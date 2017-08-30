@@ -27,12 +27,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
+use Pimcore\Model\DataObject\Objectbrick\Data as ObjectbrickData;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Fieldcollection;
-use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
-use Pimcore\Model\Object\Objectbrick\Data as ObjectbrickData;
 
 class Agent implements IOrderAgent
 {
@@ -253,7 +253,7 @@ class Agent implements IOrderAgent
             foreach ($order->getPaymentProvider()->getBrickGetters() as $method) {
                 $providerData = $order->getPaymentProvider()->{$method}();
                 if ($providerData) {
-                    /* @var \Pimcore\Model\Object\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
+                    /* @var \Pimcore\Model\DataObject\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
 
                     // get provider data
                     $name = strtolower(str_replace('PaymentProvider', '', $providerData->getType()));
@@ -292,7 +292,7 @@ class Agent implements IOrderAgent
         $order = $this->getOrder();
 
         $provider = $order->getPaymentProvider();
-        /* @var \Pimcore\Model\Object\OnlineShopOrder\PaymentProvider $provider */
+        /* @var \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider $provider */
 
         // load existing
         $getter = 'getPaymentProvider' . $paymentProvider->getName();
@@ -301,7 +301,7 @@ class Agent implements IOrderAgent
 
         if (!$providerData) {
             // create new
-            $class = '\Pimcore\Model\Object\Objectbrick\Data\PaymentProvider' . $paymentProvider->getName();
+            $class = '\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProvider' . $paymentProvider->getName();
             $providerData = new $class($order);
             $provider->{'setPaymentProvider' . $paymentProvider->getName()}($providerData);
         }

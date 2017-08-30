@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Form\LoginFormType;
-use AppBundle\Model\Object\User;
+use AppBundle\Model\DataObject\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;

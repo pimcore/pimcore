@@ -19,9 +19,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationIn
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Localizedfield;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
 
 /**
  * Provides worker functionality for batch preparing data and updating index

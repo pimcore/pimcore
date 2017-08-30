@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Shipping implements IShipping

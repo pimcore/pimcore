@@ -162,7 +162,7 @@
                         ],
                         "queryColumnType": "",
                         "columnType": "",
-                        "phpdocType": "\\Pimcore\\Model\\Object\\Data\\StructuredTable",
+                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\StructuredTable",
                         "name": "ranges",
                         "title": "Ranges",
                         "tooltip": "",

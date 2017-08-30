@@ -18,6 +18,9 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         Ext.Ajax.request({
             url: "/admin/asset/get-data-by-id",
             success: this.getDataComplete.bind(this),
+            failure: function() {
+                this.forgetOpenTab();
+            }.bind(this),
             params: {
                 id: this.id,
                 type: this.type
@@ -95,8 +98,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         // remove this instance when the panel is closed
         this.tab.on("destroy", function () {
-            pimcore.globalmanager.remove("asset_" + this.id);
-            pimcore.helpers.forgetOpenTab("asset_" + this.id + "_" + this.getType());
+            this.forgetOpenTab();
+
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {
@@ -114,6 +117,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         // recalculate the layout
         pimcore.layout.refresh();
+    },
+
+    forgetOpenTab: function() {
+        pimcore.globalmanager.remove("asset_" + this.id);
+        pimcore.helpers.forgetOpenTab("asset_" + this.id + "_" + this.getType());
     },
 
     getLayoutToolbar : function () {

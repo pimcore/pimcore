@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
 
-use Pimcore\Model\Object\ClassDefinition\Data\Textarea;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Textarea;
 
 class IndexFieldSelectionField extends Textarea
 {
@@ -77,7 +77,7 @@ class IndexFieldSelectionField extends Textarea
 
     /**
      * @param string $data
-     * @param null|\Pimcore\Model\Object\AbstractObject $object
+     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @return string

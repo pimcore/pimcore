@@ -11,7 +11,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Tests\Test\EcommerceTestCase;
 
 class ProductTaxManagementTest extends EcommerceTestCase
@@ -28,10 +28,10 @@ class ProductTaxManagementTest extends EcommerceTestCase
         $grossPrice = Decimal::create($grossPrice);
 
         $taxClass = new OnlineShopTaxClass();
-        $taxEntries = new \Pimcore\Model\Object\Fieldcollection();
+        $taxEntries = new \Pimcore\Model\DataObject\Fieldcollection();
 
         foreach ($taxes as $name => $tax) {
-            $entry = new \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry();
+            $entry = new \Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry();
             $entry->setPercent($tax);
             $entry->setName($name);
             $taxEntries->add($entry);

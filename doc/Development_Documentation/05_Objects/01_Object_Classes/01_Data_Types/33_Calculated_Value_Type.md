@@ -26,13 +26,13 @@ The extent of information differs on which datatype is the owner of the calculat
 ```php
 namespace Website;
  
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\Concrete;
  
 class CalculatorDemo
 {
     /**
      * @param $object Concrete
-     * @param $context \Pimcore\Model\Object\Data\CalculatedValue
+     * @param $context \Pimcore\Model\DataObject\Data\CalculatedValue
      * @return string
      */
     public static function compute($object, $context) {
@@ -52,7 +52,7 @@ It is also possible to provide a different representation for edit mode by provi
 ```php
 /**
  * @param $object
- * @param $context \Pimcore\Model\Object\Data\CalculatedValue
+ * @param $context \Pimcore\Model\DataObject\Data\CalculatedValue
  * @return string
  */
 public static function getCalculatedValueForEditMode($object, $context) {

@@ -27,7 +27,7 @@ class StructuredTable implements IInterpreter
 
         $getter = 'get' . ucfirst($config['tablerow']) . '__' . ucfirst($config['tablecolumn']);
 
-        if ($value && $value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
+        if ($value && $value instanceof \Pimcore\Model\DataObject\Data\StructuredTable) {
             if (isset($config['defaultUnit'])) {
                 return $value->$getter() . ' ' . $config['defaultUnit'];
             } else {

@@ -16,11 +16,17 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     urlprefix: "/admin/",
 
-    getData: function () {        
+    getData: function () {
+        var options = this.options || {};
         Ext.Ajax.request({
             url: this.urlprefix + this.getType() + "/get-data-by-id",
             params: {id: this.id},
-            success: this.getDataComplete.bind(this)
+            ignoreErrors: options.ignoreNotFoundError,
+            success: this.getDataComplete.bind(this),
+            failure: function() {
+                pimcore.helpers.forgetOpenTab("document_" + this.id + "_" + this.type);
+                pimcore.helpers.closeDocument(this.id);
+            }.bind(this)
         });
     },
 

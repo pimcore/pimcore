@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token as VoucherServiceToken;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\Concrete;
 
 class VoucherToken implements ICondition
 {

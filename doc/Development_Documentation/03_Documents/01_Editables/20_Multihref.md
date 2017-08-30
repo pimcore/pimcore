@@ -59,9 +59,9 @@ To better understand what exactly is the `$element` variable, have a look at the
 
 ```
 array(6) {
-  [0] => string(27) "Pimcore\Model\Object\Folder"
-  [1] => string(32) "Pimcore\Model\Object\BlogArticle"
-  [2] => string(32) "Pimcore\Model\Object\BlogArticle"
+  [0] => string(27) "Pimcore\Model\DataObject\Folder"
+  [1] => string(32) "Pimcore\Model\DataObject\BlogArticle"
+  [2] => string(32) "Pimcore\Model\DataObject\BlogArticle"
   [3] => string(27) "Pimcore\Model\Document\Page"
   [4] => string(27) "Pimcore\Model\Document\Page"
   [5] => string(25) "Pimcore\Model\Asset\Image"

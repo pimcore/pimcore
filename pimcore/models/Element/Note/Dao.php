@@ -19,8 +19,8 @@ namespace Pimcore\Model\Element\Note;
 
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 
 /**
  * @property \Pimcore\Model\Element\Note $model
@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             } elseif ($type == 'object') {
                 if ($data) {
-                    $data = Object\AbstractObject::getById($data);
+                    $data = DataObject\AbstractObject::getById($data);
                 }
             } elseif ($type == 'date') {
                 if ($data > 0) {
@@ -121,7 +121,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data = $data->getId();
                 }
             } elseif ($type == 'object') {
-                if ($data instanceof Object\AbstractObject) {
+                if ($data instanceof DataObject\AbstractObject) {
                     $data = $data->getId();
                 }
             } elseif ($type == 'date') {

@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -399,7 +399,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         // object <=> user dependencies
-        $userObjects = Object\Service::getObjectsReferencingUser($user->getId());
+        $userObjects = DataObject\Service::getObjectsReferencingUser($user->getId());
         $userObjectData = [];
 
         foreach ($userObjects as $o) {

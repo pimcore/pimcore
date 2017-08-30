@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
-use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ObjectValue implements IInterpreter

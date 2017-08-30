@@ -40,7 +40,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     },
 
     isMapsAvailable: function() {
-        if(pimcore.settings.google_maps_api_key) {
+        if(typeof google != "undefined" && pimcore.settings.google_maps_api_key) {
             return true;
         }
         return false;
@@ -112,7 +112,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
 
         var address = this.searchfield.getValue();
         this.geocoder.geocode( { 'address': address}, function(results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
+            if (this.isMapsAvailable() && status === google.maps.GeocoderStatus.OK) {
                 this.gmap.setCenter(results[0].geometry.location, 16);
                 this.gmap.setZoom(14);
             }

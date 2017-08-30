@@ -21,9 +21,9 @@ pimcore_ecommerce_framework:
                 # options for oder manager
                 options:
                     # Pimcore object class for orders
-                    order_class: \Pimcore\Model\Object\OnlineShopOrder
+                    order_class: \Pimcore\Model\DataObject\OnlineShopOrder
                     # Pimcore object class for order items
-                    order_item_class: \Pimcore\Model\Object\OnlineShopOrderItem
+                    order_item_class: \Pimcore\Model\DataObject\OnlineShopOrderItem
                     # Class for order listing
                     list_class: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing
                     # Class for order item listing

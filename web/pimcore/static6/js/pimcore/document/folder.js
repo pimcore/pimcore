@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.document.folder");
 pimcore.document.folder = Class.create(pimcore.document.document, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("folder");
         this.addLoadingPanel();

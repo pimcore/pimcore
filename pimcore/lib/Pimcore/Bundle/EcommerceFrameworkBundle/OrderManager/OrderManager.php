@@ -27,8 +27,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\File;
-use Pimcore\Model\Object\Folder;
-use Pimcore\Model\Object\Service;
+use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\Service;
 use Pimcore\Tool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -99,8 +99,8 @@ class OrderManager implements IOrderManager
         $resolver->setRequired($classProperties);
 
         $resolver->setDefaults([
-            'order_class'         => '\\Pimcore\\Model\\Object\\OnlineShopOrder',
-            'order_item_class'    => '\\Pimcore\\Model\\Object\\OnlineShopOrderItem',
+            'order_class'         => '\\Pimcore\\Model\\DataObject\\OnlineShopOrder',
+            'order_item_class'    => '\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem',
             'list_class'          => Listing::class,
             'list_item_class'     => Listing\Item::class,
             'parent_order_folder' => '/order/%Y/%m/%d'
@@ -289,9 +289,9 @@ class OrderManager implements IOrderManager
         $order->setSubTotalNetPrice($cart->getPriceCalculator()->getSubTotal()->getNetAmount()->asString());
         $order->setTaxInfo($this->buildTaxArray($cart->getPriceCalculator()->getGrandTotal()->getTaxEntries()));
 
-        $modificationItems = new \Pimcore\Model\Object\Fieldcollection();
+        $modificationItems = new \Pimcore\Model\DataObject\Fieldcollection();
         foreach ($cart->getPriceCalculator()->getPriceModifications() as $name => $modification) {
-            $modificationItem = new \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications();
+            $modificationItem = new \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications();
             $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
             $modificationItem->setAmount($modification->getGrossAmount()->asString());
             $modificationItem->setNetAmount($modification->getNetAmount()->asString());
@@ -408,8 +408,8 @@ class OrderManager implements IOrderManager
     protected function setCurrentCustomerToOrder(AbstractOrder $order)
     {
         // sets customer to order - if available
-        if (@Tool::classExists('\\Pimcore\\Model\\Object\\Customer')) {
-            $customer = \Pimcore\Model\Object\Customer::getById($this->environment->getCurrentUserId());
+        if (@Tool::classExists('\\Pimcore\\Model\\DataObject\\Customer')) {
+            $customer = \Pimcore\Model\DataObject\Customer::getById($this->environment->getCurrentUserId());
             $order->setCustomer($customer);
         }
 
@@ -512,10 +512,10 @@ class OrderManager implements IOrderManager
             // save active pricing rules
             $priceInfo = $item->getPriceInfo();
             if ($priceInfo instanceof IPriceInfo && method_exists($orderItem, 'setPricingRules')) {
-                $priceRules = new \Pimcore\Model\Object\Fieldcollection();
+                $priceRules = new \Pimcore\Model\DataObject\Fieldcollection();
                 foreach ($priceInfo->getRules() as $rule) {
                     if ($rule->hasProductActions()) {
-                        $priceRule = new \Pimcore\Model\Object\Fieldcollection\Data\PricingRule();
+                        $priceRule = new \Pimcore\Model\DataObject\Fieldcollection\Data\PricingRule();
                         $priceRule->setRuleId($rule->getId());
 
                         foreach (Tool::getValidLanguages() as $language) {
@@ -620,7 +620,7 @@ class OrderManager implements IOrderManager
     /**
      * Build order listing
      *
-     * @return \Pimcore\Model\Object\Listing\Concrete
+     * @return \Pimcore\Model\DataObject\Listing\Concrete
      *
      * @throws \Exception
      */
@@ -635,7 +635,7 @@ class OrderManager implements IOrderManager
     /**
      * Build order item listing
      *
-     * @return \Pimcore\Model\Object\Listing\Concrete
+     * @return \Pimcore\Model\DataObject\Listing\Concrete
      *
      * @throws \Exception
      */

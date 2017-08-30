@@ -17,9 +17,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\WorkflowManagement\Workflow;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -228,7 +228,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             }
         }
 
-        if ($element instanceof Object\Concrete) {
+        if ($element instanceof DataObject\Concrete) {
             $modificationDate = $element->getModificationDate();
             $latestVersion = $element->getLatestVersion();
             if ($latestVersion) {

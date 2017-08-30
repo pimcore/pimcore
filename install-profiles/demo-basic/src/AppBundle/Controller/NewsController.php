@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use Pimcore\Controller\FrontendController;
-use Pimcore\Model\Object\News;
+use Pimcore\Model\DataObject\News;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 

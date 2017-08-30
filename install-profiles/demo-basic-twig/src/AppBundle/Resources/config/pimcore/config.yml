@@ -12,4 +12,4 @@ pimcore:
     # we override the generated user model with a custom class which implements the UserInterface
     models:
         class_overrides:
-            'Pimcore\Model\Object\User': 'AppBundle\Model\Object\User'
+            'Pimcore\Model\DataObject\User': 'AppBundle\Model\DataObject\User'

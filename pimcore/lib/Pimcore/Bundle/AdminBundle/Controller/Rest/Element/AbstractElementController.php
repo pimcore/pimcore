@@ -170,8 +170,8 @@ abstract class AbstractElementController extends AbstractRestController
             $wsData->$key = $value;
         }
 
-        if ($wsData instanceof \Pimcore\Model\Webservice\Data\Object) {
-            /** @var \Pimcore\Model\Webservice\Data\Object key */
+        if ($wsData instanceof \Pimcore\Model\Webservice\Data\DataObject) {
+            /** @var \Pimcore\Model\Webservice\Data\DataObject key */
             $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, 'object');
         } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Document) {
             /** @var \Pimcore\Model\Webservice\Data\Document key */

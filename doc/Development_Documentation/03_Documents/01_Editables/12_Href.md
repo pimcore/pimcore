@@ -59,7 +59,7 @@ options in the editable configuration.
 
 We restricted the `myHref` editable to the following entities: 
 * Video / Image (Assets) 
-* Person Objects (`\Pimcore\Model\Object\Person`) (Objects) 
+* Person Objects (`\Pimcore\Model\DataObject\Person`) (Objects) 
  
 As you see in the picture below, it's impossible to drop any other type to that editable.
 

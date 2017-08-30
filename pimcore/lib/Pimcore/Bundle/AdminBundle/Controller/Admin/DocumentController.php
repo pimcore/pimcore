@@ -1014,6 +1014,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      */
     protected function getTreeNodeConfig($element)
     {
+        $site = null;
         $childDocument = $element;
 
         $tmpDocument = [
@@ -1076,7 +1077,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'text' => 'Type: ' . $childDocument->getType()
         ];
 
-        if ($site) {
+        if ($site instanceof Site) {
             $tmpDocument['qtipCfg']['text'] .= '<br>' . $this->trans('site_id') . ': ' . $site->getId();
         }
 
@@ -1094,7 +1095,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($childDocument instanceof Document\Page) {
             $tmpDocument['url'] = $childDocument->getFullPath();
             $site = Tool\Frontend::getSiteForDocument($childDocument);
-            if ($site) {
+            if ($site instanceof Site) {
                 $tmpDocument['url'] = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $childDocument->getRealFullPath());
             }
         }

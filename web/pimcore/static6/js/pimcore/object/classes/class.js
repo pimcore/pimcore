@@ -314,7 +314,7 @@ pimcore.object.classes.klass = Class.create({
                     if (editMode) {
                         handler = this.changeDataType.bind(this, tree, record, dataComps[i], true, this.context);
                     } else {
-                        handler = this.addDataChild.bind(record, dataComps[i], null, this.context);
+                        handler = this.addDataChild.bind(record, dataComps[i], {}, this.context);
                     }
 
                     groups[group].push({
@@ -650,7 +650,7 @@ pimcore.object.classes.klass = Class.create({
         });
 
         var getPhpClassName = function (name) {
-            return "Pimcore\\Model\\Object\\" + ucfirst(name);
+            return "Pimcore\\Model\\DataObject\\" + ucfirst(name);
         };
 
         this.rootPanel = new Ext.form.FormPanel({

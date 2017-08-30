@@ -9,7 +9,7 @@ The following code snippet indicates how to access, create and modify an object 
 
 ```php 
 // Create a new object
-$newObject = new Object\Myclassname(); 
+$newObject = new DataObject\Myclassname(); 
 $newObject->setKey(\Pimcore\File::getValidFilename('New Name'));
 $newObject->setParentId(123);
 $newObject->setName("New Name");
@@ -18,20 +18,20 @@ $newObject->save();
 
 
 //getting objects
-$myObject = Object\Myclassname::getById(167);
+$myObject = DataObject\Myclassname::getById(167);
 
 //reading data
 $myObject->getName();
 $myObject->getDescription();
 
 // it's also possible to get an object by an foreign ID
-$city = Object\City::getByZip(5020,1);
+$city = DataObject\City::getByZip(5020,1);
 
 // you can also get an object by id where you don't know the type
-$object = Object::getById(235);
+$object = DataObject::getById(235);
 
 // or obtain an object by path
-$object = Object::getByPath("/path/to/the/object");
+$object = DataObject::getByPath("/path/to/the/object");
 
 
 //updating and saving objects
@@ -47,7 +47,7 @@ $city->delete();
 
 > When using your generated classes in the code, the classname always starts with a capital letter.  
 > Example-Classname: `product`  
-> PHP-Class: `Object\Product`
+> PHP-Class: `DataObject\Product`
 
 <a name="objectsListing">&nbsp;</a>
 
@@ -68,7 +68,7 @@ An object listing class is created automatically for each class defined in Pimco
 are retrieved through a listing as in the following example:
 
 ```php
-$entries = new Object\Myclassname\Listing();
+$entries = new DataObject\Myclassname\Listing();
 $entries->setOffset($offset);
 $entries->setLimit($perPage);
 $entries->setOrderKey("date");
@@ -86,7 +86,7 @@ foreach ($entries as $entry) {
 }
  
 // there is also a shorthand eg.:
-$items = Object\Myclassname::getList([
+$items = DataObject\Myclassname::getList([
     "offset" => $offset,
     "limit" => $perPage,
     "orderKey" => "date",
@@ -94,7 +94,7 @@ $items = Object\Myclassname::getList([
 ]);
  
 // order by multiple columns
-$items = Object\Myclassname::getList([
+$items = DataObject\Myclassname::getList([
     "offset" => $offset,
     "limit" => $perPage,
     "orderKey" => ["date", "name"],
@@ -102,7 +102,7 @@ $items = Object\Myclassname::getList([
 ]);
  
 // with different directions
-$items = Object\Myclassname::getList([
+$items = DataObject\Myclassname::getList([
     "offset" => $offset,
     "limit" => $perPage,
     "orderKey" => ["name", "date"],
@@ -110,7 +110,7 @@ $items = Object\Myclassname::getList([
 ]);
  
 // with random order
-$items = new Object\PhoneProduct\Listing();
+$items = new DataObject\PhoneProduct\Listing();
 $items->setOrderKey("RAND()", false);
  
 foreach ($items as $item) {
@@ -118,7 +118,7 @@ foreach ($items as $item) {
 }
  
 // with subselect in order
-$items = new Object\PhoneProduct\Listing();
+$items = new DataObject\PhoneProduct\Listing();
 $items->setOrderKey("(SELECT id FROM sometable GROUP BY someField)", false);
 ```
 
@@ -127,14 +127,14 @@ The syntax is similar to that from the Zend Framework described
 [here](http://framework.zend.com/manual/en/zend.db.adapter.html#zend.db.adapter.select.fetchall).
 
 ```php
-$entries = new Object\Myclassname\Listing();
+$entries = new DataObject\Myclassname\Listing();
 $entries->setCondition("name LIKE ?", "%bernie%");
 $entries->load();
  
 foreach($entries as $entry) {...}
  
 // using more variables / placeholders
-$entries = new Object\Myclassname\Listing();
+$entries = new DataObject\Myclassname\Listing();
 $entries->setCondition("name LIKE ? AND date > ?", ["%bernie%", time()]);
 $entries->load();
  
@@ -142,7 +142,7 @@ foreach($entries as $entry) {...}
  
  
 // using named placeholders (recommended) - only with PDO Mysql Adapter
-$entries = new Object\Myclassname\Listing();
+$entries = new DataObject\Myclassname\Listing();
 $entries->setCondition("name LIKE :name AND date > :date", ["name" => "%bernie%", "date" => time()]);
 $entries->load();
 ```
@@ -150,7 +150,7 @@ $entries->load();
 ### Conditions on localized fields
 Following code will only search the EN value of the field `name`.
 ```php
-$entries = new Object\Myclassname\Listing();
+$entries = new DataObject\Myclassname\Listing();
 $entries->setLocale("en"); // string or instance of Zend_Locale
 $entries->setCondition("name LIKE :name", ["name" => "%term%"]); // name is a field inside a localized field container
 ```
@@ -161,7 +161,7 @@ can disable localized fields on your listing (the objects in the list will still
 Conditions and order by statements on localized fields are then not possible anymore. 
 
 ```php
-$entries = new Object\Myclassname\Listing();
+$entries = new DataObject\Myclassname\Listing();
 $entries->setIgnoreLocalizedFields(true);
 $entries->load();
 ```
@@ -171,21 +171,21 @@ Often it's very useful to get a listing of objects or a single object where a pr
 This is especially useful to get an object matching a foreign key, or get a list of objects with only one condition.
 
 ```php
-$result = Object\ClassName::getByMyfieldname($value, [int $limit, int $offset]);
+$result = DataObject\ClassName::getByMyfieldname($value, [int $limit, int $offset]);
 ```
 If you set no limit, a list object containing all matching objects is returned. If the limit is set to 1 
 the first matching object is returned directly (without listing). Only published objects are return.
 
 Alternatively you can pass an array as second parameter which will be applied to the object listing.
 ```php
-$result = Object\ClassName::getByMyfieldname($value, ['limit' => 1,'unpublished' => true]);
+$result = DataObject\ClassName::getByMyfieldname($value, ['limit' => 1,'unpublished' => true]);
 ```
 
 ##### Examples
 ```php
 
 // get a list of cities in Austria
-$list = Object\City::getByCountry("AT");
+$list = DataObject\City::getByCountry("AT");
 foreach ($list as $city) {
     // do something with the cities
     $city->getZip();
@@ -194,13 +194,13 @@ foreach ($list as $city) {
  
  
 // get a city by zip
-$city = Object\City::getByZip(5020, 1);
+$city = DataObject\City::getByZip(5020, 1);
 $city->getZip(); // do something with the city
  
  
  
 // get the first 10 cities in Austria
-$list = Object\City::getByCountry("AT", 10);
+$list = DataObject\City::getByCountry("AT", 10);
 foreach ($list as $city) {
     // do something with the cities
     $city->getZip();
@@ -210,26 +210,26 @@ foreach ($list as $city) {
 ### Get an Object List/Object by Localized Fields
 
 ```php
-$list = Object\News::getByLocalizedfields($fieldName, $value, $locale, $limit | array($limit, $offset, $unpublished));
+$list = DataObject\News::getByLocalizedfields($fieldName, $value, $locale, $limit | array($limit, $offset, $unpublished));
 ```
 
 
 ##### Examples
 ```php
 // get a list of cities in Austria by localized field using default locale
-$list = Object\City::getByLocalizedfields("country", "Österreich");
+$list = DataObject\City::getByLocalizedfields("country", "Österreich");
  
 // get a city by localized name using default locale
-$city = Object\City::getByLocalizedfields("city", "Wels", null, 1);
+$city = DataObject\City::getByLocalizedfields("city", "Wels", null, 1);
  
 // get the first 10 cities in Austria by localized field using default locale
-$list = Object\City::getByLocalizedfields("country", "Österreich", null, 10);
+$list = DataObject\City::getByLocalizedfields("country", "Österreich", null, 10);
   
 // get the first 10 cities in Austria by localized field "de" locale
-$list = Object\City::getByLocalizedfields("country", "Österreich", "de", 10);
+$list = DataObject\City::getByLocalizedfields("country", "Österreich", "de", 10);
  
 //get a country by localized name in english
-$country = Object\Country::getByLocalizedfields("name", "Austria", "en", 1);
+$country = DataObject\Country::getByLocalizedfields("name", "Austria", "en", 1);
 ```
 
 
@@ -238,11 +238,11 @@ Normally object lists only give published objects. This can be changed by settin
 `true`.
 
 ```php
-$list = Object\News::getList(["unpublished" => true]);
+$list = DataObject\News::getList(["unpublished" => true]);
 
 //or 
 
-$list = new Object\News\Listing();
+$list = new DataObject\News\Listing();
 $list->setUnpublished(true);
 $list->load();
 
@@ -253,7 +253,7 @@ To filter objects by attributes from field collections, you can use following sy
 (Both code snippets result in the same object listing).
 
 ```php
-$list = new Object\Collectiontest\Listing();
+$list = new DataObject\Collectiontest\Listing();
 $list->addFieldCollection("MyCollection", "collection");
 $list->addFieldCollection("MyCollection");
 $list->setCondition("`MyCollection~collection`.myinput = 'hugo' AND `MyCollection`.myinput = 'testinput'");
@@ -261,7 +261,7 @@ $list->setCondition("`MyCollection~collection`.myinput = 'hugo' AND `MyCollectio
 
 ```php
 
-$list = Object\Collectiontest::getList([
+$list = DataObject\Collectiontest::getList([
    "fieldCollections" => [
       ["type" => "MyCollection", "fieldname" => "collection"],
       ["type" => "MyCollection"]
@@ -289,7 +289,7 @@ The object listing of this example only delivers objects of the type Collectiont
 ```php
 public function testAction( Request $request )
 {
-    $list = new Object\Simple\Listing();
+    $list = new DataObject\Simple\Listing();
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
@@ -353,8 +353,8 @@ on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html
 <?php
 // get all news with ratings that is stored in a not Pimcore related table
  
-/** @var \Pimcore\Model\Object\Listing\Dao|\Pimcore\Model\Object\News\Listing $list */
-$list = new Pimcore\Model\Object\News\Listing();
+/** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
+$list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
 $list->onCreateQuery(function (Zend_Db_Select $query) use ($list) {
@@ -375,8 +375,8 @@ You can access and print the internal query which is based on [Zend_Db_Select](h
 <?php
 // get all news with ratings that is stored in a not Pimcore related table
  
-/** @var \Pimcore\Model\Object\Listing\Dao|\Pimcore\Model\Object\News\Listing $list */
-$list = new Pimcore\Model\Object\News\Listing();
+/** @var \Pimcore\Model\DataObject\Listing\Dao|\Pimcore\Model\DataObject\News\Listing $list */
+$list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
 $list->onCreateQuery(function (Zend_Db_Select $query) use ($list) {

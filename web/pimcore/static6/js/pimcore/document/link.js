@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.document.link");
 pimcore.document.link = Class.create(pimcore.document.document, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("link");
         this.addLoadingPanel();

@@ -33,7 +33,7 @@ Start off with defining a global list of known units.
 This can also be achieved programmatically.
 
 ```php 
-$unit = new Pimcore\Model\Object\QuantityValue\Unit();
+$unit = new Pimcore\Model\DataObject\QuantityValue\Unit();
 $unit->setAbbreviation("km");   // mandatory
 $unit->setLongname("kilometers");
 $unit->setGroup("dimension");
@@ -51,14 +51,14 @@ Only those units will be available then.
 
 The following code snippet shows how to set a value.
 ```php
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
   
-$parent = Object::getByPath("/");
+$parent = DataObject::getByPath("/");
  
-$object = new Object\Test();
-$unit = Object\QuantityValue\Unit::getByAbbreviation("km");
+$object = new DataObject\Test();
+$unit = DataObject\QuantityValue\Unit::getByAbbreviation("km");
 $object->setKey("test2");
 $object->setParent($parent);
-$object->setHeight(new Object\Data\QuantityValue(27, $unit->getId()));
+$object->setHeight(new DataObject\Data\QuantityValue(27, $unit->getId()));
 $object->save();
 ```

@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
-use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Model\WebsiteSetting;
 
 abstract class AbstractPriceSystem implements IPriceSystem

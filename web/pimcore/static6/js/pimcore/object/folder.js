@@ -16,8 +16,9 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     type: "folder",
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.addLoadingPanel();
 
@@ -45,11 +46,21 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
 
     getData: function () {
+        var options = this.options || {};
         Ext.Ajax.request({
             url: "/admin/object/get-folder",
             params: {id: this.id},
-            success: this.getDataComplete.bind(this)
+            ignoreErrors: options.ignoreNotFoundError,
+            success: this.getDataComplete.bind(this),
+            failure: function() {
+                this.forgetOpenTab();
+            }.bind(this)
         });
+    },
+
+    forgetOpenTab: function() {
+        pimcore.globalmanager.remove("object_" + this.id);
+        pimcore.helpers.forgetOpenTab("object_" + this.id + "_folder");
     },
 
     getDataComplete: function (response) {

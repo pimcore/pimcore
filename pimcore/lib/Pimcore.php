@@ -353,7 +353,9 @@ class Pimcore
         self::$inShutdown = true;
 
         // write and clean up cache
-        Cache::shutdown();
+        if(php_sapi_name() != 'cli') {
+            Cache::shutdown();
+        }
 
         // release all open locks from this process
         Model\Tool\Lock::releaseAll();

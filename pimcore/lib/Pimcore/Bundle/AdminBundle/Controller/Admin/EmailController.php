@@ -293,7 +293,7 @@ class EmailController extends DocumentControllerBase
                 $niceClassName = str_replace('_', '\\', $niceClassName);
 
                 $tmp = explode('\\', $niceClassName);
-                if (in_array($tmp[0], ['Object', 'Document', 'Asset'])) {
+                if (in_array($tmp[0], ['DataObject', 'Document', 'Asset'])) {
                     $data['objectClassBase'] = $tmp[0];
                     $data['objectClassSubType'] = $tmp[1];
                 }
@@ -316,7 +316,7 @@ class EmailController extends DocumentControllerBase
         } else {
             //setting the icon class
             if (!$data['iconCls']) {
-                if ($data['objectClassBase'] == 'Object') {
+                if ($data['objectClassBase'] == 'DataObject') {
                     $fullEntry['iconCls'] = 'pimcore_icon_object';
                 } elseif ($data['objectClassBase'] == 'Asset') {
                     switch ($data['objectClassSubType']) {

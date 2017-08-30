@@ -27,8 +27,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
-use Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications;
-use Pimcore\Model\Object\OnlineShopOrder;
+use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
+use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -377,7 +377,7 @@ class WirecardSeamless implements IPayment
         return $redirectURL;
     }
 
-    protected function addPayolutionRequestFields($fields, \Pimcore\Model\Object\OnlineShopOrder $order, $config)
+    protected function addPayolutionRequestFields($fields, \Pimcore\Model\DataObject\OnlineShopOrder $order, $config)
     {
         if (!is_array($config['birthday']) || !$config['birthday']['year'] || !$config['birthday']['month'] || !$config['birthday']['day']) {
             throw new \Exception('no birthday passed');
@@ -408,12 +408,12 @@ class WirecardSeamless implements IPayment
      * can be transmitted and visualized in Paypal (during the payment process and in the Paypal invoice email).
      *
      * @param $fields
-     * @param \Pimcore\Model\Object\OnlineShopOrder $order
+     * @param \Pimcore\Model\DataObject\OnlineShopOrder $order
      * @param $config
      *
      * @return array
      */
-    protected function addPaypalFields($fields, \Pimcore\Model\Object\OnlineShopOrder $order, $config)
+    protected function addPaypalFields($fields, \Pimcore\Model\DataObject\OnlineShopOrder $order, $config)
     {
         $priceCheckSum = 0.0;
         $priceCheckSumNet = 0.0;

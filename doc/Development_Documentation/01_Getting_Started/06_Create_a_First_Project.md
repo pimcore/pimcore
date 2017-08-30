@@ -188,7 +188,7 @@ If everything goes well, the new class looks like in the picture:
 
 **Important:** Every generated class in the Pimcore admin panel has also an accordingly PHP class 
 with getters and setters. You can find the PHP class representation of our newly created class definition above in 
-`var/classes/Object/Product.php` 
+`var/classes/DataObject/Product.php` 
 
 ## Add a new Object
 
@@ -316,7 +316,7 @@ $this->extend('layout.html.php');
     else: ?>
     <div id="product">
         <?php
-        /** @var \Pimcore\Model\Object\Product $product */
+        /** @var \Pimcore\Model\DataObject\Product $product */
         $product = $this->href('product')->getElement();
         ?>
         <h2><?= $this->escape($product->getName()); ?></h2>

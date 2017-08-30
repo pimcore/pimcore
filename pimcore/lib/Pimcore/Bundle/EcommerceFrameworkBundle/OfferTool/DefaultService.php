@@ -18,8 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Model\Object\Folder;
-use Pimcore\Model\Object\Service;
+use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\Service;
 
 class DefaultService implements IService
 {
@@ -268,7 +268,7 @@ class DefaultService implements IService
         $env = Factory::getInstance()->getEnvironment();
 
         if (@class_exists('Object_Customer')) {
-            $customer = \Pimcore\Model\Object\Customer::getById($env->getCurrentUserId());
+            $customer = \Pimcore\Model\DataObject\Customer::getById($env->getCurrentUserId());
             $offer->setCustomer($customer);
         }
 

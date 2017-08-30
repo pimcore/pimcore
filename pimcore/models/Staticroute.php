@@ -194,7 +194,7 @@ class Staticroute extends AbstractModel
             return null;
         }
 
-        // to have a singleton in a way. like all instances of Element\ElementInterface do also, like Object\AbstractObject
+        // to have a singleton in a way. like all instances of Element\ElementInterface do also, like DataObject\AbstractObject
         if ($route->getId() > 0) {
             // add it to the mini-per request cache
             self::$nameIdMappingCache[$cacheKey] = $route->getId();

@@ -22,11 +22,11 @@ Source Code for `import.php`:
  
 include(__DIR__ . "/../pimcore/config/startup_cli.php");
  
-use \Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 
 // create some random objects ;-)
 for ($i = 0; $i < 60; $i++) {
-    $o = new Object\News();
+    $o = new DataObject\News();
     $o->setKey(uniqid() . "-" . $i);
     $o->setParentId(1);
     $o->setPublished(true);

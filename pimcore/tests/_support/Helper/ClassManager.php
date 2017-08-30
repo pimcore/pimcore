@@ -3,9 +3,9 @@
 namespace Pimcore\Tests\Helper;
 
 use Codeception\Module;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\Fieldcollection\Definition as FieldcollectionDefinition;
-use Pimcore\Model\Object\Objectbrick\Definition as ObjectbrickDefinition;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
+use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ClassManager extends Module
@@ -68,10 +68,10 @@ class ClassManager extends Module
         $this->assertNotNull($class, sprintf('Test class %s does not exist and could not be created', $name));
         $this->assertInstanceOf(ClassDefinition::class, $class);
 
-        $classFile = PIMCORE_CLASS_DIRECTORY . '/Object/' . ucfirst($class->getName()) . '.php';
+        $classFile = PIMCORE_CLASS_DIRECTORY . '/DataObject/' . ucfirst($class->getName()) . '.php';
         $this->assertFileExists($classFile, sprintf('Test class file %s does not exist', $classFile));
 
-        $fullClassName = 'Pimcore\\Model\\Object\\' . ucfirst($class->getName());
+        $fullClassName = 'Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
         $this->assertTrue(class_exists($fullClassName), sprintf('Class %s cannot be found/loaded', $fullClassName));
 
         return $class;

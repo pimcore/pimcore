@@ -17,8 +17,9 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
     urlprefix: "/admin/",
     type: "printabstract",
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, this.getType());
 
         this.addLoadingPanel();

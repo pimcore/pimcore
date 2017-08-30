@@ -3,13 +3,13 @@
 namespace Pimcore\Tests\Util;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject as ObjectModel;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object as ObjectModel;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Unittest;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;

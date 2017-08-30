@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Logger;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,7 +44,8 @@ class SearchBackendReindexCommand extends AbstractCommand
         $types = ['asset', 'document', 'object'];
 
         foreach ($types as $type) {
-            $listClassName = '\\Pimcore\\Model\\' . ucfirst($type) . '\\Listing';
+            $baseClass = Service::getBaseClassNameForElement($type);
+            $listClassName = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
             $list = new $listClassName();
             if (method_exists($list, 'setUnpublished')) {
                 $list->setUnpublished(true);

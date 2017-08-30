@@ -82,7 +82,7 @@
 									"id":"int(11)",
 									"type":"enum('document','asset','object')"
 								},
-								"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
+								"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
 								"objectsAllowed":"1",
 								"assetsAllowed":"1",
 								"assetTypes":[
@@ -190,7 +190,7 @@
 									"id":"int(11)",
 									"type":"enum('document','asset','object')"
 								},
-								"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
+								"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
 								"objectsAllowed":"1",
 								"assetsAllowed":"1",
 								"assetTypes":[
@@ -316,7 +316,7 @@
 									}
 								],
 								"fieldtype":"objectsMetadata",
-								"phpdocType":"\\Pimcore\\Model\\Object\\Data\\ObjectMetadata[]",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
 								"width":"",
 								"height":"",
 								"maxItems":"",
@@ -410,7 +410,7 @@
 									"longitude":"double",
 									"latitude":"double"
 								},
-								"phpdocType":"\\Pimcore\\Model\\Object\\Data\\Geopoint",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Data\\Geopoint",
 								"lat":0,
 								"lng":0,
 								"zoom":1,
@@ -444,7 +444,7 @@
 									"SWlongitude":"double",
 									"SWlatitude":"double"
 								},
-								"phpdocType":"\\Pimcore\\Model\\Object\\Data\\Geobounds",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Data\\Geobounds",
 								"lat":0,
 								"lng":0,
 								"zoom":1,
@@ -5890,7 +5890,7 @@
 								"fieldtype":"link",
 								"queryColumnType":"text",
 								"columnType":"text",
-								"phpdocType":"\\Pimcore\\Model\\Object\\Data\\Link",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Data\\Link",
 								"name":"link",
 								"title":"Link",
 								"tooltip":"<b>Link<\/b>\nPlease select a value",
@@ -5939,7 +5939,7 @@
 									"image":"int(11)",
 									"hotspots":"text"
 								},
-								"phpdocType":"\\Pimcore\\Model\\Object\\Data\\Hotspotimage",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage",
 								"ratioX":null,
 								"ratioY":null,
 								"width":"",
@@ -6065,7 +6065,7 @@
 							},
 							{
 								"fieldtype":"fieldcollections",
-								"phpdocType":"\\Pimcore\\Model\\Object\\Fieldcollection",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Fieldcollection",
 								"allowedTypes":[
 									"unittestfieldcollection"
 								],
@@ -6142,7 +6142,7 @@
 							},
 							{
 								"fieldtype":"fieldcollections",
-								"phpdocType":"\\Pimcore\\Model\\Object\\Fieldcollection",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Fieldcollection",
 								"allowedTypes":[
 									"unittestfieldcollection"
 								],
@@ -6171,7 +6171,7 @@
 							},
 							{
 								"fieldtype":"localizedfields",
-								"phpdocType":"\\Pimcore\\Model\\Object\\Localizedfield",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Localizedfield",
 								"childs":[
 									{
 										"fieldtype":"input",
@@ -10578,7 +10578,7 @@
 										"fieldtype":"link",
 										"queryColumnType":"text",
 										"columnType":"text",
-										"phpdocType":"\\Pimcore\\Model\\Object\\Data\\Link",
+										"phpdocType":"\\Pimcore\\Model\\DataObject\\Data\\Link",
 										"name":"llink",
 										"title":"localized link",
 										"tooltip":"",
@@ -10648,7 +10648,7 @@
 							},
 							{
 								"fieldtype":"objectbricks",
-								"phpdocType":"\\Pimcore\\Model\\Object\\Objectbrick",
+								"phpdocType":"\\Pimcore\\Model\\DataObject\\Objectbrick",
 								"allowedTypes":[
 
 								],

@@ -15,7 +15,7 @@
 namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\EventDispatcher\Event;
 
 class ObjectEvent extends Event implements ElementEventInterface

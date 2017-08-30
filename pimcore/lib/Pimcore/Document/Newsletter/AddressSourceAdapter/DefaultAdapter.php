@@ -16,8 +16,8 @@ namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\Listing;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Listing;
 
 class DefaultAdapter implements AddressSourceAdapterInterface
 {
@@ -64,7 +64,7 @@ class DefaultAdapter implements AddressSourceAdapterInterface
     protected function getListing()
     {
         if (empty($this->list)) {
-            $objectList = '\\Pimcore\\Model\\Object\\' . ucfirst($this->class) . '\\Listing';
+            $objectList = '\\Pimcore\\Model\\DataObject\\' . ucfirst($this->class) . '\\Listing';
             $this->list = new $objectList();
 
             $conditions = ['(newsletterActive = 1 AND newsletterConfirmed = 1)'];
@@ -76,14 +76,14 @@ class DefaultAdapter implements AddressSourceAdapterInterface
                 if ($class && $class->getFieldDefinition('persona')) {
                     $personas = [];
 
-                    if ($class->getFieldDefinition('persona') instanceof \Pimcore\Model\Object\ClassDefinition\Data\Persona) {
+                    if ($class->getFieldDefinition('persona') instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Persona) {
                         foreach ($this->personas as $value) {
                             if (!empty($value)) {
                                 $personas[] = $this->list->quote($value);
                             }
                         }
                         $conditions[] = 'persona IN (' . implode(',', $personas) . ')';
-                    } elseif ($class->getFieldDefinition('persona') instanceof \Pimcore\Model\Object\ClassDefinition\Data\Personamultiselect) {
+                    } elseif ($class->getFieldDefinition('persona') instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Personamultiselect) {
                         $personasCondition = [];
                         foreach ($this->personas as $value) {
                             $personasCondition[] = 'persona LIKE ' . $this->list->quote('%,' . $value .  ',%');

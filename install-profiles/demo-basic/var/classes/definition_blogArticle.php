@@ -18,7 +18,7 @@ Fields Summary:
 */
 
 
-return Pimcore\Model\Object\ClassDefinition::__set_state(array(
+return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'blogArticle',
    'description' => '',
    'creationDate' => 1388389165,
@@ -31,7 +31,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'allowVariants' => false,
    'showVariants' => false,
    'layoutDefinitions' =>
-  Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
+  Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
      'fieldtype' => 'panel',
      'labelWidth' => 100,
      'layout' => NULL,
@@ -49,7 +49,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'childs' =>
     array (
       0 =>
-      Pimcore\Model\Object\ClassDefinition\Layout\Region::__set_state(array(
+      Pimcore\Model\DataObject\ClassDefinition\Layout\Region::__set_state(array(
          'fieldtype' => 'region',
          'name' => 'Layout',
          'type' => NULL,
@@ -65,13 +65,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'childs' =>
         array (
           0 =>
-          Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields::__set_state(array(
              'fieldtype' => 'localizedfields',
-             'phpdocType' => '\\Pimcore\\Model\\Object\\Localizedfield',
+             'phpdocType' => '\\Pimcore\\Model\\DataObject\\Localizedfield',
              'childs' =>
             array (
               0 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 500,
                  'queryColumnType' => 'varchar',
@@ -95,7 +95,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               1 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Wysiwyg::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg::__set_state(array(
                  'fieldtype' => 'wysiwyg',
                  'width' => '',
                  'height' => '',
@@ -119,7 +119,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               2 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 500,
                  'queryColumnType' => 'varchar',
@@ -157,7 +157,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'fieldDefinitionsCache' =>
             array (
               'title' =>
-              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 500,
                  'queryColumnType' => 'varchar',
@@ -181,7 +181,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               'text' =>
-              Pimcore\Model\Object\ClassDefinition\Data\Wysiwyg::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg::__set_state(array(
                  'fieldtype' => 'wysiwyg',
                  'width' => '',
                  'height' => '',
@@ -205,7 +205,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               'tags' =>
-              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 500,
                  'queryColumnType' => 'varchar',
@@ -245,7 +245,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleSearch' => true,
           )),
           1 =>
-          Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
              'fieldtype' => 'panel',
              'labelWidth' => 100,
              'layout' => NULL,
@@ -263,7 +263,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'childs' =>
             array (
               0 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Datetime::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Datetime::__set_state(array(
                  'fieldtype' => 'datetime',
                  'queryColumnType' => 'bigint(20)',
                  'columnType' => 'bigint(20)',
@@ -286,7 +286,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               1 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Objects::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Objects::__set_state(array(
                  'fieldtype' => 'objects',
                  'width' => '',
                  'height' => '',
@@ -318,7 +318,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               2 =>
-              Pimcore\Model\Object\ClassDefinition\Data\Hotspotimage::__set_state(array(
+              Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage::__set_state(array(
                  'fieldtype' => 'hotspotimage',
                  'queryColumnType' =>
                 array (
@@ -330,7 +330,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                   'image' => 'int(11)',
                   'hotspots' => 'text',
                 ),
-                 'phpdocType' => '\\Pimcore\\Model\\Object\\Data\\Hotspotimage',
+                 'phpdocType' => '\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage',
                  'ratioX' => NULL,
                  'ratioY' => NULL,
                  'width' => 430,

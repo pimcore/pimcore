@@ -4,11 +4,11 @@ namespace Pimcore\Tests\Helper\DataType;
 
 use Codeception\Module;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Object;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Tests\Util\TestHelper;
@@ -275,7 +275,7 @@ class TestDataHelper extends Module
         }
 
         $hotspots     = $this->createHotspots();
-        $hotspotImage = new Object\Data\Hotspotimage($asset, $hotspots);
+        $hotspotImage = new DataObject\Data\Hotspotimage($asset, $hotspots);
         $object->$setter($hotspotImage);
     }
 
@@ -288,16 +288,16 @@ class TestDataHelper extends Module
     {
         $getter   = 'get' . ucfirst($field);
 
-        /** @var Object\Data\Hotspotimage $value */
+        /** @var DataObject\Data\Hotspotimage $value */
         $value    = $object->$getter();
         $hotspots = $value->getHotspots();
 
         $this->assertCount(2, $hotspots);
-        $this->assertInstanceOf(Object\Data\Hotspotimage::class, $value);
+        $this->assertInstanceOf(DataObject\Data\Hotspotimage::class, $value);
 
         $asset    = Asset::getByPath('/' . static::HOTSPOT_IMAGE);
         $hotspots = $this->createHotspots();
-        $expected = new Object\Data\Hotspotimage($asset, $hotspots);
+        $expected = new DataObject\Data\Hotspotimage($asset, $hotspots);
 
         $this->assertAssetsEqual($expected->getImage(), $value->getImage());
         $this->assertEquals($expected->getHotspots(), $value->getHotspots());
@@ -627,13 +627,13 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @return Object\Data\Geopoint
+     * @return DataObject\Data\Geopoint
      */
     protected function getGeopointFixture()
     {
         $longitude = 2.2008440814678;
         $latitude  = 102.25112915039;
-        $point     = new Object\Data\Geopoint($longitude, $latitude);
+        $point     = new DataObject\Data\Geopoint($longitude, $latitude);
 
         return $point;
     }
@@ -658,11 +658,11 @@ class TestDataHelper extends Module
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var Object\Data\Geopoint $value */
+        /** @var DataObject\Data\Geopoint $value */
         $value  = $object->$getter();
 
         $this->assertNotNull($value);
-        $this->assertInstanceOf(Object\Data\Geopoint::class, $value);
+        $this->assertInstanceOf(DataObject\Data\Geopoint::class, $value);
 
         $expected = $this->getGeopointFixture();
 
@@ -671,13 +671,13 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @return Object\Data\Geobounds
+     * @return DataObject\Data\Geobounds
      */
     protected function getGeoboundsFixture()
     {
-        return new Object\Data\Geobounds(
-            new Object\Data\Geopoint(150.96588134765625, -33.704920213014425),
-            new Object\Data\Geopoint(150.60333251953125, -33.893217379440884)
+        return new DataObject\Data\Geobounds(
+            new DataObject\Data\Geopoint(150.96588134765625, -33.704920213014425),
+            new DataObject\Data\Geopoint(150.60333251953125, -33.893217379440884)
         );
     }
 
@@ -702,11 +702,11 @@ class TestDataHelper extends Module
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var Object\Data\Geobounds $value */
+        /** @var DataObject\Data\Geobounds $value */
         $value = $object->$getter();
 
         $this->assertNotNull($value);
-        $this->assertInstanceOf(Object\Data\Geobounds::class, $value);
+        $this->assertInstanceOf(DataObject\Data\Geobounds::class, $value);
 
         $expected = $this->getGeoboundsFixture();
 
@@ -726,14 +726,14 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @return Object\Data\Geopoint[]
+     * @return DataObject\Data\Geopoint[]
      */
     protected function getGeopolygonFixture()
     {
         return [
-            new Object\Data\Geopoint(150.54428100585938, -33.464671118242684),
-            new Object\Data\Geopoint(150.73654174804688, -33.913733814316245),
-            new Object\Data\Geopoint(151.2542724609375, -33.9946115848146)
+            new DataObject\Data\Geopoint(150.54428100585938, -33.464671118242684),
+            new DataObject\Data\Geopoint(150.73654174804688, -33.913733814316245),
+            new DataObject\Data\Geopoint(151.2542724609375, -33.9946115848146)
         ];
     }
 
@@ -758,7 +758,7 @@ class TestDataHelper extends Module
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var Object\Data\Geopoint[] $value */
+        /** @var DataObject\Data\Geopoint[] $value */
         $value = $object->$getter();
 
         $expected = $this->getGeopolygonFixture();
@@ -771,7 +771,7 @@ class TestDataHelper extends Module
             $expectedPoint = $expected[$i];
 
             $this->assertNotNull($point);
-            $this->assertInstanceOf(Object\Data\Geopoint::class, $point);
+            $this->assertInstanceOf(DataObject\Data\Geopoint::class, $point);
             $this->assertEquals($expectedPoint->__toString(), $point->__toString(), 'String representations are equal');
             $this->assertEquals($expectedPoint, $point, 'Objects are equal');
         }
@@ -854,7 +854,7 @@ class TestDataHelper extends Module
             $doc->save();
         }
 
-        $link = new Object\Data\Link();
+        $link = new DataObject\Data\Link();
         $link->setPath($doc);
 
         $object->$setter($link);
@@ -869,11 +869,11 @@ class TestDataHelper extends Module
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var Object\Data\Link $link */
+        /** @var DataObject\Data\Link $link */
         $link = $object->$getter();
 
         $this->assertNotNull($link);
-        $this->assertInstanceOf(Object\Data\Link::class, $link);
+        $this->assertInstanceOf(DataObject\Data\Link::class, $link);
 
         $document = Document::getByPath($link->getObject());
         $expected = Document::getByPath('/' . static::DOCUMENT . $seed);
@@ -889,7 +889,7 @@ class TestDataHelper extends Module
     /**
      * @param int $seed
      *
-     * @return Object\Data\StructuredTable
+     * @return DataObject\Data\StructuredTable
      */
     private function getStructuredTableData($seed = 1)
     {
@@ -901,7 +901,7 @@ class TestDataHelper extends Module
         $data['row2']['col2'] = 'text_b_' . $seed;
         $data['row3']['col2'] = 'text_c_' . $seed;
 
-        $st = new Object\Data\StructuredTable();
+        $st = new DataObject\Data\StructuredTable();
         $st->setData($data);
 
         return $st;
@@ -928,11 +928,11 @@ class TestDataHelper extends Module
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var Object\Data\StructuredTable $value */
+        /** @var DataObject\Data\StructuredTable $value */
         $value  = $object->$getter();
 
         $this->assertNotNull($value);
-        $this->assertInstanceOf(Object\Data\StructuredTable::class, $value);
+        $this->assertInstanceOf(DataObject\Data\StructuredTable::class, $value);
 
         $expected = $this->getStructuredTableData($seed);
 
@@ -1022,7 +1022,7 @@ class TestDataHelper extends Module
      * @param $field
      * @param $seed
      *
-     * @return Object\Data\ObjectMetadata[]
+     * @return DataObject\Data\ObjectMetadata[]
      */
     public function getObjectsWithMetadataFixture($field, $seed)
     {
@@ -1031,7 +1031,7 @@ class TestDataHelper extends Module
 
         $metaobjects = [];
         foreach ($objects as $o) {
-            $mo = new Object\Data\ObjectMetadata($field, ['meta1', 'meta2'], $o);
+            $mo = new DataObject\Data\ObjectMetadata($field, ['meta1', 'meta2'], $o);
             $mo->setMeta1('value1' . $seed);
             $mo->setMeta2('value2' . $seed);
             $metaobjects[] = $mo;
@@ -1079,8 +1079,8 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Object\Data\ObjectMetadata[] $expected
-     * @param Object\Data\ObjectMetadata[] $value
+     * @param DataObject\Data\ObjectMetadata[] $expected
+     * @param DataObject\Data\ObjectMetadata[] $value
      */
     protected function assertObjectMetadataEqual($expected, $value)
     {
@@ -1089,9 +1089,9 @@ class TestDataHelper extends Module
 
         $this->assertCount(count($expected), $value);
 
-        /** @var Object\Data\ObjectMetadata $expectedMetadata */
+        /** @var DataObject\Data\ObjectMetadata $expectedMetadata */
         foreach ($expected as $i => $expectedMetadata) {
-            /** @var Object\Data\ObjectMetadata $valueMetadata */
+            /** @var DataObject\Data\ObjectMetadata $valueMetadata */
             $valueMetadata = $value[$i];
 
             $this->assertEquals($expectedMetadata->getColumns(), $valueMetadata->getColumns());
@@ -1113,10 +1113,10 @@ class TestDataHelper extends Module
     {
         $getter = 'get' . ucfirst($field);
 
-        $brick = new Object\Objectbrick\Data\UnittestBrick($object);
+        $brick = new DataObject\Objectbrick\Data\UnittestBrick($object);
         $brick->setBrickInput('brickinput' . $seed);
 
-        /** @var Object\Unittest\Mybricks $objectbricks */
+        /** @var DataObject\Unittest\Mybricks $objectbricks */
         $objectbricks = $object->$getter();
         $objectbricks->setUnittestBrick($brick);
     }
@@ -1132,10 +1132,10 @@ class TestDataHelper extends Module
 
         $value = $object->$getter();
 
-        /** @var Object\Unittest\Mybricks $value */
+        /** @var DataObject\Unittest\Mybricks $value */
         $value = $value->getUnittestBrick();
 
-        /** @var Object\Objectbrick\Data\UnittestBrick $value */
+        /** @var DataObject\Objectbrick\Data\UnittestBrick $value */
         $value = $value->getBrickinput();
 
         $expected = 'brickinput' . $seed;
@@ -1152,11 +1152,11 @@ class TestDataHelper extends Module
     {
         $setter = 'set' . ucfirst($field);
 
-        $fc = new Object\Fieldcollection\Data\Unittestfieldcollection();
+        $fc = new DataObject\Fieldcollection\Data\Unittestfieldcollection();
         $fc->setFieldinput1('field1' . $seed);
         $fc->setFieldinput2('field2' . $seed);
 
-        $items = new Object\Fieldcollection([$fc], $field);
+        $items = new DataObject\Fieldcollection([$fc], $field);
         $object->$setter($items);
     }
 
@@ -1169,14 +1169,14 @@ class TestDataHelper extends Module
     {
         $getter = 'get' . ucfirst($field);
 
-        /** @var Object\Fieldcollection $value */
+        /** @var DataObject\Fieldcollection $value */
         $value = $object->$getter();
 
         $this->assertEquals(1, $value->getCount(), 'expected 1 item');
 
         $value = $value->getItems();
 
-        /** @var Object\Fieldcollection\Data\Unittestfieldcollection $value */
+        /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
         $value = $value[0];
 
         $this->assertEquals(
@@ -1283,7 +1283,7 @@ class TestDataHelper extends Module
      */
     private function getObjectList($condition = null)
     {
-        $list = new Object\Listing();
+        $list = new DataObject\Listing();
         $list->setOrderKey('o_id');
         $list->setCondition($condition);
 

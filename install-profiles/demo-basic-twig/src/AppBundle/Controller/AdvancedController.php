@@ -7,8 +7,8 @@ use AppBundle\Form\PersonInquiryType;
 use Pimcore\File;
 use Pimcore\Mail;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
@@ -126,15 +126,15 @@ class AdvancedController extends FrontendController
                 // first we create a person, then we create an inquiry object and link them together
 
                 // check for an existing person with this name
-                $person = Object\Person::getByEmail($data['email'], 1);
+                $person = DataObject\Person::getByEmail($data['email'], 1);
 
                 if (!$person) {
                     // if there isn't an existing, ... create one
                     $filename = File::getValidFilename($data['email']);
 
                     // first we need to create a new object, and fill some system-related information
-                    $person = new Object\Person();
-                    $person->setParent(Object\AbstractObject::getByPath('/crm/inquiries')); // we store all objects in /crm
+                    $person = new DataObject\Person();
+                    $person->setParent(DataObject\AbstractObject::getByPath('/crm/inquiries')); // we store all objects in /crm
                     $person->setKey($filename); // the filename of the object
                     $person->setPublished(true); // yep, it should be published :)
 
@@ -150,8 +150,8 @@ class AdvancedController extends FrontendController
                 // now we create the inquiry object and link the person
                 $inquiryFilename = File::getValidFilename(date('Y-m-d') . '~' . $person->getEmail());
 
-                $inquiry = new Object\Inquiry();
-                $inquiry->setParent(Object\AbstractObject::getByPath('/inquiries')); // we store all objects in /inquiries
+                $inquiry = new DataObject\Inquiry();
+                $inquiry->setParent(DataObject\AbstractObject::getByPath('/inquiries')); // we store all objects in /inquiries
                 $inquiry->setKey($inquiryFilename); // the filename of the object
                 $inquiry->setPublished(true); // yep, it should be published :)
 

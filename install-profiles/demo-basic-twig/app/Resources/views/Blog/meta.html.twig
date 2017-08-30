@@ -3,7 +3,7 @@
 
 {% for category in article.getCategories() %}
     {%- spaceless -%}
-    {# @var category \Pimcore\Model\Object\BlogCategory #}
+    {# @var category \Pimcore\Model\DataObject\BlogCategory #}
     {%- if loop.index0 > 0 -%}, {% endif -%}<a href="?category={{ category.getId() }}">{{ category.getName() }}</a>
     {%- endspaceless -%}
 {% endfor %}

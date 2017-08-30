@@ -45,8 +45,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService as DefaultVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory;
-use Pimcore\Model\Object\OfferToolOffer;
-use Pimcore\Model\Object\OfferToolOfferItem;
+use Pimcore\Model\DataObject\OfferToolOffer;
+use Pimcore\Model\DataObject\OfferToolOfferItem;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -359,12 +359,12 @@ class Configuration implements ConfigurationInterface
                                 ->children()
                                     ->scalarNode('order_class')
                                         ->info('Pimcore object class for orders')
-                                        ->defaultValue('\\Pimcore\\Model\\Object\\OnlineShopOrder')
+                                        ->defaultValue('\\Pimcore\\Model\\DataObject\\OnlineShopOrder')
                                         ->cannotBeEmpty()
                                     ->end()
                                     ->scalarNode('order_item_class')
                                         ->info('Pimcore object class for order items')
-                                        ->defaultValue('\\Pimcore\\Model\\Object\\OnlineShopOrderItem')
+                                        ->defaultValue('\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem')
                                         ->cannotBeEmpty()
                                     ->end()
                                     ->scalarNode('list_class')

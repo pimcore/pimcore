@@ -20,8 +20,8 @@ namespace Pimcore\Model\Element;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Model\User;
 
 class PermissionChecker
@@ -30,7 +30,7 @@ class PermissionChecker
     {
         $protectedColumns = ['cid', 'cpath', 'userId', 'lEdit', 'lView', 'layouts'];
 
-        if ($element instanceof Object\AbstractObject) {
+        if ($element instanceof DataObject\AbstractObject) {
             $type = 'object';
         } else {
             if ($element instanceof Asset) {
@@ -220,12 +220,12 @@ class PermissionChecker
             return;
         }
 
-        if ($element instanceof Object\AbstractObject) {
+        if ($element instanceof DataObject\AbstractObject) {
             $details[] = self::createDetail($user, '<b>Language Permissions</b>', null, null, null);
 
             $permissions = ['lView' => 'view', 'lEdit' => 'edit'];
             foreach ($permissions as $permissionKey => $permissionName) {
-                $languagePermissions = Object\Service::getLanguagePermissions($element, $user, $permissionKey);
+                $languagePermissions = DataObject\Service::getLanguagePermissions($element, $user, $permissionKey);
                 if (!$languagePermissions) {
                     $languagePermissions = 'all';
                 } else {

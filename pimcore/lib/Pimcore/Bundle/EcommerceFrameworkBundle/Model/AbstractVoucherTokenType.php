@@ -17,6 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 /**
  * Abstract base class for voucher token type field collections
  */
-abstract class AbstractVoucherTokenType extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData
+abstract class AbstractVoucherTokenType extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
 {
 }

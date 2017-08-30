@@ -79,7 +79,7 @@ class NewsletterController extends FrontendController
         if ($newsletter->checkParams($params)) {
             try {
                 $params["parentId"] = 1; // default folder (home) where we want to save our subscribers
-                $newsletterFolder = Model\Object\AbstractObject::getByPath("/crm/newsletter");
+                $newsletterFolder = Model\DataObject\AbstractObject::getByPath("/crm/newsletter");
                 if ($newsletterFolder) {
                     $params["parentId"] = $newsletterFolder->getId();
                 }

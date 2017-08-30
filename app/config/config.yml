@@ -22,9 +22,9 @@ imports:
 #### CLASS OVERRIDES EXAMPLES
 #    models:
 #        class_overrides:
-#            'Pimcore\Model\Object\News': 'AppBundle\Model\Object\News'
-#            'Pimcore\Model\Object\News\Listing': 'AppBundle\Model\Object\News\Listing'
-#            'Pimcore\Model\Object\Folder': 'AppBundle\Model\Object\Folder'
+#            'Pimcore\Model\DataObject\News': 'AppBundle\Model\DataObject\News'
+#            'Pimcore\Model\DataObject\News\Listing': 'AppBundle\Model\DataObject\News\Listing'
+#            'Pimcore\Model\DataObject\Folder': 'AppBundle\Model\DataObject\Folder'
 #            'Pimcore\Model\Asset\Folder': 'AppBundle\Model\Asset\Folder'
 #            'Pimcore\Model\Asset\Image': 'AppBundle\Model\Asset\Image'
 #            'Pimcore\Model\Document\Page': 'AppBundle\Model\Document\Page'

@@ -57,10 +57,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             params.layoutId = this.options.layoutId;
         }
 
+        var options = this.options || {};
+
         Ext.Ajax.request({
             url: "/admin/object/get",
             params: params,
-            success: this.getDataComplete.bind(this)
+            ignoreErrors: options.ignoreNotFoundError,
+            success: this.getDataComplete.bind(this),
+            failure: function() {
+                this.forgetOpenTab();
+            }.bind(this)
         });
     },
 
@@ -81,9 +87,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         catch (e) {
             console.log(e);
 
-            pimcore.globalmanager.remove("object_" + this.id);
-            pimcore.helpers.forgetOpenTab("object_" + this.id + "_object");
-            pimcore.helpers.forgetOpenTab("object_" + this.id + "_variant");
+            this.forgetOpenTab();
 
             if (this.toolbar) {
                 this.toolbar.destroy();
@@ -190,9 +194,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         // remove this instance when the panel is closed
         this.tab.on("destroy", function () {
-            pimcore.globalmanager.remove("object_" + this.id);
-            pimcore.helpers.forgetOpenTab("object_" + this.id + "_object");
-            pimcore.helpers.forgetOpenTab("object_" + this.id + "_variant");
+            this.forgetOpenTab();
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {
@@ -210,6 +212,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         // recalculate the layout
         pimcore.layout.refresh();
+    },
+
+    forgetOpenTab: function() {
+        pimcore.globalmanager.remove("object_" + this.id);
+        pimcore.helpers.forgetOpenTab("object_" + this.id + "_object");
+        pimcore.helpers.forgetOpenTab("object_" + this.id + "_variant");
+
     },
 
     getTabPanel: function () {
