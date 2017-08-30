@@ -708,7 +708,7 @@ pimcore.settings.system = Class.create({
                     ,
                     {
                         xtype: 'fieldset',
-                        title: t('objects'),
+                        title: t('data_objects'),
                         collapsible: true,
                         collapsed: true,
                         autoHeight: true,
