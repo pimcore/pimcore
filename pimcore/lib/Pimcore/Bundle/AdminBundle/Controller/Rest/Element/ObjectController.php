@@ -16,11 +16,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Http\Exception\ResponseException;
-use Pimcore\Model\Object;
-use Pimcore\Model\Webservice\Data\Object\Concrete\In as WebserviceObjectIn;
-use Pimcore\Model\Webservice\Data\Object\Concrete\Out as WebserviceObjectOut;
-use Pimcore\Model\Webservice\Data\Object\Folder\In as WebserviceFolderIn;
-use Pimcore\Model\Webservice\Data\Object\Folder\Out as WebserviceFolderOut;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Webservice\Data\DataObject\Concrete\In as WebserviceObjectIn;
+use Pimcore\Model\Webservice\Data\DataObject\Concrete\Out as WebserviceObjectOut;
+use Pimcore\Model\Webservice\Data\DataObject\Folder\In as WebserviceFolderIn;
+use Pimcore\Model\Webservice\Data\DataObject\Folder\Out as WebserviceFolderOut;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
@@ -126,7 +126,7 @@ class ObjectController extends AbstractElementController
         }
 
         /** @var WebserviceObjectOut|WebserviceFolderOut $out */
-        if ($object instanceof Object\Folder) {
+        if ($object instanceof DataObject\Folder) {
             $out = $this->service->getObjectFolderById($id);
         } else {
             $out = $this->service->getObjectConcreteById($id);
@@ -475,9 +475,9 @@ class ObjectController extends AbstractElementController
 
         $params = [
             'objectTypes' => [
-                Object\AbstractObject::OBJECT_TYPE_FOLDER,
-                Object\AbstractObject::OBJECT_TYPE_OBJECT,
-                Object\AbstractObject::OBJECT_TYPE_VARIANT
+                DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
+                DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
+                DataObject\AbstractObject::OBJECT_TYPE_VARIANT
             ]
         ];
 
@@ -489,11 +489,11 @@ class ObjectController extends AbstractElementController
             $params['groupBy'] = $groupBy;
         }
 
-        $listClassName = Object\AbstractObject::class;
+        $listClassName = DataObject\AbstractObject::class;
         if (!empty($objectClass)) {
-            $listClassName = '\\Pimcore\\Model\\Object\\' . ucfirst($objectClass);
+            $listClassName = '\\Pimcore\\Model\\DataObject\\' . ucfirst($objectClass);
             if (!Tool::classExists($listClassName)) {
-                $listClassName = Object\AbstractObject::class;
+                $listClassName = DataObject\AbstractObject::class;
             }
         }
 
@@ -530,14 +530,14 @@ class ObjectController extends AbstractElementController
     /**
      * @param int $id
      *
-     * @return Object\AbstractObject
+     * @return DataObject\AbstractObject
      *
      * @throws ResponseException
      *      if object was not found
      */
     protected function loadObject($id)
     {
-        $object = Object::getById((int)$id);
+        $object = DataObject::getById((int)$id);
 
         if ($object) {
             return $object;
@@ -569,7 +569,7 @@ class ObjectController extends AbstractElementController
 
         $wsData = $this->fillWebserviceData($class, $data);
 
-        $object = new Object();
+        $object = new DataObject();
         $object->setId($wsData->parentId);
 
         $this->checkElementPermission($object, 'create');
@@ -588,13 +588,13 @@ class ObjectController extends AbstractElementController
     /**
      * Update an existing object
      *
-     * @param Object\AbstractObject $object
+     * @param DataObject\AbstractObject $object
      * @param string $type
      * @param array $data
      *
      * @return JsonResponse
      */
-    protected function updateObject(Object\AbstractObject $object, $type, array $data)
+    protected function updateObject(DataObject\AbstractObject $object, $type, array $data)
     {
         $this->checkElementPermission($object, 'update');
 

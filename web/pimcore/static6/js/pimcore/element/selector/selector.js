@@ -132,7 +132,7 @@ pimcore.element.selector.selector = Class.create({
         if(in_array("object", this.restrictions.type) && user.isAllowed("objects")) {
             items.push("-");
             this.toolbarbuttons.object = new Ext.Button({
-                text: t("objects"),
+                text: t("data_objects"),
                 handler: this.searchObjects.bind(this),
                 iconCls: "pimcore_icon_object",
                 enableToggle: true

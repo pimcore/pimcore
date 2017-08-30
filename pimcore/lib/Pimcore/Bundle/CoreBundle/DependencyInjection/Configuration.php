@@ -352,10 +352,10 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('encoder_factories')
                             ->info('Encoder factories to use as className => factory service ID mapping')
                             ->example([
-                                'AppBundle\Model\Object\User1' => [
+                                'AppBundle\Model\DataObject\User1' => [
                                     'id' => 'website_demo.security.encoder_factory2'
                                 ],
-                                'AppBundle\Model\Object\User2' => 'website_demo.security.encoder_factory2'
+                                'AppBundle\Model\DataObject\User2' => 'website_demo.security.encoder_factory2'
                             ])
                             ->useAttributeAsKey('class')
                             ->prototype('array')

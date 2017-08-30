@@ -22,7 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -293,8 +293,8 @@ class Href extends Model\Document\Tag
                     }
                 }
             } elseif ($this->type == 'object') {
-                $this->element = Object\AbstractObject::getById($this->id);
-                if (!$this->element instanceof Object\AbstractObject) {
+                $this->element = DataObject\AbstractObject::getById($this->id);
+                if (!$this->element instanceof DataObject\AbstractObject) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
                     } else {

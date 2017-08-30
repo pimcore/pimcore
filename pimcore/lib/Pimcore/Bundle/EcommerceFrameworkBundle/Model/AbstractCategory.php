@@ -17,18 +17,18 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 /**
  * Abstract base class for pimcore objects who should be used as product categories in the online shop framework
  */
-class AbstractCategory extends \Pimcore\Model\Object\Concrete
+class AbstractCategory extends \Pimcore\Model\DataObject\Concrete
 {
     /**
      * @static
      *
      * @param int $id
      *
-     * @return null|\Pimcore\Model\Object\AbstractObject
+     * @return null|\Pimcore\Model\DataObject\AbstractObject
      */
     public static function getById($id)
     {
-        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
+        $object = \Pimcore\Model\DataObject\AbstractObject::getById($id);
 
         if ($object instanceof AbstractCategory) {
             return $object;

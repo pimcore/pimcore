@@ -120,12 +120,12 @@ $orderList->addSelectField(['Items' => 'count(orderItem.o_id)']);
 <?php
 
 // e.g. get all orderings for a customer
-$orderList->joinCustomer( \Pimcore\Model\Object\Customer::classId() );
+$orderList->joinCustomer( \Pimcore\Model\DataObject\Customer::classId() );
 $orderList->getQuery()->where('customer.o_id = ?', 12345);
 
 
 // e.g. filter product number
-$orderList->joinProduct( \Pimcore\Model\Object\Product::classId() );
+$orderList->joinProduct( \Pimcore\Model\DataObject\Product::classId() );
 $orderList->getQuery()->where('product.productNumber = ?', 'CMD1191');
 
 ```

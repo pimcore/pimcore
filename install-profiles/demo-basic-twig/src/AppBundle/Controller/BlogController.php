@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
@@ -11,14 +11,14 @@ class BlogController extends FrontendController
     public function indexAction(Request $request)
     {
         // get a list of news objects and order them by date
-        $blogList = new Object\BlogArticle\Listing();
+        $blogList = new DataObject\BlogArticle\Listing();
         $blogList->setOrderKey('date');
         $blogList->setOrder('DESC');
 
         // selected category
         $selectedCategory = null;
         if ($selectedCategoryId = $request->get('category')) {
-            $selectedCategory = Object\BlogCategory::getById((int)$selectedCategoryId);
+            $selectedCategory = DataObject\BlogCategory::getById((int)$selectedCategoryId);
             $this->view->selectedCategory = $selectedCategory;
         }
 
@@ -50,7 +50,7 @@ class BlogController extends FrontendController
         $this->view->articles = $paginator;
 
         // get all categories
-        $categories = Object\BlogCategory::getList(); // this is an alternative way to get an object list
+        $categories = DataObject\BlogCategory::getList(); // this is an alternative way to get an object list
         $this->view->categories = $categories;
 
         // archive information, we have to do this in pure SQL
@@ -105,9 +105,9 @@ class BlogController extends FrontendController
     public function detailAction(Request $request)
     {
         // "id" is the named parameters in "Static Routes"
-        $article = Object\BlogArticle::getById($request->get('id'));
+        $article = DataObject\BlogArticle::getById($request->get('id'));
 
-        if (!$article instanceof Object\BlogArticle || !$article->isPublished()) {
+        if (!$article instanceof DataObject\BlogArticle || !$article->isPublished()) {
             throw $this->createNotFoundException('Invalid request - no such blog article');
         }
 
@@ -122,7 +122,7 @@ class BlogController extends FrontendController
         }
 
         // this is the alternative way of getting a list of objects
-        $blogList = Object\BlogArticle::getList([
+        $blogList = DataObject\BlogArticle::getList([
             'limit' => $items,
             'order' => 'DESC',
             'orderKey' => 'date'

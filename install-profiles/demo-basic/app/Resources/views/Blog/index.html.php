@@ -5,7 +5,7 @@
  * @var \Pimcore\Templating\GlobalVariables $app
  */
 
-use Pimcore\Model\Object\BlogArticle;
+use Pimcore\Model\DataObject\BlogArticle;
 
 $this->extend('layout.html.php');
 

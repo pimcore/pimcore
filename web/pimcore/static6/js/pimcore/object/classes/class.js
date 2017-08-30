@@ -650,7 +650,7 @@ pimcore.object.classes.klass = Class.create({
         });
 
         var getPhpClassName = function (name) {
-            return "Pimcore\\Model\\Object\\" + ucfirst(name);
+            return "Pimcore\\Model\\DataObject\\" + ucfirst(name);
         };
 
         this.rootPanel = new Ext.form.FormPanel({

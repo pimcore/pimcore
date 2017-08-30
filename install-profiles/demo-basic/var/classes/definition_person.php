@@ -19,7 +19,7 @@ Fields Summary:
 */
 
 
-return Pimcore\Model\Object\ClassDefinition::__set_state(array(
+return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'person',
    'description' => '',
    'creationDate' => 1368620452,
@@ -32,7 +32,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'allowVariants' => false,
    'showVariants' => false,
    'layoutDefinitions' =>
-  Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
+  Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
      'fieldtype' => 'panel',
      'labelWidth' => 100,
      'layout' => NULL,
@@ -50,7 +50,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'childs' =>
     array (
       0 =>
-      Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
+      Pimcore\Model\DataObject\ClassDefinition\Layout\Panel::__set_state(array(
          'fieldtype' => 'panel',
          'labelWidth' => 100,
          'layout' => NULL,
@@ -68,7 +68,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'childs' =>
         array (
           0 =>
-          Pimcore\Model\Object\ClassDefinition\Data\Gender::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\Gender::__set_state(array(
              'fieldtype' => 'gender',
              'options' =>
             array (
@@ -109,7 +109,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleSearch' => false,
           )),
           1 =>
-          Pimcore\Model\Object\ClassDefinition\Data\Firstname::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\Firstname::__set_state(array(
              'fieldtype' => 'firstname',
              'width' => '',
              'queryColumnType' => 'varchar',
@@ -133,7 +133,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleSearch' => false,
           )),
           2 =>
-          Pimcore\Model\Object\ClassDefinition\Data\Lastname::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\Lastname::__set_state(array(
              'fieldtype' => 'lastname',
              'width' => '',
              'queryColumnType' => 'varchar',
@@ -157,7 +157,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleSearch' => false,
           )),
           3 =>
-          Pimcore\Model\Object\ClassDefinition\Data\Email::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\Email::__set_state(array(
              'fieldtype' => 'email',
              'width' => '',
              'queryColumnType' => 'varchar',
@@ -181,7 +181,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleSearch' => false,
           )),
           4 =>
-          Pimcore\Model\Object\ClassDefinition\Data\NewsletterActive::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive::__set_state(array(
              'fieldtype' => 'newsletterActive',
              'defaultValue' => 0,
              'queryColumnType' => 'tinyint(1)',
@@ -203,7 +203,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleSearch' => true,
           )),
           5 =>
-          Pimcore\Model\Object\ClassDefinition\Data\NewsletterConfirmed::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterConfirmed::__set_state(array(
              'fieldtype' => 'newsletterConfirmed',
              'defaultValue' => 0,
              'queryColumnType' => 'tinyint(1)',
@@ -225,7 +225,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleSearch' => false,
           )),
           6 =>
-          Pimcore\Model\Object\ClassDefinition\Data\Datetime::__set_state(array(
+          Pimcore\Model\DataObject\ClassDefinition\Data\Datetime::__set_state(array(
              'fieldtype' => 'datetime',
              'queryColumnType' => 'bigint(20)',
              'columnType' => 'bigint(20)',

@@ -2,9 +2,9 @@
 
 namespace Pimcore\Tests\Rest;
 
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Folder;
-use Pimcore\Model\Object\Unittest;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Test\RestTestCase;
 use Pimcore\Tests\Util\TestHelper;
 

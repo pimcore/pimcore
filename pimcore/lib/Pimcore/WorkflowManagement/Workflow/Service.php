@@ -71,10 +71,10 @@ class Service
      */
     public static function getDataFromEditmode($data, $pimcoreTagName)
     {
-        $tagClass = '\\Pimcore\\Model\\Object\\ClassDefinition\\Data\\' . ucfirst($pimcoreTagName);
+        $tagClass = '\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($pimcoreTagName);
         if (\Pimcore\Tool::classExists($tagClass)) {
             /**
-             * @var \Pimcore\Model\Object\ClassDefinition\Data $tag
+             * @var \Pimcore\Model\DataObject\ClassDefinition\Data $tag
              */
             $tag = new $tagClass();
 

@@ -81,7 +81,7 @@
 					},
 					{
 						"fieldtype":"fieldcollections",
-						"phpdocType":"\\Pimcore\\Model\\Object\\Fieldcollection",
+						"phpdocType":"\\Pimcore\\Model\\DataObject\\Fieldcollection",
 						"allowedTypes":[
 							"VoucherTokenTypePattern",
 							"VoucherTokenTypeSingle"

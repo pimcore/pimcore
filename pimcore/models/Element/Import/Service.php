@@ -20,7 +20,7 @@ namespace Pimcore\Model\Element\Import;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
@@ -94,17 +94,17 @@ class Service
             $parentClassName = '\\Pimcore\\Model\\Asset';
             $maintype = 'asset';
             $fullPath = $path . $apiElement->filename;
-        } elseif ($apiElement instanceof Webservice\Data\Object) {
+        } elseif ($apiElement instanceof Webservice\Data\DataObject) {
             $maintype = 'object';
             if ($type == 'object') {
-                $className = '\\Pimcore\\Model\\Object\\' . ucfirst($apiElement->className);
+                $className = '\\Pimcore\\Model\\DataObject\\' . ucfirst($apiElement->className);
                 if (!Tool::classExists($className)) {
                     throw new \Exception('Unknown class [ ' . $className . ' ]');
                 }
             } else {
-                $className = '\\Pimcore\\Model\\Object\\' . ucfirst($type);
+                $className = '\\Pimcore\\Model\\DataObject\\' . ucfirst($type);
             }
-            $parentClassName = '\\Pimcore\\Model\\Object';
+            $parentClassName = '\\Pimcore\\Model\\DataObject';
             $fullPath = $path . $apiElement->key;
         } elseif ($apiElement instanceof Webservice\Data\Document) {
             $maintype = 'document';
@@ -128,11 +128,11 @@ class Service
         if ($element instanceof Asset) {
             $element->setFilename($apiElement->filename);
             $element->setData(base64_decode($apiElement->data));
-        } elseif ($element instanceof Object\Concrete) {
+        } elseif ($element instanceof DataObject\Concrete) {
             $element->setKey($apiElement->key);
             $element->setClassName($apiElement->className);
-            $class = Object\ClassDefinition::getByName($apiElement->className);
-            if (!$class instanceof Object\ClassDefinition) {
+            $class = DataObject\ClassDefinition::getByName($apiElement->className);
+            if (!$class instanceof DataObject\ClassDefinition) {
                 throw new \Exception('Unknown object class [ ' . $apiElement->className . ' ] ');
             }
             $element->setClassId($class->getId());
@@ -268,7 +268,7 @@ class Service
     }
 
     /**
-     * @param  Webservice\Data\Object\Concrete $apiElement
+     * @param  Webservice\Data\DataObject\Concrete $apiElement
      * @param $idMapping
      */
     public function correctObjectRelations($apiElement, $idMapping)
@@ -296,7 +296,7 @@ class Service
                 } elseif ($el->type == 'wysiwyg') {
                     $el->value = Tool\Text::replaceWysiwygTextRelationIds($idMapping, $el->value);
                 } elseif ($el->type == 'fieldcollections') {
-                    if ($el instanceof Webservice\Data\Object\Element and is_array($el->value)) {
+                    if ($el instanceof Webservice\Data\DataObject\Element and is_array($el->value)) {
                         foreach ($el->value as $fieldCollectionEl) {
                             if (is_array($fieldCollectionEl->value)) {
                                 foreach ($fieldCollectionEl->value as $collectionItem) {

@@ -4540,7 +4540,7 @@ class Dao extends \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\
 
 // -- end namespace OnlineShop\Framework\VoucherService\Token\Listing ----------------------------------------------------------------------------------
 
-namespace Pimcore\Model\Object\ClassDefinition\Data {
+namespace Pimcore\Model\DataObject\ClassDefinition\Data {
 
 /**
  * @deprecated
@@ -4568,9 +4568,9 @@ class IndexFieldSelectionField extends \Pimcore\Bundle\EcommerceFrameworkBundle\
 
 }
 
-// -- end namespace Pimcore\Model\Object\ClassDefinition\Data ----------------------------------------------------------------------------------
+// -- end namespace Pimcore\Model\DataObject\ClassDefinition\Data ----------------------------------------------------------------------------------
 
-namespace Pimcore\Model\Object\Data {
+namespace Pimcore\Model\DataObject\Data {
 
 /**
  * @deprecated
@@ -4582,4 +4582,4 @@ class IndexFieldSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\CoreE
 
 }
 
-// -- end namespace Pimcore\Model\Object\Data ----------------------------------------------------------------------------------
+// -- end namespace Pimcore\Model\DataObject\Data ----------------------------------------------------------------------------------

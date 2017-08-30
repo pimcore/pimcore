@@ -44,7 +44,7 @@ class AdminStyle
     /**
      * AdminStyle constructor.
      *
-     * @param Model\Object\Concrete $element
+     * @param Model\DataObject\Concrete $element
      */
     public function __construct($element)
     {

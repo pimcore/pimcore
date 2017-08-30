@@ -79,7 +79,7 @@ It is possible to define custom tooltips which are shown while hovering over the
 The procedure is the same as for the icons. Code sample:
 ```php
 public function getElementQtipConfig() {
-    if ($this->element instanceof \Pimcore\Model\Object\News) {
+    if ($this->element instanceof \Pimcore\Model\DataObject\News) {
         $thumbnail = $this->element->getImage_1()->getThumbnail("exampleResize");
         return [
             "title" => "ID: " . $this->element->getId() . " - " . $this->element->getDate(),

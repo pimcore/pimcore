@@ -20,14 +20,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
 class Product implements IOrderListFilter
 {
     /**
-     * @var \Pimcore\Model\Object\Concrete
+     * @var \Pimcore\Model\DataObject\Concrete
      */
     protected $product;
 
     /**
-     * @param \Pimcore\Model\Object\Concrete $product
+     * @param \Pimcore\Model\DataObject\Concrete $product
      */
-    public function __construct(\Pimcore\Model\Object\Concrete $product)
+    public function __construct(\Pimcore\Model\DataObject\Concrete $product)
     {
         $this->product = $product;
     }
@@ -44,10 +44,10 @@ class Product implements IOrderListFilter
         ];
 
         $variants = $this->product->getChildren([
-            \Pimcore\Model\Object\Concrete::OBJECT_TYPE_VARIANT
+            \Pimcore\Model\DataObject\Concrete::OBJECT_TYPE_VARIANT
         ]);
 
-        /** @var \Pimcore\Model\Object\Concrete $variant */
+        /** @var \Pimcore\Model\DataObject\Concrete $variant */
         foreach ($variants as $variant) {
             $ids[] = $variant->getId();
         }

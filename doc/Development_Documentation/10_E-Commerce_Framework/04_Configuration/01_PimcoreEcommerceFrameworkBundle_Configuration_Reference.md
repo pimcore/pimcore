@@ -106,10 +106,10 @@ pimcore_ecommerce_framework:
                 options:
 
                     # Pimcore object class for orders
-                    order_class:          \Pimcore\Model\Object\OnlineShopOrder
+                    order_class:          \Pimcore\Model\DataObject\OnlineShopOrder
 
                     # Pimcore object class for order items
-                    order_item_class:     \Pimcore\Model\Object\OnlineShopOrderItem
+                    order_item_class:     \Pimcore\Model\DataObject\OnlineShopOrderItem
 
                     # Class for order listing
                     list_class:           Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing
@@ -337,10 +337,10 @@ pimcore_ecommerce_framework:
         order_storage:
 
             # Pimcore object class for offers
-            offer_class:          Pimcore\Model\Object\OfferToolOffer
+            offer_class:          Pimcore\Model\DataObject\OfferToolOffer
 
             # Pimcore object class for offer items
-            offer_item_class:     Pimcore\Model\Object\OfferToolOfferItem
+            offer_item_class:     Pimcore\Model\DataObject\OfferToolOfferItem
 
             # default path for new offers
             parent_folder_path:   /offertool/offers/%%Y/%%m

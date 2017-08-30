@@ -31,6 +31,6 @@ Just call the service's `rewriteIds` and provide a mapper config.
          176 => 190
      )
  );
- $object = Object\Service::rewriteIds($object, $rewriteConfig);
+ $object = DataObject\Service::rewriteIds($object, $rewriteConfig);
  ```
  meaning that in the copy everything point to object with ID 176 will be replaced with a reference pointing to object 190.

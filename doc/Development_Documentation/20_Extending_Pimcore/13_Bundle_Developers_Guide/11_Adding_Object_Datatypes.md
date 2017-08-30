@@ -3,14 +3,14 @@ With plugins, it is also possible to add individual data types for Pimcore Objec
 Following steps are necessary to do so: 
 
 1) Create a PHP class for server-side implementation:
- This class needs to extend `Pimcore\Model\Object\ClassDefinition\Data` and defines how your data type is stored into 
+ This class needs to extend `Pimcore\Model\DataObject\ClassDefinition\Data` and defines how your data type is stored into 
   database, how the getters and setters for Pimcore objects are generated and how data is sent to and read from 
   Pimcore Admin Ui. 
    
    For examples have a look at the Pimcore core datatypes at 
-   [github](https://github.com/pimcore/pimcore/tree/master/pimcore/models/Object/ClassDefinition/Data). 
+   [github](https://github.com/pimcore/pimcore/tree/master/pimcore/models/DataObject/ClassDefinition/Data). 
 
-   In Pimcore 4 the PHP class had to be in namespace `Pimcore\Model\Object\ClassDefinition\Data` to be loaded. This is 
+   In Pimcore 4 the PHP class had to be in namespace `Pimcore\Model\DataObject\ClassDefinition\Data` to be loaded. This is 
    still possible, but not necessary any more (see below).
 
 2) Create JavaScript class for Class Definition editor (object data): 
@@ -51,6 +51,6 @@ pimcore:
         class_definitions:
             data:
                 map:
-                  myDataType: \AppBundle\Model\Object\Data\MyDataType
+                  myDataType: \AppBundle\Model\DataObject\Data\MyDataType
 ```
 

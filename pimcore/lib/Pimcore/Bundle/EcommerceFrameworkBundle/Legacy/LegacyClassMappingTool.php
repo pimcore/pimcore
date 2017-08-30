@@ -269,10 +269,10 @@ class LegacyClassMappingTool
     ];
 
     private static $symfonyMappingClasses = [
-        'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection' => 'Pimcore\Model\Object\ClassDefinition\Data\IndexFieldSelection',
-        'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionCombo' => 'Pimcore\Model\Object\ClassDefinition\Data\IndexFieldSelectionCombo',
-        'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionField' => 'Pimcore\Model\Object\ClassDefinition\Data\IndexFieldSelectionField',
-        'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection' => 'Pimcore\Model\Object\Data\IndexFieldSelection',
+        'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection' => 'Pimcore\Model\DataObject\ClassDefinition\Data\IndexFieldSelection',
+        'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionCombo' => 'Pimcore\Model\DataObject\ClassDefinition\Data\IndexFieldSelectionCombo',
+        'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionField' => 'Pimcore\Model\DataObject\ClassDefinition\Data\IndexFieldSelectionField',
+        'Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection' => 'Pimcore\Model\DataObject\Data\IndexFieldSelection',
 
         'Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory' => 'OnlineShop\Framework\Model\AbstractCategory',
         'Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder' => 'OnlineShop\Framework\Model\AbstractOrder',

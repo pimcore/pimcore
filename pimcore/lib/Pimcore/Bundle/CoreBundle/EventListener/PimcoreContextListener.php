@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -94,15 +94,15 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
             \Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
-            Object\AbstractObject::setHideUnpublished(false);
-            Object\AbstractObject::setGetInheritedValues(false);
-            Object\Localizedfield::setGetFallbackValues(false);
+            DataObject\AbstractObject::setHideUnpublished(false);
+            DataObject\AbstractObject::setGetInheritedValues(false);
+            DataObject\Localizedfield::setGetFallbackValues(false);
         } else {
             \Pimcore::unsetAdminMode();
             Document::setHideUnpublished(true);
-            Object\AbstractObject::setHideUnpublished(true);
-            Object\AbstractObject::setGetInheritedValues(true);
-            Object\Localizedfield::setGetFallbackValues(true);
+            DataObject\AbstractObject::setHideUnpublished(true);
+            DataObject\AbstractObject::setGetInheritedValues(true);
+            DataObject\Localizedfield::setGetFallbackValues(true);
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace Pimcore\Tests\Model\Datatype\ClassificationStore;
 
 use Pimcore\Cache;
-use Pimcore\Model\Object\Classificationstore;
+use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Tests\Util\TestHelper;
 
 class GeneralTest extends AbstractClassificationStoreTest
@@ -43,7 +43,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $this->assertEquals(3, count($relations), 'expected 3 relations');
 
-        $o = new \Pimcore\Model\Object\Csstoreclass();
+        $o = new \Pimcore\Model\DataObject\Csstoreclass();
         $o->setParentId(1);
         $o->setKey('testobject');
         $o->setPublished(1);
@@ -53,9 +53,9 @@ class GeneralTest extends AbstractClassificationStoreTest
         Cache::disable();
         Cache::clearAll();
 
-        /** @var $csField \Pimcore\Model\Object\Classificationstore */
+        /** @var $csField \Pimcore\Model\DataObject\Classificationstore */
         $csField = $o->getCsstore();
-        $this->assertTrue($csField instanceof \Pimcore\Model\Object\Classificationstore, 'type mismatch');
+        $this->assertTrue($csField instanceof \Pimcore\Model\DataObject\Classificationstore, 'type mismatch');
 
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroup1');
         $keyNames = ['key1', 'key2', 'key3'];
@@ -67,7 +67,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         foreach ($validLanguages as $validLanguage) {
             foreach ($keyNames as $keyName) {
-                $keyConfig = \Pimcore\Model\Object\Classificationstore\KeyConfig::getByName($keyName, $store->getId());
+                $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName($keyName, $store->getId());
                 $idx++;
                 $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $idx, $validLanguage);
             }
@@ -76,14 +76,14 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         Cache::clearAll();
 
-        $o = \Pimcore\Model\Object\Csstoreclass::getById($o->getId());
+        $o = \Pimcore\Model\DataObject\Csstoreclass::getById($o->getId());
         $csField = $o->getCsstore();
 
         $idx = 0;
 
         foreach ($validLanguages as $validLanguage) {
             foreach ($keyNames as $keyName) {
-                $keyConfig = \Pimcore\Model\Object\Classificationstore\KeyConfig::getByName($keyName, $store->getId());
+                $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName($keyName, $store->getId());
                 $idx++;
                 $value =  $csField->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $validLanguage);
                 $this->assertEquals($idx, $value);
@@ -91,11 +91,11 @@ class GeneralTest extends AbstractClassificationStoreTest
         }
 
         // now check if inheritance is correctly implented
-        $keyConfig = \Pimcore\Model\Object\Classificationstore\KeyConfig::getByName('key1', $store->getId());
+        $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('key1', $store->getId());
 
         Cache::clearAll();
 
-        $o = \Pimcore\Model\Object\Csstoreclass::getById($o->getId());
+        $o = \Pimcore\Model\DataObject\Csstoreclass::getById($o->getId());
         $csField = $o->getCsstore();
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), null, 'en');
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), 'defaultValue', 'default');
@@ -103,7 +103,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         Cache::clearAll();
 
-        $o = \Pimcore\Model\Object\Csstoreclass::getById($o->getId());
+        $o = \Pimcore\Model\DataObject\Csstoreclass::getById($o->getId());
         $csField = $o->getCsstore();
         $value =  $csField->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), 'en');
         $this->assertEquals('defaultValue', $value);

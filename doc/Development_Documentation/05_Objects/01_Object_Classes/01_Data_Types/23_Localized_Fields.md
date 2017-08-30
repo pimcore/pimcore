@@ -65,7 +65,7 @@ Accessing the data is simple as below:
 
 ```php
 // with global registered locale
-$object = Object::getById(234);
+$object = DataObject::getById(234);
 $object->getInput1(); // will return the en_US data for the field "input1"
  
  
@@ -78,7 +78,7 @@ $object->getInput1("de") // will return the German value for the field "input1"
 It works in the similar way as getting the data.
 
 ```php
-$object = Object::getById(234);
+$object = DataObject::getById(234);
 $object->setInput1("My Name", "fr") // set the French value for the field "input1"
 ```
 

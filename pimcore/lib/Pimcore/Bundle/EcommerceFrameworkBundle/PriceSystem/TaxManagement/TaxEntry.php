@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Model\Object\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
-use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
+use Pimcore\Model\DataObject\OnlineShopTaxClass;
 
 class TaxEntry
 {

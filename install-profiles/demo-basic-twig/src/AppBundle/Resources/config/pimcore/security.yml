@@ -8,7 +8,7 @@ pimcore:
     security:
         # the encoder factory as defined in services.yml
         encoder_factories:
-            AppBundle\Model\Object\User: website_demo.security.password_encoder_factory
+            AppBundle\Model\DataObject\User: website_demo.security.password_encoder_factory
 
 security:
     providers:

@@ -100,7 +100,7 @@ Since the only value can be found on level 1 for the default language the tree i
 // setter, group id = 1, key id id = 2, language = de
 
 // the value is of type "quantity value" where 1 is the unit ID in this example
-$heightValue = new \Pimcore\Model\Object\Data\QuantityValue(13, 1);
+$heightValue = new \Pimcore\Model\DataObject\Data\QuantityValue(13, 1);
 $object->getClassificationStore2()->setLocalizedKeyValue(1, 2, $heightValue, "de");
   
 // provide additional information about which collection the group belongs to
@@ -130,11 +130,11 @@ $allValues = $store->getItems();
 // KeyConfig
 
 // first of all, define the datatype which is quantity value in this example
-$definition = new \Pimcore\Model\Object\ClassDefinition\Data\QuantityValue();
+$definition = new \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue();
 $definition->setName("height");
 $definition->setTitle(Height);
 
-$config = new \Pimcore\Model\Object\Classificationstore\KeyConfig();
+$config = new \Pimcore\Model\DataObject\Classificationstore\KeyConfig();
 $config->setName($name);
 $config->setDescription($description);
 $config->setEnabled(true);
@@ -143,13 +143,13 @@ $config->setDefinition(json_encode($definition)); // The definition is used in o
 $config->save();  
   
 // Group
-$config = new \Pimcore\Model\Object\Classificationstore\GroupConfig();
+$config = new \Pimcore\Model\DataObject\Classificationstore\GroupConfig();
 $config->setName($name);
 $config->setDescription($description);
 $config->save();
   
 // Collection
-$config = new \Pimcore\Model\Object\Classificationstore\CollectionConfig();
+$config = new \Pimcore\Model\DataObject\Classificationstore\CollectionConfig();
 $config->setName($name);
 $config->setDescription($description);
 $config->save();

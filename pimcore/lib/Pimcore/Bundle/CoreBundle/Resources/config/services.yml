@@ -366,11 +366,11 @@ services:
 
     # object data loader
     pimcore.implementation_loader.object.data:
-        class: Pimcore\Model\Object\ClassDefinition\Loader\DataLoader
+        class: Pimcore\Model\DataObject\ClassDefinition\Loader\DataLoader
 
     # object layout loader
     pimcore.implementation_loader.object.layout:
-        class: Pimcore\Model\Object\ClassDefinition\Loader\LayoutLoader
+        class: Pimcore\Model\DataObject\ClassDefinition\Loader\LayoutLoader
 
     # model factory
     pimcore.model.factory:

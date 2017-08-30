@@ -51,7 +51,7 @@ class IndexUpdateListener implements EventSubscriberInterface
         }
 
         // Delete tokens when a a configuration object gets removed.
-        if ($object instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries) {
+        if ($object instanceof \Pimcore\Model\DataObject\OnlineShopVoucherSeries) {
             $voucherService = Factory::getInstance()->getVoucherService();
             $voucherService->cleanUpVoucherSeries($object);
         }

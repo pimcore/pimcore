@@ -14,7 +14,7 @@
 
 namespace Pimcore\Security\User;
 
-use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -26,17 +26,17 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  * to know which kind of users to load (className) and which field to query for the
  * username (usernameField).
  *
- * Example DI configuration loading from the AppBundle\Model\Object\User class and searching by username:
+ * Example DI configuration loading from the AppBundle\Model\DataObject\User class and searching by username:
  *
  *      website_demo.security.user_provider:
  *          class: Pimcore\Security\User\ObjectUserProvider
- *          arguments: ['AppBundle\Model\Object\User', 'username']
+ *          arguments: ['AppBundle\Model\DataObject\User', 'username']
  */
 class ObjectUserProvider implements UserProviderInterface
 {
     /**
      * The pimcore class name to be used. Needs to be a fully qualified class
-     * name (e.g. Pimcore\Model\Object\User or your custom user class extending
+     * name (e.g. Pimcore\Model\DataObject\User or your custom user class extending
      * the generated one.
      *
      * @var string

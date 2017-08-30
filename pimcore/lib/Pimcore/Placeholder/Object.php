@@ -38,7 +38,7 @@ class Object extends AbstractPlaceholder
     public function getReplacement()
     {
         $string = '';
-        $object = is_object($this->getValue()) ? $this->getValue() : Model\Object\Concrete::getById($this->getValue());
+        $object = is_object($this->getValue()) ? $this->getValue() : Model\DataObject\Concrete::getById($this->getValue());
 
         if ($object) {
             if (is_string($this->getPlaceholderConfig()->method) && method_exists($object, $this->getPlaceholderConfig()->method)) {

@@ -8,6 +8,6 @@ The class will then extend the given parent class.
 
 ![Parent Class Configuration](../img/parent-class.png)
 
-Please make sure, that your custom class itself extends `Pimcore\Model\Object\Concrete` at some point in its class hierarchy. 
+Please make sure, that your custom class itself extends `Pimcore\Model\DataObject\Concrete` at some point in its class hierarchy. 
 Otherwise the object class will not work. 
 

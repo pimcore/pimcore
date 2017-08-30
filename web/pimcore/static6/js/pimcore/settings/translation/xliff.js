@@ -219,7 +219,7 @@ pimcore.settings.translation.xliff = Class.create({
                 style: "margin-bottom: 10px",
                 iconCls: "pimcore_icon_document"
             }, {
-                title: t("important_notice") + " (" + t("objects") + ")",
+                title: t("important_notice") + " (" + t("data_objects") + ")",
                 html: '<div>' + t("xliff_export_objects") + '</div>',
                 style: "margin-bottom: 10px",
                 iconCls: "pimcore_icon_object"

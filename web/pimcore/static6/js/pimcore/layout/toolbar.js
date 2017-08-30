@@ -164,7 +164,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("objects") && perspectiveCfg.inToolbar("file.openObject")) {
                 fileItems.push({
-                    text: t("open_object_by_id"),
+                    text: t("open_data_object"),
                     iconCls: "pimcore_icon_object pimcore_icon_overlay_go",
                     handler: pimcore.helpers.openElementByIdDialog.bind(this, "object")
                 });
@@ -724,7 +724,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("objects") && perspectiveCfg.inToolbar("settings.objects")) {
 
                 var objectMenu = {
-                    text: t("object"),
+                    text: t("data_objects"),
                     iconCls: "pimcore_icon_object",
                     hideOnClick: false,
                     menu: {
@@ -939,7 +939,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("objects") && perspectiveCfg.inToolbar("search.objects")) {
                 searchItems.push({
-                    text: t("objects"),
+                    text: t("data_objects"),
                     iconCls: "pimcore_icon_object",
                     handler: searchAction.bind(this, "object")
                 });

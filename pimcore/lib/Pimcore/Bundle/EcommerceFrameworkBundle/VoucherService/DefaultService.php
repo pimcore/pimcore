@@ -135,12 +135,12 @@ class DefaultService implements IVoucherService
      * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the
      * token usage and the ordered token object if necessary, removes the token object from the order.
      *
-     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject
      * @param AbstractOrder $order
      *
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
     {
         if ($tokenManager = $tokenObject->getVoucherSeries()->getTokenManager()) {
             $tokenManager->removeAppliedTokenFromOrder($tokenObject, $order);
@@ -177,11 +177,11 @@ class DefaultService implements IVoucherService
     }
 
     /**
-     * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $series
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherSeries $series
      *
      * @return bool
      */
-    public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series)
+    public function cleanUpVoucherSeries(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $series)
     {
         return Token\Listing::cleanUpAllTokens($series->getId());
     }
@@ -208,7 +208,7 @@ class DefaultService implements IVoucherService
     public function getTokenManager($code)
     {
         if ($token = Token::getByCode($code)) {
-            if ($series = \Pimcore\Model\Object\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId())) {
+            if ($series = \Pimcore\Model\DataObject\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId())) {
                 return $series->getTokenManager();
             }
         }

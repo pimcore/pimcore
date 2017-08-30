@@ -42,7 +42,7 @@ Particular useful can be following methods:
 
 
 Also have a look at the sub classes `Pimcore\Model\Asset\Service`, `Pimcore\Model\Document\Service` and 
-`Pimcore\Model\Object\Service`. 
+`Pimcore\Model\DataObject\Service`. 
 
 
 ### Document-Service

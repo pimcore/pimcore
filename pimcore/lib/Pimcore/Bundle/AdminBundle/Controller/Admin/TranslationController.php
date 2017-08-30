@@ -19,7 +19,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -597,14 +597,15 @@ class TranslationController extends AdminController
 
                 if ($element['children']) {
                     $el = Element\Service::getElementById($element['type'], $element['id']);
-                    $listClass = '\\Pimcore\\Model\\' . ucfirst($element['type']) . '\\Listing';
+                    $baseClass = ELement\Service::getBaseClassNameForElement($element['type']);
+                    $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
                     $list = new $listClass();
                     $list->setUnpublished(true);
-                    if ($el instanceof Object\AbstractObject) {
+                    if ($el instanceof DataObject\AbstractObject) {
                         // inlcude variants
-                        $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER]);
+                        $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
                     }
-                    $list->setCondition(($el instanceof Object\AbstractObject ? 'o_' : '') . 'path LIKE ?', [$el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '') . '%']);
+                    $list->setCondition(($el instanceof DataObject\AbstractObject ? 'o_' : '') . 'path LIKE ?', [$el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '') . '%']);
                     $idList = $list->loadIdList();
 
                     foreach ($idList as $id) {
@@ -736,7 +737,7 @@ class TranslationController extends AdminController
                         }
                     }
                 }
-            } elseif ($element instanceof Object\Concrete) {
+            } elseif ($element instanceof DataObject\Concrete) {
                 if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {
                     $definitions = $fd->getFielddefinitions();
 
@@ -929,7 +930,7 @@ class TranslationController extends AdminController
                             $element->$setter($content);
                         }
                     }
-                } elseif ($element instanceof Object\Concrete) {
+                } elseif ($element instanceof DataObject\Concrete) {
                     if ($fieldType == 'localizedfield') {
                         $setter = 'set' . ucfirst($name);
                         if (method_exists($element, $setter)) {
@@ -950,7 +951,7 @@ class TranslationController extends AdminController
 
             try {
                 // allow to save objects although there are mandatory fields
-                if ($element instanceof Object\AbstractObject) {
+                if ($element instanceof DataObject\AbstractObject) {
                     $element->setOmitMandatoryCheck(true);
                 }
 
@@ -1228,7 +1229,7 @@ class TranslationController extends AdminController
 
                         $output .= $html;
                     }
-                } elseif ($element instanceof Object\Concrete) {
+                } elseif ($element instanceof DataObject\Concrete) {
                     $hasContent = false;
 
                     if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {

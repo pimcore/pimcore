@@ -16,16 +16,20 @@
  */
 
 namespace {
-// this is just an alias ;-)
-    class_alias('Pimcore\\Model\\Object\\AbstractObject', 'Pimcore\\Model\\Object');
+    if (version_compare(PHP_VERSION, '7.2.0', '<')) {
+        // this is just an alias ;-)
+        class_alias('Pimcore\\Model\\DataObject\\AbstractObject', 'Pimcore\\Model\\Object');
+    }
 }
 
 // the following is for IDEs to support auto-complete
 
 namespace Pimcore\Model {
-    if (!\Pimcore\Tool::classExists('Pimcore\\Model\\Object')) {
-        class Object extends \Pimcore\Model\Object\AbstractObject
-        {
+    if (version_compare(PHP_VERSION, '7.2.0', '<')) {
+        if (!\Pimcore\Tool::classExists('Pimcore\\Model\\Object')) {
+            class Object extends \Pimcore\Model\DataObject\AbstractObject
+            {
+            }
         }
     }
 }

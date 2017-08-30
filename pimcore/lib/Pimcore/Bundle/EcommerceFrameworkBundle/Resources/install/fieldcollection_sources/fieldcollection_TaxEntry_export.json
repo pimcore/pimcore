@@ -34,7 +34,7 @@
 				"childs":[
 					{
 						"fieldtype":"localizedfields",
-						"phpdocType":"\\Pimcore\\Model\\Object\\Localizedfield",
+						"phpdocType":"\\Pimcore\\Model\\DataObject\\Localizedfield",
 						"childs":[
 							{
 								"fieldtype":"input",

@@ -14,8 +14,8 @@
 
 namespace Pimcore\Security\Encoder;
 
-use Pimcore\Model\Object\ClassDefinition\Data\Password;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
+use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\RuntimeException;
 

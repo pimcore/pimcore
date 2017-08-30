@@ -66,7 +66,7 @@ By calling the getter, the Objectbrick class with its attribute getter is return
 
 ```php
 //receiving data of a Objectbrick
-$product = Object\Product::getById(4);
+$product = DataObject\Product::getById(4);
 $tiretype = $product->getBricks()->getTire()->getTiretype();
 ```
 
@@ -75,20 +75,20 @@ For all getters there are corresponding setters. By saving an object, all bricks
 
 ```php
 //setting data of a Objectbrick
-$product = Object\Product::getById(4);
+$product = DataObject\Product::getById(4);
 $product->getBricks()->getTire()->setTiretype("Winter");
 $product->save();
 ```
 
 ```php
 //adding a new Objectbrick to an object
-$product = new Object\Product();
+$product = new DataObject\Product();
 $product->setKey("testproduct");
-$product->setParent(Object\Product::getById(4));
+$product->setParent(DataObject\Product::getById(4));
  
 $product->setName("testproduct");
  
-$tireBrick = new Object\Objectbrick\Data\Tire($product);
+$tireBrick = new DataObject\Objectbrick\Data\Tire($product);
 $tireBrick->setTiretype("allyear");
 $product->getBricks()->setTire($tireBrick);
 $product->save();
@@ -120,7 +120,7 @@ condition like in the sample below.
 
 ```php
 //querying for Objectbrick data
-$productList = Object\Product::getList([
+$productList = DataObject\Product::getList([
     /* add here all Objectbricks you need in the condition */
     "objectbricks" => ["Tire","Brake"],
     /* in the condition access Objectbrick attributes with OBJECTBRICKNAME.ATTRIBUTENAME */
@@ -133,7 +133,7 @@ in the condition statement.
 
 ```php
 //return all Products that have the Objectbrick "Tire"
-$productList = Object\Product::getList([
+$productList = DataObject\Product::getList([
     /* add here all Objectbricks you need in the condition */
     "objectbricks" => ["Tire"],
     /* in the condition access Objectbrick attributes with OBJECTBRICKNAME.ATTRIBUTENAME */

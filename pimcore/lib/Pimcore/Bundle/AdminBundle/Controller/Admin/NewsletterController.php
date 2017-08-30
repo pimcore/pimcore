@@ -174,7 +174,7 @@ class NewsletterController extends DocumentControllerBase
         $count = 0;
         $success = false;
         try {
-            $className = '\\Pimcore\\Model\\Object\\' . ucfirst($request->get('class')) . '\\Listing';
+            $className = '\\Pimcore\\Model\\DataObject\\' . ucfirst($request->get('class')) . '\\Listing';
             $list = new $className();
 
             $conditions = ['(newsletterActive = 1 AND newsletterConfirmed = 1)'];
@@ -203,15 +203,15 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getAvailableClassesAction(Request $request)
     {
-        $classList = new \Pimcore\Model\Object\ClassDefinition\Listing();
+        $classList = new \Pimcore\Model\DataObject\ClassDefinition\Listing();
 
         $availableClasses = [];
         foreach ($classList->load() as $class) {
             $fieldCount = 0;
             foreach ($class->getFieldDefinitions() as $fd) {
-                if ($fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\NewsletterActive ||
-                    $fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\NewsletterConfirmed ||
-                    $fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\Email) {
+                if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive ||
+                    $fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterConfirmed ||
+                    $fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Email) {
                     $fieldCount++;
                 }
             }

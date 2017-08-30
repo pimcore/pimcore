@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Rest;
 
-use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Tests\Test\RestTestCase;
 use Pimcore\Tests\Util\TestHelper;
 

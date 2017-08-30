@@ -7,11 +7,11 @@ Currently this works for all implementations of the following classes:
 - `Pimcore\Model\Document`
 - `Pimcore\Model\Document\Listing`
 - `Pimcore\Model\AbstractObject`
-- `Pimcore\Model\Object\Listing`
+- `Pimcore\Model\DataObject\Listing`
 - `Pimcore\Model\Asset`
 - `Pimcore\Model\Asset\Listing` 
 
-So for example overriding a listing class of a custom class definition like `Pimcore\Model\Object\News\Listing` or 
+So for example overriding a listing class of a custom class definition like `Pimcore\Model\DataObject\News\Listing` or 
 `Pimcore\Model\Asset\Image` is supported. 
 
 ## Configure an Override 
@@ -23,8 +23,8 @@ The configuration is a simple key / value map in your `app/config/config.yml` us
 pimcore:
     models:
         class_overrides:
-            'Pimcore\Model\Object\News': 'AppBundle\Model\Object\News'
-            'Pimcore\Model\Object\News\Listing': 'AppBundle\Model\Object\News\Listing'
+            'Pimcore\Model\DataObject\News': 'AppBundle\Model\DataObject\News'
+            'Pimcore\Model\DataObject\News\Listing': 'AppBundle\Model\DataObject\News\Listing'
 ```
 
 **It is crucial that your override class extends the origin class, if not you'll break the entire system.**
@@ -40,17 +40,17 @@ In your `app/config/config.yml`:
 pimcore:
     models:
         class_overrides:
-            'Pimcore\Model\Object\News': 'AppBundle\Model\Object\News'
+            'Pimcore\Model\DataObject\News': 'AppBundle\Model\DataObject\News'
 ```
 
-Your `AppBundle\Model\Object\News`: 
+Your `AppBundle\Model\DataObject\News`: 
 
 ```php
 <?php 
 
-namespace AppBundle\Model\Object; 
+namespace AppBundle\Model\DataObject; 
 
-class News extends \Pimcore\Model\Object\News {
+class News extends \Pimcore\Model\DataObject\News {
 
     // start overriding stuff 
     public function getMyCustomAttribute() {

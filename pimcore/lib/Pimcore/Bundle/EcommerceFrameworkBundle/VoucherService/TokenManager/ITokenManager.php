@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
-use Pimcore\Model\Object\OnlineShopVoucherToken;
+use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 
 /**
  * Interface ITokenManager
@@ -85,7 +85,7 @@ interface ITokenManager
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      *
-     * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
+     * @return bool|\Pimcore\Model\DataObject\OnlineShopVoucherToken
      */
     public function applyToken($code, ICart $cart, AbstractOrder $order);
 
@@ -102,7 +102,7 @@ interface ITokenManager
     /**
      * cleans up the token usage and the ordered token object if necessary
      *
-     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject
      * @param AbstractOrder $order
      *
      * @return bool
