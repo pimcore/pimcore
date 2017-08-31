@@ -713,7 +713,7 @@ class DataObjectHelperController extends AdminController
                     $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
                     $counter++;
                 }
-                $object = new $className();
+                $object = $this->get('pimcore.model.factory')->build($className);
             }
             $object->setClassId($request->get('classId'));
             $object->setClassName($request->get('className'));
