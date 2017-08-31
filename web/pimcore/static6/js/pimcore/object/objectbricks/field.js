@@ -15,14 +15,24 @@ pimcore.registerNS("pimcore.object.objectbricks.field");
 pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'objectbrick',
-    disallowedDataTypes: ["nonownerobjects","user","fieldcollections","localizedfields", "objectbricks",
-        "objectsMetadata"],
+    disallowedDataTypes: [
+        "nonownerobjects",
+        "user",
+        "fieldcollections",
+        "localizedfields",
+        "objectbricks",
+        "objectsMetadata"
+    ],
     uploadUrl: '/admin/class/import-objectbrick',
     exportUrl: "/admin/class/export-objectbrick",
     context: "objectbrick",
+    baseStore: {},
+    classStores: {},
+    availableClasses: {},
+    currentElements: [],
 
-    getId: function(){
-        return  this.data.key;
+    getId: function () {
+        return this.data.key;
     },
 
     getRootPanel: function () {
@@ -46,7 +56,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         return this.rootPanel;
     },
 
-    getClassDefinitionPanel: function() {
+    getClassDefinitionPanel: function () {
         this.classDefinitionsItems = new Ext.Panel({
             title: t("class_definitions"),
             style: "margin-top: 20px",
@@ -55,7 +65,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             ]
         });
 
-        for(var i = 0; i < this.data.classDefinitions.length; i++) {
+        for (var i = 0; i < this.data.classDefinitions.length; i++) {
             this.addClassDefinition(this.data.classDefinitions[i]);
         }
         return this.classDefinitionsItems;
@@ -63,9 +73,16 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     getDeleteControl: function (classDefinitionData) {
 
-        var items = [{xtype: 'tbtext', text: ""}];
-        if(this.availableClasses[classDefinitionData.classname]) {
-            items = [{xtype: 'tbtext', text: this.availableClasses[classDefinitionData.classname].data.translatedText}];
+        var items = [{
+            xtype: 'tbtext',
+            text: ""
+        }];
+
+        if (this.availableClasses[classDefinitionData.classname]) {
+            items = [{
+                xtype: 'tbtext',
+                text: this.availableClasses[classDefinitionData.classname].data.translatedText
+            }];
         }
 
         items.push({
@@ -76,31 +93,30 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             }
         });
 
-        var toolbar = new Ext.Toolbar({
+        return new Ext.Toolbar({
             items: items
         });
-
-        return toolbar;
     },
 
-    getAddControl: function() {
+    getAddControl: function () {
         var classMenu = [];
-
         var classNames = Object.keys(this.baseStore);
 
-        for(var i = 0; i < classNames.length; i++) {
+        for (var i = 0; i < classNames.length; i++) {
             var rec = this.baseStore[classNames[i]];
-            classMenu.push({
-                text: ts(rec.data.translatedText),
-                handler: this.addClassDefinition.bind(this, null, rec.data.text),
-                iconCls: "pimcore_icon_class"
-            });
-        }
 
+            if (rec) {
+                classMenu.push({
+                    text: ts(rec.data.translatedText),
+                    handler: this.addClassDefinition.bind(this, null, rec.data.text),
+                    iconCls: "pimcore_icon_class"
+                });
+            }
+        }
 
         var items = [];
 
-        if(classMenu.length == 1) {
+        if (classMenu.length === 1) {
             items.push({
                 cls: "pimcore_block_button_plus",
                 text: ts(classMenu[0].text),
@@ -120,37 +136,28 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             });
         }
 
-        var toolbar = new Ext.Toolbar({
+        return new Ext.Toolbar({
             items: items
         });
-
-        return toolbar;
     },
 
+    initClassData: function () {
+        var objectTypeStore = pimcore.globalmanager.get("object_types_store");
+        objectTypeStore.load();
 
-    baseStore: {},
-    classStores: {},
-    availableClasses: {},
-
-    initClassData: function() {
-        var s = pimcore.globalmanager.get("object_types_store");
-        s.load();
-
-        s.each(function(rec) {
+        objectTypeStore.each(function (rec) {
             var data = new Ext.data.Record({id: rec.id, text: rec.data.text, translatedText: rec.data.translatedText});
             this.availableClasses[rec.get("text")] = data;
             this.baseStore[rec.get("text")] = data;
         }.bind(this));
     },
 
-    removeFromOthers: function(name, store) {
+    removeFromOthers: function (name, store) {
         delete(this.baseStore[name]);
     },
 
-
-    currentElements: [],
-    getClassDefinitionElements: function(currentData) {
-        if(currentData) {
+    getClassDefinitionElements: function (currentData) {
+        if (currentData) {
             this.removeFromOthers(currentData.classname);
         }
 
@@ -161,7 +168,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                 extraParams: {
                     types: 'objectbricks',
                     gridtype: "all",
-                    name:currentData.classname
+                    name: currentData.classname
                 },
                 reader: {
                     type: 'json',
@@ -171,7 +178,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             fields: ['key', 'label'],
             autoLoad: true,
 
-            forceSelection:true
+            forceSelection: true
         });
 
         var fieldCombo = new Ext.form.ComboBox({
@@ -179,27 +186,27 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             value: currentData.fieldname,
             store: fieldComboStore,
             displayField: 'key',
-            valueField: 'key' ,
+            valueField: 'key',
             name: 'fieldname',
             disableKeyFilter: "true",
             valueNotFoundText: "",
             editable: false,
             listeners: {
-                focus: function(){
+                focus: function () {
                     fieldComboStore.load();
                 }.bind(this),
-                change: function(field, fieldname) {
+                change: function (field, fieldname) {
                     currentData.fieldname = fieldname;
                 }
             }
         });
 
-        fieldComboStore.addListener("load", function() {
+        fieldComboStore.addListener("load", function () {
             fieldCombo.setValue(currentData.fieldname);
         });
 
         var translatedText = " ";
-        if(this.availableClasses[currentData.classname]) {
+        if (this.availableClasses[currentData.classname]) {
             translatedText = this.availableClasses[currentData.classname].data.translatedText;
         }
 
@@ -225,7 +232,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         var currentData = {};
 
-        if(classDefinitionData) {
+        if (classDefinitionData) {
             currentData = classDefinitionData;
         } else {
             currentData.classname = className;
@@ -246,7 +253,6 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.classDefinitionsItems.insert(0, this.getAddControl());
         this.classDefinitionsItems.updateLayout();
 
-
         this.currentElements.push({
             data: currentData,
             container: element
@@ -254,10 +260,9 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     },
 
-
-    removeClassDefinition: function(classDefinitionData) {
-        for(var i = 0; i < this.currentElements.length; i++) {
-            if(this.currentElements[i].data == classDefinitionData) {
+    removeClassDefinition: function (classDefinitionData) {
+        for (var i = 0; i < this.currentElements.length; i++) {
+            if (this.currentElements[i].data === classDefinitionData) {
                 this.currentElements[i].data.deleted = true;
                 this.classDefinitionsItems.remove(this.currentElements[i].container);
             }
@@ -268,20 +273,15 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.classDefinitionsItems.remove(this.classDefinitionsItems.items.get(0));
         this.classDefinitionsItems.insert(0, this.getAddControl());
         this.classDefinitionsItems.updateLayout();
-
     },
 
-
-
     save: function () {
-
         this.saveCurrentNode();
 
         var m = Ext.encode(this.getData());
 
-
         this.data.classDefinitions = [];
-        for(var i = 0; i < this.currentElements.length; i++)  {
+        for (var i = 0; i < this.currentElements.length; i++) {
             this.data.classDefinitions.push(this.currentElements[i].data);
         }
 
@@ -306,15 +306,14 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         pimcore.helpers.showNotification(t("success"), t("objectbrick_saved_successfully"), "success");
     },
 
-    upload: function() {
-
-        pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function() {
+    upload: function () {
+        pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function () {
             Ext.Ajax.request({
                 url: "/admin/class/objectbrick-get",
                 params: {
                     id: this.getId()
                 },
-                success: function(response) {
+                success: function (response) {
                     this.data = Ext.decode(response.responseText);
                     this.parentPanel.getEditPanel().removeAll();
                     this.addLayout();
@@ -326,6 +325,4 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             Ext.MessageBox.alert(t("error"), t("error"));
         });
     }
-
-
 });
