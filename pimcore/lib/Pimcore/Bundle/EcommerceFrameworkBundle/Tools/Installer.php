@@ -134,6 +134,8 @@ class Installer extends AbstractInstaller
      */
     public function __construct(LoggerInterface $logger)
     {
+        parent::__construct(null);
+
         $this->logger             = $logger;
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
     }
