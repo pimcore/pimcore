@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Cache;
-use Pimcore\Event\Model\DataObject\CustomLayoutEvent;
 use Pimcore\Event\DataObjectCustomLayoutEvents;
+use Pimcore\Event\Model\DataObject\CustomLayoutEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;

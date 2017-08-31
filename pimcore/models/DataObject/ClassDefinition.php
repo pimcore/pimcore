@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
-use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
+use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;

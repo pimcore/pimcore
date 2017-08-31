@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
-use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;

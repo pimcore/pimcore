@@ -79,7 +79,6 @@ class TagRenderer implements LoggerAwareInterface
             $personalElementName = $document->getPersonaElementName($inputName);
         }
 
-
         if (null === $editmode) {
             $editmode = $this->editmodeResolver->isEditmode();
         }

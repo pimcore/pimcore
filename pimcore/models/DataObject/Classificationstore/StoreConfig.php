@@ -17,8 +17,8 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
-use Pimcore\Event\Model\DataObject\ClassificationStore\StoreConfigEvent;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
+use Pimcore\Event\Model\DataObject\ClassificationStore\StoreConfigEvent;
 use Pimcore\Model;
 
 /**

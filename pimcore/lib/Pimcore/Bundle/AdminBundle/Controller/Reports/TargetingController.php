@@ -162,14 +162,12 @@ class TargetingController extends AdminController implements EventedControllerIn
         $personas = [];
         $list = new Targeting\Persona\Listing();
 
-        if($request->get("add-default")) {
-
+        if ($request->get('add-default')) {
             $personas[] = [
                 'id' => 0,
-                'text' => "default",
+                'text' => 'default',
                 'qtip' => 0
             ];
-
         }
 
         foreach ($list->load() as $persona) {

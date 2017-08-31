@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Cache;
-use Pimcore\Event\Model\DataObject\ClassificationStore\KeyConfigEvent;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
+use Pimcore\Event\Model\DataObject\ClassificationStore\KeyConfigEvent;
 use Pimcore\Model;
 
 /**

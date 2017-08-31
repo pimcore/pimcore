@@ -19,8 +19,8 @@ namespace Pimcore\Model\DataObject;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
-use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;

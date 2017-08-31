@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Config;
-use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 

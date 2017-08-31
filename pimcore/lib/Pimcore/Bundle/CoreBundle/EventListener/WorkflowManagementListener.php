@@ -16,9 +16,9 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;

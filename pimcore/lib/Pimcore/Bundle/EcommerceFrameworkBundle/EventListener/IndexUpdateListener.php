@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\EventListener;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
-use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class IndexUpdateListener implements EventSubscriberInterface

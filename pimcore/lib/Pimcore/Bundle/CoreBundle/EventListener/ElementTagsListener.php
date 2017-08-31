@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
