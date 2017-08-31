@@ -82,7 +82,7 @@ class Executor
                 } elseif ($task->getCtype() == 'object') {
                     $object = DataObject::getById($task->getCid());
 
-                    if ($object instanceof Object) {
+                    if ($object instanceof DataObject) {
                         if ($task->getAction() == 'publish-version' && $task->getVersion()) {
                             try {
                                 $version = Version::getById($task->getVersion());

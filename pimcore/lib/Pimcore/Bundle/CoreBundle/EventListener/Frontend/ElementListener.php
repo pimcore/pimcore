@@ -298,7 +298,7 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
 
             $session = Session::getReadOnly('pimcore_objects');
             if ($session->has($key)) {
-                /** @var Object|Concrete $object */
+                /** @var Concrete $object */
                 $object = $session->get($key);
 
                 $this->logger->debug('Loading object {object} ({objectId}) from session', [

@@ -39,7 +39,7 @@ class Concrete extends AbstractObject
     public $o_published;
 
     /**
-     * @var Object|ClassDefinition
+     * @var ClassDefinition
      */
     public $o_class;
 

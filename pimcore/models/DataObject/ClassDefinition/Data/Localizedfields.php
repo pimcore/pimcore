@@ -9,7 +9,6 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
- * @package    Object|Class
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
@@ -616,7 +615,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * This method is called in Object|Class::save() and is used to create the database table for the localized data
+     * This method is called in DataObject\ClassDefinition::save() and is used to create the database table for the localized data
      *
      * @param $class
      * @param array $params

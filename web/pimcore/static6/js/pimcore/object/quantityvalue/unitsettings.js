@@ -8,8 +8,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
- * @package    Object|Class
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
