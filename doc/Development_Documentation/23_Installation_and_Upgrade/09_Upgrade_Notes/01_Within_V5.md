@@ -21,7 +21,7 @@ The introduction of object type hints in PHP 7.2 forced us to rename several nam
     - fix the above configuration changes, mainly the class overrides and potentially other relevant configurations
     - `composer dump-autoload`
     - `./bin/console cache:clear --no-warmup`
-    - run the [migration script](https://github.com/pimcore/pimcore/blob/master/update-scripts/100/postupdate.php#L19) manually on cli 
+    - run the [migration script](https://gist.github.com/brusch/03521a225cffee4baa8f3565342252d4) manually on cli 
   
 ## Build 96 (2017-09-22)
 
