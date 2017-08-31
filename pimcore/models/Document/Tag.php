@@ -628,7 +628,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         // check for persona content
-        if ($document && $document instanceof Document\Page && $document->getUsePersona()) {
+        if ($document && $document instanceof Document\Page) {
             $name = $document->getPersonaElementName($name);
         }
 
