@@ -147,7 +147,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const OBJECT_GET_PRE_SEND_DATA = 'pimcore.admin.object.get.preSendData';
+    const OBJECT_GET_PRE_SEND_DATA = 'pimcore.admin.dataobject.get.preSendData';
 
     /**
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DataObjectController
@@ -158,7 +158,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.object.treeGetChildsById.preSendData';
+    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.dataobject.treeGetChildsById.preSendData';
 
     /**
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController
