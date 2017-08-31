@@ -632,7 +632,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     $intendedPath = $parent->getRealFullPath() . "/" . $objectKey;
                     $counter++;
                 }
-                $object = new $className();
+                $object = \Pimcore::getDiContainer()->make($className);
             }
             $object->setClassId($this->getParam("classId"));
             $object->setClassName($this->getParam("className"));
