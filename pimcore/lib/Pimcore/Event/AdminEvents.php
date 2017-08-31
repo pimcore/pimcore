@@ -138,7 +138,7 @@ final class AdminEvents
     /**
      * Fired before the request params are parsed.
      *
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ObjectController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DataObjectController
      * Arguments:
      *  - data | array | the response data, this can be modified
      *  - object | AbstractObject | the current object
@@ -150,7 +150,7 @@ final class AdminEvents
     const OBJECT_GET_PRE_SEND_DATA = 'pimcore.admin.object.get.preSendData';
 
     /**
-     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ObjectController
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DataObjectController
      * Arguments:
      *  - objects | array | the list of object tree nodes
      *

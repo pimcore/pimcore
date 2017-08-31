@@ -14,19 +14,19 @@
 
 namespace Pimcore\Event;
 
-final class ObjectCustomLayoutEvents
+final class DataObjectCustomLayoutEvents
 {
     /**
      * @Event("Pimcore\Event\Model\DataObject\CustomLayoutEvent")
      *
      * @var string
      */
-    const PRE_ADD = 'pimcore.object.customLayout.preAdd';
+    const PRE_ADD = 'pimcore.dataobject.customLayout.preAdd';
 
     /**
      * @Event("Pimcore\Event\Model\DataObject\CustomLayoutEvent")
      *
      * @var string
      */
-    const PRE_UPDATE = 'pimcore.object.customLayout.preUpdate';
+    const PRE_UPDATE = 'pimcore.dataobject.customLayout.preUpdate';
 }

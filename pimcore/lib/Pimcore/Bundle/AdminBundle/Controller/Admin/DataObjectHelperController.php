@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/object-helper")
  */
-class ObjectHelperController extends AdminController
+class DataObjectHelperController extends AdminController
 {
     /**
      * @Route("/load-object-data")
@@ -1351,9 +1351,9 @@ class ObjectHelperController extends AdminController
                     return $this->json(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
-                Logger::debug('ObjectController::batchAction => There is no object left to update.');
+                Logger::debug('DataObjectController::batchAction => There is no object left to update.');
 
-                return $this->json(['success' => false, 'message' => 'ObjectController::batchAction => There is no object left to update.']);
+                return $this->json(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
             }
         } catch (\Exception $e) {
             Logger::err($e);

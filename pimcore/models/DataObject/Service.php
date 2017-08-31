@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
-use Pimcore\Event\Model\ObjectEvent;
-use Pimcore\Event\ObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
@@ -148,7 +148,7 @@ class Service extends Model\Element\Service
         $this->updateChilds($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_COPY, new ObjectEvent($new, [
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
             'base_element' => $source // the element used to make a copy
         ]));
 
@@ -186,7 +186,7 @@ class Service extends Model\Element\Service
         $this->updateChilds($target, $new);
 
         // triggers actions after the complete object cloning
-        \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_COPY, new ObjectEvent($new, [
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
             'base_element' => $source // the element used to make a copy
         ]));
 
@@ -779,7 +779,7 @@ class Service extends Model\Element\Service
         if (count($conditionPartsFilters) > 0) {
             $conditionFilters = '(' . implode(' AND ', $conditionPartsFilters) . ')';
         }
-        Logger::log('ObjectController filter condition:' . $conditionFilters);
+        Logger::log('DataObjectController filter condition:' . $conditionFilters);
 
         return $conditionFilters;
     }

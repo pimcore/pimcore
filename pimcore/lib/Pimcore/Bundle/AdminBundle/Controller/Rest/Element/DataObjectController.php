@@ -46,7 +46,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  *      body: same as for create object. object id can be either in URI or as request payload
  *      returns json encoded success value
  */
-class ObjectController extends AbstractElementController
+class DataObjectController extends AbstractElementController
 {
     /**
      * @Method("GET")

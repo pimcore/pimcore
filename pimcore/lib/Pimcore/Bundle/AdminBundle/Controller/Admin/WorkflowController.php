@@ -216,7 +216,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     protected function getLatestVersion($element)
     {
 
-        //TODO move this maybe to a service method, since this is also used in ObjectController and DocumentControllers
+        //TODO move this maybe to a service method, since this is also used in DataObjectController and DocumentControllers
         if ($element instanceof Document) {
             $latestVersion = $element->getLatestVersion();
             if ($latestVersion) {

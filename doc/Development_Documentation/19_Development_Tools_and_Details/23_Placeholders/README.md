@@ -9,7 +9,7 @@ Class.
 The Syntax of a Placeholder is `%PLACEHOLDERNAME(PARAMETERKEY,JSON-CONFIG);`
 
 * `PLACEHOLDERNAME`: This is the last Part of the Placeholder class name 
-E.g.: To use the Placeholder `Pimcore\Placeholder\Object` you would type `%Object(key,params);`
+E.g.: To use the Placeholder `Pimcore\Placeholder\DataObject` you would type `%DataObject(key,params);`
 * `PARAMETERKEY`: This is the key of the parameter-array that you pass as second parameter to the 
 "replacePlaceholders" method.
 * `JSON-CONFIG`: You can pass a Json-Config to the Placeholder. (It depends on the Placeholder if the 
@@ -20,10 +20,10 @@ config is used)
 Lets assume you have a text `"Thank you for the order of "PRODUCTNAME""` and you want replace 
 `"PRODUCTNAME"` with the real Product name.
 
-The following code-snippet replaces the Placeholder `"%Object(...);"` with the Product name.
+The following code-snippet replaces the Placeholder `"%DataObject(...);"` with the Product name.
 
 ```php
-$text = 'Thank you for the order of "%Object(object_id,{"method" : "getName"});"';
+$text = 'Thank you for the order of "%DataObject(object_id,{"method" : "getName"});"';
 $placeholder = new \Pimcore\Placeholder();
  
 echo $replaced = $placeholder->replacePlaceholders($text, ['object_id' => 73613, 'locale' => 'de_DE']);

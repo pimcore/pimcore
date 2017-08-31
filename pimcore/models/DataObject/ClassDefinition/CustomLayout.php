@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Cache;
 use Pimcore\Event\Model\DataObject\CustomLayoutEvent;
-use Pimcore\Event\ObjectCustomLayoutEvents;
+use Pimcore\Event\DataObjectCustomLayoutEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -163,9 +163,9 @@ class CustomLayout extends Model\AbstractModel
     public function save()
     {
         if ($this->getId()) {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectCustomLayoutEvents::PRE_UPDATE, new CustomLayoutEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectCustomLayoutEvents::PRE_UPDATE, new CustomLayoutEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectCustomLayoutEvents::PRE_ADD, new CustomLayoutEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectCustomLayoutEvents::PRE_ADD, new CustomLayoutEvent($this));
         }
 
         $this->setModificationDate(time());

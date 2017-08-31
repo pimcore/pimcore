@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/object")
  */
-class ObjectController extends ElementControllerBase implements EventedControllerInterface
+class DataObjectController extends ElementControllerBase implements EventedControllerInterface
 {
     /**
      * @var DataObject\Service

@@ -2,14 +2,14 @@
 
 namespace AppBundle\EventListener;
 
-use Pimcore\Event\Model\ObjectEvent;
+use Pimcore\Event\Model\DataObjectEvent;
 
 class TestListener
 {
     /**
-     * @param ObjectEvent $event
+     * @param DataObjectEvent $event
      */
-    public function onObjectPreUpdate(ObjectEvent $event)
+    public function onObjectPreUpdate(DataObjectEvent $event)
     {
         $object = $event->getObject();
         // do with the object whatever you want ;-)

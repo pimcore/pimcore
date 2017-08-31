@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
-use Pimcore\Event\ObjectClassDefinitionEvents;
+use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -270,12 +270,12 @@ class ClassDefinition extends Model\AbstractModel
         if ($this->getId()) {
             $isUpdate = true;
             \Pimcore::getEventDispatcher()->dispatch(
-                ObjectClassDefinitionEvents::PRE_UPDATE,
+                DataObjectClassDefinitionEvents::PRE_UPDATE,
                 new ClassDefinitionEvent($this)
             );
         } else {
             \Pimcore::getEventDispatcher()->dispatch(
-                ObjectClassDefinitionEvents::PRE_ADD,
+                DataObjectClassDefinitionEvents::PRE_ADD,
                 new ClassDefinitionEvent($this)
             );
         }
@@ -469,12 +469,12 @@ class ClassDefinition extends Model\AbstractModel
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(
-                ObjectClassDefinitionEvents::POST_UPDATE,
+                DataObjectClassDefinitionEvents::POST_UPDATE,
                 new ClassDefinitionEvent($this)
             );
         } else {
             \Pimcore::getEventDispatcher()->dispatch(
-                ObjectClassDefinitionEvents::POST_ADD,
+                DataObjectClassDefinitionEvents::POST_ADD,
                 new ClassDefinitionEvent($this)
             );
         }
@@ -541,7 +541,7 @@ class ClassDefinition extends Model\AbstractModel
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(
-            ObjectClassDefinitionEvents::PRE_DELETE,
+            DataObjectClassDefinitionEvents::PRE_DELETE,
             new ClassDefinitionEvent($this)
         );
 
@@ -600,7 +600,7 @@ class ClassDefinition extends Model\AbstractModel
         $this->getDao()->delete();
 
         \Pimcore::getEventDispatcher()->dispatch(
-            ObjectClassDefinitionEvents::POST_DELETE,
+            DataObjectClassDefinitionEvents::POST_DELETE,
             new ClassDefinitionEvent($this)
         );
     }

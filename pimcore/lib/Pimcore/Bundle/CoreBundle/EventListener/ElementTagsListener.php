@@ -18,7 +18,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Event\ObjectEvents;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -30,7 +30,7 @@ class ElementTagsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ObjectEvents::POST_COPY  => 'onPostCopy',
+            DataObjectEvents::POST_COPY  => 'onPostCopy',
             DocumentEvents::POST_COPY  => 'onPostCopy',
             AssetEvents::POST_COPY  => 'onPostCopy',
 

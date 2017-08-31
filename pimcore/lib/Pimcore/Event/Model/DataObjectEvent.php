@@ -18,7 +18,7 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\EventDispatcher\Event;
 
-class ObjectEvent extends Event implements ElementEventInterface
+class DataObjectEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 

@@ -18,7 +18,7 @@
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Event\Model\DataObject\ClassificationStore\StoreConfigEvent;
-use Pimcore\Event\ObjectClassificationStoreEvents;
+use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Model;
 
 /**
@@ -135,9 +135,9 @@ class StoreConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE, new StoreConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE, new StoreConfigEvent($this));
         parent::delete();
-        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_POST_DELETE, new StoreConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_POST_DELETE, new StoreConfigEvent($this));
     }
 
     /**
@@ -149,17 +149,17 @@ class StoreConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE, new StoreConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE, new StoreConfigEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_PRE_ADD, new StoreConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_ADD, new StoreConfigEvent($this));
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE, new StoreConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE, new StoreConfigEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD, new StoreConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD, new StoreConfigEvent($this));
         }
 
         return $model;

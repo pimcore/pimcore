@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Event\ObjectEvents;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -29,15 +29,15 @@ class SearchBackendListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ObjectEvents::POST_ADD  => 'onPostAddElement',
+            DataObjectEvents::POST_ADD  => 'onPostAddElement',
             DocumentEvents::POST_ADD  => 'onPostAddElement',
             AssetEvents::POST_ADD  => 'onPostAddElement',
 
-            ObjectEvents::PRE_DELETE => 'onPreDeleteElement',
+            DataObjectEvents::PRE_DELETE => 'onPreDeleteElement',
             DocumentEvents::PRE_DELETE => 'onPreDeleteElement',
             AssetEvents::PRE_DELETE => 'onPreDeleteElement',
 
-            ObjectEvents::POST_UPDATE  => 'onPostUpdateElement',
+            DataObjectEvents::POST_UPDATE  => 'onPostUpdateElement',
             DocumentEvents::POST_UPDATE  => 'onPostUpdateElement',
             AssetEvents::POST_UPDATE  => 'onPostUpdateElement',
         ];

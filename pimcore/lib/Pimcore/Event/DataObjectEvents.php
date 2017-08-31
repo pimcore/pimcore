@@ -14,63 +14,63 @@
 
 namespace Pimcore\Event;
 
-final class ObjectEvents
+final class DataObjectEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\ObjectEvent")
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string
      */
-    const PRE_ADD = 'pimcore.object.preAdd';
+    const PRE_ADD = 'pimcore.dataobject.preAdd';
 
     /**
-     * @Event("Pimcore\Event\Model\ObjectEvent")
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string
      */
-    const POST_ADD = 'pimcore.object.postAdd';
-
-    /**
-     * Arguments:
-     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
-     *
-     * @Event("Pimcore\Event\Model\ObjectEvent")
-     *
-     * @var string
-     */
-    const PRE_UPDATE = 'pimcore.object.preUpdate';
+    const POST_ADD = 'pimcore.dataobject.postAdd';
 
     /**
      * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
      *
-     * @Event("Pimcore\Event\Model\ObjectEvent")
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string
      */
-    const POST_UPDATE = 'pimcore.object.postUpdate';
+    const PRE_UPDATE = 'pimcore.dataobject.preUpdate';
 
     /**
-     * @Event("Pimcore\Event\Model\ObjectEvent")
+     * Arguments:
+     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string
      */
-    const PRE_DELETE = 'pimcore.object.preDelete';
+    const POST_UPDATE = 'pimcore.dataobject.postUpdate';
 
     /**
-     * @Event("Pimcore\Event\Model\ObjectEvent")
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string
      */
-    const POST_DELETE = 'pimcore.object.postDelete';
+    const PRE_DELETE = 'pimcore.dataobject.preDelete';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_DELETE = 'pimcore.dataobject.postDelete';
 
     /**
      * Arguments:
      *  - base_element | Pimcore\Model\Document | contains the base document used in copying process
      *
-     * @Event("Pimcore\Event\Model\ObjectEvent")
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string
      */
-    const POST_COPY = 'pimcore.object.postCopy';
+    const POST_COPY = 'pimcore.dataobject.postCopy';
 }

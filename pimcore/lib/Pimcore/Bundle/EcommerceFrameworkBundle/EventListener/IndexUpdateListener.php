@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\EventListener;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
-use Pimcore\Event\Model\ObjectEvent;
-use Pimcore\Event\ObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
+use Pimcore\Event\DataObjectEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class IndexUpdateListener implements EventSubscriberInterface
@@ -25,13 +25,13 @@ class IndexUpdateListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ObjectEvents::PRE_ADD => 'onObjectUpdate',
-            ObjectEvents::POST_UPDATE => 'onObjectUpdate',
-            ObjectEvents::PRE_DELETE => 'onObjectDelete'
+            DataObjectEvents::PRE_ADD => 'onObjectUpdate',
+            DataObjectEvents::POST_UPDATE => 'onObjectUpdate',
+            DataObjectEvents::PRE_DELETE => 'onObjectDelete'
         ];
     }
 
-    public function onObjectUpdate(ObjectEvent $event)
+    public function onObjectUpdate(DataObjectEvent $event)
     {
         $object = $event->getObject();
 
@@ -41,7 +41,7 @@ class IndexUpdateListener implements EventSubscriberInterface
         }
     }
 
-    public function onObjectDelete(ObjectEvent $event)
+    public function onObjectDelete(DataObjectEvent $event)
     {
         $object = $event->getObject();
 

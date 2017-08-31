@@ -1,5 +1,28 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 100
+
+### Objects were renamed to Data Objects
+The introduction of object type hints in PHP 7.2 forced us to rename several namespaces to be compliant with the
+[PHP 7 reserved words](http://php.net/manual/de/reserved.other-reserved-words.php).  
+- Namespace `Pimcore\Model\Object` was renamed to `Pimcore\Model\DataObject`
+    - PHP classes of Data Objects are now also in the format eg. `Pimcore\Model\DataObject\News`
+- Several other internal classes were renamed or moved as well
+    - `Pimcore\Event\Object*` to `Pimcore\Event\DataObject*`
+    - `Pimcore\Model\User\Workspace\Object` to `Pimcore\Model\User\Workspace\DataObject`
+- [Object Placeholders](../../19_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md) syntax changed to `%DataObject()`
+- There's a compatibility autoloader which enables you to still use the former namespace (< PHP 7.2), but you should migrate asap. to the new namespaces.
+- After the update please consider the following: 
+    - If you're using custom [class overrides](../../20_Extending_Pimcore/03_Overriding_Models.md) in your `app/config/config.yml`, please adapt them using the new namespace.
+    - If you're using event listeners on object events, please rename them as well to `pimcore.dataobject.*`
+    - Your code should continue to work as before, due to the compatibility autoloader, which is creating class aliases on the fly
+    - Update your `.gitignore` to exclude `/var/classes/DataObject` instead of `/var/classes/Object`
+- If the update fails, please try the following: 
+    - fix the above configuration changes, mainly the class overrides and potentially other relevant configurations
+    - `composer dump-autoload`
+    - `./bin/console cache:clear --no-warmup`
+    - run the [migration script](https://github.com/pimcore/pimcore/blob/master/update-scripts/100/postupdate.php#L19) manually on cli 
+  
 ## Build 96 (2017-09-22)
 
 If you get an error like the following while upgrading to build 96, please run `composer update` manually on the command

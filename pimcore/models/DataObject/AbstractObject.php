@@ -19,8 +19,8 @@ namespace Pimcore\Model\DataObject;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
-use Pimcore\Event\Model\ObjectEvent;
-use Pimcore\Event\ObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
@@ -525,7 +525,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_DELETE, new ObjectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
 
         // delete childs
         if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
@@ -556,7 +556,7 @@ class AbstractObject extends Model\Element\AbstractElement
         //set object to registry
         \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_DELETE, new ObjectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
     }
 
     /**
@@ -569,9 +569,9 @@ class AbstractObject extends Model\Element\AbstractElement
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_UPDATE, new ObjectEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_ADD, new ObjectEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_ADD, new DataObjectEvent($this));
         }
 
         $this->correctPath();
@@ -666,9 +666,9 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache($additionalTags);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_UPDATE, new ObjectEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_ADD, new ObjectEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD, new DataObjectEvent($this));
         }
 
         return $this;

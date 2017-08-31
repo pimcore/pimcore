@@ -18,7 +18,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Event\ObjectEvents;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -43,11 +43,11 @@ class WorkflowManagementListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ObjectEvents::POST_ADD  => 'onElementPostAdd',
+            DataObjectEvents::POST_ADD  => 'onElementPostAdd',
             DocumentEvents::POST_ADD  => 'onElementPostAdd',
             AssetEvents::POST_ADD  => 'onElementPostAdd',
 
-            ObjectEvents::POST_DELETE => 'onElementPostDelete',
+            DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',
             AssetEvents::POST_DELETE => 'onElementPostDelete',
 

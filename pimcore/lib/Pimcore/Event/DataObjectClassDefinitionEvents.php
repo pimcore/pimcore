@@ -14,7 +14,7 @@
 
 namespace Pimcore\Event;
 
-final class ObjectClassDefinitionEvents
+final class DataObjectClassDefinitionEvents
 {
     /**
      * @Event("Pimcore\Event\Model\DataObject\ClassDefinitionEvent")

@@ -18,8 +18,8 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Config;
-use Pimcore\Event\Model\ObjectEvent;
-use Pimcore\Event\ObjectEvents;
+use Pimcore\Event\Model\DataObjectEvent;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 
@@ -258,7 +258,7 @@ class Concrete extends AbstractObject
 
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_UPDATE, new ObjectEvent($this, [
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true
             ]));
         }
@@ -285,7 +285,7 @@ class Concrete extends AbstractObject
 
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_UPDATE, new ObjectEvent($this, [
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true
             ]));
         }

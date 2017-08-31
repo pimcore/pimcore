@@ -16,7 +16,7 @@ namespace Pimcore\Placeholder;
 
 use Pimcore\Model;
 
-class Object extends AbstractPlaceholder
+class DataObject extends AbstractPlaceholder
 {
     /**
      * Returns a value for test replacement

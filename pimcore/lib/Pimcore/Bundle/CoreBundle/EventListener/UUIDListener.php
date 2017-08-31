@@ -18,8 +18,8 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Event\ObjectClassDefinitionEvents;
-use Pimcore\Event\ObjectEvents;
+use Pimcore\Event\DataObjectClassDefinitionEvents;
+use Pimcore\Event\DataObjectEvents;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -31,15 +31,15 @@ class UUIDListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ObjectEvents::POST_ADD  => 'onPostAdd',
+            DataObjectEvents::POST_ADD  => 'onPostAdd',
             DocumentEvents::POST_ADD  => 'onPostAdd',
             AssetEvents::POST_ADD  => 'onPostAdd',
-            ObjectClassDefinitionEvents::POST_ADD => 'onPostAdd',
+            DataObjectClassDefinitionEvents::POST_ADD => 'onPostAdd',
 
-            ObjectEvents::POST_DELETE => 'onPostDelete',
+            DataObjectEvents::POST_DELETE => 'onPostDelete',
             DocumentEvents::POST_DELETE => 'onPostDelete',
             AssetEvents::POST_DELETE => 'onPostDelete',
-            ObjectClassDefinitionEvents::POST_DELETE => 'onPostDelete'
+            DataObjectClassDefinitionEvents::POST_DELETE => 'onPostDelete'
         ];
     }
 

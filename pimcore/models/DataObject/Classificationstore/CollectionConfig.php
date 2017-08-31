@@ -18,7 +18,7 @@
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Event\Model\DataObject\ClassificationStore\CollectionConfigEvent;
-use Pimcore\Event\ObjectClassificationStoreEvents;
+use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Model;
 
 /**
@@ -170,9 +170,9 @@ class CollectionConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_DELETE, new CollectionConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_DELETE, new CollectionConfigEvent($this));
         parent::delete();
-        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_DELETE, new CollectionConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_DELETE, new CollectionConfigEvent($this));
     }
 
     /**
@@ -184,17 +184,17 @@ class CollectionConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_UPDATE, new CollectionConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_UPDATE, new CollectionConfigEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_ADD, new CollectionConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_ADD, new CollectionConfigEvent($this));
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_UPDATE, new CollectionConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_UPDATE, new CollectionConfigEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_ADD, new CollectionConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_ADD, new CollectionConfigEvent($this));
         }
 
         return $model;

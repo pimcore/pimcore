@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Cache;
 use Pimcore\Event\Model\DataObject\ClassificationStore\GroupConfigEvent;
-use Pimcore\Event\ObjectClassificationStoreEvents;
+use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Model;
 
 /**
@@ -215,13 +215,13 @@ class GroupConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_PRE_DELETE, new GroupConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_DELETE, new GroupConfigEvent($this));
         $cacheKey = 'cs_groupconfig_' . $this->getId();
         Cache\Runtime::set($cacheKey, null);
         Cache::remove($cacheKey);
 
         parent::delete();
-        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_POST_DELETE, new GroupConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_DELETE, new GroupConfigEvent($this));
     }
 
     /**
@@ -237,17 +237,17 @@ class GroupConfig extends Model\AbstractModel
             Cache::remove($cacheKey);
 
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_PRE_UPDATE, new GroupConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_UPDATE, new GroupConfigEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_PRE_ADD, new GroupConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_PRE_ADD, new GroupConfigEvent($this));
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_POST_UPDATE, new GroupConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_UPDATE, new GroupConfigEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_POST_ADD, new GroupConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::GROUP_CONFIG_POST_ADD, new GroupConfigEvent($this));
         }
 
         return $model;

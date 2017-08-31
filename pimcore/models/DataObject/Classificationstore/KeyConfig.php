@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Cache;
 use Pimcore\Event\Model\DataObject\ClassificationStore\KeyConfigEvent;
-use Pimcore\Event\ObjectClassificationStoreEvents;
+use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Model;
 
 /**
@@ -239,14 +239,14 @@ class KeyConfig extends Model\AbstractModel
     {
         DefinitionCache::clear($this);
 
-        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_DELETE, new KeyConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_DELETE, new KeyConfigEvent($this));
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
             $cacheKey = 'cs_keyconfig_' . $this->getId();
             Cache::remove($cacheKey);
         }
         parent::delete();
-        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_POST_DELETE, new KeyConfigEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_POST_DELETE, new KeyConfigEvent($this));
     }
 
     /**
@@ -271,17 +271,17 @@ class KeyConfig extends Model\AbstractModel
             Cache::remove($cacheKey);
 
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_UPDATE, new KeyConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_UPDATE, new KeyConfigEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD, new KeyConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD, new KeyConfigEvent($this));
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_POST_UPDATE, new KeyConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_POST_UPDATE, new KeyConfigEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_POST_ADD, new KeyConfigEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_POST_ADD, new KeyConfigEvent($this));
         }
 
         return $model;
