@@ -204,7 +204,7 @@ class TargetingListener extends AbstractFrontendListener
                 $code = '';
                 // check if persona or target group requires geoip to be included
                 if ($this->checkPersonasAndTargetGroupForGeoIPRequirement($personas, $targets)) {
-                    $code .= '<script type="text/javascript" src="/pimcore/static6/js/frontend/geoip.js/"></script>';
+                    $code .= '<script type="text/javascript" src="/pimcore/static6/js/frontend/geoip.js/index.php"></script>';
                 }
 
                 $code .= '<script type="text/javascript">';
