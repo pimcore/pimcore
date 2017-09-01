@@ -1,6 +1,6 @@
 <?php
 
-    include("../../../../pimcore/config/startup.php");
+    include("../../../../pimcore/config/startup_cli.php");
 
     $iconDir = realpath(__DIR__ . '/../img');
     $icons = rscandir($iconDir . '/flat-color-icons/');
