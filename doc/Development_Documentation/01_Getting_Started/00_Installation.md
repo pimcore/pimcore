@@ -27,7 +27,7 @@ Pimcore is offering [2 installation packages](https://www.pimcore.org/download) 
 ### Download a Package:
 
 ```bash
-wget https://www.pimcore.org/download-5/pimcore-unstable.zip -O pimcore-install.zip
+wget https://www.pimcore.org/download-5/pimcore-latest.zip -O pimcore-install.zip
 ```
 
 Unzip the installer package into the current folder (project root):
