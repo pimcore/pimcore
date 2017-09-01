@@ -17,13 +17,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMockupConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
+use Pimcore\Cache;
 use Pimcore\Logger;
 
 /**
- * Class AbstractMockupCacheWorker
- *
  * provides worker functionality for mockup cache and central store table
- *
  */
 abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
 {
@@ -54,7 +52,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
     protected function deleteFromMockupCache($objectId)
     {
         $key = $this->getMockupCachePrefix() . '_' . $this->name . '_' . $objectId;
-        \Pimcore\Cache::remove($key);
+        Cache::remove($key);
     }
 
     /**
@@ -63,7 +61,9 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
      * @param $objectId
      * @param null $data
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup
+     * @return DefaultMockup
+     *
+     * @throws InvalidConfigException
      */
     public function saveToMockupCache($objectId, $data = null)
     {
@@ -81,13 +81,13 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
         $key = $this->createMockupCacheKey($objectId);
 
         //use cache instance directly to aviod cache locking -> in this case force writing to cache is needed
-        $hasLock = \Pimcore\Cache::getHandler()->getWriteLock()->hasLock();
+        $hasLock = Cache::getHandler()->getWriteLock()->hasLock();
         if ($hasLock) {
-            \Pimcore\Cache::getHandler()->getWriteLock()->disable();
+            Cache::getHandler()->getWriteLock()->disable();
         }
 
-        $success = \Pimcore\Cache::save($mockup, $key, [$this->getMockupCachePrefix()], null, 0, true);
-        $result = \Pimcore\Cache::load($key);
+        $success = Cache::save($mockup, $key, [$this->getMockupCachePrefix()], null, 0, true);
+        $result = Cache::load($key);
 
         if ($success && $result) {
             $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
@@ -96,7 +96,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
         }
 
         if ($hasLock) {
-            \Pimcore\Cache::getHandler()->getWriteLock()->enable();
+            Cache::getHandler()->getWriteLock()->enable();
         }
 
         return $mockup;
@@ -112,7 +112,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
     public function getMockupFromCache($objectId)
     {
         $key = $this->createMockupCacheKey($objectId);
-        $cachedItem = \Pimcore\Cache::load($key);
+        $cachedItem = Cache::load($key);
 
         if (is_string($cachedItem)) {
             $cachedItem = unserialize($cachedItem);

@@ -15,42 +15,48 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IComponent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 
-/**
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager
- */
 interface ICartManager extends IComponent
 {
     /**
-     * returns cart class name configured in the ecommerce framework config
+     * Returns cart class name configured in the ecommerce framework config
      *
      * Is also responsible for checking if guest cart class should be used or not,
      * by calling \Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment::getUseGuestCart();
-     *
      *
      * @return string
      */
     public function getCartClassName();
 
     /**
-     * adds item to given cart
+     * Adds item to given cart
      *
-     * @param ICheckoutable  $product   - product to add
-     * @param float                                                 $count
-     * @param string                                                $key       - optional key of cart where the item should be added to
-     * @param null|string                                           $itemKey   - optional item key
-     * @param bool                                                  $replace   - replace item if same key already exists
-     * @param array                                                 $params    - optional addtional item information
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry[]        $subProducts
-     * @param null|string                                           $comment
+     * @param ICheckoutable $product - product to add
+     * @param float $count
+     * @param string $key            - optional key of cart where the item should be added to
+     * @param null|string $itemKey   - optional item key
+     * @param bool $replace          - replace item if same key already exists
+     * @param array $params          - optional addtional item information
+     * @param AbstractSetProductEntry[] $subProducts
+     * @param null|string $comment
      *
      * @return string - item key
      */
-    public function addToCart(ICheckoutable $product, $count, $key = null, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function addToCart(
+        ICheckoutable $product,
+        $count,
+        $key = null,
+        $itemKey = null,
+        $replace = false,
+        array $params = [],
+        array $subProducts = [],
+        $comment = null
+    );
 
     /**
-     * removes item from given cart
+     * Removes item from given cart
      *
      * @param string      $itemKey
      * @param null|string $key     - optional identification of cart in case of multi cart
@@ -60,32 +66,32 @@ interface ICartManager extends IComponent
     public function removeFromCart($itemKey, $key = null);
 
     /**
-     * returns cart
+     * Returns cart
      *
-     * @param null|string  $key - optional identification of cart in case of multi cart
+     * @param null|string $key - optional identification of cart in case of multi cart
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
+     * @return ICart
      */
     public function getCart($key = null);
 
     /**
-     * returns cart by name
+     * Returns cart by name
      *
      * @param string $name
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart
+     * @return ICart
      */
     public function getCartByName($name);
 
     /**
-     * returns all carts
+     * Returns all carts
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart[]
+     * @return ICart[]
      */
     public function getCarts();
 
     /**
-     * clears given cart
+     * Clears given cart
      *
      * @param null|string  $key - optional identification of cart in case of multi cart
      *
@@ -94,43 +100,32 @@ interface ICartManager extends IComponent
     public function clearCart($key = null);
 
     /**
-     * creates new cart
+     * Creates new cart
      *
-     * @param  array   $param - array of cart information
+     * @param array $param - array of cart information
      *
-     * @return string  key of new created cart
+     * @return string key of new created cart
      */
-    public function createCart($param);
+    public function createCart(array $params);
 
     /**
-     * deletes cart
+     * Deletes cart
      *
-     * @param null|string  $key - optional identification of cart in case of multi cart
+     * @param null|string $key - optional identification of cart in case of multi cart
      *
      * @return void
      */
     public function deleteCart($key = null);
 
     /**
-     * creates price calculator for given cart
+     * Creates price calculator for given cart
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator
+     * @return ICartPriceCalculator
      */
     public function getCartPriceCalculator(ICart $cart);
 
     /**
-     * @deprecated
-     *
-     * use getCartPriceCalculator instead
-     *
-     * @abstract
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator
-     */
-    public function getCartPriceCalcuator(ICart $cart);
-
-    /**
-     * resets cart manager - carts need to be reloaded after reset() is called
+     * Resets cart manager - carts need to be reloaded after reset() is called
      *
      * @return void
      */

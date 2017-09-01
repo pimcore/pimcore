@@ -16,15 +16,15 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Event\ObjectEvents;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
-use Pimcore\Model\Object;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Tool\Admin;
 use Pimcore\WorkflowManagement\Workflow;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -43,11 +43,11 @@ class WorkflowManagementListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ObjectEvents::POST_ADD  => 'onElementPostAdd',
+            DataObjectEvents::POST_ADD  => 'onElementPostAdd',
             DocumentEvents::POST_ADD  => 'onElementPostAdd',
             AssetEvents::POST_ADD  => 'onElementPostAdd',
 
-            ObjectEvents::POST_DELETE => 'onElementPostDelete',
+            DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',
             AssetEvents::POST_DELETE => 'onElementPostDelete',
 
@@ -137,7 +137,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
                 if (!is_null($workflowLayoutId)) {
                     //load the new layout into the object container
 
-                    $validLayouts = Object\Service::getValidLayouts($element);
+                    $validLayouts = DataObject\Service::getValidLayouts($element);
 
                     //check that the layout id is valid before trying to load
                     if (!empty($validLayouts)) {
@@ -146,7 +146,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
                         if ($validLayouts && $validLayouts[$workflowLayoutId]) {
                             $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
                             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                            Object\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getParam('object'));
+                            DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getParam('object'));
                             $data['layout'] = $customLayoutDefinition;
                         }
                     }

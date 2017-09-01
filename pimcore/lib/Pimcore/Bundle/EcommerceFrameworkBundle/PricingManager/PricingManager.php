@@ -17,49 +17,99 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
-use Pimcore\Config\Config;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Class PricingManager
- */
 class PricingManager implements IPricingManager
 {
     /**
-     * @var Config
+     * @var bool
      */
-    protected $config;
+    protected $enabled = true;
 
     /**
-     * @var Rule\Listing
+     * Condition name => class mapping
+     *
+     * @var array
      */
-    protected $rules;
+    protected $conditionMapping = [];
+
+    /**
+     * Action name => class mapping
+     *
+     * @var array
+     */
+    protected $actionMapping = [];
 
     /**
      * @var SessionInterface
      */
-    protected $containerSession;
+    protected $session;
 
     /**
-     * @param Config $config
+     * @var array
      */
-    public function __construct(Config $config, SessionInterface $containerSession)
+    protected $options;
+
+    /**
+     * @var Rule[]
+     */
+    protected $rules;
+
+    public function __construct(
+        array $conditionMapping,
+        array $actionMapping,
+        SessionInterface $session,
+        array $options = []
+    ) {
+        $this->conditionMapping = $conditionMapping;
+        $this->actionMapping    = $actionMapping;
+        $this->session          = $session;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->options = $resolver->resolve($options);
+    }
+
+    protected function configureOptions(OptionsResolver $resolver)
     {
-        $this->config = new HelperContainer($config, 'pricingmanager');
-        $this->containerSession = $containerSession;
+        $classProperties = ['rule_class', 'price_info_class', 'environment_class'];
+
+        $resolver->setRequired($classProperties);
+
+        $resolver->setDefaults([
+            'rule_class'        => Rule::class,
+            'price_info_class'  => PriceInfo::class,
+            'environment_class' => Environment::class,
+        ]);
+
+        foreach ($classProperties as $classProperty) {
+            $resolver->setAllowedTypes($classProperty, 'string');
+        }
+    }
+
+    public function setEnabled(bool $enabled)
+    {
+        $this->enabled = $enabled;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
     }
 
     /**
-     * @param IPriceInfo $priceInfo
+     * @param PriceSystemIPriceInfo $priceInfo
      *
-     * @return IPriceInfo
+     * @return PriceSystemIPriceInfo
      */
-    public function applyProductRules(IPriceInfo $priceInfo)
+    public function applyProductRules(PriceSystemIPriceInfo $priceInfo)
     {
-        if ((string)$this->config->disabled == 'true') {
+        if (!$this->enabled) {
             return $priceInfo;
         }
 
@@ -82,7 +132,7 @@ class PricingManager implements IPricingManager
      */
     public function applyCartRules(ICart $cart)
     {
-        if ((string)$this->config->disabled == 'true') {
+        if (!$this->enabled) {
             return $this;
         }
 
@@ -105,22 +155,21 @@ class PricingManager implements IPricingManager
                 }
             }
         }
+
         $env->setCategories(array_values($categories));
 
-        //clean up discount pricing modificators in cart price calculator
-        $priceCalculator = $cart->getPriceCalculator();
+        // clean up discount pricing modificators in cart price calculator
+        $priceCalculator   = $cart->getPriceCalculator();
         $priceModificators = $priceCalculator->getModificators();
-        if ($priceModificators) {
-            foreach ($priceModificators as $priceModificator) {
-                if ($priceModificator instanceof Discount) {
-                    $priceCalculator->removeModificator($priceModificator);
-                }
+
+        foreach ($priceModificators as $priceModificator) {
+            if ($priceModificator instanceof Discount) {
+                $priceCalculator->removeModificator($priceModificator);
             }
         }
 
         // execute all valid rules
         foreach ($this->getValidRules() as $rule) {
-            /* @var IRule $rule */
             $env->setRule($rule);
 
             // test rule
@@ -132,7 +181,7 @@ class PricingManager implements IPricingManager
             $rule->executeOnCart($env);
 
             // is this a stop rule?
-            if ($rule->getBehavior() == 'stopExecute') {
+            if ($rule->getBehavior() === 'stopExecute') {
                 break;
             }
         }
@@ -150,6 +199,7 @@ class PricingManager implements IPricingManager
             $rules->setCondition('active = 1');
             $rules->setOrderKey('prio');
             $rules->setOrder('ASC');
+
             $this->rules = $rules->getRules();
         }
 
@@ -161,8 +211,14 @@ class PricingManager implements IPricingManager
      */
     public function getEnvironment()
     {
-        $environment = new Environment();
-        $environment->setSession($this->containerSession->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT));
+        /** @var AttributeBagInterface $sessionBag */
+        $sessionBag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
+
+        $class = $this->options['environment_class'];
+
+        /** @var IEnvironment $environment */
+        $environment = new $class();
+        $environment->setSession($sessionBag);
 
         return $environment;
     }
@@ -174,12 +230,30 @@ class PricingManager implements IPricingManager
      */
     public function getRule()
     {
-        $class = $this->config->rule->class;
+        $class = $this->options['rule_class'];
 
         return new $class();
     }
 
     /**
+     * @return array
+     */
+    public function getConditionMapping(): array
+    {
+        return $this->conditionMapping;
+    }
+
+    /**
+     * @return array
+     */
+    public function getActionMapping(): array
+    {
+        return $this->actionMapping;
+    }
+
+    /**
+     * Factory
+     *
      * @param string $type
      *
      * @return ICondition
@@ -188,10 +262,11 @@ class PricingManager implements IPricingManager
      */
     public function getCondition($type)
     {
-        $class = $this->config->condition->$type->class;
-        if ($class == '') {
-            throw new InvalidConfigException(sprintf('getCondition class "%s" not found.', $class));
+        if (!isset($this->conditionMapping[$type])) {
+            throw new InvalidConfigException(sprintf('ICondition for type "%s" is not registered', $type));
         }
+
+        $class = $this->conditionMapping[$type];
 
         return new $class();
     }
@@ -199,38 +274,43 @@ class PricingManager implements IPricingManager
     /**
      * Factory
      *
-     * @param $type
+     * @param string $type
      *
      * @return IAction
+     *
+     * @throws InvalidConfigException
      */
     public function getAction($type)
     {
-        $class = $this->config->action->$type->class;
+        if (!isset($this->actionMapping[$type])) {
+            throw new InvalidConfigException(sprintf('IAction for type "%s" is not registered', $type));
+        }
+
+        $class = $this->actionMapping[$type];
 
         return new $class();
     }
 
     /**
-     * @param IPriceInfo $priceInfo
+     * @param PriceSystemIPriceInfo $priceInfo
      *
      * @return IPriceInfo
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
-    public function getPriceInfo(IPriceInfo $priceInfo)
+    public function getPriceInfo(PriceSystemIPriceInfo $priceInfo)
     {
-        if ((string)$this->config->disabled == 'true') {
-            return $priceInfo;
+        // TODO make getPriceInfo private as this call is only used internally where the enabled check is alread applied?
+        if (!$this->enabled) {
+            throw new \RuntimeException('Can\'t build a pricing manager price info as the pricing manager is disabled');
         }
 
-        $class = $this->config->priceInfo->class;
-        if ($class == '') {
-            throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException(sprintf('getPriceInfo class "%s" not found.', $class));
-        }
+        $class = $this->options['price_info_class'];
 
         // create environment
         $environment = $this->getEnvironment();
         $environment->setProduct($priceInfo->getProduct());
+
         if (method_exists($priceInfo->getProduct(), 'getCategories')) {
             $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
         }

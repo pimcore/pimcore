@@ -11,16 +11,19 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Model\Object\Fieldcollection;
-use Pimcore\Model\Object\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
-use Pimcore\Model\Object\OnlineShopTaxClass;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
+use Pimcore\Model\DataObject\OnlineShopTaxClass;
+use Pimcore\Tests\Test\EcommerceTestCase;
 
-class CartTaxManagementTest extends TestCase
+class CartTaxManagementTest extends EcommerceTestCase
 {
     private function buildTaxClass(array $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
     {
@@ -41,14 +44,14 @@ class CartTaxManagementTest extends TestCase
         return $taxClass;
     }
 
-    private function setUpProduct($grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
+    private function setUpProduct($grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): ICheckoutable
     {
         $taxClass = $this->buildTaxClass($taxes, $combinationType);
 
-        $config = new \stdClass();
+        $pricingManager = new PricingManager([], [], $this->buildSession());
 
-        $priceSystem = Stub::construct(AttributePriceSystem::class, [$config], [
-            'getTaxClassForProduct' => function () use ($taxClass) {
+        $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManager, $this->buildEnvironment()], [
+            'getTaxClassForProduct'           => function () use ($taxClass) {
                 return $taxClass;
             },
             'getTaxClassForPriceModification' => function () use ($taxClass) {
@@ -62,7 +65,8 @@ class CartTaxManagementTest extends TestCase
             }
         ]);
 
-        return Stub::construct(AbstractProduct::class, [], [
+        /** @var Stub|ICheckoutable $product */
+        $product = Stub::construct(AbstractProduct::class, [], [
             'getId' => function () {
                 return rand();
             },
@@ -73,6 +77,8 @@ class CartTaxManagementTest extends TestCase
                 return [];
             }
         ]);
+
+        return $product;
     }
 
     /**
@@ -80,10 +86,12 @@ class CartTaxManagementTest extends TestCase
      */
     private function setUpCart()
     {
+        $sessionBag = $this->buildSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
+
         /** @var SessionCart|\PHPUnit_Framework_MockObject_Stub $cart */
         $cart = Stub::construct(SessionCart::class, [], [
-            'getSession' => function () {
-                return [];
+            'getSessionBag' => function () use ($sessionBag) {
+                return $sessionBag;
             },
             'isCartReadOnly' => function () {
                 return false;
@@ -102,13 +110,10 @@ class CartTaxManagementTest extends TestCase
      */
     private function setUpCartCalculator(ICart $cart, $withModificators = false, $taxes = [])
     {
-        $config = new \stdClass();
-
-        $calculator = new CartPriceCalculator($config, $cart);
+        $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 
         if ($withModificators) {
-            $shipping = new Shipping();
-            $shipping->setCharge(Decimal::create(10));
+            $shipping = new Shipping(['charge' => 10]);
             $shipping->setTaxClass($this->buildTaxClass($taxes));
             $calculator->addModificator($shipping);
         }

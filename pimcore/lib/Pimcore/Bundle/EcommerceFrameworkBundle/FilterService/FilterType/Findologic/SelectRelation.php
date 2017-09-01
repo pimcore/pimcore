@@ -14,9 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\AbstractObject;
 
 class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectRelation
 {
@@ -41,18 +43,12 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
         foreach ($values as $v) {
             if (empty($availableRelations) || $availableRelations[$v['label']] === true) {
-                $objects[$v['label']] = \Pimcore\Model\Object\AbstractObject::getById($v['label']);
+                $objects[$v['label']] = AbstractObject::getById($v['label']);
             }
         }
         Logger::info('done.');
 
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->script;
-        }
-
-        return $this->render($script, [
+        return $this->render($this->getTemplate($filterDefinition), [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
@@ -70,7 +66,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
         $value = $params[$field];
 
-        if ($value == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } elseif (empty($value) && !$params['is_reload']) {
             $value = $preSelect;

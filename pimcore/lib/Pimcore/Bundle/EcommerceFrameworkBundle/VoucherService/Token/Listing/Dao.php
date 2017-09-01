@@ -40,10 +40,12 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int)$this->db->fetchOne('SELECT COUNT(*) as amount FROM ' .
+            $amount = (int)$this->db->fetchOne(
+                'SELECT COUNT(*) as amount FROM ' .
                 \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME .
                 $this->getCondition(),
-                $this->model->getConditionVariables());
+                $this->model->getConditionVariables()
+            );
         } catch (\Exception $e) {
             return false;
         }

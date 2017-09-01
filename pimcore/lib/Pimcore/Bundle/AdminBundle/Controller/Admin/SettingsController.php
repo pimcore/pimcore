@@ -394,8 +394,10 @@ class SettingsController extends AdminController
 
         // delete views if fallback languages has changed or the language is no more available
         if (isset($existingValues['general']['fallbackLanguages']) && is_array($existingValues['general']['fallbackLanguages'])) {
-            $fallbackLanguagesChanged = array_diff_assoc($existingValues['general']['fallbackLanguages'],
-                $fallbackLanguages);
+            $fallbackLanguagesChanged = array_diff_assoc(
+                $existingValues['general']['fallbackLanguages'],
+                $fallbackLanguages
+            );
             $dbName = $existingValues['database']['params']['dbname'];
             foreach ($fallbackLanguagesChanged as $language => $dummy) {
                 $this->deleteViews($language, $dbName);
@@ -1439,9 +1441,10 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('robots.txt');
 
-        $siteSuffix = '';
         if ($request->get('site')) {
             $siteSuffix = '-' . $request->get('site');
+        } else {
+            $siteSuffix = "-default";
         }
 
         $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';

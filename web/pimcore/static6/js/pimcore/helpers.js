@@ -139,7 +139,7 @@ pimcore.helpers.closeAsset = function (id) {
 pimcore.helpers.openDocument = function (id, type, options) {
     if (pimcore.globalmanager.exists("document_" + id) == false) {
         if (pimcore.document[type]) {
-            pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id));
+            pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id, options));
             pimcore.helpers.rememberOpenTab("document_" + id + "_" + type);
 
             if (options !== undefined) {
@@ -905,11 +905,11 @@ pimcore.helpers.openMemorizedTabs = function () {
                 window.setTimeout(function (parts) {
                     if(parts[1] && parts[2]) {
                         if(parts[0] == "asset") {
-                            pimcore.helpers.openAsset(parts[1], parts[2], { ignoreForHistory: true});
+                            pimcore.helpers.openAsset(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
                         } else if(parts[0] == "document") {
-                            pimcore.helpers.openDocument(parts[1], parts[2], { ignoreForHistory: true});
+                            pimcore.helpers.openDocument(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
                         } else if(parts[0] == "object") {
-                            pimcore.helpers.openObject(parts[1], parts[2], { ignoreForHistory: true});
+                            pimcore.helpers.openObject(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
                         }
                     }
                 }.bind(this, parts), 200);
@@ -1618,8 +1618,8 @@ pimcore.helpers.openImageCropper = function (imageId, data, saveCallback, config
 };
 
 /* this is here so that it can be opened in the parent window when in editmode frame */
-pimcore.helpers.openImageHotspotMarkerEditor = function (imageId, data, saveCallback) {
-    var editor = new pimcore.element.tag.imagehotspotmarkereditor(imageId, data, saveCallback);
+pimcore.helpers.openImageHotspotMarkerEditor = function (imageId, data, saveCallback, config) {
+    var editor = new pimcore.element.tag.imagehotspotmarkereditor(imageId, data, saveCallback, config);
     return editor;
 };
 
@@ -1654,12 +1654,13 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             },
 
             onNodeOver : function(target, dd, e, data) {
-                return Ext.dd.DropZone.prototype.dropAllowed;
+                data = data.records[0].data;
+                return data.type != "folder" ? Ext.dd.DropZone.prototype.dropAllowed : Ext.dd.DropZone.prototype.dropNotAllowed;
             }.bind(this),
 
             onNodeDrop : function (target, dd, e, data) {
                 var record = data.records[0];
-                if (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object") {
+                if (record.data.type != "folder" && (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object")) {
                     fieldPath.setValue(record.data.path);
                     return true;
                 }

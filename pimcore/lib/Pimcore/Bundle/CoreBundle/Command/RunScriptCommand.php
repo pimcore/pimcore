@@ -25,7 +25,8 @@ class RunScriptCommand extends AbstractCommand
                 'Path to PHP script which should run'
             )
             ->addOption(
-                'cleanup', 'c',
+                'cleanup',
+                'c',
                 InputOption::VALUE_NONE,
                 'Clean up opcache and temporary DB tables after script (useful if running update scripts)'
             );

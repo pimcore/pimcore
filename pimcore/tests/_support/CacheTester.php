@@ -21,7 +21,7 @@ class CacheTester extends \Codeception\Actor
 {
     use _generated\CacheTesterActions;
 
-   /**
-    * Define custom actions here
-    */
+    /**
+     * Define custom actions here
+     */
 }

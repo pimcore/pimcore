@@ -18,8 +18,7 @@ pimcore.object.classes.klass = Class.create({
     disallowedDataTypes: [],
     uploadUrl: '/admin/class/import-class',
     exportUrl: "/admin/class/export-class",
-
-
+    context: "class",
 
     initialize: function (data, parentPanel, reopen, editorPrefix) {
         this.parentPanel = parentPanel;
@@ -201,10 +200,10 @@ pimcore.object.classes.klass = Class.create({
         var newNode = null;
 
         if (con.datatype == "layout") {
-            fn = this.addLayoutChild.bind(scope, con.fieldtype, con);
+            fn = this.addLayoutChild.bind(scope, con.fieldtype, con, this.context);
         }
         else if (con.datatype == "data") {
-            fn = this.addDataChild.bind(scope, con.fieldtype, con);
+            fn = this.addDataChild.bind(scope, con.fieldtype, con, this.context);
         }
 
         newNode = fn();
@@ -313,9 +312,9 @@ pimcore.object.classes.klass = Class.create({
                     }
                     var handler;
                     if (editMode) {
-                        handler = this.changeDataType.bind(this, tree, record, dataComps[i], true);
+                        handler = this.changeDataType.bind(this, tree, record, dataComps[i], true, this.context);
                     } else {
-                        handler = this.addDataChild.bind(record, dataComps[i]);
+                        handler = this.addDataChild.bind(record, dataComps[i], {}, this.context);
                     }
 
                     groups[group].push({
@@ -397,7 +396,7 @@ pimcore.object.classes.klass = Class.create({
                         layoutMenu.push({
                             text: pimcore.object.classes.layout[layouts[i]].prototype.getTypeName(),
                             iconCls: pimcore.object.classes.layout[layouts[i]].prototype.getIconClass(),
-                            handler: this.addLayoutChild.bind(record, layouts[i])
+                            handler: this.addLayoutChild.bind(record, layouts[i], this.context)
                         });
                     }
 
@@ -441,7 +440,7 @@ pimcore.object.classes.klass = Class.create({
                     text: t('duplicate'),
                     iconCls: "pimcore_icon_clone",
                     hideOnClick: true,
-                    handler: this.changeDataType.bind(this, tree, record, record.data.editor.type, dataComps, false)
+                    handler: this.changeDataType.bind(this, tree, record, record.data.editor.type, false, this.context)
                 }));
             }
 
@@ -651,7 +650,7 @@ pimcore.object.classes.klass = Class.create({
         });
 
         var getPhpClassName = function (name) {
-            return "Pimcore\\Model\\Object\\" + ucfirst(name);
+            return "Pimcore\\Model\\DataObject\\" + ucfirst(name);
         };
 
         this.rootPanel = new Ext.form.FormPanel({
@@ -824,7 +823,7 @@ pimcore.object.classes.klass = Class.create({
         return this.rootPanel;
     },
 
-    addLayoutChild: function (type, initData) {
+    addLayoutChild: function (type, initData, context) {
 
         var nodeLabel = t(type);
 
@@ -863,7 +862,7 @@ pimcore.object.classes.klass = Class.create({
         return newNode;
     },
 
-    addDataChild: function (type, initData) {
+    addDataChild: function (type, initData, context) {
 
         var nodeLabel = t(type);
 
@@ -889,6 +888,7 @@ pimcore.object.classes.klass = Class.create({
         newNode = this.appendChild(newNode);
 
         var editor = new pimcore.object.classes.data[type](newNode, initData);
+        editor.setContext(context);
         newNode.set("editor", editor);
 
         this.expand();
@@ -896,7 +896,7 @@ pimcore.object.classes.klass = Class.create({
         return newNode;
     },
 
-    changeDataType: function (tree, record, type, initData, removeExisting) {
+    changeDataType: function (tree, record, type, removeExisting, context) {
         try {
             this.saveCurrentNode();
 
@@ -948,6 +948,7 @@ pimcore.object.classes.klass = Class.create({
             }
 
             var editor = new pimcore.object.classes.data[type](newNode, theData);
+            editor.setContext(context);
             newNode = record.parentNode.insertBefore(newNode, record);
 
             var availableFields = editor.availableSettingsFields;

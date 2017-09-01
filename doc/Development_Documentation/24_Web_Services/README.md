@@ -254,7 +254,7 @@ condense parameter is set to true then only non-existing object ids are returned
     * **offset**: search offset
     * **limit**: result limit
     * **groupBy**: group by key
-    * **objectClass**: the name of the object class (without "Object\"). Note: If the class does not exist the filter criteria will be ignored!
+    * **objectClass**: the name of the object class (without "DataObject\"). Note: If the class does not exist the filter criteria will be ignored!
 
 
 ### Get Asset Count
@@ -282,7 +282,7 @@ condense parameter is set to true then only non-existing object ids are returned
 * **Parameters**:
     * **condition**: where clause
     * **groupBy**: group by key
-    * **objectClass**: the name of the object class (without "Object\"). Note: If the class does not exist the filter criteria will be ignored!
+    * **objectClass**: the name of the object class (without "DataObject\"). Note: If the class does not exist the filter criteria will be ignored!
 
 
 ### Get List of Tags

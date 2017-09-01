@@ -69,7 +69,9 @@ final class NestedNamingStrategy extends AbstractNamingStrategy
         if (count($parentBlockNames) === 0) {
             throw new TagNameException(sprintf(
                 'Failed to build child tag name for %s %s at index %d as no parent name was passed',
-                $type, $name, $index
+                $type,
+                $name,
+                $index
             ));
         }
 

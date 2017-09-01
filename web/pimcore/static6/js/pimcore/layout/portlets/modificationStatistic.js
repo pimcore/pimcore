@@ -135,7 +135,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                     {
                         type:'line',
                         axis:' left',
-                        title: t('objects'),
+                        title: t('data_objects'),
                         xField: 'datetext',
                         yField: 'objects',
                         colors: ['#ff6600'],

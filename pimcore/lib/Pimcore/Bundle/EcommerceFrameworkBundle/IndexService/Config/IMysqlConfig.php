@@ -16,8 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 /**
  * Interface for IndexService Tenant Configurations using mysql as index
- *
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
  */
 interface IMysqlConfig extends IConfig
 {

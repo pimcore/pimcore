@@ -266,9 +266,7 @@ class Placeholder
         $stringReplaced = null;
         if (!empty($placeholderStack)) {
             foreach ($placeholderStack as $placeholder) {
-                $placeholderObject = null;
                 $placeholderClassPrefixes = self::getPlaceholderClassPrefixes();
-
                 $placeholderObject = null;
 
                 foreach ($placeholderClassPrefixes as $classPrefix) {

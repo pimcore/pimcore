@@ -21,7 +21,7 @@ class EcommerceTester extends \Codeception\Actor
 {
     use _generated\EcommerceTesterActions;
 
-   /**
-    * Define custom actions here
-    */
+    /**
+     * Define custom actions here
+     */
 }

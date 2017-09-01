@@ -17,18 +17,18 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 /**
  * Abstract base class for filter definition pimcore objects
  */
-abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
+abstract class AbstractFilterDefinition extends \Pimcore\Model\DataObject\Concrete
 {
     /**
      * @static
      *
      * @param int $id
      *
-     * @return null|\Pimcore\Model\Object\AbstractObject
+     * @return null|\Pimcore\Model\DataObject\AbstractObject
      */
     public static function getById($id)
     {
-        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
+        $object = \Pimcore\Model\DataObject\AbstractObject::getById($id);
 
         if ($object instanceof AbstractFilterDefinition) {
             return $object;
@@ -46,14 +46,14 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
      */
     abstract public function getPageLimit();
 
-   /**
-    * returns list of available fields for sorting ascending
-    *
-    * @abstract
-    *
-    * @return string
-    */
-   abstract public function getOrderByAsc();
+    /**
+     * returns list of available fields for sorting ascending
+     *
+     * @abstract
+     *
+     * @return string
+     */
+    abstract public function getOrderByAsc();
 
     /**
      * returns list of available fields for sorting descending
@@ -64,36 +64,36 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
      */
     abstract public function getOrderByDesc();
 
-   /**
-    * return array of field collections for preconditions
-    *
-    * @abstract
-    *
-    * @return \Pimcore\Model\Object\Fieldcollection
-    */
-   abstract public function getConditions();
+    /**
+     * return array of field collections for preconditions
+     *
+     * @abstract
+     *
+     * @return \Pimcore\Model\DataObject\Fieldcollection
+     */
+    abstract public function getConditions();
 
-   /**
-    * return array of field collections for filters
-    *
-    * @abstract
-    *
-    * @return \Pimcore\Model\Object\Fieldcollection
-    */
-   abstract public function getFilters();
+    /**
+     * return array of field collections for filters
+     *
+     * @abstract
+     *
+     * @return \Pimcore\Model\DataObject\Fieldcollection
+     */
+    abstract public function getFilters();
 
     /**
      * enables inheritance for field collections, if xxxInheritance field is available and set to string 'true'
      *
      * @param string $key
      *
-     * @return mixed|\Pimcore\Model\Object\Fieldcollection
+     * @return mixed|\Pimcore\Model\DataObject\Fieldcollection
      */
     public function preGetValue($key)
     {
         if ($this->getClass()->getAllowInherit()
-            && \Pimcore\Model\Object\AbstractObject::doGetInheritedValues()
-            && $this->getClass()->getFieldDefinition($key) instanceof \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections
+            && \Pimcore\Model\DataObject\AbstractObject::doGetInheritedValues()
+            && $this->getClass()->getFieldDefinition($key) instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections
         ) {
             $checkInheritanceKey = $key . 'Inheritance';
             if ($this->{
@@ -109,14 +109,14 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete
                     return $parentValue;
                 } else {
                     if (!empty($parentValue)) {
-                        $value = new \Pimcore\Model\Object\Fieldcollection($parentValue->getItems());
+                        $value = new \Pimcore\Model\DataObject\Fieldcollection($parentValue->getItems());
                         if (!empty($data)) {
                             foreach ($data as $entry) {
                                 $value->add($entry);
                             }
                         }
                     } else {
-                        $value = new \Pimcore\Model\Object\Fieldcollection($data->getItems());
+                        $value = new \Pimcore\Model\DataObject\Fieldcollection($data->getItems());
                     }
 
                     return $value;

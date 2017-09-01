@@ -14,46 +14,43 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+
 interface IVoucherService
 {
-    /**
-     * Voucherservice get initialized with config settings from Onlineshop Config.
-     *
-     * @param $sysConfig
-     */
-    public function __construct($sysConfig);
-
     /**
      * Gets the correct token manager and calls its checkToken() function.
      *
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return bool
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
+     * @throws VoucherServiceException
      */
-    public function checkToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function checkToken($code, ICart $cart);
 
     /**
      * Gets the correct token manager and calls its reserveToken() function.
      *
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return bool
      */
-    public function reserveToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function reserveToken($code, ICart $cart);
 
     /**
      * Gets the correct token manager and calls its releaseToken() function, which removes a reservations.
      *
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param ICart $cart
      *
      * @return bool
      */
-    public function releaseToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function releaseToken($code, ICart $cart);
 
     /**
      * Gets the correct token manager and calls its applyToken() function, which returns
@@ -61,23 +58,23 @@ interface IVoucherService
      * reservations gets released.
      *
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @param ICart $cart
+     * @param AbstractOrder $order
      *
      * @return bool
      */
-    public function applyToken($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
+    public function applyToken($code, ICart $cart, AbstractOrder $order);
 
     /**
      * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the
      * token usage and the ordered token object if necessary, removes the token object from the order.
      *
-     * @param \Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject
+     * @param AbstractOrder $order
      *
      * @return mixed
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\Object\OnlineShopVoucherToken $tokenObject, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
 
     /**
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is
@@ -93,11 +90,11 @@ interface IVoucherService
      * Removes all tokens from a voucher series and its reservations,
      * not considering any type of filter.
      *
-     * @param \Pimcore\Model\Object\OnlineShopVoucherSeries $series
+     * @param \Pimcore\Model\DataObject\OnlineShopVoucherSeries $series
      *
      * @return bool
      */
-    public function cleanUpVoucherSeries(\Pimcore\Model\Object\OnlineShopVoucherSeries $series);
+    public function cleanUpVoucherSeries(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $series);
 
     /**
      * Removes all statistics, optionally a seriesId can be passed, to only remove from one series.

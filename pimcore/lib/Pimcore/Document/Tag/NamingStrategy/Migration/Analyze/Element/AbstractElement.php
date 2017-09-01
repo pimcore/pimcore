@@ -199,20 +199,23 @@ abstract class AbstractElement
         if (!preg_match_all($pattern, $this->name, $matches, PREG_SET_ORDER)) {
             throw new LogicException(sprintf(
                 'Failed to match "%s" against pattern "%s"',
-                $this->name, $pattern
+                $this->name,
+                $pattern
             ));
         }
 
         if (count($matches) === 0) {
             throw new LogicException(sprintf(
                 'No matches found for name "%s" and pattern "%s"',
-                $this->name, $pattern
+                $this->name,
+                $pattern
             ));
         } elseif (count($matches) > 1) {
             throw new LogicException(sprintf(
                 'Ambiguous amount of %s matches found for name "%s" and pattern "%s"',
                 count($matches),
-                $this->name, $pattern
+                $this->name,
+                $pattern
             ));
         }
 

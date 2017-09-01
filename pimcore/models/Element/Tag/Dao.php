@@ -224,14 +224,18 @@ class Dao extends Model\Dao\AbstractDao
      * @return array
      */
     public function getElementsForTag(
-        Tag $tag, $type, array $subtypes = [], array $classNames = [], $considerChildTags = false
+        Tag $tag,
+        $type,
+        array $subtypes = [],
+        array $classNames = [],
+        $considerChildTags = false
     ) {
         $elements = [];
 
         $map = [
             'document' => ['documents', 'id', 'type', '\Pimcore\Model\Document'],
             'asset'    => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
-            'object'   => ['objects', 'o_id', 'o_type', '\Pimcore\Model\Object\AbstractObject'],
+            'object'   => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
         $select = $this->db->select()
@@ -240,7 +244,8 @@ class Dao extends Model\Dao\AbstractDao
 
         if (true === $considerChildTags) {
             $select->joinInner('tags', 'tags.id = tags_assignment.tagid', ['tags_id' => 'id']);
-            $select->where('(' .
+            $select->where(
+                '(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
                 $this->db->quoteInto('tags.idPath LIKE ?', $tag->getFullIdPath() . '%') . ')'
             );
@@ -249,7 +254,8 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $select->joinInner(
-            ['el' => $map[$type][0]], 'tags_assignment.cId = el.' . $map[$type][1],
+            ['el' => $map[$type][0]],
+            'tags_assignment.cId = el.' . $map[$type][1],
             ['el_id' => $map[$type][1]]
         );
 

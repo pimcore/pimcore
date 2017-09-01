@@ -14,12 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 class DimensionUnitField implements IInterpreter
 {
-    public static function interpret($value, $config = null)
+    use OptionsResolverTrait;
+
+    public function interpret($value, $config = null)
     {
-        if (!empty($value) && $value instanceof \Object_Data_DimensionUnitField) {
-            if ($config->onlyDimensionValue == 'true') {
+        $config = $this->resolveOptions($config ?? []);
+
+        if (!empty($value) && $value instanceof \Pimcore\Model\DataObject\Data\DimensionUnitField) {
+            if ($config['onlyDimensionValue']) {
                 $unit = $value->getUnit();
                 $value = $value->getValue();
 
@@ -34,5 +41,12 @@ class DimensionUnitField implements IInterpreter
         }
 
         return null;
+    }
+
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    {
+        $resolver
+            ->setDefault('onlyDimensionValue', false)
+            ->setAllowedTypes('onlyDimensionValue', 'bool');
     }
 }

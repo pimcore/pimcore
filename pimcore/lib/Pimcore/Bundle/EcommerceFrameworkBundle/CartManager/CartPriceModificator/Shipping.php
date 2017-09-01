@@ -21,8 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Config\Config;
-use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Model\DataObject\OnlineShopTaxClass;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Shipping implements IShipping
 {
@@ -36,16 +36,24 @@ class Shipping implements IShipping
      */
     protected $taxClass;
 
-    /**
-     * @param Config $config
-     */
-    public function __construct(Config $config = null)
+    public function __construct(array $options = [])
     {
-        if ($config && $config->charge) {
-            $this->charge = Decimal::create($config->charge);
-        } else {
-            $this->charge = Decimal::zero();
-        }
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->processOptions($resolver->resolve($options));
+    }
+
+    protected function processOptions(array $options)
+    {
+        $this->charge = Decimal::create($options['charge']);
+    }
+
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'charge' => 0,
+        ]);
     }
 
     /**

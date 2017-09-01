@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,12 +17,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+
 interface IPaymentManager
 {
     /**
-     * @param $name
+     * Get a payment provider by name
+     *
+     * @param string $name
      *
      * @return Payment\IPayment
+     *
+     * @throws ProviderNotFoundException
      */
-    public function getProvider($name);
+    public function getProvider(string $name): IPayment;
 }

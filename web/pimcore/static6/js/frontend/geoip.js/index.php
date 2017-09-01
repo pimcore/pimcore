@@ -23,12 +23,14 @@ if ($_SERVER["HTTP_HOST"] != $referrerHost) {
 
 // this file doesn't boot the pimcore core for performance reasons
 ini_set("display_errors", "Off");
-include_once("../../../../../vendor/autoload.php");
+
+require_once("../../../../../../vendor/autoload.php");
+
 
 
 use GeoIp2\Database\Reader;
 
-$geoDbFile = realpath("../../../../../var/config/GeoLite2-City.mmdb");
+$geoDbFile = realpath("../../../../../../var/config/GeoLite2-City.mmdb");
 $exception = "";
 $record = null;
 

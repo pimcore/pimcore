@@ -120,13 +120,13 @@ class ApplicationLogger implements LoggerInterface
     /**
      * @deprecated
      *
-     * @param \\Pimcore\Model\Object\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
+     * @param \\Pimcore\Model\DataObject\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
      */
     public function setRelatedObject($relatedObject)
     {
         $this->relatedObject = $relatedObject;
 
-        if ($this->relatedObject instanceof \Pimcore\Model\Object\AbstractObject) {
+        if ($this->relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject) {
             $this->relatedObjectType = 'object';
         } elseif ($this->relatedObject instanceof \Pimcore\Model\Asset) {
             $this->relatedObjectType = 'asset';
@@ -173,7 +173,7 @@ class ApplicationLogger implements LoggerInterface
         }
 
         if ($relatedObject) {
-            if ($relatedObject instanceof \Pimcore\Model\Object\AbstractObject or $relatedObject instanceof \Pimcore\Model\Document or $relatedObject instanceof \Pimcore\Model\Asset) {
+            if ($relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject or $relatedObject instanceof \Pimcore\Model\Document or $relatedObject instanceof \Pimcore\Model\Asset) {
                 $relatedObject = $relatedObject->getId();
             }
             if (is_numeric($relatedObject)) {
@@ -371,38 +371,38 @@ class ApplicationLogger implements LoggerInterface
         $this->log($level, $message, $context);
     }
 
-     /**
-      * @param $message
-      * @param $exceptionObject
-      * @param string $priority
-      * @param null $relatedObject
-      * @param null $component
-      */
-     public function logException($message, $exceptionObject, $priority = 'alert', $relatedObject = null, $component = null)
-     {
-         if (is_null($priority)) {
-             $priority = 'alert';
-         }
+    /**
+     * @param $message
+     * @param $exceptionObject
+     * @param string $priority
+     * @param null $relatedObject
+     * @param null $component
+     */
+    public function logException($message, $exceptionObject, $priority = 'alert', $relatedObject = null, $component = null)
+    {
+        if (is_null($priority)) {
+            $priority = 'alert';
+        }
 
-         $message .= ' : '.$exceptionObject->getMessage();
+        $message .= ' : '.$exceptionObject->getMessage();
 
-         //workaround to prevent "nesting level to deep" errors when used var_export()
-         ob_start();
-         var_dump($exceptionObject);
-         $dataDump = ob_get_clean();
+        //workaround to prevent "nesting level to deep" errors when used var_export()
+        ob_start();
+        var_dump($exceptionObject);
+        $dataDump = ob_get_clean();
 
-         if (!$dataDump) {
-             $dataDump = $exceptionObject->getMessage();
-         }
+        if (!$dataDump) {
+            $dataDump = $exceptionObject->getMessage();
+        }
 
-         $fileObject = new \Pimcore\Log\FileObject($dataDump);
+        $fileObject = new \Pimcore\Log\FileObject($dataDump);
 
-         $this->log($priority, $message, [
+        $this->log($priority, $message, [
              'relatedObject' => $relatedObject,
              'fileObject' => $fileObject,
              'component' => $component
          ]);
-     }
+    }
 
     /**
      * @return array

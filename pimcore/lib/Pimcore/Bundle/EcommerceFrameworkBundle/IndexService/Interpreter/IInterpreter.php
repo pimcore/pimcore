@@ -16,5 +16,5 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 interface IInterpreter
 {
-    public static function interpret($value, $config = null);
+    public function interpret($value, $config = null);
 }

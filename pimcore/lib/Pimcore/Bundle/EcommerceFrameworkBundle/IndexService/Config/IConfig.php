@@ -14,13 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
  * Interface for IndexService Tenant Configurations
- *
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig
  */
 interface IConfig
 {
@@ -32,18 +31,18 @@ interface IConfig
     public function getTenantName();
 
     /**
-     * returns attribute configuration for product index
+     * Returns configured attributes for product index
      *
-     * @return array
+     * @return Attribute[]
      */
-    public function getAttributeConfig();
+    public function getAttributes(): array;
 
     /**
-     * return full text search index attribute names for product index
+     * Returns full text search index attribute names for product index
      *
      * @return array
      */
-    public function getSearchAttributeConfig();
+    public function getSearchAttributes(): array;
 
     /**
      * return all supported filter types for product index
@@ -54,6 +53,8 @@ interface IConfig
 
     /**
      * returns if given product is active for this tenant
+     *
+     * @param IIndexable $object
      *
      * @return bool
      */
@@ -98,6 +99,18 @@ interface IConfig
      * @return void
      */
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null);
+
+    /**
+     * Config <-> worker have a 1:1 relation as the config
+     * needs to access its worker in certain cases.
+     *
+     * @param IWorker $tenantWorker
+     *
+     * @throws \LogicException If the config already has a worker set
+     * @throws \LogicException If the config used from the worker does not match the config object the worker is
+     *                         about to be set to
+     */
+    public function setTenantWorker(IWorker $tenantWorker);
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration

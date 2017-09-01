@@ -22,11 +22,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Or
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Controller\FrontendController;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Localizedfield;
-use Pimcore\Model\Object\OnlineShopOrder;
-use Pimcore\Model\Object\OnlineShopOrderItem;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\OnlineShopOrder;
+use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\User;
 use Pimcore\Service\IntlFormatterService;
 use Symfony\Component\HttpFoundation\Request;
@@ -180,7 +180,9 @@ class AdminOrderController extends FrontendController
          */
         $geoPoint = function (array $address) {
             // https://developers.google.com/maps/documentation/geocoding/index?hl=de#JSON
-            $url = sprintf('http://maps.googleapis.com/maps/api/geocode/json?address=%1$s&sensor=false', urlencode(
+            $url = sprintf(
+                'http://maps.googleapis.com/maps/api/geocode/json?address=%1$s&sensor=false',
+                urlencode(
                     $address[0]
                     . ' ' . $address[1]
                     . ' ' . $address[2]
@@ -217,10 +219,10 @@ class AdminOrderController extends FrontendController
             $addOrderCount = function () use ($customer, &$arrCustomerAccount) {
                 $order = new OnlineShopOrder();
                 $field = $order->getClass()->getFieldDefinition('customer');
-                if ($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Href) {
+                if ($field instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Href) {
                     if (count($field->getClasses()) == 1) {
-                        $class = 'Pimcore\Model\Object\\' . reset($field->getClasses())['classes'];
-                        /* @var \Pimcore\Model\Object\Concrete $class */
+                        $class = 'Pimcore\Model\DataObject\\' . reset($field->getClasses())['classes'];
+                        /* @var \Pimcore\Model\DataObject\Concrete $class */
 
                         $orderList = $this->orderManager->createOrderList();
                         $orderList->joinCustomer($class::classId());
@@ -283,7 +285,7 @@ class AdminOrderController extends FrontendController
     {
         // init
         $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
+        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -313,7 +315,7 @@ class AdminOrderController extends FrontendController
     {
         // init
         $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
+        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -341,7 +343,7 @@ class AdminOrderController extends FrontendController
     {
         // init
         $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
-        /* @var \Pimcore\Model\Object\OnlineShopOrderItem $orderItem */
+        /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {

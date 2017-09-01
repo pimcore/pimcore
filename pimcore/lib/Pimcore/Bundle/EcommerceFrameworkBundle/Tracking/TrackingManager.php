@@ -15,142 +15,45 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
-use Pimcore\Config\Config;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 class TrackingManager implements ITrackingManager
 {
-    /** @var  */
-    protected $config;
-
-    /** @var ITracker[] */
+    /**
+     * @var ITracker[]
+     */
     protected $trackers = [];
 
-    /** @var ITrackingItemBuilder[] */
-    protected $trackingItemBuilders = [];
-
     /**
-     * @var EngineInterface
+     * @param ITracker[] $trackers
      */
-    protected $renderer;
-
-    /**
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    public function __construct(Config $config, EngineInterface $renderer)
+    public function __construct(array $trackers = [])
     {
-        $this->renderer = $renderer;
-        $this->processConfig($config);
-    }
-
-    /**
-     * Process config and register configured trackers
-     *
-     * @param Config $config
-     *
-     * @throws InvalidConfigException
-     */
-    protected function processConfig(Config $config)
-    {
-        $container = new \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Config\HelperContainer($config, 'trackingmanager');
-
-        foreach ($container->trackers as $cfg) {
-            $this->processConfigEntry($cfg);
+        foreach ($trackers as $tracker) {
+            $this->registerTracker($tracker);
         }
-    }
-
-    /**
-     * Used by processConfig to handle single config entry
-     *
-     * @param Config $cfg
-     *
-     * @throws InvalidConfigException
-     */
-    protected function processConfigEntry(Config $cfg)
-    {
-        $className = $cfg->class;
-        if (!class_exists($className)) {
-            throw new InvalidConfigException(sprintf('Tracker class %s not found.', $className));
-        }
-
-        $itemBuilder = $this->getItemBuilder($cfg->trackingItemBuilder);
-        $tracker     = new $className($itemBuilder, $this->renderer);
-
-        if ($tracker instanceof ITracker) {
-            $this->registerTracker($cfg->name, $tracker);
-        } else {
-            throw new InvalidConfigException(sprintf('Tracker class %s not an insance of ITracker.', $className));
-        }
-    }
-
-    /**
-     * Get an item builder instance, fall back to default implementation
-     *
-     * @param null $className
-     *
-     * @return ITrackingItemBuilder
-     *
-     * @throws InvalidConfigException
-     */
-    protected function getItemBuilder($className = null)
-    {
-        $itemBuilder = null;
-        if (null !== $className) {
-            if (!class_exists($className)) {
-                throw new InvalidConfigException(sprintf('Tracking item builder class %s not found.', $className));
-            }
-
-            $itemBuilder = new $className();
-        } else {
-            // fall back to default implementation
-            $itemBuilder = new TrackingItemBuilder();
-        }
-
-        return $itemBuilder;
     }
 
     /**
      * Register a tracker
      *
      * @param ITracker $tracker
-     *
-     * @return $this
      */
-    public function registerTracker($name, ITracker $tracker)
+    public function registerTracker(ITracker $tracker)
     {
-        if (!isset($this->trackers[$name])) {
-            $this->trackers[$name] = $tracker;
-        }
-
-        return $this;
+        $this->trackers[] = $tracker;
     }
 
     /**
      * Get all registered trackers
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker[]
+     * @return ITracker[]
      */
-    public function getTrackers()
+    public function getTrackers(): array
     {
         return $this->trackers;
-    }
-
-    /**
-     * Ensure the dependency for enhanced e-commerce tracking "ec.js"
-     * is included.
-     */
-    public function ensureDependencies()
-    {
-        foreach ($this->trackers as $tracker) {
-            $tracker->includeDependencies();
-        }
-
-        return $this;
     }
 
     /**
@@ -162,7 +65,6 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductImpression(IProduct $product)
     {
-        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductImpression) {
                 $tracker->trackProductImpression($product);
@@ -174,11 +76,11 @@ class TrackingManager implements ITrackingManager
      * Track product view
      *
      * @param IProduct $product
+     *
      * @implements IProductView
      */
     public function trackProductView(IProduct $product)
     {
-        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductView) {
                 $tracker->trackProductView($product);
@@ -192,11 +94,10 @@ class TrackingManager implements ITrackingManager
      * @implements IProductImpression
      *
      * @param IProduct $product
-     * @param int $quantity
+     * @param int|float $quantity
      */
     public function trackProductActionAdd(IProduct $product, $quantity = 1)
     {
-        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductActionAdd) {
                 $tracker->trackProductActionAdd($product, $quantity);
@@ -210,11 +111,10 @@ class TrackingManager implements ITrackingManager
      * @implements IProductImpression
      *
      * @param IProduct $product
-     * @param int $quantity
+     * @param int|float $quantity
      */
     public function trackProductActionRemove(IProduct $product, $quantity = 1)
     {
-        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductActionRemove) {
                 $tracker->trackProductActionRemove($product, $quantity);
@@ -231,7 +131,6 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckout(ICart $cart)
     {
-        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof ICheckout) {
                 $tracker->trackCheckout($cart);
@@ -248,17 +147,17 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
-        if (!$order->getProperty('os_tracked')) {
+        if ($order->getProperty('os_tracked')) {
+            return;
+        }
 
-            //add property to order object in order to prevent multiple checkout complete tracking
-            $order->setProperty('os_tracked', 'bool', true);
-            $order->save();
+        // add property to order object in order to prevent multiple checkout complete tracking
+        $order->setProperty('os_tracked', 'bool', true);
+        $order->save();
 
-            $this->ensureDependencies();
-            foreach ($this->trackers as $tracker) {
-                if ($tracker instanceof ICheckoutComplete) {
-                    $tracker->trackCheckoutComplete($order);
-                }
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICheckoutComplete) {
+                $tracker->trackCheckoutComplete($order);
             }
         }
     }
@@ -268,16 +167,15 @@ class TrackingManager implements ITrackingManager
      *
      * @implements ICheckoutStep
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep\ICheckoutStep $step
+     * @param CheckoutManagerICheckoutStep $step
      * @param ICart $cart
      * @param null $stepNumber
      * @param null $checkoutOption
      */
-    public function trackCheckoutStep(\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
-        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
-            if ($tracker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutStep) {
+            if ($tracker instanceof ICheckoutStep) {
                 $tracker->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption);
             }
         }

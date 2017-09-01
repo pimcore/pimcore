@@ -17,8 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
 interface IAvailability
 {
     /**
-     * @abstract
-     *
      * @return bool
      */
     public function getAvailable();

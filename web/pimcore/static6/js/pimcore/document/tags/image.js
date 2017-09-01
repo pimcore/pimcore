@@ -437,10 +437,24 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     openHotspotWindow: function() {
-        var editor = pimcore.helpers.openImageHotspotMarkerEditor(this.datax.id, this.datax, function (data) {
-            this.datax["hotspots"] = data["hotspots"];
-            this.datax["marker"] = data["marker"];
-        }.bind(this));
+        var editor = pimcore.helpers.openImageHotspotMarkerEditor(
+            this.datax.id,
+            this.datax,
+            function (data) {
+                this.datax["hotspots"] = data["hotspots"];
+                this.datax["marker"] = data["marker"];
+            }.bind(this),
+            {
+                crop: {
+                    cropWidth: this.datax.cropWidth,
+                    cropHeight: this.datax.cropHeight,
+                    cropTop: this.datax.cropTop,
+                    cropLeft: this.datax.cropLeft,
+                    cropPercent: this.datax.cropPercent
+                }
+            }
+
+        );
         editor.open(false);
     },
 

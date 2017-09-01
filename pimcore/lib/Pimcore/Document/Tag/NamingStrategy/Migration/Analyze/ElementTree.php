@@ -255,7 +255,8 @@ final class ElementTree
         }
 
         $exception = BuildEditableException::create(
-            $name, $this->map[$name],
+            $name,
+            $this->map[$name],
             sprintf(
                 'Failed to resolve editable hierarchy for element "%s". Element can\'t be migrated.',
                 $name
@@ -323,7 +324,8 @@ final class ElementTree
                     $changed = true;
                 } catch (LogicException $e) {
                     throw BuildEditableException::create(
-                        $blockName, $this->map[$blockName],
+                        $blockName,
+                        $this->map[$blockName],
                         sprintf(
                             'Failed to build block "%s" with parent "%s"',
                             $blockName,
@@ -348,7 +350,8 @@ final class ElementTree
             // check if all parent candidates could be resolved
             if (count($candidateBlocks) !== count($parentCandidates[$blockName])) {
                 throw BuildEditableException::create(
-                    $blockName, $this->map[$blockName],
+                    $blockName,
+                    $this->map[$blockName],
                     sprintf(
                         'Failed to resolve %d parent candidates for block "%s"',
                         count($parentCandidates[$blockName]),
@@ -378,7 +381,8 @@ final class ElementTree
             } elseif (count($resolvedBlocks) > 1) {
                 // resolve multiple available blocks
                 $exception = BuildEditableException::create(
-                    $blockName, $this->map[$blockName],
+                    $blockName,
+                    $this->map[$blockName],
                     sprintf(
                         'Failed to resolve block hierarchy for block "%s". Block can\'t be migrated.',
                         $blockName

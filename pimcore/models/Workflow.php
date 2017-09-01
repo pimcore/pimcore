@@ -539,7 +539,7 @@ class Workflow extends AbstractModel
                 $newField = $field;
 
                 if ($field['fieldType'] === 'user') {
-                    $def = new \Pimcore\Model\Object\ClassDefinition\Data\User();
+                    $def = new \Pimcore\Model\DataObject\ClassDefinition\Data\User();
                     $def->configureOptions();
                     $newField['options'] = $def->getOptions();
                 }

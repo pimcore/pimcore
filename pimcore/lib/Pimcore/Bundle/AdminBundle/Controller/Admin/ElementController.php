@@ -19,9 +19,9 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -106,9 +106,9 @@ class ElementController extends AdminController
         if ($el) {
             if ($el instanceof Asset || $el instanceof Document) {
                 $subtype = $el->getType();
-            } elseif ($el instanceof Object\Concrete) {
+            } elseif ($el instanceof DataObject\Concrete) {
                 $subtype = $el->getClassName();
-            } elseif ($el instanceof Object\Folder) {
+            } elseif ($el instanceof DataObject\Folder) {
                 $subtype = 'folder';
             }
 
@@ -401,8 +401,8 @@ class ElementController extends AdminController
 
             if ($element instanceof Document) {
                 $element = Document\Service::rewriteIds($element, $rewriteConfig);
-            } elseif ($element instanceof Object\AbstractObject) {
-                $element = Object\Service::rewriteIds($element, $rewriteConfig);
+            } elseif ($element instanceof DataObject\AbstractObject) {
+                $element = DataObject\Service::rewriteIds($element, $rewriteConfig);
             } elseif ($element instanceof Asset) {
                 $element = Asset\Service::rewriteIds($element, $rewriteConfig);
             }
@@ -462,7 +462,7 @@ class ElementController extends AdminController
             $element = Document::getById($id);
             $data['index'] = $element->getIndex();
         } else {
-            $element = Object::getById($id);
+            $element = DataObject::getById($id);
         }
         $typePath = Element\Service::getTypePath($element);
 
@@ -512,7 +512,7 @@ class ElementController extends AdminController
         $result = [];
 
         $id = $source['id'];
-        $source = Object\Concrete::getById($id);
+        $source = DataObject\Concrete::getById($id);
 
         if ($request->get('context')) {
             $context = $this->decodeJson($request->get('context'));
@@ -528,11 +528,11 @@ class ElementController extends AdminController
         } elseif ($ownerType == 'localizedfield') {
             $fd = $source->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
         } elseif ($ownerType == 'objectbrick') {
-            $fdBrick = Object\Objectbrick\Definition::getByKey($context['containerKey']);
+            $fdBrick = DataObject\Objectbrick\Definition::getByKey($context['containerKey']);
             $fd = $fdBrick->getFieldDefinition($fieldname);
         } elseif ($ownerType == 'fieldcollection') {
             $containerKey = $context['containerKey'];
-            $fdCollection = Object\Fieldcollection\Definition::getByKey($containerKey);
+            $fdCollection = DataObject\Fieldcollection\Definition::getByKey($containerKey);
             if ($context['subContainerType'] == 'localizedfield') {
                 $fdLocalizedFields = $fdCollection->getFieldDefinition('localizedfields');
                 $fd = $fdLocalizedFields->getFieldDefinition($fieldname);
@@ -546,11 +546,16 @@ class ElementController extends AdminController
             if (Tool::classExists($formatterClass)) {
                 $targets = $this->decodeJson($request->get('targets'));
 
-                $result = call_user_func($formatterClass . '::formatPath', $result, $source, $targets,
+                $result = call_user_func(
+                    $formatterClass . '::formatPath',
+                    $result,
+                    $source,
+                    $targets,
                     [
                         'fd' => $fd,
                         'context' => $context
-                    ]);
+                    ]
+                );
             } else {
                 Logger::error('Formatter Class does not exist: ' . $formatterClass);
             }

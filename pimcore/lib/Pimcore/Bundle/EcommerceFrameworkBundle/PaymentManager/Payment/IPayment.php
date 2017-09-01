@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Config\Config;
 
 /**
  * Interface for checkout payment provider
@@ -24,20 +23,15 @@ use Pimcore\Config\Config;
 interface IPayment
 {
     /**
-     * @param Config $config
-     */
-    public function __construct(Config $config);
-
-    /**
      * @return string
      */
     public function getName();
 
     /**
-     * start payment
+     * Start payment
      *
      * @param IPrice $price
-     * @param array                       $config
+     * @param array $config
      *
      * @return mixed - either an url for a link the user has to follow to (e.g. paypal) or
      *                 an symfony form builder which needs to submitted (e.g. datatrans and wirecard)
@@ -54,35 +48,35 @@ interface IPayment
     public function handleResponse($response);
 
     /**
-     * return the authorized data from payment provider
+     * Returns the authorized data from payment provider
      *
      * @return array
      */
     public function getAuthorizedData();
 
     /**
-     * set authorized data from payment provider
+     * Set authorized data from payment provider
      *
      * @param array $authorizedData
      */
     public function setAuthorizedData(array $authorizedData);
 
     /**
-     * execute payment
+     * Executes payment
      *
      * @param IPrice $price
-     * @param string                      $reference
+     * @param string $reference
      *
      * @return IStatus
      */
     public function executeDebit(IPrice $price = null, $reference = null);
 
     /**
-     * execute credit
+     * Executes credit
      *
      * @param IPrice $price
-     * @param string                      $reference
-     * @param                             $transactionId
+     * @param string $reference
+     * @param $transactionId
      *
      * @return IStatus
      */

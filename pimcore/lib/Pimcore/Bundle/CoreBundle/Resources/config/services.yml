@@ -34,8 +34,11 @@ services:
     # dedicated router for static routes
     pimcore.routing.router.staticroute:
         class: Pimcore\Routing\Staticroute\Router
-        arguments: ['@router.request_context', '@pimcore.controller.config.config_normalizer']
+        arguments:
+            - '@router.request_context'
+            - '@pimcore.controller.config.config_normalizer'
         calls:
+            - [setLocaleParams, ['%pimcore.routing.static.locale_params%']]
             - [setLogger, ['@logger']]
         tags:
             - { name: router, priority: 100 }
@@ -77,7 +80,6 @@ services:
     # DI tag. See the SessionConfiguratorPass for details.
     pimcore.session.configurator:
         class: Pimcore\Session\SessionConfigurator
-
 
     #
     # SECURITY
@@ -140,6 +142,9 @@ services:
     #
     # INFRASTRUCTURE
     #
+
+    # support autowiring on pimcore connection class by creating an alias
+    Pimcore\Db\Connection: '@database_connection'
 
     pimcore.maintenance.schedule_manager:
         class: Pimcore\Model\Schedule\Manager\Procedural
@@ -249,6 +254,11 @@ services:
         tags:
             - { name: controller.argument_value_resolver }
 
+    Pimcore\Controller\ArgumentValueResolver\WebsiteConfigValueResolver:
+        public: false
+        tags:
+            - { name: controller.argument_value_resolver }
+
     #
     # EXTENSIONS
     #
@@ -267,6 +277,7 @@ services:
     pimcore.extension.bundle_locator:
         class: Pimcore\Extension\Bundle\PimcoreBundleLocator
         arguments:
+            - '@pimcore.composer.package_info'
             - '%pimcore.extensions.bundles.search_paths%'
             - '%pimcore.extensions.bundles.handle_composer%'
 
@@ -340,7 +351,7 @@ services:
             - '@request_stack'
             - '@pimcore.service.request.editmode_resolver'
             - '@pimcore_admin.security.user_loader'
-            - '@pimcore_admin.session.configurator.admin_session_bags'
+            - '@Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator'
             - '@pimcore.routing.dynamic.document_route_handler'
 
     #
@@ -355,11 +366,11 @@ services:
 
     # object data loader
     pimcore.implementation_loader.object.data:
-        class: Pimcore\Model\Object\ClassDefinition\Loader\DataLoader
+        class: Pimcore\Model\DataObject\ClassDefinition\Loader\DataLoader
 
     # object layout loader
     pimcore.implementation_loader.object.layout:
-        class: Pimcore\Model\Object\ClassDefinition\Loader\LayoutLoader
+        class: Pimcore\Model\DataObject\ClassDefinition\Loader\LayoutLoader
 
     # model factory
     pimcore.model.factory:
@@ -375,6 +386,9 @@ services:
     #
     # PIMCORE SERVICES
     #
+
+    pimcore.composer.package_info:
+        class: Pimcore\Composer\PackageInfo
 
     pimcore.bundle_config_locator:
         class: Pimcore\Config\BundleConfigLocator

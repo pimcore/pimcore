@@ -14,17 +14,44 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Db\Connection;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlSubTenantConfig
- *
  * Sample implementation for sub-tenants based on mysql.
+ *
+ * NOTE: this works only with a single-column primary key
  */
 class DefaultMysqlSubTenantConfig extends DefaultMysql
 {
-    // NOTE: this works only with a single-column primary key
+    /**
+     * @var IEnvironment
+     */
+    protected $environment;
+
+    /**
+     * @var Connection
+     */
+    protected $db;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(
+        string $tenantName,
+        array $attributes,
+        array $searchAttributes,
+        array $filterTypes,
+        array $options = [],
+        IEnvironment $environment,
+        Connection $db
+    ) {
+        $this->environment = $environment;
+        $this->db = $db;
+
+        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $options);
+    }
 
     /**
      * returns table name of product index
@@ -80,7 +107,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      */
     public function getJoins()
     {
-        $currentSubTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
+        $currentSubTenant = $this->environment->getCurrentAssortmentSubTenant();
         if ($currentSubTenant) {
             return ' INNER JOIN ' . $this->getTenantRelationTablename() . ' b ON a.o_id = b.o_id ';
         } else {
@@ -97,7 +124,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      */
     public function getCondition()
     {
-        $currentSubTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentSubTenant();
+        $currentSubTenant = $this->environment->getCurrentAssortmentSubTenant();
         if ($currentSubTenant) {
             return 'b.subtenant_id = ' . $currentSubTenant;
         } else {
@@ -142,13 +169,12 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      */
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
     {
-        $db = \Pimcore\Db::get();
-        $db->deleteWhere($this->getTenantRelationTablename(), 'o_id = ' . $db->quote($subObjectId ? $subObjectId : $objectId));
+        $this->db->deleteWhere($this->getTenantRelationTablename(), 'o_id = ' . $this->db->quote($subObjectId ? $subObjectId : $objectId));
 
         if ($subTenantData) {
             //implementation specific tenant get logic
             foreach ($subTenantData as $data) {
-                $db->insert($this->getTenantRelationTablename(), $data);
+                $this->db->insert($this->getTenantRelationTablename(), $data);
             }
         }
     }

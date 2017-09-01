@@ -156,3 +156,6 @@ services:
       tags:
           - { name: templating.helper, alias: navigation }
 
+    Pimcore\Templating\Helper\WebsiteConfig:
+        tags:
+            - { name: templating.helper, alias: websiteConfig }

@@ -15,27 +15,27 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Service\Locale;
 use Pimcore\Tool;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Environment implements IEnvironment
 {
-    const SESSION_KEY_CUSTOM_ITEMS = 'customitems';
-    const SESSION_KEY_USERID = 'userid';
-    const SESSION_KEY_USE_GUEST_CART = 'useguestcart';
-    const SESSION_KEY_ASSORTMENT_TENANT = 'currentassortmenttenant';
-    const SESSION_KEY_ASSORTMENT_SUB_TENANT = 'currentassortmentsubtenant';
-    const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
     const USER_ID_NOT_SET = -1;
 
     /**
-     * @var AttributeBagInterface
+     * @var Locale
      */
-    protected $session;
+    protected $localeService;
 
+    /**
+     * @var Currency
+     */
+    protected $defaultCurrency;
+
+    /**
+     * @var array
+     */
     protected $customItems = [];
 
     /**
@@ -48,98 +48,83 @@ class Environment implements IEnvironment
      */
     protected $useGuestCart = false;
 
-    protected $currentAssortmentTenant = null;
-    protected $currentAssortmentSubTenant = null;
-    protected $currentCheckoutTenant = null;
-
     /**
-     * @var Currency
+     * @var string
      */
-    protected $defaultCurrency = null;
+    protected $currentAssortmentTenant;
 
     /**
-     * locale set on container
+     * @var string
+     */
+    protected $currentAssortmentSubTenant;
+
+    /**
+     * @var string
+     */
+    protected $currentCheckoutTenant;
+
+    /**
+     * Current transient checkout tenant
      *
-     * @var Locale
-     */
-    protected $localeService = null;
-
-    /**
-     * @var SessionInterface
-     */
-    protected $containerSession = null;
-
-    /**
-     * current transient checkout tenant
-     * this value will not be stored into the session and is only valid for current process
+     * This value will not be stored into the session and is only valid for current process
      * set with setCurrentCheckoutTenant('tenant', false');
      *
      * @var string
      */
-    protected $currentTransientCheckoutTenant = null;
+    protected $currentTransientCheckoutTenant;
 
-    public function __construct($config, SessionInterface $containerSession, Locale $localeService)
+    public function __construct(Locale $localeService, array $options = [])
     {
         $this->localeService = $localeService;
-        $this->containerSession = $containerSession;
 
-        $this->loadFromSession();
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
 
-        $this->defaultCurrency = new Currency((string)$config->defaultCurrency);
+        $this->processOptions($resolver->resolve($options));
     }
 
-    protected function loadFromSession()
+    protected function processOptions(array $options)
     {
-        if (php_sapi_name() != 'cli') {
-            $this->session = $this->buildSession();
+        $this->defaultCurrency = new Currency((string)$options['defaultCurrency']);
+    }
 
-            $this->customItems = $this->session->get(self::SESSION_KEY_CUSTOM_ITEMS);
-            if ($this->customItems == null) {
-                $this->customItems=[];
-            }
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired(['defaultCurrency']);
+        $resolver->setAllowedTypes('defaultCurrency', 'string');
+        $resolver->setDefaults(['defaultCurrency' => 'EUR']);
+    }
 
-            $this->userId = $this->session->get(self::SESSION_KEY_USERID);
-
-            $this->currentAssortmentTenant = $this->session->get(self::SESSION_KEY_ASSORTMENT_TENANT);
-
-            $this->currentAssortmentSubTenant = $this->session->get(self::SESSION_KEY_ASSORTMENT_SUB_TENANT);
-
-            $this->currentCheckoutTenant = $this->session->get(self::SESSION_KEY_CHECKOUT_TENANT);
-            $this->currentTransientCheckoutTenant = $this->session->get(self::SESSION_KEY_CHECKOUT_TENANT);
-
-            $this->useGuestCart = $this->session->get(self::SESSION_KEY_USE_GUEST_CART);
-        }
+    protected function load()
+    {
     }
 
     public function save()
     {
-        if (php_sapi_name() != 'cli') {
-            $this->session->set(self::SESSION_KEY_CUSTOM_ITEMS, $this->customItems);
-
-            $this->session->set(self::SESSION_KEY_USERID, $this->userId);
-
-            $this->session->set(self::SESSION_KEY_ASSORTMENT_TENANT, $this->currentAssortmentTenant);
-
-            $this->session->set(self::SESSION_KEY_ASSORTMENT_SUB_TENANT, $this->currentAssortmentSubTenant);
-
-            $this->session->set(self::SESSION_KEY_CHECKOUT_TENANT, $this->currentCheckoutTenant);
-
-            $this->session->set(self::SESSION_KEY_USE_GUEST_CART, $this->useGuestCart);
-        }
     }
 
     public function getAllCustomItems()
     {
+        $this->load();
+
         return $this->customItems;
     }
 
-    public function getCustomItem($key)
+    public function getCustomItem($key, $defaultValue = null)
     {
-        return $this->customItems[$key];
+        $this->load();
+
+        if (isset($this->customItems[$key])) {
+            return $this->customItems[$key];
+        }
+
+        return $defaultValue;
     }
 
     public function setCustomItem($key, $value)
     {
+        $this->load();
+
         $this->customItems[$key] = $value;
     }
 
@@ -148,6 +133,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentUserId()
     {
+        $this->load();
+
         return $this->userId;
     }
 
@@ -158,6 +145,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentUserId($userId)
     {
+        $this->load();
+
         $this->userId = (int)$userId;
 
         return $this;
@@ -168,39 +157,28 @@ class Environment implements IEnvironment
      */
     public function hasCurrentUserId()
     {
+        $this->load();
+
         return $this->getCurrentUserId() !== self::USER_ID_NOT_SET;
     }
 
     public function removeCustomItem($key)
     {
+        $this->load();
+
         unset($this->customItems[$key]);
     }
 
     public function clearEnvironment()
     {
-        $key = self::SESSION_KEY_CUSTOM_ITEMS;
-        $this->session->remove($key);
+        $this->load();
+
         $this->customItems = null;
-
-        $key = self::SESSION_KEY_USERID;
-        $this->session->remove($key);
         $this->userId = null;
-
-        $key = self::SESSION_KEY_ASSORTMENT_TENANT;
-        $this->session->remove($key);
         $this->currentAssortmentTenant = null;
-
-        $key = self::SESSION_KEY_ASSORTMENT_SUB_TENANT;
-        $this->session->remove($key);
         $this->currentAssortmentSubTenant = null;
-
-        $key = self::SESSION_KEY_CHECKOUT_TENANT;
-        $this->session->remove($key);
         $this->currentCheckoutTenant = null;
         $this->currentTransientCheckoutTenant = null;
-
-        $key = self::SESSION_KEY_USE_GUEST_CART;
-        $this->session->remove($key);
         $this->useGuestCart = false;
     }
 
@@ -215,6 +193,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentTenant($currentTenant)
     {
+        $this->load();
+
         $this->setCurrentAssortmentTenant($currentTenant);
     }
 
@@ -227,6 +207,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentTenant()
     {
+        $this->load();
+
         return $this->getCurrentAssortmentTenant();
     }
 
@@ -241,6 +223,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentSubTenant($currentSubTenant)
     {
+        $this->load();
+
         $this->setCurrentAssortmentSubTenant($currentSubTenant);
     }
 
@@ -253,6 +237,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentSubTenant()
     {
+        $this->load();
+
         return $this->getCurrentAssortmentSubTenant();
     }
 
@@ -269,6 +255,8 @@ class Environment implements IEnvironment
      */
     public function getUseGuestCart()
     {
+        $this->load();
+
         return $this->useGuestCart;
     }
 
@@ -277,6 +265,8 @@ class Environment implements IEnvironment
      */
     public function setUseGuestCart($useGuestCart)
     {
+        $this->load();
+
         $this->useGuestCart = (bool)$useGuestCart;
     }
 
@@ -284,11 +274,11 @@ class Environment implements IEnvironment
      * sets current assortment tenant which is used for indexing and product lists
      *
      * @param $tenant string
-     *
-     * @return mixed
      */
     public function setCurrentAssortmentTenant($tenant)
     {
+        $this->load();
+
         $this->currentAssortmentTenant = $tenant;
     }
 
@@ -299,6 +289,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentAssortmentTenant()
     {
+        $this->load();
+
         return $this->currentAssortmentTenant;
     }
 
@@ -311,6 +303,8 @@ class Environment implements IEnvironment
      */
     public function setCurrentAssortmentSubTenant($subTenant)
     {
+        $this->load();
+
         $this->currentAssortmentSubTenant = $subTenant;
     }
 
@@ -321,6 +315,8 @@ class Environment implements IEnvironment
      */
     public function getCurrentAssortmentSubTenant()
     {
+        $this->load();
+
         return $this->currentAssortmentSubTenant;
     }
 
@@ -334,13 +330,13 @@ class Environment implements IEnvironment
      */
     public function setCurrentCheckoutTenant($tenant, $persistent = true)
     {
+        $this->load();
+
         if ($this->currentCheckoutTenant != $tenant) {
             if ($persistent) {
                 $this->currentCheckoutTenant = $tenant;
             }
             $this->currentTransientCheckoutTenant = $tenant;
-
-            Factory::resetInstance();
         }
     }
 
@@ -351,15 +347,9 @@ class Environment implements IEnvironment
      */
     public function getCurrentCheckoutTenant()
     {
-        return $this->currentTransientCheckoutTenant;
-    }
+        $this->load();
 
-    /**
-     * @return AttributeBagInterface
-     */
-    protected function buildSession()
-    {
-        return $this->containerSession->getBag(SessionConfigurator::ATTRIBUTE_BAG_ENVIRONMENT);
+        return $this->currentTransientCheckoutTenant;
     }
 
     /**
@@ -369,16 +359,11 @@ class Environment implements IEnvironment
      */
     public function getSystemLocale()
     {
-        // try to get the language from the service container
-        try {
-            $locale = $this->localeService->findLocale();
-
-            if (Tool::isValidLanguage($locale)) {
-                return (string) $locale;
-            }
-            throw new \Exception('Not supported language');
-        } catch (\Exception $e) {
-            return Tool::getDefaultLanguage();
+        $locale = $this->localeService->findLocale();
+        if (Tool::isValidLanguage($locale)) {
+            return (string)$locale;
         }
+
+        return Tool::getDefaultLanguage();
     }
 }

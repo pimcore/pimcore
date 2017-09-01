@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,49 +17,34 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
-use Pimcore\Config\Config;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 
-/**
- * Class PaymentManager
- */
 class PaymentManager implements IPaymentManager
 {
     /**
-     * @var Config
+     * @var PsrContainerInterface
      */
-    protected $config;
+    private $providers;
 
-    /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment[]
-     */
-    protected $instance = [];
-
-    /**
-     * @param Config $config
-     */
-    public function __construct(Config $config)
+    public function __construct(PsrContainerInterface $providers)
     {
-        $this->config = $config;
+        $this->providers = $providers;
     }
 
     /**
-     * @param $name
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment
+     * @inheritdoc
      */
-    public function getProvider($name)
+    public function getProvider(string $name): IPayment
     {
-        $arrProvider = $this->config->provider->class ? [$this->config->provider] : $this->config->provider;
-
-        foreach ($arrProvider as $provider) {
-            if ($provider->name == $name) {
-                if (!array_key_exists($name, $this->instance)) {
-                    $class = $provider->class;
-                    $this->instance[$name] = new $class($provider);
-                }
-
-                return $this->instance[$name];
-            }
+        if (!$this->providers->has($name)) {
+            throw new ProviderNotFoundException(sprintf(
+                'The payment provider "%s" is not registered',
+                $name
+            ));
         }
+
+        return $this->providers->get($name);
     }
 }

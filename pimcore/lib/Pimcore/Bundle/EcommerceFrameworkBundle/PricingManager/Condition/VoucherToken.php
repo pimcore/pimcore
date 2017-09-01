@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token as VoucherServiceToken;
+use Pimcore\Model\DataObject\Concrete;
 
 class VoucherToken implements ICondition
 {
@@ -54,7 +54,7 @@ class VoucherToken implements ICondition
 
     public function checkVoucherCode($code)
     {
-        if (in_array(Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
+        if (in_array(VoucherServiceToken::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
             return true;
         }
 

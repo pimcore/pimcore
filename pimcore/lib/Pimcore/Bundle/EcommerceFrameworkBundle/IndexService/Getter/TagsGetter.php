@@ -14,14 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\Tag;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TagsGetter implements IGetter
 {
-    public static function get($element, $config = null)
+    use OptionsResolverTrait;
+
+    public function get($element, $config = null)
     {
+        $config = $this->resolveOptions($config ?? []);
+
         $type = 'object';
         if ($element instanceof Asset) {
             $type = 'asset';
@@ -31,7 +37,7 @@ class TagsGetter implements IGetter
 
         $tags = Tag::getTagsForElement($type, $element->getId());
 
-        if (!$config || !$config->includeParentTags) {
+        if (!$config['includeParentTags']) {
             return $tags;
         }
 
@@ -47,5 +53,14 @@ class TagsGetter implements IGetter
         }
 
         return $result;
+    }
+
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'includeParentTags' => false
+        ]);
+
+        $resolver->setAllowedTypes('includeParentTags', 'bool');
     }
 }

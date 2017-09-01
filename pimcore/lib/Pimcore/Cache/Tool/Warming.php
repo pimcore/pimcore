@@ -17,10 +17,10 @@ namespace Pimcore\Cache\Tool;
 use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Listing\AbstractListing;
-use Pimcore\Model\Object;
 
 class Warming
 {
@@ -68,7 +68,7 @@ class Warming
             $classesCondition .= " AND o_className IN ('" . implode("','", $classes) . "')";
         }
 
-        $list = new Object\Listing();
+        $list = new DataObject\Listing();
         $list->setCondition("o_type IN ('" . implode("','", $types) . "')" . $classesCondition);
 
         self::loadToCache($list);

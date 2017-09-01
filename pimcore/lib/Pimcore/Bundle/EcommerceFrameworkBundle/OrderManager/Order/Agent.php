@@ -15,22 +15,24 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
 use Exception;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
-
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
-
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
+use Pimcore\Model\DataObject\Objectbrick\Data as ObjectbrickData;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Fieldcollection;
-use Pimcore\Model\Object\Fieldcollection\Data\PaymentInfo;
-use Pimcore\Model\Object\Objectbrick\Data as ObjectbrickData;
 
 class Agent implements IOrderAgent
 {
@@ -40,28 +42,33 @@ class Agent implements IOrderAgent
     protected $order;
 
     /**
+     * @var IEnvironment
+     */
+    protected $environment;
+
+    /**
+     * @var IPaymentManager
+     */
+    protected $paymentManager;
+
+    /**
      * @var IPayment
      */
     protected $paymentProvider;
-
-    /**
-     * @var Factory
-     */
-    protected $factory;
 
     /**
      * @var Note[]
      */
     protected $fullChangeLog;
 
-    /**
-     * @param Factory $factory
-     * @param Order                        $order
-     */
-    public function __construct(Factory $factory, Order $order)
-    {
-        $this->order = $order;
-        $this->factory = $factory;
+    public function __construct(
+        Order $order,
+        IEnvironment $environment,
+        IPaymentManager $paymentManager
+    ) {
+        $this->order          = $order;
+        $this->environment    = $environment;
+        $this->paymentManager = $paymentManager;
     }
 
     /**
@@ -77,7 +84,7 @@ class Agent implements IOrderAgent
      *
      * @param OrderItem $item
      *
-     * @return $this
+     * @return Note
      *
      * @throws \Exception
      */
@@ -91,23 +98,23 @@ class Agent implements IOrderAgent
         $item->setOrderState(Order::ORDER_STATE_CANCELLED);
 
         // cancel complete order if all items are canceled
-//        $cancel = true;
-//        foreach($this->getOrder()->getItems() as $i)
-//        {
-//            /* @var OrderItem $i */
-//            if($i->getOrderState() != Order::ORDER_STATE_CANCELLED)
-//            {
-//                $cancel = false;
-//                break;
-//            }
-//        }
-//
-//
-//        // cancel complete order
-//        if($cancel)
-//        {
-//            $this->getOrder()->setOrderState( Order::ORDER_STATE_CANCELLED )->save();
-//        }
+        //        $cancel = true;
+        //        foreach($this->getOrder()->getItems() as $i)
+        //        {
+        //            /* @var OrderItem $i */
+        //            if($i->getOrderState() != Order::ORDER_STATE_CANCELLED)
+        //            {
+        //                $cancel = false;
+        //                break;
+        //            }
+        //        }
+        //
+        //
+        //        // cancel complete order
+        //        if($cancel)
+        //        {
+        //            $this->getOrder()->setOrderState( Order::ORDER_STATE_CANCELLED )->save();
+        //        }
 
         // commit changes
         $item->save();
@@ -122,7 +129,7 @@ class Agent implements IOrderAgent
      * @param OrderItem $item
      * @param float $amount
      *
-     * @return $this
+     * @return Note
      */
     public function itemChangeAmount(OrderItem $item, $amount)
     {
@@ -230,7 +237,7 @@ class Agent implements IOrderAgent
      */
     public function getCurrency()
     {
-        return $this->factory->getEnvironment()->getDefaultCurrency();
+        return $this->environment->getDefaultCurrency();
     }
 
     /**
@@ -246,7 +253,7 @@ class Agent implements IOrderAgent
             foreach ($order->getPaymentProvider()->getBrickGetters() as $method) {
                 $providerData = $order->getPaymentProvider()->{$method}();
                 if ($providerData) {
-                    /* @var \Pimcore\Model\Object\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
+                    /* @var \Pimcore\Model\DataObject\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
 
                     // get provider data
                     $name = strtolower(str_replace('PaymentProvider', '', $providerData->getType()));
@@ -259,7 +266,7 @@ class Agent implements IOrderAgent
                     }
 
                     // init payment
-                    $paymentProvider = $this->factory->getPaymentManager()->getProvider($name);
+                    $paymentProvider = $this->paymentManager->getProvider($name);
                     $paymentProvider->setAuthorizedData($authorizedData);
 
                     $this->paymentProvider = $paymentProvider;
@@ -285,7 +292,7 @@ class Agent implements IOrderAgent
         $order = $this->getOrder();
 
         $provider = $order->getPaymentProvider();
-        /* @var \Pimcore\Model\Object\OnlineShopOrder\PaymentProvider $provider */
+        /* @var \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider $provider */
 
         // load existing
         $getter = 'getPaymentProvider' . $paymentProvider->getName();
@@ -294,7 +301,7 @@ class Agent implements IOrderAgent
 
         if (!$providerData) {
             // create new
-            $class = '\Pimcore\Model\Object\Objectbrick\Data\PaymentProvider' . $paymentProvider->getName();
+            $class = '\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProvider' . $paymentProvider->getName();
             $providerData = new $class($order);
             $provider->{'setPaymentProvider' . $paymentProvider->getName()}($providerData);
         }
@@ -314,7 +321,7 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @return null|\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
+     * @return null|AbstractPaymentInformation
      */
     public function getCurrentPendingPaymentInfo()
     {
@@ -334,10 +341,10 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @return null|\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation|PaymentInfo
+     * @return null|AbstractPaymentInformation|PaymentInfo
      *
      * @throws Exception
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function startPayment()
     {
@@ -402,13 +409,13 @@ class Agent implements IOrderAgent
      *
      * @return int
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     protected function getFingerprintOfOrder()
     {
         $order = $this->getOrder();
         $fingerprintParts = [];
-        $fingerprintParts[] = $order->getTotalPrice();
+        $fingerprintParts[] = Decimal::create($order->getTotalPrice())->asString();
         $fingerprintParts[] = $order->getCreationDate();
         foreach ($order->getItems() as $item) {
             $fingerprintParts[] = $item->getProductNumber();
@@ -423,7 +430,7 @@ class Agent implements IOrderAgent
      * @return Order
      *
      * @throws Exception
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
     public function cancelStartedOrderPayment()
     {
@@ -436,21 +443,21 @@ class Agent implements IOrderAgent
             $order->setOrderState(null);
             $order->save();
         } else {
-            throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException('Cancel started order payment not possible');
+            throw new UnsupportedException('Cancel started order payment not possible');
         }
 
         return $order;
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status
+     * @param IStatus $status
      *
      * @return $this
      *
      * @throws Exception
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @throws UnsupportedException
      */
-    public function updatePayment(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status)
+    public function updatePayment(IStatus $status)
     {
         //log this for documentation
         \Pimcore\Log\Simple::log('update-payment', 'Update payment called with status: ' . print_r($status, true));
@@ -506,7 +513,7 @@ class Agent implements IOrderAgent
             $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' -> order fingerprint changed since start payment. throwing exception!');
             $order->setOrderState(null);
             $order->save();
-            throw new \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException('order fingerprint changed since start payment. Old internal status = ' . $status->getInternalPaymentId() . ' -> current internal status id = ' . $currentOrderFingerPrint);
+            throw new UnsupportedException('order fingerprint changed since start payment. Old internal status = ' . $status->getInternalPaymentId() . ' -> current internal status id = ' . $currentOrderFingerPrint);
         } else {
             $order->save();
         }
@@ -520,7 +527,7 @@ class Agent implements IOrderAgent
      * @param IStatus $status
      * @param PaymentInfo $currentPaymentInformation
      */
-    protected function extractAdditionalPaymentInformation(\Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus $status, PaymentInfo $currentPaymentInformation)
+    protected function extractAdditionalPaymentInformation(IStatus $status, PaymentInfo $currentPaymentInformation)
     {
     }
 

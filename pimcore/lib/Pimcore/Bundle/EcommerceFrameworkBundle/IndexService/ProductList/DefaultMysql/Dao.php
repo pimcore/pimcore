@@ -225,6 +225,8 @@ class Dao
      *
      * @param $fields
      * @param $objectId
+     *
+     * @return string
      */
     public function buildSimularityOrderBy($fields, $objectId)
     {
@@ -282,6 +284,8 @@ class Dao
      *
      * @param $fields
      * @param $searchstring
+     *
+     * @return string
      */
     public function buildFulltextSearchWhere($fields, $searchstring)
     {

@@ -14,6 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+
 /**
  * Class ICheckoutable
  */
@@ -89,7 +92,7 @@ interface ICheckoutable
      *
      * @param int $quantityScale
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo
+     * @return IPriceInfo|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1);
 

@@ -115,7 +115,7 @@
 							"id":"int(11)",
 							"type":"enum('document','asset','object')"
 						},
-						"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
+						"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
 						"objectsAllowed":true,
 						"assetsAllowed":false,
 						"assetTypes":[

@@ -6,7 +6,7 @@
 
 ```php
 <?php
-    $object = Object::getById(1234);
+    $object = DataObject::getById(1234);
     print_r($object->getMyVideo());
 ?>
 ```
@@ -15,7 +15,7 @@ Will produce the following output depending on the content:
 ```php
 # ASSET VIDEO
  
-Pimcore\Model\Object\Data\Video Object
+Pimcore\Model\DataObject\Data\Video Object
 (
     [type] => asset
     [data] => Pimcore\Model\Asset\Video Object
@@ -37,7 +37,7 @@ Pimcore\Model\Object\Data\Video Object
 )
  
 # YouTube Video
-Pimcore\Model\Object\Data\Video Object
+Pimcore\Model\DataObject\Data\Video Object
 (
     [type] => youtube
     [data] => pAE_ff8tV-g
@@ -47,7 +47,7 @@ Pimcore\Model\Object\Data\Video Object
 )
  
 # Vimeo Video
-Pimcore\Model\Object\Data\Video Object
+Pimcore\Model\DataObject\Data\Video Object
 (
     [type] => vimeo
     [data] => 11696823
@@ -64,7 +64,7 @@ Pimcore\Model\Object\Data\Video Object
 <?php
  
  
-$object = Object::getById(1234);
+$object = DataObject::getById(1234);
 $v = $object->getMyVideo();
 $videoData = $v->getData();
  
@@ -96,11 +96,11 @@ if($videoData) {
  
 // asset video with poster image
  
-$object = Object::getById(789);
+$object = DataObject::getById(789);
 $assetVideo = Asset::getById(123);
 $assetImage = Asset::getById(456);
  
-$videoData= new Object\Data\Video();
+$videoData= new DataObject\Data\Video();
 $videoData->setData($assetVideo);
 $videoData->setType("asset");
 $videoData->setPoster($assetImage);

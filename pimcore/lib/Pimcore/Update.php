@@ -293,7 +293,7 @@ class Update
                 if (!self::$dryRun) {
                     if ($file['path'] == '/composer.json') {
                         // composer.json needs some special processing
-                        self::installComposerJson($srcFile, $destFile);
+                        self::installComposerJson($srcFile, PIMCORE_COMPOSER_FILE_PATH . $file['path']);
                     } else {
                         copy($srcFile, $destFile);
                     }
@@ -411,7 +411,7 @@ class Update
      */
     public static function composerUpdate($options = [])
     {
-        $composerLock = PIMCORE_PROJECT_ROOT . '/composer.lock';
+        $composerLock = PIMCORE_COMPOSER_FILE_PATH . '/composer.lock';
         if (file_exists($composerLock)) {
             @unlink($composerLock);
         }
@@ -423,7 +423,7 @@ class Update
 
             $composerOptions = array_merge(['-n'], $options);
 
-            $process = new Process($composerPath . ' update ' . implode(' ', $composerOptions) . ' -d ' . PIMCORE_PROJECT_ROOT);
+            $process = new Process($composerPath . ' update ' . implode(' ', $composerOptions) . ' -d ' . PIMCORE_COMPOSER_FILE_PATH);
             $process->setTimeout(900);
             $process->mustRun();
         } catch (\Exception $e) {
@@ -446,7 +446,7 @@ class Update
 
         try {
             $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
-            $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_PROJECT_ROOT);
+            $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_COMPOSER_FILE_PATH);
             $process->setTimeout(300);
             $process->mustRun();
         } catch (\Exception $e) {

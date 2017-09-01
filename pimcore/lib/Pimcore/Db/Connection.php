@@ -19,6 +19,7 @@ use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
+use Pimcore\Model\Element\ValidationException;
 
 class Connection extends \Doctrine\DBAL\Connection
 {
@@ -501,13 +502,18 @@ class Connection extends \Doctrine\DBAL\Connection
      *
      * @return mixed|null
      */
-    public function queryIgnoreError($sql, $bind = [])
+    public function queryIgnoreError($sql, $bind = [], $exclusions = [])
     {
         try {
             $return = $this->executeQuery($sql, $bind);
 
             return $return;
         } catch (\Exception $e) {
+            foreach ($exclusions as $exclusion) {
+                if ($e instanceof $exclusion) {
+                    throw new ValidationException($e->getMessage(), 0, $e);
+                }
+            }
             // we simply ignore the error
         }
 

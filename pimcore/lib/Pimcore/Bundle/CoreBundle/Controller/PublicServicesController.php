@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Site;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as FrameworkController;
@@ -42,10 +43,9 @@ class PublicServicesController extends FrameworkController
                 $thumbnailFile = null;
                 $thumbnailConfig = null;
 
-                //get thumbnail for e.g. pdf page thumb__document_pdfPage-5
-                if (preg_match("|document_(.*)\-(\d+)$|", $thumbnailName, $matchesThumbs)) {
-                    $thumbnailName = $matchesThumbs[1];
-                    $page = (int)$matchesThumbs[2];
+                //get page in case of an asset document (PDF, ...)
+                if (preg_match("|~\-~page\-(\d+)\.|", $filename, $matchesThumbs)) {
+                    $page = (int)$matchesThumbs[1];
                 }
 
                 // just check if the thumbnail exists -> throws exception otherwise
@@ -78,7 +78,7 @@ class PublicServicesController extends FrameworkController
 
                     preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $filename, $matches);
 
-                    if (array_key_exists(2, $matches)) {
+                    if (array_key_exists(2, $matches) && $matches[2]) {
                         $highResFactor = (float) str_replace(['@', 'x'], '', $matches[2]);
                         $thumbnailConfig->setHighResolution($highResFactor);
                     }
@@ -109,6 +109,43 @@ class PublicServicesController extends FrameworkController
                 throw $this->createNotFoundException($message, $e);
             }
         }
+    }
+
+    /**
+     * @param $request
+     * @return Response
+     */
+    public function robotsTxtAction(Request $request) {
+
+        // check for site
+        $site = null;
+        try {
+            $domain = \Pimcore\Tool::getHostname();
+            $site = Site::getByDomain($domain);
+        } catch (\Exception $e) {
+        }
+
+        $siteSuffix = "-default";
+        if ($site instanceof Site) {
+            $siteSuffix = "-" . $site->getId();
+        }
+
+        // send correct headers
+        header("Content-Type: text/plain; charset=utf8"); while (@ob_end_flush()) ;
+
+        // check for configured robots.txt in pimcore
+        $content = '';
+        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
+        if (is_file($robotsPath)) {
+            $content = file_get_contents($robotsPath);
+        }
+
+        if(empty($content)){
+            // default behavior, allow robots to index everything
+            $content = "User-agent: *\nDisallow:";
+        }
+
+        return new Response($content, 200);
     }
 
     /**

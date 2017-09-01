@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexField
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 
@@ -92,7 +93,7 @@ class DefaultMysql implements IProductList
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct[]
+     * @return AbstractProduct[]
      */
     public function getProducts()
     {
@@ -427,7 +428,7 @@ class DefaultMysql implements IProductList
      *
      * @param $elementId
      *
-     * @return array|\Pimcore\Model\Object\AbstractObject
+     * @return array|\Pimcore\Model\DataObject\AbstractObject
      */
     protected function loadElementById($elementId)
     {
@@ -594,7 +595,7 @@ class DefaultMysql implements IProductList
                 }
             }
 
-            $condition .= ' AND ' . $this->resource->buildFulltextSearchWhere($this->tenantConfig->getSearchAttributeConfig(), $searchstring);
+            $condition .= ' AND ' . $this->resource->buildFulltextSearchWhere($this->tenantConfig->getSearchAttributes(), $searchstring);
         }
 
         $this->logger->info('Total Condition: ' . $condition);
@@ -701,6 +702,8 @@ class DefaultMysql implements IProductList
      *
      * @param $fields
      * @param $objectId
+     *
+     * @return string
      */
     public function buildSimularityOrderBy($fields, $objectId)
     {
@@ -712,6 +715,8 @@ class DefaultMysql implements IProductList
      *
      * @param $fields
      * @param $searchstring
+     *
+     * @return string
      */
     public function buildFulltextSearchWhere($fields, $searchstring)
     {

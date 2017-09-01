@@ -16,15 +16,17 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexable, ICheckoutable, IProduct
+class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IIndexable, ICheckoutable, IProduct
 {
     // =============================================
-//     IIndexable Methods
-//  =============================================
+    //     IIndexable Methods
+    //  =============================================
 
     /**
      * defines if product is included into the product index. If false, product doesn't appear in product index.
@@ -101,9 +103,9 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
         throw new UnsupportedException('getCategories is not supported for ' . get_class($this));
     }
 
-// =============================================
-//     ICheckoutable Methods
-//  =============================================
+    // =============================================
+    //     ICheckoutable Methods
+    //  =============================================
 
     /**
      * called by default CommitOrderProcessor to get the product name to store it in the order item
@@ -197,7 +199,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      *
      * @param int $quantityScale
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo
+     * @return IPriceInfo|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1)
     {
@@ -221,11 +223,11 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      *
      * @param int $id
      *
-     * @return null|\Pimcore\Model\Object\AbstractObject
+     * @return null|\Pimcore\Model\DataObject\AbstractObject
      */
     public static function getById($id)
     {
-        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
+        $object = \Pimcore\Model\DataObject\AbstractObject::getById($id);
 
         if ($object instanceof AbstractProduct) {
             return $object;

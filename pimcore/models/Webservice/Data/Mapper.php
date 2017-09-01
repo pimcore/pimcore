@@ -41,8 +41,8 @@ abstract class Mapper
             'Document\\Link',
             'Document\\Hardlink',
             'Document\\Email',
-            'Object\\Folder',
-            'Object\\Concrete'
+            'DataObject\\Folder',
+            'DataObject\\Concrete'
         ];
 
         $retVal = null;

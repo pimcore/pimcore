@@ -27,9 +27,14 @@ class BundleCollection
     private $items = [];
 
     /**
-     * @var array
+     * @var ItemInterface[]
      */
-    private $bundleIdentifiers = [];
+    private $itemsByPriority = [];
+
+    /**
+     * @var ItemInterface[]
+     */
+    private $itemsByEnvironment = [];
 
     /**
      * Adds a collection item
@@ -41,14 +46,90 @@ class BundleCollection
     public function add(ItemInterface $item): self
     {
         $identifier = $item->getBundleIdentifier();
-        if (in_array($identifier, $this->bundleIdentifiers)) {
+        if ($this->hasItem($identifier)) {
             throw new \LogicException(sprintf('Trying to register the bundle "%s" multiple times', $identifier));
         }
 
-        $this->bundleIdentifiers[] = $identifier;
-        $this->items[$item->getPriority()][] = $item;
+        $this->items[$item->getBundleIdentifier()] = $item;
+        $this->itemsByPriority[$item->getPriority()][] = $item;
 
         return $this;
+    }
+
+    /**
+     * Returns a collection item by identifier
+     *
+     * @param string $identifier
+     *
+     * @return ItemInterface
+     */
+    public function getItem(string $identifier): ItemInterface
+    {
+        if (!$this->hasItem($identifier)) {
+            throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered', $identifier));
+        }
+
+        return $this->items[$identifier];
+    }
+
+    /**
+     * Checks if a specific item is registered
+     *
+     * @param string $identifier
+     *
+     * @return bool
+     */
+    public function hasItem(string $identifier)
+    {
+        return isset($this->items[$identifier]);
+    }
+
+    /**
+     * Returns all collection items ordered by priority and optionally filtered by matching environment
+     *
+     * @param string|null $environment
+     *
+     * @return ItemInterface[]
+     */
+    public function getItems(string $environment = null): array
+    {
+        $cacheKey = '_all';
+        if (null !== $environment) {
+            $cacheKey = $environment;
+        }
+
+        if (isset($this->itemsByEnvironment[$cacheKey])) {
+            return $this->itemsByEnvironment[$cacheKey];
+        }
+
+        $priorities = array_keys($this->itemsByPriority);
+        rsort($priorities); // highest priority first
+
+        $items = [];
+        foreach ($priorities as $priority) {
+            /** @var Item $item */
+            foreach ($this->itemsByPriority[$priority] as $item) {
+                if (null !== $environment && !$item->matchesEnvironment($environment)) {
+                    continue;
+                }
+
+                $items[] = $item;
+            }
+        }
+
+        $this->itemsByEnvironment[$cacheKey] = $items;
+
+        return $items;
+    }
+
+    /**
+     * Returns all bundle identifiers
+     *
+     * @return array
+     */
+    public function getIdentifiers(): array
+    {
+        return array_keys($this->items);
     }
 
     /**
@@ -92,18 +173,9 @@ class BundleCollection
      */
     public function getBundles(string $environment): array
     {
-        $priorities = array_keys($this->items);
-        rsort($priorities); // highest priority first
-
         $bundles = [];
-        foreach ($priorities as $priority) {
-
-            /** @var Item $item */
-            foreach ($this->items[$priority] as $item) {
-                if ($item->matchesEnvironment($environment)) {
-                    $bundles[] = $item->getBundle();
-                }
-            }
+        foreach ($this->getItems($environment) as $item) {
+            $bundles[] = $item->getBundle();
         }
 
         return $bundles;

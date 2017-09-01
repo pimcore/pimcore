@@ -14,28 +14,53 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
 use Pimcore\Logger;
 use Pimcore\Model\Tool\Lock;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
- */
 class CommitOrderProcessor implements ICommitOrderProcessor
 {
     const LOCK_KEY = 'ecommerce-framework-commitorder-lock';
     const LOGGER_NAME = 'commit-order-processor';
 
     /**
+     * @var IOrderManagerLocator
+     */
+    protected $orderManagers;
+
+    /**
      * @var string
      */
     protected $confirmationMail = '/emails/order-confirmation';
+
+    public function __construct(IOrderManagerLocator $orderManagers, array $options = [])
+    {
+        $this->orderManagers = $orderManagers;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->processOptions($resolver->resolve($options));
+    }
+
+    protected function processOptions(array $options)
+    {
+        if (isset($options['confirmation_mail'])) {
+            $this->confirmationMail = $options['confirmation_mail'];
+        }
+    }
+
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefined('confirmation_mail');
+    }
 
     /**
      * @param string $confirmationMail
@@ -51,11 +76,11 @@ class CommitOrderProcessor implements ICommitOrderProcessor
      * @param $paymentResponseParams
      * @param IPayment $paymentProvider
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status|IStatus
+     * @return Status|IStatus
      */
     protected function getPaymentStatus($paymentResponseParams, IPayment $paymentProvider)
     {
-        //since handle response can throw exceptions and commitOrderPayment must be executed,
+        // since handle response can throw exceptions and commitOrderPayment must be executed,
         // this needs to be in a try-catch block
         try {
             $paymentStatus = $paymentProvider->handleResponse($paymentResponseParams);
@@ -63,8 +88,11 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             Logger::err($e);
 
             //create payment status with error message and cancelled payment
-            $paymentStatus = new \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status(
-                $paymentResponseParams['orderIdent'], 'unknown', 'there was an error: ' . $e->getMessage(), IStatus::STATUS_CANCELLED
+            $paymentStatus = new Status(
+                $paymentResponseParams['orderIdent'],
+                'unknown',
+                'there was an error: ' . $e->getMessage(),
+                IStatus::STATUS_CANCELLED
             );
         }
 
@@ -72,18 +100,12 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     }
 
     /**
-     * @param $paymentResponseParams
-     * @param IPayment $paymentProvider
-     *
-     * @return AbstractOrder
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, IPayment $paymentProvider)
     {
-
-        //check if order is already committed and payment information with same internal payment id has same state
-        //if so, do nothing and return order
+        // check if order is already committed and payment information with same internal payment id has same state
+        // if so, do nothing and return order
         if ($committedOrder = $this->committedOrderWithSamePaymentExists($paymentResponseParams, $paymentProvider)) {
             return $committedOrder;
         }
@@ -94,15 +116,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     }
 
     /**
-     * check if order is already committed and payment information with same internal payment id has same state
-     *
-     * @param array|IStatus $paymentResponseParams
-     * @param IPayment $paymentProvider
-     *
-     * @return null|AbstractOrder
-     *
-     * @throws \Exception
-     * @throws UnsupportedException
+     * @inheritdoc
      */
     public function committedOrderWithSamePaymentExists($paymentResponseParams, IPayment $paymentProvider)
     {
@@ -112,8 +126,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             $paymentStatus = $paymentResponseParams;
         }
 
-        $orderManager = Factory::getInstance()->getOrderManager();
-        $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
+        $order = $this->orderManagers->getOrderManager()->getOrderByPaymentStatus($paymentStatus);
 
         if ($order && $order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
             $paymentInformationCollection = $order->getPaymentInfo();
@@ -136,27 +149,20 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     }
 
     /**
-     * @param IStatus $paymentStatus
-     * @param IPayment $paymentProvider
-     *
-     * @return AbstractOrder
-     *
-     * @throws \Exception
-     * @throws UnsupportedException
+     * @inheritdoc
      */
     public function commitOrderPayment(IStatus $paymentStatus, IPayment $paymentProvider)
     {
-
-        //acquire lock to make sure only one process is committing order payment
+        // acquire lock to make sure only one process is committing order payment
         Lock::acquire(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
 
-        //check if order is already committed and payment information with same internal payment id has same state
-        //if so, do nothing and return order
+        // check if order is already committed and payment information with same internal payment id has same state
+        // if so, do nothing and return order
         if ($committedOrder = $this->committedOrderWithSamePaymentExists($paymentStatus, $paymentProvider)) {
             return $committedOrder;
         }
 
-        $orderManager = Factory::getInstance()->getOrderManager();
+        $orderManager = $this->orderManagers->getOrderManager();
         $order = $orderManager->getOrderByPaymentStatus($paymentStatus);
 
         if (empty($order)) {
@@ -172,12 +178,11 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         $this->applyAdditionalDataToOrder($order, $paymentStatus, $paymentProvider);
 
         if (in_array($paymentStatus->getStatus(), [AbstractOrder::ORDER_STATE_COMMITTED, AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
-
-            //only when payment state is committed or authorized -> proceed and commit order
+            // only when payment state is committed or authorized -> proceed and commit order
             $order = $this->commitOrder($order);
         } elseif ($order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
 
-            //do not overwrite status if order is already committed. normally this shouldn't happen at all.
+            // do not overwrite status if order is already committed. normally this shouldn't happen at all.
             $logger = ApplicationLogger::getInstance(self::LOGGER_NAME, true);
             $logger->setRelatedObject($order);
             $logger->setFileObject(new FileObject(print_r($paymentStatus, true)));
@@ -202,19 +207,16 @@ class CommitOrderProcessor implements ICommitOrderProcessor
      */
     protected function applyAdditionalDataToOrder(AbstractOrder $order, IStatus $paymentStatus, IPayment $paymentProvider)
     {
-        //nothing to do by default
+        // nothing to do by default
     }
 
     /**
-     * @param AbstractOrder $order
-     *
-     * @return AbstractOrder
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
     public function commitOrder(AbstractOrder $order)
     {
         $this->processOrder($order);
+
         $order->setOrderState(AbstractOrder::ORDER_STATE_COMMITTED);
         $order->save();
 
@@ -244,13 +246,13 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     }
 
     /**
-     * implementation-specific processing of order, must be implemented in subclass (e.g. sending order to ERP-system)
+     * Implementation-specific processing of order, must be implemented in subclass (e.g. sending order to ERP-system)
      *
      * @param AbstractOrder $order
      */
     protected function processOrder(AbstractOrder $order)
     {
-        //nothing to do
+        // nothing to do
     }
 
     /**
@@ -258,17 +260,18 @@ class CommitOrderProcessor implements ICommitOrderProcessor
      */
     public function cleanUpPendingOrders()
     {
-        $orderManager = Factory::getInstance()->getOrderManager();
-
         $dateTime = new \DateTime();
         $dateTime->add(new \DateInterval('PT1H'));
         $timestamp = $dateTime->getTimestamp();
+
+        $orderManager = $this->orderManagers->getOrderManager();
 
         //Abort orders with payment pending
         $list = $orderManager->buildOrderList();
         $list->addFieldCollection('PaymentInfo');
         $list->setCondition('orderState = ? AND orderdate < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
 
+        /** @var AbstractOrder $order */
         foreach ($list as $order) {
             Logger::warn('Setting order ' . $order->getId() . ' to ' . AbstractOrder::ORDER_STATE_ABORTED);
             $order->setOrderState(AbstractOrder::ORDER_STATE_ABORTED);
@@ -279,14 +282,18 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         $list = $orderManager->buildOrderList();
         $list->addFieldCollection('PaymentInfo', 'paymentinfo');
         $list->setCondition('`PaymentInfo~paymentinfo`.paymentState = ? AND `PaymentInfo~paymentinfo`.paymentStart < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
+
+        /** @var AbstractOrder[] $list */
         foreach ($list as $order) {
             $payments = $order->getPaymentInfo();
+
             foreach ($payments as $payment) {
                 if ($payment->getPaymentState() == AbstractOrder::ORDER_STATE_PAYMENT_PENDING && $payment->getPaymentStart()->getTimestamp() < $timestamp) {
                     Logger::warn('Setting order ' . $order->getId() . ' payment ' . $payment->getInternalPaymentId() . ' to ' . AbstractOrder::ORDER_STATE_ABORTED);
                     $payment->setPaymentState(AbstractOrder::ORDER_STATE_ABORTED);
                 }
             }
+
             $order->save();
         }
     }

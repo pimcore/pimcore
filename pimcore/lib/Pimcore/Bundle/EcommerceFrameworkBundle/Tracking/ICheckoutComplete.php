@@ -14,12 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+
 interface ICheckoutComplete
 {
     /**
      * Track checkout complete
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     * @param AbstractOrder $order
      */
-    public function trackCheckoutComplete(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
+    public function trackCheckoutComplete(AbstractOrder $order);
 }

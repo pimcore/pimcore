@@ -21,7 +21,7 @@ class RestTester extends \Codeception\Actor
 {
     use _generated\RestTesterActions;
 
-   /**
-    * Define custom actions here
-    */
+    /**
+     * Define custom actions here
+     */
 }

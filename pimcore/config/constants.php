@@ -30,6 +30,10 @@ if (!defined('PIMCORE_COMPOSER_PATH')) {
     define('PIMCORE_COMPOSER_PATH', PIMCORE_PROJECT_ROOT . '/vendor');
 }
 
+if (!defined('PIMCORE_COMPOSER_FILE_PATH')) {
+    define('PIMCORE_COMPOSER_FILE_PATH', realpath(__DIR__ . '/../../'));
+}
+
 if (!defined('PIMCORE_APP_ROOT')) {
     define('PIMCORE_APP_ROOT', PIMCORE_PROJECT_ROOT . '/app');
 }

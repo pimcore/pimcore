@@ -34,10 +34,12 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getDocumentIdByPrettyUrlInSite(Site $site, $path)
     {
-        return (int) $this->db->fetchOne('SELECT documents.id FROM documents
+        return (int) $this->db->fetchOne(
+            'SELECT documents.id FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?',
-        [$site->getRootPath() . '/%', rtrim($path, '/')]);
+        [$site->getRootPath() . '/%', rtrim($path, '/')]
+        );
     }
 
     /**

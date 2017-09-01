@@ -16,14 +16,18 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 class ProductAction extends AbstractProductData
 {
-    /** @var int */
+    /**
+     * @var int
+     */
     protected $quantity = 1;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $coupon;
 
     /**
-     * @return int
+     * @return int|float
      */
     public function getQuantity()
     {
@@ -31,7 +35,7 @@ class ProductAction extends AbstractProductData
     }
 
     /**
-     * @param int $quantity
+     * @param int|float $quantity
      *
      * @return ProductAction
      */

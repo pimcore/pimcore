@@ -67,9 +67,15 @@ pimcore.element.selector.selector = Class.create({
             windowWidth = 1250;
         }
 
+        var title = t('search');
+        if (this.restrictions.type && this.restrictions.type.length == 1) {
+            title = t(this.restrictions.type[0] + '_search');
+        }
+
         var windowConfig = {
             width: windowWidth,
             height: 550,
+            title: title,
             modal: true,
             layout: "fit",
             items: [this.panel]
@@ -132,7 +138,7 @@ pimcore.element.selector.selector = Class.create({
         if(in_array("object", this.restrictions.type) && user.isAllowed("objects")) {
             items.push("-");
             this.toolbarbuttons.object = new Ext.Button({
-                text: t("objects"),
+                text: t("data_objects"),
                 handler: this.searchObjects.bind(this),
                 iconCls: "pimcore_icon_object",
                 enableToggle: true

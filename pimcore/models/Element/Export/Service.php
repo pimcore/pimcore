@@ -18,9 +18,9 @@
 namespace Pimcore\Model\Element\Export;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 
 class Service
@@ -43,9 +43,9 @@ class Service
     public function getApiElement($element)
     {
         $service = new Webservice\Service();
-        if ($element instanceof Object\Folder) {
+        if ($element instanceof DataObject\Folder) {
             return $service->getObjectFolderById($element->getId());
-        } elseif ($element instanceof Object\Concrete) {
+        } elseif ($element instanceof DataObject\Concrete) {
             return $service->getObjectConcreteById($element->getId());
         } elseif ($element instanceof Asset\Folder) {
             return $service->getAssetFolderById($element->getId());

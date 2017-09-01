@@ -29,7 +29,8 @@ class MysqlToolsCommand extends AbstractCommand
             ->setAliases(['mysql-tools'])
             ->setDescription('Optimize and warmup mysql database')
             ->addOption(
-                'mode', 'm',
+                'mode',
+                'm',
                 InputOption::VALUE_REQUIRED,
                 'optimize or warmup'
             );

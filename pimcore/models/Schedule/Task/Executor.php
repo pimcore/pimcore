@@ -19,8 +19,8 @@ namespace Pimcore\Model\Schedule\Task;
 
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Model\Version;
 
 class Executor
@@ -80,14 +80,14 @@ class Executor
                         }
                     }
                 } elseif ($task->getCtype() == 'object') {
-                    $object = Object::getById($task->getCid());
+                    $object = DataObject::getById($task->getCid());
 
-                    if ($object instanceof Object) {
+                    if ($object instanceof DataObject) {
                         if ($task->getAction() == 'publish-version' && $task->getVersion()) {
                             try {
                                 $version = Version::getById($task->getVersion());
                                 $object = $version->getData();
-                                if ($object instanceof Object\AbstractObject) {
+                                if ($object instanceof DataObject\AbstractObject) {
                                     $object->setPublished(true);
                                     $object->save();
                                 } else {

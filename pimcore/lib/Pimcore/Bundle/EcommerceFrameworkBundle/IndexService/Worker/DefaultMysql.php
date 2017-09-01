@@ -14,28 +14,34 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Db\Connection;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\AbstractObject;
 
+/**
+ * @property IMysqlConfig $tenantConfig
+ */
 class DefaultMysql extends AbstractWorker implements IWorker
 {
-    protected $_sqlChangeLog = [];
-
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
+     * @var array
      */
-    protected $tenantConfig;
+    protected $_sqlChangeLog = [];
 
     /**
      * @var Helper\MySql
      */
     protected $mySqlHelper;
 
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig)
+    public function __construct(IMysqlConfig $tenantConfig, Connection $db)
     {
-        parent::__construct($tenantConfig);
+        parent::__construct($tenantConfig, $db);
 
-        $this->mySqlHelper = new Helper\MySql($tenantConfig);
+        $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
 
     public function createOrUpdateIndexStructures()
@@ -83,22 +89,22 @@ class DefaultMysql extends AbstractWorker implements IWorker
         foreach ($subObjectIds as $subObjectId => $object) {
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
-                $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
+                $b = AbstractObject::doGetInheritedValues();
                 \Pimcore::unsetAdminMode();
-                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
-                $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
-                \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
+                AbstractObject::setGetInheritedValues(true);
+                $hidePublishedMemory = AbstractObject::doHideUnpublished();
+                AbstractObject::setHideUnpublished(false);
                 $categories = $this->tenantConfig->getCategories($object);
                 $categoryIds = [];
                 $parentCategoryIds = [];
                 if ($categories) {
                     foreach ($categories as $c) {
-                        if ($c instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory) {
+                        if ($c instanceof AbstractCategory) {
                             $categoryIds[$c->getId()] = $c->getId();
                         }
 
                         $currentCategory = $c;
-                        while ($currentCategory instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory) {
+                        while ($currentCategory instanceof AbstractCategory) {
                             $parentCategoryIds[$currentCategory->getId()] = $currentCategory->getId();
 
                             if ($currentCategory->getOSProductsInParentCategoryVisible()) {
@@ -118,7 +124,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
                     $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
                 }
 
-                $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
+                $virtualProduct = AbstractObject::getById($virtualProductId);
                 if ($virtualProduct && method_exists($virtualProduct, 'isActive')) {
                     $virtualProductActive = $virtualProduct->isActive();
                 }
@@ -139,63 +145,43 @@ class DefaultMysql extends AbstractWorker implements IWorker
 
                 $relationData = [];
 
-                $columnConfig = $this->columnConfig;
-                if (!empty($columnConfig->name)) {
-                    $columnConfig = [$columnConfig];
-                } elseif (empty($columnConfig)) {
-                    $columnConfig = [];
-                }
-                foreach ($columnConfig as $column) {
+                foreach ($this->tenantConfig->getAttributes() as $attribute) {
                     try {
-                        $value = null;
-                        if (!empty($column->getter)) {
-                            $getter = $column->getter;
-                            $value = $getter::get($object, $column->config, $subObjectId, $this->tenantConfig);
-                        } else {
-                            if (!empty($column->fieldname)) {
-                                $getter = 'get' . ucfirst($column->fieldname);
-                            } else {
-                                $getter = 'get' . ucfirst($column->name);
-                            }
+                        $value = $attribute->getValue($object, $subObjectId, $this->tenantConfig);
 
-                            if (method_exists($object, $getter)) {
-                                $value = $object->$getter($column->locale);
-                            }
-                        }
+                        if (null !== $attribute->getInterpreter()) {
+                            $value = $attribute->interpretValue($value);
 
-                        if (!empty($column->interpreter)) {
-                            $interpreter = $column->interpreter;
-                            $value = $interpreter::interpret($value, $column->config);
-                            $interpreterObject = new $interpreter();
-                            if ($interpreterObject instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
+                            if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
                                 foreach ($value as $v) {
                                     $relData = [];
                                     $relData['src'] = $subObjectId;
                                     $relData['src_virtualProductId'] = $virtualProductId;
                                     $relData['dest'] = $v['dest'];
-                                    $relData['fieldname'] = $column->name;
+                                    $relData['fieldname'] = $attribute->getName();
                                     $relData['type'] = $v['type'];
                                     $relationData[] = $relData;
                                 }
                             } else {
-                                $data[$column->name] = $value;
+                                $data[$attribute->getName()] = $value;
                             }
                         } else {
-                            $data[$column->name] = $value;
+                            $data[$attribute->getName()] = $value;
                         }
 
-                        if (is_array($data[$column->name])) {
-                            $data[$column->name] = $this->convertArray($data[$column->name]);
+                        if (is_array($data[$attribute->getName()])) {
+                            $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Exception $e) {
                         Logger::err('Exception in IndexService: ' . $e);
                     }
                 }
+
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }
-                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($b);
-                \Pimcore\Model\Object\AbstractObject::setHideUnpublished($hidePublishedMemory);
+                AbstractObject::setGetInheritedValues($b);
+                AbstractObject::setHideUnpublished($hidePublishedMemory);
 
                 try {
                     $this->mySqlHelper->doInsertData($data);

@@ -9,7 +9,6 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
- * @package    Object|Class
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
@@ -18,7 +17,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Model\Object\QuantityValue\Unit;
+use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,7 +39,7 @@ class QuantityValueController extends AdminController
             if ($request->get('xaction') == 'destroy') {
                 $data = json_decode($request->get('data'), true);
                 $id = $data['id'];
-                $unit = \Pimcore\Model\Object\QuantityValue\Unit::getById($id);
+                $unit = \Pimcore\Model\DataObject\QuantityValue\Unit::getById($id);
                 if (!empty($unit)) {
                     $unit->delete();
 

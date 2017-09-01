@@ -213,7 +213,9 @@ abstract class Page extends Container
                 $page = new $type($options);
                 if (!$page instanceof self) {
                     throw new \Exception(sprintf(
-                            'Invalid argument: Detected type "%s", which is not an instance of Page', $type));
+                            'Invalid argument: Detected type "%s", which is not an instance of Page',
+                        $type
+                    ));
                 }
 
                 return $page;

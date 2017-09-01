@@ -28,8 +28,27 @@
     "docs": "https://www.pimcore.org/wiki/"
   },
   "config": {
+    "platform": {
+      "php": "7.0"
+    },
     "optimize-autoloader": true,
     "sort-packages": true
+  },
+  "repositories": {
+    "vrana-jush": {
+      "info1": "External dependency of vrana/adminer which isn't included or referenced by adminer, see also https://sourceforge.net/p/adminer/bugs-and-features/468/ ",
+      "info2": "The package on GitHub isn't compatible with Adminer, it doesn't contain the /modules/ folder.",
+      "type": "package",
+      "package": {
+        "name": "vrana/jush",
+        "version": "1.0.0",
+        "source": {
+          "url": "https://git.code.sf.net/p/jush/git",
+          "type": "git",
+          "reference": "master"
+        }
+      }
+    }
   },
   "require": {
     "php": ">=7.0",
@@ -52,7 +71,8 @@
     "composer/ca-bundle": "^1",
     "debril/rss-atom-bundle": "^3.0",
     "defuse/php-encryption": "~2",
-    "doctrine/doctrine-bundle": "^1.6",
+    "doctrine/doctrine-bundle": "1.6.*",
+    "doctrine/doctrine-migrations-bundle": "^1.2",
     "egulias/email-validator": "*",
     "endroid/qrcode": "~1.5",
     "geoip2/geoip2": "~2",
@@ -62,6 +82,7 @@
     "linfo/linfo": "~3",
     "monolog/monolog": "~1",
     "mpratt/embera": "~1",
+    "myclabs/deep-copy": "~1.3",
     "neitanod/forceutf8": "~2",
     "nesbot/carbon": "~1",
     "ocramius/proxy-manager": "2.0.*",
@@ -74,6 +95,7 @@
     "sensio/distribution-bundle": "^5.0.19",
     "sensio/framework-extra-bundle": "^3.0.2",
     "sensio/generator-bundle": "^3.0",
+    "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^2.0",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/polyfill-apcu": "^1.0",
@@ -82,6 +104,7 @@
     "tijsverkoyen/css-to-inline-styles": "~1.5",
     "twig/twig": "^2.0",
     "vrana/adminer": "~4.2",
+    "vrana/jush": "*",
     "wikimedia/composer-merge-plugin": "^1.4",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2"
@@ -101,7 +124,10 @@
   },
   "autoload": {
     "psr-4": {
-      "": ["src/"],
+      "": [
+        "src/"
+      ],
+      "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
       "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",

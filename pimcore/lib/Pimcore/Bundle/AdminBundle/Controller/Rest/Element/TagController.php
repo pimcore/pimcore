@@ -17,9 +17,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -97,7 +97,7 @@ class TagController extends AbstractElementController
         } elseif ($type === 'asset') {
             $element = Asset::getById($id);
         } elseif ($type === 'object') {
-            $element = Object::getById($id);
+            $element = DataObject::getById($id);
         }
 
         if (!$element) {

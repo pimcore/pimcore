@@ -906,7 +906,7 @@ class QueryBuilder
      * Gets the \Doctrine\DBAL\Connection for this
      * particular QueryBuilder object.
      *
-     * @return \Doctrine\DBAL\Connection
+     * @return Connection|\Doctrine\DBAL\Connection
      */
     public function getAdapter()
     {

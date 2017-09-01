@@ -27,7 +27,7 @@ Pimcore is offering [2 installation packages](https://www.pimcore.org/download) 
 ### Download a Package:
 
 ```bash
-wget https://www.pimcore.org/download-5/pimcore-unstable.zip -O pimcore-install.zip
+wget https://www.pimcore.org/download-5/pimcore-latest.zip -O pimcore-install.zip
 ```
 
 Unzip the installer package into the current folder (project root):
@@ -57,12 +57,51 @@ For further information please visit out [DB Setup Guide](../23_Installation_and
 
 ## 4. Launch Pimcore and Finish Installation
 
+### Web installer
+
 Finish the Pimcore installation by accessing the URL (eg. `https://your-host.com/install.php`) in your web browser.
 
 1. Fill in the required fields (database + admin user)
 2. Press ***Check Requirements*** to check if your system is ready for Pimcore
 3. Click ***Install Now!***
-4. Ensure the the file `web/install.php` was moved out of `web/` by the installer, if not, (re)move it manually.
+4. Remove the file `web/install.php` as it isn't needed anymore
+
+### CLI installer
+
+Alternatively, you can use the CLI installer to install pimcore. The installer will guide you through the installation
+interactively.
+
+```
+$ bin/install
+```
+
+Every parameter can be set as option to make the install automated. The `--no-interaction` flag will avoid any interactive
+prompts:
+
+```
+$ bin/install --profile demo-basic \
+  --admin-username admin --admin-password admin \
+  --mysql-username username --mysql-password password --mysql-database pimcore5 \
+  --no-interaction
+```
+
+To avoid having to pass sensitive data (e.g. DB password) as command line option, you can also set each parameter as env
+variable. See `bin/install --help` for details. Example:
+
+```
+$ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password bin/install --profile demo-basic \
+  --admin-username admin --admin-password admin \
+  --mysql-database pimcore5 \
+  --no-interaction
+```
+
+Please also remove the `web/install.php` file after the installation is complete.
+
+### Debugging installation issues
+
+The installer writes a log in `var/installer/logs` which contains any errors encountered during the installation. Please
+have a look at the logs as a starting point when debugging installation issues.
+
 
 ## 5. Maintenance Cron Job
 

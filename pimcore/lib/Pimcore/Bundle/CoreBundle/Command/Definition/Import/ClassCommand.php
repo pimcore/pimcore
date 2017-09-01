@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
 use Pimcore\Model\AbstractModel;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\ClassDefinition\Service;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class ClassCommand extends AbstractStructureImportCommand
 {

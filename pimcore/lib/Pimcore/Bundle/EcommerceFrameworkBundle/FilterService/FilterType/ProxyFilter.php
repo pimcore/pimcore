@@ -16,47 +16,66 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @deprecated
- *
- * Class ProxyFilter
  */
 class ProxyFilter extends AbstractFilterType
 {
-    /** @var $proxy AbstractFilterType */
-    private $proxy;
-    protected $field;
+    use OptionsResolverTrait;
 
     /**
-     * ProxyFilter constructor.
-     *
-     * @param string $script
-     * @param \Pimcore\Config\Config $config
-     * @param TranslatorInterface $translator
-     * @param EngineInterface $engine
-     *
-     * @throws \Exception
+     * @var AbstractFilterType
      */
-    public function __construct($script, $config, TranslatorInterface $translator, EngineInterface $engine)
+    private $proxy;
+
+    /**
+     * @var string
+     */
+    protected $field;
+
+    protected function processOptions(array $options)
     {
-        parent::__construct($script, $config, $translator, $engine);
-        if (!$config->proxyclass) {
-            throw new \Exception('wrong configuration for ' .  __CLASS__ . ': config setting proxyclass is missing!');
-        }
-        if (!$config->field) {
-            throw new \Exception('wrong configuration for ' .  __CLASS__ . ': config setting field is missing!');
+        $options = $this->resolveOptions($options);
+
+        $proxyClass = $options['proxy_class'];
+        if (!class_exists($proxyClass)) {
+            throw new \InvalidArgumentException(sprintf('Proxy class "%s" does not exist', $proxyClass));
         }
 
-        $this->proxy = new $config->proxyclass($script, $config, $translator, $engine);
-        $this->field= $config->field;
+        $this->proxy = new $proxyClass(
+            $this->translator,
+            $this->templatingEngine,
+            $this->template,
+            $options['proxy_options']
+        );
+
+        $this->field = $options['field'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    {
+        foreach (['proxy_class', 'field'] as $field) {
+            $resolver->setRequired($field);
+            $resolver->setAllowedTypes($field, 'string');
+        }
+
+        $resolver->setDefaults([
+            'proxy_options' => []
+        ]);
+
+        $resolver->setAllowedTypes('proxy_options', 'array');
     }
 
     public function getFilterFrontend(
         AbstractFilterDefinitionType $filterDefinition,
-        IProductList $productList, $currentFilter
+        IProductList $productList,
+        $currentFilter
     ) {
         $filterDefinition->field=$this->field;
 
@@ -65,7 +84,9 @@ class ProxyFilter extends AbstractFilterType
 
     public function addCondition(
         AbstractFilterDefinitionType $filterDefinition,
-        IProductList $productList, $currentFilter, $params,
+        IProductList $productList,
+        $currentFilter,
+        $params,
         $isPrecondition = false
     ) {
         $filterDefinition->field=$this->field;

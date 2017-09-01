@@ -15,6 +15,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 
@@ -71,7 +74,7 @@ class DefaultFindologic implements IProductList
     protected $offset = 0;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
+     * @var AbstractCategory
      */
     protected $category;
 
@@ -138,9 +141,9 @@ class DefaultFindologic implements IProductList
     protected $timeout = 3;
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig
+     * @param IConfig $tenantConfig
      */
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig)
+    public function __construct(IConfig $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -320,7 +323,7 @@ class DefaultFindologic implements IProductList
         return $this->offset;
     }
 
-    public function setCategory(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $category)
+    public function setCategory(AbstractCategory $category)
     {
         $this->products = null;
         $this->category = $category;
@@ -477,11 +480,11 @@ class DefaultFindologic implements IProductList
     /**
      * create category path
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $currentCat
+     * @param AbstractCategory $currentCat
      *
      * @return string
      */
-    public function buildCategoryTree(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $currentCat)
+    public function buildCategoryTree(AbstractCategory $currentCat)
     {
         $catTree = $currentCat->getId();
         while ($currentCat->getParent() instanceof $currentCat) {
@@ -630,7 +633,7 @@ class DefaultFindologic implements IProductList
             $field = $this->groupedValues[$fieldname];
 
             // special handling for nested category filters
-            if ($this->getCategory() && $fieldname === \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
+            if ($this->getCategory() && $fieldname === SelectCategory::FIELDNAME) {
                 $catTree = $this->buildCategoryTree($this->getCategory());
 
                 $categories = explode('_', $catTree);
@@ -638,7 +641,13 @@ class DefaultFindologic implements IProductList
                 foreach (array_slice($categories, 0, -1) as $cat) {
                     $field = $field->items->item;
                 }
-            } elseif ($fieldname === \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
+            } elseif ($fieldname === 'price') {
+                $field = $this->groupedValues[$fieldname];
+
+                $groups[] = [
+                    'value' => null, 'label' => null, 'count' => null, 'parameter' => $field->attributes->totalRange
+                ];
+            } elseif ($fieldname === \OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
                 $rec = function (array $items) use (&$rec, &$groups) {
                     foreach ($items as $item) {
                         $groups[$item->name] = [
@@ -716,11 +725,11 @@ class DefaultFindologic implements IProductList
         $data = $this->sendRequest($params);
 
         // TODO error handling
-//        if(array_key_exists('error', $data))
-//        {
-//            throw new Exception($data['error']);
-//        }
-//        $searchResult = $data->searchResult;
+        //        if(array_key_exists('error', $data))
+        //        {
+        //            throw new Exception($data['error']);
+        //        }
+        //        $searchResult = $data->searchResult;
 
         // extract grouped values
         $this->groupedValues = [];
@@ -738,6 +747,8 @@ class DefaultFindologic implements IProductList
      * @param array $params
      *
      * @return \SimpleXMLElement
+     *
+     * @throws \Exception
      */
     protected function sendRequest(array $params)
     {
@@ -753,7 +764,10 @@ class DefaultFindologic implements IProductList
         ;
 
         // create url
-        $url = sprintf('http://%1$s/ps/xml_2.0/%2$s?', $this->tenantConfig->getClientConfig('serviceUrl'), $endpoint
+        $url = sprintf(
+            'http://%1$s/ps/xml_2.0/%2$s?',
+            $this->tenantConfig->getClientConfig('serviceUrl'),
+            $endpoint
         );
         $url .= http_build_query($params);
 

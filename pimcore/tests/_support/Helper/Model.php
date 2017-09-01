@@ -1,8 +1,8 @@
 <?php
 namespace Pimcore\Tests\Helper;
 
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition;
 
 class Model extends AbstractDefinitionHelper
 {

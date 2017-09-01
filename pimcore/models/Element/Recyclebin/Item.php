@@ -21,9 +21,9 @@ use Pimcore\Cache;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -120,8 +120,8 @@ class Item extends Model\AbstractModel
             if ($indentElement) {
                 $element->setFilename($element->getFilename().'_restore');
             }
-        } elseif ($element instanceof Object\AbstractObject) {
-            $indentElement = Object::getByPath($element->getRealFullPath());
+        } elseif ($element instanceof DataObject\AbstractObject) {
+            $indentElement = DataObject::getByPath($element->getRealFullPath());
             if ($indentElement) {
                 $element->setKey($element->getKey().'_restore');
             }
@@ -228,9 +228,9 @@ class Item extends Model\AbstractModel
         Cache::addIgnoredTagOnSave($element->getCacheTag());
 
         if (method_exists($element, 'getChilds')) {
-            if ($element instanceof Object\AbstractObject) {
+            if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
-                $childs = $element->getChildren([Object::OBJECT_TYPE_FOLDER, Object::OBJECT_TYPE_VARIANT, Object::OBJECT_TYPE_OBJECT]);
+                $childs = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
             } else {
                 $childs = $element->getChilds();
             }
@@ -259,13 +259,13 @@ class Item extends Model\AbstractModel
 
         $restoreBinaryData($element, $this);
 
-        if ($element instanceof Object\Concrete) {
+        if ($element instanceof DataObject\Concrete) {
             $element->setOmitMandatoryCheck(true);
         }
         $element->save();
 
         if (method_exists($element, 'getChilds')) {
-            if ($element instanceof Object\AbstractObject) {
+            if ($element instanceof DataObject\AbstractObject) {
                 // don't use the getter because this will return an empty array (variants are excluded by default)
                 $childs = $element->o_childs;
             } else {

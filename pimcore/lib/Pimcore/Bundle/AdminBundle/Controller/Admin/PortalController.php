@@ -20,8 +20,8 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -385,7 +385,7 @@ class PortalController extends AdminController implements EventedControllerInter
      */
     public function portletModifiedObjectsAction(Request $request)
     {
-        $list = Object::getList([
+        $list = DataObject::getList([
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'o_modificationDate',

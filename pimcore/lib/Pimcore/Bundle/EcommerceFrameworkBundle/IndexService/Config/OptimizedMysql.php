@@ -14,35 +14,17 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql
- *
  * Configuration for the optimized mysql product index implementation.
  */
 class OptimizedMysql extends DefaultMysql implements IMockupConfig
 {
-    /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
-     */
-    protected $tenantWorker;
-
-    /**
-     * creates and returns tenant worker suitable for this tenant configuration
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql
-     */
-    public function getTenantWorker()
-    {
-        if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql($this);
-        }
-
-        return $this->tenantWorker;
-    }
-
     /**
      * creates object mockup for given data
      *
@@ -50,11 +32,11 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
      * @param $data
      * @param $relations
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup
+     * @return DefaultMockup
      */
     public function createMockupObject($objectId, $data, $relations)
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup($objectId, $data, $relations);
+        return new DefaultMockup($objectId, $data, $relations);
     }
 
     /**
@@ -76,5 +58,21 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
         } else {
             return $mockup;
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setTenantWorker(IWorker $tenantWorker)
+    {
+        if (!$tenantWorker instanceof OptimizedMysqlWorker) {
+            throw new \InvalidArgumentException(sprintf(
+                'Worker must be an instance of %s',
+                OptimizedMysqlWorker::class
+            ));
+        }
+
+        $this->checkTenantWorker($tenantWorker);
+        $this->tenantWorker = $tenantWorker;
     }
 }

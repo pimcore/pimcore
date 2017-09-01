@@ -115,7 +115,8 @@ abstract class AbstractElementController extends AbstractRestController
         $permission = $map[$type];
         if (!$element->isAllowed($permission)) {
             $this->get('monolog.logger.security')->error(
-                'User {user} attempted to access {permission} on {elementType} {elementId}, but has no permission to do so', [
+                'User {user} attempted to access {permission} on {elementType} {elementId}, but has no permission to do so',
+                [
                     'user'        => $this->getUser()->getName(),
                     'permission'  => $permission,
                     'elementType' => $element->getType(),
@@ -169,8 +170,8 @@ abstract class AbstractElementController extends AbstractRestController
             $wsData->$key = $value;
         }
 
-        if ($wsData instanceof \Pimcore\Model\Webservice\Data\Object) {
-            /** @var \Pimcore\Model\Webservice\Data\Object key */
+        if ($wsData instanceof \Pimcore\Model\Webservice\Data\DataObject) {
+            /** @var \Pimcore\Model\Webservice\Data\DataObject key */
             $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, 'object');
         } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Document) {
             /** @var \Pimcore\Model\Webservice\Data\Document key */

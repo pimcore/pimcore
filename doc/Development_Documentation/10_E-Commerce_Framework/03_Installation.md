@@ -7,8 +7,7 @@ This section describes the installation of the E-Commerce Framework and the firs
 The E-Commerce Framework is shipped with Pimcore core. To install it, navigate to `Tools` > `Extensions` in Pimcore 
 Admin UI and activate and install the `PimcoreEcommerceFrameworkBundle`. 
 
-The installer does following tasks: 
-- Create configuration file `app/config/pimcore/EcommerceFrameworkConfig.php` and fills it with default values. 
+The installer does following tasks:  
 - Install several field collections.
 - Install several object classes. 
 - Install several object bricks. 
@@ -18,8 +17,8 @@ The installer does following tasks:
 
 If either classes, field collections, object bricks or tables already exist, the installation cannot be started. 
 
-After this installation routine, additional configurations have to be made - most important Product, ProductCategory and
-eventually `EcommerceFrameworkConfig.php`. 
+After this installation routine, additional configurations have to be made - most important Product and ProductCategory.
+Please see [Configuration](./04_Configuration) for further information on available options.
 
 
 ## Configure Product and Product Category Class
@@ -33,7 +32,7 @@ The only requirement is, that the classes have to be 'prepared' for being produc
 There are two ways of preparing a Pimcore class for product-usage in the E-Commerce Framework
 
 1. The Pimcore class needs to extend the abstract class `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct`
-   * This is useful, when both product index and checkout functionality are based on the E-Commerce Framework. 
+   * This is useful, when both product index and checkout functionality are based on the E-Commerce Framework.    
    
    
 2. Make sure that the Pimcore class implements either `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable` or 
@@ -46,6 +45,11 @@ There are two ways of preparing a Pimcore class for product-usage in the E-Comme
 the parent class functionality or the overriding models functionality of Pimcore 
 (see also [Overriding Models](../20_Extending_Pimcore/03_Overriding_Models.md)).
 
+> If using the abstract class, also have a look at its [implementation](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Model/AbstractProduct.php). 
+You might need to override a few methods that cannot be implemented by the abstract class and throw an 
+exception depending on the use case you are using it. 
+
+
 ### Product Category
 When a product category class is used, this class needs to extend the abstract class 
 `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory`. 
@@ -54,14 +58,19 @@ When a product category class is used, this class needs to extend the abstract c
 Possibly the index update scripts need to be adapted.
 
 
-## Configuring `EcommerceFrameworkConfig.php`
+## Configuring Pimcore Ecommerce Framework
 
-[Sample EcommerceFrameworkConfig.php](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/install/EcommerceFrameworkConfig_sample.php)
+The E-Commerce Framework is split up into multiple components which can be configured individually. You can take a look 
+at a [sample Ecommerce Framework configuration file](https://github.com/pimcore/demo-ecommerce/blob/ecommerce-config/src/AppBundle/Resources/config/pimcore/ecommerce/ecommerce-config.yml)
+to get an overview what can be configured. For further reading please see:
 
-Open `app/config/pimcore/EcommerceFrameworkConfig.php` and adjust the settings. This configuration file is the central 
-configuration for the E-Commerce Framework and defines the implementations and configurations for all modules.
+- [Configuration](./04_Configuration) describes configuration features valid for the whole framework configuration
+- [PimcoreEcommerceFrameworkBundle Configuration Reference](./04_Configuration/01_PimcoreEcommerceFrameworkBundle_Configuration_Reference.md)
+  contains a reference of the whole configuration tree
+  
+Please see the following sections for a description of each component and and a configuration reference describing
+the configuration entries relevant to the component:
 
-So this configuration file specifies things like
 - [Cart Manager](./11_Cart_Manager.md)
 - [Price Systems](./09_Working_with_Prices/README.md)
 - Availability Systems
@@ -74,5 +83,4 @@ So this configuration file specifies things like
 For detailed information see comments within the configuration file. Depending on your use case, you might not need 
 all components configured in the configuration file. 
 
-
-> During development you will return to this file and adjust the settings multiple times. 
+> During development you will return to the configuration and adjust the settings multiple times. 

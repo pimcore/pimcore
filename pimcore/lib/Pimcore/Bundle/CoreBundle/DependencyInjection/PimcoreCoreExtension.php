@@ -78,10 +78,12 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $loader->load('event_listeners.yml');
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
+        $loader->load('migrations.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
         $this->configureDocumentEditableNamingStrategy($container, $config);
+        $this->configureRouting($container, $config['routing']);
         $this->configureCache($container, $loader, $config);
         $this->configurePasswordEncoders($container, $config);
 
@@ -179,6 +181,14 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
             $service = $container->getDefinition($serviceId);
             $service->setArguments([$loaders]);
         }
+    }
+
+    private function configureRouting(ContainerBuilder $container, array $config)
+    {
+        $container->setParameter(
+            'pimcore.routing.static.locale_params',
+            $config['static']['locale_params']
+        );
     }
 
     /**

@@ -2,12 +2,14 @@
 
 use Pimcore\Tool\Requirements\Check;
 
-?><!DOCTYPE html>
+?><?php if(!$this->headless) { ?><!DOCTYPE html>
 <html>
 <head>
-
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow" />
+</head>
+<body>
+<?php } ?>
 
     <style type="text/css">
         body {
@@ -54,9 +56,6 @@ use Pimcore\Tool\Requirements\Check;
             width:20px;
         }
     </style>
-
-</head>
-<body>
 
     <table cellpadding="20">
         <tr>
@@ -153,5 +152,9 @@ use Pimcore\Tool\Requirements\Check;
         </p>
     </div>
 
+<?php if(!$this->headless) { ?>
+
 </body>
 </html>
+
+<?php } ?>

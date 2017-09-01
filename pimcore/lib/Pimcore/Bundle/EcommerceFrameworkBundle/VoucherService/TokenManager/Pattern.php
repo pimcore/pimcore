@@ -22,8 +22,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing;
-use Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern;
-use Pimcore\Model\Object\OnlineShopVoucherToken;
+use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern;
+use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 use Zend\Paginator\Paginator;
 
 /**
@@ -137,7 +137,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
                 $orderToken = new OnlineShopVoucherToken();
                 $orderToken->setTokenId($token->getId());
                 $orderToken->setToken($token->getToken());
-                $series = \Pimcore\Model\Object\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
+                $series = \Pimcore\Model\DataObject\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
                 $orderToken->setVoucherSeries($series);
                 $orderToken->setParent($series);
                 $orderToken->setKey(\Pimcore\File::getValidFilename($token->getToken()));
@@ -238,7 +238,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
             return $codeSets;
         } catch (\Exception $e) {
             //            var_dump($e);
-//            \Pimcore\Log\Simple::log('VoucherSystem', $e);
+            //            \Pimcore\Log\Simple::log('VoucherSystem', $e);
             return false;
         }
     }
@@ -640,7 +640,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      */
 
     /**
-     * @return \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern
+     * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
      */
     public function getConfiguration()
     {
@@ -648,7 +648,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     }
 
     /**
-     * @param \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern $configuration
+     * @param \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern $configuration
      */
     public function setConfiguration($configuration)
     {

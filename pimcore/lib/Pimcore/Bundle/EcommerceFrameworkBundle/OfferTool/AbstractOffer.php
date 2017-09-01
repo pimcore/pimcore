@@ -17,11 +17,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
  * Abstract base class for offer pimcore objects
  */
-class AbstractOffer extends \Pimcore\Model\Object\Concrete
+class AbstractOffer extends Concrete
 {
     /**
      * @return string

@@ -118,10 +118,13 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     public function buildCheckoutItems(AbstractOrder $order)
     {
         $items = [];
-        if ($order->getItems()) {
-            foreach ($order->getItems() as $orderItem) {
-                $items[] = $this->buildCheckoutItem($order, $orderItem);
-            }
+
+        if (!$order->getItems()) {
+            return $items;
+        }
+
+        foreach ($order->getItems() as $orderItem) {
+            $items[] = $this->buildCheckoutItem($order, $orderItem);
         }
 
         return $items;
@@ -137,13 +140,20 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     public function buildCheckoutItemsByCart(ICart $cart)
     {
         $items = [];
-        if ($cart->getItems()) {
-            foreach ($cart->getItems() as $cartItem) {
-                if ($product = $cartItem->getProduct()) {
-                }
-                $item = $this->buildProductActionItem($product, $cartItem->getCount());
-                $items[] = $item;
+
+        if (!$cart->getItems()) {
+            return $items;
+        }
+
+        foreach ($cart->getItems() as $cartItem) {
+            /** @var IProduct $product */
+            $product = $cartItem->getProduct();
+            if (!$product) {
+                continue;
             }
+
+            $item = $this->buildProductActionItem($product, $cartItem->getCount());
+            $items[] = $item;
         }
 
         return $items;
@@ -159,12 +169,15 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      */
     public function buildCheckoutItem(AbstractOrder $order, AbstractOrderItem $orderItem)
     {
+        /** @var IProduct $product */
+        $product = $orderItem->getProduct();
+
         $item = new ProductAction();
         $item
             ->setId($orderItem->getProductNumber())
             ->setTransactionId($order->getOrdernumber())
             ->setName($this->normalizeName($orderItem->getProductName()))
-            ->setCategories($this->getProductCategories($orderItem->getProduct()))
+            ->setCategories($this->getProductCategories($product))
             ->setPrice($orderItem->getTotalPrice() / $orderItem->getAmount())
             ->setQuantity($orderItem->getAmount());
 
@@ -180,12 +193,14 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      */
     public function buildCheckoutItemByCartItem(AbstractCartItem $cartItem)
     {
-        $item = new ProductAction();
+        /** @var IProduct $product */
+        $product = $cartItem->getProduct();
 
+        $item = new ProductAction();
         $item
-            ->setId($cartItem->getProduct()->getId())
-            ->setName($this->normalizeName($cartItem->getProduct()->getOSName()))
-            ->setCategories($this->getProductCategories($cartItem->getProduct()))
+            ->setId($product->getId())
+            ->setName($this->normalizeName($product->getOSName()))
+            ->setCategories($this->getProductCategories($product))
             ->setPrice($cartItem->getTotalPrice() / $cartItem->getAmount())
             ->setQuantity($cartItem->getAmount());
 
@@ -196,9 +211,9 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      * Get a product's categories
      *
      * @param IProduct $product
-     * @param bool|false $first
+     * @param bool $first
      *
-     * @return array
+     * @return array|string
      */
     protected function getProductCategories(IProduct $product, $first = false)
     {
@@ -259,9 +274,9 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     /**
      * Normalize name for tracking JS
      *
-     * @param $name
+     * @param string $name
      *
-     * @return mixed
+     * @return string
      */
     protected function normalizeName($name)
     {

@@ -14,14 +14,16 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
+use Pimcore\Model\Element\ElementInterface;
+
 class ObjectIdSum implements IInterpreter
 {
-    public static function interpret($value, $config = null)
+    public function interpret($value, $config = null)
     {
         $sum = 0;
         if (is_array($value)) {
             foreach ($value as $object) {
-                if ($object instanceof \Pimcore\Model\Element\ElementInterface) {
+                if ($object instanceof ElementInterface) {
                     $sum += $object->getId();
                 }
             }

@@ -67,6 +67,7 @@ class Configuration implements ConfigurationInterface
         $this->addDocumentsNode($rootNode);
         $this->addModelsNode($rootNode);
 
+        $this->addRoutingNode($rootNode);
         $this->addCacheNode($rootNode);
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
@@ -84,12 +85,12 @@ class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-            ->arrayNode('models')
-            ->addDefaultsIfNotSet()
-                ->children()
-                ->arrayNode('class_overrides')
-                ->prototype('scalar')
-                ->end();
+                ->arrayNode('models')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('class_overrides')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar');
     }
 
     /**
@@ -174,6 +175,27 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
+
+    private function addRoutingNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('routing')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('static')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('locale_params')
+                                    ->info('Route params from this list will be mapped to _locale if _locale is not set explicitely')
+                                    ->prototype('scalar')
+                                    ->defaultValue([])
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end();
     }
 
     /**
@@ -330,10 +352,10 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('encoder_factories')
                             ->info('Encoder factories to use as className => factory service ID mapping')
                             ->example([
-                                'AppBundle\Model\Object\User1' => [
+                                'AppBundle\Model\DataObject\User1' => [
                                     'id' => 'website_demo.security.encoder_factory2'
                                 ],
-                                'AppBundle\Model\Object\User2' => 'website_demo.security.encoder_factory2'
+                                'AppBundle\Model\DataObject\User2' => 'website_demo.security.encoder_factory2'
                             ])
                             ->useAttributeAsKey('class')
                             ->prototype('array')

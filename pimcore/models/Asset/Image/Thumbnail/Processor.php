@@ -92,7 +92,7 @@ class Processor
     public static function process(Asset $asset, Config $config, $fileSystemPath = null, $deferred = false, $returnAbsolutePath = false, &$generated = false)
     {
         $generated = false;
-        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.png';
+        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.svg';
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
 
@@ -292,14 +292,20 @@ class Processor
                                             // check if source image is big enough otherwise adjust the high-res factor
                                             if (in_array($key, ['width', 'x'])) {
                                                 if ($sourceImageWidth < $value) {
-                                                    $highResFactor = $calculateMaxFactor($highResFactor,
-                                                        $sourceImageWidth, $value);
+                                                    $highResFactor = $calculateMaxFactor(
+                                                        $highResFactor,
+                                                        $sourceImageWidth,
+                                                        $value
+                                                    );
                                                     goto prepareTransformations;
                                                 }
                                             } elseif (in_array($key, ['height', 'y'])) {
                                                 if ($sourceImageHeight < $value) {
-                                                    $highResFactor = $calculateMaxFactor($highResFactor,
-                                                        $sourceImageHeight, $value);
+                                                    $highResFactor = $calculateMaxFactor(
+                                                        $highResFactor,
+                                                        $sourceImageHeight,
+                                                        $value
+                                                    );
                                                     goto prepareTransformations;
                                                 }
                                             }

@@ -16,8 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 /**
  * Interface for IndexService Tenant Configurations with mockup implementations
- *
- * Interface \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMockupConfig
  */
 interface IMockupConfig
 {

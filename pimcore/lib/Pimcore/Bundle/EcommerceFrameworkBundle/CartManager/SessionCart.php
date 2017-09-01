@@ -20,11 +20,16 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 class SessionCart extends AbstractCart implements ICart
 {
     /**
+     * @var ICart[]
+     */
+    protected static $unserializedCarts;
+
+    /**
      * @return string
      */
     protected function getCartItemClassName()
     {
-        return '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCartItem';
+        return SessionCartItem::class;
     }
 
     /**
@@ -32,29 +37,24 @@ class SessionCart extends AbstractCart implements ICart
      */
     protected function getCartCheckoutDataClassName()
     {
-        return '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCartCheckoutData';
+        return SessionCartCheckoutData::class;
     }
 
-    /**
-     * @return AttributeBagInterface
-     */
-    protected function getSession()
+    protected static function getSessionBag(): AttributeBagInterface
     {
-        /**
-         * @var AttributeBagInterface $session
-         */
-        $session = \Pimcore::getContainer()->get('session')->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
+        /** @var AttributeBagInterface $sessionBag */
+        $sessionBag = \Pimcore::getContainer()->get('session')->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
 
-        if (empty($session->get('carts'))) {
-            $session->set('carts', []);
+        if (empty($sessionBag->get('carts'))) {
+            $sessionBag->set('carts', []);
         }
 
-        return $session;
+        return $sessionBag;
     }
 
     public function save()
     {
-        $session = $this->getSession();
+        $session = static::getSessionBag();
 
         if (!$this->getId()) {
             $this->setId(uniqid('sesscart_'));
@@ -62,6 +62,7 @@ class SessionCart extends AbstractCart implements ICart
 
         $carts = $session->get('carts');
         $carts[$this->getId()] = serialize($this);
+
         $session->set('carts', $carts);
     }
 
@@ -74,7 +75,7 @@ class SessionCart extends AbstractCart implements ICart
     {
         $this->setIgnoreReadonly();
 
-        $session = $this->getSession();
+        $session = static::getSessionBag();
 
         if (!$this->getId()) {
             throw new \Exception('Cart saved not yet.');
@@ -84,6 +85,7 @@ class SessionCart extends AbstractCart implements ICart
 
         $carts = $session->get('carts');
         unset($carts[$this->getId()]);
+
         $session->set('carts', $carts);
     }
 
@@ -101,18 +103,16 @@ class SessionCart extends AbstractCart implements ICart
         return $this;
     }
 
-    protected static $unserializedCarts = null;
-
     /**
      * @param int $id
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart
+     * @return ICart|SessionCart
      */
     public static function getById($id)
     {
         $carts = static::getAllCartsForUser(-1);
 
-        return $carts[$id];
+        return $carts[$id] ?? null;
     }
 
     /**
@@ -120,14 +120,14 @@ class SessionCart extends AbstractCart implements ICart
      *
      * @param int $userId
      *
-     * @return array
+     * @return ICart[]
      */
     public static function getAllCartsForUser($userId)
     {
-        if (static::$unserializedCarts == null) {
-            $tmpCart = new static();
+        if (null === static::$unserializedCarts) {
+            static::$unserializedCarts = [];
 
-            foreach ($tmpCart->getSession()->get('carts') as $serializedCart) {
+            foreach (static::getSessionBag()->get('carts') as $serializedCart) {
                 $cart = unserialize($serializedCart);
                 static::$unserializedCarts[$cart->getId()] = $cart;
             }

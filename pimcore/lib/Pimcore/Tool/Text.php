@@ -15,9 +15,9 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object\Concrete;
 
 class Text
 {
@@ -79,7 +79,8 @@ class Text
                         } elseif ($element instanceof Concrete) {
                             if ($linkGenerator = $element->getClass()->getLinkGenerator()) {
                                 $path = $linkGenerator->generate(
-                                    $element, $params
+                                    $element,
+                                    $params
                                 );
                             } else {
                                 // no object path without link generator!

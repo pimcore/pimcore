@@ -28,7 +28,8 @@ class Web2PrintPdfCreationCommand extends AbstractCommand
             ->setName('web2print:pdf-creation')
             ->setDescription('Start pdf creation')
             ->addOption(
-                'processId', 'p',
+                'processId',
+                'p',
                 InputOption::VALUE_REQUIRED,
                 'process-id with pdf creation definitions'
             )

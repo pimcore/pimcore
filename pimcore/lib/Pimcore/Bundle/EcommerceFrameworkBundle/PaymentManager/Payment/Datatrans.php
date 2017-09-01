@@ -21,13 +21,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Config\Config;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-// TODO refine how payment amounts are transformed for API
 class Datatrans implements IPayment
 {
     const TRANS_TYPE_DEBIT = '05';
@@ -37,7 +37,12 @@ class Datatrans implements IPayment
     const AUTH_TYPE_FINAL_AUTHORIZATION = 'FOA'; // final authorization (MasterCard/Maestro)
 
     /**
-     * @var string
+     * @var FormFactoryInterface
+     */
+    protected $formFactory;
+
+    /**
+     * @var array
      */
     protected $endpoint = [];
 
@@ -66,37 +71,68 @@ class Datatrans implements IPayment
      */
     protected $paymentStatus;
 
-    /**
-     * @param Config $config
-     *
-     * @throws \Exception
-     */
-    public function __construct(Config $config)
+    public function __construct(array $options, FormFactoryInterface $formFactory)
     {
-        $settings = $config->config->{$config->mode};
-        if ($settings->sign == '' || $settings->merchantId == '') {
-            throw new \Exception('payment configuration is wrong. secret or customer is empty !');
+        $this->formFactory = $formFactory;
+
+        $this->processOptions(
+            $this->configureOptions(new OptionsResolver())->resolve($options)
+        );
+    }
+
+    protected function processOptions(array $options)
+    {
+        $this->merchantId = $options['merchant_id'];
+        $this->sign       = $options['sign'];
+
+        // use digital signature if configured
+        if (isset($options['use_digital_signature'])) {
+            $this->useDigitalSignature = $options['use_digital_signature'];
         }
 
-        $this->merchantId = $settings->merchantId;
-        $this->sign = $settings->sign;
-
-        // use digitally signed
-        if ($settings->digitalSignature) {
-            $this->useDigitalSignature = (bool)$settings->digitalSignature;
-        }
-
-        if ($config->mode == 'live') {
-            $this->endpoint['form'] = 'https://payment.datatrans.biz/upp/jsp/upStart.jsp';
-            $this->endpoint['script'] = 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js';
-            $this->endpoint['xmlAuthorize'] = 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp';
-            $this->endpoint['xmlProcessor'] = 'https://payment.datatrans.biz/upp/jsp/XML_processor.jsp';
+        // set endpoint depending on mode
+        if ('live' === $options['mode']) {
+            $this->endpoint = array_merge($this->endpoint, [
+                'form'         => 'https://payment.datatrans.biz/upp/jsp/upStart.jsp',
+                'script'       => 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
+                'xmlAuthorize' => 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://payment.datatrans.biz/upp/jsp/XML_processor.jsp',
+            ]);
         } else {
-            $this->endpoint['form'] = 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp';
-            $this->endpoint['script'] = 'https://pilot.datatrans.biz/upp/payment/js/datatrans-1.0.2.js';
-            $this->endpoint['xmlAuthorize'] = 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp';
-            $this->endpoint['xmlProcessor'] = 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp';
+            $this->endpoint = array_merge($this->endpoint, [
+                'form'         => 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp',
+                'script'       => 'https://pilot.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
+                'xmlAuthorize' => 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp',
+            ]);
         }
+    }
+
+    protected function configureOptions(OptionsResolver $resolver): OptionsResolver
+    {
+        $resolver->setRequired([
+            'mode',
+            'merchant_id',
+            'sign'
+        ]);
+
+        $resolver
+            ->setDefault('mode', 'sandbox')
+            ->setAllowedValues('mode', ['sandbox', 'live']);
+
+        $resolver
+            ->setDefined('use_digital_signature')
+            ->setAllowedTypes('use_digital_signature', ['bool']);
+
+        $notEmptyValidator = function ($value) {
+            return !empty($value);
+        };
+
+        foreach ($resolver->getRequiredOptions() as $requiredProperty) {
+            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+        }
+
+        return $resolver;
     }
 
     /**
@@ -111,9 +147,9 @@ class Datatrans implements IPayment
      * start payment
      *
      * @param IPrice $price
-     * @param array                       $config
+     * @param array $config
      *
-     * @return \Symfony\Component\Form\FormBuilderInterface
+     * @return FormBuilderInterface
      *
      * @throws \Exception
      *
@@ -123,8 +159,16 @@ class Datatrans implements IPayment
     public function initPayment(IPrice $price, array $config)
     {
         // check params
-        $required = [  'successUrl' => null, 'errorUrl' => null, 'cancelUrl' => null, 'refno' => null, 'useAlias' => null, 'reqtype' => null, 'language' => null
+        $required = [
+            'successUrl' => null,
+            'errorUrl'   => null,
+            'cancelUrl'  => null,
+            'refno'      => null,
+            'useAlias'   => null,
+            'reqtype'    => null,
+            'language'   => null
         ];
+
         $config = array_intersect_key($config, $required);
 
         if (count($required) != count($config)) {
@@ -143,8 +187,12 @@ class Datatrans implements IPayment
             $sign = $this->sign;
         } else {
             $data = [
-                'merchantId' => $this->merchantId, 'amount' => $paymentData['amount'], 'currency' => $paymentData['currency'], 'refno' => $config['refno']
+                'merchantId' => $this->merchantId,
+                'amount'     => $paymentData['amount'],
+                'currency'   => $paymentData['currency'],
+                'refno'      => $config['refno']
             ];
+
             $sign = hash_hmac('SHA256', implode('', $data), hex2bin($this->sign));
         }
 
@@ -171,9 +219,10 @@ class Datatrans implements IPayment
 
         // create form
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
-        $form = Forms::createFormFactory()->createNamedBuilder(null, FormType::class, [], [
+        $form = $this->formFactory->createNamedBuilder(null, FormType::class, [], [
             'attr' => $formAttributes
         ]);
+
         $form->setAction($this->endpoint['form']);
         $form->setMethod('post');
 
@@ -239,7 +288,14 @@ class Datatrans implements IPayment
         // check required fields
         $required = $this->getRequiredResponseFields($response);
         $authorizedData = [
-            'aliasCC' => null, 'expm' => null, 'expy' => null, 'reqtype' => null, 'uppTransactionId' => null, 'amount' => null, 'currency' => null, 'refno' => null
+            'aliasCC'          => null,
+            'expm'             => null,
+            'expy'             => null,
+            'reqtype'          => null,
+            'uppTransactionId' => null,
+            'amount'           => null,
+            'currency'         => null,
+            'refno'            => null
         ];
 
         // check fields
@@ -271,8 +327,14 @@ class Datatrans implements IPayment
         }
 
         return new Status(
-            $response['refno'], $response['uppTransactionId'], $message, $paymentState, [
-                'datatrans_amount' => (string)$price, 'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode'], 'datatrans_response' => $response
+            $response['refno'],
+            $response['uppTransactionId'],
+            $message,
+            $paymentState,
+            [
+                'datatrans_amount'               => (string)$price,
+                'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode'],
+                'datatrans_response'             => $response
             ]
         );
     }
@@ -324,12 +386,7 @@ class Datatrans implements IPayment
     }
 
     /**
-     * @param IPrice $price
-     * @param string $reference
-     *
-     * @return Status|IStatus
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
     public function executeDebit(IPrice $price = null, $reference = null)
     {
@@ -341,7 +398,11 @@ class Datatrans implements IPayment
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
-                self::TRANS_TYPE_DEBIT, $this->authorizedData['amount'], $this->authorizedData['currency'], $reference ?: $this->authorizedData['refno'], $this->authorizedData['uppTransactionId']
+                self::TRANS_TYPE_DEBIT,
+                $this->authorizedData['amount'],
+                $this->authorizedData['currency'],
+                $reference ?: $this->authorizedData['refno'],
+                $this->authorizedData['uppTransactionId']
             );
 
             $uppTransactionId = $this->authorizedData['uppTransactionId'];
@@ -380,8 +441,14 @@ class Datatrans implements IPayment
 
         // create and return status
         $status = new Status(
-            (string)$transaction->attributes()['refno'], (string)$response->uppTransactionId ?: $uppTransactionId, $message, $paymentState, [
-                'datatrans_amount' => (string)$price, 'datatrans_responseXML' => $transaction->asXML(), 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+            (string)$transaction->attributes()['refno'],
+            (string)$response->uppTransactionId ?: $uppTransactionId,
+            $message,
+            $paymentState,
+            [
+                'datatrans_amount'               => (string)$price,
+                'datatrans_responseXML'          => $transaction->asXML(),
+                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
             ]
         );
 
@@ -389,13 +456,7 @@ class Datatrans implements IPayment
     }
 
     /**
-     * gutschrift ausführen
-     *
-     * @param IPrice $price
-     * @param string $reference
-     * @param string $transactionId
-     *
-     * @return IStatus
+     * @inheritdoc
      */
     public function executeCredit(IPrice $price, $reference, $transactionId)
     {
@@ -405,7 +466,11 @@ class Datatrans implements IPayment
 
             // complete authorized payment
             $xml = $this->xmlSettlement(
-                self::TRANS_TYPE_CREDIT, $this->authorizedData['amount'], $this->authorizedData['currency'], $this->authorizedData['refno'], $this->authorizedData['uppTransactionId']
+                self::TRANS_TYPE_CREDIT,
+                $this->authorizedData['amount'],
+                $this->authorizedData['currency'],
+                $this->authorizedData['refno'],
+                $this->authorizedData['uppTransactionId']
             );
         } else {
             // complete authorized payment
@@ -435,8 +500,14 @@ class Datatrans implements IPayment
 
         // create and return status
         $status = new Status(
-            (string)$transaction->attributes()['refno'], (string)$response->uppTransactionId, $message, $paymentState, [
-                'datatrans_amount' => (string)$price, 'datatrans_responseXML' => $transaction->asXML(), 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
+            (string)$transaction->attributes()['refno'],
+            (string)$response->uppTransactionId,
+            $message,
+            $paymentState,
+            [
+                'datatrans_amount'               => (string)$price,
+                'datatrans_responseXML'          => $transaction->asXML(),
+                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
             ]
         );
 
@@ -553,7 +624,18 @@ class Datatrans implements IPayment
 </authorizationService>
 XML;
 
-        $xml = sprintf($xml, $this->merchantId, $this->sign, $refno, $reqType, $transType, $amount, $currency, $aliasCC, $expireMonth, $expireYear
+        $xml = sprintf(
+            $xml,
+            $this->merchantId,
+            $this->sign,
+            $refno,
+            $reqType,
+            $transType,
+            $amount,
+            $currency,
+            $aliasCC,
+            $expireMonth,
+            $expireYear
         );
 
         return $this->xmlRequest($this->endpoint['xmlAuthorize'], $xml);
@@ -594,7 +676,15 @@ XML;
 </paymentService>
 XML;
 
-        $xml = sprintf($xml, $this->merchantId, $reference, $transactionId, $amount, $currency, $transType, $this->sign
+        $xml = sprintf(
+            $xml,
+            $this->merchantId,
+            $reference,
+            $transactionId,
+            $amount,
+            $currency,
+            $transType,
+            $this->sign
         );
 
         return $this->xmlRequest($this->endpoint['xmlProcessor'], $xml);

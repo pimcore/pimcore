@@ -246,8 +246,10 @@ function return_bytes($val)
     switch ($last) {
         case 'g':
             $val *= 1024;
+            // no break
         case 'm':
             $val *= 1024;
+            // no break
         case 'k':
             $val *= 1024;
     }
@@ -417,7 +419,8 @@ function recursiveCopy($source, $destination)
         foreach (
             $iterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
-                RecursiveIteratorIterator::SELF_FIRST) as $item) {
+                RecursiveIteratorIterator::SELF_FIRST
+            ) as $item) {
             if ($item->isDir()) {
                 \Pimcore\File::mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
             } else {
@@ -436,8 +439,11 @@ function recursiveCopy($source, $destination)
 
 function p_r()
 {
+    $cloner = new \Symfony\Component\VarDumper\Cloner\VarCloner();
+    $dumper = 'cli' === PHP_SAPI ? new \Symfony\Component\VarDumper\Dumper\CliDumper() : new \Symfony\Component\VarDumper\Dumper\HtmlDumper();
+
     foreach (func_get_args() as $var) {
-        \Symfony\Component\VarDumper\VarDumper::dump($var);
+        $dumper->dump($cloner->cloneVar($var));
     }
 }
 

@@ -14,24 +14,22 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
 
 /**
- * Class AbstractMockupCacheWorker
+ * Provides worker functionality for batch preparing data and updating index
  *
- * provides worker functionality for patch preparing data and updating index
- *
+ * @property AbstractConfig $tenantConfig
  */
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements IBatchProcessingWorker
 {
-    /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
-     */
-    protected $tenantConfig;
-
     /**
      * returns name for store table
      *
@@ -85,6 +83,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      * prepare data for index creation and store is in store table
      *
      * @param IIndexable $object
+     * @param $subObjectId
+     *
+     * @return array
      */
     protected function getDefaultDataForIndex(IIndexable $object, $subObjectId)
     {
@@ -136,7 +137,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
             $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
         }
 
-        $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
+        $virtualProduct = AbstractObject::getById($virtualProductId);
         if ($virtualProduct && method_exists($virtualProduct, 'isActive')) {
             $virtualProductActive = $virtualProduct->isActive();
         }
@@ -175,73 +176,55 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
              */
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
-                $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
+                $b = AbstractObject::doGetInheritedValues();
                 \Pimcore::unsetAdminMode();
-                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
-                $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
-                \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
+                AbstractObject::setGetInheritedValues(true);
+                $hidePublishedMemory = AbstractObject::doHideUnpublished();
+                AbstractObject::setHideUnpublished(false);
+                $getFallbackLanguagesMemory = Localizedfield::getGetFallbackValues();
+                Localizedfield::setGetFallbackValues(true);
 
                 $data = $this->getDefaultDataForIndex($object, $subObjectId);
                 $relationData = [];
 
-                $columnConfig = $this->columnConfig;
-                if (!empty($columnConfig->name)) {
-                    $columnConfig = [$columnConfig];
-                } elseif (empty($columnConfig)) {
-                    $columnConfig = [];
-                }
-                foreach ($columnConfig as $column) {
+                foreach ($this->tenantConfig->getAttributes() as $attribute) {
                     try {
-                        //$data[$column->name] = null;
-                        $value = null;
-                        if (!empty($column->getter)) {
-                            $getter = $column->getter;
-                            $value = $getter::get($object, $column->config, $subObjectId, $this->tenantConfig);
-                        } else {
-                            if (!empty($column->fieldname)) {
-                                $getter = 'get' . ucfirst($column->fieldname);
-                            } else {
-                                $getter = 'get' . ucfirst($column->name);
-                            }
+                        $value = $attribute->getValue($object, $subObjectId, $this->tenantConfig);
 
-                            if (method_exists($object, $getter)) {
-                                $value = $object->$getter($column->locale);
-                            }
-                        }
+                        if (null !== $attribute->getInterpreter()) {
+                            $value = $attribute->interpretValue($value);
 
-                        if (!empty($column->interpreter)) {
-                            $interpreter = $column->interpreter;
-                            $value = $interpreter::interpret($value, $column->config);
-                            $interpreterObject = new $interpreter();
-                            if ($interpreterObject instanceof IRelationInterpreter) {
+                            if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
                                 foreach ($value as $v) {
                                     $relData = [];
                                     $relData['src'] = $subObjectId;
                                     $relData['src_virtualProductId'] = $data['o_virtualProductId'];
                                     $relData['dest'] = $v['dest'];
-                                    $relData['fieldname'] = $column->name;
+                                    $relData['fieldname'] = $attribute->getName();
                                     $relData['type'] = $v['type'];
                                     $relationData[] = $relData;
                                 }
                             } else {
-                                $data[$column->name] = $value;
+                                $data[$attribute->getName()] = $value;
                             }
                         } else {
-                            $data[$column->name] = $value;
+                            $data[$attribute->getName()] = $value;
                         }
 
-                        if (is_array($data[$column->name])) {
-                            $data[$column->name] = $this->convertArray($data[$column->name]);
+                        if (is_array($data[$attribute->getName()])) {
+                            $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Exception $e) {
                         Logger::err('Exception in IndexService: ' . $e);
                     }
                 }
+
                 if ($a) {
                     \Pimcore::setAdminMode();
                 }
-                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($b);
-                \Pimcore\Model\Object\AbstractObject::setHideUnpublished($hidePublishedMemory);
+                AbstractObject::setGetInheritedValues($b);
+                AbstractObject::setHideUnpublished($hidePublishedMemory);
+                Localizedfield::setGetFallbackValues($getFallbackLanguagesMemory);
 
                 $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);
                 $jsonData = json_encode([
@@ -307,7 +290,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      */
     public function fillupPreparationQueue(IIndexable $object)
     {
-        if ($object instanceof \Pimcore\Model\Object\Concrete) {
+        if ($object instanceof Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
             $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);
@@ -330,11 +313,15 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     {
         $workerId = uniqid();
         $workerTimestamp = time();
-        $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) LIMIT ' . intval($limit),
-            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]);
+        $this->db->query(
+            'UPDATE ' . $this->getStoreTableName() . ' SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) LIMIT ' . intval($limit),
+            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]
+        );
 
-        $entries = $this->db->fetchCol('SELECT o_id FROM ' . $this->getStoreTableName() . ' WHERE preparation_worker_id = ?',
-            [$workerId]);
+        $entries = $this->db->fetchCol(
+            'SELECT o_id FROM ' . $this->getStoreTableName() . ' WHERE preparation_worker_id = ?',
+            [$workerId]
+        );
 
         if ($entries) {
             foreach ($entries as $objectId) {
@@ -368,8 +355,10 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     {
         $workerId = uniqid();
         $workerTimestamp = time();
-        $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET worker_id = ?, worker_timestamp = ? WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
-            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]);
+        $this->db->query(
+            'UPDATE ' . $this->getStoreTableName() . ' SET worker_id = ?, worker_timestamp = ? WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
+            [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]
+        );
 
         $entries = $this->db->fetchAll('SELECT o_id, data FROM ' . $this->getStoreTableName() . ' WHERE worker_id = ?', [$workerId]);
 

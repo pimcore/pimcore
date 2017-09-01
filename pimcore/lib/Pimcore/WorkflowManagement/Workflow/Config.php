@@ -16,11 +16,10 @@ namespace Pimcore\WorkflowManagement\Workflow;
 
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Object;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\WorkflowManagement\Workflow;
 
 class Config
@@ -143,14 +142,14 @@ class Config
         return null;
     }
 
-//    /**
+    //    /**
 //     * @param $classId
 //     * @return null
 //     * @throws \Exception
 //     */
 //    public static function getClassWorkflowConfig($classId)
 //    {
-//        if ($classId instanceof \Pimcore\Model\Object\ClassDefinition) {
+//        if ($classId instanceof \Pimcore\Model\DataObject\ClassDefinition) {
 //            $classId = $classId->getId();
 //        }
 //

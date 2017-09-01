@@ -14,8 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
+use Pimcore\Model\DataObject\AbstractObject;
 
 abstract class AbstractConfig implements IConfig
 {
@@ -24,55 +28,124 @@ abstract class AbstractConfig implements IConfig
     protected $searchAttributeConfig;
 
     /**
+     * @var Attribute[]
+     */
+    protected $attributes = [];
+
+    /**
+     * @var array
+     */
+    protected $searchAttributes = [];
+
+    /**
+     * @var array
+     */
+    protected $filterTypes;
+
+    /**
+     * @var IWorker
+     */
+    protected $tenantWorker;
+
+    /**
      * @var Config
      */
     protected $filterTypeConfig;
 
     /**
-     * @param string $tenantName
-     * @param $tenantConfig
-     * @param null $totalConfig
+     * @var array
      */
-    public function __construct($tenantName, $tenantConfig, $totalConfig = null)
-    {
+    protected $options;
+
+    /**
+     * @param string $tenantName
+     * @param Attribute[] $attributes
+     * @param array $searchAttributes
+     * @param array $filterTypes
+     * @param array $options
+     */
+    public function __construct(
+        string $tenantName,
+        array $attributes,
+        array $searchAttributes,
+        array $filterTypes,
+        array $options = []
+    ) {
         $this->tenantName = $tenantName;
-        $attributeConfigArray = [];
 
-        /* include column file configs and replace placeholders */
-        foreach ($tenantConfig->columns->toArray() as $columnConfig) {
-            if (!array_key_exists('file', $columnConfig)) {
-                $attributeConfigArray[] = $columnConfig;
-                continue;
-            }
-
-            $includeColumnConfig = include PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . (string)$columnConfig['file'];
-
-            /* if placeholders are defined, check for them in the included config */
-            if (array_key_exists('placeholders', $columnConfig)) {
-                $placeholders = $columnConfig['placeholders'];
-                foreach ($includeColumnConfig as $incIndex => $replaceConfig) {
-                    foreach ($replaceConfig as $key => $value) {
-                        if (array_key_exists($value, $placeholders)) {
-                            $includeColumnConfig[$incIndex][$key] = $placeholders[$value];
-                        }
-                    }
-                }
-            }
-
-            $attributeConfigArray = array_merge($attributeConfigArray, $includeColumnConfig);
+        foreach ($attributes as $attribute) {
+            $this->addAttribute($attribute);
         }
 
-        $this->attributeConfig = new Config($attributeConfigArray);
-
-        $this->filterTypeConfig = $tenantConfig->filtertypes;
-
-        if (sizeof($tenantConfig->generalSearchColumns) == 1) {
-            $this->searchAttributeConfig[] = (string)$tenantConfig->generalSearchColumns->name;
-        } elseif ($tenantConfig->generalSearchColumns) {
-            foreach ($tenantConfig->generalSearchColumns as $c) {
-                $this->searchAttributeConfig[] = $c->name;
-            }
+        foreach ($searchAttributes as $searchAttribute) {
+            $this->addSearchAttribute($searchAttribute);
         }
+
+        $this->filterTypes = $filterTypes;
+        $this->processOptions($options);
+    }
+
+    protected function addAttribute(Attribute $attribute)
+    {
+        $this->attributes[$attribute->getName()] = $attribute;
+    }
+
+    protected function addSearchAttribute(string $searchAttribute)
+    {
+        if (!isset($this->attributes[$searchAttribute])) {
+            throw new \InvalidArgumentException(sprintf(
+                'The search attribute "%s" in product index tenant "%s" is not defined as attribute',
+                $searchAttribute,
+                $this->tenantName
+            ));
+        }
+
+        $this->searchAttributes[] = $searchAttribute;
+    }
+
+    protected function processOptions(array $options)
+    {
+        // noop - to implemented by configs supporting options
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setTenantWorker(IWorker $tenantWorker)
+    {
+        $this->checkTenantWorker($tenantWorker);
+        $this->tenantWorker = $tenantWorker;
+    }
+
+    /**
+     * Checks if tenant worker matches prerequisites (config wrapped in worker is this instance and instance has no
+     * worker set yet).
+     *
+     * @param IWorker $tenantWorker
+     */
+    protected function checkTenantWorker(IWorker $tenantWorker)
+    {
+        if (null !== $this->tenantWorker) {
+            throw new \LogicException(sprintf('Worker for tenant "%s" is already set', $this->tenantName));
+        }
+
+        // make sure the worker is the one working on this config instance
+        if ($tenantWorker->getTenantConfig() !== $this) {
+            throw new \LogicException('Worker config does not match the config the worker is about to be set to');
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTenantWorker()
+    {
+        // the worker is expected to call setTenantWorker as soon as possible
+        if (null === $this->tenantWorker) {
+            throw new \RuntimeException('Tenant worker is not set.');
+        }
+
+        return $this->tenantWorker;
     }
 
     /**
@@ -84,23 +157,23 @@ abstract class AbstractConfig implements IConfig
     }
 
     /**
-     * returns column configuration for product index
+     * Returns configured attributes for product index
      *
-     * @return mixed
+     * @return Attribute[]
      */
-    public function getAttributeConfig()
+    public function getAttributes(): array
     {
-        return $this->attributeConfig;
+        return $this->attributes;
     }
 
     /**
-     * return search index column names for product index
+     * Returns full text search index attribute names for product index
      *
      * @return array
      */
-    public function getSearchAttributeConfig()
+    public function getSearchAttributes(): array
     {
-        return $this->searchAttributeConfig;
+        return $this->searchAttributes;
     }
 
     /**
@@ -114,6 +187,8 @@ abstract class AbstractConfig implements IConfig
     }
 
     /**
+     * @param IIndexable $object
+     *
      * @return bool
      */
     public function isActive(IIndexable $object)
@@ -124,7 +199,7 @@ abstract class AbstractConfig implements IConfig
     /**
      * @param IIndexable $object
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
+     * @return AbstractCategory[]
      */
     public function getCategories(IIndexable $object)
     {
@@ -182,7 +257,7 @@ abstract class AbstractConfig implements IConfig
      */
     public function getObjectById($objectId, $onlyMainObject = false)
     {
-        return \Pimcore\Model\Object\AbstractObject::getById($objectId);
+        return AbstractObject::getById($objectId);
     }
 
     /**

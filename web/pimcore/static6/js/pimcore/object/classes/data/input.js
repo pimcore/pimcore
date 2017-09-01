@@ -52,6 +52,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
         $super();
 
         this.specificPanel.removeAll();
+
         this.specificPanel.add([
             {
                 xtype: "numberfield",
@@ -140,7 +141,8 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 {
                     width: source.datax.width,
                     columnLength: source.datax.columnLength,
-                    regex: source.datax.regex
+                    regex: source.datax.regex,
+                    unique: source.datax.unique
                 });
         }
     }

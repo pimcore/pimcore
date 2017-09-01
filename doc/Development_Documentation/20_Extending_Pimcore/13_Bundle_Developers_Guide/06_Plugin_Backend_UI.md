@@ -6,7 +6,7 @@ The Pimcore Backend UI is based upon the [Ext JS](https://www.sencha.com/product
 add Ext components to the user interface or execute any other JavaScript required in the plugin context.
 
 All JavaScript and CSS which should be included, needs to be defined in your bundle class, as described in 
-[Pimcore Bundles](./05_Pimcore_Bundles.md). 
+[Pimcore Bundles](./05_Pimcore_Bundles). 
 
 These scripts are loaded last upon Pimcore startup. They are loaded in the same order as specified in the bundle class.
 

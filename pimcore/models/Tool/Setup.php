@@ -37,8 +37,16 @@ class Setup extends Model\AbstractModel
 
         // check for an initial configuration template
         // used eg. by the demo installer
-        $configTemplatePath = PIMCORE_CONFIGURATION_DIRECTORY . '/system.php';
-        if (file_exists($configTemplatePath)) {
+        $configTemplatePaths = [
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system.php',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.php'
+        ];
+
+        foreach ($configTemplatePaths as $configTemplatePath) {
+            if (!file_exists($configTemplatePath)) {
+                continue;
+            }
+
             try {
                 $configTemplate = new \Pimcore\Config\Config(include($configTemplatePath));
                 if ($configTemplate->general) { // check if the template contains a valid configuration
@@ -47,6 +55,8 @@ class Setup extends Model\AbstractModel
                     // unset database configuration
                     unset($settings['database']['params']['host']);
                     unset($settings['database']['params']['port']);
+
+                    break;
                 }
             } catch (\Exception $e) {
             }
@@ -160,9 +170,12 @@ class Setup extends Model\AbstractModel
         ]));
 
         // generate parameters.yml
-        $parameters = file_get_contents(PIMCORE_APP_ROOT . '/config/parameters.example.yml');
-        $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', generateRandomSymfonySecret(), $parameters);
-        File::put(PIMCORE_APP_ROOT . '/config/parameters.yml', $parameters);
+        $parametersFilePath = PIMCORE_APP_ROOT . '/config/parameters.yml';
+        if (!file_exists($parametersFilePath)) {
+            $parameters = file_get_contents(PIMCORE_APP_ROOT . '/config/parameters.example.yml');
+            $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', generateRandomSymfonySecret(), $parameters);
+            File::put($parametersFilePath, $parameters);
+        }
     }
 
     /**

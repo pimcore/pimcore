@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
@@ -26,14 +27,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
 
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->script;
-        }
-
         $ranges = $filterDefinition->getRanges();
-
         $groupByValues = $productList->getGroupByValues($filterDefinition->getField(), true);
 
         $counts = [];
@@ -68,7 +62,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
             $currentValue = implode($currentFilter[$filterDefinition->getField()], '-');
         }
 
-        return $this->render($script, [
+        return $this->render($this->getTemplate($filterDefinition), [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentValue,
@@ -86,11 +80,11 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         $field = $filterDefinition->getField();
         $rawValue = $params[$field];
 
-        if (!empty($rawValue) && $rawValue != \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if (!empty($rawValue) && $rawValue != AbstractFilterType::EMPTY_STRING) {
             $values = explode('-', $rawValue);
             $value['from'] = trim($values[0]);
             $value['to'] = trim($values[1]);
-        } elseif ($rawValue == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        } elseif ($rawValue == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } else {
             $value['from'] = $filterDefinition->getPreSelectFrom();

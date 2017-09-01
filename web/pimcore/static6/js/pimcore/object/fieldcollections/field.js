@@ -19,6 +19,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                                                                 "objectsMetadata"],
     uploadUrl: '/admin/class/import-fieldcollection',
     exportUrl: "/admin/class/export-fieldcollection",
+    context: "fieldcollection",
 
     
     getId: function(){
@@ -64,9 +65,22 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         }
     },
 
-    saveOnComplete: function () {
-        this.parentPanel.tree.getStore().load();
-        pimcore.helpers.showNotification(t("success"), t("fieldcollection_saved_successfully"), "success");
+    saveOnComplete: function (response) {
+        try {
+            var res = Ext.decode(response.responseText);
+            if (res.success) {
+                this.parentPanel.tree.getStore().load();
+                pimcore.helpers.showNotification(t("success"), t("fieldcollection_saved_successfully"), "success");
+            } else {
+                throw "save was not successful, see debug.log";
+            }
+        } catch (e) {
+            this.saveOnError();
+        }
+    },
+
+    saveOnError: function () {
+        pimcore.helpers.showNotification(t("error"), t("definition_save_error"), "error");
     },
 
     upload: function() {

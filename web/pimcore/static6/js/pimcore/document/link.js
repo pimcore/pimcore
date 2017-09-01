@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.document.link");
 pimcore.document.link = Class.create(pimcore.document.document, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("link");
         this.addLoadingPanel();
@@ -284,13 +285,16 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                     },
 
                     onNodeOver : function(target, dd, e, data) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
+                        data = data.records[0].data;
+                        return data.type != "folder" ? Ext.dd.DropZone.prototype.dropAllowed : Ext.dd.DropZone.prototype.dropNotAllowed;
                     },
 
                     onNodeDrop : function(target, dd, e, data) {
                         data = data.records[0].data;
-                        this.setValue(data.path);
-                        return true;
+                        if (data.type != "folder") {
+                            this.setValue(data.path);
+                            return true;
+                        }
                     }.bind(this)
                 });
             });

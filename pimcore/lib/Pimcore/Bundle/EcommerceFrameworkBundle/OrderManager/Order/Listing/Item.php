@@ -57,6 +57,6 @@ class Item extends AbstractOrderListItem implements IOrderListItem
      */
     public function reference()
     {
-        return \Pimcore\Model\Object\Concrete::getById($this->getId());
+        return \Pimcore\Model\DataObject\Concrete::getById($this->getId());
     }
 }

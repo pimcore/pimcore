@@ -20,14 +20,14 @@ use Pimcore\Logger;
 class Backend
 {
     /**
-      * @var string
-      */
-     private $backendQuery;
+     * @var string
+     */
+    private $backendQuery;
 
-     /**
-      * @var array
-      */
-     private $backendQueryParams;
+    /**
+     * @var array
+     */
+    private $backendQueryParams;
 
     /**
      * @param $queryStr

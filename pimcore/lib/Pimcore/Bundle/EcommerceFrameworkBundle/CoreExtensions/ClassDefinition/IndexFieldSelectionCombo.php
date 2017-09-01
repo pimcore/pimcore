@@ -16,9 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
-use Pimcore\Logger;
-use Pimcore\Model\Object\ClassDefinition\Data\Select;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PimcoreEcommerceFrameworkBundle;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 
 class IndexFieldSelectionCombo extends Select
 {
@@ -35,34 +34,35 @@ class IndexFieldSelectionCombo extends Select
 
     public function __construct()
     {
-        $installer = \Pimcore::getContainer()->get('pimcore.ecommerceframework.installer');
-        if ($installer->isInstalled()) {
-            $indexColumns = [];
-            try {
-                $indexService = Factory::getInstance()->getIndexService();
-                $indexColumns = $indexService->getIndexAttributes(true);
-            } catch (\Exception $e) {
-                Logger::err($e);
-            }
+        $this->setOptions($this->buildOptions());
+    }
 
-            $options = [];
-
-            foreach ($indexColumns as $c) {
-                $options[] = [
-                    'key' => $c,
-                    'value' => $c
-                ];
-            }
-
-            if ($this->getSpecificPriceField()) {
-                $options[] = [
-                    'key' => IProductList::ORDERKEY_PRICE,
-                    'value' => IProductList::ORDERKEY_PRICE
-                ];
-            }
-
-            $this->setOptions($options);
+    protected function buildOptions(): array
+    {
+        if (!PimcoreEcommerceFrameworkBundle::isInstalled()) {
+            return [];
         }
+
+        $indexService = Factory::getInstance()->getIndexService();
+        $indexColumns = $indexService->getIndexAttributes(true);
+
+        $options = [];
+
+        foreach ($indexColumns as $c) {
+            $options[] = [
+                'key' => $c,
+                'value' => $c
+            ];
+        }
+
+        if ($this->getSpecificPriceField()) {
+            $options[] = [
+                'key' => IProductList::ORDERKEY_PRICE,
+                'value' => IProductList::ORDERKEY_PRICE
+            ];
+        }
+
+        return $options;
     }
 
     public function setSpecificPriceField($specificPriceField)

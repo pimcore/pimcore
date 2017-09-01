@@ -14,13 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql as DefaultMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql
- *
  * Tenant configuration for a simple mysql product index implementation. It is used by the default tenant.
+ *
+ * @method DefaultMysqlWorker getTenantWorker()
  */
 class DefaultMysql extends AbstractConfig implements IMysqlConfig
 {
@@ -118,21 +119,17 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig
     }
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql
+     * @inheritDoc
      */
-    protected $tenantWorker;
-
-    /**
-     * creates and returns tenant worker suitable for this tenant configuration
-     *
-     * @return IWorker
-     */
-    public function getTenantWorker()
+    public function setTenantWorker(IWorker $tenantWorker)
     {
-        if (empty($this->tenantWorker)) {
-            $this->tenantWorker = new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql($this);
+        if (!$tenantWorker instanceof DefaultMysqlWorker) {
+            throw new \InvalidArgumentException(sprintf(
+                'Worker must be an instance of %s',
+                DefaultMysqlWorker::class
+            ));
         }
 
-        return $this->tenantWorker;
+        parent::setTenantWorker($tenantWorker);
     }
 }

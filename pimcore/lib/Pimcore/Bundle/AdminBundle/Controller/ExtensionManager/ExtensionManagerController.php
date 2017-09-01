@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 
+use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\LegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
@@ -26,6 +27,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Routing\RouteReferenceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -208,6 +210,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $message = 'Failed to run assets:install command. Please run command manually.' . PHP_EOL . PHP_EOL . $e->getMessage();
         }
 
+        $message = Encoding::fixUTF8($message);
+        $message = (new AnsiToHtmlConverter())->convert($message);
         $message = explode(PHP_EOL, $message);
 
         return $message;
@@ -259,10 +263,16 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
             $this->bundleManager->update($bundle);
 
-            return $this->json([
+            $data = [
                 'success' => true,
                 'bundle'  => $this->buildBundleInfo($bundle, true, true)
-            ]);
+            ];
+
+            if (!empty($message = $this->getInstallerOutput($bundle))) {
+                $data['message'] = $message;
+            }
+
+            return $this->json($data);
         } catch (BundleNotFoundException $e) {
             return $this->json([
                 'success' => false,
@@ -331,10 +341,16 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 $this->bundleManager->uninstall($bundle);
             }
 
-            return $this->json([
+            $data = [
                 'success' => true,
                 'reload'  => $this->bundleManager->needsReloadAfterInstall($bundle)
-            ]);
+            ];
+
+            if (!empty($message = $this->getInstallerOutput($bundle))) {
+                $data['message'] = $message;
+            }
+
+            return $this->json($data);
         } catch (BundleNotFoundException $e) {
             return $this->json([
                 'success' => false,
@@ -447,19 +463,19 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $state = $bm->getState($bundle);
 
         $info = [
-            'id'            => $bm->getBundleIdentifier($bundle),
-            'type'          => 'bundle',
-            'name'          => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
-            'description'   => $bundle->getDescription(),
-            'active'        => $enabled,
-            'installable'   => false,
-            'uninstallable' => false,
-            'updateable'    => false,
-            'installed'     => $installed,
-            'configuration' => $this->getIframePath($bundle),
-            'version'       => $bundle->getVersion(),
-            'priority'      => $state['priority'],
-            'environments'  => implode(', ', $state['environments'])
+            'id'             => $bm->getBundleIdentifier($bundle),
+            'type'           => 'bundle',
+            'name'           => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
+            'active'         => $enabled,
+            'installable'    => false,
+            'uninstallable'  => false,
+            'updateable'     => false,
+            'installed'      => $installed,
+            'canChangeState' => $bm->canChangeState($bundle),
+            'configuration'  => $this->getIframePath($bundle),
+            'version'        => $bundle->getVersion(),
+            'priority'       => $state['priority'],
+            'environments'   => implode(', ', $state['environments'])
         ];
 
         // only check for installation specifics if the bundle is enabled
@@ -470,6 +486,18 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 'updateable'    => $bm->canBeUpdated($bundle),
             ]);
         }
+
+        // get description as last item as it may contain installer output
+        $description = $bundle->getDescription();
+        if (!empty($installerOutput = $this->getInstallerOutput($bundle))) {
+            if (!empty($description)) {
+                $description = $description . '. ';
+            }
+
+            $description .= $installerOutput;
+        }
+
+        $info['description'] = $description;
 
         return $info;
     }
@@ -530,5 +558,29 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'active'        => $this->areabrickManager->isEnabled($brick->getId()),
             'version'       => $brick->getVersion()
         ];
+    }
+
+    private function getInstallerOutput(PimcoreBundleInterface $bundle, bool $decorated = false)
+    {
+        if (!$this->bundleManager->isEnabled($bundle)) {
+            return null;
+        }
+
+        $installer = $this->bundleManager->getInstaller($bundle);
+        if (null !== $installer) {
+            $output = $installer->getOutputWriter()->getOutput();
+            if (!empty($output)) {
+                $converter = new AnsiToHtmlConverter(null);
+
+                $converted = Encoding::fixUTF8($output);
+                $converted = $converter->convert($converted);
+
+                if (!$decorated) {
+                    $converted = strip_tags($converted);
+                }
+
+                return $converted;
+            }
+        }
     }
 }

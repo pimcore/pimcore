@@ -5,14 +5,16 @@ namespace Pimcore\Tests\Ecommerce;
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Model\Object\OnlineShopTaxClass;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Model\DataObject\OnlineShopTaxClass;
+use Pimcore\Tests\Test\EcommerceTestCase;
 
-class ProductTaxManagementTest extends TestCase
+class ProductTaxManagementTest extends EcommerceTestCase
 {
     /**
      * @param float $grossPrice
@@ -21,15 +23,15 @@ class ProductTaxManagementTest extends TestCase
      *
      * @return AbstractProduct|\PHPUnit_Framework_MockObject_Stub
      */
-    private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
+    private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): ICheckoutable
     {
         $grossPrice = Decimal::create($grossPrice);
 
         $taxClass = new OnlineShopTaxClass();
-        $taxEntries = new \Pimcore\Model\Object\Fieldcollection();
+        $taxEntries = new \Pimcore\Model\DataObject\Fieldcollection();
 
         foreach ($taxes as $name => $tax) {
-            $entry = new \Pimcore\Model\Object\Fieldcollection\Data\TaxEntry();
+            $entry = new \Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry();
             $entry->setPercent($tax);
             $entry->setName($name);
             $taxEntries->add($entry);
@@ -37,9 +39,9 @@ class ProductTaxManagementTest extends TestCase
         $taxClass->setTaxEntries($taxEntries);
         $taxClass->setTaxEntryCombinationType($combinationType);
 
-        $config = new \stdClass();
+        $pricingManager = new PricingManager([], [], $this->buildSession());
 
-        $priceSystem = Stub::construct(AttributePriceSystem::class, [$config], [
+        $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManager, $this->buildEnvironment()], [
             'getTaxClassForProduct' => function () use ($taxClass) {
                 return $taxClass;
             },

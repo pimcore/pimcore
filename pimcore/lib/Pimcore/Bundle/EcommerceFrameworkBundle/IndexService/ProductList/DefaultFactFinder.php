@@ -15,7 +15,10 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Tool;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
@@ -85,7 +88,7 @@ class DefaultFactFinder implements IProductList
     protected $offset = 0;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
+     * @var AbstractCategory
      */
     protected $category;
 
@@ -222,9 +225,9 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig
+     * @param IConfig $tenantConfig
      */
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig $tenantConfig)
+    public function __construct(IConfig $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -400,7 +403,7 @@ class DefaultFactFinder implements IProductList
         return $this->offset;
     }
 
-    public function setCategory(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $category)
+    public function setCategory(AbstractCategory $category)
     {
         $this->products = null;
         $this->category = $category;
@@ -424,6 +427,8 @@ class DefaultFactFinder implements IProductList
 
     /**
      * @return IIndexable[]
+     *
+     * @throws \Exception
      */
     public function load()
     {
@@ -562,7 +567,10 @@ class DefaultFactFinder implements IProductList
             if (!$this->conditionPriceTo) {
                 $params['filterGRUNDPREIS'] = $this->conditionPriceFrom;
             } else {
-                $params['filterGRUNDPREIS'] = sprintf('%d - %d', $this->conditionPriceFrom, $this->conditionPriceTo
+                $params['filterGRUNDPREIS'] = sprintf(
+                    '%d - %d',
+                    $this->conditionPriceFrom,
+                    $this->conditionPriceTo
                 );
             }
         }
@@ -767,7 +775,10 @@ class DefaultFactFinder implements IProductList
      */
     protected function getSearchUrl()
     {
-        return sprintf('http://%s/%s/Search.ff?', $this->tenantConfig->getClientConfig('host'), $this->tenantConfig->getClientConfig('customer')
+        return sprintf(
+            'http://%s/%s/Search.ff?',
+            $this->tenantConfig->getClientConfig('host'),
+            $this->tenantConfig->getClientConfig('customer')
         );
     }
 
@@ -824,7 +835,7 @@ class DefaultFactFinder implements IProductList
 
         $internalIPAddresses = explode_and_trim(',', $this->tenantConfig->getClientConfig('internalIPAddresses'));
         if (!empty($internalIPAddresses)) {
-            if (in_array(\Pimcore\Tool::getClientIp(), $internalIPAddresses)) {
+            if (in_array(Tool::getClientIp(), $internalIPAddresses)) {
                 $url .= '&log=internal';
             }
         }
@@ -853,9 +864,9 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @param $params
-     *
      * @return array
+     *
+     * @throws \Exception
      */
     protected function sendRequest()
     {

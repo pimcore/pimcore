@@ -10,7 +10,7 @@
 
 <?php
 
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 
 $fields = $this->object1->getClass()->getFieldDefinitions();
 ?>
@@ -49,7 +49,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 <?php
     foreach ($fields as $fieldName => $definition) { ?>
     <?php
-        if($definition instanceof Object\ClassDefinition\Data\Localizedfields) { ?>
+        if($definition instanceof DataObject\ClassDefinition\Data\Localizedfields) { ?>
         <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
             <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                 <?php
@@ -66,11 +66,11 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 $c++;
             } ?>
         <?php } ?>
-        <?php } else if($definition instanceof Object\ClassDefinition\Data\Classificationstore){
+        <?php } else if($definition instanceof DataObject\ClassDefinition\Data\Classificationstore){
 
 
 
-            /** @var $storedata Object\Classificationstore */
+            /** @var $storedata DataObject\Classificationstore */
             $storedata1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
             $storedata2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
 
@@ -111,18 +111,18 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 if  (!$activeGroups1[$activeGroupId] && !$activeGroups2[$activeGroupId]) {
                     continue;
                 }
-                /** @var $groupDefinition Object\Classificationstore\GroupConfig */
-                $groupDefinition = Pimcore\Model\Object\Classificationstore\GroupConfig::getById($activeGroupId);
+                /** @var $groupDefinition DataObject\Classificationstore\GroupConfig */
+                $groupDefinition = Pimcore\Model\DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
                 if (!$groupDefinition) {
                     continue;
                 }
 
-                /** @var $keyGroupRelation Object\Classificationstore\KeyGroupRelation */
+                /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
                 $keyGroupRelations = $groupDefinition->getRelations();
 
                 foreach ($keyGroupRelations as $keyGroupRelation) {
 
-                    $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+                    $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
                     if (!$keyDef) {
                         continue;
                     }
@@ -147,11 +147,11 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 }
             }
             ?>
-    <?php } else if($definition instanceof Object\ClassDefinition\Data\ObjectBricks) {
+    <?php } else if($definition instanceof DataObject\ClassDefinition\Data\ObjectBricks) {
                 ?>
                 <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
                     <?php
-                    $collectionDef = Object\Objectbrick\Definition::getByKey($asAllowedType);
+                    $collectionDef = DataObject\Objectbrick\Definition::getByKey($asAllowedType);
 
                     foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
                         <?php

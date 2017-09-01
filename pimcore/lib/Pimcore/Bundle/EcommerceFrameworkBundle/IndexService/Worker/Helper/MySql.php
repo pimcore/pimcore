@@ -14,25 +14,33 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Cache;
+use Pimcore\Db\Connection;
 use Pimcore\Logger;
 
 class MySql
 {
+    /**
+     * @var array
+     */
     protected $_sqlChangeLog = [];
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig
+     * @var IMysqlConfig
      */
     protected $tenantConfig;
 
+    /**
+     * @var Connection
+     */
     protected $db;
 
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig $tenantConfig)
+    public function __construct(IMysqlConfig $tenantConfig, Connection $db)
     {
         $this->tenantConfig = $tenantConfig;
-
-        $this->db = \Pimcore\Db::get();
+        $this->db = $db;
     }
 
     public function getValidTableColumns($table)
@@ -99,29 +107,22 @@ class MySql
 
         $columnsToDelete = $columns;
         $columnsToAdd = [];
-        $columnConfig = $this->tenantConfig->getAttributeConfig();
-        if (!empty($columnConfig->name)) {
-            $columnConfig = [$columnConfig];
-        }
-        if ($columnConfig) {
-            foreach ($columnConfig as $column) {
-                if (!array_key_exists($column->name, $columns)) {
-                    $doAdd = true;
-                    if (!empty($column->interpreter)) {
-                        $interpreter = $column->interpreter;
-                        $interpreterObject = new $interpreter();
-                        if ($interpreterObject instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter) {
-                            $doAdd = false;
-                        }
-                    }
 
-                    if ($doAdd) {
-                        $columnsToAdd[$column->name] = $column->type;
-                    }
+        foreach ($this->tenantConfig->getAttributes() as $attribute) {
+            if (!array_key_exists($attribute->getName(), $columns)) {
+                $doAdd = true;
+                if (null !== $attribute->getInterpreter() && $attribute->getInterpreter() instanceof  IRelationInterpreter) {
+                    $doAdd = false;
                 }
-                unset($columnsToDelete[$column->name]);
+
+                if ($doAdd) {
+                    $columnsToAdd[$attribute->getName()] = $attribute->getType();
+                }
             }
+
+            unset($columnsToDelete[$attribute->getName()]);
         }
+
         foreach ($columnsToDelete as $c) {
             if (!in_array($c, $systemColumns)) {
                 $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` DROP COLUMN `' . $c . '`;');
@@ -132,7 +133,7 @@ class MySql
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD `' . $c . '` ' . $type . ';');
         }
 
-        $searchIndexColums = $this->tenantConfig->getSearchAttributeConfig();
+        $searchIndexColums = $this->tenantConfig->getSearchAttributes();
         if (!empty($searchIndexColums)) {
             try {
                 $this->dbexec('ALTER TABLE ' . $this->tenantConfig->getTablename() . ' DROP INDEX search;');
@@ -181,7 +182,6 @@ class MySql
 
     public function __destruct()
     {
-
         // write sql change log for deploying to production system
         if (!empty($this->_sqlChangeLog)) {
             $log = implode("\n\n\n", $this->_sqlChangeLog);

@@ -89,8 +89,8 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
                 xtype: "checkbox",
                 fieldLabel: t("lazy_loading"),
                 name: "lazyLoading",
-                checked: this.datax.lazyLoading,
-                disabled: this.isInCustomLayoutEditor()
+                checked: this.datax.lazyLoading && !this.ladyLoadingNotPossible(),
+                disabled: this.isInCustomLayoutEditor() || this.ladyLoadingNotPossible()
             },
             {
                 xtype: "displayfield",

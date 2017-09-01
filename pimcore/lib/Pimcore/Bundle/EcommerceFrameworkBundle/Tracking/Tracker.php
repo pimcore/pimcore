@@ -14,69 +14,88 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Google\Analytics;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class Tracker implements ITracker
 {
-    /** @var ITrackingItemBuilder */
-    protected $trackingItemBuilder;
-
     /**
-     * @var array
+     * @var ITrackingItemBuilder
      */
-    protected $dependencies = [];
+    protected $trackingItemBuilder;
 
     /**
      * @var EngineInterface
      */
-    protected $renderer;
+    protected $templatingEngine;
 
     /**
-     * @param ITrackingItemBuilder $trackingItemBuilder
+     * @var string
      */
-    public function __construct(ITrackingItemBuilder $trackingItemBuilder, EngineInterface $renderer)
-    {
+    protected $templatePrefix;
+
+    /**
+     * @var string
+     */
+    protected $templateExtension;
+
+    public function __construct(
+        ITrackingItemBuilder $trackingItemBuilder,
+        EngineInterface $templatingEngine,
+        array $options = []
+    ) {
         $this->trackingItemBuilder = $trackingItemBuilder;
-        $this->renderer = $renderer;
+        $this->templatingEngine    = $templatingEngine;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+        $this->processOptions($resolver->resolve($options));
     }
 
-    /**
-     * @return ITrackingItemBuilder
-     */
-    public function getTrackingItemBuilder()
+    protected function processOptions(array $options)
     {
-        return $this->trackingItemBuilder;
+        $this->templatePrefix    = $options['template_prefix'];
+        $this->templateExtension = $options['template_extension'];
     }
 
-    /**
-     * View script prefix
-     *
-     * @return mixed
-     */
-    abstract protected function getViewScriptPrefix();
-
-    /**
-     * Get path to view script
-     *
-     * @param $name
-     *
-     * @return string
-     */
-    protected function getViewScript($name)
+    protected function configureOptions(OptionsResolver $resolver)
     {
-        return sprintf('PimcoreEcommerceFrameworkBundle:Tracking/%s:%s.js.php', $this->getViewScriptPrefix(), $name);
+        $resolver->setRequired(['template_prefix', 'template_extension']);
+        $resolver->setDefaults([
+            'template_extension' => 'php'
+        ]);
+
+        $resolver->setAllowedTypes('template_prefix', 'string');
+        $resolver->setAllowedTypes('template_extension', 'string');
+    }
+
+    protected function getTemplatePath(string $name)
+    {
+        return sprintf(
+            '%s:%s.js.%s',
+            $this->templatePrefix,
+            $name,
+            $this->templateExtension
+        );
+    }
+
+    protected function renderTemplate(string $name, array $parameters): string
+    {
+        return $this->templatingEngine->render(
+            $this->getTemplatePath($name),
+            $parameters
+        );
     }
 
     /**
      * Remove null values from an object, keep protected keys in any case
      *
-     * @param $data
+     * @param array $data
      * @param array $protectedKeys
      *
      * @return array
      */
-    protected function filterNullValues($data, $protectedKeys = [])
+    protected function filterNullValues(array $data, array $protectedKeys = [])
     {
         $result = [];
         foreach ($data as $key => $value) {
@@ -87,23 +106,5 @@ abstract class Tracker implements ITracker
         }
 
         return $result;
-    }
-
-    private $dependenciesIncluded = false;
-
-    /**
-     * Include all defined google dependencies of this tracker
-     * and only include them once in the script.
-     */
-    public function includeDependencies()
-    {
-        if (!$this->dependenciesIncluded) {
-            if ($dependencies = $this->dependencies) {
-                foreach ($dependencies as $dependency) {
-                    Analytics::addAdditionalCode("ga('require', '" . $dependency . "')", 'beforePageview');
-                }
-            }
-            $this->dependenciesIncluded = true;
-        }
     }
 }

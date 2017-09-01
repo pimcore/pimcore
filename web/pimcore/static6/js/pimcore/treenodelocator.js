@@ -1,6 +1,6 @@
 pimcore.registerNS("pimcore.treenodelocator.x");
 
-pimcore.treenodelocator.showInTree = function(id, elementType, button) {
+pimcore.treenodelocator.showInTree = function (id, elementType, button) {
 
     if (button) {
         button.disable();
@@ -21,16 +21,18 @@ pimcore.treenodelocator.showInTree = function(id, elementType, button) {
                         accordion.expand();
                     }
 
-                    Ext.getCmp("pimcore_panel_tree_" + elementType + "s").expand();
-                    var tree = pimcore.globalmanager.get("layout_" + elementType + "_tree");
+                    var tree = pimcore.globalmanager.get("layout_" + elementType + "s_locateintree_tree");
+                    if (tree) {
+                        tree.tree.expand();
 
 
-                    var callback = function() {
-                        if (button) {
-                            button.enable();
+                        var callback = function () {
+                            if (button) {
+                                button.enable();
+                            }
                         }
+                        pimcore.treenodelocator.searchInTree(res, elementType, tree.tree, res.idPath, callback);
                     }
-                    pimcore.treenodelocator.searchInTree(res, elementType, tree.tree, res.idPath, callback);
                 }
             } catch (e) {
                 console.log(e);
@@ -42,7 +44,7 @@ pimcore.treenodelocator.showInTree = function(id, elementType, button) {
 }
 
 
-pimcore.treenodelocator.reportDone = function(node, elementType, callback) {
+pimcore.treenodelocator.reportDone = function (node, elementType, callback) {
     if (node) {
         pimcore.helpers.removeTreeNodeLoadingIndicator(node, node.id);
         var tree = node.getOwnerTree();
@@ -54,7 +56,7 @@ pimcore.treenodelocator.reportDone = function(node, elementType, callback) {
     }
 }
 
-pimcore.treenodelocator.searchInTree = function(element, elementType, tree, path, callback) {
+pimcore.treenodelocator.searchInTree = function (element, elementType, tree, path, callback) {
     try {
 
         var initialData = {
@@ -64,7 +66,7 @@ pimcore.treenodelocator.searchInTree = function(element, elementType, tree, path
         };
 
         tree.selectPath(path, null, '/', function (success, node) {
-            if(!success) {
+            if (!success) {
                 try {
                     var lastExpandedNode = pimcore.treenodelocator.getLastExpandedNode(path, tree);
                     lastExpandedNode.expand();
@@ -74,8 +76,8 @@ pimcore.treenodelocator.searchInTree = function(element, elementType, tree, path
                     pimcore.treenodelocator.showError(lastExpandedNode, lastExpandedNode.data.elementType);
                 }
             } else {
-                pimcore.treenodelocator.reportDone(null, null,  callback);
-                if(typeof initialData["callback"] == "function") {
+                pimcore.treenodelocator.reportDone(null, null, callback);
+                if (typeof initialData["callback"] == "function") {
                     initialData["callback"]();
                 }
             }
@@ -87,7 +89,7 @@ pimcore.treenodelocator.searchInTree = function(element, elementType, tree, path
     }
 }
 
-pimcore.treenodelocator.getDirection = function(node, element, elementType, searchData, callback) {
+pimcore.treenodelocator.getDirection = function (node, element, elementType, searchData, callback) {
     if (!searchData) {
         // new level
         var pagingData = node.pagingData;
@@ -98,8 +100,8 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
         }
 
         var searchData = {
-            minPage : 1,
-            maxPage : pageCount
+            minPage: 1,
+            maxPage: pageCount
         }
     }
 
@@ -244,7 +246,7 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
     }
 }
 
-pimcore.treenodelocator.reloadComplete = function(node, element, elementType, searchData, callback) {
+pimcore.treenodelocator.reloadComplete = function (node, element, elementType, searchData, callback) {
     try {
         pimcore.treenodelocator.getDirection(node, element, elementType, searchData, callback);
     } catch (e) {
@@ -253,7 +255,7 @@ pimcore.treenodelocator.reloadComplete = function(node, element, elementType, se
     }
 }
 
-pimcore.treenodelocator.switchToPage = function(node, pageNumber, element, elementType, searchData, callback){
+pimcore.treenodelocator.switchToPage = function (node, pageNumber, element, elementType, searchData, callback) {
     try {
         pageNumber = Math.floor(pageNumber);
 
@@ -286,7 +288,7 @@ pimcore.treenodelocator.switchToPage = function(node, pageNumber, element, eleme
 }
 
 
-pimcore.treenodelocator.getLastExpandedNode = function(path, tree) {
+pimcore.treenodelocator.getLastExpandedNode = function (path, tree) {
     var ids = path.split("/");
     var arrayLength = ids.length;
     var store = tree.getStore();
@@ -296,7 +298,7 @@ pimcore.treenodelocator.getLastExpandedNode = function(path, tree) {
     return lastExpandedNode;
 }
 
-pimcore.treenodelocator.showError = function(element, elementType) {
+pimcore.treenodelocator.showError = function (element, elementType) {
     if (element) {
         pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, element.id);
     }

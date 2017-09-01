@@ -58,7 +58,7 @@ customizations on the resulting array.
 
 ### Pimcore Bundles
 
-For more information see [Pimcore Bundles](./13_Bundle_Developers_Guide/05_Pimcore_Bundles.md).
+For more information see [Pimcore Bundles](./13_Bundle_Developers_Guide/05_Pimcore_Bundles).
 
 Pimcore bundles can be registered on the kernel by enabling them in the extension manager. The extension manager also allows
 you to set a priority and environments to handle (as comma-separated string).

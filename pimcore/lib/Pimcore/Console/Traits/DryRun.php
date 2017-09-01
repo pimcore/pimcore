@@ -37,7 +37,9 @@ trait DryRun
         }
 
         $command->addOption(
-            'dry-run', 'N', InputOption::VALUE_NONE,
+            'dry-run',
+            'N',
+            InputOption::VALUE_NONE,
             $description
         );
 

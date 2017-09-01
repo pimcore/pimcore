@@ -21,9 +21,9 @@ use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -40,7 +40,7 @@ class Renderlet extends Model\Document\Tag
     /**
      * Contains the object
      *
-     * @var Document | Asset | Object\AbstractObject
+     * @var Document | Asset | DataObject\AbstractObject
      */
     public $o;
 
@@ -317,8 +317,8 @@ class Renderlet extends Model\Document\Tag
                         }
                     }
                 } elseif ($this->type == 'object') {
-                    $this->o = Object::getById($id);
-                    if (!$this->o instanceof Object\AbstractObject) {
+                    $this->o = DataObject::getById($id);
+                    if (!$this->o instanceof DataObject\AbstractObject) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
                             $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
                         } else {

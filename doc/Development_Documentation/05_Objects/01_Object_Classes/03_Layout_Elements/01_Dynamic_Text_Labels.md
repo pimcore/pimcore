@@ -16,7 +16,7 @@ Here is an example for a rendering class.
 
 namespace Website;
 
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\Concrete;
 
 class CustomRenderer
 {

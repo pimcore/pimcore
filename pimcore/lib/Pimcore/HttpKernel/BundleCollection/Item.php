@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\HttpKernel\BundleCollection;
 
+use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class Item extends AbstractItem
@@ -26,16 +27,15 @@ class Item extends AbstractItem
      */
     private $bundle;
 
-    /**
-     * @param BundleInterface $bundle
-     * @param int $priority
-     * @param array $environments
-     */
-    public function __construct(BundleInterface $bundle, int $priority = 0, array $environments = [])
-    {
+    public function __construct(
+        BundleInterface $bundle,
+        int $priority = 0,
+        array $environments = [],
+        string $source = self::SOURCE_PROGRAMATICALLY
+    ) {
         $this->bundle = $bundle;
 
-        parent::__construct($priority, $environments);
+        parent::__construct($priority, $environments, $source);
     }
 
     public function getBundleIdentifier(): string
@@ -46,5 +46,10 @@ class Item extends AbstractItem
     public function getBundle(): BundleInterface
     {
         return $this->bundle;
+    }
+
+    public function isPimcoreBundle(): bool
+    {
+        return $this->bundle instanceof PimcoreBundleInterface;
     }
 }

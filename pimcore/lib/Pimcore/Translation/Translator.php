@@ -15,6 +15,7 @@
 namespace Pimcore\Translation;
 
 use Pimcore\Cache;
+use Pimcore\Model\Translation\AbstractTranslation;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
@@ -220,13 +221,16 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     protected function checkForEmptyTranslation($id, $translated, $domain, $locale)
     {
-        if ($id != $translated && $translated) {
+        $lookForFallback = empty($translated);
+        if (empty($id)) {
+            return $translated;
+        } elseif ($id != $translated && $translated) {
             return $translated;
         } elseif ($id == $translated && !$this->getCatalogue($locale)->has($id, $domain)) {
             $backend = $this->getBackendForDomain($domain);
             if ($backend) {
                 if (strlen($id) > 190) {
-                    throw new \Exception("Pimcore_Translate: Message ID's longer than 190 characters are invalid!");
+                    throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
                 $class = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend);
@@ -234,8 +238,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 // no translation found create key
                 if (Tool::isValidLanguage($locale)) {
                     try {
+                        /**
+                         * @var AbstractTranslation $t
+                         */
                         $t = $class::getByKey($id);
-                        $t->addTranslation($locale, '');
+                        if (!$t->hasTranslation($locale)) {
+                            $t->addTranslation($locale, '');
+                        } else {
+                            return $translated;
+                        }
                     } catch (\Exception $e) {
                         $t = new $class();
                         $t->setKey($id);
@@ -254,12 +265,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 // the key would be inserted/updated several times, what would be redundant
                 $this->getCatalogue($locale)->set($id, $id, $domain);
 
-                $translated = '';
+                $lookForFallback = true;
             }
         }
 
         // now check for custom fallback locales, only for shared translations
-        if (empty($translated) && ($domain == 'messages' || $domain == 'admin')) {
+        if ($lookForFallback && $domain == 'messages') {
             foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
@@ -274,7 +285,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             return $id;
         }
 
-        return $translated;
+        if (empty($translated)) {
+            return $id;
+        } else {
+            return $translated;
+        }
     }
 
     /**

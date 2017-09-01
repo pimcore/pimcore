@@ -14,24 +14,45 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
+use Pimcore\Model\DataObject\AbstractObject;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 class ObjectValue implements IInterpreter
 {
-    public static function interpret($value, $config = null)
+    use OptionsResolverTrait;
+
+    public function interpret($value, $config = null)
     {
-        $targetList = $config->target;
+        $config     = $this->resolveOptions($config ?? []);
+        $targetList = $this->resolveOptions($config['target'], 'target');
 
-        if (empty($targetList->fieldname)) {
-            throw new \Exception('target fieldname missing.');
-        }
-
-        if ($value instanceof \Pimcore\Model\Object\AbstractObject) {
-            $fieldGetter = 'get' . ucfirst($targetList->fieldname);
+        if ($value instanceof AbstractObject) {
+            $fieldGetter = 'get' . ucfirst($targetList['fieldname']);
 
             if (method_exists($value, $fieldGetter)) {
-                return $value->$fieldGetter($targetList->locale);
+                return $value->$fieldGetter($targetList['locale']);
             }
         }
 
         return null;
+    }
+
+    protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
+    {
+        if ('default' === $resolverName) {
+            $resolver
+                ->setDefined('target')
+                ->setAllowedTypes('target', 'array');
+        } elseif ('target' === $resolverName) {
+            $fields = ['fieldname', 'locale'];
+
+            $resolver->setRequired($fields);
+            foreach ($fields as $field) {
+                $resolver->setAllowedTypes($field, 'string');
+            }
+        } else {
+            throw new \InvalidArgumentException(sprintf('Resolver with name "%s" is not defined', $resolverName));
+        }
     }
 }

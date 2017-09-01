@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 class Round implements IInterpreter
 {
-    public static function interpret($value, $config = null)
+    public function interpret($value, $config = null)
     {
         if (is_numeric($value)) {
             return round($value, 0);

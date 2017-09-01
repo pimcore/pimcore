@@ -9,9 +9,10 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Cache;
 use Pimcore\Config;
+use Pimcore\Event\TestEvents;
 use Pimcore\Kernel;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Model\Tool\Setup;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -105,6 +106,9 @@ class Pimcore extends Module\Symfony
         if ($this->config['cache_router'] === true) {
             $this->persistService('router', true);
         }
+
+        // dispatch kernel booted event - will be used from services which need to reset state between tests
+        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(TestEvents::KERNEL_BOOTED);
     }
 
     protected function setupPimcoreDirectories()
@@ -285,9 +289,9 @@ class Pimcore extends Module\Symfony
     {
         \Pimcore::setAdminMode();
         Document::setHideUnpublished(false);
-        Object\AbstractObject::setHideUnpublished(false);
-        Object\AbstractObject::setGetInheritedValues(false);
-        Object\Localizedfield::setGetFallbackValues(false);
+        DataObject\AbstractObject::setHideUnpublished(false);
+        DataObject\AbstractObject::setGetInheritedValues(false);
+        DataObject\Localizedfield::setGetFallbackValues(false);
     }
 
     /**
@@ -297,8 +301,8 @@ class Pimcore extends Module\Symfony
     {
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
-        Object\AbstractObject::setHideUnpublished(true);
-        Object\AbstractObject::setGetInheritedValues(true);
-        Object\Localizedfield::setGetFallbackValues(true);
+        DataObject\AbstractObject::setHideUnpublished(true);
+        DataObject\AbstractObject::setGetInheritedValues(true);
+        DataObject\Localizedfield::setGetFallbackValues(true);
     }
 }

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Templating;
 
+use Pimcore\Config\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Templating\Helper\Cache;
@@ -90,6 +91,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method string inc($include, array $params = [], $cacheEnabled = true, $editmode = null)
  * @method InlineScript inlineScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
  * @method Navigation navigation()
+ * @method Config|mixed websiteConfig($key = null, $default = null)
  * @method string pimcoreUrl(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
  * @method string translate($key, $parameters = [], $domain = null, $locale = null)
  *

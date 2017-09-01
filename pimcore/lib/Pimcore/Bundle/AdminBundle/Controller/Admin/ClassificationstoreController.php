@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Db;
-use Pimcore\Model\Object;
-use Pimcore\Model\Object\Classificationstore;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Classificationstore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -197,13 +197,13 @@ class ClassificationstoreController extends AdminController
     {
         $nodeId = $request->get('node');
 
-        $list = new Object\Classificationstore\GroupConfig\Listing();
+        $list = new DataObject\Classificationstore\GroupConfig\Listing();
         $list->setCondition('parentId = ?', $nodeId);
         $list = $list->load();
 
         $contents = [];
 
-        /** @var $item Object\Classificationstore\GroupConfig */
+        /** @var $item DataObject\Classificationstore\GroupConfig */
         foreach ($list as $item) {
             $hasChilds = $item->hasChildren();
 
@@ -301,7 +301,7 @@ class ClassificationstoreController extends AdminController
 
             $allowedCollectionIds = [];
             if ($request->get('oid')) {
-                $object = Object\Concrete::getById($request->get('oid'));
+                $object = DataObject\Concrete::getById($request->get('oid'));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($request->get('fieldname'));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
@@ -476,7 +476,7 @@ class ClassificationstoreController extends AdminController
             }
 
             if ($request->get('oid')) {
-                $object = Object\Concrete::getById($request->get('oid'));
+                $object = DataObject\Concrete::getById($request->get('oid'));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($request->get('fieldname'));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
@@ -676,9 +676,9 @@ class ClassificationstoreController extends AdminController
         $storeId = $request->get('storeId');
 
         $mapping = [
-            'groupName' => Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS .'.name',
-            'keyName' => Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS .'.name',
-            'keyDescription' => Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. '.description'];
+            'groupName' => DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS .'.name',
+            'keyName' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS .'.name',
+            'keyDescription' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. '.description'];
 
         $start = 0;
         $limit = 15;
@@ -888,7 +888,7 @@ class ClassificationstoreController extends AdminController
             foreach ($listItems as $config) {
                 $type = $config->getType();
                 $definition = json_decode($config->getDefinition());
-                $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+                $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                 $item = [
                     'keyId' => $config->getKeyId(),
@@ -922,7 +922,7 @@ class ClassificationstoreController extends AdminController
     {
         $ids = $this->decodeJson($request->get('collectionIds'));
         $oid = $request->get('oid');
-        $object = Object\AbstractObject::getById($oid);
+        $object = DataObject\AbstractObject::getById($oid);
         $fieldname = $request->get('fieldname');
 
         if ($ids) {
@@ -942,7 +942,7 @@ class ClassificationstoreController extends AdminController
             $allowedGroupIds = null;
 
             if ($request->get('oid')) {
-                $object = Object\Concrete::getById($request->get('oid'));
+                $object = DataObject\Concrete::getById($request->get('oid'));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($request->get('fieldname'));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
@@ -986,7 +986,7 @@ class ClassificationstoreController extends AdminController
                     $keyList = $data[$groupId]['keys'];
                     $type = $keyData->getType();
                     $definition = json_decode($keyData->getDefinition());
-                    $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+                    $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                     if (method_exists($definition, '__wakeup')) {
                         $definition->__wakeup();
@@ -1028,7 +1028,7 @@ class ClassificationstoreController extends AdminController
     {
         $ids = $this->decodeJson($request->get('groupIds'));
         $oid = $request->get('oid');
-        $object = Object\AbstractObject::getById($oid);
+        $object = DataObject\AbstractObject::getById($oid);
         $fieldname = $request->get('fieldname');
 
         $keyCondition = 'groupId in (' . implode(',', $ids) . ')';
@@ -1064,7 +1064,7 @@ class ClassificationstoreController extends AdminController
             $keyList = $data[$groupId]['keys'];
             $type = $keyData->getType();
             $definition = json_decode($keyData->getDefinition());
-            $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+            $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
             if (method_exists($definition, '__wakeup')) {
                 $definition->__wakeup();
@@ -1348,7 +1348,7 @@ class ClassificationstoreController extends AdminController
         $id = $request->get('id');
 
         $config = Classificationstore\KeyConfig::getById($id);
-//        $config->delete();
+        //        $config->delete();
         $config->setEnabled(false);
         $config->save();
 

@@ -2,8 +2,8 @@
 
 namespace Pimcore\Tests\Rest\DataType;
 
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Unittest;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Test\DataType\AbstractDataTypeRestTestCase;
 use Pimcore\Tests\Util\TestHelper;
 

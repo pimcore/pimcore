@@ -15,31 +15,33 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Templating\Model\ViewModel;
 
 /**
- * Class \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper
- *
  * Helper Class for setting up a product list utilizing the filter service
  * based on a filter definition and set filter parameters
  */
 class Helper
 {
     /**
-     * @param \Pimcore\Model\Object\FilterDefinition $filterDefinition
+     * @param \Pimcore\Model\DataObject\FilterDefinition $filterDefinition
      * @param IProductList $productList
      * @param $params
-     * @param ViewModel $view
+     * @param ViewModel $viewModel
      * @param FilterService $filterService
-     * @param $loadFullPage
+     * @param bool $loadFullPage
      * @param bool $excludeLimitOfFirstpage
      */
-    public static function setupProductList(\Pimcore\Model\Object\FilterDefinition $filterDefinition,
-                                            IProductList $productList,
-                                            $params, $viewModel,
-                                            FilterService $filterService,
-                                            $loadFullPage, $excludeLimitOfFirstpage = false)
-    {
+    public static function setupProductList(
+        \Pimcore\Model\DataObject\FilterDefinition $filterDefinition,
+        IProductList $productList,
+        $params,
+        ViewModel $viewModel,
+        FilterService $filterService,
+        $loadFullPage,
+        $excludeLimitOfFirstpage = false
+    ) {
         $orderByOptions = [];
         $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
         if (!empty($orderKeysAsc)) {
@@ -164,13 +166,13 @@ class Helper
     /**
      * @param $conditions
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
+     * @return AbstractCategory
      */
     public static function getFirstFilteredCategory($conditions)
     {
         if (!empty($conditions)) {
             foreach ($conditions as $c) {
-                if ($c instanceof \Pimcore\Model\Object\Fieldcollection\Data\FilterCategory) {
+                if ($c instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory) {
                     return $c->getPreSelect();
                 }
             }

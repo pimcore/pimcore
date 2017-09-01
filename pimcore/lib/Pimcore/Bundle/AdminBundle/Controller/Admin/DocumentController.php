@@ -943,12 +943,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $versionFrom = Version::getById($from);
         $docFrom = $versionFrom->loadData();
 
-        $sessionName = Tool\Session::getOption('name');
+        $sessionName = Tool\Session::getSessionName();
+        $sessionId = Tool\Session::getSessionId();
 
         $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . '?pimcore_version=';
 
-        $fromUrl = $prefix . $from . '&' . $sessionName . '=' . $_COOKIE[$sessionName];
-        $toUrl   = $prefix . $to . '&' . $sessionName . '=' . $_COOKIE[$sessionName];
+        $fromUrl = $prefix . $from . '&' . $sessionName . '=' . $sessionId;
+        $toUrl   = $prefix . $to . '&' . $sessionName . '=' . $sessionId;
 
         $toFileId = uniqid();
         $fromFileId = uniqid();
@@ -1013,6 +1014,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      */
     protected function getTreeNodeConfig($element)
     {
+        $site = null;
         $childDocument = $element;
 
         $tmpDocument = [
@@ -1075,7 +1077,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'text' => 'Type: ' . $childDocument->getType()
         ];
 
-        if ($site) {
+        if ($site instanceof Site) {
             $tmpDocument['qtipCfg']['text'] .= '<br>' . $this->trans('site_id') . ': ' . $site->getId();
         }
 
@@ -1093,7 +1095,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($childDocument instanceof Document\Page) {
             $tmpDocument['url'] = $childDocument->getFullPath();
             $site = Tool\Frontend::getSiteForDocument($childDocument);
-            if ($site) {
+            if ($site instanceof Site) {
                 $tmpDocument['url'] = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $childDocument->getRealFullPath());
             }
         }

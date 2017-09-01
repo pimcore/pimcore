@@ -70,31 +70,36 @@ class CacheWarmingCommand extends AbstractCommand
             ->setName('pimcore:cache:warming')
             ->setDescription('Warm up caches')
             ->addOption(
-                'types', 't',
+                'types',
+                't',
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 sprintf('Perform warming only for this types of elements. Valid options: %s', $this->humanList($this->validTypes)),
                 null
             )
             ->addOption(
-                'documentTypes', 'd',
+                'documentTypes',
+                'd',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 sprintf('Restrict warming to these types of documents. Valid options: %s', $this->humanList($this->validDocumentTypes)),
                 null
             )
             ->addOption(
-                'assetTypes', 'a',
+                'assetTypes',
+                'a',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 sprintf('Restrict warming to these types of assets. Valid options: %s', $this->humanList($this->validAssetTypes)),
                 null
             )
             ->addOption(
-                'objectTypes', 'o',
+                'objectTypes',
+                'o',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 sprintf('Restrict warming to these types of objects. Valid options: %s', $this->humanList($this->validObjectTypes)),
                 null
             )
             ->addOption(
-                'classes', 'c',
+                'classes',
+                'c',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Restrict object warming to these classes (only valid for objects!). Valid options: class names of your classes defined in Pimcore',
                 null

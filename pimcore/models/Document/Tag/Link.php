@@ -146,7 +146,7 @@ class Link extends Model\Document\Tag
                     $this->data = $new->getData();
                 }
             } elseif ($this->data['internalType'] == 'object') {
-                $object = Model\Object\Concrete::getById($this->data['internalId']);
+                $object = Model\DataObject\Concrete::getById($this->data['internalId']);
                 if (!$object) {
                     $sane = false;
                     Logger::notice('Detected insane relation, removing reference to non existent object with id [' . $this->getDocumentId() . ']');
@@ -203,7 +203,7 @@ class Link extends Model\Document\Tag
                     $this->data['path'] = $asset->$method();
                 }
             } elseif ($this->data['internalType'] == 'object') {
-                if ($object = Model\Object::getById($this->data['internalId'])) {
+                if ($object = Model\DataObject::getById($this->data['internalId'])) {
                     if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                         if ($realPath) {
                             $this->data['path'] = $object->getFullPath();
@@ -343,8 +343,8 @@ class Link extends Model\Document\Tag
         }
 
         if (!$data['internal']) {
-            if ($object = Model\Object\Concrete::getByPath($data['path'])) {
-                if ($object instanceof Model\Object\Concrete) {
+            if ($object = Model\DataObject\Concrete::getByPath($data['path'])) {
+                if ($object instanceof Model\DataObject\Concrete) {
                     $data['internal'] = true;
                     $data['internalId'] = $object->getId();
                     $data['internalType'] = 'object';

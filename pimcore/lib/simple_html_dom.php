@@ -72,7 +72,7 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
     // For sourceforge users: uncomment the next line and comment the retreive_url_contents line 2 lines down if it is not already done.
     $contents = file_get_contents($url, $use_include_path, $context, $offset);
     // Paperg - use our own mechanism for getting the contents as we want to control the timeout.
-//    $contents = retrieve_url_contents($url);
+    //    $contents = retrieve_url_contents($url);
     if (empty($contents)) {
         return false;
     }
@@ -673,10 +673,10 @@ class simple_html_dom_node
         // pattern of CSS selectors, modified from mootools
         // Paperg: Add the colon to the attrbute, so that it properly finds <tag attr:ibute="something" > like google does.
         // Note: if you try to look at this attribute, yo MUST use getAttribute since $dom->x:y will fail the php syntax check.
-// Notice the \[ starting the attbute?  and the @? following?  This implies that an attribute can begin with an @ sign that is not captured.
-// This implies that an html attribute specifier may start with an @ sign that is NOT captured by the expression.
-// farther study is required to determine of this should be documented or removed.
-//        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
+        // Notice the \[ starting the attbute?  and the @? following?  This implies that an attribute can begin with an @ sign that is not captured.
+        // This implies that an html attribute specifier may start with an @ sign that is NOT captured by the expression.
+        // farther study is required to determine of this should be documented or removed.
+        //        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
         $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w-:]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
         preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER);
         if (is_object($debugObject)) {

@@ -44,11 +44,11 @@ The place of interest (parameter cx) is marked with a comment in the code exampl
 ### Code Example
 
 #### Controller Action
-See: https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms/src/AppBundle/Controller/AdvancedController.php#L85-L85
+See: https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Controller/AdvancedController.php#L85-L85
 
 #### View
-See: https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms/app/Resources/views/Advanced/search.html.php
+See: https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/app/Resources/views/Advanced/search.html.php
 
 #### Partial View Script (includes/paging.php)
-See: https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms/app/Resources/views/Includes/paging.html.php
+See: https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/app/Resources/views/Includes/paging.html.php
 

@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
-use Pimcore\Model\Object\Localizedfield;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 

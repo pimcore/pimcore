@@ -17,7 +17,7 @@ $environment->setCurrentCheckoutTenant('noShipping');
 $environment->save();
 ```
 
-For configuration examples see [E-Commerce Demo](https://github.com/pimcore/demo-ecommerce/blob/master/app/config/pimcore/EcommerceFrameworkConfig.php#L92). 
+For configuration examples see [E-Commerce Demo](https://github.com/pimcore/demo-ecommerce/blob/master/src/AppBundle/Resources/config/pimcore/ecommerce/ecommerce-config.yml). 
 
 > When using server-by-server payment confirmation communication, make sure that the correct tenant is set during the 
 > response handling! 

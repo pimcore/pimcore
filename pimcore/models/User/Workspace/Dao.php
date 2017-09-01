@@ -21,7 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\User\Workspace;
 
 /**
- * @property \Pimcore\Model\User\Workspace\Object $model
+ * @property \Pimcore\Model\User\Workspace\DataObject $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = 'users_workspaces_asset';
         } elseif ($this->model instanceof Workspace\Document) {
             $tableName = 'users_workspaces_document';
-        } elseif ($this->model instanceof Workspace\Object) {
+        } elseif ($this->model instanceof Workspace\DataObject) {
             $tableName = 'users_workspaces_object';
         }
 

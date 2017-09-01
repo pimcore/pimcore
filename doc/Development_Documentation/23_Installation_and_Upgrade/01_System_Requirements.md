@@ -11,6 +11,7 @@ For production we highly recommend a *nix based system.
 
 ### PHP >= 7.0
 Both **mod_php** and **FCGI (FPM)** are supported.  
+Please note that the usage of **PHP 7.1 is strongly recommended** as future versions of Pimcore 5 will require PHP 7.1. 
 
 #### Required Settings and Modules & Extensions
 - `memory_limit` >= 128M

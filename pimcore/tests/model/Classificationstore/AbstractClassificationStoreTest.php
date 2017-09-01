@@ -2,9 +2,9 @@
 
 namespace Pimcore\Tests\Model\Datatype\ClassificationStore;
 
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\ClassDefinition\Data\Classificationstore as ClassificationStoreDefinition;
-use Pimcore\Model\Object\Classificationstore;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore as ClassificationStoreDefinition;
+use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Tests\Test\ModelTestCase;
 
 abstract class AbstractClassificationStoreTest extends ModelTestCase

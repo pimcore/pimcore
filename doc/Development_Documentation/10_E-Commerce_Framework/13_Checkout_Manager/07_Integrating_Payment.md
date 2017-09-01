@@ -38,8 +38,7 @@ payment provider, also other data structures can be created:
 ```php
 <?php
 $form = $this->payment;
-$container = $this->app->getContainer();
-echo $container->get('templating.helper.form')->form($form->getForm()->createView());
+echo $this->form()->form($form->getForm()->createView());
 ```
 For more samples see [E-Commerce Demo](https://github.com/pimcore/demo-ecommerce/blob/master/app/Resources/views/Payment/paymentFrame.html.php)
 

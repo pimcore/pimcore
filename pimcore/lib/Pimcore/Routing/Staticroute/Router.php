@@ -58,9 +58,12 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     protected $supportedNames;
 
     /**
-     * @param RequestContext $context
-     * @param ConfigNormalizer $configNormalizer
+     * Params which are treated as _locale if no _locale attribute is set
+     *
+     * @var array
      */
+    protected $localeParams = [];
+
     public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer)
     {
         $this->context          = $context;
@@ -81,6 +84,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     public function getContext()
     {
         return $this->context;
+    }
+
+    public function getLocaleParams(): array
+    {
+        return $this->localeParams;
+    }
+
+    public function setLocaleParams(array $localeParams)
+    {
+        $this->localeParams = $localeParams;
     }
 
     /**
@@ -197,8 +210,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
         foreach ($this->getStaticRoutes() as $route) {
             if ($routeParams = $route->match($pathinfo, $params)) {
-                // TODO nearest document
-
                 Staticroute::setCurrentRoute($route);
 
                 // add the route object also as parameter to the request object, this is needed in
@@ -248,6 +259,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         );
 
         $routeParams['_controller'] = $controller;
+
+        // map common language properties (e.g. language) to _locale if not set
+        if (!isset($routeParams['_locale'])) {
+            foreach ($this->localeParams as $localeParam) {
+                if (isset($routeParams[$localeParam])) {
+                    $routeParams['_locale'] = $routeParams[$localeParam];
+                    break;
+                }
+            }
+        }
 
         return $routeParams;
     }

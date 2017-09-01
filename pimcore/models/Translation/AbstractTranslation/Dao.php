@@ -61,8 +61,6 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
                 $this->db->insertOrUpdate(static::getTableName(), $data);
             }
         }
-
-        $this->model->clearDependentCache();
     }
 
     /**
@@ -71,8 +69,6 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
     public function delete()
     {
         $this->db->delete(static::getTableName(), [$this->db->quoteIdentifier('key') => $this->model->getKey()]);
-
-        $this->model->clearDependentCache();
     }
 
     /**

@@ -14,17 +14,17 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\AbstractObject;
 
 class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
 {
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
     {
-        //return "";
         $field = $this->getField($filterDefinition);
-
         $values = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
 
         // add current filter. workaround for findologic behavior
@@ -55,7 +55,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
 
         foreach ($values as $v) {
             if (empty($availableRelations) || $availableRelations[$v['value']] === true) {
-                $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
+                $objects[$v['value']] = AbstractObject::getById($v['value']);
             }
         }
 
@@ -64,13 +64,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
 
         Logger::info('done.');
 
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->script;
-        }
-
-        return $this->render($script, [
+        return $this->render($this->getTemplate($filterDefinition), [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
@@ -105,9 +99,9 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
                     }
                 }
             }
-        } elseif (!empty($value) && in_array(\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING, $value)) {
+        } elseif (!empty($value) && in_array(AbstractFilterType::EMPTY_STRING, $value)) {
             foreach ($value as $k => $v) {
-                if ($v == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+                if ($v == AbstractFilterType::EMPTY_STRING) {
                     unset($value[$k]);
                 }
             }

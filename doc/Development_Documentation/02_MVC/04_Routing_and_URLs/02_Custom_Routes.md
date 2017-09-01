@@ -122,6 +122,35 @@ $this->path("news category", [
 Output will be: `/news-category/random+text_5_category_776`
 
 
+### Setting locale from a route
+
+Symfony supports a special `_locale` parameter which is automatically used as current locale if set via route 
+parameters (see [https://symfony.com/doc/current/translation/locale.html#the-locale-and-the-url](https://symfony.com/doc/current/translation/locale.html#the-locale-and-the-url)).
+As an example a simple route matching `/{_locale}/test`:
+
+| Name          | Pattern                                                  | Reverse                                          | Module     | Controller     | Action     | Variables                | Defaults     | Site     | Priority     |
+|---------------|----------------------------------------------------------|--------------------------------------------------|------------|----------------|------------|--------------------------|--------------|----------|--------------|
+| myroute | /^\\/([a-z]{2}\\/test/ | /%_locale/test |            | content           | test       | _locale |              |          | 1            |
+
+Whatever is matched in `_locale` will be automatically used as site-wide locale for the request.
+
+
+#### Mappping other parameters to `_locale`
+
+When migrating an existing site to Pimcore 5 you may already have static routes which rely on another parameter (e.g. `language`)
+to define the locale for the request. To avoid having to migrate those static routes and locations where the routes are 
+generated, you can use the following configuration setting to map parameters to `_locale`. This mapping is only used if 
+no `_locale` is set for the matched route.
+
+```yaml
+# will map the static route parameter "language" to "_locale"
+pimcore:
+    routing:
+        static:
+            locale_params:
+                - language
+``` 
+
 ### Setting priorities
 
 There might be cases where you want to use a same pattern at the beginning, but in same time you require a completely different controller, action or additional parameters.
@@ -233,7 +262,7 @@ use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 // ...
 
 public function testAction(Request $request) {
-    $object = Object::getById($request->get("id")); 
+    $object = DataObject::getById($request->get("id")); 
     if( !$object || ( !$object->isPublished() && !$this->editmode) ) {
         return new NotFoundHttpException('Not found');
     }

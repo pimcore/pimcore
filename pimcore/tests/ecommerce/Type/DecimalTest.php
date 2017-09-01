@@ -363,18 +363,25 @@ class DecimalTest extends TestCase
         $result = call_user_func_array([$value, $operation], $arguments);
 
         $this->assertNotSame(
-            $value, $result,
+            $value,
+            $result,
             sprintf(
                 'Decimal::create(%d)->%s(%s) returns a new instance',
-                $input, $operation, implode(', ', $arguments)
+                $input,
+                $operation,
+                implode(', ', $arguments)
             )
         );
 
         $this->assertSame(
-            $expected, $result->asNumeric(),
+            $expected,
+            $result->asNumeric(),
             sprintf(
                 'Decimal::create(%d)->%s(%s)->asNumeric() returns %d',
-                $input, $operation, implode(', ', $arguments), $expected
+                $input,
+                $operation,
+                implode(', ', $arguments),
+                $expected
             )
         );
     }

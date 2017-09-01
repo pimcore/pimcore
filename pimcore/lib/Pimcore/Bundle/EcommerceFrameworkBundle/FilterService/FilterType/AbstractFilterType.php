@@ -17,16 +17,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
-use Pimcore\Config\Config;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractFilterType
 {
     const EMPTY_STRING = '$$EMPTY$$';
-
-    protected $script;
-    protected $config;
 
     /**
      * @var TranslatorInterface
@@ -36,20 +32,35 @@ abstract class AbstractFilterType
     /**
      * @var EngineInterface
      */
-    protected $renderer;
+    protected $templatingEngine;
 
     /**
-     * @param $script string - script for rendering the filter frontend
-     * @param $config Config - for more settings
-     * @param $translator TranslatorInterface - translator for text translation im necessary
-     * @param $renderer EngineInterface - renderer for view snippet
+     * @var string
      */
-    public function __construct($script, $config, TranslatorInterface $translator, EngineInterface $renderer)
+    protected $template;
+
+    /**
+     * @param $translator TranslatorInterface
+     * @param EngineInterface $templatingEngine
+     * @param string $template for rendering the filter frontend
+     * @param array $options for additional options
+     */
+    public function __construct(
+        TranslatorInterface $translator,
+        EngineInterface $templatingEngine,
+        string $template,
+        array $options = []
+    ) {
+        $this->translator       = $translator;
+        $this->templatingEngine = $templatingEngine;
+        $this->template         = $template;
+
+        $this->processOptions($options);
+    }
+
+    protected function processOptions(array $options)
     {
-        $this->script = $script;
-        $this->config = $config;
-        $this->translator = $translator;
-        $this->renderer = $renderer;
+        // noop - to implemented by filter types supporting options
     }
 
     protected function getField(AbstractFilterDefinitionType $filterDefinition)
@@ -60,6 +71,16 @@ abstract class AbstractFilterType
         }
 
         return $field;
+    }
+
+    protected function getTemplate(AbstractFilterDefinitionType $filterDefinition)
+    {
+        $template = $this->template;
+        if (!empty($filterDefinition->getScriptPath())) {
+            $template = $filterDefinition->getScriptPath();
+        }
+
+        return $template;
     }
 
     protected function getPreSelect(AbstractFilterDefinitionType $filterDefinition)
@@ -130,21 +151,21 @@ abstract class AbstractFilterType
     /**
      * renders filter template
      *
-     * @param $script string
-     * @param $parameterBag array
+     * @param string $template
+     * @param array $parameters
      *
      * @return string
      */
-    protected function render($script, $parameterBag)
+    protected function render($template, array $parameters = [])
     {
         try {
-            return $this->renderer->render($script, $parameterBag);
+            return $this->templatingEngine->render($template, $parameters);
         } catch (\Exception $e) {
 
             //legacy fallback for view rendering
             $prefix = PIMCORE_PROJECT_ROOT . '/legacy/website/views/scripts';
 
-            return $this->renderer->render($prefix . $script, $parameterBag);
+            return $this->templatingEngine->render($prefix . $template, $parameters);
         }
     }
 }

@@ -61,6 +61,11 @@ class Config extends Model\AbstractModel
     public $httpMethod = '';
 
     /**
+     * @var bool
+     */
+    public $disabled;
+
+    /**
      * @var array
      */
     public $params = [
@@ -327,5 +332,21 @@ class Config extends Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisabled()
+    {
+        return $this->disabled;
+    }
+
+    /**
+     * @param bool $disabled
+     */
+    public function setDisabled($disabled)
+    {
+        $this->disabled = $disabled;
     }
 }

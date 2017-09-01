@@ -1,0 +1,29 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager: ~
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder: ~
+
+    #
+    # TRACKERS
+    #
+    # Predefined core trackers. The item builder can be overriden via config (see extension).
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce:
+        arguments:
+            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
+            - '@templating.engine.delegating'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce:
+        arguments:
+            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
+            - '@templating.engine.delegating'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce:
+        arguments:
+            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
+            - '@templating.engine.delegating'

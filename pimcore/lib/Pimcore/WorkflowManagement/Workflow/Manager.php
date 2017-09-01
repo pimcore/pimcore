@@ -18,12 +18,13 @@ use Pimcore\Event\Model\WorkflowEvent;
 use Pimcore\Event\WorkflowEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\WorkflowManagement\Workflow;
 
 class Manager
@@ -379,7 +380,7 @@ class Manager
         if (is_array($additionalFields)) {
             foreach ($additionalFields as &$field) {
                 if ($field['fieldType'] === 'user') {
-                    $userdata = new \Pimcore\Model\Object\ClassDefinition\Data\User();
+                    $userdata = new \Pimcore\Model\DataObject\ClassDefinition\Data\User();
                     $userdata->configureOptions();
                     $field['options'] = $userdata->getOptions();
                 }
@@ -732,18 +733,29 @@ class Manager
     /**
      * Returns whether or not an element can be actioned
      *
-     * @param $element
+     * @param AbstractElement $element
      *
      * @return bool
      */
-    public static function elementCanAction($element)
+    public static function elementCanAction(AbstractElement $element)
     {
         if (!self::elementHasWorkflow($element)) {
             return false;
         }
 
+        $config = Workflow\Config::getElementWorkflowConfig($element);
+        $subject = $config['workflowSubject'];
+
         if ($element instanceof Asset) {
+            if (isset($subject['assetTypes'][0]) && !in_array($element->getType(), $subject['assetTypes'])) {
+                return false;
+            }
+
             return true;
+        } elseif ($element instanceof AbstractObject && isset($subject['objectTypes'][0]) && !in_array($element->getType(), $subject['objectTypes'])) {
+            return false;
+        } elseif ($element instanceof Document && isset($subject['documentTypes'][0]) && !in_array($element->getType(), $subject['documentTypes'])) {
+            return false;
         }
 
         /**

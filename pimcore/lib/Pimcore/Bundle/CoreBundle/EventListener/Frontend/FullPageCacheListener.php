@@ -30,6 +30,11 @@ class FullPageCacheListener extends AbstractFrontendListener
     protected $enabled = true;
 
     /**
+     * @var bool
+     */
+    protected $stopResponsePropagation = false;
+
+    /**
      * @var null|int
      */
     protected $lifetime = null;
@@ -189,7 +194,7 @@ class FullPageCacheListener extends AbstractFrontendListener
                 }
 
                 // output-cache is always disabled when logged in at the admin ui
-                if (Tool\Session::requestHasSessionId($request)) {
+                if (null !== $pimcoreUser = Tool\Authentication::authenticateSession($request)) {
                     return $this->disable('backend user is logged in');
                 }
             } else {
@@ -245,6 +250,17 @@ class FullPageCacheListener extends AbstractFrontendListener
             $response->headers->set('Age', (time() - $cacheItemDate));
 
             $event->setResponse($response);
+            $this->stopResponsePropagation = true;
+        }
+    }
+
+    /**
+     * @param KernelEvent $event
+     */
+    public function stopPropagationCheck(KernelEvent $event)
+    {
+        if ($this->stopResponsePropagation) {
+            $event->stopPropagation();
         }
     }
 
@@ -255,15 +271,16 @@ class FullPageCacheListener extends AbstractFrontendListener
      */
     public function onKernelResponse(KernelEvent $event)
     {
-        if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
-            return false;
-        }
-
         if (!$event->isMasterRequest()) {
             return false;
         }
 
-        if (!$this->matchesPimcoreContext($event->getRequest(), PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        $request = $event->getRequest();
+        if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return false;
         }
 
@@ -273,7 +290,7 @@ class FullPageCacheListener extends AbstractFrontendListener
             return false;
         }
 
-        if ($this->enabled && session_id()) {
+        if ($this->enabled && $request->hasSession() && !empty($request->getSession()->getId())) {
             $this->disable('session in use');
         }
 

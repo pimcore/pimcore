@@ -16,9 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\IExportableTokenManager;
 use Pimcore\Controller\FrontendController;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Localizedfield;
-use Pimcore\Model\Object\OnlineShopVoucherSeries;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -94,7 +94,7 @@ class VoucherController extends FrontendController
             throw new \InvalidArgumentException('Voucher series not found');
         }
 
-        /** @var \Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries */
+        /** @var \Pimcore\Model\DataObject\OnlineShopVoucherSeries $onlineShopVoucherSeries */
         $tokenManager = $onlineShopVoucherSeries->getTokenManager();
         if (!(null !== $tokenManager && $tokenManager instanceof IExportableTokenManager)) {
             throw new \InvalidArgumentException('Token manager does not support exporting');
@@ -135,19 +135,19 @@ class VoucherController extends FrontendController
         return $response;
     }
 
-//    /**
-//     * @param OnlineShopVoucherSeries $onlineShopVoucherSeries
-//     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager
-//     * @param array $params
-//     * @return Response
-//     */
-//    protected function renderTab(\Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries, \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
-//    {
-//        $paramsBag = [];
-//        $paramsBag['series'] = $onlineShopVoucherSeries;
-//        $renderScript = $tokenManager->prepareConfigurationView($paramsBag, $params);
-//        return $this->render($renderScript);
-//    }
+    //    /**
+    //     * @param OnlineShopVoucherSeries $onlineShopVoucherSeries
+    //     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager
+    //     * @param array $params
+    //     * @return Response
+    //     */
+    //    protected function renderTab(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $onlineShopVoucherSeries, \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
+    //    {
+    //        $paramsBag = [];
+    //        $paramsBag['series'] = $onlineShopVoucherSeries;
+    //        $renderScript = $tokenManager->prepareConfigurationView($paramsBag, $params);
+    //        return $this->render($renderScript);
+    //    }
 
     /**
      * Generates new Tokens or Applies single token settings.

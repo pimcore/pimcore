@@ -17,6 +17,15 @@ ALTER TABLE `translations_website` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NU
 ALTER TABLE `translations_admin` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin'; 
 ```
 
+If you were running the Compatibility Bridge before - please also run the following SQL: 
+```sql 
+update documents_email set legacy = NULL; 
+update documents_newsletter set legacy = NULL; 
+update documents_page set legacy = NULL; 
+update documents_snippet set legacy = NULL; 
+update documents_printpage set legacy = NULL;  
+```
+
 ### Controller
 - Move Controllers to `/src/AppBundle/Controllers/`.
 - Add namespace to controllers and extend them from `Pimcore\Controller\FrontendController` 
@@ -54,7 +63,7 @@ actions, get them from Symfony container follows. They all have keys like `pimco
 ```
 
 - Replace ZF1 `Zend_Paginator` with ZF3 Paginator. It should be sufficient just to replace the create
-statement with `$paginator = new Paginator($productList);`. 
+statement with `$paginator = new \Zend\Paginator\Paginator($productList);`. 
 
 
 ### Area Bricks
@@ -140,5 +149,11 @@ This will result in data loss!
  folder and should be included automatically by the autoloader. E.g. you have a 
  directory `/src/Website` for all your models and libraries in `Website` namespace. 
 - Replace and refactor all ZF1 functionality. 
+
+### Documents
+- Document editables now use a different naming format for nested editables. Please see the upgrade notes regarding build
+  54 in the [upgrade within V5 upgrade notes](../../09_Upgrade_Notes/01_Within_V5.md#page_Build_54_(2017-05-16)) documentation and add the
+  configuration entry for the legacy naming to your config or execute the naming migration script. Details on the migration
+  can be found in [Editable Naming Strategies](../../../03_Documents/13_Editable_Naming_Strategies.md).
 
 > Also have a look at the [Upgrade Notes](../../09_Upgrade_Notes/02_V4_to_V5.md).

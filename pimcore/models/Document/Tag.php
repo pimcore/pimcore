@@ -25,6 +25,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
+use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Tool\HtmlUtils;
 use Pimcore\View;
@@ -110,6 +111,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $tag->setName($name);
         $tag->setDocumentId($documentId);
         $tag->setController($controller);
+        if (!$view) {
+            // needed for the RESTImporter. For areabricks define a default implementation. Otherwise cannot find a tag handler.
+            $view = new ViewModel();
+        }
         $tag->setView($view);
         $tag->setEditmode($editmode);
         $tag->setOptions($config);
@@ -623,7 +628,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         // check for persona content
-        if ($document && $document instanceof Document\Page && $document->getUsePersona()) {
+        if ($document && $document instanceof Document\Page) {
             $name = $document->getPersonaElementName($name);
         }
 
@@ -644,7 +649,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         if (strlen($tagName) > 750) {
             throw new \Exception(sprintf(
                 'Composite name for editable "%s" is longer than 750 characters. Use shorter names for your editables or reduce amount of nesting levels. Name is: %s',
-                $name, $tagName
+                $name,
+                $tagName
             ));
         }
 

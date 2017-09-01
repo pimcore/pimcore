@@ -30,16 +30,19 @@ class ThumbnailsVideoCommand extends AbstractCommand
             ->setName('thumbnails:video')
             ->setDescription('Generate video thumbnails, useful to pre-generate thumbnails in the background')
             ->addOption(
-                'parent', 'p',
+                'parent',
+                'p',
                 InputOption::VALUE_OPTIONAL,
                 'only create thumbnails of images in this folder (ID)'
             )
             ->addOption(
-                'thumbnails', 't',
+                'thumbnails',
+                't',
                 InputOption::VALUE_OPTIONAL,
                 'only create specified thumbnails (comma separated eg.: thumb1,thumb2)'
             )->addOption(
-                'system', 's',
+                'system',
+                's',
                 InputOption::VALUE_NONE,
                 'create system thumbnails (used for tree-preview, ...)'
             );

@@ -76,7 +76,8 @@ class Definition extends Model\AbstractModel
         $list->setCondition('`key`=?', [$permission]);
         $list->setLimit(1);
         $permissionDefinition = $list->load();
-        if ($permissionDefinition[0]) {
+
+        if (1 === count($permissionDefinition)) {
             return $permissionDefinition[0];
         }
     }

@@ -368,10 +368,28 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $asset = Asset::getById($request->get('id'));
 
+        $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
+        $mimetype = Tool\Mime::detect($_FILES['Filedata']['tmp_name'], $newFilename);
+        $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
+
+        if ($newType != $asset->getType()) {
+            $translator = $this->get('translator');
+
+            return $this->json([
+                'success'=>false,
+                'message'=> sprintf($translator->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType)
+            ]);
+        }
+
         $stream = fopen($_FILES['Filedata']['tmp_name'], 'r+');
         $asset->setStream($stream);
         $asset->setCustomSetting('thumbnails', null);
         $asset->setUserModification($this->getUser()->getId());
+        $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
+        if ($newFilename != $asset->getFilename()) {
+            $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
+        }
+        $asset->setFilename($newFilename);
 
         if ($asset->isAllowed('publish')) {
             $asset->save();
@@ -748,10 +766,6 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             if ($allowUpdate) {
-                if ($request->get('filename') || $request->get('parentId')) {
-                    $asset->getData();
-                }
-
                 if ($request->get('filename') != $asset->getFilename() and !$asset->isAllowed('rename')) {
                     unset($updateData['filename']);
                     Logger::debug('prevented renaming asset because of missing permissions ');
@@ -967,8 +981,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = $version->loadData();
 
         if ($asset->isAllowed('versions')) {
-            return $this->render('PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
-                ['asset' => $asset]);
+            return $this->render(
+                'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
+                ['asset' => $asset]
+            );
         } else {
             throw new \Exception('Permission denied, version id [' . $id . ']');
         }
@@ -1079,8 +1095,11 @@ class AssetController extends ElementControllerBase implements EventedController
                 \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . $config['dpi'] . ' -yresolution=' . $config['dpi'] . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
             }
 
-            $downloadFilename = str_replace('.' . File::getFileExtension($image->getFilename()),
-                '.' . $thumbnail->getFileExtension(), $image->getFilename());
+            $downloadFilename = str_replace(
+                '.' . File::getFileExtension($image->getFilename()),
+                '.' . $thumbnail->getFileExtension(),
+                $image->getFilename()
+            );
             $downloadFilename = strtolower($downloadFilename);
 
             clearstatcache();
@@ -1331,15 +1350,21 @@ class AssetController extends ElementControllerBase implements EventedController
             $previewData['thumbnail'] = $thumbnail;
 
             if ($thumbnail['status'] == 'finished') {
-                return $this->render('PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.php',
-                    $previewData);
+                return $this->render(
+                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.php',
+                    $previewData
+                );
             } else {
-                return $this->render('PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
-                    $previewData);
+                return $this->render(
+                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
+                    $previewData
+                );
             }
         } else {
-            return $this->render('PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
-                $previewData);
+            return $this->render(
+                'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
+                $previewData
+            );
         }
     }
 
@@ -2047,7 +2072,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         } else {
             $db = \Pimcore\Db::get();
-                // get list of objects
+            // get list of objects
             $folder = Asset::getById($request->get('folderId'));
 
             $start = 0;
@@ -2086,28 +2111,32 @@ class AssetController extends ElementControllerBase implements EventedController
                 foreach ($filters as $filter) {
                     $operator = '=';
 
-                    if ($filter['type'] == 'string') {
+                    $filterField = $filter['property'];
+                    $filterOperator = $filter['operator'];
+                    $filterType = $filter['type'];
+
+                    if ($filterType == 'string') {
                         $operator = 'LIKE';
-                    } elseif ($filter['type'] == 'numeric') {
-                        if ($filter['comparison'] == 'lt') {
+                    } elseif ($filterType == 'numeric') {
+                        if ($filterOperator == 'lt') {
                             $operator = '<';
-                        } elseif ($filter['comparison'] == 'gt') {
+                        } elseif ($filterOperator == 'gt') {
                             $operator = '>';
-                        } elseif ($filter['comparison'] == 'eq') {
+                        } elseif ($filterOperator == 'eq') {
                             $operator = '=';
                         }
-                    } elseif ($filter['type'] == 'date') {
-                        if ($filter['comparison'] == 'lt') {
+                    } elseif ($filterType == 'date') {
+                        if ($filterOperator == 'lt') {
                             $operator = '<';
-                        } elseif ($filter['comparison'] == 'gt') {
+                        } elseif ($filterOperator == 'gt') {
                             $operator = '>';
-                        } elseif ($filter['comparison'] == 'eq') {
+                        } elseif ($filterOperator == 'eq') {
                             $operator = '=';
                         }
                         $filter['value'] = strtotime($filter['value']);
-                    } elseif ($filter['type'] == 'list') {
+                    } elseif ($filterType == 'list') {
                         $operator = '=';
-                    } elseif ($filter['type'] == 'boolean') {
+                    } elseif ($filterType == 'boolean') {
                         $operator = '=';
                         $filter['value'] = (int) $filter['value'];
                     }
@@ -2117,8 +2146,8 @@ class AssetController extends ElementControllerBase implements EventedController
                         $value = '%' . $value . '%';
                     }
 
-                    $field = '`' . $filter['field'] . '` ';
-                    if ($filter['field'] == 'fullpath') {
+                    $field = '`' . $filterField . '` ';
+                    if ($filterField == 'fullpath') {
                         $field = 'CONCAT(path,filename)';
                     }
 

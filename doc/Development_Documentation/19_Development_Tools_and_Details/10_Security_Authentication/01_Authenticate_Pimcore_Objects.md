@@ -3,24 +3,24 @@
 As Symfony's security component is quite complex, Pimcore provides base implementations to facilitate integrating the security
 configuration with users stored as Pimcore objects.
 
-As example, assume we have a user object which is defined in a `AppBundle\Model\Object\User` class and stores its password
+As example, assume we have a user object which is defined in a `AppBundle\Model\DataObject\User` class and stores its password
 in a field named `password` (field type `Password`). The password field is configured to use the `password_hash` algorithm
 which is the standard way to handle passwords in PHP these days (internally it uses bcrypt). The class definition looks
-like this (you can find a working example in the `demo-cms` install profile):
+like this (you can find a working example in the `demo-basic` install profile):
 
-![AppBundle\Model\Object\User](../../img/security_authentication_class_definition.png)
+![AppBundle\Model\DataObject\User](../../img/security_authentication_class_definition.png)
 
 As a user object needs to implement the `UserInterface` provided by Symfony, we override the generated class and implement
 the remaining methods which are not implemented by field getters:
 
 ```php
 <?php
-// src/AppBundle/Model/Object/User.php
+// src/AppBundle/Model/DataObject/User.php
 
-namespace AppBundle\Model\Object;
+namespace AppBundle\Model\DataObject;
 
-use Pimcore\Model\Object\ClassDefinition\Data\Password;
-use Pimcore\Model\Object\User as BaseUser;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Password;
+use Pimcore\Model\DataObject\User as BaseUser;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -60,7 +60,7 @@ Next, we configure Pimcore to use our overridden class:
 pimcore:
     models:
         class_overrides:
-            'Pimcore\Model\Object\User': 'AppBundle\Model\Object\User'
+            'Pimcore\Model\DataObject\User': 'AppBundle\Model\DataObject\User'
 ```
 
 
@@ -68,7 +68,7 @@ pimcore:
 
 A user provider is responsible for finding matching user objects for a given username. Pimcore ships an `ObjectUserProvider`
 which loads users from a defined class type and searches the username for a configured property. In our case, we want to
-load users from the `AppBundle\Model\Object\User` and query the `username` field. To be able to use our user class in the
+load users from the `AppBundle\Model\DataObject\User` and query the `username` field. To be able to use our user class in the
 security configuration, we define a user provider service which is configured to load our user implementation (make sure
 your bundle is able to load service definitions, see
 [Loading Service Definitions](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/01_Loading_Service_Definitions.md)):
@@ -78,11 +78,11 @@ your bundle is able to load service definitions, see
 services:
     # The user provider loads users by Username.
     # Pimcore provides a simple ObjectUserProvider which is able to load users from a specified class by a configured
-    # field. The website_demo.security.user_provider will load users from the AppBundle\Model\Object\User by looking at
+    # field. The website_demo.security.user_provider will load users from the AppBundle\Model\DataObject\User by looking at
     # their username field.
     website_demo.security.user_provider:
         class: Pimcore\Security\User\ObjectUserProvider
-        arguments: ['AppBundle\Model\Object\User', 'username']
+        arguments: ['AppBundle\Model\DataObject\User', 'username']
 ```
 
 We'll use this service later in our security configuration to tell the firewall where to load its users from. For details
@@ -134,10 +134,10 @@ pimcore:
     security:
         # the encoder factory as defined in services.yml
         encoder_factories:
-            AppBundle\Model\Object\User: website_demo.security.password_encoder_factory
+            AppBundle\Model\DataObject\User: website_demo.security.password_encoder_factory
 ```
 
-When an encoder is loaded for a `AppBundle\Model\Object\User` object, the UserAwareEncoderFactory will build a dedicated
+When an encoder is loaded for a `AppBundle\Model\DataObject\User` object, the UserAwareEncoderFactory will build a dedicated
 instance of `PasswordFieldEncoder` instead of always returning the same instance for all users.
 
 
@@ -151,7 +151,7 @@ pimcore:
     security:
         # the encoder factory as defined in services.yml
         encoder_factories:
-            AppBundle\Model\Object\User: website_demo.security.password_encoder_factory
+            AppBundle\Model\DataObject\User: website_demo.security.password_encoder_factory
 
 security:
     providers:
@@ -169,6 +169,6 @@ security:
 
 This should get you started with a custom authentication system based on Pimcore objects. For further information see:
 
-* The [Demo CMS profile](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-cms) which acts as base for
+* The [Demo CMS profile](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic) which acts as base for
   this guide and implements a form/session login.
 * The [Symfony Security Component documentation](http://symfony.com/doc/current/security.html)

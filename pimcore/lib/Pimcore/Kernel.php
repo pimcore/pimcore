@@ -23,6 +23,7 @@ use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
@@ -47,6 +48,11 @@ abstract class Kernel extends SymfonyKernel
      * @var Extension\Config
      */
     protected $extensionConfig;
+
+    /**
+     * @var BundleCollection
+     */
+    private $bundleCollection;
 
     /**
      * {@inheritdoc}
@@ -144,15 +150,27 @@ abstract class Kernel extends SymfonyKernel
         // core bundles (Symfony, Pimcore)
         $this->registerCoreBundlesToCollection($collection);
 
-        // bundles registered in extensions.php
-        $this->registerExtensionManagerBundles($collection);
-
         // custom bundles
         $this->registerBundlesToCollection($collection);
 
+        // bundles registered in extensions.php
+        $this->registerExtensionManagerBundles($collection);
+
         $bundles = $collection->getBundles($this->getEnvironment());
 
+        $this->bundleCollection = $collection;
+
         return $bundles;
+    }
+
+    /**
+     * Returns the bundle collection which was used to build the set of used bundles
+     *
+     * @return BundleCollection
+     */
+    public function getBundleCollection(): BundleCollection
+    {
+        return $this->bundleCollection;
     }
 
     /**
@@ -194,13 +212,15 @@ abstract class Kernel extends SymfonyKernel
             if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
                 $collection->addBundle(
                     new SensioGeneratorBundle(),
-                    80, ['dev']
+                    80,
+                    ['dev']
                 );
 
                 // PimcoreGeneratorBundle depends on SensioGeneratorBundle
                 $collection->addBundle(
                     new PimcoreGeneratorBundle(),
-                    60, ['dev']
+                    60,
+                    ['dev']
                 );
             }
         }
@@ -220,8 +240,18 @@ abstract class Kernel extends SymfonyKernel
                 continue;
             }
 
+            // do not register bundles twice - skip if it was already loaded manually
+            if ($collection->hasItem($className)) {
+                continue;
+            }
+
             // use lazy loaded item to instantiate the bundle only if environment matches
-            $collection->add(new LazyLoadedItem($className, $options['priority'], $options['environments']));
+            $collection->add(new LazyLoadedItem(
+                $className,
+                $options['priority'],
+                $options['environments'],
+                ItemInterface::SOURCE_EXTENSION_MANAGER_CONFIG
+            ));
         }
     }
 

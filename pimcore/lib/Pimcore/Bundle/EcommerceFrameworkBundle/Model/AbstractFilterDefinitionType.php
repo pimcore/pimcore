@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 /**
  * Abstract base class for filter definition type field collections
  */
-abstract class AbstractFilterDefinitionType extends \Pimcore\Model\Object\Fieldcollection\Data\AbstractData
+abstract class AbstractFilterDefinitionType extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
 {
     protected $metaData = [];
 

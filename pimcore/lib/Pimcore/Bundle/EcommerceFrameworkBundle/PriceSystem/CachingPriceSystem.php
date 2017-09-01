@@ -37,12 +37,14 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
             $this->priceInfos[$pId] = [];
         }
 
-        if (!array_key_exists($quantityScale, $this->priceInfos[$pId]) || !$this->priceInfos[$pId][$quantityScale]) {
+        $quantityScaleKey = (string) $quantityScale;
+
+        if (!array_key_exists($quantityScaleKey, $this->priceInfos[$pId]) || !$this->priceInfos[$pId][$quantityScaleKey]) {
             $priceInfo = $this->initPriceInfoInstance($quantityScale, $product, $products);
-            $this->priceInfos[$pId][$quantityScale]=$priceInfo;
+            $this->priceInfos[$pId][$quantityScaleKey] = $priceInfo;
         }
 
-        return $this->priceInfos[$pId][$quantityScale];
+        return $this->priceInfos[$pId][$quantityScaleKey];
     }
 
     /**

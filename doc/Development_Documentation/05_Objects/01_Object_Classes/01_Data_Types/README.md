@@ -107,7 +107,7 @@ The entire list of data types is indicated below:
 
 ### General Aspects
 
-All data types are wrapped in an object derived from `Pimcore\Model\Object\Class\Data`. 
+All data types are wrapped in an object derived from `Pimcore\Model\DataObject\Class\Data`. 
 These data type objects provide getters and setters and they define the Description in the frontend. 
 Data type objects are displayed in the first column of the table above. 
 The second column indicates the underlying data type class and the third column outlines the Description used in Pimcore 
@@ -128,6 +128,7 @@ languages. Please see the article about Translations to find out how to add obje
   (meaning it has to be activated manually)
 * `indexed`: puts an index on this column in the database
 Moreover, each data field can have a `tooltip`, which is shown when the mouse hovers over the input field.
+* `unique`: currently the `input` and `numeric` data type allows to add a unique constraint. If checked, the values will also be indexed. 
 
 ![Data Field Settings](../../../img/classes-datatypes1.jpg)
 ![Data Field Settings](../../../img/classes-datatypes2.jpg)

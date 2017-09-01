@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
@@ -183,10 +184,10 @@ interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginato
      *
      * @return void
      */
-    public function setCategory(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory $category);
+    public function setCategory(AbstractCategory $category);
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory
+     * @return AbstractCategory
      */
     public function getCategory();
 
@@ -214,6 +215,8 @@ interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginato
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */
@@ -224,6 +227,8 @@ interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginato
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */
@@ -234,6 +239,8 @@ interface IProductList extends \Zend_Paginator_Adapter_Interface, \Zend_Paginato
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */

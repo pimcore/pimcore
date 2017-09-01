@@ -22,16 +22,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 interface IEnvironment extends IComponent
 {
     /**
-     * returns current user id
-     *
-     * @abstract
+     * Returns current user id
      *
      * @return int
      */
     public function getCurrentUserId();
 
     /**
-     * sets current user id
+     * Sets current user id
      *
      * @param int $userId
      *
@@ -40,118 +38,99 @@ interface IEnvironment extends IComponent
     public function setCurrentUserId($userId);
 
     /**
-     * check if a user id is set
+     * Checks if a user id is set
      *
      * @return bool
      */
     public function hasCurrentUserId();
 
     /**
-     * sets custom item to environment - which is saved to the session then
+     * Sets custom item to environment - which is saved to the session then
      * save()-call is needed to save the custom items
-     *
-     * @abstract
      *
      * @param $key
      * @param $value
-     *
-     * @return void
      */
     public function setCustomItem($key, $value);
 
     /**
-     * removes custom item from the environment
+     * Removes custom item from the environment
      * save()-call is needed to save the custom items
      *
-     * @abstract
-     *
      * @param $key
-     *
-     * @return mixed
      */
     public function removeCustomItem($key);
 
     /**
-     * returns custom saved item from environment
-     *
-     * @abstract
+     * Returns custom saved item from environment
      *
      * @param $key
+     * @param $defaultValue
      *
      * @return mixed
      */
-    public function getCustomItem($key);
+    public function getCustomItem($key, $defaultValue = null);
 
     /**
-     * returns all custom items from environment
+     * Returns all custom items from environment
      *
-     * @abstract
-     *
-     * @return mixed[]
+     * @return array
      */
     public function getAllCustomItems();
 
     /**
-     * reset environment
+     * Resets environment
      * save()-call is needed to save changes
-     *
-     * @abstract
-     *
-     * @return mixed
      */
     public function clearEnvironment();
 
     /**
-     * sets current assortment tenant which is used for indexing and product lists
+     * Sets current assortment tenant which is used for indexing and product lists
      *
-     * @param $tenant string
-     *
-     * @return mixed
+     * @param string $tenant
      */
     public function setCurrentAssortmentTenant($tenant);
 
     /**
-     * gets current assortment tenant which is used for indexing and product lists
+     * Returns current assortment tenant which is used for indexing and product lists
      *
      * @return string
      */
     public function getCurrentAssortmentTenant();
 
     /**
-     * sets current assortment sub tenant which is used for indexing and product lists
+     * Sets current assortment sub tenant which is used for indexing and product lists
      *
-     * @param $subTenant mixed
+     * TODO: is this mixed or string?
      *
-     * @return mixed
+     * @param mixed $subTenant
      */
     public function setCurrentAssortmentSubTenant($subTenant);
 
     /**
-     * gets current sub assortment tenant which is used for indexing and product lists
+     * Returns current sub assortment tenant which is used for indexing and product lists
      *
      * @return mixed
      */
     public function getCurrentAssortmentSubTenant();
 
     /**
-     * sets current checkout tenant which is used for cart and checkout manager
+     * Sets current checkout tenant which is used for cart and checkout manager
      *
-     * @param $tenant string
+     * @param string $tenant
      * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
-     *
-     * @return mixed
      */
     public function setCurrentCheckoutTenant($tenant, $persistent = true);
 
     /**
-     * gets current assortment tenant which is used for cart and checkout manager
+     * Returns current assortment tenant which is used for cart and checkout manager
      *
      * @return string
      */
     public function getCurrentCheckoutTenant();
 
     /**
-     * returns instance of default currency
+     * Returns instance of default currency
      *
      * @return Currency
      */
@@ -167,57 +146,50 @@ interface IEnvironment extends IComponent
      */
     public function setUseGuestCart($useGuestCart);
 
-    /** ===========================================
+    /**
+     * Returns current system locale
+     *
+     * @return null|string
+     */
+    public function getSystemLocale();
+
+    /**
+     * ===========================================
      *
      *  deprecated functions
      *
-     *  ===========================================
+     * ===========================================
      */
 
     /**
-     * @deprecated
+     * @deprecated use setCurrentAssortmentTenant instead
      *
-     * use setCurrentAssortmentTenant instead
-     *
-     * @param $tenant string
+     * @param string $tenant
      *
      * @return mixed
      */
     public function setCurrentTenant($tenant);
 
     /**
-     * @deprecated
-     *
-     * use getCurrentAssortmentTenant instead
+     * @deprecated use getCurrentAssortmentTenant instead
      *
      * @return string
      */
     public function getCurrentTenant();
 
     /**
-     * @deprecated
+     * @deprecated use setCurrentAssortmentSubTenant instead
      *
-     * use setCurrentAssortmentSubTenant instead
-     *
-     * @param $tenant mixed
+     * @param mixed $tenant
      *
      * @return mixed
      */
     public function setCurrentSubTenant($tenant);
 
     /**
-     * @deprecated
-     *
-     * use getCurrentAssortmentSubTenant instead
+     * @deprecated use getCurrentAssortmentSubTenant instead
      *
      * @return mixed
      */
     public function getCurrentSubTenant();
-
-    /**
-     * gets current system locale
-     *
-     * @return null|string
-     */
-    public function getSystemLocale();
 }

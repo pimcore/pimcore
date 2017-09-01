@@ -16,5 +16,5 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
 
 interface IGetter
 {
-    public static function get($object, $config = null);
+    public function get($object, $config = null);
 }

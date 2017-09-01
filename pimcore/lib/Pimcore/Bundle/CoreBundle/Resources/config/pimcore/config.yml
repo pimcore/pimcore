@@ -53,6 +53,8 @@ doctrine:
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_unicode_ci
+                mapping_types:
+                    enum: string
 
 # Monolog Configuration
 monolog:
@@ -85,62 +87,62 @@ pimcore:
         class_definitions:
             data:
                 map:
-                    block: \Pimcore\Model\Object\ClassDefinition\Data\Block
-                    calculatedValue: \Pimcore\Model\Object\ClassDefinition\Data\CalculatedValue
-                    checkbox: \Pimcore\Model\Object\ClassDefinition\Data\Checkbox
-                    classificationstore: \Pimcore\Model\Object\ClassDefinition\Data\Classificationstore
-                    country: \Pimcore\Model\Object\ClassDefinition\Data\Country
-                    countrymultiselect: \Pimcore\Model\Object\ClassDefinition\Data\Countrymultiselect
-                    date: \Pimcore\Model\Object\ClassDefinition\Data\Date
-                    datetime: \Pimcore\Model\Object\ClassDefinition\Data\Datetime
-                    email: \Pimcore\Model\Object\ClassDefinition\Data\Email
-                    externalImage: \Pimcore\Model\Object\ClassDefinition\Data\ExternalImage
-                    fieldcollections: \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections
-                    firstname: \Pimcore\Model\Object\ClassDefinition\Data\Firstname
-                    gender: \Pimcore\Model\Object\ClassDefinition\Data\Gender
-                    geobounds: \Pimcore\Model\Object\ClassDefinition\Data\Geobounds
-                    geopoint: \Pimcore\Model\Object\ClassDefinition\Data\Geopoint
-                    geopolygon: \Pimcore\Model\Object\ClassDefinition\Data\Geopolygon
-                    hotspotimage: \Pimcore\Model\Object\ClassDefinition\Data\Hotspotimage
-                    href: \Pimcore\Model\Object\ClassDefinition\Data\Href
-                    image: \Pimcore\Model\Object\ClassDefinition\Data\Image
-                    input: \Pimcore\Model\Object\ClassDefinition\Data\Input
-                    language: \Pimcore\Model\Object\ClassDefinition\Data\Language
-                    languagemultiselect: \Pimcore\Model\Object\ClassDefinition\Data\Languagemultiselect
-                    lastname: \Pimcore\Model\Object\ClassDefinition\Data\Lastname
-                    link: \Pimcore\Model\Object\ClassDefinition\Data\Link
-                    localizedfields: \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields
-                    multihref: \Pimcore\Model\Object\ClassDefinition\Data\Multihref
-                    multihrefMetadata: \Pimcore\Model\Object\ClassDefinition\Data\MultihrefMetadata
-                    multiselect: \Pimcore\Model\Object\ClassDefinition\Data\Multiselect
-                    newsletterActive: \Pimcore\Model\Object\ClassDefinition\Data\NewsletterActive
-                    nonownerobjects: \Pimcore\Model\Object\ClassDefinition\Data\Nonownerobjects
-                    numeric: \Pimcore\Model\Object\ClassDefinition\Data\Numeric
-                    objectbricks: \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks
-                    objects: \Pimcore\Model\Object\ClassDefinition\Data\Objects
-                    objectsMetadata: \Pimcore\Model\Object\ClassDefinition\Data\ObjectsMetadata
-                    password: \Pimcore\Model\Object\ClassDefinition\Data\Password
-                    persona: \Pimcore\Model\Object\ClassDefinition\Data\Persona
-                    personamultiselect: \Pimcore\Model\Object\ClassDefinition\Data\Personamultiselect
-                    quantityValue: \Pimcore\Model\Object\ClassDefinition\Data\QuantityValue
+                    block: \Pimcore\Model\DataObject\ClassDefinition\Data\Block
+                    calculatedValue: \Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue
+                    checkbox: \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox
+                    classificationstore: \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore
+                    country: \Pimcore\Model\DataObject\ClassDefinition\Data\Country
+                    countrymultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect
+                    date: \Pimcore\Model\DataObject\ClassDefinition\Data\Date
+                    datetime: \Pimcore\Model\DataObject\ClassDefinition\Data\Datetime
+                    email: \Pimcore\Model\DataObject\ClassDefinition\Data\Email
+                    externalImage: \Pimcore\Model\DataObject\ClassDefinition\Data\ExternalImage
+                    fieldcollections: \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections
+                    firstname: \Pimcore\Model\DataObject\ClassDefinition\Data\Firstname
+                    gender: \Pimcore\Model\DataObject\ClassDefinition\Data\Gender
+                    geobounds: \Pimcore\Model\DataObject\ClassDefinition\Data\Geobounds
+                    geopoint: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint
+                    geopolygon: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon
+                    hotspotimage: \Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage
+                    href: \Pimcore\Model\DataObject\ClassDefinition\Data\Href
+                    image: \Pimcore\Model\DataObject\ClassDefinition\Data\Image
+                    input: \Pimcore\Model\DataObject\ClassDefinition\Data\Input
+                    language: \Pimcore\Model\DataObject\ClassDefinition\Data\Language
+                    languagemultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Languagemultiselect
+                    lastname: \Pimcore\Model\DataObject\ClassDefinition\Data\Lastname
+                    link: \Pimcore\Model\DataObject\ClassDefinition\Data\Link
+                    localizedfields: \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields
+                    multihref: \Pimcore\Model\DataObject\ClassDefinition\Data\Multihref
+                    multihrefMetadata: \Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata
+                    multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
+                    newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
+                    nonownerobjects: \Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects
+                    numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
+                    objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
+                    objects: \Pimcore\Model\DataObject\ClassDefinition\Data\Objects
+                    objectsMetadata: \Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata
+                    password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
+                    persona: \Pimcore\Model\DataObject\ClassDefinition\Data\Persona
+                    personamultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Personamultiselect
+                    quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
                     inputQuantityValue: \Pimcore\Model\Object\ClassDefinition\Data\InputQuantityValue
-                    select: \Pimcore\Model\Object\ClassDefinition\Data\Select
-                    slider: \Pimcore\Model\Object\ClassDefinition\Data\Slider
-                    structuredTable: \Pimcore\Model\Object\ClassDefinition\Data\StructuredTable
-                    table: \Pimcore\Model\Object\ClassDefinition\Data\Table
-                    textarea: \Pimcore\Model\Object\ClassDefinition\Data\Textarea
-                    time: \Pimcore\Model\Object\ClassDefinition\Data\Time
-                    user: \Pimcore\Model\Object\ClassDefinition\Data\User
-                    video: \Pimcore\Model\Object\ClassDefinition\Data\Video
-                    wysiwyg: \Pimcore\Model\Object\ClassDefinition\Data\Wysiwyg
+                    select: \Pimcore\Model\DataObject\ClassDefinition\Data\Select
+                    slider: \Pimcore\Model\DataObject\ClassDefinition\Data\Slider
+                    structuredTable: \Pimcore\Model\DataObject\ClassDefinition\Data\StructuredTable
+                    table: \Pimcore\Model\DataObject\ClassDefinition\Data\Table
+                    textarea: \Pimcore\Model\DataObject\ClassDefinition\Data\Textarea
+                    time: \Pimcore\Model\DataObject\ClassDefinition\Data\Time
+                    user: \Pimcore\Model\DataObject\ClassDefinition\Data\User
+                    video: \Pimcore\Model\DataObject\ClassDefinition\Data\Video
+                    wysiwyg: \Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg
 
                 prefixes:
-                    - \Pimcore\Model\Object\ClassDefinition\Data\
+                    - \Pimcore\Model\DataObject\ClassDefinition\Data\
                     - \Object_Class_Data_
 
             layout:
                 prefixes:
-                    - \Pimcore\Model\Object\ClassDefinition\Layout\
+                    - \Pimcore\Model\DataObject\ClassDefinition\Layout\
                     - \Object_Class_Layout_
 
     documents:

@@ -19,9 +19,9 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -98,9 +98,9 @@ class Multihref extends Model\Document\Tag implements \Iterator
 
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
-                if ($element instanceof Object\Concrete) {
+                if ($element instanceof DataObject\Concrete) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName()];
-                } elseif ($element instanceof Object\AbstractObject) {
+                } elseif ($element instanceof DataObject\AbstractObject) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'object', 'folder'];
                 } elseif ($element instanceof Asset) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
@@ -173,7 +173,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
 
         foreach ($this->elements as $element) {
             if (
-                ($element instanceof Object && Object::doHideUnpublished())
+                ($element instanceof Object && DataObject::doHideUnpublished())
                 ||
                 ($element instanceof Document && Document::doHideUnpublished())
             ) {

@@ -14,11 +14,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-use Pimcore\Model\Object\Data\ObjectMetadata;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\Service;
 
 class DefaultRelations implements IRelationInterpreter
 {
-    public static function interpret($value, $config = null)
+    public function interpret($value, $config = null)
     {
         $result = [];
 
@@ -32,10 +34,10 @@ class DefaultRelations implements IRelationInterpreter
                     $v = $v->getObject();
                 }
 
-                $result[] = ['dest' => $v->getId(), 'type' => \Pimcore\Model\Element\Service::getElementType($v)];
+                $result[] = ['dest' => $v->getId(), 'type' => Service::getElementType($v)];
             }
-        } elseif ($value instanceof \Pimcore\Model\Element\AbstractElement) {
-            $result[] = ['dest' => $value->getId(), 'type' => \Pimcore\Model\Element\Service::getElementType($value)];
+        } elseif ($value instanceof AbstractElement) {
+            $result[] = ['dest' => $value->getId(), 'type' => Service::getElementType($value)];
         }
 
         return $result;

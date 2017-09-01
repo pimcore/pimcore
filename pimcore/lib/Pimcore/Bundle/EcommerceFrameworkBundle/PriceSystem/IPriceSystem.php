@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Model\DataObject\OnlineShopTaxClass;
 
 interface IPriceSystem
 {

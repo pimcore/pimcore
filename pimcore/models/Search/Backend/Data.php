@@ -19,9 +19,9 @@ use Pimcore\Event\Model\SearchBackendEvent;
 use Pimcore\Event\SearchBackendEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 
 class Data extends \Pimcore\Model\AbstractModel
 {
@@ -370,7 +370,7 @@ class Data extends \Pimcore\Model\AbstractModel
         $this->userOwner = $element->getUserOwner();
 
         $this->type = $element->getType();
-        if ($element instanceof Object\Concrete) {
+        if ($element instanceof DataObject\Concrete) {
             $this->subtype = $element->getClassName();
         } else {
             $this->subtype = $this->type;
@@ -466,18 +466,18 @@ class Data extends \Pimcore\Model\AbstractModel
             }
 
             $this->published = true;
-        } elseif ($element instanceof Object\AbstractObject) {
-            if ($element instanceof Object\Concrete) {
-                $getInheritedValues = Object\AbstractObject::doGetInheritedValues();
-                Object\AbstractObject::setGetInheritedValues(true);
+        } elseif ($element instanceof DataObject\AbstractObject) {
+            if ($element instanceof DataObject\Concrete) {
+                $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
+                DataObject\AbstractObject::setGetInheritedValues(true);
 
                 $this->published = $element->isPublished();
                 foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
                     $this->data .= $value->getDataForSearchIndex($element).' ';
                 }
 
-                Object\AbstractObject::setGetInheritedValues($getInheritedValues);
-            } elseif ($element instanceof Object\Folder) {
+                DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
+            } elseif ($element instanceof DataObject\Folder) {
                 $this->data=$element->getKey();
                 $this->published = true;
             }

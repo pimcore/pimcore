@@ -34,6 +34,10 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         var imageUrl = '/admin/asset/get-image-thumbnail?id=' + this.imageId + '&width=' + this.width + '&height='
             + this.height + '&contain=true';
 
+        if(this.config.crop) {
+            imageUrl = imageUrl + '&' + Ext.urlEncode(this.config.crop);
+        }
+
         if(typeof modal != "undefined") {
             this.modal = modal;
         }
@@ -435,7 +439,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                                 name: data["name"][i],
                                 value: data["value"][i],
                                 type: data["type"][i]
-                            }
+                            };
 
                             normalizedData.push(listItem);
                         }

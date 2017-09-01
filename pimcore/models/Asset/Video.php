@@ -51,7 +51,7 @@ class Video extends Model\Asset
     public function delete()
     {
         parent::delete();
-        $this->clearThumbnails();
+        $this->clearThumbnails(true);
     }
 
     /**
@@ -71,8 +71,13 @@ class Video extends Model\Asset
                 }
             }
 
-            recursiveDelete($this->getImageThumbnailSavePath());
-            recursiveDelete($this->getVideoThumbnailSavePath());
+            $imageFiles = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
+            $videoFiles = glob($this->getVideoThumbnailSavePath() . '/video-thumb__' . $this->getId() . '__*');
+
+            $files = array_merge($imageFiles, $videoFiles);
+            foreach ($files as $file) {
+                recursiveDelete($file);
+            }
         }
     }
 

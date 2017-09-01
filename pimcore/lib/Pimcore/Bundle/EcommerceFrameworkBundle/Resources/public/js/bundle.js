@@ -54,7 +54,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin,{
             var config = pimcore.bundle.EcommerceFramework.bundle.config;
 
             // pricing rules
-            if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("bundle_ecommerce_pricing_rules") && (!config.menu || config.menu.pricingRules.disabled == 0)) {
+            if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("bundle_ecommerce_pricing_rules") && (!config.menu || config.menu.pricing_rules.enabled)) {
                 // add pricing rules to menu
                 // create item
                 var pricingPanelId = "bundle_ecommerce_pricing_config";
@@ -77,7 +77,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin,{
 
 
             // order backend
-            if (perspectiveCfg.inToolbar("ecommerce.orderbackend") && user.isAllowed("bundle_ecommerce_back-office_order") && (!config.menu || config.menu.orderlist.disabled == 0)) {
+            if (perspectiveCfg.inToolbar("ecommerce.orderbackend") && user.isAllowed("bundle_ecommerce_back-office_order") && (!config.menu || config.menu.order_list.enabled)) {
                 // create item
                 var orderPanelId = "bundle_ecommerce_back-office_order";
                 var item = {
@@ -88,7 +88,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin,{
                             pimcore.globalmanager.get(orderPanelId).activate();
                         }
                         catch (e) {
-                            pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.orderlist.route, "bundle_ecommerce_back-office_order", t('bundle_ecommerce_back-office_order')));
+                            pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.order_list.route, "bundle_ecommerce_back-office_order", t('bundle_ecommerce_back-office_order')));
                         }
                     }
                 };

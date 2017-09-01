@@ -17,9 +17,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -212,7 +212,7 @@ class TranslationController extends AdminController
         $suffix = $admin ? 'admin' : 'website';
         $response = new Response("\xEF\xBB\xBF" . $csv);
         $response->headers->set('Content-Encoding', 'UTF-8');
-        $response->headers->set('Content-type:', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
         $response->headers->set('Content-Disposition', 'attachment; filename="export_ ' . $suffix . '_translations.csv"');
         ini_set('display_errors', false); //to prevent warning messages in csv
         return $response;
@@ -310,10 +310,12 @@ class TranslationController extends AdminController
                 $t->setModificationDate(time());
                 $t->save();
 
-                $return = array_merge(['key' => $t->getKey(),
+                $return = array_merge(
+                    ['key' => $t->getKey(),
                     'creationDate' => $t->getCreationDate(),
                     'modificationDate' => $t->getModificationDate()],
-                    $t->getTranslations());
+                    $t->getTranslations()
+                );
 
                 return $this->json(['data' => $return, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
@@ -408,20 +410,21 @@ class TranslationController extends AdminController
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
         if ($joins) {
-            $list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list, $joins, $tableName, $filters) {
-                $db = \Pimcore\Db::get();
+            $list->onCreateQuery(
+                function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use ($list, $joins, $tableName, $filters) {
+                    $db = \Pimcore\Db::get();
 
-                $alreadyJoined = [];
+                    $alreadyJoined = [];
 
-                foreach ($joins as $join) {
-                    $fieldname = $join['language'];
+                    foreach ($joins as $join) {
+                        $fieldname = $join['language'];
 
-                    if ($alreadyJoined[$fieldname]) {
-                        continue;
-                    }
-                    $alreadyJoined[$fieldname] = 1;
+                        if ($alreadyJoined[$fieldname]) {
+                            continue;
+                        }
+                        $alreadyJoined[$fieldname] = 1;
 
-                    $select->joinLeft(
+                        $select->joinLeft(
                         [$fieldname => $tableName],
                         '('
                         . $fieldname . '.key = ' . $tableName . '.key'
@@ -431,14 +434,14 @@ class TranslationController extends AdminController
                             $fieldname => 'text'
                         ]
                     );
-                }
+                    }
 
-                $havings = $filters['conditions'];
-                if ($havings) {
-                    $havings = implode(' AND ', $havings);
-                    $select->having($havings);
+                    $havings = $filters['conditions'];
+                    if ($havings) {
+                        $havings = implode(' AND ', $havings);
+                        $select->having($havings);
+                    }
                 }
-            }
             );
         }
     }
@@ -594,14 +597,15 @@ class TranslationController extends AdminController
 
                 if ($element['children']) {
                     $el = Element\Service::getElementById($element['type'], $element['id']);
-                    $listClass = '\\Pimcore\\Model\\' . ucfirst($element['type']) . '\\Listing';
+                    $baseClass = ELement\Service::getBaseClassNameForElement($element['type']);
+                    $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
                     $list = new $listClass();
                     $list->setUnpublished(true);
-                    if ($el instanceof Object\AbstractObject) {
+                    if ($el instanceof DataObject\AbstractObject) {
                         // inlcude variants
-                        $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER]);
+                        $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
                     }
-                    $list->setCondition(($el instanceof Object\AbstractObject ? 'o_' : '') . 'path LIKE ?', [$el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '') . '%']);
+                    $list->setCondition(($el instanceof DataObject\AbstractObject ? 'o_' : '') . 'path LIKE ?', [$el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '') . '%']);
                     $idList = $list->loadIdList();
 
                     foreach ($idList as $id) {
@@ -733,7 +737,7 @@ class TranslationController extends AdminController
                         }
                     }
                 }
-            } elseif ($element instanceof Object\Concrete) {
+            } elseif ($element instanceof DataObject\Concrete) {
                 if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {
                     $definitions = $fd->getFielddefinitions();
 
@@ -926,7 +930,7 @@ class TranslationController extends AdminController
                             $element->$setter($content);
                         }
                     }
-                } elseif ($element instanceof Object\Concrete) {
+                } elseif ($element instanceof DataObject\Concrete) {
                     if ($fieldType == 'localizedfield') {
                         $setter = 'set' . ucfirst($name);
                         if (method_exists($element, $setter)) {
@@ -947,7 +951,7 @@ class TranslationController extends AdminController
 
             try {
                 // allow to save objects although there are mandatory fields
-                if ($element instanceof Object\AbstractObject) {
+                if ($element instanceof DataObject\AbstractObject) {
                     $element->setOmitMandatoryCheck(true);
                 }
 
@@ -1225,7 +1229,7 @@ class TranslationController extends AdminController
 
                         $output .= $html;
                     }
-                } elseif ($element instanceof Object\Concrete) {
+                } elseif ($element instanceof DataObject\Concrete) {
                     $hasContent = false;
 
                     if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {

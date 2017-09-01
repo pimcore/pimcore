@@ -41,7 +41,7 @@ Let's say there is an object class **collectiontest** and a fieldcollection call
 There is an object field called **collectionitems** which is of the type field collection.
 
 ```php
-$object = new Object\Collectiontest();
+$object = new DataObject\Collectiontest();
   
 $object->setParentId(1);
 $object->setUserOwner(1);
@@ -49,10 +49,10 @@ $object->setUserModification(1);
 $object->setCreationDate(time());
 $object->setKey(uniqid() . rand(10, 99));
 
-$items = new Object\Fieldcollection();
+$items = new DataObject\Fieldcollection();
 
 for ($i = 0; $i < 5; $i++) {
-    $item = new Object\Fieldcollection\Data\MyCollection();
+    $item = new DataObject\Fieldcollection\Data\MyCollection();
     $item->setMyinput("This is a test " . $i);
     $items->add($item);
 }
@@ -67,7 +67,7 @@ If you want to use localized fields inside field collections you have to set the
 
 ...
 
-$item = new Object\Fieldcollection\Data\MyCollection();
+$item = new DataObject\Fieldcollection\Data\MyCollection();
 $item->setObject($object)
 
 ```

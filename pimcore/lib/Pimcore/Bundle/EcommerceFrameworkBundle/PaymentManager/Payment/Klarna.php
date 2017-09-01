@@ -14,10 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Config\Config;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Klarna implements IPayment
 {
@@ -41,26 +42,47 @@ class Klarna implements IPayment
      */
     protected $endpoint;
 
-    /**
-     * @param Config $config
-     *
-     * @throws \Exception
-     */
-    public function __construct(Config $config)
+    public function __construct(array $options)
     {
-        $settings = $config->config->{$config->mode};
-        if ($settings->eid == '' || $settings->{'shared-secret-key'} == '') {
-            throw new \Exception('payment configuration is wrong. eid or shared-secret-key is empty !');
-        }
+        $this->processOptions(
+            $this->configureOptions(new OptionsResolver())->resolve($options)
+        );
+    }
 
-        $this->eid = $settings->eid;
-        $this->sharedSecretKey = $settings->{'shared-secret-key'};
+    protected function processOptions(array $options)
+    {
+        $this->eid             = $options['eid'];
+        $this->sharedSecretKey = $options['shared_secret_key'];
 
-        if ($config->mode == 'live') {
+        // set endpoint depending on mode
+        if ('live' === $options['mode']) {
             $this->endpoint = 'https://checkout.klarna.com/checkout/orders';
         } else {
             $this->endpoint = 'https://checkout.testdrive.klarna.com/checkout/orders';
         }
+    }
+
+    protected function configureOptions(OptionsResolver $resolver): OptionsResolver
+    {
+        $resolver->setRequired([
+            'mode',
+            'eid',
+            'shared_secret_key'
+        ]);
+
+        $resolver
+            ->setDefault('mode', 'sandbox')
+            ->setAllowedValues('mode', ['sandbox', 'live']);
+
+        $notEmptyValidator = function ($value) {
+            return !empty($value);
+        };
+
+        foreach ($resolver->getRequiredOptions() as $requiredProperty) {
+            $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
+        }
+
+        return $resolver;
     }
 
     /**
@@ -72,21 +94,25 @@ class Klarna implements IPayment
     }
 
     /**
-     * start payment
+     * Start payment
      *
      * @param IPrice $price
-     * @param array                       $config
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart  $cart
+     * @param array $config
+     * @param ICart  $cart
      *
      * @return string
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart = null)
+    public function initPayment(IPrice $price, array $config, ICart $cart = null)
     {
         // check params
-        $required = [  'purchase_country' => null, 'locale' => null, 'merchant_reference' => null
+        $required = [
+            'purchase_country'   => null,
+            'locale'             => null,
+            'merchant_reference' => null
         ];
+
         $check = array_intersect_key($config, $required);
 
         if (count($required) != count($check)) {
@@ -111,11 +137,7 @@ class Klarna implements IPayment
     }
 
     /**
-     * @param mixed $response
-     *
-     * @return IStatus
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
     public function handleResponse($response)
     {
@@ -123,6 +145,7 @@ class Klarna implements IPayment
         $required = [
             'klarna_order' => null
         ];
+
         $authorizedData = [
             'klarna_order' => null
         ];
@@ -145,18 +168,23 @@ class Klarna implements IPayment
         ];
 
         return new Status(
-            $order['merchant_reference']['orderid2'], $order['id'], $order['status'], array_key_exists($order['status'], $statMap)
+            $order['merchant_reference']['orderid2'],
+            $order['id'],
+            $order['status'],
+            array_key_exists($order['status'], $statMap)
                 ? $statMap[$order['status']]
-                : IStatus::STATUS_CANCELLED, [
-                'klarna_amount' => $order['cart']['total_price_including_tax'], 'klarna_marshal' => json_encode($order->marshal()), 'klarna_reservation' => $order['reservation'], 'klarna_reference' => $order['reference']
+                : IStatus::STATUS_CANCELLED,
+            [
+                'klarna_amount'      => $order['cart']['total_price_including_tax'],
+                'klarna_marshal'     => json_encode($order->marshal()),
+                'klarna_reservation' => $order['reservation'],
+                'klarna_reference'   => $order['reference']
             ]
         );
     }
 
     /**
-     * return the authorized data from payment provider
-     *
-     * @return array
+     * @inheritdoc
      */
     public function getAuthorizedData()
     {
@@ -164,9 +192,7 @@ class Klarna implements IPayment
     }
 
     /**
-     * set authorized data from payment provider
-     *
-     * @param array $authorizedData
+     * @inheritdoc
      */
     public function setAuthorizedData(array $authorizedData)
     {
@@ -174,14 +200,7 @@ class Klarna implements IPayment
     }
 
     /**
-     * execute payment
-     *
-     * @param IPrice $price
-     * @param string                      $reference
-     *
-     * @return IStatus
-     *
-     * @throws \Exception
+     * @inheritdoc
      */
     public function executeDebit(IPrice $price = null, $reference = null)
     {
@@ -201,23 +220,30 @@ class Klarna implements IPayment
             }
 
             return new Status(
-                $reference, $order['id'], $order['status'], $order['status'] == 'created'
-                ? IStatus::STATUS_CLEARED
-                : IStatus::STATUS_CANCELLED, [
-                    'klarna_amount' => $order['cart']['total_price_including_tax'], 'klarna_marshal' => json_encode($order->marshal())
+                $reference,
+                $order['id'],
+                $order['status'],
+                $order['status'] == 'created'
+                    ? IStatus::STATUS_CLEARED
+                    : IStatus::STATUS_CANCELLED,
+                [
+                    'klarna_amount'  => $order['cart']['total_price_including_tax'],
+                    'klarna_marshal' => json_encode($order->marshal())
                 ]
             );
         }
     }
 
     /**
-     * execute credit
+     * Executes credit
      *
      * @param IPrice $price
-     * @param string                      $reference
-     * @param                             $transactionId
+     * @param string $reference
+     * @param $transactionId
      *
      * @return IStatus
+     *
+     * @throws \Exception
      *
      * @see http://developers.klarna.com/en/at+php/kco-v2/order-management-api#introduction
      */

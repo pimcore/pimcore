@@ -63,6 +63,7 @@ class CheckController extends Controller implements EventedControllerInterface
 
                 $config = new \Doctrine\DBAL\Configuration();
                 $db = \Doctrine\DBAL\DriverManager::getConnection($dbConfig, $config);
+                $db->fetchAll('SELECT 1'); // connect and validate connection
             } catch (\Exception $e) {
                 $db = null;
             }
@@ -81,7 +82,8 @@ class CheckController extends Controller implements EventedControllerInterface
             'checksApps' => $checksApps,
             'checksPHP'  => $checksPHP,
             'checksMySQL' => $checksMySQL,
-            'checksFS' => $checksFS
+            'checksFS' => $checksFS,
+            'headless' => (bool) $request->get('headless')
         ];
 
         return $this->render('PimcoreAdminBundle:Install/Check:index.html.php', $viewParams);

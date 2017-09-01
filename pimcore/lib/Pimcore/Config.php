@@ -226,6 +226,24 @@ class Config
     }
 
     /**
+     * Returns whole website config or only a given setting for the current site
+     *
+     * @param null|mixed $key       Config key to directly load. If null, the whole config will be returned
+     * @param null|mixed $default   Default value to use if the key is not set
+     *
+     * @return Config\Config|mixed
+     */
+    public static function getWebsiteConfigValue($key = null, $default = null)
+    {
+        $config = self::getWebsiteConfig();
+        if (null !== $key) {
+            return $config->get($key, $default);
+        }
+
+        return $config;
+    }
+
+    /**
      * @static
      *
      * @return \Pimcore\Config\Config

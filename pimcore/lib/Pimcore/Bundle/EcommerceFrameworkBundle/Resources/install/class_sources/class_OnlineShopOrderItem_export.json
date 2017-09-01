@@ -128,7 +128,7 @@
                                             "id": "int(11)",
                                             "type": "enum('document','asset','object')"
                                         },
-                                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
+                                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
                                         "objectsAllowed": true,
                                         "assetsAllowed": false,
                                         "assetTypes": [],
@@ -326,7 +326,7 @@
                                     },
                                     {
                                         "fieldtype": "fieldcollections",
-                                        "phpdocType": "\\Pimcore\\Model\\Object\\Fieldcollection",
+                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
                                         "allowedTypes": [
                                             "PricingRule"
                                         ],
@@ -448,7 +448,7 @@
                             },
                             {
                                 "fieldtype": "objectbricks",
-                                "phpdocType": "\\Pimcore\\Model\\Object\\Objectbrick",
+                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Objectbrick",
                                 "allowedTypes": [],
                                 "maxItems": "",
                                 "name": "customized",

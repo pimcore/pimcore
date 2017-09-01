@@ -11,6 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+if(typeof window['t'] !== 'function') {
+    // for compatibility reasons
+    function t(v) {return v;};
+}
+
 Ext.override(Ext.dd.DragDropMgr, {
         startDrag: function (x, y) {
 
@@ -800,7 +805,7 @@ Ext.define('Ext.scroll.TouchScroller', {
     extend: 'Ext.scroll.DomScroller',
     alias: 'scroller.touch'
 });
-
+Ext.supports.touchScroll = 0;
 
 // Chrome fix for XMLHttpRequest.sendAsBinary()
 if (Ext.isChrome) {

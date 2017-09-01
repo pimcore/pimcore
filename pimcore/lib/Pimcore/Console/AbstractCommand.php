@@ -23,6 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base command class setting up some defaults (e.g. the ignore-maintenance-mode switch and the VarDumper component).
+ *
+ * @method Application getApplication()
  */
 abstract class AbstractCommand extends ContainerAwareCommand
 {

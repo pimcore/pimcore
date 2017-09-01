@@ -121,7 +121,7 @@ class ImageThumbnail
 
     public function generate()
     {
-        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.png';
+        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.svg';
         $deferred = false;
         $generated = false;
 
@@ -180,8 +180,14 @@ class ImageThumbnail
                     $this->getConfig()->setFilenameSuffix('time-' . $timeOffset);
 
                     try {
-                        $path = Image\Thumbnail\Processor::process($this->asset, $this->getConfig(), $path, $deferred,
-                            true, $generated);
+                        $path = Image\Thumbnail\Processor::process(
+                            $this->asset,
+                            $this->getConfig(),
+                            $path,
+                            $deferred,
+                            true,
+                            $generated
+                        );
                     } catch (\Exception $e) {
                         Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
                         Logger::error($e);

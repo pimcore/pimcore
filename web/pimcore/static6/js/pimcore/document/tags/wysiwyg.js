@@ -256,7 +256,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     dndAllowed: function(data) {
 
         if (data.elementType == "document" && (data.type=="page"
-                            || data.ype=="hardlink" || data.type=="link")){
+                            || data.type=="hardlink" || data.type=="link")){
             return true;
         } else if (data.elementType=="asset" && data.type != "folder"){
             return true;
@@ -265,7 +265,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         }
 
         return false;
-
     },
 
 

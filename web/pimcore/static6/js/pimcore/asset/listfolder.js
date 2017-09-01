@@ -94,6 +94,7 @@ pimcore.asset.listfolder = Class.create({
         this.store = new Ext.data.Store({
             proxy: proxy,
             remoteSort: true,
+            remoteFilter: true,
             filter: this.filterField,
             fields: readerFields
         });
@@ -126,7 +127,7 @@ pimcore.asset.listfolder = Class.create({
             columnLines: true,
             stripeRows: true,
             columns : typesColumns,
-            plugins: ['gridfilters'],
+            plugins: ['pimcore.gridfilters'],
             trackMouseOver: true,
             bbar: this.pagingtoolbar,
             selModel: this.selectionColumn,

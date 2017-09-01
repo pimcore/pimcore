@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\CoreBundle\Command\Definition\Import;
 
 use Pimcore\Model\AbstractModel;
-use Pimcore\Model\Object\ClassDefinition\Service;
-use Pimcore\Model\Object\Fieldcollection\Definition;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
 class FieldCollectionCommand extends AbstractStructureImportCommand
 {

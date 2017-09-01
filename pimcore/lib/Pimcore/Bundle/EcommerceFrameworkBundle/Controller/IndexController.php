@@ -159,7 +159,8 @@ class IndexController extends AdminController
     public function getAllTenantsAction()
     {
         $tenants = Factory::getInstance()->getAllTenants();
-        $data = [['key' => '', 'name' => $this->trans('default')]];
+        $data = [];
+
         if ($tenants) {
             foreach ($tenants as $tenant) {
                 $data[] = ['key' => $tenant, 'name' => $this->trans($tenant)];

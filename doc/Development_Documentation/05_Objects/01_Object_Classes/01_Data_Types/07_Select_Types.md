@@ -51,7 +51,7 @@ $options = $fd->getOptions();
 The display name values can be obtained as follows:
 
 ```php
-$o = Object::getById(49);
-$values = Object\Service::getOptionsForMultiSelectField($o, "multiselect"); // for a multiselect data field
-$values1 = Object\Service::getOptionsForSelectField($o, "select"); // for a select data field
+$o = DataObject::getById(49);
+$values = DataObject\Service::getOptionsForMultiSelectField($o, "multiselect"); // for a multiselect data field
+$values1 = DataObject\Service::getOptionsForSelectField($o, "select"); // for a select data field
 ```

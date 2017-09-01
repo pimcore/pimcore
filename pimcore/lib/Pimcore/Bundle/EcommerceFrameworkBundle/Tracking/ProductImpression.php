@@ -16,7 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 class ProductImpression extends AbstractProductData
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $list;
 
     /**

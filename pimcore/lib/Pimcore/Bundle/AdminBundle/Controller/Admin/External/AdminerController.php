@@ -43,20 +43,19 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             }
 
             chdir($this->adminerHome . 'adminer');
-
-            ob_start();
             include($this->adminerHome . 'adminer/index.php');
-            $content = ob_get_clean();
 
-            $content = str_replace('"../adminer/', '"proxy/adminer/', $content);
-            $content = str_replace('"static/', '"proxy/adminer/static/', $content);
-            $content = str_replace('"../externals/', '"proxy/externals/', $content);
+            // empty fake response, unfortunately Adminer uses flush() very heavily so we're not able to buffer, rewrite
+            // and put the into a proper response object :(
+            $response = new Response();
 
-            return new Response($content);
+            return $this->mergeAdminerHeaders($response);
         }
 
         /**
-         * @Route("/external_adminer/proxy/{path}", requirements={"path"=".*"})
+         * @Route("/external_adminer/{path}", requirements={"path"=".*"})
+         * @Route("/adminer/{path}", requirements={"path"=".*"})
+         * @Route("/externals/{path}", requirements={"path"=".*"}, defaults={"type": "external"})
          *
          * @param Request $request
          *
@@ -65,10 +64,19 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         public function proxyAction(Request $request)
         {
             $response = new Response();
+            $content = '';
 
             // proxy for resources
             $path = $request->get('path');
             if (preg_match("@\.(css|js|ico|png|jpg|gif)$@", $path)) {
+                if ($request->get('type') == 'external') {
+                    $path = '../' . $path;
+                }
+
+                if (strpos($path, 'static/') === 0) {
+                    $path = 'adminer/' . $path;
+                }
+
                 $filePath = $this->adminerHome . '/' . $path;
 
                 // it seems that css files need the right content-type (Chrome)
@@ -86,12 +94,12 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                         $content .= file_get_contents($this->adminerHome . 'designs/konya/adminer.css');
                         $content .= file_get_contents(PIMCORE_WEB_ROOT . '/pimcore/static6/css/adminer-modifications.css');
                     }
-
-                    $response->setContent($content);
                 }
             }
 
-            return $response;
+            $response->setContent($content);
+
+            return $this->mergeAdminerHeaders($response);
         }
 
         /**
@@ -124,6 +132,34 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         public function onKernelResponse(FilterResponseEvent $event)
         {
             // nothing to do
+        }
+
+        /**
+         * Merges http-headers set from Adminer via headers function
+         * to the Symfony Response Object
+         *
+         * @param Response $response
+         *
+         * @return Response
+         */
+        protected function mergeAdminerHeaders(Response $response)
+        {
+            if (!headers_sent()) {
+                $headersRaw = headers_list();
+
+                foreach ($headersRaw as $header) {
+                    $header = explode(':', $header);
+                    list($headerKey, $headerValue) = $header;
+
+                    if ($headerKey && $headerValue) {
+                        $response->headers->set($headerKey, $headerValue);
+                    }
+                }
+
+                header_remove();
+            }
+
+            return $response;
         }
     }
 }

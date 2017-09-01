@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEventInterface;
-use Pimcore\Event\ObjectEvents;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -30,7 +30,7 @@ class ElementTagsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ObjectEvents::POST_COPY  => 'onPostCopy',
+            DataObjectEvents::POST_COPY  => 'onPostCopy',
             DocumentEvents::POST_COPY  => 'onPostCopy',
             AssetEvents::POST_COPY  => 'onPostCopy',
 
@@ -48,8 +48,11 @@ class ElementTagsListener implements EventSubscriberInterface
         $copiedElement = $e->getElement();
         /** @var \Pimcore\Model\Element\AbstractElement $baseElement */
         $baseElement = $e->getArgument('base_element');
-        \Pimcore\Model\Element\Tag::setTagsForElement($elementType, $copiedElement->getId(),
-            \Pimcore\Model\Element\Tag::getTagsForElement($elementType, $baseElement->getId()));
+        \Pimcore\Model\Element\Tag::setTagsForElement(
+            $elementType,
+            $copiedElement->getId(),
+            \Pimcore\Model\Element\Tag::getTagsForElement($elementType, $baseElement->getId())
+        );
     }
 
     /**

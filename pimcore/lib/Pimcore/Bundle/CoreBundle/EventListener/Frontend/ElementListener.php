@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Asset\Dao;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Version;
 use Pimcore\Service\Request\DocumentResolver;
 use Pimcore\Service\Request\EditmodeResolver;
@@ -298,7 +298,7 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
 
             $session = Session::getReadOnly('pimcore_objects');
             if ($session->has($key)) {
-                /** @var Object|Concrete $object */
+                /** @var Concrete $object */
                 $object = $session->get($key);
 
                 $this->logger->debug('Loading object {object} ({objectId}) from session', [
@@ -307,7 +307,7 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
                 ]);
 
                 // TODO remove \Pimcore\Cache\Runtime
-                // add the object to the registry so every call to Object::getById() will return this object instead of the real one
+                // add the object to the registry so every call to DataObject::getById() will return this object instead of the real one
                 \Pimcore\Cache\Runtime::set('object_' . $object->getId(), $object);
             }
         }

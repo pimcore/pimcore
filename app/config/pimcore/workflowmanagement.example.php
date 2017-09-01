@@ -7,6 +7,7 @@ return [
         'workflowSubject' => [                                              // defines for which elements the workflow is for
             'types' => ['object', 'asset', 'document'],                     // the type of element that this workflow is for (asset|object|document)
             'classes' => [4],                                               // the class id's that this workflow applies to, defaults to NONE, (Objects only)
+            'objectTypes' => ['object'],                                    // the type of objects to support (i.e. object or variant) (Objects Only)
             'assetTypes' => ['image', 'video'],                             // asset types the workflow is for, defaults to NONE, (Assets only)
             'documentTypes' => ['page']                                     // document types the workflow is for, defaults to NONE, (Documents only)
         ],

@@ -36,11 +36,14 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
             ->setName(sprintf('definition:import:%s', strtolower($type)))
             ->setDescription(sprintf('Import %s definition from a JSON export', $type))
             ->addArgument(
-                'path', InputArgument::REQUIRED,
+                'path',
+                InputArgument::REQUIRED,
                 sprintf('Path to %s JSON export file', $type)
             )
             ->addOption(
-                'force', 'f', InputOption::VALUE_NONE,
+                'force',
+                'f',
+                InputOption::VALUE_NONE,
                 sprintf('Force import (do not ask for confirmation when %s already exists)', $type)
             );
 

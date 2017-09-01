@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
@@ -26,7 +27,7 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
 
         $value = $params[$field];
 
-        if ($value == \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::EMPTY_STRING) {
+        if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
         } elseif (empty($value) && !$params['is_reload']) {
             $value = $preSelect;

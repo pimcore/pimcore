@@ -42,7 +42,7 @@ This one allows you to enter an external image URL which is then shown as a prev
 ![External Image Field](../../../img/classes-datatypes-image3.jpg)
 
 ```php
-<?php if ($object->getExternalImage() instanceof Pimcore\Model\Object\Data\ExternalImage) {?>
+<?php if ($object->getExternalImage() instanceof Pimcore\Model\DataObject\Data\ExternalImage) {?>
     <img src="<?= $object->getExternalImage()->getUrl() ?>" />
 <?php } ?>
 ```
@@ -156,7 +156,7 @@ $hotspotImage->getThumbnail("myCustomThumbnail"); // $hotspotImage contains no c
 
 ```php
 $image = Asset::getById(123);
-$advancedImage = new Object\Data\Hotspotimage();
+$advancedImage = new DataObject\Data\Hotspotimage();
 $advancedImage->setImage($image);
 // ...
  

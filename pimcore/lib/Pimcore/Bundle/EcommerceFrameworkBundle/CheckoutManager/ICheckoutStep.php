@@ -14,32 +14,33 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+
 /**
  * Interface for checkout step implementations of online shop framework
  */
 interface ICheckoutStep
 {
-    /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
-     */
-    public function __construct(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart);
+    public function __construct(ICart $cart, array $options = []);
 
     /**
+     * Returns checkout step name
+     *
      * @return string
      */
     public function getName();
 
     /**
-     * returns saved data of step
+     * Returns saved data of step
      *
      * @return mixed
      */
     public function getData();
 
     /**
-     * sets delivered data and commits step
+     * Sets delivered data and commits step
      *
-     * @param  $data
+     * @param $data
      *
      * @return bool
      */
