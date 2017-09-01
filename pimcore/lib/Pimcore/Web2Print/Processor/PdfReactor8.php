@@ -137,7 +137,7 @@ class PdfReactor8 extends Processor
         $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig['document'] = (string)$web2PrintConfig->pdfreactorBaseUrl . $filePath;
 
-        $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig]);
+        $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig, 'document' => $document]);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
 
         $reactorConfig = $event->getArguments()['reactorConfig'];

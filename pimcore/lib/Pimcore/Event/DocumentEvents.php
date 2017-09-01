@@ -90,7 +90,7 @@ final class DocumentEvents
     const PRINT_POST_PDF_GENERATION = 'pimcore.document.print.postPdfGeneration';
 
     /**
-     * Modify the processing options (displayed in the pimcore admin interface)
+     * Modify the processing options (displayed in the Pimcore admin interface)
      *
      * Arguments:
      *  - options | array for configuration settings
@@ -115,8 +115,9 @@ final class DocumentEvents
      * PDFReactor:
      *  - config | configuration which is passed from the pimcore admin interface
      *  - reactorConfig | configuration which is passed to PDFReactor
+     *  - document | Pimcore document that is converted
      *
-     * @Event("Pimcore\Event\Model\DocumentEvent")
+     * @Event("Pimcore\Event\Model\PrintConfigEvent")
      *
      * @var string
      */
