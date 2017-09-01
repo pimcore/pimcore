@@ -38,11 +38,11 @@ class DataObjectCompatibility
     {
         if (strpos($class, 'Pimcore\\') === 0 && strpos($class, '\\Object\\')) {
             $realClassName = str_replace('\\Object\\', '\\DataObject\\', $class);
-            if (!class_exists($realClassName, false)) {
+            if (!$this->classExists($realClassName, false)) {
                 $this->composerAutoloader->loadClass($realClassName);
             }
 
-            if (class_exists($realClassName, false)) {
+            if ($this->classExists($realClassName, false)) {
                 class_alias($realClassName, $class);
 
                 return true;
@@ -55,6 +55,15 @@ class DataObjectCompatibility
                 return true;
             }
         }
+    }
+
+    /**
+     * @param $class
+     * @param bool $autoload
+     * @return bool
+     */
+    protected function classExists($class, $autoload = true) {
+        return class_exists($class, $autoload) || interface_exists($class, $autoload) || trait_exists($class, $autoload);
     }
 
     /**
