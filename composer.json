@@ -34,8 +34,8 @@
     "optimize-autoloader": true,
     "sort-packages": true
   },
-  "repositories": [
-    {
+  "repositories": {
+    "vrana-jush": {
       "info1": "External dependency of vrana/adminer which isn't included or referenced by adminer, see also https://sourceforge.net/p/adminer/bugs-and-features/468/ ",
       "info2": "The package on GitHub isn't compatible with Adminer, it doesn't contain the /modules/ folder.",
       "type": "package",
@@ -49,7 +49,7 @@
         }
       }
     }
-  ],
+  },
   "require": {
     "php": ">=7.0",
     "ext-SimpleXML": "*",
