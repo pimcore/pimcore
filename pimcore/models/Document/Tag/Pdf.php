@@ -537,7 +537,7 @@ HTML;
 
         $code = '
         <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_tag_pdf">
-            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/pimcore/static6/img/filetype-not-supported.png) no-repeat center center #fff;">
+            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/pimcore/static6/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';

@@ -92,7 +92,7 @@ class Processor
     public static function process(Asset $asset, Config $config, $fileSystemPath = null, $deferred = false, $returnAbsolutePath = false, &$generated = false)
     {
         $generated = false;
-        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.png';
+        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.svg';
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
 
