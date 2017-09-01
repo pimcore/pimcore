@@ -77,7 +77,7 @@ class PublicServicesController extends FrameworkController
 
                     preg_match("@([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $filename, $matches);
 
-                    if (array_key_exists(2, $matches)) {
+                    if (array_key_exists(2, $matches) && $matches[2]) {
                         $highResFactor = (float) str_replace(['@', 'x'], '', $matches[2]);
                         $thumbnailConfig->setHighResolution($highResFactor);
                     }

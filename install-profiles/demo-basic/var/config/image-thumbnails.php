@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 return [
     "content" => [
@@ -44,7 +44,7 @@ return [
             [
                 "method" => "addOverlay",
                 "arguments" => [
-                    "path" => "/website/static/img/logo-overlay.png",
+                    "path" => "/web/static/img/logo-overlay.png",
                     "x" => "10",
                     "y" => "10",
                     "origin" => "bottom-right",
@@ -127,7 +127,7 @@ return [
             [
                 "method" => "addOverlay",
                 "arguments" => [
-                    "path" => "/website/static/img/logo-overlay.png",
+                    "path" => "/web/static/img/logo-overlay.png",
                     "x" => "10",
                     "y" => "10",
                     "origin" => "top-left",
@@ -261,7 +261,7 @@ return [
             [
                 "method" => "addOverlay",
                 "arguments" => [
-                    "path" => "/website/static/img/logo-overlay.png",
+                    "path" => "/web/static/img/logo-overlay.png",
                     "x" => "10",
                     "y" => "10",
                     "origin" => "top-left",
