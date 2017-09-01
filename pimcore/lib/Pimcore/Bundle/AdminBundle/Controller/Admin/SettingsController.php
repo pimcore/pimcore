@@ -1441,9 +1441,10 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('robots.txt');
 
-        $siteSuffix = '';
         if ($request->get('site')) {
             $siteSuffix = '-' . $request->get('site');
+        } else {
+            $siteSuffix = "-default";
         }
 
         $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';

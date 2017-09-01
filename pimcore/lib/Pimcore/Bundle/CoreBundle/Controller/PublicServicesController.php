@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Site;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as FrameworkController;
@@ -108,6 +109,43 @@ class PublicServicesController extends FrameworkController
                 throw $this->createNotFoundException($message, $e);
             }
         }
+    }
+
+    /**
+     * @param $request
+     * @return Response
+     */
+    public function robotsTxtAction(Request $request) {
+
+        // check for site
+        $site = null;
+        try {
+            $domain = \Pimcore\Tool::getHostname();
+            $site = Site::getByDomain($domain);
+        } catch (\Exception $e) {
+        }
+
+        $siteSuffix = "-default";
+        if ($site instanceof Site) {
+            $siteSuffix = "-" . $site->getId();
+        }
+
+        // send correct headers
+        header("Content-Type: text/plain; charset=utf8"); while (@ob_end_flush()) ;
+
+        // check for configured robots.txt in pimcore
+        $content = '';
+        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
+        if (is_file($robotsPath)) {
+            $content = file_get_contents($robotsPath);
+        }
+
+        if(empty($content)){
+            // default behavior, allow robots to index everything
+            $content = "User-agent: *\nDisallow:";
+        }
+
+        return new Response($content, 200);
     }
 
     /**

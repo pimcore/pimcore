@@ -1,8 +1,12 @@
+_pimcore_service_robots_txt:
+    path: /robots.txt
+    defaults: { _controller: PimcoreCoreBundle:PublicServices:robotsTxt }
+
 _pimcore_service_common_files:
     path: /{filename}
     defaults: { _controller: PimcoreCoreBundle:PublicServices:commonFiles }
     requirements:
-        filename: '(robobts\.txt|crossdomain\.xml|favicon\.ico|browserconfig\.xml|wpad\.dat|\.crl)'
+        filename: '(robots\.txt|crossdomain\.xml|favicon\.ico|browserconfig\.xml|wpad\.dat|\.crl)'
 
 _pimcore_service_common_files_apple_touch_icon:
     path: /{filename}
