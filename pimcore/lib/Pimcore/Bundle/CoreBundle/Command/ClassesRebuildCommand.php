@@ -96,7 +96,7 @@ class ClassesRebuildCommand extends AbstractCommand
                 $output->writeln($brickDefinition->getKey() . ' saved');
             }
 
-            $brickDefinition->save();
+            $brickDefinition->save(false);
         }
 
         if ($output->isVerbose()) {
@@ -110,7 +110,7 @@ class ClassesRebuildCommand extends AbstractCommand
                 $output->writeln($fc->getKey() . ' saved');
             }
 
-            $fc->save();
+            $fc->save(false);
         }
     }
 }
