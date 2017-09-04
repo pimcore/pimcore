@@ -91,8 +91,15 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $iptcData = $asset->getIPTCData();
-            if (!empty($exifData)) {
-                $imageInfo["iptc"] = $iptcData;
+            if (!empty($iptcData)) {
+                // flatten data, to be displayed in grid
+                foreach($iptcData as &$value) {
+                    if (is_array($value)) {
+                        $value = implode(", ", $value);
+                    }
+                }
+
+                $imageInfo['iptc'] = $iptcData;
             }
 
             $imageInfo["exiftoolAvailable"] = (bool) \Pimcore\Tool\Console::getExecutable("exiftool");
