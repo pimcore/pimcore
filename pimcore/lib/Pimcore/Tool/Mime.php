@@ -211,6 +211,7 @@ class Mime
         'm4u'       => 'video/vnd.mpegurl',
         'flv'       => 'video/x-flv',
         'f4v'       => 'video/mp4',
+        'mp4'       => 'video/mp4',
         'asf'       => 'video/x-ms-asf',
         'asx'       => 'video/x-ms-asf',
         'wmv'       => 'video/x-ms-wmv',
