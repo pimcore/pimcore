@@ -732,10 +732,11 @@ class Manager
             if (isset($subject['assetTypes'][0]) && !in_array($element->getType(), $subject['assetTypes'])) {
                 return false;
             }
+
             return true;
-        } else if ($element instanceof AbstractObject && isset($subject['objectTypes'][0]) && !in_array($element->getType(), $subject['objectTypes'])) {
+        } elseif ($element instanceof AbstractObject && isset($subject['objectTypes'][0]) && !in_array($element->getType(), $subject['objectTypes'])) {
             return false;
-        } else if ($element instanceof Document && isset($subject['documentTypes'][0]) && !in_array($element->getType(), $subject['documentTypes'])) {
+        } elseif ($element instanceof Document && isset($subject['documentTypes'][0]) && !in_array($element->getType(), $subject['documentTypes'])) {
             return false;
         }
 

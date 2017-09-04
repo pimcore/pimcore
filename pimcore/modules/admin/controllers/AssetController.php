@@ -93,7 +93,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $iptcData = $asset->getIPTCData();
             if (!empty($iptcData)) {
                 // flatten data, to be displayed in grid
-                foreach($iptcData as &$value) {
+                foreach ($iptcData as &$value) {
                     if (is_array($value)) {
                         $value = implode(", ", $value);
                     }
@@ -336,7 +336,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $mimetype = Tool\Mime::detect($_FILES["Filedata"]["tmp_name"], $newFilename);
         $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
 
-        if($newType != $asset->getType()) {
+        if ($newType != $asset->getType()) {
             $t = \Zend_Registry::get("Zend_Translate");
             $this->_helper->json([
                 'success'=>false,
@@ -349,7 +349,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $asset->setCustomSetting("thumbnails", null);
         $asset->setUserModification($this->getUser()->getId());
         $newFilename = Element\Service::getValidKey($_FILES["Filedata"]["name"], 'asset');
-        if($newFilename != $asset->getFilename()) {
+        if ($newFilename != $asset->getFilename()) {
             $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
         }
         $asset->setFilename($newFilename);
