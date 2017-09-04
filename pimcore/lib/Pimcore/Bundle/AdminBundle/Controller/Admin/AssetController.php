@@ -102,7 +102,14 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $iptcData = $asset->getIPTCData();
-            if (!empty($exifData)) {
+            if (!empty($iptcData)) {
+                // flatten data, to be displayed in grid
+                foreach($iptcData as &$value) {
+                    if (is_array($value)) {
+                        $value = implode(", ", $value);
+                    }
+                }
+
                 $imageInfo['iptc'] = $iptcData;
             }
 
