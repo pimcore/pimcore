@@ -12,7 +12,7 @@ class UniqidExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('uniqid', function (string $prefix = '', bool $moreEntropy = false) {
+            new \Twig_Function('uniqid', function (string $prefix = '', bool $moreEntropy = false) {
                 return uniqid($prefix, $moreEntropy);
             })
         ];
