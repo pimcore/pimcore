@@ -22,11 +22,18 @@ use Pimcore\Db\Connection;
 use Pimcore\Event\TestEvents;
 use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class ConfigurationFactory implements EventSubscriberInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
     /**
      * @var string
      */
@@ -47,9 +54,10 @@ class ConfigurationFactory implements EventSubscriberInterface
      */
     private $installConfigurations = [];
 
-    public function __construct(string $rootDir)
+    public function __construct(ContainerInterface $container, string $rootDir)
     {
-        $this->rootDir = $rootDir;
+        $this->container = $container;
+        $this->rootDir   = $rootDir;
 
         $this->buildDefaultMigrationSets();
     }
@@ -69,7 +77,11 @@ class ConfigurationFactory implements EventSubscriberInterface
     ) {
         $migrationSet = $this->getMigrationSet($set);
 
-        return $this->getConfiguration($migrationSet, $connection, $outputWriter);
+        $configuration = $this->getConfiguration($migrationSet, $connection, $outputWriter);
+
+        $this->injectContainerToVersions($configuration);
+
+        return $configuration;
     }
 
     public function getForBundle(
@@ -87,6 +99,8 @@ class ConfigurationFactory implements EventSubscriberInterface
                 $configuration->setInstaller($installer);
             }
         }
+
+        $this->injectContainerToVersions($configuration);
 
         return $configuration;
     }
@@ -177,6 +191,18 @@ class ConfigurationFactory implements EventSubscriberInterface
         $configuration->setName($migrationSet->getName());
         $configuration->setMigrationsNamespace($migrationSet->getNamespace());
         $configuration->setMigrationsDirectory($migrationSet->getDirectory());
+    }
+
+    protected function injectContainerToVersions(Configuration $configuration)
+    {
+        $versions = $configuration->getMigrations();
+
+        foreach ($versions as $version) {
+            $migration = $version->getMigration();
+            if ($migration instanceof ContainerAwareInterface) {
+                $migration->setContainer($this->container);
+            }
+        }
     }
 
     protected function buildDefaultMigrationSets()
