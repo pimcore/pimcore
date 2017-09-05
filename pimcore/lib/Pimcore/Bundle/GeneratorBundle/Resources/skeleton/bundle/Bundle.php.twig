@@ -7,3 +7,12 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 {% block class_definition %}
 class {{ bundle }} extends AbstractPimcoreBundle
 {% endblock class_definition %}
+
+{% block class_body %}
+    public function getJsPaths()
+    {
+        return [
+            '/bundles/{{ bundle_basename }}/js/pimcore/startup.js'
+        ];
+    }
+{% endblock class_body %}

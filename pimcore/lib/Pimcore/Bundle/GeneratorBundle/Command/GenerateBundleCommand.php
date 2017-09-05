@@ -17,7 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GeneratorBundle\Command;
 
+use Pimcore\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Pimcore\Bundle\GeneratorBundle\Generator\BundleGenerator;
+use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
 use Sensio\Bundle\GeneratorBundle\Command\GenerateBundleCommand as BaseGenerateBundleCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -73,7 +75,6 @@ EOT
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $input->setOption('shared', true);
         $input->setOption('format', 'annotation');
 
         parent::initialize($input, $output);
@@ -110,16 +111,31 @@ EOT
         try {
             // remove tests until we defined a standard setup for bundle tests
             $fs->remove($bundle->getTestsDirectory());
-            $output->writeln(sprintf('  <fg=red>removed</> %s', $bundle->getTestsDirectory()));
 
             // remove views (controller just returns a response)
             $fs->remove($bundle->getTargetDirectory() . '/Resources/views');
-            $output->writeln(sprintf('  <fg=red>removed</> %s', $bundle->getTargetDirectory() . '/Resources/views'));
         } catch (\Exception $e) {
             $errors[] = $e->getMessage();
         }
 
         $questionHelper->writeGeneratorSummary($output, $errors);
+    }
+
+    protected function getQuestionHelper()
+    {
+        $question = $this->getHelperSet()->get('question');
+        if (!$question || get_class($question) !== QuestionHelper::class) {
+            $this->getHelperSet()->set($question = new QuestionHelper());
+        }
+
+        return $question;
+    }
+
+    protected function createBundleObject(InputInterface $input)
+    {
+        $bundle = parent::createBundleObject($input);
+
+        return new Bundle($bundle);
     }
 
     protected function createGenerator()

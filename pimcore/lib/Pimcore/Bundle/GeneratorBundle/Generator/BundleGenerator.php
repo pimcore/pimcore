@@ -29,6 +29,14 @@ class BundleGenerator extends BaseBundleGenerator
 
         $dir = $bundle->getTargetDirectory();
 
+        $parameters = array(
+            'namespace'       => $bundle->getNamespace(),
+            'bundle'          => $bundle->getName(),
+            'format'          => $bundle->getConfigurationFormat(),
+            'bundle_basename' => $bundle->getBasename(),
+            'extension_alias' => $bundle->getExtensionAlias(),
+        );
+
         $routingFilename = $bundle->getRoutingConfigurationFilename() ?: 'routing.yml';
         $routingTarget   = $dir . '/Resources/config/pimcore/' . $routingFilename;
 
@@ -38,5 +46,11 @@ class BundleGenerator extends BaseBundleGenerator
 
         $routing = new RoutingManipulator($routingTarget);
         $routing->addResource($bundle->getName(), 'annotation');
+
+        $this->renderFile(
+            'js/pimcore/startup.js.twig',
+            $dir . '/Resources/public/js/pimcore/startup.js',
+            $parameters
+        );
     }
 }
