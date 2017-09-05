@@ -75,7 +75,6 @@ EOT
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $input->setOption('shared', true);
         $input->setOption('format', 'annotation');
 
         parent::initialize($input, $output);
@@ -112,11 +111,9 @@ EOT
         try {
             // remove tests until we defined a standard setup for bundle tests
             $fs->remove($bundle->getTestsDirectory());
-            $output->writeln(sprintf('  <fg=red>removed</> %s', $bundle->getTestsDirectory()));
 
             // remove views (controller just returns a response)
             $fs->remove($bundle->getTargetDirectory() . '/Resources/views');
-            $output->writeln(sprintf('  <fg=red>removed</> %s', $bundle->getTargetDirectory() . '/Resources/views'));
         } catch (\Exception $e) {
             $errors[] = $e->getMessage();
         }
