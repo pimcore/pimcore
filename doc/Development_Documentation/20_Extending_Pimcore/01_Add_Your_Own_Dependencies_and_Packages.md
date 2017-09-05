@@ -21,8 +21,8 @@ Pimcore Kernel exposes a `registerBundlesToCollection`  method which allows to a
 an optional priority (higher priority is loaded first) and a list of environments to handle (e.g. load only in `dev`
 environment).
 
-> Bundles without a priority are registered with a default priority of 0. You can a priority lower than default by using 
-  a negative value.
+> Bundles without a priority are registered with a default priority of 0. You can set a negative value if you need to set
+  a priority lower than default.
 
 As an example, register a third party bundle on the collection:
 
@@ -63,6 +63,10 @@ For more information see [Pimcore Bundles](./13_Bundle_Developers_Guide/05_Pimco
 Pimcore bundles can be registered on the kernel by enabling them in the extension manager. The extension manager also allows
 you to set a priority and environments to handle (as comma-separated string).
 
+You can also enable pimcore bundles manually by adding them via code as shown above. Bundles which are manually enabled
+can't be enabled or disabled through the extension manager. Instead, the extension manager will only expose functionality
+to interact with the bundle installer (install/uninstall/update). 
+
 ## Version Checking
 To avoid compatibility problems with plugins or custom components, that are compatible with a special Pimcore version only, Pimcore
 has following requirement `pimcore/core-version` that defines its current version: 
@@ -72,7 +76,7 @@ has following requirement `pimcore/core-version` that defines its current versio
     ...
     "require": {
         ...
-        "pimcore/core-version": "4.3.1",
+        "pimcore/core-version": "5.0.0",
         ...
     }
     ...
