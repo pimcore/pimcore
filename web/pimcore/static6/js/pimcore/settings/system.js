@@ -371,11 +371,18 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 fieldLabel: 'DEV-Mode (<span style="color:red;font-weight:bold;">'
-                                + 'DON`T ACTIVATE IT!</span>)',
+                                + t('do_not_use_in_production') + '</span>)',
                                 xtype: "checkbox",
                                 name: "general.devmode",
                                 id: "system_settings_general_devmode",
                                 checked: this.getValue("general.devmode")
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: t('dev_mode_description'),
+                                cls: "pimcore_extra_label_bottom"
                             }
                         ]
                     },

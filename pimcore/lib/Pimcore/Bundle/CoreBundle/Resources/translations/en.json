@@ -1,4 +1,6 @@
 {
+  "dev_mode_description": "The DEV-mode sets the highest verbosity level and removes certain performance optimizations such as combining Javascript of the admin backend. It is typically used for developing/debugging the core or plugins.",
+  "do_not_use_in_production": "Do not use in production!",
   "open_data_object": "Open Data Object",
   "data_objects": "Data Objects",
   "asset_type_change_not_allowed": "<strong>Only assets of same type are allowed here.</strong><br/>[ type of uploaded asset: \"%s\" | type of existing asset: \"%s\" ]",
