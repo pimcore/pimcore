@@ -1,0 +1,17 @@
+pimcore.registerNS("pimcore.plugin.{{ bundle }}");
+
+pimcore.plugin.{{ bundle }} = Class.create(pimcore.plugin.admin, {
+    getClassName: function () {
+        return "pimcore.plugin.{{ bundle }}";
+    },
+
+    initialize: function () {
+        pimcore.plugin.broker.registerPlugin(this);
+    },
+
+    pimcoreReady: function (params, broker) {
+        // alert("{{ bundle }} ready!");
+    }
+});
+
+var {{ bundle }}Plugin = new pimcore.plugin.{{ bundle }}();
