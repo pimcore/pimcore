@@ -133,7 +133,7 @@
     background: url(/pimcore/static/img/icon/page_white_flash.png) no-repeat !important;
 }
 
-.pimcore_icon_jpeg, .pimcore_icon_jpg, .pimcore_icon_png, .pimcore_icon_gif, .pimcore_icon_tif, .pimcore_icon_psd, .pimcore_icon_eps, .pimcore_icon_ai, .pimcore_icon_svg, .pimcore_icon_svgz, .pimcore_icon_bmp, .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf {
+.pimcore_icon_jpeg, .pimcore_icon_jpg, .pimcore_icon_png, .pimcore_icon_gif, .pimcore_icon_tif, .pimcore_icon_psd, .pimcore_icon_psb, .pimcore_icon_eps, .pimcore_icon_ai, .pimcore_icon_svg, .pimcore_icon_svgz, .pimcore_icon_bmp, .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf {
     background: url(/pimcore/static/img/icon/picture.png) no-repeat !important;
 }
 
