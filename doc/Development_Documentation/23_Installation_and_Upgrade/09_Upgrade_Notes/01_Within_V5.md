@@ -1,6 +1,6 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
-## Build 100
+## Build 100 (2017-08-30)
 
 ### Objects were renamed to Data Objects
 The introduction of object type hints in PHP 7.2 forced us to rename several namespaces to be compliant with the
@@ -21,9 +21,17 @@ The introduction of object type hints in PHP 7.2 forced us to rename several nam
     - fix the above configuration changes, mainly the class overrides and potentially other relevant configurations
     - `composer dump-autoload`
     - `./bin/console cache:clear --no-warmup`
-    - run the [migration script](https://gist.github.com/brusch/03521a225cffee4baa8f3565342252d4) manually on cli 
+    - run the [migration script](https://gist.github.com/brusch/03521a225cffee4baa8f3565342252d4) manually on cli
   
-## Build 96 (2017-09-22)
+
+## Build 96 (2017-08-22)
+
+This build adds support for migrations in bundle installers (see [Installers](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/05_Pimcore_Bundles/01_Installers.md)).
+With this change, extension manager commands can now also be executed as CLI commands and installers use an `OutputWriter`
+object to return information to the extension manager or to CLI scripts. As this `OutputWriter` is initialized in `AbstractInstaller`s 
+constructor, please update your custom installers to call the parent constructor. 
+
+### Upgrade errors
 
 If you get an error like the following while upgrading to build 96, please run `composer update` manually on the command
 line and continue to upgrade:
@@ -32,7 +40,7 @@ line and continue to upgrade:
 Class Doctrine\Bundle\MigrationsBundle\Command\MigrationsExecuteDoctrineCommand not found in ExecuteCommand.php (line 8)
 ```
 
-You can avoid this problem by installing the *BEFORE* running the upgrade:
+You can avoid this problem by installing the `doctrine/doctrine-migrations-bundle` package *BEFORE* running the upgrade:
 
 ```bash
 $ composer require doctrine/doctrine-migrations-bundle "^1.2"
