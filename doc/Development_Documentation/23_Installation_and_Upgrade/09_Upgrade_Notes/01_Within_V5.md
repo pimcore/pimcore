@@ -24,6 +24,11 @@ The introduction of object type hints in PHP 7.2 forced us to rename several nam
     - run the [migration script](https://gist.github.com/brusch/03521a225cffee4baa8f3565342252d4) manually on cli
   
 
+## Build 97 (2017-08-24)
+
+This build re-adds support to access website config settings from controllers and views, but in a slightly different way
+than in Pimcore 4. See [Website Settings](../../18_Tools_and_Features/27_Website_Settings.md) for details.
+
 ## Build 96 (2017-08-22)
 
 This build adds support for migrations in bundle installers (see [Installers](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/05_Pimcore_Bundles/01_Installers.md)).
