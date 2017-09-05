@@ -176,6 +176,7 @@ class Mime
         'rgb'       => 'image/x-rgb',
         'xbm'       => 'image/x-xbitmap',
         'psd'       => 'image/x-photoshop',
+        'ps'       => 'image/x-photoshop',
         'xpm'       => 'image/x-xpixmap',
         'xwd'       => 'image/x-xwindowdump',
         'eml'       => 'message/rfc822',
