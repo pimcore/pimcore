@@ -256,6 +256,9 @@ class Installer
                         ]);
 
                         $fs->remove($target);
+                    } else {
+                        $this->logger->info('Skipping ' . $logAction . ' {source} to {target}. The target path already exists.');
+                        continue;
                     }
                 }
 
