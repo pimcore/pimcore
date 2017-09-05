@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GeneratorBundle\Command;
 
+use Pimcore\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
 use Pimcore\Bundle\GeneratorBundle\Generator\BundleGenerator;
 use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
 use Sensio\Bundle\GeneratorBundle\Command\GenerateBundleCommand as BaseGenerateBundleCommand;
@@ -121,6 +122,16 @@ EOT
         }
 
         $questionHelper->writeGeneratorSummary($output, $errors);
+    }
+
+    protected function getQuestionHelper()
+    {
+        $question = $this->getHelperSet()->get('question');
+        if (!$question || get_class($question) !== QuestionHelper::class) {
+            $this->getHelperSet()->set($question = new QuestionHelper());
+        }
+
+        return $question;
     }
 
     protected function createBundleObject(InputInterface $input)
