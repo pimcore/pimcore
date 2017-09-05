@@ -469,8 +469,41 @@ pimcore.asset.tree = Class.create({
                     if (perspectiveCfg.inTreeContextMenu("asset.add.upload")) {
                         menuItems.push({
                             text: t("upload_files"),
-                            handler: this.addAssets.bind(this, tree, record),
-                            iconCls: "pimcore_icon_upload"
+                            iconCls: "pimcore_icon_upload",
+                            listeners: {
+                                "afterrender": function (el, eOpts) {
+                                    // we need to do this vanilla javascript and directly after finishing rendering
+                                    // otherwise this will cause issues when used with hybrid touch devices, see also:
+                                    // https://github.com/pimcore/pimcore/issues/1836
+                                    var fileElemId = 'assetMultiUploadField';
+                                    if(!document.getElementById(fileElemId)) {
+                                        document.body.insertAdjacentHTML('beforeend', '<input type="file" id="' + fileElemId + '" multiple>');
+                                    }
+
+                                    var fileSelect = el.getEl().down('a', true),
+                                        fileElem = document.getElementById(fileElemId);
+
+                                    if(fileElem['onChangeListener']) {
+                                        fileElem.removeEventListener('change', fileElem['onChangeListener']);
+                                    }
+
+                                    fileElem['onChangeListener'] = function (e) {
+                                        if (e.target.files.length) {
+                                            this.uploadFileList(e.target, record);
+                                        }
+                                    }.bind(this);
+
+                                    fileElem.addEventListener("change", fileElem['onChangeListener']);
+
+                                    fileSelect.addEventListener("click", function (e) {
+                                        if (fileElem) {
+                                            fileElem.value = fileElem.defaultValue;
+                                            fileElem.click();
+                                        }
+                                        e.preventDefault();
+                                    }, false);
+                                }.bind(this)
+                            }
                         });
                     }
 
@@ -882,26 +915,6 @@ pimcore.asset.tree = Class.create({
             var f = this.addAssetComplete.bind(this, tree, record);
             f();
         }.bind(this));
-    },
-
-    addAssets : function (tree, record) {
-        // check if multiupload fields exists in dom
-        if(!Ext.get("multiUploadField")) {
-            // we have to do the following in jQuery :(
-            jQuery("body").append('<input type="file" name="multiUploadField" id="multiUploadField" multiple>');
-        }
-
-        jQuery("#multiUploadField").val("");
-
-        // this is the tree node
-        jQuery("#multiUploadField").unbind("change");
-        jQuery("#multiUploadField").on("change", function (e) {
-            if(e.target.files.length) {
-                this.uploadFileList(e.target, record);
-            }
-        }.bind(this));
-
-        jQuery("#multiUploadField").trigger("click");
     },
 
     uploadZip: function (tree, record) {
