@@ -53,6 +53,7 @@ class Inc extends Helper
      * @param PageSnippet|int|string $include
      * @param array $params
      * @param bool $cacheEnabled
+     * @param bool|null $editmode
      *
      * @return string
      */
