@@ -120,7 +120,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             return [];
         }
 
-        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
+        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1, $params);
 
         // replace the real data with the data for the editmode
         foreach ($result["data"] as $language => &$data) {
@@ -145,9 +145,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param $fieldData
      * @param $metaData
      * @param int $level
+     * @param array $params
      * @return array
      */
-    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1)
+    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1, $params)
     {
         $class = $object->getClass();
         $inheritanceAllowed = $class->getAllowInherit();
@@ -162,12 +163,21 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     // never override existing data
                     $fieldData[$language][$key] = $fdata;
                     if (!$fd->isEmpty($fdata)) {
-                        $metaData[$language][$key] = ["inherited" => $level > 1, "objectid" => $object->getId()];
+
+                        $inherited = $level > 1;
+                        if($params['context'] && $params['context']['containerType'] == 'block'){
+                            $inherited = false;
+                        }
+
+                        $metaData[$language][$key] = ["inherited" => $inherited, "objectid" => $object->getId()];
                     }
                 }
             }
         }
 
+        if($params['context'] && $params['context']['containerType'] == 'block'){
+            $inheritanceAllowed = false;
+        }
 
         if ($inheritanceAllowed) {
             // check if there is a parent with the same type
@@ -192,7 +202,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                 if ($foundEmptyValue) {
                     // still some values are passing, ask the parent
                     $parentData = $parent->getLocalizedFields();
-                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
+                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1,$params);
                 }
             }
         }
