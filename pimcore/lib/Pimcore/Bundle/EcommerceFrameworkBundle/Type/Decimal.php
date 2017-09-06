@@ -315,7 +315,9 @@ class Decimal
      */
     public function asString(int $digits = null): string
     {
-        $string = strval($this->amount);
+        $signum = $this->amount < 0 ? '-' : '';
+
+        $string = strval(abs($this->amount));
         $amount = null;
 
         if ($this->scale === 0) {
@@ -336,7 +338,7 @@ class Decimal
             $amount = $this->truncateDecimalString($amount, $digits);
         }
 
-        return $amount;
+        return $signum . $amount;
     }
 
     /**
