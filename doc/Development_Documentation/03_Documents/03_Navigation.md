@@ -9,7 +9,7 @@ It builds a navigation container based on the existing document structure. The p
 2. Render the navigation: `$this->navigation()->render($nav)` or `$this->navigation()->getRenderer('menu')->render($nav)`
 
 > The building step does not necessarily need to happen in the view script. In fact the view helper just forwards the
- `buildNavigation()` call to the `pimcore.navigation.builder` service. You can also build the navigation in your controller
+ `buildNavigation()` call to the `Pimcore\Navigation\Builder` service. You can also build the navigation in your controller
  or a service and pass the navigation object to the view.
 
 **Only documents are included** in this structure, directories are ignored, regardless of their navigation properties.
