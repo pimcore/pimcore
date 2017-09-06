@@ -32,7 +32,25 @@ class TemplatingEngineAwareHelperPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('templating.helper') as $id => $tags) {
             $definition = $container->getDefinition($id);
 
-            $reflector = new \ReflectionClass($definition->getClass());
+            $class = $definition->getClass();
+            if (!$class) {
+                continue;
+            }
+
+            // if class is configured as parameter, try to resolve class name from parameter
+            if (preg_match('/^%([^%]+)%$/', $class, $matches)) {
+                if ($container->hasParameter($matches[1])) {
+                    $class = $container->getParameter($matches[1]);
+                } else {
+                    continue;
+                }
+            }
+
+            if (!class_exists($class)) {
+                continue;
+            }
+
+            $reflector = new \ReflectionClass($class);
             if ($reflector->implementsInterface(TemplatingEngineAwareHelperInterface::class)) {
                 $definition->addMethodCall('setTemplatingEngine', [new Reference('pimcore.templating.engine.php')]);
             }
