@@ -26,6 +26,14 @@ set_time_limit($maxExecutionTime);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 @ini_set('display_errors', 'On');
+if (!defined('PIMCORE_PROJECT_ROOT')) {
+    define(
+        'PIMCORE_PROJECT_ROOT',
+        getenv('PIMCORE_PROJECT_ROOT')
+            ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
+            ?: realpath(__DIR__ . '/..')
+    );
+}
 
 require_once __DIR__ . '/../pimcore/config/constants.php';
 require_once __DIR__ . '/../vendor/autoload.php';

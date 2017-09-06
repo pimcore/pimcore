@@ -12,18 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-// configure some constants needed by pimcore
-$projectRoot = getenv('PIMCORE_PROJECT_ROOT')
-    ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
-    ?: realpath(__DIR__ . '/../..');
-
-$customConstants = $projectRoot . '/app/constants.php';
+$customConstants = PIMCORE_PROJECT_ROOT . '/app/constants.php';
 if (file_exists($customConstants)) {
     include_once $customConstants;
-}
-
-if (!defined('PIMCORE_PROJECT_ROOT')) {
-    define('PIMCORE_PROJECT_ROOT', $projectRoot);
 }
 
 if (!defined('PIMCORE_COMPOSER_PATH')) {
