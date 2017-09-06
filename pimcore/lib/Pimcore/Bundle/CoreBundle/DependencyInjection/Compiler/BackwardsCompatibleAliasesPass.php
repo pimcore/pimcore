@@ -27,6 +27,18 @@ use Symfony\Component\DependencyInjection\Exception\LogicException;
 class BackwardsCompatibleAliasesPass implements CompilerPassInterface
 {
     private $mapping = [
+        // aliases for event listeners exposing methods (e.g. can be disabled)
+        'pimcore.event_listener.workflow_management' => \Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener::class,
+        'pimcore.event_listener.frontend.google_analytics_code' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener::class,
+        'pimcore.event_listener.frontend.cookie_policy_notice' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener::class,
+        'pimcore.event_listener.frontend.google_tag_manager' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener::class,
+        'pimcore.event_listener.frontend.tag_manager' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\TagManagerListener::class,
+        'pimcore.event_listener.frontend.targeting' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\TargetingListener::class,
+        'pimcore.event_listener.frontend.full_page_cache' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener::class,
+
+
+
+        // templating helpers
         'pimcore.templating.action_renderer' => \Pimcore\Templating\Renderer\ActionRenderer::class,
         'pimcore.templating.include_renderer' => \Pimcore\Templating\Renderer\IncludeRenderer::class,
         'pimcore.templating.tag_renderer' => \Pimcore\Templating\Renderer\TagRenderer::class,
