@@ -120,7 +120,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             return [];
         }
 
-        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
+        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1, $params);
 
         // replace the real data with the data for the editmode
         foreach ($result['data'] as $language => &$data) {
@@ -148,7 +148,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      *
      * @return array
      */
-    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1)
+    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1, $params)
     {
         $class = $object->getClass();
         $inheritanceAllowed = $class->getAllowInherit();
@@ -163,11 +163,21 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                     // never override existing data
                     $fieldData[$language][$key] = $fdata;
                     if (!$fd->isEmpty($fdata)) {
-                        $metaData[$language][$key] = ['inherited' => $level > 1, 'objectid' => $object->getId()];
+                        $inherited = $level > 1;
+                        if ($params['context'] && $params['context']['containerType'] == 'block') {
+                            $inherited = false;
+                        }
+
+                        $metaData[$language][$key] = ['inherited' => $inherited, 'objectid' => $object->getId()];
                     }
                 }
             }
         }
+
+        if ($params['context'] && $params['context']['containerType'] == 'block') {
+            $inheritanceAllowed = false;
+        }
+
 
         if ($inheritanceAllowed) {
             // check if there is a parent with the same type
@@ -192,7 +202,14 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                 if ($foundEmptyValue) {
                     // still some values are passing, ask the parent
                     $parentData = $parent->getLocalizedFields();
-                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
+                    $parentResult = $this->doGetDataForEditMode(
+                        $parentData,
+                        $parent,
+                        $fieldData,
+                        $metaData,
+                        $level + 1,
+                        $params
+                    );
                 }
             }
         }
@@ -200,7 +217,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         $result = [
             'data' => $fieldData,
             'metaData' => $metaData,
-            'inherited' => $inherited
+            'inherited' => $inherited,
         ];
 
         return $result;
@@ -230,7 +247,11 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
                     $fd = $this->getFielddefinition($name);
-                    $localizedFields->setLocalizedValue($name, $fd->getDataFromEditmode($fdata, $object, $params), $language);
+                    $localizedFields->setLocalizedValue(
+                        $name,
+                        $fd->getDataFromEditmode($fdata, $object, $params),
+                        $language
+                    );
                 }
             }
         }
@@ -317,7 +338,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             foreach ($lfData->getItems() as $language => $values) {
                 foreach ($values as $lData) {
                     if (is_string($lData)) {
-                        $dataString .= $lData . ' ';
+                        $dataString .= $lData.' ';
                     }
                 }
             }
@@ -450,19 +471,37 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                 }
 
                 if (!$field instanceof Model\Webservice\Data\DataObject\Element) {
-                    throw new \Exception("Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName().' ]');
+                    throw new \Exception(
+                        "Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName(
+                        ).' ]'
+                    );
                 }
                 $fd = $this->getFielddefinition($field->name);
                 if (!$fd instanceof DataObject\ClassDefinition\Data) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         continue;
                     }
-                    throw new \Exception("Unknown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName().' ] ');
+                    throw new \Exception(
+                        "Unknown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName(
+                        ).' ] '
+                    );
                 } elseif ($fd->getFieldtype() != $field->type) {
-                    throw new \Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName().' ]. Should be [ '.$fd->getFieldtype().' ], but is [ '.$field->type.' ] ');
+                    throw new \Exception(
+                        "Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName(
+                        ).' ]. Should be [ '.$fd->getFieldtype().' ], but is [ '.$field->type.' ] '
+                    );
                 }
 
-                $localizedFields->setLocalizedValue($field->name, $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value, $object, $params, $idMapper), $field->language);
+                $localizedFields->setLocalizedValue(
+                    $field->name,
+                    $this->getFielddefinition($field->name)->getFromWebserviceImport(
+                        $field->value,
+                        $object,
+                        $params,
+                        $idMapper
+                    ),
+                    $field->language
+                );
             }
 
             return $localizedFields;
@@ -549,7 +588,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     {
         foreach ($data as $key => $value) {
             if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
+                $method = 'set'.$key;
                 if (method_exists($this, $method)) {
                     $this->$method($value);
                 }
@@ -653,12 +692,12 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             $lf = new DataObject\Localizedfield();
 
             $object = $container;
-            if ($container instanceof  DataObject\Fieldcollection\Data\AbstractData) {
+            if ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
                 $object = $container->getObject();
 
                 $context = [
                     'containerType' => 'fieldcollection',
-                    'containerKey' => $container->getType()
+                    'containerKey' => $container->getType(),
                 ];
                 $lf->setContext($context);
             }
@@ -1064,7 +1103,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
 
                 foreach ($subdata as $item) {
                     $diffdata['field'] = $this->getName();
-                    $diffdata['key'] = $this->getName() . '~' . $fieldname . '~' . $item['key'] . '~'. $language;
+                    $diffdata['key'] = $this->getName().'~'.$fieldname.'~'.$item['key'].'~'.$language;
 
                     $diffdata['type'] = $item['type'];
                     $diffdata['value'] = $item['value'];
@@ -1073,11 +1112,11 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                     unset($item['type']);
                     unset($item['value']);
 
-                    $diffdata['title'] = $this->getName() . ' / ' . $item['title'];
+                    $diffdata['title'] = $this->getName().' / '.$item['title'];
                     $diffdata['lang'] = $language;
                     $diffdata['data'] = $item;
                     $diffdata['extData'] = [
-                        'fieldname' => $fieldname
+                        'fieldname' => $fieldname,
                     ];
 
                     $diffdata['disabled'] = $item['disabled'];
@@ -1264,7 +1303,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof  DataObject\Localizedfield) {
+        if ($value instanceof DataObject\Localizedfield) {
             $items = $value->getItems();
             if (is_array($items)) {
                 $result = [];
@@ -1274,7 +1313,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                         $fd = $this->getFielddefinition($elementName);
                         if (!$fd) {
                             // class definition seems to have changed
-                            Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+                            Logger::warn('class definition seems to have changed, element name: '.$elementName);
                             continue;
                         }
 
@@ -1312,7 +1351,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
-                        Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+                        Logger::warn('class definition seems to have changed, element name: '.$elementName);
                         continue;
                     }
 

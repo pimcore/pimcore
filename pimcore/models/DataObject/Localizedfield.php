@@ -271,7 +271,14 @@ class Localizedfield extends Model\AbstractModel
 
         // check for inherited value
         $doGetInheritedValues = AbstractObject::doGetInheritedValues();
-        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues) {
+
+        $allowInheritance = true;
+        if ($context && $context['containerType'] == 'block') {
+            $allowInheritance = false;
+        }
+
+        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues && $allowInheritance) {
+
             $object = $this->getObject();
             $class = $object->getClass();
             $allowInherit = $class->getAllowInherit();
@@ -314,11 +321,14 @@ class Localizedfield extends Model\AbstractModel
         }
 
         if ($fieldDefinition && method_exists($fieldDefinition, 'preGetData')) {
-            $data =  $fieldDefinition->preGetData($this, [
-                'data' => $data,
-                'language' => $language,
-                'name' => $name
-            ]);
+            $data = $fieldDefinition->preGetData(
+                $this,
+                [
+                    'data' => $data,
+                    'language' => $language,
+                    'name' => $name,
+                ]
+            );
         }
 
         return $data;
@@ -337,11 +347,11 @@ class Localizedfield extends Model\AbstractModel
     {
         if (self::$strictMode) {
             if (!$language || !in_array($language, Tool::getValidLanguages())) {
-                throw new \Exception('Language ' . $language . ' not accepted in strict mode');
+                throw new \Exception('Language '.$language.' not accepted in strict mode');
             }
         }
 
-        $language  = $this->getLanguage($language);
+        $language = $this->getLanguage($language);
         if (!$this->languageExists($language)) {
             $this->items[$language] = [];
         }
@@ -366,10 +376,14 @@ class Localizedfield extends Model\AbstractModel
         }
 
         if (method_exists($fieldDefinition, 'preSetData')) {
-            $value =  $fieldDefinition->preSetData($this, $value, [
-                'language' => $language,
-                'name' => $name
-            ]);
+            $value = $fieldDefinition->preSetData(
+                $this,
+                $value,
+                [
+                    'language' => $language,
+                    'name' => $name,
+                ]
+            );
         }
 
         $this->items[$language][$name] = $value;

@@ -244,6 +244,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         continue;
                     }
                     $elementData = $blockElement->getData();
+                    $params['context']['containerType'] = 'block';
                     $dataForEditMode = $fd->getDataForEditmode($elementData, $object, $params);
                     $resultElement[$elementName] = $dataForEditMode;
                 }
