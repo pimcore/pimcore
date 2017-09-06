@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Dotenv\Dotenv;
+
 /**
  * Pimcore
  *
@@ -30,6 +32,12 @@ $resolveConstant = function (string $name, $default, bool $define = true) {
 
     return $value;
 };
+
+// load .env file if available
+$dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
+if (file_exists($dotEnvFile)) {
+    (new Dotenv())->load($dotEnvFile);
+}
 
 // load custom constants
 $customConstantsFile = PIMCORE_PROJECT_ROOT . '/app/constants.php';
