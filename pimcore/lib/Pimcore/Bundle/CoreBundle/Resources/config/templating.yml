@@ -18,6 +18,12 @@ services:
 
     # NAVIGATION
 
+    # renderer locator collecting all registered renderers
+    pimcore.templating.navigation.renderer_locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']
+        arguments: [[]]
+
     pimcore.navigation.builder:
         class: Pimcore\Navigation\Builder
         arguments: ['@pimcore.http.request_helper']

@@ -151,7 +151,7 @@ services:
 
     pimcore.templating.view_helper.navigation:
       class: Pimcore\Templating\Helper\Navigation
-      arguments: ['@service_container', '@pimcore.navigation.builder', '@?']
+      arguments: ['@pimcore.navigation.builder', '@pimcore.templating.navigation.renderer_locator']
       lazy: true
       tags:
           - { name: templating.helper, alias: navigation }
