@@ -2094,7 +2094,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $start = $request->get('start');
             }
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
                 if ($orderKey == 'fullpath') {

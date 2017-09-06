@@ -162,7 +162,7 @@ class VariantsController extends AdminController
                     'creationDate' => 'o_creationDate'
                 ];
 
-                $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+                $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
                 if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
                     $orderKey = $sortingSettings['orderKey'];
                     if (array_key_exists($orderKey, $colMappings)) {

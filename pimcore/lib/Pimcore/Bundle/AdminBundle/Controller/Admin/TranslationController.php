@@ -355,7 +355,7 @@ class TranslationController extends AdminController
             $list->setOrder('asc');
             $list->setOrderKey($tableName . '.key', false);
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
 
             $joins = [];
 

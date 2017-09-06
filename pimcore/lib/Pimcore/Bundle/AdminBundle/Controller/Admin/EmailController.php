@@ -515,7 +515,7 @@ class EmailController extends DocumentControllerBase
             $list->setLimit($request->get('limit'));
             $list->setOffset($request->get('start'));
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->query->all());
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($request->query->all());
             if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
             }

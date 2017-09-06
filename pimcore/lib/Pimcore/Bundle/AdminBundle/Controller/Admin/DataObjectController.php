@@ -1687,7 +1687,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $start = $request->get('start');
             }
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
 
             $doNotQuote = false;
 
