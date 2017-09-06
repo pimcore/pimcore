@@ -48,7 +48,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: pimcore.asset.preUpdate, method: onPreUpdate }
             - { name: kernel.event_listener, event: pimcore.document.preUpdate, method: onPreUpdate }
-            - { name: kernel.event_listener, event: pimcore.object.preUpdate, method: onPreUpdate }
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: onPreUpdate }
 ```
 
 in your listener class `src/AppBundle/EventListener/TestListener`
