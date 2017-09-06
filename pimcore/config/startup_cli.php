@@ -30,11 +30,10 @@ if (!defined('PIMCORE_PROJECT_ROOT')) {
 // determines if we're in Pimcore\Console mode
 $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
 
+require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/bootstrap.php';
+
 $workingDirectory = getcwd();
 chdir(__DIR__);
-
-include_once __DIR__ . '/../config/constants.php';
-include_once __DIR__ . '/../config/autoload.php';
 
 if ($pimcoreConsole) {
     $input = new ArgvInput();

@@ -19,13 +19,12 @@ use Pimcore\Version;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+@ini_set('display_errors', 'On');
 
 $maxExecutionTime = 0;
 @ini_set('max_execution_time', $maxExecutionTime);
 set_time_limit($maxExecutionTime);
 
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-@ini_set('display_errors', 'On');
 if (!defined('PIMCORE_PROJECT_ROOT')) {
     define(
         'PIMCORE_PROJECT_ROOT',
@@ -35,9 +34,12 @@ if (!defined('PIMCORE_PROJECT_ROOT')) {
     );
 }
 
-require_once __DIR__ . '/../pimcore/config/constants.php';
-require_once __DIR__ . '/../vendor/autoload.php';
-include_once(__DIR__ . '/../pimcore/lib/helper-functions.php');
+/** @var $loader \Composer\Autoload\ClassLoader */
+$loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+Pimcore::setAutoloader($loader);
+
+require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/constants.php';
+require_once PIMCORE_PROJECT_ROOT . '/pimcore/lib/helper-functions.php';
 
 $kernel = new InstallerKernel(Config::getEnvironment(), true);
 

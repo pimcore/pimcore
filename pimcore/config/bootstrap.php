@@ -13,6 +13,10 @@
  */
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
+/** @var $loader \Composer\Autoload\ClassLoader */
+$loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+Pimcore::setAutoloader($loader);
+
 require_once __DIR__ . '/constants.php';
 require_once __DIR__ . '/autoload.php';
 
