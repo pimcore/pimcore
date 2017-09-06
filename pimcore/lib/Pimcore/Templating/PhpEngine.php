@@ -145,19 +145,6 @@ class PhpEngine extends BasePhpEngine
     }
 
     /**
-     * @inheritDoc
-     */
-    public function get($name)
-    {
-        $helper = parent::get($name);
-        if ($helper instanceof TemplatingEngineAwareHelperInterface) {
-            $helper->setTemplatingEngine($this);
-        }
-
-        return $helper;
-    }
-
-    /**
      * In addition to the core method, this keeps parameters in a ViewModel instance which is accessible from
      * view helpers and via $this->$variable.
      *

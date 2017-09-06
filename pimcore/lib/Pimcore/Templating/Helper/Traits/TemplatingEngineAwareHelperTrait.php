@@ -29,5 +29,7 @@ trait TemplatingEngineAwareHelperTrait
     public function setTemplatingEngine(PhpEngine $engine)
     {
         $this->templatingEngine = $engine;
+
+        $this->setCharset($engine->getCharset());
     }
 }
