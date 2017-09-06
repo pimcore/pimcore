@@ -163,9 +163,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     // never override existing data
                     $fieldData[$language][$key] = $fdata;
                     if (!$fd->isEmpty($fdata)) {
-
                         $inherited = $level > 1;
-                        if($params['context'] && $params['context']['containerType'] == 'block'){
+                        if ($params['context'] && $params['context']['containerType'] == 'block') {
                             $inherited = false;
                         }
 
@@ -175,7 +174,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
         }
 
-        if($params['context'] && $params['context']['containerType'] == 'block'){
+        if ($params['context'] && $params['context']['containerType'] == 'block') {
             $inheritanceAllowed = false;
         }
 
@@ -202,7 +201,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                 if ($foundEmptyValue) {
                     // still some values are passing, ask the parent
                     $parentData = $parent->getLocalizedFields();
-                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1,$params);
+                    $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1, $params);
                 }
             }
         }
