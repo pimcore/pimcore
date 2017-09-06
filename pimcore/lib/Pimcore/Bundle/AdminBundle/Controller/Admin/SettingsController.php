@@ -1444,7 +1444,7 @@ class SettingsController extends AdminController
         if ($request->get('site')) {
             $siteSuffix = '-' . $request->get('site');
         } else {
-            $siteSuffix = "-default";
+            $siteSuffix = '-default';
         }
 
         $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';

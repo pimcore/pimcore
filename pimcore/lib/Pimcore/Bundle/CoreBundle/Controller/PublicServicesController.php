@@ -113,9 +113,11 @@ class PublicServicesController extends FrameworkController
 
     /**
      * @param $request
+     *
      * @return Response
      */
-    public function robotsTxtAction(Request $request) {
+    public function robotsTxtAction(Request $request)
+    {
 
         // check for site
         $site = null;
@@ -125,22 +127,23 @@ class PublicServicesController extends FrameworkController
         } catch (\Exception $e) {
         }
 
-        $siteSuffix = "-default";
+        $siteSuffix = '-default';
         if ($site instanceof Site) {
-            $siteSuffix = "-" . $site->getId();
+            $siteSuffix = '-' . $site->getId();
         }
 
         // send correct headers
-        header("Content-Type: text/plain; charset=utf8"); while (@ob_end_flush()) ;
+        header('Content-Type: text/plain; charset=utf8');
+        while (@ob_end_flush()) ;
 
         // check for configured robots.txt in pimcore
         $content = '';
-        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
+        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';
         if (is_file($robotsPath)) {
             $content = file_get_contents($robotsPath);
         }
 
-        if(empty($content)){
+        if (empty($content)) {
             // default behavior, allow robots to index everything
             $content = "User-agent: *\nDisallow:";
         }

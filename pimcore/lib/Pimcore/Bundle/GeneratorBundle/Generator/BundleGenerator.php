@@ -29,13 +29,13 @@ class BundleGenerator extends BaseBundleGenerator
 
         $dir = $bundle->getTargetDirectory();
 
-        $parameters = array(
+        $parameters = [
             'namespace'       => $bundle->getNamespace(),
             'bundle'          => $bundle->getName(),
             'format'          => $bundle->getConfigurationFormat(),
             'bundle_basename' => $bundle->getBasename(),
             'extension_alias' => $bundle->getExtensionAlias(),
-        );
+        ];
 
         $routingFilename = $bundle->getRoutingConfigurationFilename() ?: 'routing.yml';
         $routingTarget   = $dir . '/Resources/config/pimcore/' . $routingFilename;

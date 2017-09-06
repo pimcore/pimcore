@@ -60,9 +60,11 @@ class DataObjectCompatibility
     /**
      * @param $class
      * @param bool $autoload
+     *
      * @return bool
      */
-    protected function classExists($class, $autoload = true) {
+    protected function classExists($class, $autoload = true)
+    {
         return class_exists($class, $autoload) || interface_exists($class, $autoload) || trait_exists($class, $autoload);
     }
 

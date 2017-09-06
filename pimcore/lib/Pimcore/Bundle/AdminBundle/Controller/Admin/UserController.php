@@ -343,7 +343,6 @@ class UserController extends AdminController implements EventedControllerInterfa
                     foreach ($spaces as $space) {
                         $element = Element\Service::getElementByPath($type, $space['path']);
                         if ($element) {
-
                             $className = '\\Pimcore\\Model\\User\\Workspace\\' . Element\Service::getBaseClassNameForElement($type);
                             $workspace = new $className();
                             $workspace->setValues($space);

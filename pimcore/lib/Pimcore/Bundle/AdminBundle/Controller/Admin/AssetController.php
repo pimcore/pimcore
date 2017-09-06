@@ -104,9 +104,9 @@ class AssetController extends ElementControllerBase implements EventedController
             $iptcData = $asset->getIPTCData();
             if (!empty($iptcData)) {
                 // flatten data, to be displayed in grid
-                foreach($iptcData as &$value) {
+                foreach ($iptcData as &$value) {
                     if (is_array($value)) {
-                        $value = implode(", ", $value);
+                        $value = implode(', ', $value);
                     }
                 }
 
