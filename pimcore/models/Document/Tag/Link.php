@@ -65,7 +65,7 @@ class Link extends Model\Document\Tag
     public function getDataEditmode()
     {
         // update path if internal link
-        $this->updatePathFromInternal(true);
+        $this->updatePathFromInternal(true,true);
 
         return $this->data;
     }
@@ -85,12 +85,42 @@ class Link extends Model\Document\Tag
             if (is_array($this->options)) {
                 foreach ($this->options as $key => $value) {
                     if (is_string($value) || is_numeric($value)) {
-                        $attribs[] = $key . '="' . $value . '"';
+                        $attribs[] = $key.'="'.$value.'"';
                     }
                 }
             }
             // add attributes to link
-            $allowedAttributes = ['charset', 'coords', 'hreflang', 'name', 'rel', 'rev', 'shape', 'target', 'accesskey', 'class', 'dir', 'id', 'lang', 'style', 'tabindex', 'title', 'xml:lang', 'onblur', 'onclick', 'ondblclick', 'onfocus', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onkeydown', 'onkeypress', 'onkeyup'];
+            $allowedAttributes = [
+                'charset',
+                'coords',
+                'hreflang',
+                'name',
+                'rel',
+                'rev',
+                'shape',
+                'target',
+                'accesskey',
+                'class',
+                'dir',
+                'id',
+                'lang',
+                'style',
+                'tabindex',
+                'title',
+                'xml:lang',
+                'onblur',
+                'onclick',
+                'ondblclick',
+                'onfocus',
+                'onmousedown',
+                'onmousemove',
+                'onmouseout',
+                'onmouseover',
+                'onmouseup',
+                'onkeydown',
+                'onkeypress',
+                'onkeyup',
+            ];
             $defaultAttributes = [];
 
             if (!is_array($this->options)) {
@@ -105,7 +135,7 @@ class Link extends Model\Document\Tag
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value)) && in_array($key, $allowedAttributes)) {
                     if (!empty($value)) {
-                        $attribs[] = $key . '="' . $value . '"';
+                        $attribs[] = $key.'="'.$value.'"';
                     }
                 }
             }
@@ -116,7 +146,7 @@ class Link extends Model\Document\Tag
                 $attribs[] = $this->data['attributes'];
             }
 
-            return '<a href="' . $url . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->data['text']) . '</a>';
+            return '<a href="'.$url.'" '.implode(' ', $attribs).'>'.htmlspecialchars($this->data['text']).'</a>';
         }
 
         return '';
@@ -133,7 +163,10 @@ class Link extends Model\Document\Tag
                 $doc = Document::getById($this->data['internalId']);
                 if (!$doc) {
                     $sane = false;
-                    Logger::notice('Detected insane relation, removing reference to non existent document with id [' . $this->getDocumentId() . ']');
+                    Logger::notice(
+                        'Detected insane relation, removing reference to non existent document with id ['.$this->getDocumentId(
+                        ).']'
+                    );
                     $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
@@ -141,7 +174,10 @@ class Link extends Model\Document\Tag
                 $asset = Asset::getById($this->data['internalId']);
                 if (!$asset) {
                     $sane = false;
-                    Logger::notice('Detected insane relation, removing reference to non existent asset with id [' . $this->getDocumentId() . ']');
+                    Logger::notice(
+                        'Detected insane relation, removing reference to non existent asset with id ['.$this->getDocumentId(
+                        ).']'
+                    );
                     $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
@@ -149,7 +185,10 @@ class Link extends Model\Document\Tag
                 $object = Model\DataObject\Concrete::getById($this->data['internalId']);
                 if (!$object) {
                     $sane = false;
-                    Logger::notice('Detected insane relation, removing reference to non existent object with id [' . $this->getDocumentId() . ']');
+                    Logger::notice(
+                        'Detected insane relation, removing reference to non existent object with id ['.$this->getDocumentId(
+                        ).']'
+                    );
                     $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
@@ -169,11 +208,11 @@ class Link extends Model\Document\Tag
         $url = $this->data['path'] ?? '';
 
         if (strlen($this->data['parameters'] ?? '') > 0) {
-            $url .= '?' . str_replace('?', '', $this->getParameters());
+            $url .= '?'.str_replace('?', '', $this->getParameters());
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
-            $url .= '#' . str_replace('#', '', $this->getAnchor());
+            $url .= '#'.str_replace('#', '', $this->getAnchor());
         }
 
         return $url;
@@ -182,7 +221,7 @@ class Link extends Model\Document\Tag
     /**
      * @param bool $realPath
      */
-    protected function updatePathFromInternal($realPath = false)
+    protected function updatePathFromInternal($realPath = false, $editmode = false)
     {
         $method = 'getFullPath';
         if ($realPath) {
@@ -192,7 +231,7 @@ class Link extends Model\Document\Tag
         if (isset($this->data['internal']) && $this->data['internal']) {
             if ($this->data['internalType'] == 'document') {
                 if ($doc = Document::getById($this->data['internalId'])) {
-                    if (!Document::doHideUnpublished() || $doc->isPublished()) {
+                    if ($editmode || (!Document::doHideUnpublished() || $doc->isPublished())) {
                         $this->data['path'] = $doc->$method();
                     } else {
                         $this->data['path'] = '';
@@ -204,17 +243,21 @@ class Link extends Model\Document\Tag
                 }
             } elseif ($this->data['internalType'] == 'object') {
                 if ($object = Model\DataObject::getById($this->data['internalId'])) {
-                    if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-                        if ($realPath) {
-                            $this->data['path'] = $object->getFullPath();
-                        } else {
-                            $this->data['path'] = $linkGenerator->generate(
-                                $object,
-                                [
-                                    'document' => Document::getById($this->getDocumentId()),
-                                    'context' => $this
-                                ]
-                            );
+                    if ($editmode) {
+                        $this->data['path'] = $object->getFullPath();
+                    } else {
+                        if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
+                            if ($realPath) {
+                                $this->data['path'] = $object->getFullPath();
+                            } else {
+                                $this->data['path'] = $linkGenerator->generate(
+                                    $object,
+                                    [
+                                        'document' => Document::getById($this->getDocumentId()),
+                                        'context' => $this,
+                                    ]
+                                );
+                            }
                         }
                     }
                 }
@@ -324,30 +367,40 @@ class Link extends Model\Document\Tag
             $data = [];
         }
 
-        if ($doc = Document::getByPath($data['path'])) {
-            if ($doc instanceof Document) {
-                $data['internal'] = true;
-                $data['internalId'] = $doc->getId();
-                $data['internalType'] = 'document';
-            }
-        }
+        $path = $data['path'];
 
-        if (!$data['internal']) {
-            if ($asset = Asset::getByPath($data['path'])) {
-                if ($asset instanceof Asset) {
+        if (!empty($path)) {
+            if ($data["linktype"] == "internal" && $data["internalType"]) {
+                $target = Model\Element\Service::getElementByPath($data["internalType"], $path);
+                if ($target) {
                     $data['internal'] = true;
-                    $data['internalId'] = $asset->getId();
-                    $data['internalType'] = 'asset';
+                    $data['internalId'] = $target->getId();
+                    $data['internalType'] = $data["internalType"];
                 }
             }
-        }
 
-        if (!$data['internal']) {
-            if ($object = Model\DataObject\Concrete::getByPath($data['path'])) {
-                if ($object instanceof Model\DataObject\Concrete) {
+            if (!$target) {
+                if ($target = Document::getByPath($path)) {
                     $data['internal'] = true;
-                    $data['internalId'] = $object->getId();
+                    $data['internalId'] = $target->getId();
+                    $data['internalType'] = 'document';
+                } elseif ($target = Asset::getByPath($path)) {
+                    $data['internal'] = true;
+                    $data['internalId'] = $target->getId();
+                    $data['internalType'] = 'asset';
+                } elseif ($target = Model\DataObject\Concrete::getByPath($path)) {
+                    $data['internal'] = true;
+                    $data['internalId'] = $target->getId();
                     $data['internalType'] = 'object';
+                } else {
+                    $data['internal'] = false;
+                    $data['internalId'] = null;
+                    $data['internalType'] = null;
+                    $data['linktype'] = 'direct';
+                }
+
+                if ($target) {
+                    $data['linktype'] = 'internal';
                 }
             }
         }
@@ -376,20 +429,20 @@ class Link extends Model\Document\Tag
             if (intval($this->data['internalId']) > 0) {
                 if ($this->data['internalType'] == 'document') {
                     if ($doc = Document::getById($this->data['internalId'])) {
-                        $key = 'document_' . $doc->getId();
+                        $key = 'document_'.$doc->getId();
 
                         $dependencies[$key] = [
                             'id' => $doc->getId(),
-                            'type' => 'document'
+                            'type' => 'document',
                         ];
                     }
                 } elseif ($this->data['internalType'] == 'asset') {
                     if ($asset = Asset::getById($this->data['internalId'])) {
-                        $key = 'asset_' . $asset->getId();
+                        $key = 'asset_'.$asset->getId();
 
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
-                            'type' => 'asset'
+                            'type' => 'asset',
                         ];
                     }
                 }
@@ -410,7 +463,7 @@ class Link extends Model\Document\Tag
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         if ($wsElement->value->data instanceof \stdClass) {
-            $wsElement->value->data = (array) $wsElement->value->data;
+            $wsElement->value->data = (array)$wsElement->value->data;
         }
 
         if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
@@ -426,9 +479,16 @@ class Link extends Model\Document\Tag
                         $referencedDocument = Document::getById($id);
                         if (!$referencedDocument instanceof Document) {
                             if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->data['internalType'], $this->data['internalId']);
+                                $idMapper->recordMappingFailure(
+                                    'document',
+                                    $this->getDocumentId(),
+                                    $this->data['internalType'],
+                                    $this->data['internalId']
+                                );
                             } else {
-                                throw new \Exception('cannot get values from web service import - link references unknown document with id [ ' . $this->data['internalId'] . ' ] ');
+                                throw new \Exception(
+                                    'cannot get values from web service import - link references unknown document with id [ '.$this->data['internalId'].' ] '
+                                );
                             }
                         }
                     } elseif ($this->data['internalType'] == 'asset') {
@@ -438,9 +498,16 @@ class Link extends Model\Document\Tag
                         $referencedAsset = Asset::getById($id);
                         if (!$referencedAsset instanceof Asset) {
                             if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                $idMapper->recordMappingFailure('document', $this->getDocumentId(), $this->data['internalType'], $this->data['internalId']);
+                                $idMapper->recordMappingFailure(
+                                    'document',
+                                    $this->getDocumentId(),
+                                    $this->data['internalType'],
+                                    $this->data['internalId']
+                                );
                             } else {
-                                throw new \Exception('cannot get values from web service import - link references unknown asset with id [ ' . $this->data['internalId'] . ' ] ');
+                                throw new \Exception(
+                                    'cannot get values from web service import - link references unknown asset with id [ '.$this->data['internalId'].' ] '
+                                );
                             }
                         }
                     }

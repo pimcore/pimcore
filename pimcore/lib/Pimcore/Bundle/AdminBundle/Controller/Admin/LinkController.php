@@ -137,22 +137,40 @@ class LinkController extends DocumentControllerBase
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
 
-            if (!empty($data['path'])) {
-                if ($document = Document::getByPath($data['path'])) {
-                    $data['linktype'] = 'internal';
-                    $data['internalType'] = 'document';
-                    $data['internal'] = $document->getId();
-                } elseif ($asset = Asset::getByPath($data['path'])) {
-                    $data['linktype'] = 'internal';
-                    $data['internalType'] = 'asset';
-                    $data['internal'] = $asset->getId();
-                } elseif ($object = Concrete::getByPath($data['path'])) {
-                    $data['linktype'] = 'internal';
-                    $data['internalType'] = 'object';
-                    $data['internal'] = $object->getId();
-                } else {
-                    $data['linktype'] = 'direct';
-                    $data['direct'] = $data['path'];
+            $path = $data['path'];
+
+            if (!empty($path)) {
+                if ($data["linktype"] == "internal" && $data["internalType"]) {
+                    $target = Element\Service::getElementByPath($data["internalType"], $path);
+                    if ($target) {
+                        $data['internal'] = true;
+                        $data['internal'] = $target->getId();
+                        $data['internalType'] = $data["internalType"];
+                    }
+                }
+
+                if (!$target) {
+                    if ($target = Document::getByPath($path)) {
+                        $data['linktype'] = 'internal';
+                        $data['internalType'] = 'document';
+                        $data['internal'] = $target->getId();
+                    } elseif ($target = Asset::getByPath($path)) {
+                        $data['linktype'] = 'internal';
+                        $data['internalType'] = 'asset';
+                        $data['internal'] = $target->getId();
+                    } elseif ($target = Concrete::getByPath($path)) {
+                        $data['linktype'] = 'internal';
+                        $data['internalType'] = 'object';
+                        $data['internal'] = $target->getId();
+                    } else {
+                        $data['linktype'] = 'direct';
+                        $data['internalType'] = null;
+                        $data['direct'] = $path;
+                    }
+
+                    if ($target) {
+                        $data['linktype'] = 'internal';
+                    }
                 }
             } else {
                 // clear content of link

@@ -1628,6 +1628,23 @@ pimcore.helpers.editmode = {};
 
 pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
+
+    var internalTypeField = new Ext.form.Hidden({
+        fieldLabel: 'internalType',
+        value: data.internalType,
+        name: 'internalType',
+        readOnly: true,
+        width: 520
+    });
+
+    var linkTypeField = new Ext.form.Hidden({
+        fieldLabel: 'linktype',
+        value: data.linktype,
+        name: 'linktype',
+        readOnly: true,
+        width: 520
+    });
+
     var fieldPath = new Ext.form.TextField({
         fieldLabel: t('path'),
         value: data.path,
@@ -1639,10 +1656,13 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             keyup: function (el) {
                 if(el.getValue().match(/^www\./)) {
                     el.setValue("http://" + el.getValue());
+                    internalTypeField.setValue(null);
+                    linkTypeField.setValue("direct");
                 }
             }
         }
     });
+
 
     fieldPath.on("render", function (el) {
         // add drop zone
@@ -1661,6 +1681,8 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             onNodeDrop : function (target, dd, e, data) {
                 var record = data.records[0];
                 if (record.data.type != "folder" && (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object")) {
+                    internalTypeField.setValue(record.data.elementType);
+                    linkTypeField.setValue('internal');
                     fieldPath.setValue(record.data.path);
                     return true;
                 }
@@ -1684,6 +1706,10 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                         border: false,
                         defaultType: 'textfield',
                         items: [
+                            // do not change the order, the server-side works with setValues - setPath expects
+                            // the types are already set correctly
+                            internalTypeField,
+                            linkTypeField,
                             {
                                 fieldLabel: t('text'),
                                 name: 'text',
@@ -1700,6 +1726,8 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                     handler: function () {
                                         pimcore.helpers.itemselector(false, function (item) {
                                             if (item) {
+                                                internalTypeField.setValue(item.type);
+                                                linkTypeField.setValue('internal');
                                                 fieldPath.setValue(item.fullpath);
                                                 return true;
                                             }

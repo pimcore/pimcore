@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.document.link");
 pimcore.document.link = Class.create(pimcore.document.document, {
 
-    initialize: function(id, options) {
+    initialize: function (id, options) {
 
         this.options = options;
         this.id = intval(id);
@@ -41,7 +41,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
     },
 
-    getSaveData : function () {
+    getSaveData: function () {
         var parameters = {};
 
         parameters.id = this.id;
@@ -70,7 +70,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         this.tab = new Ext.Panel({
             id: tabId,
             title: tabTitle,
-            closable:true,
+            closable: true,
             layout: "border",
             items: [
                 this.getLayoutToolbar(),
@@ -114,7 +114,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         pimcore.layout.refresh();
     },
 
-    getLayoutToolbar : function () {
+    getLayoutToolbar: function () {
 
         if (!this.toolbar) {
 
@@ -168,10 +168,10 @@ pimcore.document.link = Class.create(pimcore.document.document, {
 
             buttons.push("-");
 
-            if(this.isAllowed("delete") && !this.data.locked) {
+            if (this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
-            if(this.isAllowed("rename") && !this.data.locked) {
+            if (this.isAllowed("rename") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.rename);
             }
 
@@ -249,9 +249,9 @@ pimcore.document.link = Class.create(pimcore.document.document, {
 
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
-            region:'center',
-            deferredRender:true,
-            enableTabScroll:true,
+            region: 'center',
+            deferredRender: true,
+            enableTabScroll: true,
             border: false,
             items: items,
             activeTab: 0
@@ -263,6 +263,22 @@ pimcore.document.link = Class.create(pimcore.document.document, {
     getLayoutForm: function () {
 
         if (!this.panel) {
+            var internalTypeField = new Ext.form.Hidden({
+                fieldLabel: 'internalType',
+                value: this.data.internalType,
+                name: 'internalType',
+                readOnly: true,
+                width: 520
+            });
+
+            var linkTypeField = new Ext.form.Hidden({
+                fieldLabel: 'linktype',
+                value: this.data.linktype,
+                name: 'linktype',
+                readOnly: true,
+                width: 520
+            });
+
 
             var path = "";
             if (this.data.rawHref) {
@@ -273,42 +289,66 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                 name: "path",
                 fieldLabel: t("path"),
                 value: path,
-                fieldCls: "input_drop_target"
+                fieldCls: "input_drop_target",
+                width: 500
             });
 
             pathField.on("render", function (el) {
                 var dd = new Ext.dd.DropZone(el.getEl().dom.parentNode.parentNode, {
                     ddGroup: "element",
 
-                    getTargetFromEvent: function(e) {
+                    getTargetFromEvent: function (e) {
                         return this.getEl();
                     },
 
-                    onNodeOver : function(target, dd, e, data) {
+                    onNodeOver: function (target, dd, e, data) {
                         data = data.records[0].data;
                         return data.type != "folder" ? Ext.dd.DropZone.prototype.dropAllowed : Ext.dd.DropZone.prototype.dropNotAllowed;
                     },
 
-                    onNodeDrop : function(target, dd, e, data) {
+                    onNodeDrop: function (target, dd, e, data) {
                         data = data.records[0].data;
                         if (data.type != "folder") {
-                            this.setValue(data.path);
+                            internalTypeField.setValue(data.elementType);
+                            linkTypeField.setValue('internal');
+                            pathField.setValue(data.path);
                             return true;
                         }
                     }.bind(this)
                 });
             });
 
+            var openButton = new Ext.Button({
+                iconCls: "pimcore_icon_edit",
+                style: "margin-left: 5px",
+                handler: function() {
+                    if (linkTypeField.getValue() == "internal") {
+                        pimcore.helpers.openElement(pathField.getValue(), internalTypeField.getValue());
+                    } else {
+                        window.open(pathField.getValue(), "_blank");
+                    }
+                }.bind(this)
+            });
+
             this.panel = new Ext.form.FormPanel({
                 title: t('link_properties'),
-                autoHeight:true,
+                autoHeight: true,
                 labelWidth: 200,
                 defaultType: 'textfield',
-                defaults: {width:500},
-                bodyStyle:'padding:10px;',
+                bodyStyle: 'padding:10px;',
                 region: "center",
-                items :[
-                    pathField,
+                items: [
+                    internalTypeField,
+                    linkTypeField,
+                    {
+                        xtype: 'fieldcontainer',
+                        layout: 'hbox',
+                        items: [
+                            pathField,
+                            openButton
+                        ]
+
+                    },
                     new Ext.toolbar.Spacer({
                         height: 50
                     })

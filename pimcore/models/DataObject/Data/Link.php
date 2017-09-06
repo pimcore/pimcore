@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\Service;
 
 class Link
 {
@@ -376,21 +377,33 @@ class Link
     public function setPath($path)
     {
         if (!empty($path)) {
-            if ($document = Document::getByPath($path)) {
-                $this->linktype = 'internal';
-                $this->internalType = 'document';
-                $this->internal = $document->getId();
-            } elseif ($asset = Asset::getByPath($path)) {
-                $this->linktype = 'internal';
-                $this->internalType = 'asset';
-                $this->internal = $asset->getId();
-            } elseif ($object = Concrete::getByPath($path)) {
-                $this->linktype = 'internal';
-                $this->internalType = 'object';
-                $this->internal = $object->getId();
-            } else {
-                $this->linktype = 'direct';
-                $this->direct = $path;
+            if ($this->getLinktype() == "internal" && $this->getInternalType()) {
+                $matchedElement = Service::getElementByPath($this->getInternalType(), $path);
+                if ($matchedElement) {
+                    $this->linktype = 'internal';
+                    $this->internalType = $this->getInternalType();
+                    $this->internal = $matchedElement->getId();
+                }
+            }
+
+            if (!$matchedElement) {
+                if ($document = Document::getByPath($path)) {
+                    $this->linktype = 'internal';
+                    $this->internalType = 'document';
+                    $this->internal = $document->getId();
+                } elseif ($asset = Asset::getByPath($path)) {
+                    $this->linktype = 'internal';
+                    $this->internalType = 'asset';
+                    $this->internal = $asset->getId();
+                } elseif ($object = Concrete::getByPath($path)) {
+                    $this->linktype = 'internal';
+                    $this->internalType = 'object';
+                    $this->internal = $object->getId();
+                } else {
+                    $this->linktype = 'direct';
+                    $this->internalType = null;
+                    $this->direct = $path;
+                }
             }
         }
 

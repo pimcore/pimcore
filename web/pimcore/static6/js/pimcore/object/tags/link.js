@@ -67,10 +67,24 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             name: this.fieldConfig.name
         };
 
-        this.button = new Ext.Button({
+        this.editButton = new Ext.Button({
             iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",
             style: "margin-left: 5px",
             handler: this.openEditor.bind(this)
+        });
+
+        this.openButton = new Ext.Button({
+            iconCls: "pimcore_icon_edit",
+            style: "margin-left: 5px",
+            handler: function() {
+                if (this.data && this.data.path) {
+                    if (this.data.linktype == "internal") {
+                        pimcore.helpers.openElement(this.data.path, this.data.internalType);
+                    } else {
+                        window.open(this.data.path, "_blank");
+                    }
+                }
+            }.bind(this)
         });
 
         var textValue = "[not set]";
@@ -86,7 +100,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             layout: 'hbox',
             border: false,
             combineErrors: false,
-            items: [this.displayField, this.button],
+            items: [this.displayField, this.openButton, this.editButton],
             componentCls: "object_field"
         });
 
@@ -97,7 +111,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
-        this.button.hide();
+        this.editButton.hide();
 
         return this.component;
     },

@@ -46,14 +46,31 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         });
         Ext.get(id).insertHtml("beforeEnd",'<span class="pimcore_tag_link_text">' + this.getLinkContent() + '</span>');
 
-        var button = new Ext.Button({
+        var editButton = new Ext.Button({
             iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",
             cls: "pimcore_edit_link_button",
             listeners: {
                 "click": this.openEditor.bind(this)
             }
         });
-        button.render(id);
+        editButton.render(id);
+
+        var openButton = new Ext.Button({
+            iconCls: "pimcore_icon_edit",
+            cls: "pimcore_open_link_button",
+            listeners: {
+                "click": function () {
+                    if (this.data && this.data.path) {
+                        if (this.data.linktype == "internal") {
+                            pimcore.helpers.openElement(this.data.path, this.data.internalType);
+                        } else {
+                            window.open(this.data.path, "_blank");
+                        }
+                    }
+                }.bind(this)
+            }
+        });
+        openButton.render(id);
     },
 
     openEditor: function () {

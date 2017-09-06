@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.document.hardlink");
 pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
-    initialize: function(id, options) {
+    initialize: function (id, options) {
 
         this.options = options;
         this.id = intval(id);
@@ -41,7 +41,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
     },
 
-    getSaveData : function () {
+    getSaveData: function () {
         var parameters = {};
 
         parameters.id = this.id;
@@ -70,7 +70,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         this.tab = new Ext.Panel({
             id: tabId,
             title: tabTitle,
-            closable:true,
+            closable: true,
             layout: "border",
             items: [
                 this.getLayoutToolbar(),
@@ -114,7 +114,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         pimcore.layout.refresh();
     },
 
-    getLayoutToolbar : function () {
+    getLayoutToolbar: function () {
 
         if (!this.toolbar) {
 
@@ -168,10 +168,10 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
             buttons.push("-");
 
-            if(this.isAllowed("delete") && !this.data.locked) {
+            if (this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
-            if(this.isAllowed("rename") && !this.data.locked) {
+            if (this.isAllowed("rename") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.rename);
             }
 
@@ -249,9 +249,9 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
-            region:'center',
-            deferredRender:true,
-            enableTabScroll:true,
+            region: 'center',
+            deferredRender: true,
+            enableTabScroll: true,
             border: false,
             items: items,
             activeTab: 0
@@ -273,22 +273,23 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                 name: "sourcePath",
                 fieldLabel: t("source_path"),
                 value: path,
-                fieldCls: "input_drop_target"
+                fieldCls: "input_drop_target",
+                width: 500
             });
 
             pathField.on("render", function (el) {
                 var dd = new Ext.dd.DropZone(el.getEl().dom.parentNode.parentNode, {
                     ddGroup: "element",
 
-                    getTargetFromEvent: function(e) {
+                    getTargetFromEvent: function (e) {
                         return this.getEl();
                     },
 
-                    onNodeOver : function(target, dd, e, data) {
+                    onNodeOver: function (target, dd, e, data) {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     },
 
-                    onNodeDrop : function(target, dd, e, data) {
+                    onNodeDrop: function (target, dd, e, data) {
                         data = data.records[0].data;
                         this.setValue(data.path);
                         return true;
@@ -296,26 +297,48 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                 });
             });
 
+            var openButton = new Ext.Button({
+                iconCls: "pimcore_icon_edit",
+                style: "margin-left: 5px",
+                handler: function() {
+                    if (pathField.getValue()) {
+                        pimcore.helpers.openElement(pathField.getValue(), 'document');
+                    }
+                }.bind(this)
+            });
+
             this.panel = new Ext.form.FormPanel({
                 title: t('settings'),
                 iconCls: "pimcore_icon_settings",
-                autoHeight:true,
+                autoHeight: true,
                 labelWidth: 120,
                 defaultType: 'textfield',
-                defaults: {width:500},
-                bodyStyle:'padding:10px;',
+                bodyStyle: 'padding:10px;',
                 region: "center",
-                items :[pathField,{
-                    xtype:"checkbox",
-                    name: "propertiesFromSource",
-                    fieldLabel: t("properties_from_source"),
-                    checked: this.data.propertiesFromSource
-                },{
-                    xtype:"checkbox",
-                    name: "childsFromSource",
-                    fieldLabel: t("childs_from_source"),
-                    checked: this.data.childsFromSource
-                }]
+                items: [
+                    {
+                        xtype: 'fieldcontainer',
+                        layout: 'hbox',
+                        items: [
+                            pathField,
+                            openButton
+                        ]
+
+                    },
+                    new Ext.toolbar.Spacer({
+                        height: 50
+                    })
+                    , {
+                        xtype: "checkbox",
+                        name: "propertiesFromSource",
+                        fieldLabel: t("properties_from_source"),
+                        checked: this.data.propertiesFromSource
+                    }, {
+                        xtype: "checkbox",
+                        name: "childsFromSource",
+                        fieldLabel: t("childs_from_source"),
+                        checked: this.data.childsFromSource
+                    }]
             });
         }
 
