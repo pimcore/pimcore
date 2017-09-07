@@ -92,9 +92,9 @@ class DataObjectHelperController extends AdminController
 
         if (!$fields && $class) {
             $fields = $class->getFieldDefinitions();
-        } else {
+        } else if (!$class) {
             return $this->json([
-                'availableFields' => [],
+                'availableFields' => []
             ]);
         }
 
