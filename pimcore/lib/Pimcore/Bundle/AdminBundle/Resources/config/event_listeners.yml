@@ -2,50 +2,34 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
+        public: false
 
     #
     # SECURITY
     #
 
-    pimcore_admin.event_listener.bruteforce_protection:
-        class: Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener: ~
 
-    pimcore_admin.event_listener.authentication_double_check:
-        class: Pimcore\Bundle\AdminBundle\EventListener\AdminAuthenticationDoubleCheckListener
+    Pimcore\Bundle\AdminBundle\EventListener\AdminAuthenticationDoubleCheckListener:
         arguments:
             $unauthenticatedRoutes: '%pimcore.admin.unauthenticated_routes%'
-        tags:
-            - { name: kernel.event_subscriber }
 
     #
     # EXCEPTION HANDLING
     #
 
-    pimcore_admin.event_listener.webservice_exception:
-        class: Pimcore\Bundle\AdminBundle\EventListener\AdminExceptionListener
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\AdminBundle\EventListener\AdminExceptionListener: ~
 
     #
     # MISC
     #
 
-    pimcore_admin.event_listener.http_cache:
-        class: Pimcore\Bundle\AdminBundle\EventListener\HttpCacheListener
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\AdminBundle\EventListener\HttpCacheListener: ~
 
-    pimcore_admin.event_listener.user_perspective:
-        class: Pimcore\Bundle\AdminBundle\EventListener\UserPerspectiveListener
+    Pimcore\Bundle\AdminBundle\EventListener\UserPerspectiveListener:
         calls:
             - [setLogger, ['@logger']]
         tags:
-            - { name: kernel.event_subscriber }
             - { name: monolog.logger, channel: admin }
 
-    pimcore_admin.event_listener.usage_statistics:
-        class: Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener: ~
