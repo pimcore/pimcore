@@ -105,6 +105,9 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore_admin.security.bruteforce_protection_handler' => \Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler::class,
         'pimcore_admin.security.user_checker' => \Pimcore\Bundle\AdminBundle\Security\User\UserChecker::class,
         'pimcore_admin.webservice.service' => \Pimcore\Model\Webservice\Service::class,
+
+        // ecommerce
+        'pimcore.ecommerceframework.installer' => \Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer::class,
     ];
 
     public function process(ContainerBuilder $container)
