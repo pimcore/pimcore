@@ -12,7 +12,7 @@ services:
     pimcore_admin.event_listener.authentication_double_check:
         class: Pimcore\Bundle\AdminBundle\EventListener\AdminAuthenticationDoubleCheckListener
         arguments:
-            - '@pimcore.service.request_matcher_factory'
+            - '@Pimcore\Service\RequestMatcherFactory'
             - '@pimcore_admin.security.token_storage_user_resolver'
             - '%pimcore.admin.unauthenticated_routes%'
         tags:

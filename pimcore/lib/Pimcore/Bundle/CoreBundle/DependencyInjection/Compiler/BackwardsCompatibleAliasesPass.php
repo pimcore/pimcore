@@ -46,6 +46,10 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.controller.config.config_normalizer' => \Pimcore\Controller\Config\ConfigNormalizer::class,
         'pimcore.controller.config.controller_data_provider' => \Pimcore\Controller\Config\ControllerDataProvider::class,
 
+        // this block is probably not needed
+        'pimcore.service.context.pimcore_context_guesser' => \Pimcore\Service\Context\PimcoreContextGuesser::class,
+        'pimcore.service.request_matcher_factory' => \Pimcore\Service\RequestMatcherFactory::class,
+
         'pimcore.locale' => \Pimcore\Service\Locale::class,
         'pimcore.locale.intl_formatter' => \Pimcore\Service\IntlFormatterService::class,
 

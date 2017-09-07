@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Http\RequestHelper:
+        public: true
+
+    Pimcore\Http\ResponseHelper:
+        public: true
+
+    Pimcore\Service\RequestMatcherFactory: ~
+
+    Pimcore\Service\Context\PimcoreContextGuesser: ~

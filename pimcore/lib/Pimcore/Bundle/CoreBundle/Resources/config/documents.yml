@@ -53,6 +53,10 @@ services:
     # DOCUMENT RELATED SERVICES
     #
 
+    # TODO inject user?
+    Pimcore\Model\Document\Service:
+        public: true
+
     Pimcore\Document\Renderer\DocumentRenderer:
         arguments:
             $fragmentRenderer: '@fragment.renderer.inline'

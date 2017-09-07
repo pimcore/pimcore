@@ -66,18 +66,6 @@ services:
 
 
     #
-    # REQUEST SPECIFICS
-    #
-
-    pimcore.service.request_matcher_factory:
-        class: Pimcore\Service\RequestMatcherFactory
-
-    pimcore.service.context.pimcore_context_guesser:
-        class: Pimcore\Service\Context\PimcoreContextGuesser
-        arguments: ['@pimcore.service.request_matcher_factory']
-
-
-    #
     # REQUEST RESOLVERS
     #
     # Read/write/normalize defined request attributes (e.g. document)
@@ -85,7 +73,9 @@ services:
 
     pimcore.service.request.pimcore_context_resolver:
         class: Pimcore\Service\Request\PimcoreContextResolver
-        arguments: ['@request_stack', '@pimcore.service.context.pimcore_context_guesser']
+        arguments:
+            - '@request_stack'
+            - '@Pimcore\Service\Context\PimcoreContextGuesser'
 
     pimcore.service.request.site_resolver:
         class: Pimcore\Service\Request\SiteResolver
@@ -135,21 +125,6 @@ services:
         public : true
         arguments:
             $serviceControllers: '%pimcore.service_controllers%'
-
-
-    #
-    # PIMCORE SERVICES
-    #
-
-    Pimcore\Http\RequestHelper:
-        public: true
-
-    Pimcore\Http\ResponseHelper:
-        public: true
-
-    # TODO inject user?
-    Pimcore\Model\Document\Service:
-        public: true
 
 
     #
