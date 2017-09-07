@@ -26,7 +26,7 @@ services:
             - '@request_stack'
             - '@pimcore.service.request.document_resolver'
             - '@pimcore.service.request.site_resolver'
-            - '@pimcore.document_service'
+            - '@Pimcore\Model\Document\Service'
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\LocaleListener: ~
 

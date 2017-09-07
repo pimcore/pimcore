@@ -17,9 +17,9 @@ services:
     # specific document related dynamic routing handling
     Pimcore\Routing\Dynamic\DocumentRouteHandler:
         arguments:
-            - '@pimcore.document_service'
+            - '@Pimcore\Model\Document\Service'
             - '@pimcore.service.request.site_resolver'
-            - '@pimcore.http.request_helper'
+            - '@Pimcore\Http\RequestHelper'
             - '@Pimcore\Controller\Config\ConfigNormalizer'
 
     # alias the request context as public service

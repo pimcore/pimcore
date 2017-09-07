@@ -35,7 +35,7 @@ services:
 
     website_demo.language_switcher:
         class: AppBundle\Templating\LanguageSwitcher
-        arguments: ['@pimcore.document_service']
+        arguments: ['@Pimcore\Model\Document\Service']
 
     #
     # SECURITY/LOGIN SERVICES

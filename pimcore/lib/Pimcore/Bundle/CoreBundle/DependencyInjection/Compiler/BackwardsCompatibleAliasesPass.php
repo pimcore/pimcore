@@ -37,6 +37,10 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.bundle_locator' => \Pimcore\HttpKernel\BundleLocator\BundleLocator::class,
         'pimcore.web_path_resolver' => \Pimcore\Service\WebPathResolver::class,
         'pimcore.tool.assets_installer' => \Pimcore\Tool\AssetsInstaller::class,
+        'pimcore.http.request_helper' => \Pimcore\Http\RequestHelper::class,
+        'pimcore.http.response_helper' => \Pimcore\Http\ResponseHelper::class,
+
+        'pimcore.document_service' => \Pimcore\Model\Document\Service::class,
 
         'pimcore.controller.config.config_normalizer' => \Pimcore\Controller\Config\ConfigNormalizer::class,
         'pimcore.controller.config.controller_data_provider' => \Pimcore\Controller\Config\ControllerDataProvider::class,
