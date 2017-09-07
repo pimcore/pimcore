@@ -35,16 +35,14 @@ services:
     # APPLICATION LOGGER
     #
 
-    pimcore.app_logger:
-      alias: pimcore.app_logger.default
+    pimcore.app_logger: '@pimcore.app_logger.default'
+    pimcore.app_logger.default: '@Pimcore\Log\ApplicationLogger'
 
-    pimcore.app_logger.default:
-      class: Pimcore\Log\ApplicationLogger
-      calls:
-        - [addWriter, ['@pimcore.app_logger.db_writer']]
+    Pimcore\Log\ApplicationLogger:
+        calls:
+            - [addWriter, ['@Pimcore\Log\Handler\ApplicationLoggerDb']]
 
-    pimcore.app_logger.db_writer:
-      class: Pimcore\Log\Handler\ApplicationLoggerDb
+    Pimcore\Log\Handler\ApplicationLoggerDb: ~
 
 
     #

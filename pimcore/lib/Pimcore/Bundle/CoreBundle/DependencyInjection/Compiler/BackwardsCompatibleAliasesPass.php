@@ -53,6 +53,8 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.locale' => \Pimcore\Service\Locale::class,
         'pimcore.locale.intl_formatter' => \Pimcore\Service\IntlFormatterService::class,
 
+        'pimcore.app_logger.db_writer' => \Pimcore\Log\Handler\ApplicationLoggerDb::class,
+
         // request resolvers
         'pimcore.service.request.pimcore_context_resolver' => \Pimcore\Service\Request\PimcoreContextResolver::class,
         'pimcore.service.request.site_resolver' => \Pimcore\Service\Request\SiteResolver::class,
