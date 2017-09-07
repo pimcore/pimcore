@@ -18,6 +18,9 @@ services:
     pimcore.document.tag.block_state_stack: '@Pimcore\Document\Tag\Block\BlockStateStack'
     Pimcore\Document\Tag\Block\BlockStateStack: ~
 
+    # get default tag handler when type hinting against interface
+    Pimcore\Document\Tag\TagHandlerInterface: '@pimcore.document.tag.handler'
+
     # delegating tag handler holds a collection of tag handlers it delegates to (e.g. default and legacy)
     pimcore.document.tag.handler:
         class: Pimcore\Document\Tag\DelegatingTagHandler

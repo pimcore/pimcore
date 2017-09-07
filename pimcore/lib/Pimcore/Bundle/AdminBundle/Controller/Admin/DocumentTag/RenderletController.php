@@ -18,11 +18,14 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DocumentTag;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Document\Tag\TagHandlerInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Service\Locale;
 use Pimcore\Templating\Model\ViewModel;
+use Pimcore\Templating\Renderer\ActionRenderer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,19 +39,24 @@ class RenderletController extends AdminController
      * @Route("/document_tag/renderlet")
      *
      * @param Request $request
+     * @param ActionRenderer $actionRenderer
+     * @param TagHandlerInterface $tagHandler
+     * @param Locale $localeService
      *
      * @return Response
      */
-    public function renderletAction(Request $request)
+    public function renderletAction(
+        Request $request,
+        ActionRenderer $actionRenderer,
+        TagHandlerInterface $tagHandler,
+        Locale $localeService
+    )
     {
         $query      = $request->query->all();
         $attributes = [];
 
         // load element to make sure the request is valid
         $this->loadElement($request);
-
-        $actionRenderer = $this->get('pimcore.templating.action_renderer');
-        $tagHandler     = $this->get('pimcore.document.tag.handler');
 
         $controller = $request->get('controller');
         $action     = $request->get('action');
@@ -82,7 +90,7 @@ class RenderletController extends AdminController
         // setting locale manually here before rendering the action to make sure editables use the right locale - if this
         // is needed in multiple places, move this to the tag handler instead (see #1834)
         if ($attributes['_locale']) {
-            $this->get('pimcore.locale')->setLocale($attributes['_locale']);
+            $localeService->setLocale($attributes['_locale']);
         }
 
         $result = $tagHandler->renderAction(new ViewModel(), $controller, $action, $moduleOrBundle, $attributes, $query);

@@ -34,13 +34,12 @@ class MiscController extends AdminController
     /**
      * @Route("/get-available-modules")
      *
+     * @param ControllerDataProvider $provider
+     *
      * @return JsonResponse
      */
-    public function getAvailableModulesAction()
+    public function getAvailableModulesAction(ControllerDataProvider $provider)
     {
-        // TODO define admin controllers as services and use action injection
-        $provider = $this->get(ControllerDataProvider::class);
-
         // convert to normal array
         $bundles = array_values($provider->getBundles());
 
@@ -59,13 +58,12 @@ class MiscController extends AdminController
      * @Route("/get-available-controllers")
      *
      * @param Request $request
+     * @param ControllerDataProvider $provider
      *
      * @return JsonResponse
      */
-    public function getAvailableControllersAction(Request $request)
+    public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
     {
-        $provider = $this->get(ControllerDataProvider::class);
-
         $bundle      = $request->get('moduleName');
         $controllers = $provider->getControllers($bundle, 'AppBundle');
 
@@ -84,13 +82,12 @@ class MiscController extends AdminController
      * @Route("/get-available-actions")
      *
      * @param Request $request
+     * @param ControllerDataProvider $provider
      *
      * @return JsonResponse
      */
-    public function getAvailableActionsAction(Request $request)
+    public function getAvailableActionsAction(Request $request, ControllerDataProvider $provider)
     {
-        $provider = $this->get(ControllerDataProvider::class);
-
         $bundle = $request->get('moduleName');
         if (empty($bundle)) {
             $bundle = 'AppBundle';
@@ -113,12 +110,12 @@ class MiscController extends AdminController
     /**
      * @Route("/get-available-templates")
      *
+     * @param ControllerDataProvider $provider
+     *
      * @return JsonResponse
      */
-    public function getAvailableTemplatesAction()
+    public function getAvailableTemplatesAction(ControllerDataProvider $provider)
     {
-        $provider = $this->get(ControllerDataProvider::class);
-
         $templates = $provider->getTemplates();
 
         $result = array_map(function ($template) {
