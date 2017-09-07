@@ -349,6 +349,14 @@ class ClassController extends AdminController implements EventedControllerInterf
         }
 
         if ($values['name'] != $class->getName()) {
+
+            $classByName = DataObject\ClassDefinition::getByName($values['name']);
+            if ($classByName && $classByName->getId() != $class->getId()) {
+                throw new \Exception("Class name already exists");
+
+            }
+
+
             $values['name'] = $this->correctClassname($values['name']);
             $class->rename($values['name']);
         }
