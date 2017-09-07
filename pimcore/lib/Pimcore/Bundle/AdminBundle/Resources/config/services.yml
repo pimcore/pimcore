@@ -1,16 +1,21 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
     #
     # SESSION
     #
 
     Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator:
-        arguments: ['%pimcore.admin.session.attribute_bags%']
+        arguments:
+            - '%pimcore.admin.session.attribute_bags%'
         tags:
             - { name: pimcore.session.configurator }
 
     Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler:
-        arguments:
-            - '@session'
+        public: true
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -115,5 +120,5 @@ services:
     # API
     #
 
-    pimcore_admin.webservice.service:
-        class: Pimcore\Model\Webservice\Service
+    Pimcore\Model\Webservice\Service:
+        public: true

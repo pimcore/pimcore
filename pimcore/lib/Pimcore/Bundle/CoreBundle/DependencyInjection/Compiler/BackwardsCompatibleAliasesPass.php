@@ -94,6 +94,9 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.templating.view_helper.device' => \Pimcore\Templating\Helper\Device::class,
         'pimcore.templating.view_helper.cache' => \Pimcore\Templating\Helper\Cache::class,
         'pimcore.templating.view_helper.navigation' => \Pimcore\Templating\Helper\Navigation::class,
+
+        // admin
+        'pimcore_admin.webservice.service' => \Pimcore\Model\Webservice\Service::class,
     ];
 
     public function process(ContainerBuilder $container)

@@ -44,7 +44,7 @@ abstract class AbstractRestController extends AdminController
     {
         parent::setContainer($container);
 
-        $this->service = $container->get('pimcore_admin.webservice.service');
+        $this->service = $container->get(Service::class);
     }
 
     /**
