@@ -26,8 +26,6 @@ services:
     #
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener:
-        arguments:
-            $userLoader: '@pimcore_admin.security.user_loader'
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -95,8 +93,6 @@ services:
     Pimcore\Bundle\CoreBundle\EventListener\ResponseHeaderListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener:
-        arguments:
-            $userLoader: '@pimcore_admin.security.user_loader'
         calls:
             - [setLogger, ['@logger']]
 

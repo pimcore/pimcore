@@ -1,20 +1,21 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
     #
     # SECURITY
     #
 
     pimcore_admin.event_listener.bruteforce_protection:
         class: Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener
-        arguments: ['@pimcore_admin.security.bruteforce_protection_handler']
         tags:
             - { name: kernel.event_subscriber }
 
     pimcore_admin.event_listener.authentication_double_check:
         class: Pimcore\Bundle\AdminBundle\EventListener\AdminAuthenticationDoubleCheckListener
         arguments:
-            - '@Pimcore\Service\RequestMatcherFactory'
-            - '@pimcore_admin.security.token_storage_user_resolver'
-            - '%pimcore.admin.unauthenticated_routes%'
+            $unauthenticatedRoutes: '%pimcore.admin.unauthenticated_routes%'
         tags:
             - { name: kernel.event_subscriber }
 
@@ -33,13 +34,11 @@ services:
 
     pimcore_admin.event_listener.http_cache:
         class: Pimcore\Bundle\AdminBundle\EventListener\HttpCacheListener
-        arguments: ['@pimcore.http.request_helper', '@pimcore.http.response_helper']
         tags:
             - { name: kernel.event_subscriber }
 
     pimcore_admin.event_listener.user_perspective:
         class: Pimcore\Bundle\AdminBundle\EventListener\UserPerspectiveListener
-        arguments: ['@pimcore_admin.security.token_storage_user_resolver']
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -48,6 +47,5 @@ services:
 
     pimcore_admin.event_listener.usage_statistics:
         class: Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener
-        arguments: ['@pimcore_admin.security.token_storage_user_resolver']
         tags:
             - { name: kernel.event_subscriber }

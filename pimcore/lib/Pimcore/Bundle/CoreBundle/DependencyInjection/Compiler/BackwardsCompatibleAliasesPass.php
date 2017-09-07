@@ -96,6 +96,14 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.templating.view_helper.navigation' => \Pimcore\Templating\Helper\Navigation::class,
 
         // admin
+        'pimcore_admin.security.user_provider' => \Pimcore\Bundle\AdminBundle\Security\User\UserProvider::class,
+        'pimcore_admin.security.admin_authenticator' => \Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator::class,
+        'pimcore_admin.security.webservice_authenticator' => \Pimcore\Bundle\AdminBundle\Security\Guard\WebserviceAuthenticator::class,
+        'pimcore_admin.security.logout_success_handler' => \Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler::class,
+        'pimcore_admin.security.token_storage_user_resolver' => \Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver::class,
+        'pimcore_admin.security.user_loader' => \Pimcore\Bundle\AdminBundle\Security\User\UserLoader::class,
+        'pimcore_admin.security.bruteforce_protection_handler' => \Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler::class,
+        'pimcore_admin.security.user_checker' => \Pimcore\Bundle\AdminBundle\Security\User\UserChecker::class,
         'pimcore_admin.webservice.service' => \Pimcore\Model\Webservice\Service::class,
     ];
 

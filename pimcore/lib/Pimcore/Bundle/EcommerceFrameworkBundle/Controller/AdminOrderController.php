@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
@@ -53,7 +54,8 @@ class AdminOrderController extends FrontendController
     public function onKernelController(FilterControllerEvent $event)
     {
         // set language
-        $user = $this->get('pimcore_admin.security.token_storage_user_resolver')->getUser();
+        $user = $this->get(TokenStorageUserResolver::class)->getUser();
+
         if ($user) {
             $this->get('translator')->setLocale($user->getLanguage());
             $event->getRequest()->setLocale($user->getLanguage());

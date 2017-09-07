@@ -1,7 +1,7 @@
 security:
     providers:
         pimcore_admin:
-            id: pimcore_admin.security.user_provider
+            id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
 
     firewalls:
         dev:
@@ -27,11 +27,11 @@ security:
             logout:
                 path:   /admin/logout
                 target: /admin/login
-                success_handler: pimcore_admin.security.logout_success_handler
+                success_handler: Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler
             guard:
-                entry_point: pimcore_admin.security.admin_authenticator
+                entry_point: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
                 authenticators:
-                    - pimcore_admin.security.admin_authenticator
+                    - Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
 
         webservice:
             pattern: ^/webservice
@@ -39,7 +39,7 @@ security:
             provider: pimcore_admin
             guard:
                 authenticators:
-                    - pimcore_admin.security.webservice_authenticator
+                    - Pimcore\Bundle\AdminBundle\Security\Guard\WebserviceAuthenticator
 
     access_control:
         - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }

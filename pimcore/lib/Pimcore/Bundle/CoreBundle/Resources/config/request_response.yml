@@ -26,8 +26,6 @@ services:
     Pimcore\Service\Request\SiteResolver: ~
 
     Pimcore\Service\Request\EditmodeResolver:
-        arguments:
-            $userLoader: '@pimcore_admin.security.user_loader'
         calls:
             - [setLogger, ['@logger']]
         tags:

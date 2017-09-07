@@ -29,7 +29,7 @@ Current configuration for extension with alias "security"
 security:
     providers:
         pimcore_admin:
-            id: pimcore_admin.security.user_provider
+            id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
         demo_cms_provider:
             memory:
                 users:

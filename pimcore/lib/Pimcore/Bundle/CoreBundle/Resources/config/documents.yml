@@ -68,5 +68,3 @@ services:
 
     pimcore.document.tag.naming.migration.strategy.render:
         class: Pimcore\Document\Tag\NamingStrategy\Migration\RenderMigrationStrategy
-        arguments:
-            $userLoader: '@pimcore_admin.security.user_loader'
