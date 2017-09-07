@@ -1,3 +1,7 @@
+imports:
+    # php aliases are only imported if this file is loaded
+    - { resource: templating_php_aliases.yml }
+
 services:
     _defaults:
         autowire: true

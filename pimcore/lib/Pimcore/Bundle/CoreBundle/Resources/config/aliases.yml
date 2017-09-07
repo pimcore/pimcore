@@ -1,9 +1,55 @@
 services:
     _defaults:
-        autowire: true
-        autoconfigure: true
         public: true
 
     # aliases enabling autowiring for type hints to our own implementations
     Pimcore\Db\Connection: '@database_connection'
     Pimcore\Kernel: '@kernel'
+
+    # aliases for backwards compatibility
+    pimcore.cache.runtime: '@Pimcore\Cache\Runtime'
+
+    pimcore.extension.config: '@Pimcore\Extension\Config'
+    pimcore.extension.bundle_manager: '@Pimcore\Extension\Bundle\PimcoreBundleManager'
+
+    pimcore.maintenance.schedule_manager: '@Pimcore\Model\Schedule\Manager\Procedural'
+
+    pimcore.bundle_locator: '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
+    pimcore.web_path_resolver: '@Pimcore\Service\WebPathResolver'
+    pimcore.tool.assets_installer: '@Pimcore\Tool\AssetsInstaller'
+    pimcore.http.request_helper: '@Pimcore\Http\RequestHelper'
+    pimcore.http.response_helper: '@Pimcore\Http\ResponseHelper'
+
+    pimcore.document_service: '@Pimcore\Model\Document\Service'
+    pimcore.document.renderer: '@Pimcore\Document\Renderer\DocumentRenderer'
+
+    pimcore.controller.config.config_normalizer: '@Pimcore\Controller\Config\ConfigNormalizer'
+    pimcore.controller.config.controller_data_provider: '@Pimcore\Controller\Config\ControllerDataProvider'
+
+    # this block is probably not needed as services are only used internally
+    pimcore.service.context.pimcore_context_guesser: '@Pimcore\Service\Context\PimcoreContextGuesser'
+    pimcore.service.request_matcher_factory: '@Pimcore\Service\RequestMatcherFactory'
+
+    pimcore.locale: '@Pimcore\Service\Locale'
+    pimcore.locale.intl_formatter: '@Pimcore\Service\IntlFormatterService'
+
+    pimcore.app_logger.db_writer: '@Pimcore\Log\Handler\ApplicationLoggerDb'
+
+    # request resolvers
+    pimcore.service.request.pimcore_context_resolver: '@Pimcore\Service\Request\PimcoreContextResolver'
+    pimcore.service.request.site_resolver: '@Pimcore\Service\Request\SiteResolver'
+    pimcore.service.request.editmode_resolver: '@Pimcore\Service\Request\EditmodeResolver'
+    pimcore.service.request.document_resolver: '@Pimcore\Service\Request\DocumentResolver'
+    pimcore.service.request.template_resolver: '@Pimcore\Service\Request\TemplateResolver'
+    pimcore.service.request.template_vars_resolver: '@Pimcore\Service\Request\TemplateVarsResolver'
+    pimcore.service.request.view_model_resolver: '@Pimcore\Service\Request\ViewModelResolver'
+    pimcore.service.request.response_header_resolver: '@Pimcore\Service\Request\ResponseHeaderResolver'
+
+    # aliases for event listeners exposing methods (e.g. can be disabled)
+    pimcore.event_listener.workflow_management: '@Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener'
+    pimcore.event_listener.frontend.google_analytics_code: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener'
+    pimcore.event_listener.frontend.cookie_policy_notice: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener'
+    pimcore.event_listener.frontend.google_tag_manager: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener'
+    pimcore.event_listener.frontend.tag_manager: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\TagManagerListener'
+    pimcore.event_listener.frontend.targeting: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\TargetingListener'
+    pimcore.event_listener.frontend.full_page_cache: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener'

@@ -1,6 +1,6 @@
 services:
     _defaults:
-        public: false
+        public: true
         autowire: true
         autoconfigure: true
 
@@ -9,6 +9,7 @@ services:
     #
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator:
+        public: false
         tags:
             - { name: pimcore.session.configurator }
 
@@ -16,8 +17,8 @@ services:
     # INSTALLER
     #
 
+    pimcore.ecommerceframework.installer: '@Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer'
     Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer:
-        public: true
         tags:
             - { name: monolog.logger, channel: pimcore_ecommerce.installer }
 

@@ -59,7 +59,6 @@ class PimcoreCoreBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new BackwardsCompatibleAliasesPass());
         $container->addCompilerPass(new PimcoreContextResolverAwarePass());
         $container->addCompilerPass(new PhpTemplatingPass());
         $container->addCompilerPass(new AreabrickPass());

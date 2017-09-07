@@ -76,7 +76,6 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load('aliases.yml');
         $loader->load('services.yml');
         $loader->load('services_routing.yml');
         $loader->load('extensions.yml');
@@ -89,6 +88,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
         $loader->load('migrations.yml');
+        $loader->load('aliases.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
