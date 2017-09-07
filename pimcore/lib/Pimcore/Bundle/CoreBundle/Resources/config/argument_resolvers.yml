@@ -1,0 +1,21 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+        tags:
+            - { name: controller.argument_value_resolver }
+
+    Pimcore\Controller\ArgumentValueResolver\DocumentValueResolver:
+        arguments: ['@pimcore.service.request.document_resolver']
+
+    Pimcore\Controller\ArgumentValueResolver\ViewModelValueResolver:
+        arguments: ['@pimcore.service.request.view_model_resolver']
+
+    Pimcore\Controller\ArgumentValueResolver\EditmodeValueResolver:
+        arguments: ['@pimcore.service.request.editmode_resolver']
+
+    Pimcore\Controller\ArgumentValueResolver\TemplateVarsValueResolver:
+        arguments: ['@pimcore.service.request.template_vars_resolver']
+
+    Pimcore\Controller\ArgumentValueResolver\WebsiteConfigValueResolver: ~

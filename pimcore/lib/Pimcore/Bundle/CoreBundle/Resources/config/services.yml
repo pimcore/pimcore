@@ -223,43 +223,6 @@ services:
         arguments: ['@request_stack']
 
     #
-    # ARGUMENT RESOLVERS
-    #
-
-    pimcore.argument_resolver.document:
-        class: Pimcore\Controller\ArgumentValueResolver\DocumentValueResolver
-        public: false
-        arguments: ['@pimcore.service.request.document_resolver']
-        tags:
-            - { name: controller.argument_value_resolver }
-
-    pimcore.argument_resolver.view_model:
-        class: Pimcore\Controller\ArgumentValueResolver\ViewModelValueResolver
-        public: false
-        arguments: ['@pimcore.service.request.view_model_resolver']
-        tags:
-            - { name: controller.argument_value_resolver }
-
-    pimcore.argument_resolver.editmode:
-        class: Pimcore\Controller\ArgumentValueResolver\EditmodeValueResolver
-        public: false
-        arguments: ['@pimcore.service.request.editmode_resolver']
-        tags:
-            - { name: controller.argument_value_resolver }
-
-    pimcore.argument_resolver.template_vars:
-        class: Pimcore\Controller\ArgumentValueResolver\TemplateVarsValueResolver
-        public: false
-        arguments: ['@pimcore.service.request.template_vars_resolver']
-        tags:
-            - { name: controller.argument_value_resolver }
-
-    Pimcore\Controller\ArgumentValueResolver\WebsiteConfigValueResolver:
-        public: false
-        tags:
-            - { name: controller.argument_value_resolver }
-
-    #
     # EXTENSIONS
     #
 
