@@ -14,14 +14,16 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class GoogleTagManagerListener extends AbstractFrontendListener
+class GoogleTagManagerListener
 {
     use ResponseInjectionTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var bool

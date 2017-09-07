@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;
@@ -27,9 +28,10 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class ResponseExceptionListener extends AbstractContextAwareListener implements EventSubscriberInterface
+class ResponseExceptionListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var ActionRenderer

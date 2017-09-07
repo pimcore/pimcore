@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Model\Document;
@@ -33,9 +34,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Modifies responses for editmode
  */
-class EditmodeListener extends AbstractFrontendListener implements EventSubscriberInterface
+class EditmodeListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var EditmodeResolver
@@ -67,6 +69,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
     /**
      * @param EditmodeResolver $editmodeResolver
      * @param DocumentResolver $documentResolver
+     * @param UserLoader $userLoader
      * @param PimcoreBundleManager $bundleManager
      */
     public function __construct(

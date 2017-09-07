@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Model\Document\Page;
 use Pimcore\Service\Request\DocumentResolver as DocumentResolverService;
 use Pimcore\Service\Request\PimcoreContextResolver;
@@ -25,8 +26,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Adds Meta Data entries of document to HeadMeta view helper
  */
-class DocumentMetaDataListener extends AbstractFrontendListener implements EventSubscriberInterface
+class DocumentMetaDataListener implements EventSubscriberInterface
 {
+    use PimcoreContextAwareTrait;
+
     /**
      * @var DocumentResolverService
      */

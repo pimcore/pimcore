@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Document\Tag\Block\BlockStateStack;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
@@ -26,9 +27,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Handles block state for sub requests (saves parent state and restores it after request completes)
  */
-class BlockStateListener extends AbstractFrontendListener implements EventSubscriberInterface, LoggerAwareInterface
+class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var BlockStateStack

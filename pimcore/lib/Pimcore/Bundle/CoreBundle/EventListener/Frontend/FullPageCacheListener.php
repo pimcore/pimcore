@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Logger;
 use Pimcore\Service\Request\PimcoreContextResolver;
@@ -22,8 +23,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 
-class FullPageCacheListener extends AbstractFrontendListener
+class FullPageCacheListener
 {
+    use PimcoreContextAwareTrait;
+
     /**
      * @var bool
      */

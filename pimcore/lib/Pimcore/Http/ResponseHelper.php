@@ -14,6 +14,7 @@
 
 namespace Pimcore\Http;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResponseHelper
@@ -47,5 +48,23 @@ class ResponseHelper
         if (!$response->headers->has('Expires') || $force) {
             $response->setExpires(new \DateTime('Tue, 01 Jan 1980 00:00:00 GMT'));
         }
+    }
+
+    /**
+     * @param Response $response
+     *
+     * @return bool
+     */
+    public function isHtmlResponse(Response $response): bool
+    {
+        if ($response instanceof BinaryFileResponse) {
+            return false;
+        }
+
+        if (strpos($response->getContent(), '<html')) {
+            return true;
+        }
+
+        return false;
     }
 }

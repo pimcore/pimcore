@@ -46,8 +46,8 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         PimcoreContextResolver $resolver,
         RequestStack $requestStack
     ) {
-        $this->resolver           = $resolver;
-        $this->requestStack       = $requestStack;
+        $this->resolver     = $resolver;
+        $this->requestStack = $requestStack;
     }
 
     /**

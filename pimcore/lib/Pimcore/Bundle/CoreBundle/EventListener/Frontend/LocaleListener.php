@@ -14,14 +14,16 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class LocaleListener extends AbstractFrontendListener implements EventSubscriberInterface
+class LocaleListener implements EventSubscriberInterface
 {
+    use PimcoreContextAwareTrait;
+
     protected $lastLocale = null;
 
     /**

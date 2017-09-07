@@ -14,15 +14,17 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class CookiePolicyNoticeListener extends AbstractFrontendListener
+class CookiePolicyNoticeListener
 {
     use ResponseInjectionTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var bool

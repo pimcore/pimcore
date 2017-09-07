@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Service\Request\TemplateResolver;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -25,8 +26,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * If a contentTemplate attribute was set on the request (done by router when building a document route), extract the
  * value and set it on the Template annotation. This handles custom template files being configured on documents.
  */
-class ContentTemplateListener extends AbstractFrontendListener implements EventSubscriberInterface
+class ContentTemplateListener implements EventSubscriberInterface
 {
+    use PimcoreContextAwareTrait;
+
     /**
      * @var TemplateResolver
      */

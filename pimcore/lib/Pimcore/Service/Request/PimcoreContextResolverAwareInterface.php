@@ -14,6 +14,9 @@
 
 namespace Pimcore\Service\Request;
 
+/**
+ * @deprecated Not used anymore. Please define PimcoreContextResolver as dependency if you need it on your service.
+ */
 interface PimcoreContextResolverAwareInterface
 {
     /**

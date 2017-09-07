@@ -16,6 +16,9 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\AbstractContextAwareListener;
 
+/**
+ * @deprecated Just use the PimcoreContextAwareTrait if you need to check against pimcore context
+ */
 abstract class AbstractFrontendListener extends AbstractContextAwareListener
 {
 }

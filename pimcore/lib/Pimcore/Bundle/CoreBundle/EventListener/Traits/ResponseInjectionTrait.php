@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,26 +17,33 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Traits;
 
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Pimcore\Http\ResponseHelper;
 use Symfony\Component\HttpFoundation\Response;
 
 trait ResponseInjectionTrait
 {
     /**
+     * @var ResponseHelper
+     */
+    private $responseHelper;
+
+    /**
+     * @required
+     *
+     * @param ResponseHelper $responseHelper
+     */
+    public function setResponseHelper(ResponseHelper $responseHelper)
+    {
+        $this->responseHelper = $responseHelper;
+    }
+
+    /**
      * @param Response $response
      *
      * @return bool
      */
-    protected function isHtmlResponse(Response $response)
+    protected function isHtmlResponse(Response $response): bool
     {
-        if ($response instanceof BinaryFileResponse) {
-            return false;
-        }
-
-        if (strpos($response->getContent(), '<html')) {
-            return true;
-        }
-
-        return false;
+        return $this->responseHelper->isHtmlResponse($response);
     }
 }

@@ -47,6 +47,11 @@ class PimcoreContextResolverAwarePass implements CompilerPassInterface
         foreach ($services as $id => $tags) {
             $definition = $container->getDefinition($id);
 
+            // do not do anything for autowired definitions
+            if ($definition->isAutowired()) {
+                continue;
+            }
+
             if (class_exists($definition->getClass())) {
                 $reflector = new \ReflectionClass($definition->getClass());
 
