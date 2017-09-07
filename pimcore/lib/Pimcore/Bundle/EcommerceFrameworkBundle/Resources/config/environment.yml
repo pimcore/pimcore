@@ -10,6 +10,8 @@ services:
     # Predefined core environment implementations. Options will be set from configuration.
     #
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment: '@pimcore_ecommerce.environment'
+
     Pimcore\Bundle\EcommerceFrameworkBundle\Environment:
         arguments:
             $options: '%pimcore_ecommerce.environment.options%'
