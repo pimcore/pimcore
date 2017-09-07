@@ -20,7 +20,7 @@
 pimcore.registerNS("pimcore.object.helpers.edit");
 pimcore.object.helpers.edit = {
 
-    getRecursiveLayout: function (l, noteditable, context) {
+    getRecursiveLayout: function (l, noteditable, context, skipLayoutChildren, onlyLayoutChildren) {
         if (typeof context === "undefined") {
             context = {};
         }
@@ -122,7 +122,7 @@ pimcore.object.helpers.edit = {
         };
 
         var validKeys = ["xtype","title","layout","icon","items","region","width","height","name","text","html","handler",
-            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle"];
+            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners"];
 
         var tmpItems;
 
@@ -132,7 +132,7 @@ pimcore.object.helpers.edit = {
         }
 
         if (l.datatype == "layout") {
-            if (l.childs && typeof l.childs == "object") {
+            if (skipLayoutChildren !== true && l.childs && typeof l.childs == "object") {
                 if (l.childs.length > 0) {
                     l.items = [];
                     for (var i = 0; i < l.childs.length; i++) {
@@ -146,13 +146,45 @@ pimcore.object.helpers.edit = {
                             childConfig.fieldLabel = l.fieldLabel;
                         }
 
-                        tmpItems = this.getRecursiveLayout(childConfig, noteditable, context);
+
+                        if(l.fieldtype =='tabpanel') {
+                            tmpItems = this.getRecursiveLayout(childConfig, noteditable, context, true);
+                            if(!tmpItems['listeners']) {
+                                tmpItems['listeners'] = {};
+                            }
+                            tmpItems['listeners']['afterrender'] = function (childConfig, panel) {
+                                if (!panel.__tabpanel_initialized) {
+                                    var children = this.getRecursiveLayout(childConfig, noteditable, context, false, true);
+                                    panel.add(children);
+                                    panel.updateLayout();
+
+                                    if (panel.setActiveTab) {
+                                        var activeTab = panel.items.items[0];
+                                        if (activeTab) {
+                                            activeTab.updateLayout();
+                                            panel.setActiveTab(activeTab);
+                                        }
+                                    }
+
+                                    panel.__tabpanel_initialized = true;
+
+
+                                }
+                            }.bind(this, childConfig);
+
+                        } else {
+                            tmpItems = this.getRecursiveLayout(childConfig, noteditable, context);
+                        }
 
                         if (tmpItems) {
                             l.items.push(tmpItems);
                         }
                     }
                 }
+            }
+
+            if(onlyLayoutChildren === true) {
+                return l.items;
             }
 
             var configKeys = Object.keys(l);
@@ -178,7 +210,7 @@ pimcore.object.helpers.edit = {
                 }
             }
 
-            newConfig = Object.extend(xTypeLayoutMapping[l.fieldtype], newConfig);
+            newConfig = Object.extend(xTypeLayoutMapping[l.fieldtype] || {}, newConfig);
             if (typeof newConfig.labelWidth != "undefined") {
                 newConfig = Ext.applyIf(newConfig, {
                     defaults: {
