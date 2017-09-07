@@ -165,11 +165,21 @@ services:
             - '@fragment.renderer.inline'
             - '@Pimcore\Routing\Dynamic\DocumentRouteHandler'
 
+
+    #
+    # HTTP/REST clients
+    #
+
     pimcore.http_client:
         class: \GuzzleHttp\Client
         factory: ['Pimcore\Http\ClientFactory', createHttpClient]
 
     pimcore.rest_client:
-        class: Pimcore\Tool\RestClient
-        arguments: ['@pimcore.http_client']
+        alias: Pimcore\Tool\RestClient
+        public: true
+
+    Pimcore\Tool\RestClient:
+        public: true
+        arguments:
+            - '@pimcore.http_client'
 
