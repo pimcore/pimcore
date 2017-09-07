@@ -30,8 +30,8 @@ services:
         arguments:
             - '@pimcore.area.brick_manager'
             - '@templating'
-            - '@pimcore.bundle_locator'
-            - '@pimcore.web_path_resolver'
+            - '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
+            - '@Pimcore\Service\WebPathResolver'
             - '@pimcore.templating.action_renderer'
             - '@pimcore.http.request_helper'
             - '@translator'

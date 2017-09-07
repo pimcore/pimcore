@@ -1,12 +1,7 @@
 services:
-    pimcore.bundle_locator:
-        class: Pimcore\HttpKernel\BundleLocator\BundleLocator
-        arguments: ['@kernel']
-
-    pimcore.web_path_resolver:
-        class: Pimcore\Service\WebPathResolver
-
-
+    _defaults:
+        autowire: true
+        autoconfigure: true
 
     #
     # CONTROLLERS
@@ -206,10 +201,13 @@ services:
             - '@event_dispatcher'
             - '@router'
 
-
     #
     # PIMCORE SERVICES
     #
+
+    Pimcore\HttpKernel\BundleLocator\BundleLocator: ~
+
+    Pimcore\Service\WebPathResolver: ~
 
     pimcore.composer.package_info:
         class: Pimcore\Composer\PackageInfo
@@ -248,3 +246,4 @@ services:
     pimcore.tool.assets_installer:
         class: Pimcore\Tool\AssetsInstaller
         arguments: ['@kernel', '@pimcore_admin.serializer']
+
