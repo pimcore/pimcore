@@ -317,34 +317,6 @@ services:
             - '@Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator'
             - '@pimcore.routing.dynamic.document_route_handler'
 
-    #
-    # IMPLEMENTATION FACTORIES
-    #
-    # Class maps and prefixes will be set from the extension as they are loaded from config
-    #
-
-    # document tag loader
-    pimcore.implementation_loader.document.tag:
-        class: Pimcore\Model\Document\Tag\Loader\TagLoader
-
-    # object data loader
-    pimcore.implementation_loader.object.data:
-        class: Pimcore\Model\DataObject\ClassDefinition\Loader\DataLoader
-
-    # object layout loader
-    pimcore.implementation_loader.object.layout:
-        class: Pimcore\Model\DataObject\ClassDefinition\Loader\LayoutLoader
-
-    # model factory
-    pimcore.model.factory:
-        class: Pimcore\Model\Factory
-        calls:
-            - [addLoader, ['@pimcore.model.factory.fallback_builder']]
-
-    # fallback model builder for pimcore.model.factory
-    pimcore.model.factory.fallback_builder:
-        class: Pimcore\Model\Factory\FallbackBuilder
-        public: false
 
     #
     # PIMCORE SERVICES

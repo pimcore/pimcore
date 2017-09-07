@@ -36,8 +36,6 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.event_listener.frontend.targeting' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\TargetingListener::class,
         'pimcore.event_listener.frontend.full_page_cache' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener::class,
 
-
-
         // templating helpers
         'pimcore.templating.action_renderer' => \Pimcore\Templating\Renderer\ActionRenderer::class,
         'pimcore.templating.include_renderer' => \Pimcore\Templating\Renderer\IncludeRenderer::class,

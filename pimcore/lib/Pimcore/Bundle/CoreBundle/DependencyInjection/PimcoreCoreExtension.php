@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
+use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
 use Pimcore\Tool\ArrayUtils;
 use Symfony\Component\Config\FileLocator;
@@ -76,6 +77,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
 
         $loader->load('services.yml');
         $loader->load('argument_resolvers.yml');
+        $loader->load('implementation_factories.yml');
         $loader->load('event_listeners.yml');
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
@@ -110,7 +112,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      */
     private function configureModelFactory(ContainerBuilder $container, array $config)
     {
-        $service = $container->getDefinition('pimcore.model.factory');
+        $service = $container->getDefinition(Factory::class);
 
         $classMapLoader = new Definition(ClassMapLoader::class, [$config['models']['class_overrides']]);
         $classMapLoader->setPublic(false);
