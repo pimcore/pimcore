@@ -25,9 +25,7 @@ services:
     # API
     #
 
-    Pimcore\Model\Webservice\Service:
-        public: true
-
+    Pimcore\Model\Webservice\Service: ~
 
     #
     # CONTROLLERS
