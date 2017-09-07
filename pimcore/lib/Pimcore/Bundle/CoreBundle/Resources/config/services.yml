@@ -4,18 +4,6 @@ services:
         autoconfigure: true
 
     #
-    # CONTROLLERS
-    #
-
-    pimcore.controller.config.config_normalizer:
-        class: Pimcore\Controller\Config\ConfigNormalizer
-        arguments: ['@kernel']
-
-    pimcore.controller.config.controller_data_provider:
-        class: Pimcore\Controller\Config\ControllerDataProvider
-        arguments: ['@kernel', '%pimcore.service_controllers%']
-
-    #
     # SESSION
     #
 
@@ -152,7 +140,9 @@ services:
 
     pimcore.service.request.template_resolver:
         class: Pimcore\Service\Request\TemplateResolver
-        arguments: ['@request_stack', '@pimcore.controller.config.config_normalizer']
+        arguments:
+            - '@request_stack'
+            - '@Pimcore\Controller\Config\ConfigNormalizer'
 
     pimcore.service.request.template_vars_resolver:
         class: Pimcore\Service\Request\TemplateVarsResolver
@@ -165,6 +155,18 @@ services:
     pimcore.service.request.response_header_resolver:
         class: Pimcore\Service\Request\ResponseHeaderResolver
         arguments: ['@request_stack']
+
+
+    #
+    # CONTROLLERS
+    #
+
+    Pimcore\Controller\Config\ConfigNormalizer: ~
+
+    Pimcore\Controller\Config\ControllerDataProvider:
+        public : true
+        arguments:
+            $serviceControllers: '%pimcore.service_controllers%'
 
     #
     # EXTENSIONS

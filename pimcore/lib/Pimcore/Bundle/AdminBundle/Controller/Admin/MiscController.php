@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Tool;
@@ -38,7 +39,7 @@ class MiscController extends AdminController
     public function getAvailableModulesAction()
     {
         // TODO define admin controllers as services and use action injection
-        $provider = $this->get('pimcore.controller.config.controller_data_provider');
+        $provider = $this->get(ControllerDataProvider::class);
 
         // convert to normal array
         $bundles = array_values($provider->getBundles());
@@ -63,7 +64,7 @@ class MiscController extends AdminController
      */
     public function getAvailableControllersAction(Request $request)
     {
-        $provider = $this->get('pimcore.controller.config.controller_data_provider');
+        $provider = $this->get(ControllerDataProvider::class);
 
         $bundle      = $request->get('moduleName');
         $controllers = $provider->getControllers($bundle, 'AppBundle');
@@ -88,7 +89,7 @@ class MiscController extends AdminController
      */
     public function getAvailableActionsAction(Request $request)
     {
-        $provider = $this->get('pimcore.controller.config.controller_data_provider');
+        $provider = $this->get(ControllerDataProvider::class);
 
         $bundle = $request->get('moduleName');
         if (empty($bundle)) {
@@ -116,7 +117,7 @@ class MiscController extends AdminController
      */
     public function getAvailableTemplatesAction()
     {
-        $provider = $this->get('pimcore.controller.config.controller_data_provider');
+        $provider = $this->get(ControllerDataProvider::class);
 
         $templates = $provider->getTemplates();
 

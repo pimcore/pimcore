@@ -20,7 +20,7 @@ services:
             - '@pimcore.document_service'
             - '@pimcore.service.request.site_resolver'
             - '@pimcore.http.request_helper'
-            - '@pimcore.controller.config.config_normalizer'
+            - '@Pimcore\Controller\Config\ConfigNormalizer'
 
     # alias the request context as public service
     pimcore.routing.router.request_context:
@@ -31,7 +31,7 @@ services:
     Pimcore\Routing\Staticroute\Router:
         arguments:
             - '@router.request_context'
-            - '@pimcore.controller.config.config_normalizer'
+            - '@Pimcore\Controller\Config\ConfigNormalizer'
         calls:
             - [setLocaleParams, ['%pimcore.routing.static.locale_params%']]
             - [setLogger, ['@logger']]

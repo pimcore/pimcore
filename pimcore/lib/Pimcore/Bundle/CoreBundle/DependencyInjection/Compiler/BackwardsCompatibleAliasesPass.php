@@ -30,6 +30,9 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.bundle_locator' => \Pimcore\HttpKernel\BundleLocator\BundleLocator::class,
         'pimcore.web_path_resolver' => \Pimcore\Service\WebPathResolver::class,
 
+        'pimcore.controller.config.config_normalizer' => \Pimcore\Controller\Config\ConfigNormalizer::class,
+        'pimcore.controller.config.controller_data_provider' => \Pimcore\Controller\Config\ControllerDataProvider::class,
+
         // aliases for event listeners exposing methods (e.g. can be disabled)
         'pimcore.event_listener.workflow_management' => \Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener::class,
         'pimcore.event_listener.frontend.google_analytics_code' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener::class,
