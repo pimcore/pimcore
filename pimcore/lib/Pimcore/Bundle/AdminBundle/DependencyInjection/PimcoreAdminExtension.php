@@ -33,5 +33,6 @@ class PimcoreAdminExtension extends Extension
 
         $loader->load('services.yml');
         $loader->load('event_listeners.yml');
+        $loader->load('serializer.yml');
     }
 }

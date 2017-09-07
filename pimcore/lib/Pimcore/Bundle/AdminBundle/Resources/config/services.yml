@@ -16,30 +16,6 @@ services:
         tags:
             - { name: monolog.logger, channel: pimcore_admin.session }
 
-    #
-    # SERIALIZER
-    #
-    # We use an isolated serializer instance in the admin area to make sure the admin doesn't break when the global
-    # serializer is used and configured in client applications. For example, we don't want to use most of the normalizers
-    # which are preconfigured as we basically only need json_encode with error handling and reference loop detection.
-    #
-    # This allows to use the power and flexibility of the serializer component in both admin and website contexts
-    # without influencing each other.
-    #
-
-    pimcore_admin.serializer:
-        class: Symfony\Component\Serializer\Serializer
-        arguments: ['@?', '@?']
-
-    pimcore_admin.serializer.encoder.json:
-        class: Symfony\Component\Serializer\Encoder\JsonEncoder
-        tags:
-            -  { name: pimcore_admin.serializer.encoder }
-
-    pimcore_admin.serializer.normalizer.reference_loop:
-        class: Pimcore\Bundle\AdminBundle\Serializer\Normalizer\ReferenceLoopNormalizer
-        tags:
-            -  { name: pimcore_admin.serializer.normalizer }
 
     #
     # SECURITY
