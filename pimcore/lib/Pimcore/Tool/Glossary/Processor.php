@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Glossary;
+namespace Pimcore\Tool\Glossary;
 
 use Pimcore\Cache;
 use Pimcore\Http\RequestHelper;

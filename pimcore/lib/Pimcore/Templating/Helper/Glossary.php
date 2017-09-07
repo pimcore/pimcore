@@ -14,18 +14,18 @@
 
 namespace Pimcore\Templating\Helper;
 
-use Pimcore\Glossary\Processor;
+use Pimcore\Tool\Glossary\Processor;
 use Symfony\Component\Templating\Helper\Helper;
 
 class Glossary extends Helper
 {
     /**
-     * @var Processor
+     * @var \Pimcore\Tool\Glossary\Processor
      */
     private $glossaryProcessor;
 
     /**
-     * @param Processor $glossaryProcessor
+     * @param \Pimcore\Tool\Glossary\Processor $glossaryProcessor
      */
     public function __construct(Processor $glossaryProcessor)
     {
