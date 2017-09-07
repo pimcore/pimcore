@@ -33,6 +33,7 @@ services:
     # MISC EXTENSION RELATED SERVICES
     #
 
+    Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface: '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
     Pimcore\HttpKernel\BundleLocator\BundleLocator: ~
 
     Pimcore\Service\WebPathResolver: ~

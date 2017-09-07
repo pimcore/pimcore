@@ -102,8 +102,7 @@ services:
     Pimcore\Templating\Helper\Navigation:
         lazy: true
         arguments:
-            - '@Pimcore\Navigation\Builder'
-            - '@pimcore.templating.navigation.renderer_locator'
+            $rendererLocator: '@pimcore.templating.navigation.renderer_locator'
         tags:
             - { name: templating.helper, alias: navigation }
 

@@ -83,6 +83,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      * @param WebPathResolver $webPathResolver
      * @param ActionRenderer $actionRenderer
      * @param RequestHelper $requestHelper
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,

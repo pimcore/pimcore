@@ -28,13 +28,7 @@ services:
     Pimcore\Document\Tag\TagHandler:
         public: false
         arguments:
-            - '@pimcore.area.brick_manager'
-            - '@templating'
-            - '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
-            - '@Pimcore\Service\WebPathResolver'
-            - '@pimcore.templating.action_renderer'
-            - '@pimcore.http.request_helper'
-            - '@translator'
+            $templating: '@templating'
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -46,6 +40,7 @@ services:
     #
 
     pimcore.area.brick_manager: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+    Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
     Pimcore\Extension\Document\Areabrick\AreabrickManager: ~
 
 
@@ -69,14 +64,9 @@ services:
     pimcore.document.tag.naming.migration.strategy.analyze:
         class: Pimcore\Document\Tag\NamingStrategy\Migration\AnalyzeMigrationStrategy
         arguments:
-            - '@database_connection'
+            $db: '@database_connection'
 
     pimcore.document.tag.naming.migration.strategy.render:
         class: Pimcore\Document\Tag\NamingStrategy\Migration\RenderMigrationStrategy
         arguments:
-            - '@event_dispatcher'
-            - '@request_stack'
-            - '@Pimcore\Service\Request\EditmodeResolver'
-            - '@pimcore_admin.security.user_loader'
-            - '@Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator'
-            - '@Pimcore\Routing\Dynamic\DocumentRouteHandler'
+            $userLoader: '@pimcore_admin.security.user_loader'

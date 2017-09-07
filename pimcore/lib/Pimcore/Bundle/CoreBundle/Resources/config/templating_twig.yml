@@ -19,7 +19,7 @@ services:
 
     Pimcore\Twig\Extension\TemplatingHelperExtension:
         arguments:
-            $phpEngine: '@pimcore.templating.engine.php'
+            $phpEngine: '@templating.engine.php'
 
     Pimcore\Twig\Extension\NavigationExtension: ~
 

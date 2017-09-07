@@ -43,7 +43,6 @@ services:
 
     # handles block state (current block, current index) for sub-requests
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\BlockStateListener:
-        arguments: ['@pimcore.document.tag.block_state_stack']
         calls:
             - [setLogger, ['@logger']]
 
@@ -84,8 +83,7 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\ResponseExceptionListener:
         arguments:
-            - '@Pimcore\Templating\Renderer\ActionRenderer'
-            - '%pimcore.response_exception_listener.render_error_document%'
+            $renderErrorPage: '%pimcore.response_exception_listener.render_error_document%'
         calls:
             - [setLogger, ['@logger']]
 
@@ -116,7 +114,6 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener:
         public: true
-        arguments: ['@kernel']
         calls:
             - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-template.html']]
             - [setTranslator, ['@translator']]
@@ -146,12 +143,9 @@ services:
             - { name: kernel.event_listener, event: kernel.response, method: stopPropagationCheck, priority: 100 }
 
     Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
-        arguments:
-            - '@kernel'
         calls:
             - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/maintenance.html']]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener: ~
-

@@ -18,14 +18,14 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class MaintenancePageListener
 {
     use ResponseInjectionTrait;
 
     /**
-     * @var Kernel
+     * @var KernelInterface
      */
     protected $kernel;
 
@@ -35,11 +35,9 @@ class MaintenancePageListener
     protected $templateCode = null;
 
     /**
-     * CookiePolicyNotice constructor.
-     *
-     * @param Kernel $kernel
+     * @param KernelInterface $kernel
      */
-    public function __construct(Kernel $kernel)
+    public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
     }
