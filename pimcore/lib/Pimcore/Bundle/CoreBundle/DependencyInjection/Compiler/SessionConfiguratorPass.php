@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
+use Pimcore\Session\SessionConfigurator;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -30,7 +31,7 @@ class SessionConfiguratorPass implements CompilerPassInterface
             return;
         }
 
-        if (!$container->hasDefinition('pimcore.session.configurator')) {
+        if (!$container->hasDefinition(SessionConfigurator::class)) {
             return;
         }
 
@@ -42,7 +43,7 @@ class SessionConfiguratorPass implements CompilerPassInterface
             throw new InvalidConfigurationException('The session service already defines a configurator.');
         }
 
-        $session->setConfigurator([new Reference('pimcore.session.configurator'), 'configure']);
+        $session->setConfigurator([new Reference(SessionConfigurator::class), 'configure']);
 
         $this->addTaggedConfigurators($container);
     }
@@ -54,7 +55,7 @@ class SessionConfiguratorPass implements CompilerPassInterface
      */
     protected function addTaggedConfigurators(ContainerBuilder $container)
     {
-        $configurator   = $container->getDefinition('pimcore.session.configurator');
+        $configurator   = $container->getDefinition(SessionConfigurator::class);
         $taggedServices = $container->findTaggedServiceIds('pimcore.session.configurator');
 
         foreach ($taggedServices as $id => $tags) {

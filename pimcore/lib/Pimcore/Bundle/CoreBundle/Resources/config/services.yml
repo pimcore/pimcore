@@ -27,8 +27,8 @@ services:
     # Sessions need to be configured (e.g. adding custom attribute bags) before they are started. The configurator handles
     # a collection of configurator instances which can be added via addConfigurator or by using the pimcore.session.configurator
     # DI tag. See the SessionConfiguratorPass for details.
-    pimcore.session.configurator:
-        class: Pimcore\Session\SessionConfigurator
+    Pimcore\Session\SessionConfigurator:
+        public: false
 
     #
     # SECURITY
