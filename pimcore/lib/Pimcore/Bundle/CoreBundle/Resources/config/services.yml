@@ -50,19 +50,16 @@ services:
     # INFRASTRUCTURE
     #
 
-    # support autowiring on pimcore connection class by creating an alias
-    Pimcore\Db\Connection: '@database_connection'
-    Pimcore\Kernel: '@kernel'
-
-    pimcore.maintenance.schedule_manager:
-        class: Pimcore\Model\Schedule\Manager\Procedural
-        arguments: ['maintenance.pid', '@logger']
+    Pimcore\Model\Schedule\Manager\Procedural:
+        public: true
+        arguments:
+            $pidFileName: 'maintenance.pid'
         tags:
             - { name: monolog.logger, channel: pimcore.maintenance }
 
     # creates needed pimcore directories
-    pimcore.cache_warmer.mkdir:
-        class: Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer
+    Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer:
+        public: false
         tags:
             - { name: kernel.cache_warmer }
 

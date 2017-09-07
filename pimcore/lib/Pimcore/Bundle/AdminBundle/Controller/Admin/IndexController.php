@@ -19,6 +19,7 @@ use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Google;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Schedule\Manager\Procedural;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
@@ -227,7 +228,7 @@ class IndexController extends AdminController
         // check maintenance
         $maintenance_active = false;
 
-        $manager = $this->get('pimcore.maintenance.schedule_manager');
+        $manager = $this->get(Procedural::class);
 
         $lastExecution = $manager->getLastExecution();
         if ($lastExecution) {

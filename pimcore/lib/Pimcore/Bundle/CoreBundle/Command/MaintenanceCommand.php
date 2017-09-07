@@ -77,8 +77,7 @@ class MaintenanceCommand extends AbstractCommand
         $validJobs    = $this->getArrayOptionValue($input, 'job');
         $excludedJobs = $this->getArrayOptionValue($input, 'excludedJobs');
 
-        // create manager
-        $manager = $this->getContainer()->get('pimcore.maintenance.schedule_manager');
+        $manager = $this->getContainer()->get(Schedule\Manager\Procedural::class);
         $manager->setValidJobs($validJobs);
         $manager->setExcludedJobs($excludedJobs);
         $manager->setForce((bool) $input->getOption('force'));

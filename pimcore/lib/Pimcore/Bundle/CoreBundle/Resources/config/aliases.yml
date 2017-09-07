@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    # aliases enabling autowiring for type hints to our own implementations
+    Pimcore\Db\Connection: '@database_connection'
+    Pimcore\Kernel: '@kernel'

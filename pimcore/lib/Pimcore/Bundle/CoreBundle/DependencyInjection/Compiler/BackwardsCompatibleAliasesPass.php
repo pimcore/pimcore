@@ -30,6 +30,8 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.extension.config' => \Pimcore\Extension\Config::class,
         'pimcore.extension.bundle_manager' => \Pimcore\Extension\Bundle\PimcoreBundleManager::class,
 
+        'pimcore.maintenance.schedule_manager' => \Pimcore\Model\Schedule\Manager\Procedural::class,
+
         'pimcore.bundle_locator' => \Pimcore\HttpKernel\BundleLocator\BundleLocator::class,
         'pimcore.web_path_resolver' => \Pimcore\Service\WebPathResolver::class,
         'pimcore.tool.assets_installer' => \Pimcore\Tool\AssetsInstaller::class,
