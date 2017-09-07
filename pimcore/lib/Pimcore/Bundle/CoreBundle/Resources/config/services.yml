@@ -6,58 +6,7 @@ services:
     pimcore.web_path_resolver:
         class: Pimcore\Service\WebPathResolver
 
-    #
-    # ROUTING
-    #
 
-    # route provider for the CMF dynamic router
-    pimcore.routing.dynamic.route_provider:
-        class: Pimcore\Routing\DynamicRouteProvider
-        arguments: ['@pimcore.service.request.site_resolver']
-        calls:
-            - [addHandler, ['@pimcore.routing.dynamic.document_route_handler']]
-
-    # specific document related dynamic routing handling
-    pimcore.routing.dynamic.document_route_handler:
-        class: Pimcore\Routing\Dynamic\DocumentRouteHandler
-        arguments:
-            - '@pimcore.document_service'
-            - '@pimcore.service.request.site_resolver'
-            - '@pimcore.http.request_helper'
-            - '@pimcore.controller.config.config_normalizer'
-
-    # alias the request context as public service
-    pimcore.routing.router.request_context:
-        alias: router.request_context
-        public: true
-
-    # dedicated router for static routes
-    pimcore.routing.router.staticroute:
-        class: Pimcore\Routing\Staticroute\Router
-        arguments:
-            - '@router.request_context'
-            - '@pimcore.controller.config.config_normalizer'
-        calls:
-            - [setLocaleParams, ['%pimcore.routing.static.locale_params%']]
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: router, priority: 100 }
-            - { name: monolog.logger, channel: routing }
-
-    # routing loader for bundle routing auto loading
-    pimcore.routing.loader.bundle_routes:
-        class: Pimcore\Routing\Loader\BundleRoutingLoader
-        arguments: ['@pimcore.bundle_config_locator']
-        tags:
-            - { name: routing.loader }
-
-    # redirect handler used to handle redirects before/after routing
-    pimcore.routing.redirect_handler:
-        class: Pimcore\Routing\RedirectHandler
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: routing }
 
     #
     # CONTROLLERS
@@ -315,7 +264,7 @@ services:
             - '@pimcore.service.request.editmode_resolver'
             - '@pimcore_admin.security.user_loader'
             - '@Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator'
-            - '@pimcore.routing.dynamic.document_route_handler'
+            - '@Pimcore\Routing\Dynamic\DocumentRouteHandler'
 
 
     #
@@ -346,7 +295,7 @@ services:
             - '@pimcore.http.request_helper'
             - '@pimcore.templating.action_renderer'
             - '@fragment.renderer.inline'
-            - '@pimcore.routing.dynamic.document_route_handler'
+            - '@Pimcore\Routing\Dynamic\DocumentRouteHandler'
 
     pimcore.http_client:
         class: \GuzzleHttp\Client

@@ -11,7 +11,7 @@ services:
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\FrontendRoutingListener:
         arguments:
             - '@pimcore.http.request_helper'
-            - '@pimcore.routing.redirect_handler'
+            - '@Pimcore\Routing\RedirectHandler'
             - '@pimcore.service.request.site_resolver'
 
     Pimcore\Bundle\CoreBundle\EventListener\PimcoreContextListener:

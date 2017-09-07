@@ -67,7 +67,7 @@ cmf_routing:
             router.default:             300
             cmf_routing.dynamic_router: 200
     dynamic:
-        route_provider_service_id: pimcore.routing.dynamic.route_provider
+        route_provider_service_id: Pimcore\Routing\DynamicRouteProvider
 
 # Pimcore
 pimcore:
