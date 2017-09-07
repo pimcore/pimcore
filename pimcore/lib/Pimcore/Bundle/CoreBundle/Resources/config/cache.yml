@@ -1,4 +1,21 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # RUNTIME CACHE
+    #
+
+    Pimcore\Cache\Runtime:
+        public: true
+        synthetic: true
+
+
+    #
+    # PIMCORE CACHE
+    #
+
     # the actual core handler which is used from Pimcore\Cache
     # the pimcore.cache.core.pool service is defined by config
     # and set in PimcoreExtension

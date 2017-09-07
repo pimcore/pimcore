@@ -27,6 +27,8 @@ use Symfony\Component\DependencyInjection\Exception\LogicException;
 class BackwardsCompatibleAliasesPass implements CompilerPassInterface
 {
     private $mapping = [
+        'pimcore.cache.runtime' => \Pimcore\Cache\Runtime::class,
+
         'pimcore.extension.config' => \Pimcore\Extension\Config::class,
         'pimcore.extension.bundle_manager' => \Pimcore\Extension\Bundle\PimcoreBundleManager::class,
 

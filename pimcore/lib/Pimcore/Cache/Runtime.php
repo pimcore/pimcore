@@ -16,7 +16,7 @@ namespace Pimcore\Cache;
 
 final class Runtime extends \ArrayObject
 {
-    const SERVICE_ID = 'pimcore.cache.runtime';
+    const SERVICE_ID = __CLASS__;
 
     protected static $tempInstance;
 

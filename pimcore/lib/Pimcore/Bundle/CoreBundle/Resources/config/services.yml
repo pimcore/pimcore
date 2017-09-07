@@ -64,14 +64,6 @@ services:
             - { name: kernel.cache_warmer }
 
     #
-    # RUNTIME CACHE
-    #
-
-    pimcore.cache.runtime:
-      class: Pimcore\Cache\Runtime
-      synthetic: true
-
-    #
     # REQUEST SPECIFICS
     #
 
