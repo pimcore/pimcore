@@ -151,14 +151,6 @@ services:
     Pimcore\Model\Document\Service:
         public: true
 
-    pimcore.document.renderer:
-        class: Pimcore\Document\Renderer\DocumentRenderer
-        arguments:
-            - '@pimcore.http.request_helper'
-            - '@pimcore.templating.action_renderer'
-            - '@fragment.renderer.inline'
-            - '@Pimcore\Routing\Dynamic\DocumentRouteHandler'
-
 
     #
     # HTTP/REST clients

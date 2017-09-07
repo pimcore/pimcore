@@ -46,11 +46,21 @@ services:
     #
 
     pimcore.area.brick_manager: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
-    Pimcore\Extension\Document\Areabrick\AreabrickManager:
-        arguments: ['@pimcore.extension.config', '@service_container']
+    Pimcore\Extension\Document\Areabrick\AreabrickManager: ~
 
 
+    #
+    # DOCUMENT RELATED SERVICES
+    #
+
+    Pimcore\Document\Renderer\DocumentRenderer:
+        arguments:
+            $fragmentRenderer: '@fragment.renderer.inline'
+
+
+    #
     # DOCUMENT TAG MIGRATION
+    #
 
     pimcore.document.tag.naming.migration.strategy.analyze:
         class: Pimcore\Document\Tag\NamingStrategy\Migration\AnalyzeMigrationStrategy

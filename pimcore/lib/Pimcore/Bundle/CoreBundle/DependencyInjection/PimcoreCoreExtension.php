@@ -82,7 +82,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $loader->load('l10n.yml');
         $loader->load('argument_resolvers.yml');
         $loader->load('implementation_factories.yml');
-        $loader->load('document_tags.yml');
+        $loader->load('documents.yml');
         $loader->load('event_listeners.yml');
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
