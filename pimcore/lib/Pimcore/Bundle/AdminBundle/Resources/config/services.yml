@@ -27,3 +27,14 @@ services:
 
     Pimcore\Model\Webservice\Service:
         public: true
+
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\AdminBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']

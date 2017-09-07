@@ -67,6 +67,12 @@ services:
     # CONTROLLERS
     #
 
+    # auto-register all controllers as services
+    Pimcore\Bundle\CoreBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
     Pimcore\Controller\Config\ConfigNormalizer: ~
 
     Pimcore\Controller\Config\ControllerDataProvider:

@@ -20,3 +20,13 @@ services:
         public: true
         tags:
             - { name: monolog.logger, channel: pimcore_ecommerce.installer }
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\EcommerceFrameworkBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
