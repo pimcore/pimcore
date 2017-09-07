@@ -14,13 +14,13 @@
 
 namespace Pimcore\Templating\Helper;
 
-use Pimcore\Translation\Translator;
 use Symfony\Component\Templating\Helper\Helper;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class Translate extends Helper
 {
     /**
-     * @var \Pimcore\Translation\Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
@@ -29,7 +29,7 @@ class Translate extends Helper
      */
     protected $domain;
 
-    public function __construct(Translator $translator)
+    public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }

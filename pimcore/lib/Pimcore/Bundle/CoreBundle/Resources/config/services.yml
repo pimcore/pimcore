@@ -30,31 +30,6 @@ services:
         arguments: ['@pimcore.security.encoder_factory.inner', '@?']
         public: false
 
-    #
-    # TRANSLATOR
-    #
-
-    pimcore.translator:
-      class: Pimcore\Translation\Translator
-      decorates: translator
-      arguments: ['@pimcore.translator.inner']
-      calls:
-        - [setKernel, ['@kernel']]
-        - [setAdminPath, ['%pimcore.admin.translations.path%']]
-
-    #
-    # LOCALE
-    #
-
-    pimcore.locale:
-      class: Pimcore\Service\Locale
-      arguments: ['@request_stack', '@pimcore.translator']
-
-    # Formatting service for dates, times and numbers
-    pimcore.locale.intl_formatter:
-      class: Pimcore\Service\IntlFormatterService
-      arguments: ['@pimcore.locale']
-
 
     #
     # APPLICATION LOGGER
