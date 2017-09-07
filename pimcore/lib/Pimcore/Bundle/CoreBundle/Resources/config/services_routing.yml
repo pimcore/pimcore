@@ -41,7 +41,6 @@ services:
 
     # routing loader for bundle routing auto loading
     Pimcore\Routing\Loader\BundleRoutingLoader:
-        arguments: ['@pimcore.bundle_config_locator']
         tags:
             - { name: routing.loader }
 

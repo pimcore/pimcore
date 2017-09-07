@@ -25,6 +25,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Routing\RouteReferenceInterface;
+use Pimcore\Tool\AssetsInstaller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
@@ -200,7 +201,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
      */
     private function installAssets(): array
     {
-        $assetsInstaller = $this->get('pimcore.tool.assets_installer');
+        $assetsInstaller = $this->get(AssetsInstaller::class);
 
         try {
             $installProcess = $assetsInstaller->install();

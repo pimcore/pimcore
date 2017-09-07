@@ -27,8 +27,12 @@ use Symfony\Component\DependencyInjection\Exception\LogicException;
 class BackwardsCompatibleAliasesPass implements CompilerPassInterface
 {
     private $mapping = [
+        'pimcore.extension.config' => \Pimcore\Extension\Config::class,
+        'pimcore.extension.bundle_manager' => \Pimcore\Extension\Bundle\PimcoreBundleManager::class,
+
         'pimcore.bundle_locator' => \Pimcore\HttpKernel\BundleLocator\BundleLocator::class,
         'pimcore.web_path_resolver' => \Pimcore\Service\WebPathResolver::class,
+        'pimcore.tool.assets_installer' => \Pimcore\Tool\AssetsInstaller::class,
 
         'pimcore.controller.config.config_normalizer' => \Pimcore\Controller\Config\ConfigNormalizer::class,
         'pimcore.controller.config.controller_data_provider' => \Pimcore\Controller\Config\ControllerDataProvider::class,

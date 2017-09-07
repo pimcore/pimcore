@@ -77,6 +77,7 @@ services:
 
     # support autowiring on pimcore connection class by creating an alias
     Pimcore\Db\Connection: '@database_connection'
+    Pimcore\Kernel: '@kernel'
 
     pimcore.maintenance.schedule_manager:
         class: Pimcore\Model\Schedule\Manager\Procedural
@@ -168,55 +169,10 @@ services:
         arguments:
             $serviceControllers: '%pimcore.service_controllers%'
 
-    #
-    # EXTENSIONS
-    #
-
-    # extension manager config will be built on kernel boot and injected
-    # into the container at runtime
-    pimcore.extension.config:
-        class: Pimcore\Extension\Config
-        synthetic: true
-
-
-    #
-    # PIMCORE BUNDLES
-    #
-
-    pimcore.extension.bundle_locator:
-        class: Pimcore\Extension\Bundle\PimcoreBundleLocator
-        arguments:
-            - '@pimcore.composer.package_info'
-            - '%pimcore.extensions.bundles.search_paths%'
-            - '%pimcore.extensions.bundles.handle_composer%'
-
-    pimcore.extension.bundle.state_config:
-        class: Pimcore\Extension\Bundle\Config\StateConfig
-        arguments: ['@pimcore.extension.config']
-
-    pimcore.extension.bundle_manager:
-        class: Pimcore\Extension\Bundle\PimcoreBundleManager
-        arguments:
-            - '@pimcore.extension.bundle.state_config'
-            - '@pimcore.extension.bundle_locator'
-            - '@kernel'
-            - '@event_dispatcher'
-            - '@router'
 
     #
     # PIMCORE SERVICES
     #
-
-    Pimcore\HttpKernel\BundleLocator\BundleLocator: ~
-
-    Pimcore\Service\WebPathResolver: ~
-
-    pimcore.composer.package_info:
-        class: Pimcore\Composer\PackageInfo
-
-    pimcore.bundle_config_locator:
-        class: Pimcore\Config\BundleConfigLocator
-        arguments: ['@kernel']
 
     pimcore.http.request_helper:
         class: Pimcore\Http\RequestHelper
@@ -244,8 +200,4 @@ services:
     pimcore.rest_client:
         class: Pimcore\Tool\RestClient
         arguments: ['@pimcore.http_client']
-
-    pimcore.tool.assets_installer:
-        class: Pimcore\Tool\AssetsInstaller
-        arguments: ['@kernel', '@pimcore_admin.serializer']
 
