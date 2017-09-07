@@ -10,17 +10,11 @@ services:
 
     # route provider for the CMF dynamic router
     Pimcore\Routing\DynamicRouteProvider:
-        arguments: ['@pimcore.service.request.site_resolver']
         calls:
             - [addHandler, ['@Pimcore\Routing\Dynamic\DocumentRouteHandler']]
 
     # specific document related dynamic routing handling
-    Pimcore\Routing\Dynamic\DocumentRouteHandler:
-        arguments:
-            - '@Pimcore\Model\Document\Service'
-            - '@pimcore.service.request.site_resolver'
-            - '@Pimcore\Http\RequestHelper'
-            - '@Pimcore\Controller\Config\ConfigNormalizer'
+    Pimcore\Routing\Dynamic\DocumentRouteHandler: ~
 
     # alias the request context as public service
     pimcore.routing.router.request_context:

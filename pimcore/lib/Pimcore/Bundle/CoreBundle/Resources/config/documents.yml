@@ -76,7 +76,7 @@ services:
         arguments:
             - '@event_dispatcher'
             - '@request_stack'
-            - '@pimcore.service.request.editmode_resolver'
+            - '@Pimcore\Service\Request\EditmodeResolver'
             - '@pimcore_admin.security.user_loader'
             - '@Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator'
             - '@Pimcore\Routing\Dynamic\DocumentRouteHandler'

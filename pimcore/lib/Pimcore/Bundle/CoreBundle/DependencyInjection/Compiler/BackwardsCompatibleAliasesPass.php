@@ -53,6 +53,16 @@ class BackwardsCompatibleAliasesPass implements CompilerPassInterface
         'pimcore.locale' => \Pimcore\Service\Locale::class,
         'pimcore.locale.intl_formatter' => \Pimcore\Service\IntlFormatterService::class,
 
+        // request resolvers
+        'pimcore.service.request.pimcore_context_resolver' => \Pimcore\Service\Request\PimcoreContextResolver::class,
+        'pimcore.service.request.site_resolver' => \Pimcore\Service\Request\SiteResolver::class,
+        'pimcore.service.request.editmode_resolver' => \Pimcore\Service\Request\EditmodeResolver::class,
+        'pimcore.service.request.document_resolver' => \Pimcore\Service\Request\DocumentResolver::class,
+        'pimcore.service.request.template_resolver' => \Pimcore\Service\Request\TemplateResolver::class,
+        'pimcore.service.request.template_vars_resolver' => \Pimcore\Service\Request\TemplateVarsResolver::class,
+        'pimcore.service.request.view_model_resolver' => \Pimcore\Service\Request\ViewModelResolver::class,
+        'pimcore.service.request.response_header_resolver' => \Pimcore\Service\Request\ResponseHeaderResolver::class,
+
         // aliases for event listeners exposing methods (e.g. can be disabled)
         'pimcore.event_listener.workflow_management' => \Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener::class,
         'pimcore.event_listener.frontend.google_analytics_code' => \Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener::class,

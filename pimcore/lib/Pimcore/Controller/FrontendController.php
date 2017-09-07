@@ -16,6 +16,10 @@ namespace Pimcore\Controller;
 
 use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Model\Document;
+use Pimcore\Service\Request\DocumentResolver;
+use Pimcore\Service\Request\EditmodeResolver;
+use Pimcore\Service\Request\ResponseHeaderResolver;
+use Pimcore\Service\Request\ViewModelResolver;
 use Pimcore\Templating\Model\ViewModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,15 +44,15 @@ abstract class FrontendController extends Controller implements EventedControlle
     public function __get($name)
     {
         if ('view' === $name) {
-            return $this->get('pimcore.service.request.view_model_resolver')->getViewModel();
+            return $this->get(ViewModelResolver::class)->getViewModel();
         }
 
         if ('document' === $name) {
-            return $this->get('pimcore.service.request.document_resolver')->getDocument();
+            return $this->get(DocumentResolver::class)->getDocument();
         }
 
         if ('editmode' === $name) {
-            return $this->get('pimcore.service.request.editmode_resolver')->isEditmode();
+            return $this->get(EditmodeResolver::class)->isEditmode();
         }
 
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
@@ -130,7 +134,7 @@ abstract class FrontendController extends Controller implements EventedControlle
             $request = $this->get('request_stack')->getCurrentRequest();
         }
 
-        $this->get('pimcore.service.request.response_header_resolver')->addResponseHeader($request, $key, $values, $replace);
+        $this->get(ResponseHeaderResolver::class)->addResponseHeader($request, $key, $values, $replace);
     }
 
     /**
@@ -165,7 +169,7 @@ abstract class FrontendController extends Controller implements EventedControlle
      */
     public function renderTemplate($view, array $parameters = [], Response $response = null)
     {
-        $viewModel = $this->get('pimcore.service.request.view_model_resolver')->getViewModel();
+        $viewModel  = $this->get(ViewModelResolver::class)->getViewModel();
         $parameters = array_merge($viewModel->getAllParameters(), $parameters);
 
         return $this->render($view, $parameters, $response);

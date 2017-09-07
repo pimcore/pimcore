@@ -2,14 +2,46 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
+        public: true
+
+    Pimcore\Http\RequestHelper: ~
+
+    Pimcore\Http\ResponseHelper: ~
+
+    Pimcore\Service\RequestMatcherFactory:
         public: false
 
-    Pimcore\Http\RequestHelper:
-        public: true
+    Pimcore\Service\Context\PimcoreContextGuesser:
+        public: false
 
-    Pimcore\Http\ResponseHelper:
-        public: true
 
-    Pimcore\Service\RequestMatcherFactory: ~
+    #
+    # REQUEST RESOLVERS
+    #
+    # Read/write/normalize defined request attributes (e.g. document)
+    #
 
-    Pimcore\Service\Context\PimcoreContextGuesser: ~
+    Pimcore\Service\Request\PimcoreContextResolver: ~
+
+    Pimcore\Service\Request\SiteResolver: ~
+
+    Pimcore\Service\Request\EditmodeResolver:
+        arguments:
+            $userLoader: '@pimcore_admin.security.user_loader'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: init }
+            - { name: pimcore.templating.vars_provider }
+
+    Pimcore\Service\Request\DocumentResolver:
+        tags:
+            - { name: pimcore.templating.vars_provider }
+
+    Pimcore\Service\Request\TemplateResolver: ~
+
+    Pimcore\Service\Request\TemplateVarsResolver: ~
+
+    Pimcore\Service\Request\ViewModelResolver: ~
+
+    Pimcore\Service\Request\ResponseHeaderResolver: ~

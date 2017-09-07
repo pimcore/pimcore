@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
+use Pimcore\Service\Request\TemplateVarsResolver;
 use Pimcore\Templating\Vars\TemplateVarsProviderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -29,7 +30,7 @@ class TemplateVarsProviderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $definition     = $container->getDefinition('pimcore.service.request.template_vars_resolver');
+        $definition     = $container->getDefinition(TemplateVarsResolver::class);
         $taggedServices = $container->findTaggedServiceIds('pimcore.templating.vars_provider');
 
         foreach ($taggedServices as $id => $tags) {

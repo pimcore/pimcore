@@ -66,56 +66,6 @@ services:
 
 
     #
-    # REQUEST RESOLVERS
-    #
-    # Read/write/normalize defined request attributes (e.g. document)
-    #
-
-    pimcore.service.request.pimcore_context_resolver:
-        class: Pimcore\Service\Request\PimcoreContextResolver
-        arguments:
-            - '@request_stack'
-            - '@Pimcore\Service\Context\PimcoreContextGuesser'
-
-    pimcore.service.request.site_resolver:
-        class: Pimcore\Service\Request\SiteResolver
-        arguments: ['@request_stack']
-
-    pimcore.service.request.editmode_resolver:
-        class: Pimcore\Service\Request\EditmodeResolver
-        arguments: ['@request_stack', '@pimcore_admin.security.user_loader', '@pimcore.http.request_helper']
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: init }
-            - { name: pimcore.templating.vars_provider }
-
-    pimcore.service.request.document_resolver:
-        class: Pimcore\Service\Request\DocumentResolver
-        arguments: ['@request_stack']
-        tags:
-            - { name: pimcore.templating.vars_provider }
-
-    pimcore.service.request.template_resolver:
-        class: Pimcore\Service\Request\TemplateResolver
-        arguments:
-            - '@request_stack'
-            - '@Pimcore\Controller\Config\ConfigNormalizer'
-
-    pimcore.service.request.template_vars_resolver:
-        class: Pimcore\Service\Request\TemplateVarsResolver
-        arguments: ['@request_stack']
-
-    pimcore.service.request.view_model_resolver:
-        class: Pimcore\Service\Request\ViewModelResolver
-        arguments: ['@request_stack', '@pimcore.service.request.template_vars_resolver']
-
-    pimcore.service.request.response_header_resolver:
-        class: Pimcore\Service\Request\ResponseHeaderResolver
-        arguments: ['@request_stack']
-
-
-    #
     # CONTROLLERS
     #
 

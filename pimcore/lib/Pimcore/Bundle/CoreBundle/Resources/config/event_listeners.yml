@@ -8,25 +8,13 @@ services:
     # REQUEST + ROUTING
     #
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\FrontendRoutingListener:
-        arguments:
-            - '@pimcore.http.request_helper'
-            - '@Pimcore\Routing\RedirectHandler'
-            - '@pimcore.service.request.site_resolver'
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\FrontendRoutingListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\PimcoreContextListener:
-        arguments:
-            - '@pimcore.service.request.pimcore_context_resolver'
-            - '@request_stack'
         calls:
             - [setLogger, ['@logger']]
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentFallbackListener:
-        arguments:
-            - '@request_stack'
-            - '@pimcore.service.request.document_resolver'
-            - '@pimcore.service.request.site_resolver'
-            - '@Pimcore\Model\Document\Service'
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentFallbackListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\LocaleListener: ~
 
@@ -39,17 +27,13 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener:
         arguments:
-            - '@pimcore.service.request.document_resolver'
-            - '@pimcore.service.request.editmode_resolver'
-            - '@pimcore.http.request_helper'
-            - '@pimcore_admin.security.user_loader'
+            $userLoader: '@pimcore_admin.security.user_loader'
         calls:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: init }
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener:
-        arguments: ['@pimcore.service.request.document_resolver']
         tags:
             - { name: kernel.event_subscriber }
 
@@ -64,29 +48,20 @@ services:
             - [setLogger, ['@logger']]
 
     # Adds Meta Data entries of document to HeadMeta view helper
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentMetaDataListener:
-        arguments:
-            - '@pimcore.service.request.document_resolver'
-            - '@Pimcore\Templating\Helper\HeadMeta'
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentMetaDataListener: ~
 
 
     #
     # CONTROLLER HANDLING
     #
 
-    Pimcore\Bundle\CoreBundle\EventListener\ControllerViewModelListener:
-        arguments:
-            - '@pimcore.service.request.view_model_resolver'
+    Pimcore\Bundle\CoreBundle\EventListener\ControllerViewModelListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\ContentTemplateListener:
-        arguments:
-            - '@pimcore.service.request.template_resolver'
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\ContentTemplateListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\EventedControllerListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\TemplateControllerListener:
-        arguments:
-            - '@service_container'
+    Pimcore\Bundle\CoreBundle\EventListener\TemplateControllerListener: ~
 
 
     #
@@ -119,16 +94,11 @@ services:
     # RESPONSE TRANSFORMING
     #
 
-    Pimcore\Bundle\CoreBundle\EventListener\ResponseHeaderListener:
-        arguments:
-            - '@pimcore.service.request.response_header_resolver'
+    Pimcore\Bundle\CoreBundle\EventListener\ResponseHeaderListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener:
         arguments:
-            - '@pimcore.service.request.editmode_resolver'
-            - '@pimcore.service.request.document_resolver'
-            - '@pimcore_admin.security.user_loader'
-            - '@pimcore.extension.bundle_manager'
+            $userLoader: '@pimcore_admin.security.user_loader'
         calls:
             - [setLogger, ['@logger']]
 
@@ -165,8 +135,6 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\TargetingListener:
         public: true
-        arguments:
-            - '@pimcore.service.request.document_resolver'
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -106 }
 
