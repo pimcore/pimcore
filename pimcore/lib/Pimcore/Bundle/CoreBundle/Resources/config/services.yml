@@ -208,66 +208,6 @@ services:
 
 
     #
-    # AREABRICKS
-    #
-
-    pimcore.area.brick_manager:
-        class: Pimcore\Extension\Document\Areabrick\AreabrickManager
-        arguments: ['@pimcore.extension.config', '@service_container']
-
-    #
-    # DOCUMENT TAG HANDLING (EDITABLES)
-    #
-
-    # the used naming strategy will be aliased to "pimcore.document.tag.naming.strategy" by the extension based on
-    # the pimcore.documents.editables.naming_strategy config value
-    pimcore.document.tag.naming.strategy.legacy:
-        class: Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy
-
-    pimcore.document.tag.naming.strategy.nested:
-        class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
-
-    pimcore.document.tag.block_state_stack:
-        class: Pimcore\Document\Tag\Block\BlockStateStack
-
-    pimcore.document.tag.handler:
-        class: Pimcore\Document\Tag\DelegatingTagHandler
-        calls:
-            - [addHandler, ['@pimcore.document.tag.handler.default']]
-
-    pimcore.document.tag.handler.default:
-        class: Pimcore\Document\Tag\TagHandler
-        arguments:
-            - '@pimcore.area.brick_manager'
-            - '@templating'
-            - '@pimcore.bundle_locator'
-            - '@pimcore.web_path_resolver'
-            - '@pimcore.templating.action_renderer'
-            - '@pimcore.http.request_helper'
-            - '@translator'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: pimcore }
-
-    # DOCUMENT TAG MIGRATION
-
-    pimcore.document.tag.naming.migration.strategy.analyze:
-        class: Pimcore\Document\Tag\NamingStrategy\Migration\AnalyzeMigrationStrategy
-        arguments: ['@database_connection']
-
-    pimcore.document.tag.naming.migration.strategy.render:
-        class: Pimcore\Document\Tag\NamingStrategy\Migration\RenderMigrationStrategy
-        arguments:
-            - '@event_dispatcher'
-            - '@request_stack'
-            - '@pimcore.service.request.editmode_resolver'
-            - '@pimcore_admin.security.user_loader'
-            - '@Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator'
-            - '@Pimcore\Routing\Dynamic\DocumentRouteHandler'
-
-
-    #
     # PIMCORE SERVICES
     #
 

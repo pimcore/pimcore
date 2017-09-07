@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Doctrine\Common\Util\Inflector;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
+use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\Config\Resource\FileExistenceResource;
@@ -35,7 +36,7 @@ class AreabrickPass implements CompilerPassInterface
     {
         $config = $container->getParameter('pimcore.config');
 
-        $areaManagerDefinition = $container->getDefinition('pimcore.area.brick_manager');
+        $areaManagerDefinition = $container->getDefinition(AreabrickManager::class);
         $taggedServices        = $container->findTaggedServiceIds('pimcore.area.brick');
 
         // keep a list of areas loaded via tags - those classes won't be autoloaded
