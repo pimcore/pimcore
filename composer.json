@@ -65,7 +65,7 @@
     "pear/net_url2": "~2.2",
     "ramsey/uuid": "~3",
     "colinmollenhour/credis": "~1",
-    "endroid/qrcode": "~1.5",
+    "endroid/qrcode": "~2.2",
     "mpratt/embera": "~1",
     "defuse/php-encryption": "~2",
     "nesbot/carbon": "~1",

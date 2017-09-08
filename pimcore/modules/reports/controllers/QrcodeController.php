@@ -111,7 +111,6 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports
 
         $code = new \Endroid\QrCode\QrCode;
         $code->setText($url);
-        $code->setPadding(0);
         $code->setSize(500);
 
         $hexToRGBA = function ($hex) {
@@ -134,7 +133,7 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports
             header('Content-Disposition: attachment;filename="qrcode-' . $this->getParam("name", "preview") . '.png"', true);
         }
 
-        $code->render();
+        echo $code->writeString();
 
         exit;
     }
