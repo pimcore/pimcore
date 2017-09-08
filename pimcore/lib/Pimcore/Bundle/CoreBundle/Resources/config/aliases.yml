@@ -15,7 +15,7 @@ services:
     pimcore.maintenance.schedule_manager: '@Pimcore\Model\Schedule\Manager\Procedural'
 
     pimcore.bundle_locator: '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
-    pimcore.web_path_resolver: '@Pimcore\Service\WebPathResolver'
+    pimcore.web_path_resolver: '@Pimcore\HttpKernel\WebPathResolver'
     pimcore.tool.assets_installer: '@Pimcore\Tool\AssetsInstaller'
     pimcore.http.request_helper: '@Pimcore\Http\RequestHelper'
     pimcore.http.response_helper: '@Pimcore\Http\ResponseHelper'

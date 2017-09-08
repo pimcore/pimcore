@@ -36,7 +36,7 @@ services:
     Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface: '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
     Pimcore\HttpKernel\BundleLocator\BundleLocator: ~
 
-    Pimcore\Service\WebPathResolver: ~
+    Pimcore\HttpKernel\WebPathResolver: ~
 
     Pimcore\Composer\PackageInfo: ~
 
