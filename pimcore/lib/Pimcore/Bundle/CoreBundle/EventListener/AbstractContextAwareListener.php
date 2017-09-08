@@ -18,11 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Http\Context\PimcoreContextResolverAwareInterface;
 
 /**
  * @deprecated Just use the PimcoreContextAwareTrait if you need to check against pimcore context
  */
-abstract class AbstractContextAwareListener
+abstract class AbstractContextAwareListener implements PimcoreContextResolverAwareInterface
 {
     use PimcoreContextAwareTrait;
 }
