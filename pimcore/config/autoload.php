@@ -27,6 +27,10 @@ if (version_compare(PHP_VERSION, '7.2.0', '<')) {
     $dataObjectCompatibilityLoader->register(true);
 }
 
+// legacy mapping loader creates aliases for renamed classes
+$legacyMappingLoader = new \Pimcore\Loader\Autoloader\AliasMapper($loader);
+$legacyMappingLoader->createAliases();
+
 // the following code is out of `app/autoload.php`
 // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
 AnnotationRegistry::registerLoader([$loader, 'loadClass']);
