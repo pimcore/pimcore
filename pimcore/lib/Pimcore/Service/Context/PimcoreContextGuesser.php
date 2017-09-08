@@ -14,7 +14,7 @@
 
 namespace Pimcore\Service\Context;
 
-use Pimcore\Service\RequestMatcherFactory;
+use Pimcore\Http\RequestMatcherFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
