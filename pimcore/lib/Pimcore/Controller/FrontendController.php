@@ -15,11 +15,11 @@
 namespace Pimcore\Controller;
 
 use Pimcore\Controller\Traits\TemplateControllerTrait;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
+use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
+use Pimcore\Http\Request\Resolver\ViewModelResolver;
 use Pimcore\Model\Document;
-use Pimcore\Service\Request\DocumentResolver;
-use Pimcore\Service\Request\EditmodeResolver;
-use Pimcore\Service\Request\ResponseHeaderResolver;
-use Pimcore\Service\Request\ViewModelResolver;
 use Pimcore\Templating\Model\ViewModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

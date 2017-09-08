@@ -14,7 +14,7 @@
 
 namespace Pimcore\Http\Context;
 
-use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 
 /**
  * @deprecated Not used anymore. Please define PimcoreContextResolver as dependency if you need it on your service.

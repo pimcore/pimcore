@@ -14,9 +14,9 @@
 
 namespace Pimcore\Routing;
 
+use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Routing\Dynamic\DynamicRequestContext;
 use Pimcore\Routing\Dynamic\DynamicRouteHandlerInterface;
-use Pimcore\Service\Request\SiteResolver;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;

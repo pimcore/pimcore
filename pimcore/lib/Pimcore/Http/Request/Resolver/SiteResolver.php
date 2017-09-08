@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Service\Request;
+namespace Pimcore\Http\Request\Resolver;
 
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;

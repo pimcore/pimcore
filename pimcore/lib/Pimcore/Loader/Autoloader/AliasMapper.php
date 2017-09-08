@@ -33,6 +33,15 @@ class AliasMapper extends AbstractAutoloader
         'Pimcore\Service\RequestMatcherFactory' => \Pimcore\Http\RequestMatcherFactory::class,
         'Pimcore\Service\Context\PimcoreContextGuesser' => \Pimcore\Http\Context\PimcoreContextGuesser::class,
         'Pimcore\Service\Request\PimcoreContextResolverAwareInterface' => \Pimcore\Http\Context\PimcoreContextResolverAwareInterface::class,
+        'Pimcore\Service\Request\AbstractRequestResolver' => \Pimcore\Http\Request\Resolver\AbstractRequestResolver::class,
+        'Pimcore\Service\Request\DocumentResolver' => \Pimcore\Http\Request\Resolver\DocumentResolver::class,
+        'Pimcore\Service\Request\EditmodeResolver' => \Pimcore\Http\Request\Resolver\EditmodeResolver::class,
+        'Pimcore\Service\Request\PimcoreContextResolver' => \Pimcore\Http\Request\Resolver\PimcoreContextResolver::class,
+        'Pimcore\Service\Request\ResponseHeaderResolver' => \Pimcore\Http\Request\Resolver\ResponseHeaderResolver::class,
+        'Pimcore\Service\Request\SiteResolver' => \Pimcore\Http\Request\Resolver\SiteResolver::class,
+        'Pimcore\Service\Request\TemplateResolver' => \Pimcore\Http\Request\Resolver\TemplateResolver::class,
+        'Pimcore\Service\Request\TemplateVarsResolver' => \Pimcore\Http\Request\Resolver\TemplateVarsResolver::class,
+        'Pimcore\Service\Request\ViewModelResolver' => \Pimcore\Http\Request\Resolver\ViewModelResolver::class,
     ];
 
     public function createAliases()

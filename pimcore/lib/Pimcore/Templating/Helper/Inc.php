@@ -14,8 +14,8 @@
 
 namespace Pimcore\Templating\Helper;
 
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Service\Request\EditmodeResolver;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\Templating\Helper\Helper;
 

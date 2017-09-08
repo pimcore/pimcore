@@ -21,25 +21,25 @@ services:
     # Read/write/normalize defined request attributes (e.g. document)
     #
 
-    Pimcore\Service\Request\PimcoreContextResolver: ~
+    Pimcore\Http\Request\Resolver\PimcoreContextResolver: ~
 
-    Pimcore\Service\Request\SiteResolver: ~
+    Pimcore\Http\Request\Resolver\SiteResolver: ~
 
-    Pimcore\Service\Request\EditmodeResolver:
+    Pimcore\Http\Request\Resolver\EditmodeResolver:
         calls:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: init }
             - { name: pimcore.templating.vars_provider }
 
-    Pimcore\Service\Request\DocumentResolver:
+    Pimcore\Http\Request\Resolver\DocumentResolver:
         tags:
             - { name: pimcore.templating.vars_provider }
 
-    Pimcore\Service\Request\TemplateResolver: ~
+    Pimcore\Http\Request\Resolver\TemplateResolver: ~
 
-    Pimcore\Service\Request\TemplateVarsResolver: ~
+    Pimcore\Http\Request\Resolver\TemplateVarsResolver: ~
 
-    Pimcore\Service\Request\ViewModelResolver: ~
+    Pimcore\Http\Request\Resolver\ViewModelResolver: ~
 
-    Pimcore\Service\Request\ResponseHeaderResolver: ~
+    Pimcore\Http\Request\Resolver\ResponseHeaderResolver: ~

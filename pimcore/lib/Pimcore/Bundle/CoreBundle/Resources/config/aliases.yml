@@ -36,14 +36,14 @@ services:
     pimcore.app_logger.db_writer: '@Pimcore\Log\Handler\ApplicationLoggerDb'
 
     # request resolvers
-    pimcore.service.request.pimcore_context_resolver: '@Pimcore\Service\Request\PimcoreContextResolver'
-    pimcore.service.request.site_resolver: '@Pimcore\Service\Request\SiteResolver'
-    pimcore.service.request.editmode_resolver: '@Pimcore\Service\Request\EditmodeResolver'
-    pimcore.service.request.document_resolver: '@Pimcore\Service\Request\DocumentResolver'
-    pimcore.service.request.template_resolver: '@Pimcore\Service\Request\TemplateResolver'
-    pimcore.service.request.template_vars_resolver: '@Pimcore\Service\Request\TemplateVarsResolver'
-    pimcore.service.request.view_model_resolver: '@Pimcore\Service\Request\ViewModelResolver'
-    pimcore.service.request.response_header_resolver: '@Pimcore\Service\Request\ResponseHeaderResolver'
+    pimcore.service.request.pimcore_context_resolver: '@Pimcore\Http\Request\Resolver\PimcoreContextResolver'
+    pimcore.service.request.site_resolver: '@Pimcore\Http\Request\Resolver\SiteResolver'
+    pimcore.service.request.editmode_resolver: '@Pimcore\Http\Request\Resolver\EditmodeResolver'
+    pimcore.service.request.document_resolver: '@Pimcore\Http\Request\Resolver\DocumentResolver'
+    pimcore.service.request.template_resolver: '@Pimcore\Http\Request\Resolver\TemplateResolver'
+    pimcore.service.request.template_vars_resolver: '@Pimcore\Http\Request\Resolver\TemplateVarsResolver'
+    pimcore.service.request.view_model_resolver: '@Pimcore\Http\Request\Resolver\ViewModelResolver'
+    pimcore.service.request.response_header_resolver: '@Pimcore\Http\Request\Resolver\ResponseHeaderResolver'
 
     # aliases for event listeners exposing methods (e.g. can be disabled)
     pimcore.event_listener.workflow_management: '@Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener'

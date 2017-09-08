@@ -16,9 +16,9 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Tag;
-use Pimcore\Service\Request\PimcoreContextResolver;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 class TagManagerListener

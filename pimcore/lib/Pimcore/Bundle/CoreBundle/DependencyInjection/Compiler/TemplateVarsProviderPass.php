@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Service\Request\TemplateVarsResolver;
+use Pimcore\Http\Request\Resolver\TemplateVarsResolver;
 use Pimcore\Templating\Vars\TemplateVarsProviderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

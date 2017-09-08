@@ -19,10 +19,10 @@ namespace Pimcore\Routing\Dynamic;
 
 use Pimcore\Config;
 use Pimcore\Controller\Config\ConfigNormalizer;
+use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Routing\DocumentRoute;
-use Pimcore\Service\Request\SiteResolver;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
