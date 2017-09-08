@@ -31,6 +31,8 @@ class AliasMapper extends AbstractAutoloader
         'Pimcore\Service\IntlFormatterService' => \Pimcore\Localization\IntlFormatter::class,
         'Pimcore\Service\WebPathResolver' => \Pimcore\HttpKernel\WebPathResolver::class,
         'Pimcore\Service\RequestMatcherFactory' => \Pimcore\Http\RequestMatcherFactory::class,
+        'Pimcore\Service\Context\PimcoreContextGuesser' => \Pimcore\Http\Context\PimcoreContextGuesser::class,
+        'Pimcore\Service\Request\PimcoreContextResolverAwareInterface' => \Pimcore\Http\Context\PimcoreContextResolverAwareInterface::class,
     ];
 
     public function createAliases()

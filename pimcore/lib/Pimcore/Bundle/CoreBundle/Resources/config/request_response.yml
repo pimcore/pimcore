@@ -11,7 +11,7 @@ services:
     Pimcore\Http\RequestMatcherFactory:
         public: false
 
-    Pimcore\Service\Context\PimcoreContextGuesser:
+    Pimcore\Http\Context\PimcoreContextGuesser:
         public: false
 
 

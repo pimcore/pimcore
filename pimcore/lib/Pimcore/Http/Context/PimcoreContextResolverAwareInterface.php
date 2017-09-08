@@ -12,7 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Service\Request;
+namespace Pimcore\Http\Context;
+
+use Pimcore\Service\Request\PimcoreContextResolver;
 
 /**
  * @deprecated Not used anymore. Please define PimcoreContextResolver as dependency if you need it on your service.

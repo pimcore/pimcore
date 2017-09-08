@@ -27,7 +27,7 @@ services:
     pimcore.controller.config.controller_data_provider: '@Pimcore\Controller\Config\ControllerDataProvider'
 
     # this block is probably not needed as services are only used internally
-    pimcore.service.context.pimcore_context_guesser: '@Pimcore\Service\Context\PimcoreContextGuesser'
+    pimcore.service.context.pimcore_context_guesser: '@Pimcore\Http\Context\PimcoreContextGuesser'
     pimcore.service.request_matcher_factory: '@Pimcore\Http\RequestMatcherFactory'
 
     pimcore.locale: '@Pimcore\Localization\Locale'
