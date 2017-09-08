@@ -71,7 +71,7 @@
     "doctrine/doctrine-bundle": "^1.6",
     "doctrine/doctrine-migrations-bundle": "^1.2",
     "egulias/email-validator": "*",
-    "endroid/qrcode": "~1.5",
+    "endroid/qrcode": "~2.2",
     "geoip2/geoip2": "~2",
     "google/apiclient": "~1",
     "guzzlehttp/guzzle": "~6.0",

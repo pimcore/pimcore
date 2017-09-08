@@ -153,8 +153,8 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
         }
 
         $code = new \Endroid\QrCode\QrCode;
+        $code->setWriterByName('png');
         $code->setText($url);
-        $code->setPadding(0);
         $code->setSize(500);
 
         $hexToRGBA = function ($hex) {
@@ -172,7 +172,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
         }
 
         $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
-        $code->render($tmpFile);
+        $code->writeFile($tmpFile);
         $response = new BinaryFileResponse($tmpFile);
 
         if ($request->get('download')) {
