@@ -19,11 +19,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DocumentTag;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Document\Tag\TagHandlerInterface;
+use Pimcore\Localization\Locale;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Service\Locale;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

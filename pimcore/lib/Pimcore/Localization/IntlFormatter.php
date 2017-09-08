@@ -12,12 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Service;
+namespace Pimcore\Localization;
 
 /**
  * Formatting service for dates, times and numbers
  */
-class IntlFormatterService
+class IntlFormatter
 {
     const DATE_SHORT = 'date_short';
     const DATE_MEDIUM = 'date_medium';
@@ -57,8 +57,6 @@ class IntlFormatterService
     protected $currencyFormats = [];
 
     /**
-     * IntlFormatterService constructor.
-     *
      * @param $locale
      */
     public function __construct(Locale $locale)

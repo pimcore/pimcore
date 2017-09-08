@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
-use Pimcore\Service\Locale;
+use Pimcore\Localization\Locale;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 

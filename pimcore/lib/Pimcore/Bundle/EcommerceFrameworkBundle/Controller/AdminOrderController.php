@@ -23,13 +23,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Or
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Controller\FrontendController;
+use Pimcore\Localization\IntlFormatter;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\User;
-use Pimcore\Service\IntlFormatterService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -210,7 +210,7 @@ class AdminOrderController extends FrontendController
 
             // register
             $register = new \DateTime($order->getCreationDate());
-            $arrCustomerAccount['created'] = $dateFormatter->formatDateTime($register, IntlFormatterService::DATE_MEDIUM);
+            $arrCustomerAccount['created'] = $dateFormatter->formatDateTime($register, IntlFormatter::DATE_MEDIUM);
 
             // mail
             if (method_exists($customer, 'getEMail')) {
@@ -261,7 +261,7 @@ class AdminOrderController extends FrontendController
 
             // group events
             $date->setTimestamp($note->getDate());
-            $group = $dateFormatter->formatDateTime($date, IntlFormatterService::DATE_MEDIUM);
+            $group = $dateFormatter->formatDateTime($date, IntlFormatter::DATE_MEDIUM);
 
             // load reference
             $reference = Concrete::getById($note->getCid());
@@ -272,7 +272,7 @@ class AdminOrderController extends FrontendController
 
             // add
             $arrTimeline[$group][] = [
-                'icon' => $arrIcons[$note->getTitle()], 'context' => $arrContext[$note->getTitle()] ?: 'default', 'type' => $note->getTitle(), 'date' => $dateFormatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatterService::DATETIME_MEDIUM), 'avatar' => $avatar, 'user' => $user ? $user->getName() : null, 'message' => $note->getData()['message']['data'], 'title' => $title ?: $note->getTitle()
+                'icon' => $arrIcons[$note->getTitle()], 'context' => $arrContext[$note->getTitle()] ?: 'default', 'type' => $note->getTitle(), 'date' => $dateFormatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM), 'avatar' => $avatar, 'user' => $user ? $user->getName() : null, 'message' => $note->getData()['message']['data'], 'title' => $title ?: $note->getTitle()
             ];
         }
         $this->view->timeLine = $arrTimeline;

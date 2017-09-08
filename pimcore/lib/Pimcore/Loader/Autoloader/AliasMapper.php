@@ -27,6 +27,8 @@ class AliasMapper extends AbstractAutoloader
     private $mapping = [
         'Pimcore\Glossary\Processor' => \Pimcore\Tool\Glossary\Processor::class,
         'Pimcore\Admin\Helper\QueryParams' => \Pimcore\Bundle\AdminBundle\Helper\QueryParams::class,
+        'Pimcore\Service\Locale' => \Pimcore\Localization\Locale::class,
+        'Pimcore\Service\IntlFormatterService' => \Pimcore\Localization\IntlFormatter::class,
     ];
 
     public function createAliases()

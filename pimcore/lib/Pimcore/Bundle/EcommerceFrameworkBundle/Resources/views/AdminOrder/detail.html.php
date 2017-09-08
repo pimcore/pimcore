@@ -234,7 +234,7 @@ $regionArray = $locale->getDisplayRegions();
                         <tr>
                             <td width="130">
                                 <small>
-                                    <?= $item->getPaymentFinish() ? $formatter->formatDateTime($item->getPaymentFinish(), \Pimcore\Service\IntlFormatterService::DATETIME_MEDIUM) : '' ?>
+                                    <?= $item->getPaymentFinish() ? $formatter->formatDateTime($item->getPaymentFinish(), \Pimcore\Localization\IntlFormatter::DATETIME_MEDIUM) : '' ?>
                                 </small>
                             </td>
                             <td width="100">
@@ -455,7 +455,7 @@ $regionArray = $locale->getDisplayRegions();
 
             <!-- Separator -->
             <div class="separator text-muted">
-                <time><?= $formatter->formatDateTime($order->getOrderdate(), \Pimcore\Service\IntlFormatterService::DATETIME_MEDIUM) ?></time>
+                <time><?= $formatter->formatDateTime($order->getOrderdate(), \Pimcore\Localization\IntlFormatter::DATETIME_MEDIUM) ?></time>
             </div>
             <!-- /Separator -->
 
