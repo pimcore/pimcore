@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Adds tagged navigation renderers to navigation helper
@@ -48,15 +49,11 @@ class NavigationRendererPass implements CompilerPassInterface
                     ));
                 }
 
-                $map[$alias] = $id;
+                $map[$alias] = new Reference($id);
             }
         }
 
-        if (count($map) === 0) {
-            return;
-        }
-
-        $helperDefinition = $container->findDefinition('pimcore.templating.view_helper.navigation');
-        $helperDefinition->setArgument('$rendererMap', $map);
+        $locatorDefinition = $container->findDefinition('pimcore.templating.navigation.renderer_locator');
+        $locatorDefinition->setArgument(0, $map);
     }
 }

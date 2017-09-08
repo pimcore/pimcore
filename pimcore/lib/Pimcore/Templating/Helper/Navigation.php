@@ -36,35 +36,23 @@ use Symfony\Component\Templating\Helper\Helper;
 class Navigation extends Helper
 {
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * @var Builder
      */
     private $builder;
 
     /**
-     * @var array
+     * @var ContainerInterface
      */
-    private $rendererMap;
+    private $rendererLocator;
 
     /**
-     * @var RendererInterface[]
-     */
-    private $renderers = [];
-
-    /**
-     * @param ContainerInterface $container
      * @param Builder $builder
-     * @param array $rendererMap    Map with alias => id mapping for registered renderers
+     * @param ContainerInterface $rendererLocator
      */
-    public function __construct(ContainerInterface $container, Builder $builder, array $rendererMap)
+    public function __construct(Builder $builder, ContainerInterface $rendererLocator)
     {
-        $this->container   = $container;
-        $this->builder     = $builder;
-        $this->rendererMap = $rendererMap;
+        $this->builder         = $builder;
+        $this->rendererLocator = $rendererLocator;
     }
 
     /**
@@ -111,23 +99,17 @@ class Navigation extends Helper
      */
     public function getRenderer(string $alias): RendererInterface
     {
-        if (isset($this->renderers[$alias])) {
-            return $this->renderers[$alias];
-        }
-
-        if (isset($this->rendererMap[$alias])) {
-            $renderer = $this->container->get($this->rendererMap[$alias]);
-
-            if (!$renderer instanceof RendererInterface) {
-                throw InvalidRendererException::create($alias, $renderer);
-            }
-
-            $this->renderers[$alias] = $renderer;
-
-            return $renderer;
-        } else {
+        if (!$this->rendererLocator->has($alias)) {
             throw RendererNotFoundException::create($alias);
         }
+
+        $renderer = $this->rendererLocator->get($alias);
+
+        if (!$renderer instanceof RendererInterface) {
+            throw InvalidRendererException::create($alias, $renderer);
+        }
+
+        return $renderer;
     }
 
     /**
