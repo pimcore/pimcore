@@ -88,6 +88,10 @@ class Numeric extends Model\Document\Tag
      */
     public function isEmpty()
     {
+        if (is_numeric($this->number)) {
+            return false;
+        }
+
         return empty($this->number);
     }
 
