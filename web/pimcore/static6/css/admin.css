@@ -1477,7 +1477,7 @@ span.warning {
     background: #28a050;
 }
 
-.pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active {
+.pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active, .pimcore_save_button.x-btn-focus {
     background: #298e4b !important;
 }
 
