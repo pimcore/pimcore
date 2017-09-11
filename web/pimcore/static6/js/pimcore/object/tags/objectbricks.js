@@ -228,31 +228,33 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             Ext.Msg.alert(t("error"),t("limit_reached"));
             return;
         }
-        
-        this.dataFields = [];
-        this.currentData = {};
-        this.currentMetaData = {};
+
+        var dataFields = [];
+        var currentData = {};
+        var currentMetaData = {};
 
         if(blockData) {
-            this.currentData = blockData.data;
-            this.currentMetaData = blockData.metaData;
+            currentData = blockData.data;
+            currentMetaData = blockData.metaData;
         }
 
-        var items = this.getRecursiveLayout(
-            this.layoutDefinitions[type],
-            null,
-            {
-                containerType: "objectbrick",
-                containerKey: type,
-                ownerName: this.fieldConfig.name
+        var dataProvider = {
+            getDataForField: function (fieldConfig) {
+                var name = fieldConfig.name;
+                return currentData[name];
+            },
+
+            getMetaDataForField: function (fieldConfig) {
+                var name = fieldConfig.name;
+                return currentMetaData[name];
+            },
+
+            addToDataFields: function (field, name) {
+                dataFields.push(field);
             }
-        ).items;
-        
-        if(this.fieldConfig.noteditable && items) {
-            items.forEach(function (record) {
-                record.disabled = true;
-            });
-        }
+        };
+
+        var childConfig = this.layoutDefinitions[type];
 
         var blockElement = new Ext.Panel({
             //bodyStyle: "padding:10px;",
@@ -260,7 +262,40 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             autoHeight: true,
             border: false,
             title: ts(type),
-            items: items
+            // items: items
+            items: [],
+            listeners: {
+                afterrender: function (childConfig, dataProvider, panel) {
+                    if (!panel.__tabpanel_initialized) {
+                        var children = this.getRecursiveLayout(childConfig, null,             {
+                            containerType: "objectbrick",
+                            containerKey: type,
+                            ownerName: this.fieldConfig.name
+                        }, false, true, dataProvider);
+                        if(this.fieldConfig.noteditable && children) {
+                            children.forEach(function (record) {
+                                record.disabled = true;
+                            });
+                        }
+
+                        panel.add(children);
+                        panel.updateLayout();
+
+                        if (panel.setActiveTab) {
+                            var activeTab = panel.items.items[0];
+                            if (activeTab) {
+                                activeTab.updateLayout();
+                                panel.setActiveTab(activeTab);
+                            }
+                        }
+
+                        panel.__tabpanel_initialized = true;
+
+
+                    }
+                }.bind(this, childConfig, dataProvider)
+
+            }
         });
 
         this.component.remove(this.component.getComponent(0));
@@ -285,7 +320,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.currentElements[type] = null;
         this.currentElements[type] = {
             container: blockElement,
-            fields: this.dataFields,
+            fields: dataFields,
             type: type
         };
 
@@ -293,24 +328,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             this.dirty = true;
             this.tabpanel.setActiveTab(blockElement);
         }
-
-        this.dataFields = [];
-        this.currentData = {};
-        this.currentMetaData = {};
-    },
-
-    getDataForField: function (fieldConfig) {
-        var name = fieldConfig.name;
-        return this.currentData[name];
-    },
-
-    getMetaDataForField: function(fieldConfig) {
-        var name = fieldConfig.name;
-        return this.currentMetaData[name];
-    },
-
-    addToDataFields: function (field, name) {
-        this.dataFields.push(field);
     },
 
     getLayoutShow: function () {
