@@ -134,7 +134,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
                 var selectData = [];
                 for (var j = 0; j < selectDataRaw.length; j++) {
-                    selectData.push([selectDataRaw[j], selectDataRaw[j]]);
+                    selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
                 }
 
                 editor = new Ext.form.ComboBox({
