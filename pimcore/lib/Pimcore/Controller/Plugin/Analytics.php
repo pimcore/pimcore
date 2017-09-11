@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -54,9 +54,14 @@ class Analytics extends \Zend_Controller_Plugin_Abstract
         if (!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
-        
+
+        // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
+        if($this->getRequest()->getHeader('X-Purpose') == 'preview') {
+            return;
+        }
+
         if ($this->enabled && $code = AnalyticsHelper::getCode()) {
-            
+
             // analytics
             $body = $this->getResponse()->getBody();
 

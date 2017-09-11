@@ -51,6 +51,11 @@ class GoogleTagManager extends \Zend_Controller_Plugin_Abstract
      */
     public function dispatchLoopShutdown()
     {
+        // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
+        if($this->getRequest()->getHeader('X-Purpose') == 'preview') {
+            return;
+        }
+
         if (!Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
