@@ -25,13 +25,24 @@ pimcore.treenodelocator.showInTree = function (id, elementType, button) {
                     if (tree) {
                         tree.tree.expand();
 
+                        var rootNode = tree.tree.getRootNode();
+                        var rootNodeId = rootNode.getId();
 
                         var callback = function () {
                             if (button) {
                                 button.enable();
                             }
                         }
-                        pimcore.treenodelocator.searchInTree(res, elementType, tree.tree, res.idPath, callback);
+                        var idPath = res.idPath;
+                        var idParts = idPath.split('/');
+
+                        var idx = idParts.indexOf(rootNodeId);
+                        if (idx) {
+                            idParts.splice(0, idx);
+                            idPath = idParts.join('/');
+                        }
+
+                        pimcore.treenodelocator.searchInTree(res, elementType, tree.tree, idPath, callback);
                     }
                 }
             } catch (e) {
