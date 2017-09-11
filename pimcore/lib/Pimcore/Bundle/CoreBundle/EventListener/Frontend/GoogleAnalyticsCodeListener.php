@@ -61,15 +61,25 @@ class GoogleAnalyticsCodeListener extends AbstractFrontendListener
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        $request = $event->getRequest();
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
         // only inject analytics code on non-admin requests
-        if (!$this->matchesPimcoreContext($event->getRequest(), PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
+        // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
+        if($request->server->get('HTTP_X_PURPOSE') == 'preview') {
             return;
         }
 
         $response = $event->getResponse();
 
         if (\Pimcore\Tool::useFrontendOutputFilters()) {
-            if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
+            if ($this->isHtmlResponse($response)) {
                 if ($this->enabled && $code = AnalyticsHelper::getCode()) {
 
                     // analytics

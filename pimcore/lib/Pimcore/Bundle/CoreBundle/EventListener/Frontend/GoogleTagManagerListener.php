@@ -70,6 +70,12 @@ class GoogleTagManagerListener extends AbstractFrontendListener
             return;
         }
 
+        // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
+        $serverVars = $event->getRequest()->server;
+        if($serverVars->get('HTTP_X_PURPOSE') == 'preview') {
+            return;
+        }
+
         $response = $event->getResponse();
 
         $siteKey = \Pimcore\Tool\Frontend::getSiteKey();
