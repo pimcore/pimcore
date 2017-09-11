@@ -27,7 +27,6 @@ use Pimcore\Templating\Helper\HeadTitle;
 use Pimcore\Templating\Helper\InlineScript;
 use Pimcore\Templating\Helper\Navigation;
 use Pimcore\Templating\Helper\Placeholder\Container;
-use Pimcore\Templating\Helper\TemplatingEngineAwareHelperInterface;
 use Pimcore\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Model\ViewModelInterface;

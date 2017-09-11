@@ -643,7 +643,7 @@ class Mail extends \Swift_Message
         // $message->getHeaders()->remove('To');
         // $message->getHeaders()->remove('Subject'); ....
 
-        $recipients = array();
+        $recipients = [];
 
         foreach (['To', 'Cc', 'Bcc'] as $key) {
             $recipients[$key] = null;

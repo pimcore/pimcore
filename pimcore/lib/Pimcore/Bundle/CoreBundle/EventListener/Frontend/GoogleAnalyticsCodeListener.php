@@ -72,7 +72,7 @@ class GoogleAnalyticsCodeListener extends AbstractFrontendListener
         }
 
         // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
-        if($request->server->get('HTTP_X_PURPOSE') == 'preview') {
+        if ($request->server->get('HTTP_X_PURPOSE') == 'preview') {
             return;
         }
 

@@ -65,7 +65,7 @@ class Link extends Model\Document\Tag
     public function getDataEditmode()
     {
         // update path if internal link
-        $this->updatePathFromInternal(true,true);
+        $this->updatePathFromInternal(true, true);
 
         return $this->data;
     }
@@ -370,12 +370,12 @@ class Link extends Model\Document\Tag
         $path = $data['path'];
 
         if (!empty($path)) {
-            if ($data["linktype"] == "internal" && $data["internalType"]) {
-                $target = Model\Element\Service::getElementByPath($data["internalType"], $path);
+            if ($data['linktype'] == 'internal' && $data['internalType']) {
+                $target = Model\Element\Service::getElementByPath($data['internalType'], $path);
                 if ($target) {
                     $data['internal'] = true;
                     $data['internalId'] = $target->getId();
-                    $data['internalType'] = $data["internalType"];
+                    $data['internalType'] = $data['internalType'];
                 }
             }
 

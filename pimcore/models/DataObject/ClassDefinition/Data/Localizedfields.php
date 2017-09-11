@@ -178,7 +178,6 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             $inheritanceAllowed = false;
         }
 
-
         if ($inheritanceAllowed) {
             // check if there is a parent with the same type
             $parent = DataObject\Service::hasInheritableParentObject($object);

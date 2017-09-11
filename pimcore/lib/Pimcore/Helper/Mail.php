@@ -186,7 +186,6 @@ CSS;
         }
 
         foreach (['To', 'Cc', 'Bcc'] as $key) {
-
             $addresses = isset($recipients[$key]) ? $recipients[$key] : null;
 
             if ($addresses) {

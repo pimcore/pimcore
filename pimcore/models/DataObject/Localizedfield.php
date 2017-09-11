@@ -278,7 +278,6 @@ class Localizedfield extends Model\AbstractModel
         }
 
         if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues && $allowInheritance) {
-
             $object = $this->getObject();
             $class = $object->getClass();
             $allowInherit = $class->getAllowInherit();

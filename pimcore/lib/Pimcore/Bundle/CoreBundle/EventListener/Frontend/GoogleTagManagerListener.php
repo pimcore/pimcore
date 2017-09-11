@@ -72,7 +72,7 @@ class GoogleTagManagerListener extends AbstractFrontendListener
 
         // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
         $serverVars = $event->getRequest()->server;
-        if($serverVars->get('HTTP_X_PURPOSE') == 'preview') {
+        if ($serverVars->get('HTTP_X_PURPOSE') == 'preview') {
             return;
         }
 

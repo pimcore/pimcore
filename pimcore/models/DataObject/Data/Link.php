@@ -377,7 +377,7 @@ class Link
     public function setPath($path)
     {
         if (!empty($path)) {
-            if ($this->getLinktype() == "internal" && $this->getInternalType()) {
+            if ($this->getLinktype() == 'internal' && $this->getInternalType()) {
                 $matchedElement = Service::getElementByPath($this->getInternalType(), $path);
                 if ($matchedElement) {
                     $this->linktype = 'internal';
