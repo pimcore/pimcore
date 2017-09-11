@@ -164,6 +164,10 @@ section img {
     background: url(/static/img/transparent-background-placeholder.png);
 }
 
+.image-container {
+    position: relative;
+    max-width: 100%;
+}
 
 .image-hotspot {
     position: absolute;

@@ -15,7 +15,21 @@
         <hr />
 
         {% if article.getPosterImage() %}
-            {{ article.getPosterImage().getThumbnail('content').getHTML()|raw }}
+            {# @var posterImage \Pimcore\Model\DataObject\Data\Hotspotimage #}
+            {% set posterImage = article.getPosterImage() %}
+
+            <div class="image-container" style="width: {{ posterImage.getThumbnail('content').getWidth() }}px">
+                {{ posterImage.getThumbnail('content').getHTML({ class: 'img-responsive' })|raw }}
+
+                {% for hotspot in posterImage.getHotspots()|default([]) %}
+                    <div class="image-hotspot" style="top: {{ hotspot.top }}%; left: {{ hotspot.left }}%; width: {{ hotspot.width }}%; height: {{ hotspot.height }}%"></div>
+                {% endfor %}
+
+                {% for marker in posterImage.getMarker()|default([]) %}
+                    <div class="image-marker" style="top: {{ marker.top }}%; left: {{ marker.left }}%"></div>
+                {% endfor %}
+            </div>
+
             <br /><br />
         {% endif %}
 

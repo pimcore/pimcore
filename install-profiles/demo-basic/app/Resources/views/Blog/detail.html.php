@@ -25,7 +25,7 @@ $this->extend('layout.html.php');
 
     <?php if($this->article->getPosterImage()) { ?>
         <div class="image-container" style="width:<?= $this->article->getPosterImage()->getThumbnail("content")->getWidth() ?>px">
-            <?= $this->article->getPosterImage()->getThumbnail("content")->getHTML() ?>
+            <?= $this->article->getPosterImage()->getThumbnail("content")->getHTML(['class' => 'img-responsive']) ?>
 
             <?php if($this->article->getPosterImage()->getHotspots()) { ?>
 
