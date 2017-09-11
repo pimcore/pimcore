@@ -233,7 +233,7 @@ return [
             [
                 "method" => "applyMask",
                 "arguments" => [
-                    "path" => "/website/static/img/mask-example.png"
+                    "path" => "/web/static/img/mask-example.png"
                 ]
             ]
         ],

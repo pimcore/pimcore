@@ -17,9 +17,9 @@ if($this->editmode) {
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link href="/website/static/bootstrap/css/bootstrap.css" rel="stylesheet">
-        <link href="/website/static/css/global.css" rel="stylesheet">
-        <link href="/website/static/css/editmode.css?_dc=<?= time(); ?>" rel="stylesheet">
+        <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+        <link href="/static/css/global.css" rel="stylesheet">
+        <link href="/static/css/editmode.css?_dc=<?= time(); ?>" rel="stylesheet">
     </head>
 
     <body>

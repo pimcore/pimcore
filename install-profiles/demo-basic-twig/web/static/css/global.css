@@ -161,7 +161,7 @@ section img {
 
 .thumbnail-examples .img-container {
     height: 139px;
-    background: url(/website/static/img/transparent-background-placeholder.png);
+    background: url(/static/img/transparent-background-placeholder.png);
 }
 
 
