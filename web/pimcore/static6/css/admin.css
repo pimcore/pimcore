@@ -83,7 +83,7 @@
     position: absolute;
     z-index: 10;
     left: 8px;
-    bottom: 150px;
+    bottom: 170px;
     width: 44px;
 }
 
@@ -153,7 +153,7 @@
     position: absolute;
     z-index: 10;
     left: 8px;
-    bottom: 90px;
+    bottom: 150px;
     width:44px;
     padding:0;
 }

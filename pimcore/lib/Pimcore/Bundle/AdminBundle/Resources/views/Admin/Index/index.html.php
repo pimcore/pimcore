@@ -47,7 +47,7 @@ $user      = $userProxy->getUser();
         .spinner > div {
             width: 18px;
             height: 18px;
-            background-color: #6428b4;
+            background-color: #3d3d3d;
 
             border-radius: 100%;
             display: inline-block;
