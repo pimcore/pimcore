@@ -869,14 +869,14 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
 
         if (is_array($data)) {
             foreach ($data as &$metaObject) {
-                $eo = $metaObject->getObject();
+                $eo = $metaObject->getElement();
                 if ($eo instanceof Element\ElementInterface) {
                     $id = $eo->getId();
                     $type = Element\Service::getElementType($eo);
 
                     if (array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
                         $newElement = Element\Service::getElementById($type, $idMapping[$type][$id]);
-                        $metaObject->setObject($newElement);
+                        $metaObject->setElement($newElement);
                     }
                 }
             }
