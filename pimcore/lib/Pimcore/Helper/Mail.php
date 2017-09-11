@@ -144,10 +144,11 @@ CSS;
 
     /**
      * @param MailClient $mail
+     * @param $recipients array
      *
      * @return Model\Tool\Email\Log
      */
-    public static function logEmail(MailClient $mail)
+    public static function logEmail(MailClient $mail, $recipients)
     {
         $emailLog = new Model\Tool\Email\Log();
         $document = $mail->getDocument();
@@ -185,8 +186,8 @@ CSS;
         }
 
         foreach (['To', 'Cc', 'Bcc'] as $key) {
-            $getterName = 'get' . $key;
-            $addresses = $mail->$getterName();
+
+            $addresses = isset($recipients[$key]) ? $recipients[$key] : null;
 
             if ($addresses) {
                 if (method_exists($emailLog, 'set' . $key)) {

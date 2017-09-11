@@ -637,10 +637,20 @@ class Mail extends \Swift_Message
     public function sendWithoutRendering(\Swift_Mailer $mailer = null)
     {
         // filter email addresses
+
+        // preserve email addresses, see Swift_Transport_MailTransport::send lines 140ff :-(
+        // ... Remove headers that would otherwise be duplicated
+        // $message->getHeaders()->remove('To');
+        // $message->getHeaders()->remove('Subject'); ....
+
+        $recipients = array();
+
         foreach (['To', 'Cc', 'Bcc'] as $key) {
+            $recipients[$key] = null;
             $getterName = 'get' . $key;
             $setterName = 'set' . $key;
             $addresses = $this->$getterName();
+
             if ($addresses) {
                 foreach (array_keys($addresses) as $address) {
 
@@ -652,6 +662,9 @@ class Mail extends \Swift_Message
             }
 
             $this->$setterName($addresses);
+
+            $addresses = $this->$getterName();
+            $recipients[$key] = $addresses;
         }
 
         if ($mailer == null) {
@@ -663,7 +676,7 @@ class Mail extends \Swift_Message
 
         if ($this->loggingIsEnabled()) {
             try {
-                $this->lastLogEntry = MailHelper::logEmail($this);
+                $this->lastLogEntry = MailHelper::logEmail($this, $recipients);
             } catch (\Exception $e) {
                 Logger::emerg("Couldn't log Email");
             }
