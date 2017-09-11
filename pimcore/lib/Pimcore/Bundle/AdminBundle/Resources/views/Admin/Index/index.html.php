@@ -47,7 +47,7 @@ $user      = $userProxy->getUser();
         .spinner > div {
             width: 18px;
             height: 18px;
-            background-color: #3d3d3d;
+            background-color: #6428b4;
 
             border-radius: 100%;
             display: inline-block;
@@ -149,6 +149,10 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
 </div>
 
 <div id="pimcore_tooltip" style="display: none;"></div>
+<div id="pimcore_signet">
+    BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR LOGO.
+    WE OFFER YOU THE POSSIBILITY TO ADDITIONALLY ADD YOUR OWN LOGO IN PIMCORE'S SYSTEM SETTINGS. THANK YOU!
+</div>
 
 <?php // define stylesheets ?>
 <?php

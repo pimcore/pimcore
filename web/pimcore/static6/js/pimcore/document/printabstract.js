@@ -36,7 +36,8 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
             this.toolbar.remove(this.toolbarButtons.publish);
             this.toolbarButtons.publish = new Ext.SplitButton({
                 text: t('save_and_publish'),
-                iconCls: "pimcore_icon_publish",
+                iconCls: "pimcore_icon_save_white",
+                cls: "pimcore_save_button",
                 scale: "medium",
                 handler: this.publish.bind(this),
                 menu: [

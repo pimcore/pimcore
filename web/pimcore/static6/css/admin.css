@@ -83,7 +83,7 @@
     position: absolute;
     z-index: 10;
     left: 8px;
-    bottom: 115px;
+    bottom: 150px;
     width: 44px;
 }
 
@@ -119,7 +119,7 @@
 #pimcore_logout {
     position: absolute;
     z-index: 2;
-    bottom: 1px;
+    bottom: 60px;
     left: 8px;
     width: 44px;
     height:38px;
@@ -133,7 +133,7 @@
 #pimcore_avatar {
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: 60px;
     z-index: 1;
     width: 60px;
     height: 80px;
@@ -167,6 +167,23 @@
     background-color: #fff;
     width: 10px;
     height: 10px;
+}
+
+#pimcore_signet {
+    position: absolute;
+    z-index: 10000;
+    bottom:0px;
+    left: 0px;
+    width: 60px;
+    height: 60px;
+    display: none;
+    font-size: 0;
+    cursor: pointer;
+    background-color: #0078BE;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iRWJlbmVfMSIgZGF0YS1uYW1lPSJFYmVuZSAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MiAxOS43MiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNmZmY7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5VbmJlbmFubnQtMTwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjIuNjQsMjAuMzgsMjEuMjQsMTlhOS44Niw5Ljg2LDAsMSwwLDAsMTRsNC4xNi00LjIsNC4xNiw0LjJhOS44Niw5Ljg2LDAsMSwwLDAtMTRMMTguNDMsMzAuMTRhNS45Miw1LjkyLDAsMSwxLDAtOC4zN2wxLjQsMS40Wm0xOC4xMSw5Ljc3YTUuOTIsNS45MiwwLDAsMS04LjM3LDBMMjguMiwyNmw0LjE4LTQuMThhNS45Miw1LjkyLDAsMCwxLDguMzcsOC4zN1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00LjQgLTE2LjA5KSIvPjwvc3ZnPg==);
+    background-repeat: no-repeat;
+    background-size: 40px 40px;
+    background-position: 9px 9px;
 }
 
 #pimcore_tooltip {
@@ -1260,12 +1277,7 @@ span.warning {
 
 /* ExtJS 6.0 specific styles */
 
-#pimcore_panel_tabs-body {
-    background-image: url(/pimcore/static6/img/logo-gray.svg);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 300px auto;
-}
+
 
 #pimcore_panel_tabs > .x-tab-bar {
     background: #222222;
@@ -1286,8 +1298,8 @@ span.warning {
 
 #pimcore_panel_tabs > .x-tab-bar .x-tab-default-top {
     background-color: #3c3f41;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+    border-top: 0;
+    padding-top: 5px;
 }
 
 #pimcore_panel_tabs > .x-tab-bar .x-tab-over .x-tab-default-top {
@@ -1459,4 +1471,24 @@ span.warning {
     font-size:14px;
     padding: 11px 0 0 0;
     border-top:1px solid #EEEEEE;
+}
+
+.pimcore_save_button {
+    background: #28a050;
+}
+
+.pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active {
+    background: #298e4b !important;
+}
+
+.pimcore_save_button .x-btn-inner {
+    color: #fff;
+}
+
+.pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right:after {
+    color: #fff;
+}
+
+.pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right > .x-btn-button:after {
+    border-color: #53b373;
 }
