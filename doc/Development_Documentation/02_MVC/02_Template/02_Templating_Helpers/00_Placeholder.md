@@ -10,6 +10,8 @@ Basic usage of placeholders is to persist view data. Each invocation of the Plac
 placeholder `name`. The helper then returns a placeholder container object that you can either manipulate or simply 
 echo out.
 
+<div class="code-section">
+
 ```php 
 <?php $this->placeholder('foo')->set("Some text for later") ?>
 
@@ -18,6 +20,15 @@ echo out.
     // outputs "Some text for later"
 ?>
 ```
+
+```twig 
+{% do pimcore_placeholder('foo').set("Some text for later") %}
+
+{% outputs "Some text for later" %}
+{{ pimcore_placeholder('foo') }}
+```
+
+</div>
 
 ### Aggregate Content
 Aggregating content via placeholders can be useful at times as well. For instance, your view script may have a variable 

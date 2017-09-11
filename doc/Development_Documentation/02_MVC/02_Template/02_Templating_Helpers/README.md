@@ -56,9 +56,20 @@ Here you can find an example how to [create](https://github.com/pimcore/pimcore/
 and [register](https://github.com/pimcore/pimcore/blob/master/app/config/services.yml) your own templating helper. 
 
 ### `$this->action()`
+
 This helper is a shorthand of Symfony's `actions` helper. 
 
-`$this->action(string $action, string $controller, string $bundle, array $params = [])`
+<div class="code-section">
+
+```php
+<?= $this->action($action, $controller, $bundle, $params = []) ?>
+```
+
+```twig
+{{ pimcore_action(action, controller, bundle, {}) }}
+```
+
+</div>
    
 | Name                | Description  |
 |---------------------|--------------|
@@ -69,11 +80,22 @@ This helper is a shorthand of Symfony's `actions` helper.
 
    
 ##### Example
+
+<div class="code-section">
+
 ```php
 <section id="foo-bar">
     <?= $this->action("foo", "Bar", null, ["awesome" => "value"]) ?>
 </section>
 ```
+
+```twig
+<section id="foo-bar">
+    {{ pimcore_action('foo', 'Bar', ~, { awesome: 'value' }) }}
+</section>
+```
+
+</div>
    
     
 ### `$this->cache()`
@@ -100,9 +122,22 @@ of calculation or require a huge amount of objects (like navigations, ...).
 
 
 ### `$this->device()`
+
 This helper makes it easy to implement "Adaptive Design" in Pimcore. 
 
-`$this->device([string $default = null])`
+<div class="code-section">
+
+```php
+<?= $this->device('a default value'); ?>
+```
+
+```twig
+{{ pimcore_device('a default value') }}
+```
+
+</div>
+
+
 
 | Name                | Description  |
 |---------------------|--------------|
