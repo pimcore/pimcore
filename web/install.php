@@ -39,7 +39,16 @@ if (is_file(Config::locateConfigFile('system.php'))) {
     return;
 }
 
-$kernel   = new InstallerKernel(Config::getEnvironment(), true);
+$request = Request::createFromGlobals();
+
+// always redirect to /install instead of /install.php
+if ($request->getRequestUri() === '/install.php') {
+    (new RedirectResponse('/install', Response::HTTP_MOVED_PERMANENTLY))->send();
+    return;
+}
+
+$kernel = new InstallerKernel(Config::getEnvironment(), true);
+
 $request  = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();

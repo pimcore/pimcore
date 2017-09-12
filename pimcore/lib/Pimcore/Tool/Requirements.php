@@ -72,12 +72,8 @@ class Requirements
      *
      * @return Check[]
      */
-    public static function checkMysql(Connection $db = null)
+    public static function checkMysql(Connection $db)
     {
-        if (!$db) {
-            $db = \Pimcore::getContainer()->get('database_connection');
-        }
-
         $checks = [];
 
         // storage engines

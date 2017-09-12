@@ -87,6 +87,11 @@ RewriteRule ^(.*)$ /var/tmp/%1-thumbnails%{REQUEST_URI} [PT,L]
 # cache-buster rule for scripts & stylesheets embedded using view helpers
 RewriteRule ^cache-buster\-[\d]+/(.*) $1 [PT,L]
 
+# rewrite /install to install.php if file exists
+RewriteCond %{DOCUMENT_ROOT}/install.php -f
+RewriteCond %{REQUEST_URI} !^/install\.php
+RewriteRule  ^install /install.php [L]
+
 # If the requested filename exists, simply serve it.
 # We only want to let Apache serve files and not directories.
 RewriteCond %{REQUEST_FILENAME} -f

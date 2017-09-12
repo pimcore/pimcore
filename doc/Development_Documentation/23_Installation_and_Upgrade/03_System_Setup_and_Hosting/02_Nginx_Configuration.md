@@ -76,15 +76,20 @@ server {
         add_header Cache-Control "public";
     }
 
+    # Installer
+    # Remove this if you don't need the web installer (anymore)
+    if (-f $document_root/install.php) {
+        rewrite ^/install(/?.*) /install.php$1 last;
+    }
+
     location / {
         error_page 404 /meta/404;
         add_header "X-UA-Compatible" "IE=edge";
         try_files $uri /app.php$is_args$args;
     }
 
-    # Use this location when install.php has to be run
+    # Use this location when the installer has to be run
     # location ~ /(app|install)\.php(/|$) {
-    # and temporarily disable the "internal" flag at the end of the block.
     #
     # Use this after initial install is done:
     location ~ ^/app\.php(/|$) {

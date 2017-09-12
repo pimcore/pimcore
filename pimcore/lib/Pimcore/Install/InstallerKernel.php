@@ -81,7 +81,8 @@ class InstallerKernel extends Kernel
             'debug'            => '%kernel.debug%',
             'strict_variables' => '%kernel.debug%',
             'paths'            => [
-                __DIR__ . '/../Resources/views/Install' => 'install'
+                __DIR__ . '/Resources/views/Install'               => 'install',
+                __DIR__ . '/../Bundle/AdminBundle/Resources/views' => 'PimcoreAdminBundle'
             ]
         ]);
 
@@ -127,8 +128,9 @@ class InstallerKernel extends Kernel
      */
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->addRoute($this->buildRoute('/', 'index', ['GET']));
-        $routes->addRoute($this->buildRoute('/', 'install', ['POST']));
+        $routes->addRoute($this->buildRoute('/install', 'index', ['GET']));
+        $routes->addRoute($this->buildRoute('/install', 'install', ['POST']));
+        $routes->addRoute($this->buildRoute('/install/check', 'check', ['POST']));
     }
 
     private function buildRoute(string $path, string $action, array $methods = []): Route

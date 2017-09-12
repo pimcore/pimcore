@@ -13,7 +13,9 @@
  */
 
 use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 require_once __DIR__ . '/../pimcore/config/bootstrap.php';
 
@@ -25,6 +27,16 @@ Tool::setCurrentRequest($request);
 
 /** @var \Pimcore\Kernel $kernel */
 $kernel = require_once __DIR__ . '/../pimcore/config/kernel.php';
+
+// redirect to installer if pimcore is not installed
+if (!is_file(\Pimcore\Config::locateConfigFile('system.php'))) {
+    if (file_exists(__DIR__ . '/install.php')) {
+        (new RedirectResponse('/install', Response::HTTP_FOUND))->send();
+        return;
+    }
+
+    throw new RuntimeException('Pimcore is not installed and the installer is not available. Please add the installer or install via command line.');
+}
 
 // reset current request - will be read from request stack from now on
 Tool::setCurrentRequest(null);

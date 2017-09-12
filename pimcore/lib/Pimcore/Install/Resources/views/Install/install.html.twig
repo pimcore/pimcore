@@ -440,7 +440,7 @@
                             };
 
                             Ext.Ajax.request({
-                                url: "install.php",
+                                url: "/install",
                                 method: "post",
                                 params: Ext.getCmp("install_form").getForm().getFieldValues(),
                                 success: handleResponse,
