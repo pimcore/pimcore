@@ -160,17 +160,20 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             wrapperConfig.items = [];
 
-            //TODO choose default language, maybe user-specific ?
             for (var i = nrOfLanguages - 1; i >= 0; i--) {
-                this.currentLanguage = this.frontendLanguages[i];
-                this.languageElements[this.currentLanguage] = [];
+                var currentLanguage = this.frontendLanguages[i];
+                this.currentLanguage = currentLanguage;         // remember active language
+
+                var dataProvider = this.getDataProvider(currentLanguage);
+
+                this.languageElements[currentLanguage] = [];
 
                 var editable =  !showMode && (pimcore.currentuser.admin ||
-                    this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
+                    this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
 
                 var runtimeContext = Ext.clone(this.context);
-                runtimeContext.language = Ext.clone(this.currentLanguage);
-                var items =  this.getRecursiveLayout(this.fieldConfig, !editable, runtimeContext).items;
+                runtimeContext.language = Ext.clone(currentLanguage);
+                var items =  this.getRecursiveLayout(this.fieldConfig, !editable, runtimeContext, false, false, dataProvider).items;
 
                 var panelConf = {
                     height: "auto",
@@ -195,7 +198,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
                 this.tabPanel = new Ext.Panel(panelConf);
 
-                this.availablePanels[this.currentLanguage] = this.tabPanel;
+                this.availablePanels[currentLanguage] = this.tabPanel;
                 wrapperConfig.items.push(this.tabPanel);
 
                 wrapperConfig.tbar = [new Ext.Toolbar.TextItem({
@@ -227,24 +230,54 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             }
 
             for (var i=0; i < nrOfLanguages; i++) {
-                this.currentLanguage = this.frontendLanguages[i];
-                this.languageElements[this.currentLanguage] = [];
+                var currentLanguage = this.frontendLanguages[i];
+                var dataProvider = this.getDataProvider(currentLanguage);
+                this.languageElements[currentLanguage] = [];
 
                 var editable =  (pimcore.currentuser.admin ||
-                    this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
+                    this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(currentLanguage, this.fieldConfig.permissionEdit));
 
                 var runtimeContext = Ext.clone(this.context);
-                runtimeContext.language = Ext.clone(this.currentLanguage);
-                var items = this.getRecursiveLayout(this.fieldConfig, !editable, runtimeContext);
+                runtimeContext.language = Ext.clone(currentLanguage);
+                var panelConfig = this.fieldConfig;
 
                 var item = {
                     xtype: "panel",
                     border:false,
                     autoScroll: true,
                     padding: "10px",
-                    deferredRender: false,
+                    deferredRender: true,
                     hideMode: "offsets",
-                    items: items.items
+                    items: [],
+                    listeners: {
+                        afterrender: function (l, runtimeContext, dataProvider, panel) {
+                            if (!panel.__tabpanel_initialized) {
+                                panel.__tabpanel_initialized = true;
+                                if (l.childs && typeof l.childs == "object") {
+                                    if (l.childs.length > 0) {
+                                        l.items = [];
+                                        for (var i = 0; i < l.childs.length; i++) {
+                                            var childConfig = l.childs[i];
+
+                                            var children = this.getRecursiveLayout(childConfig, !editable, runtimeContext, false, true, dataProvider);
+                                            panel.add(children);
+                                        }
+                                    }
+                                    panel.updateLayout();
+                                }
+
+                                if (panel.setActiveTab) {
+                                    var activeTab = panel.items.items[0];
+                                    if (activeTab) {
+                                        activeTab.updateLayout();
+                                        panel.setActiveTab(activeTab);
+                                    }
+                                }
+
+                            }
+                        }.bind(this, panelConfig, runtimeContext, dataProvider)
+                    }
+
                 };
 
                 if(hideLabels){
@@ -292,41 +325,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         this.component = this.getLayoutEdit(true);
         return this.component;
-    },
-
-    getDataForField: function (fieldConfig) {
-        var name = fieldConfig.name;
-        try {
-            if (this.data[this.currentLanguage]) {
-                if (typeof this.data[this.currentLanguage][name] !== undefined){
-                    return this.data[this.currentLanguage][name];
-                }
-            }
-        } catch (e) {
-            console.log(e);
-        }
-        return;
-    },
-
-    getMetaDataForField: function(fieldConfig) {
-        var name = fieldConfig.name;
-        try {
-            if (this.metaData[this.currentLanguage]) {
-                if (this.metaData[this.currentLanguage][name]) {
-                    return this.metaData[this.currentLanguage][name];
-                } else if (typeof this.data[this.currentLanguage][name] !== undefined){
-                    return null;
-                }
-            }
-        } catch (e) {
-            console.log(e);
-        }
-        return;
-
-    },
-
-    addToDataFields: function (field, name) {
-        this.languageElements[this.currentLanguage].push(field);
     },
 
     addReferencedField: function (field) {
@@ -515,6 +513,48 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     markInherited:function (metaData) {
         // nothing to do, only sub-elements can be marked
+    },
+
+    getDataProvider: function(currentLanguage) {
+        var dataProvider = {
+            getDataForField: function (currentLanguage, fieldConfig) {
+                var name = fieldConfig.name;
+                try {
+                    if (this.data[currentLanguage]) {
+                        if (typeof this.data[currentLanguage][name] !== undefined){
+                            return this.data[currentLanguage][name];
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+                return;
+
+            }.bind(this, currentLanguage),
+
+            getMetaDataForField: function (currentLanguage, fieldConfig) {
+                var name = fieldConfig.name;
+                try {
+                    if (this.metaData[currentLanguage]) {
+                        if (this.metaData[currentLanguage][name]) {
+                            return this.metaData[currentLanguage][name];
+                        } else if (typeof this.data[currentLanguage][name] !== undefined){
+                            return null;
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+                return;
+
+            }.bind(this, currentLanguage),
+
+            addToDataFields: function (currentLanguage, field, name) {
+                this.languageElements[currentLanguage].push(field);
+            }.bind(this, currentLanguage)
+        };
+
+        return dataProvider;
     }
 
 });
