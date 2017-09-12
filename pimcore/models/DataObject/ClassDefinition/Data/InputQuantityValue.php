@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataOb
  * TODO: Refactor - this class is very similar to the parent one so probably we can try to refactor parent and have better results here also
  *
  * Class InputQuantityValue
+ *
  * @package Pimcore\Model\DataObject\ClassDefinition\Data
  */
 class InputQuantityValue extends QuantityValue
@@ -80,6 +81,7 @@ class InputQuantityValue extends QuantityValue
      * @param float $data
      * @param null $object
      * @param array $params
+     *
      * @return InputQuantityValueDataObject|void
      */
     public function getDataFromResource($data, $object = null, $params = [])
@@ -95,6 +97,7 @@ class InputQuantityValue extends QuantityValue
      * @param float $data
      * @param null $object
      * @param array $params
+     *
      * @return InputQuantityValueDataObject|void
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -117,6 +120,7 @@ class InputQuantityValue extends QuantityValue
     /**
      * @param mixed $data
      * @param bool $omitMandatoryCheck
+     *
      * @throws Model\Element\ValidationException
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
@@ -143,6 +147,7 @@ class InputQuantityValue extends QuantityValue
      * @param string $importValue
      * @param null $object
      * @param array $params
+     *
      * @return null|InputQuantityValueDataObject
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
@@ -163,7 +168,9 @@ class InputQuantityValue extends QuantityValue
      * @param null $object
      * @param array $params
      * @param null $idMapper
+     *
      * @return null|InputQuantityValueDataObject
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -196,6 +203,7 @@ class InputQuantityValue extends QuantityValue
      * @param mixed $value
      * @param null $object
      * @param array $params
+     *
      * @return array|mixed|null|InputQuantityValueDataObject
      */
     public function unmarshal($value, $object = null, $params = [])
@@ -218,6 +226,7 @@ class InputQuantityValue extends QuantityValue
     /**
      * @param string $value
      * @param int $unitId
+     *
      * @return InputQuantityValueDataObject
      */
     protected function getNewDataObject($value = null, $unitId = null)
