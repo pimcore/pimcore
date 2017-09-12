@@ -23,11 +23,6 @@ _pimcore_update:
     type:     annotation
     prefix:   /admin/update
 
-_pimcore_install:
-    resource: "@PimcoreAdminBundle/Controller/Install/"
-    type:     annotation
-    prefix:   /install
-
 _pimcore_api_rest:
     resource: "@PimcoreAdminBundle/Controller/Rest/"
     type:     annotation

@@ -1496,7 +1496,7 @@ pimcore.layout.toolbar = Class.create({
     },
 
     showSystemRequirementsCheck: function () {
-        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", "/install/check", "pimcore_icon_systemrequirements", "System-Requirements Check");
+        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", "/admin/install/check", "pimcore_icon_systemrequirements", "System-Requirements Check");
     },
 
     showAdminer: function () {
