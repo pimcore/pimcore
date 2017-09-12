@@ -55,8 +55,6 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
 
         var input = {};
 
-        var valueInvalid = false;
-
         if (this.data) {
             input.value = this.data.value;
         }
@@ -105,7 +103,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             items: [this.inputField, this.unitField],
             componentCls: "object_field",
             isDirty: function() {
-                return this.inputField.isDirty() || this.unitField.isDirty() || valueInvalid
+                return this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)
         });
 
