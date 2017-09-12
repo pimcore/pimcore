@@ -30,7 +30,6 @@ use Pimcore\Tool\AssetsInstaller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -56,8 +55,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     public function __construct(
         PimcoreBundleManager $bundleManager,
         AreabrickManagerInterface $areabrickManager
-    )
-    {
+    ) {
         $this->bundleManager    = $bundleManager;
         $this->areabrickManager = $areabrickManager;
     }

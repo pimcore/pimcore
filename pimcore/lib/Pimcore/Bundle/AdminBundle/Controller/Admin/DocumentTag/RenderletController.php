@@ -50,8 +50,7 @@ class RenderletController extends AdminController
         ActionRenderer $actionRenderer,
         TagHandlerInterface $tagHandler,
         Locale $localeService
-    )
-    {
+    ) {
         $query      = $request->query->all();
         $attributes = [];
 
