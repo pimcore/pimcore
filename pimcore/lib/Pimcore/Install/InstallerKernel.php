@@ -81,7 +81,7 @@ class InstallerKernel extends Kernel
             'debug'            => '%kernel.debug%',
             'strict_variables' => '%kernel.debug%',
             'paths'            => [
-                __DIR__ . '/../Resources/views/Install' => 'install'
+                __DIR__ . '/Resources/views/Install' => 'install'
             ]
         ]);
 
