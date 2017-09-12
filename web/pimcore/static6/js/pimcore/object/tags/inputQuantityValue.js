@@ -12,9 +12,44 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.inputQuantityValue");
-pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.quantityValue, {
+pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstract, {
 
     type: "inputQuantityValue",
+
+    initialize: function (data, fieldConfig) {
+        this.defaultValue = null;
+        this.defaultUnit = null;
+        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit)) {
+            data = {
+                value: fieldConfig.defaultValue,
+                unit: fieldConfig.defaultUnit
+            };
+            this.defaultValue = data.value;
+            this.defaultUnit = data.unit;
+        }
+
+        this.data = data;
+        this.fieldConfig = fieldConfig;
+
+        this.store = new Ext.data.JsonStore({
+            autoDestroy: true,
+            root: 'data',
+            fields: ['id', 'abbreviation']
+        });
+
+        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), fieldConfig.validUnits);
+    },
+
+    setData: function(data) {
+        var storeData = data.data;
+        storeData.unshift({'id': -1, 'abbreviation' : "(" + t("empty") + ")"});
+
+        this.store.loadData(storeData);
+
+        if (this.unitField) {
+            this.unitField.reset();
+        }
+    },
 
     getLayoutEdit: function () {
 
@@ -26,18 +61,19 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.quanti
             input.value = this.data.value;
         }
 
-        input.width = 171;
+        input.width = 200;
         if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
         }
 
-        var labelWidth = 100;
+        var labelWidth = 200;
         if (this.fieldConfig.labelWidth) {
             labelWidth = this.fieldConfig.labelWidth;
         }
 
         var options = {
-            width: 100,
+            width: 125,
+            margin: {left: 10},
             triggerAction: "all",
             autoSelect: true,
             editable: true,
@@ -74,5 +110,58 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.quanti
         });
 
         return this.component;
+    },
+
+    getGridColumnConfig:function (field) {
+        var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
+
+            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                try {
+                    metaData.tdCls += " grid_value_inherited";
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+
+            if (value) {
+                return value.value + " " + value.unit;
+            } else {
+                return "";
+            }
+
+        }.bind(this, field.key);
+
+        return {
+            header:ts(field.label),
+            sortable:true,
+            dataIndex:field.key,
+            renderer:renderer
+        };
+    },
+
+
+    getLayoutShow: function () {
+
+        this.getLayoutEdit();
+        this.unitField.disable();
+        this.inputField.disable();
+
+        return this.component;
+    },
+
+    getValue: function () {
+        return {
+            unit: this.unitField.getValue(),
+            value: this.inputField.getValue()
+        };
+    },
+
+    getName: function () {
+        return this.fieldConfig.name;
+    },
+
+    isInvalidMandatory: function () {
+        return !(this.unitField.getValue() && this.inputField.getValue());
     }
 });

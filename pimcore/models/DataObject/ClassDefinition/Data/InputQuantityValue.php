@@ -68,11 +68,20 @@ class InputQuantityValue extends QuantityValue
         return;
     }
 
+    /**
+     * @param int $defaultValue
+     */
     public function setDefaultValue($defaultValue)
     {
         return;
     }
 
+    /**
+     * @param float $data
+     * @param null $object
+     * @param array $params
+     * @return InputQuantityValueDataObject|void
+     */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
@@ -82,6 +91,12 @@ class InputQuantityValue extends QuantityValue
         return;
     }
 
+    /**
+     * @param float $data
+     * @param null $object
+     * @param array $params
+     * @return InputQuantityValueDataObject|void
+     */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data['value'] || $data['unit']) {
@@ -99,6 +114,11 @@ class InputQuantityValue extends QuantityValue
         return;
     }
 
+    /**
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     * @throws Model\Element\ValidationException
+     */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if ($omitMandatoryCheck) {
@@ -119,6 +139,12 @@ class InputQuantityValue extends QuantityValue
         }
     }
 
+    /**
+     * @param string $importValue
+     * @param null $object
+     * @param array $params
+     * @return null|InputQuantityValueDataObject
+     */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $values = explode('_', $importValue);
@@ -132,6 +158,14 @@ class InputQuantityValue extends QuantityValue
         return $value;
     }
 
+    /**
+     * @param mixed $value
+     * @param null $object
+     * @param array $params
+     * @param null $idMapper
+     * @return null|InputQuantityValueDataObject
+     * @throws \Exception
+     */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         if (empty($value)) {
@@ -158,6 +192,12 @@ class InputQuantityValue extends QuantityValue
         }
     }
 
+    /**
+     * @param mixed $value
+     * @param null $object
+     * @param array $params
+     * @return array|mixed|null|InputQuantityValueDataObject
+     */
     public function unmarshal($value, $object = null, $params = [])
     {
         if ($params['blockmode'] && is_array($value)) {

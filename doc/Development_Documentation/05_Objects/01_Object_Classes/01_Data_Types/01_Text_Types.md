@@ -74,6 +74,11 @@ More examples and config options for the toolbar and toolbarGroups can be found 
 [http://docs.ckeditor.com/#!/guide/dev_toolbar](http://docs.ckeditor.com/#!/guide/dev_toolbar). 
 
 Please refer to the [CKeditor 4.0 Documentation](http://docs.ckeditor.com/).
+
+#### Input Quantity Value
+
+Quite similar to [Quantity Value](03_Number_Types.md) except that text values are allowed instead of the strict restriction to numeric values.
+
   
 ##### Global Configuration
 You can add a Global Configuration for all WYSIWYG Editors for all objects by setting ```pimcore.object.tags.wysiwyg.defaultEditorConfig```

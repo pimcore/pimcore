@@ -1,8 +1,21 @@
 
 pimcore.registerNS("pimcore.object.classes.data.inputQuantityValue");
-pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.classes.data.quantityValue, {
+pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.classes.data.data, {
 
     type: "inputQuantityValue",
+    allowIndex: true,
+
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true,
+        classificationstore : true,
+        block: true
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "inputQuantityValue";
@@ -15,6 +28,8 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
 
     },
 
+
+
     getTypeName: function () {
         return t("inputQuantityValue_field");
     },
@@ -24,26 +39,55 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
     },
 
     getIconClass: function () {
-        return "pimcore_icon_inputQuantityValue";
+        return "pimcore_icon_quantityValue";
     },
 
     getLayout: function ($super) {
 
         $super();
 
-        var defaultValueItemIndex = -1;
-        var item = null;
-        for (i = 0; i < this.specificPanel.items.items.length; i++) {
-            item = this.specificPanel.items.items[i];
-            if (item.name === 'defaultValue') {
-                defaultValueItemIndex = i;
-                break;
+        this.specificPanel.removeAll();
+        this.specificPanel.add([
+            {
+                xtype: "numberfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: this.datax.width
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("default_value"),
+                name: "defaultValue",
+                value: this.datax.defaultValue
+            },{
+                xtype: 'combobox',
+                name: 'defaultUnit',
+                triggerAction: "all",
+                editable: true,
+                typeAhead: true,
+                selectOnFocus: true,
+                fieldLabel: t('default_unit'),
+                store: this.store,
+                value: this.datax.defaultUnit,
+                displayField: 'abbreviation',
+                valueField: 'id',
+                width: 275
+            },
+            {
+                xtype: 'multiselect',
+                queryDelay: 0,
+                triggerAction: 'all',
+                resizable: true,
+                width: 600,
+                fieldLabel: t("valid_quantityValue_units"),
+                typeAhead: true,
+                name: 'validUnits',
+                value: this.datax.validUnits,
+                store: this.store,
+                displayField: 'abbreviation',
+                valueField: 'id'
             }
-        }
-
-        if (defaultValueItemIndex >= 0) {
-            this.specificPanel.remove(defaultValueItemIndex);
-        }
+        ]);
 
         return this.layout;
     }
