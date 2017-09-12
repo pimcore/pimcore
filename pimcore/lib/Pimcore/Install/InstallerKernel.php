@@ -127,8 +127,8 @@ class InstallerKernel extends Kernel
      */
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->addRoute($this->buildRoute('/', 'index', ['GET']));
-        $routes->addRoute($this->buildRoute('/', 'install', ['POST']));
+        $routes->addRoute($this->buildRoute('/install', 'index', ['GET']));
+        $routes->addRoute($this->buildRoute('/install', 'install', ['POST']));
     }
 
     private function buildRoute(string $path, string $action, array $methods = []): Route

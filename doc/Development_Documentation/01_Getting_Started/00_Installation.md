@@ -59,7 +59,7 @@ For further information please visit out [DB Setup Guide](../23_Installation_and
 
 ### Web installer
 
-Finish the Pimcore installation by accessing the URL (eg. `https://your-host.com/install.php`) in your web browser.
+Finish the Pimcore installation by accessing the URL (eg. `https://your-host.com/install`) in your web browser.
 
 1. Fill in the required fields (database + admin user)
 2. Press ***Check Requirements*** to check if your system is ready for Pimcore
