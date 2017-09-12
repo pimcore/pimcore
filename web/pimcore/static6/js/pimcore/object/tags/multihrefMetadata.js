@@ -113,7 +113,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 if (this.fieldConfig.columns[i].value) {
                     var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
                     for (var j = 0; j < selectDataRaw.length; j++) {
-                        selectData.push([selectDataRaw[j], ts(selectDataRaw[j]]));
+                        selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
                     }
                 }
 
