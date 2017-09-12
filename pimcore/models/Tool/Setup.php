@@ -48,7 +48,13 @@ class Setup extends Model\AbstractModel
             }
 
             try {
-                $configTemplate = new \Pimcore\Config\Config(include($configTemplatePath));
+                $configTemplateArray = include($configTemplatePath);
+
+                if (!is_array($configTemplateArray)) {
+                    continue;
+                }
+
+                $configTemplate = new \Pimcore\Config\Config($configTemplateArray);
                 if ($configTemplate->general) { // check if the template contains a valid configuration
                     $settings = $configTemplate->toArray();
 
