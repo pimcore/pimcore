@@ -21,7 +21,7 @@ pimcore.document.tags.numeric = Class.create(pimcore.document.tag, {
         this.setupWrapper();
         options = this.parseOptions(options);
 
-        if (!data) {
+        if ('number' !== typeof data && !data) {
             data = "";
         }
 
