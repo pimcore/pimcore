@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Http\RequestHelper;
-use Pimcore\Service\RequestMatcherFactory;
+use Pimcore\Http\RequestMatcherFactory;
 use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as BaseWebDebugToolbarListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;

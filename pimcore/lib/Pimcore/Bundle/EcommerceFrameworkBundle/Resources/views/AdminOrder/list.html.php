@@ -135,7 +135,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
                         $date->setTimestamp($item->getOrderDate());
                     }
 
-                    echo $formatter->formatDateTime($date, \Pimcore\Service\IntlFormatterService::DATETIME_MEDIUM);
+                    echo $formatter->formatDateTime($date, \Pimcore\Localization\IntlFormatter::DATETIME_MEDIUM);
                 ?>
             </td>
             <td><?= $item->getItems() ?></td>

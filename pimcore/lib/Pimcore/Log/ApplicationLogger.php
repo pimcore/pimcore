@@ -14,6 +14,7 @@
 
 namespace Pimcore\Log;
 
+use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -57,16 +58,18 @@ class ApplicationLogger implements LoggerInterface
      */
     public static function getInstance($component = 'default', $initDbHandler = false)
     {
+        $container   = \Pimcore::getContainer();
         $containerId = 'pimcore.app_logger.' . $component;
 
-        if (\Pimcore::getContainer()->has($containerId)) {
-            $logger = \Pimcore::getContainer()->get($containerId);
+        if ($container->has($containerId)) {
+            $logger = $container->get($containerId);
         } else {
             $logger = new self;
             if ($initDbHandler) {
-                $logger->addWriter(\Pimcore::getContainer()->get('pimcore.app_logger.db_writer'));
+                $logger->addWriter($container->get(ApplicationLoggerDb::class));
             }
-            \Pimcore::getContainer()->set($containerId, $logger);
+
+            $container->set($containerId, $logger);
         }
 
         $logger->setComponent($component);

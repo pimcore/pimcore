@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
 use Pimcore\Model\User;
@@ -52,7 +53,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function getUser($proxyUser = false)
     {
-        $resolver = $this->get('pimcore_admin.security.token_storage_user_resolver');
+        $resolver = $this->get(TokenStorageUserResolver::class);
 
         if ($proxyUser) {
             return $resolver->getUserProxy();

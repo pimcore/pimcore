@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\IExportableTokenManager;
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -37,7 +38,8 @@ class VoucherController extends FrontendController
     public function onKernelController(FilterControllerEvent $event)
     {
         // set language
-        $user = $this->get('pimcore_admin.security.token_storage_user_resolver')->getUser();
+        $user = $this->get(TokenStorageUserResolver::class)->getUser();
+
         if ($user) {
             $this->get('translator')->setLocale($user->getLanguage());
             $event->getRequest()->setLocale($user->getLanguage());

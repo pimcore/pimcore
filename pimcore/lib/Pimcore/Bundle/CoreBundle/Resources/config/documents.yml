@@ -1,0 +1,73 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # DOCUMENT TAG HANDLING (EDITABLES)
+    #
+
+    # the used naming strategy will be aliased to "pimcore.document.tag.naming.strategy" by the extension based on
+    # the pimcore.documents.editables.naming_strategy config value
+    pimcore.document.tag.naming.strategy.legacy:
+        class: Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy
+
+    pimcore.document.tag.naming.strategy.nested:
+        class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
+
+    pimcore.document.tag.block_state_stack: '@Pimcore\Document\Tag\Block\BlockStateStack'
+    Pimcore\Document\Tag\Block\BlockStateStack: ~
+
+    # get default tag handler when type hinting against interface
+    Pimcore\Document\Tag\TagHandlerInterface: '@pimcore.document.tag.handler'
+
+    # delegating tag handler holds a collection of tag handlers it delegates to (e.g. default and legacy)
+    pimcore.document.tag.handler:
+        class: Pimcore\Document\Tag\DelegatingTagHandler
+        calls:
+            - [addHandler, ['@Pimcore\Document\Tag\TagHandler']]
+
+    # default tag handler rendering pimcore5+ tags
+    Pimcore\Document\Tag\TagHandler:
+        public: false
+        arguments:
+            $templating: '@templating'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: pimcore }
+
+
+    #
+    # AREABRICKS
+    #
+
+    pimcore.area.brick_manager: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+    Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+    Pimcore\Extension\Document\Areabrick\AreabrickManager: ~
+
+
+    #
+    # DOCUMENT RELATED SERVICES
+    #
+
+    # TODO inject user?
+    Pimcore\Model\Document\Service:
+        public: true
+
+    Pimcore\Document\Renderer\DocumentRenderer:
+        arguments:
+            $fragmentRenderer: '@fragment.renderer.inline'
+
+
+    #
+    # DOCUMENT TAG MIGRATION
+    #
+
+    pimcore.document.tag.naming.migration.strategy.analyze:
+        class: Pimcore\Document\Tag\NamingStrategy\Migration\AnalyzeMigrationStrategy
+        arguments:
+            $db: '@database_connection'
+
+    pimcore.document.tag.naming.migration.strategy.render:
+        class: Pimcore\Document\Tag\NamingStrategy\Migration\RenderMigrationStrategy

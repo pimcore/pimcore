@@ -13,15 +13,15 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Glossary;
+namespace Pimcore\Tool\Glossary;
 
 use Pimcore\Cache;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Glossary;
 use Pimcore\Model\Site;
-use Pimcore\Service\Request\DocumentResolver;
-use Pimcore\Service\Request\EditmodeResolver;
 
 class Processor
 {

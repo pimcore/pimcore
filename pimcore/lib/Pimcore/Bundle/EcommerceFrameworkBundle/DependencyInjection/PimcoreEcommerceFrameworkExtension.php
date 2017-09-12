@@ -62,6 +62,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setParameter('pimcore_ecommerce.decimal_scale', $config['decimal_scale']);
 
         $loader->load('services.yml');
+        $loader->load('event_listeners.yml');
         $loader->load('factory.yml');
         $loader->load('environment.yml');
         $loader->load('cart_manager.yml');

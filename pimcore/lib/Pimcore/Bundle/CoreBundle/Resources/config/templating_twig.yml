@@ -1,66 +1,37 @@
+imports:
+    # twig aliases are only imported if this file is loaded
+    - { resource: templating_twig_aliases.yml }
+
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
     # public alias to Twig engine
     pimcore.templating.engine.twig:
         alias: templating.engine.twig
         public: true
 
-    pimcore.twig.extension.helpers:
-        class: Pimcore\Twig\Extension\HelpersExtension
-        public: false
-        tags:
-            - { name: twig.extension }
+    Pimcore\Twig\Extension\HelpersExtension: ~
 
-    pimcore.twig.extension.document_tag:
-        class: Pimcore\Twig\Extension\DocumentTagExtension
-        arguments: ['@pimcore.templating.tag_renderer']
-        public: false
-        tags:
-            - { name: twig.extension }
+    Pimcore\Twig\Extension\DocumentTagExtension: ~
 
-    pimcore.twig.extension.subrequest:
-        class: Pimcore\Twig\Extension\SubrequestExtension
-        arguments: ['@pimcore.templating.view_helper.inc', '@pimcore.templating.view_helper.action']
-        public: false
-        tags:
-            - { name: twig.extension }
+    Pimcore\Twig\Extension\SubrequestExtension: ~
 
-    pimcore.twig.extension.pimcore_object:
-        class: Pimcore\Twig\Extension\PimcoreObjectExtension
-        public: false
-        tags:
-            - { name: twig.extension }
+    Pimcore\Twig\Extension\PimcoreObjectExtension: ~
 
-    pimcore.twig.extension.templating_helper:
-        class: Pimcore\Twig\Extension\TemplatingHelperExtension
-        arguments: ['@templating.engine.php']
-        public: false
-        tags:
-            - { name: twig.extension }
+    Pimcore\Twig\Extension\TemplatingHelperExtension:
+        arguments:
+            $phpEngine: '@templating.engine.php'
 
-    pimcore.twig.extension.navigation:
-        class: Pimcore\Twig\Extension\NavigationExtension
-        arguments: ['@pimcore.templating.view_helper.navigation']
-        public: false
-        tags:
-            - { name: twig.extension }
+    Pimcore\Twig\Extension\NavigationExtension: ~
 
-    pimcore.twig.extension.glossary:
-        class: Pimcore\Twig\Extension\GlossaryExtension
-        arguments: ['@pimcore.templating.view_helper.glossary']
-        public: false
-        tags:
-            - { name: twig.extension }
+    Pimcore\Twig\Extension\GlossaryExtension: ~
 
-    Pimcore\Twig\Extension\WebsiteConfigExtension:
-        public: false
-        tags:
-            - { name: twig.extension }
+    Pimcore\Twig\Extension\WebsiteConfigExtension: ~
 
     # the deferred extension is needed for placeholder helpers to work
     # as otherwise the placeholder block would be rendered before any
     # content was added (e.g. headTitle)
-    twig.extension.deferred:
-        class: Phive\Twig\Extensions\Deferred\DeferredExtension
-        public: false
-        tags:
-            - { name: twig.extension }
+    Phive\Twig\Extensions\Deferred\DeferredExtension: ~

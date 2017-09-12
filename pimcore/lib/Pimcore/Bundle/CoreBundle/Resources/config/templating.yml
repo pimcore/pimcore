@@ -1,17 +1,20 @@
 services:
-    pimcore.templating.action_renderer:
-        class: Pimcore\Templating\Renderer\ActionRenderer
-        arguments: ['@templating.helper.actions', '@pimcore.controller.config.config_normalizer']
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
 
-    pimcore.templating.include_renderer:
-        class: Pimcore\Templating\Renderer\IncludeRenderer
-        arguments: ['@pimcore.templating.action_renderer']
+    # RENDERERS
 
-    pimcore.templating.tag_renderer:
-        class: Pimcore\Templating\Renderer\TagRenderer
+    Pimcore\Templating\Renderer\ActionRenderer:
         arguments:
-            - '@pimcore.implementation_loader.document.tag'
-            - '@pimcore.service.request.editmode_resolver'
+            $actionsHelper: '@templating.helper.actions'
+
+    Pimcore\Templating\Renderer\IncludeRenderer: ~
+
+    Pimcore\Templating\Renderer\TagRenderer:
+        arguments:
+            $tagLoader: '@pimcore.implementation_loader.document.tag'
         calls:
             - [setLogger, ['@logger']]
 
@@ -24,33 +27,22 @@ services:
         tags: ['container.service_locator']
         arguments: [[]]
 
-    pimcore.navigation.builder:
-        class: Pimcore\Navigation\Builder
-        arguments: ['@pimcore.http.request_helper']
-        public: false
+    Pimcore\Navigation\Builder: ~
 
-    pimcore.navigation.base_renderer:
-        abstract: true
-        arguments: ['@templating.engine.delegating']
-
-    pimcore.navigation.renderer.menu:
-        class: Pimcore\Navigation\Renderer\Menu
-        parent: pimcore.navigation.base_renderer
+    Pimcore\Navigation\Renderer\Menu:
+        arguments:
+            $templatingEngine: '@templating.engine.delegating'
         tags:
             - { name: pimcore.navigation.renderer, alias: menu }
 
-    pimcore.navigation.renderer.breadcrumbs:
-        class: Pimcore\Navigation\Renderer\Breadcrumbs
-        parent: pimcore.navigation.base_renderer
+    Pimcore\Navigation\Renderer\Breadcrumbs:
+        arguments:
+            $templatingEngine: '@templating.engine.delegating'
         tags:
             - { name: pimcore.navigation.renderer, alias: breadcrumbs }
 
 
     # GLOSSARY
 
-    pimcore.glossary.processor:
-        class: Pimcore\Glossary\Processor
-        arguments:
-            - '@pimcore.http.request_helper'
-            - '@pimcore.service.request.editmode_resolver'
-            - '@pimcore.service.request.document_resolver'
+    Pimcore\Tool\Glossary\Processor:
+        public: false

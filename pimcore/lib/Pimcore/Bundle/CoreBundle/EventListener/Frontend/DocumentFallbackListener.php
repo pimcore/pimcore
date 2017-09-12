@@ -14,10 +14,11 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
-use Pimcore\Service\Request\DocumentResolver;
-use Pimcore\Service\Request\PimcoreContextResolver;
-use Pimcore\Service\Request\SiteResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -30,8 +31,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *  - if request is a sub-request, try to read document from master request
  *  - if all fails, try to find the nearest document by path
  */
-class DocumentFallbackListener extends AbstractFrontendListener implements EventSubscriberInterface
+class DocumentFallbackListener implements EventSubscriberInterface
 {
+    use PimcoreContextAwareTrait;
+
     /**
      * @var RequestStack
      */

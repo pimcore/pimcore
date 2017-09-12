@@ -14,12 +14,24 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class GoogleSearchConsoleVerificationListener extends AbstractFrontendListener
+class GoogleSearchConsoleVerificationListener implements EventSubscriberInterface
 {
+    use PimcoreContextAwareTrait;
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST => 'onKernelRequest'
+        ];
+    }
+
     /**
      * @param GetResponseEvent $event
      */

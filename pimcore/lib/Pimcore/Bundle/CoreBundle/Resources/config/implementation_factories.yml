@@ -1,0 +1,35 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # IMPLEMENTATION FACTORIES
+    #
+    # Class maps and prefixes will be set from the extension as they are loaded from config
+    #
+
+    # document tag loader
+    pimcore.implementation_loader.document.tag:
+        class: Pimcore\Model\Document\Tag\Loader\TagLoader
+
+    # object data loader
+    pimcore.implementation_loader.object.data:
+        class: Pimcore\Model\DataObject\ClassDefinition\Loader\DataLoader
+
+    # object layout loader
+    pimcore.implementation_loader.object.layout:
+        class: Pimcore\Model\DataObject\ClassDefinition\Loader\LayoutLoader
+
+    # model factory
+    Pimcore\Model\Factory:
+        calls:
+            - [addLoader, ['@Pimcore\Model\Factory\FallbackBuilder']]
+
+    # public alias which is used throughout code base
+    # TODO replace with FQCN reference in wherever this is used
+    pimcore.model.factory: '@Pimcore\Model\Factory'
+
+    # fallback model builder for pimcore model factory
+    Pimcore\Model\Factory\FallbackBuilder:
+        public: false

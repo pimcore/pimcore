@@ -85,6 +85,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
      */
     public function getInstaller()
     {
-        return $this->container->get('pimcore.ecommerceframework.installer');
+        return $this->container->get(Installer::class);
     }
 }

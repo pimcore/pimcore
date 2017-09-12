@@ -1,0 +1,45 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # ROUTING
+    #
+
+    # route provider for the CMF dynamic router
+    Pimcore\Routing\DynamicRouteProvider:
+        calls:
+            - [addHandler, ['@Pimcore\Routing\Dynamic\DocumentRouteHandler']]
+
+    # specific document related dynamic routing handling
+    Pimcore\Routing\Dynamic\DocumentRouteHandler: ~
+
+    # alias the request context as public service
+    pimcore.routing.router.request_context:
+        alias: router.request_context
+        public: true
+
+    # dedicated router for static routes
+    Pimcore\Routing\Staticroute\Router:
+        arguments:
+            $context: '@router.request_context'
+        calls:
+            - [setLocaleParams, ['%pimcore.routing.static.locale_params%']]
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: router, priority: 100 }
+            - { name: monolog.logger, channel: routing }
+
+    # routing loader for bundle routing auto loading
+    Pimcore\Routing\Loader\BundleRoutingLoader:
+        tags:
+            - { name: routing.loader }
+
+    # redirect handler used to handle redirects before/after routing
+    Pimcore\Routing\RedirectHandler:
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: routing }

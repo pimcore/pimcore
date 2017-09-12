@@ -14,46 +14,24 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListener
+class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
+    use PimcoreContextAwareTrait;
 
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
-
-    /**
-     * @return bool
-     */
-    public function disable()
+    public static function getSubscribedEvents()
     {
-        $this->enabled = false;
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function enable()
-    {
-        $this->enabled = true;
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
+        return [
+            KernelEvents::RESPONSE => 'onKernelResponse'
+        ];
     }
 
     /**

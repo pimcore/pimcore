@@ -10,15 +10,12 @@ services:
     # Predefined core environment implementations. Options will be set from configuration.
     #
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment: '@pimcore_ecommerce.environment'
+
     Pimcore\Bundle\EcommerceFrameworkBundle\Environment:
-        class: Pimcore\Bundle\EcommerceFrameworkBundle\Environment
         arguments:
-            - '@pimcore.locale'
-            - '%pimcore_ecommerce.environment.options%'
+            $options: '%pimcore_ecommerce.environment.options%'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment:
-        class: Pimcore\Bundle\EcommerceFrameworkBundle\SessionEnvironment
         arguments:
-            - '@session'
-            - '@pimcore.locale'
-            - '%pimcore_ecommerce.environment.options%'
+            $options: '%pimcore_ecommerce.environment.options%'

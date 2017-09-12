@@ -12,9 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Service\Request;
+namespace Pimcore\Http\Request\Resolver;
 
-use Pimcore\Service\Context\PimcoreContextGuesser;
+use Pimcore\Http\Context\PimcoreContextGuesser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -78,5 +78,43 @@ class PimcoreContextResolver extends AbstractRequestResolver
     public function setPimcoreContext(Request $request, string $context)
     {
         $request->attributes->set(self::ATTRIBUTE_PIMCORE_CONTEXT, $context);
+    }
+
+    /**
+     * Tests if the request matches a given contect. $context can also be an array of contexts. If one
+     * of the contexts matches, the method will return true.
+     *
+     * @param Request $request
+     * @param string|array $context
+     *
+     * @return bool
+     */
+    public function matchesPimcoreContext(Request $request, $context): bool
+    {
+        if (!is_array($context)) {
+            if (!empty($context)) {
+                $context = [$context];
+            } else {
+                $context = [];
+            }
+        }
+
+        if (empty($context)) {
+            throw new \InvalidArgumentException('Can\'t match against empty pimcore context');
+        }
+
+        $resolvedContext = $this->getPimcoreContext($request);
+        if (!$resolvedContext) {
+            // no context available to match -> false
+            return false;
+        }
+
+        foreach ($context as $ctx) {
+            if ($ctx === $resolvedContext) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

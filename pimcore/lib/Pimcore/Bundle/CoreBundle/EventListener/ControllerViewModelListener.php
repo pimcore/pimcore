@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Pimcore\Service\Request\ViewModelResolver;
+use Pimcore\Http\Request\Resolver\ViewModelResolver;
 use Pimcore\Templating\Model\ViewModelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;

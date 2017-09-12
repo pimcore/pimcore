@@ -12,7 +12,6 @@ services:
     #
 
     Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager:
-        class: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager
         arguments:
             - '@pimcore_ecommerce.environment'
             - '@?'

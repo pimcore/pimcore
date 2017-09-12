@@ -36,7 +36,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     public function listAction(Request $request)
     {
         if ($request->get('xaction') == 'destroy') {
-            $item = Recyclebin\Item::getById(\Pimcore\Admin\Helper\QueryParams::getRecordIdForGridRequest($request->get('data')));
+            $item = Recyclebin\Item::getById(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::getRecordIdForGridRequest($request->get('data')));
             $item->delete();
 
             return $this->json(['success' => true, 'data' => []]);
@@ -50,7 +50,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
             $list->setOrderKey('date');
             $list->setOrder('DESC');
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
                 $list->setOrderKey($sortingSettings['orderKey']);
                 $list->setOrder($sortingSettings['order']);

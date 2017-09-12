@@ -1,65 +1,37 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
     #
     # REQUEST + ROUTING
     #
 
-    pimcore.event_listener.frontend.routing:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\FrontendRoutingListener
-        arguments:
-            - '@pimcore.http.request_helper'
-            - '@pimcore.routing.redirect_handler'
-            - '@pimcore.service.request.site_resolver'
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\FrontendRoutingListener: ~
 
-    pimcore.event_listener.pimcore_context:
-        class: Pimcore\Bundle\CoreBundle\EventListener\PimcoreContextListener
-        arguments: ['@pimcore.service.request.pimcore_context_resolver', '@request_stack']
+    Pimcore\Bundle\CoreBundle\EventListener\PimcoreContextListener:
         calls:
             - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.frontend.document_fallback:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentFallbackListener
-        arguments:
-            - '@request_stack'
-            - '@pimcore.service.request.document_resolver'
-            - '@pimcore.service.request.site_resolver'
-            - '@pimcore.document_service'
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentFallbackListener: ~
 
-    pimcore.event_listener.frontend.locale:
-      class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\LocaleListener
-      tags:
-        - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\LocaleListener: ~
 
-    pimcore.event_listener.pimcore_header:
-        class: Pimcore\Bundle\CoreBundle\EventListener\PimcoreHeaderListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+    Pimcore\Bundle\CoreBundle\EventListener\PimcoreHeaderListener: ~
+
 
     #
     # PIMCORE OBJECTS/PARAMS LOGIC
     #
 
-    pimcore.event_listener.frontend.element_listener:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener
-        arguments:
-            - '@pimcore.service.request.document_resolver'
-            - '@pimcore.service.request.editmode_resolver'
-            - '@pimcore.http.request_helper'
-            - '@pimcore_admin.security.user_loader'
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener:
         calls:
             - [setLogger, ['@logger']]
         tags:
-            - { name: kernel.event_subscriber }
             - { name: monolog.logger, channel: init }
 
-    pimcore.event_listener.frontend.hardlink_canonical_listener:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener
-        arguments: ['@pimcore.service.request.document_resolver']
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener:
         tags:
             - { name: kernel.event_subscriber }
 
@@ -68,159 +40,108 @@ services:
     #
 
     # handles block state (current block, current index) for sub-requests
-    pimcore.event_listener.frontend.block_state:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\BlockStateListener
-        arguments: ['@pimcore.document.tag.block_state_stack']
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\BlockStateListener:
         calls:
             - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_subscriber }
 
     # Adds Meta Data entries of document to HeadMeta view helper
-    pimcore.event_listener.frontend.document_meta_data:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentMetaDataListener
-        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.templating.view_helper.head_meta']
-        tags:
-          - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentMetaDataListener: ~
 
 
     #
     # CONTROLLER HANDLING
     #
 
-    pimcore.event_listener.controller_view_model:
-        class: Pimcore\Bundle\CoreBundle\EventListener\ControllerViewModelListener
-        arguments: ['@pimcore.service.request.view_model_resolver']
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\ControllerViewModelListener: ~
 
-    pimcore.event_listener.frontend.content_template:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\ContentTemplateListener
-        arguments: ['@pimcore.service.request.template_resolver']
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\ContentTemplateListener: ~
 
-    pimcore.event_listener.evented_controller:
-        class: Pimcore\Bundle\CoreBundle\EventListener\EventedControllerListener
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\EventedControllerListener: ~
 
-    pimcore.event_listener.template_controller:
-        class: Pimcore\Bundle\CoreBundle\EventListener\TemplateControllerListener
-        arguments: ['@service_container']
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\TemplateControllerListener: ~
 
 
     #
     # VARIOUS MODEL SPECIFIC LISTENERS
     #
-    pimcore.event_listener.workflow_management:
-      class: Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener
-      tags:
-        - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.element_tags:
-      class: Pimcore\Bundle\CoreBundle\EventListener\ElementTagsListener
-      tags:
-        - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener:
+        public: true # can be disabled
 
-    pimcore.event_listener.search_backend:
-          class: Pimcore\Bundle\CoreBundle\EventListener\SearchBackendListener
-          tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\ElementTagsListener: ~
 
-    pimcore.event_listener.uuid:
-          class: Pimcore\Bundle\CoreBundle\EventListener\UUIDListener
-          tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\SearchBackendListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\UUIDListener: ~
+
 
     #
     # EXCEPTION HANDLING
     #
 
-    pimcore.event_listener.response_exception:
-        class: Pimcore\Bundle\CoreBundle\EventListener\ResponseExceptionListener
-        arguments: ['@pimcore.templating.action_renderer', '%pimcore.response_exception_listener.render_error_document%']
+    Pimcore\Bundle\CoreBundle\EventListener\ResponseExceptionListener:
+        arguments:
+            $renderErrorPage: '%pimcore.response_exception_listener.render_error_document%'
         calls:
             - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_subscriber }
+
 
     #
     # RESPONSE TRANSFORMING
     #
 
-    pimcore.event_listener.response_header:
-        class: Pimcore\Bundle\CoreBundle\EventListener\ResponseHeaderListener
-        arguments: ['@pimcore.service.request.response_header_resolver']
-        tags:
-            - { name: kernel.event_subscriber }
+    Pimcore\Bundle\CoreBundle\EventListener\ResponseHeaderListener: ~
 
-    pimcore.event_listener.editmode_listener:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener
-        arguments:
-            - '@pimcore.service.request.editmode_resolver'
-            - '@pimcore.service.request.document_resolver'
-            - '@pimcore_admin.security.user_loader'
-            - '@pimcore.extension.bundle_manager'
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener:
         calls:
             - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.frontend.internal_wysiwyg_html_attribute_filter:
-      class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\InternalWysiwygHtmlAttributeFilterListener
-      tags:
-          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
-    pimcore.event_listener.frontend.google_analytics_code:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener
+    #
+    # FRONTEND LISTENERS
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\InternalWysiwygHtmlAttributeFilterListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener:
+        public: true
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
 
-    pimcore.event_listener.frontend.cookie_policy_notice:
-      class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener
-      arguments: ['@kernel']
-      calls:
-          - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-template.html']]
-          - [setTranslator, ['@translator']]
-      tags:
-          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -109 }
-
-    pimcore.event_listener.frontend.google_tag_manager:
-      class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener
-      tags:
-          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
-
-    pimcore.event_listener.frontend.tag_manager:
-      class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\TagManagerListener
-      tags:
-          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -107 }
-
-    pimcore.event_listener.frontend.targeting:
-      class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\TargetingListener
-      arguments: ['@pimcore.service.request.document_resolver']
-      tags:
-          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -106 }
-
-    pimcore.event_listener.frontend.full_page_cache:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener:
+        public: true
+        calls:
+            - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-template.html']]
+            - [setTranslator, ['@translator']]
         tags:
-          - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 600 }
-          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -120 }
-          - { name: kernel.event_listener, event: kernel.response, method: stopPropagationCheck, priority: 100 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -109 }
 
-    pimcore.event_listener.maintenance_page:
-        class: Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener
-        arguments: ['@kernel']
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\TagManagerListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -107 }
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\TargetingListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -106 }
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener:
+        public: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 600 }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -120 }
+            - { name: kernel.event_listener, event: kernel.response, method: stopPropagationCheck, priority: 100 }
+
+    Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
         calls:
             - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/maintenance.html']]
         tags:
-          - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 
-    pimcore.event_listener.frontend.google_search_console_verification:
-        class: Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener
-        tags:
-          - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener: ~

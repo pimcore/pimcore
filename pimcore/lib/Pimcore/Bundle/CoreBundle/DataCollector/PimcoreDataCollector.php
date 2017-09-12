@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DataCollector;
 
-use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;

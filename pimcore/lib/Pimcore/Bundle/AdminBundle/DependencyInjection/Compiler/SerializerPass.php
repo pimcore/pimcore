@@ -38,19 +38,24 @@ class SerializerPass implements CompilerPassInterface
             return;
         }
 
+        $definition = $container->getDefinition('pimcore_admin.serializer');
+
         // Looks for all the services tagged "serializer.normalizer" and adds them to the Serializer service
         $normalizers = $this->findAndSortTaggedServices('pimcore_admin.serializer.normalizer', $container);
 
         if (empty($normalizers)) {
             throw new RuntimeException('You must tag at least one service as "pimcore_admin.serializer.normalizer" to use the Admin Serializer service');
         }
-        $container->getDefinition('pimcore_admin.serializer')->replaceArgument(0, $normalizers);
 
         // Looks for all the services tagged "serializer.encoders" and adds them to the Serializer service
         $encoders = $this->findAndSortTaggedServices('pimcore_admin.serializer.encoder', $container);
         if (empty($encoders)) {
             throw new RuntimeException('You must tag at least one service as "pimcore_admin.serializer.encoder" to use the Admin Serializer service');
         }
-        $container->getDefinition('pimcore_admin.serializer')->replaceArgument(1, $encoders);
+
+        $definition->setArguments([
+            '$normalizers' => $normalizers,
+            '$encoders'    => $encoders
+        ]);
     }
 }

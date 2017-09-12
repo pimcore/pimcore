@@ -14,7 +14,8 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Service\Request\PimcoreContextResolverAwareInterface;
+use Pimcore\Http\Context\PimcoreContextResolverAwareInterface;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -42,9 +43,14 @@ class PimcoreContextResolverAwarePass implements CompilerPassInterface
      */
     protected function processList(ContainerBuilder $container, array $services)
     {
-        $resolver = new Reference('pimcore.service.request.pimcore_context_resolver');
+        $resolver = new Reference(PimcoreContextResolver::class);
         foreach ($services as $id => $tags) {
             $definition = $container->getDefinition($id);
+
+            // do not do anything for autowired definitions
+            if ($definition->isAutowired()) {
+                continue;
+            }
 
             if (class_exists($definition->getClass())) {
                 $reflector = new \ReflectionClass($definition->getClass());

@@ -14,16 +14,18 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Service\Request\DocumentResolver;
-use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class TargetingListener extends AbstractFrontendListener
+class TargetingListener
 {
+    use PimcoreContextAwareTrait;
     use ResponseInjectionTrait;
 
     /**

@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Service;
+namespace Pimcore\Localization;
 
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -35,8 +35,6 @@ class Locale
     protected $translator;
 
     /**
-     * Locale constructor.
-     *
      * @param RequestStack|null $requestStack
      * @param Translator|null $translator
      */

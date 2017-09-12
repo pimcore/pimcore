@@ -14,7 +14,7 @@
 
 namespace Pimcore\Controller\ArgumentValueResolver;
 
-use Pimcore\Service\Request\TemplateVarsResolver;
+use Pimcore\Http\Request\Resolver\TemplateVarsResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

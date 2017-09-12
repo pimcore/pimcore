@@ -12,9 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Service\Context;
+namespace Pimcore\Http\Context;
 
-use Pimcore\Service\RequestMatcherFactory;
+use Pimcore\Http\RequestMatcherFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 

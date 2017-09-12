@@ -14,12 +14,13 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Site;
 use Pimcore\Routing\RedirectHandler;
-use Pimcore\Service\Request\PimcoreContextResolver;
-use Pimcore\Service\Request\SiteResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,8 +34,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Runs before dynamic routing kicks in and resolves site + handles redirects
  */
-class FrontendRoutingListener extends AbstractFrontendListener implements EventSubscriberInterface
+class FrontendRoutingListener implements EventSubscriberInterface
 {
+    use PimcoreContextAwareTrait;
+
     /**
      * @var RequestHelper
      */

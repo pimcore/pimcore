@@ -58,7 +58,7 @@ class LogController extends AdminController implements EventedControllerInterfac
         $limit = $request->get('limit');
 
         $orderby = 'ORDER BY id DESC';
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey']) {
             $orderby = 'ORDER BY ' . $sortingSettings['orderKey'] . ' ' . $sortingSettings['order'];
         }

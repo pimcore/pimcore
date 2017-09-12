@@ -41,7 +41,7 @@ class Currency
     protected $currencyName;
 
     /**
-     * @var \Pimcore\Service\IntlFormatterService
+     * @var \Pimcore\Localization\IntlFormatter
      */
     protected $formattingService;
 

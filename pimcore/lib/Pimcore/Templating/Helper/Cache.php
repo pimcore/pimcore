@@ -15,7 +15,7 @@
 namespace Pimcore\Templating\Helper;
 
 use Pimcore\Cache as CacheManager;
-use Pimcore\Service\Request\EditmodeResolver;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Symfony\Component\Templating\Helper\Helper;
 
 class Cache extends Helper

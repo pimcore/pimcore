@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Service;
+namespace Pimcore\HttpKernel;
 
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 

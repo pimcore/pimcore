@@ -20,7 +20,7 @@ namespace Pimcore\Tests\Test;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
-use Pimcore\Service\Locale;
+use Pimcore\Localization\Locale;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;

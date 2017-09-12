@@ -14,9 +14,11 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
+use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
 use Pimcore\Tool\ArrayUtils;
 use Symfony\Component\Config\FileLocator;
@@ -75,10 +77,18 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         );
 
         $loader->load('services.yml');
+        $loader->load('services_routing.yml');
+        $loader->load('extensions.yml');
+        $loader->load('request_response.yml');
+        $loader->load('l10n.yml');
+        $loader->load('argument_resolvers.yml');
+        $loader->load('implementation_factories.yml');
+        $loader->load('documents.yml');
         $loader->load('event_listeners.yml');
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
         $loader->load('migrations.yml');
+        $loader->load('aliases.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
@@ -109,7 +119,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      */
     private function configureModelFactory(ContainerBuilder $container, array $config)
     {
-        $service = $container->getDefinition('pimcore.model.factory');
+        $service = $container->getDefinition(Factory::class);
 
         $classMapLoader = new Definition(ClassMapLoader::class, [$config['models']['class_overrides']]);
         $classMapLoader->setPublic(false);
@@ -282,7 +292,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      */
     private function addContextRoutes(ContainerBuilder $container, array $config)
     {
-        $guesser = $container->getDefinition('pimcore.service.context.pimcore_context_guesser');
+        $guesser = $container->getDefinition(PimcoreContextGuesser::class);
 
         foreach ($config as $context => $contextConfig) {
             $guesser->addMethodCall('addContextRoutes', [$context, $contextConfig['routes']]);

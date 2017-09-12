@@ -4,6 +4,7 @@ namespace Pimcore\Tests\Helper;
 
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 
 class Ecommerce extends Module
 {
@@ -28,7 +29,7 @@ class Ecommerce extends Module
             $this->debug('[ECOMMERCE] Running ecommerce framework installer');
 
             // install ecommerce framework
-            $installer = $pimcoreModule->getContainer()->get('pimcore.ecommerceframework.installer');
+            $installer = $pimcoreModule->getContainer()->get(Installer::class);
             $installer->install();
         }
     }

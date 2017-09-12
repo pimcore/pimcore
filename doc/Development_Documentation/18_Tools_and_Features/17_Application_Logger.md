@@ -18,24 +18,63 @@ The logs are visible and searchable within the Pimcore backend GUI ![Tools menu]
 
 ## How to create log entries
 
-The application logger is a PSR-3 compatible component and available on the service container (`pimcore.app_logger`)
-and therefore it can be used the usual way:
+The application logger is a PSR-3 compatible component and available on the service container as service `Pimcore\Log\ApplicationLogger`
+(aliased to `pimcore.app_logger`) and therefore it can be used the usual way:
 
 ### Basic Usage - Example
 
 #### Controller / Action
+
 ```php
-$this->get("pimcore.app_logger")->error("Your error message");
-$this->get("pimcore.app_logger")->alert("Your alert");
-$this->get("pimcore.app_logger")->debug("Your alert", ["foo" => "bar"); // additional context information
+<?php
+$this->get(\Pimcore\Log\ApplicationLogger::class)->error('Your error message');
+$this->get(\Pimcore\Log\ApplicationLogger::class)->alert('Your alert');
+$this->get(\Pimcore\Log\ApplicationLogger::class)->debug('Your debug message', ['foo' => 'bar']); // additional context information
+
+// or
+$this->get('pimcore.app_logger')->error('Your error message');
 ```
 
 #### Dependency Injection / Container
-```php
+
+```yaml
 app.your_service:
-  class: AppBundle\Service\YourService
-  calls:
-    - [setLogger, ['pimcore.app_logger']]
+    class: AppBundle\YourService
+    calls:
+        - [setLogger, ['@Pimcore\Log\ApplicationLogger']]
+```
+
+You can also make use of autowiring by defining the application logger as dependency:
+
+```yaml
+services:
+    _defaults:
+        autowire: true
+
+    AppBundle\YourService: ~
+```
+
+```php
+<?php
+
+namespace AppBundle;
+
+use Pimcore\Log\ApplicationLogger;
+
+class YourService
+{
+    /**
+     * @var ApplicationLogger 
+     */
+    private $logger;
+    
+    public function __construct(ApplicationLogger $logger)
+    {
+        $this->logger = $logger;
+        
+        $logger->debug('Hello from YourService');
+    }
+}
 ```
 
 ### Advanced Usage - Example
@@ -43,7 +82,9 @@ app.your_service:
 There are some context variables with a special functionality: fileObject, relatedObject, component.
 
 ```php
-$logger = \Pimcore::getContainer()->get("pimcore.app_logger"); 
+<?php
+
+$logger = \Pimcore::getContainer()->get(\Pimcore\Log\ApplicationLogger::class); 
  
 $fileObject = new \Pimcore\Log\FileObject("some interesting data");
 $myObject = \Pimcore\Model\DataObject\AbstractObject::getById(73);

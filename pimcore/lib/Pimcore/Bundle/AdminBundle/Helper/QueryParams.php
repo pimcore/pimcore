@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Admin\Helper;
+namespace Pimcore\Bundle\AdminBundle\Helper;
 
 use Carbon\Carbon;
 

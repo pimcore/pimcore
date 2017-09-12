@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -46,8 +46,8 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         PimcoreContextResolver $resolver,
         RequestStack $requestStack
     ) {
-        $this->resolver           = $resolver;
-        $this->requestStack       = $requestStack;
+        $this->resolver     = $resolver;
+        $this->requestStack = $requestStack;
     }
 
     /**

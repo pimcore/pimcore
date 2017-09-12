@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Service\Locale;
+use Pimcore\Localization\Locale;
 use Pimcore\Tool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

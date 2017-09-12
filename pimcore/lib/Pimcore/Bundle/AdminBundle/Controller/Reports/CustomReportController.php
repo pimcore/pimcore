@@ -260,7 +260,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
     {
         $offset = $request->get('start', 0);
         $limit = $request->get('limit', 40);
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey']) {
             $sort = $sortingSettings['orderKey'];
             $dir = $sortingSettings['order'];

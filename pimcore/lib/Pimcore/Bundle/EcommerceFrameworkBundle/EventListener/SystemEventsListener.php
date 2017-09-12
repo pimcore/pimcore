@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\EventListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PimcoreEcommerceFrameworkBundle;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Event\System\MaintenanceEvent;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Model\Schedule\Maintenance\Job;
@@ -57,7 +58,7 @@ class SystemEventsListener implements EventSubscriberInterface
     private function handleMaintenance()
     {
         // fetch installer only on demand
-        $installer = $this->container->get('pimcore.ecommerceframework.installer');
+        $installer = $this->container->get(Installer::class);
         if (!$installer->isInstalled()) {
             return;
         }

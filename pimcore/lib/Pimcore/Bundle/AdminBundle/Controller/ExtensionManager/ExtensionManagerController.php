@@ -24,7 +24,9 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
+use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Routing\RouteReferenceInterface;
+use Pimcore\Tool\AssetsInstaller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
@@ -44,22 +46,20 @@ class ExtensionManagerController extends AdminController implements EventedContr
     /**
      * @var PimcoreBundleManager
      */
-    protected $bundleManager;
+    private $bundleManager;
 
     /**
      * @var AreabrickManager
      */
-    protected $areabrickManager;
+    private $areabrickManager;
 
-    /**
-     * @inheritDoc
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function __construct(
+        PimcoreBundleManager $bundleManager,
+        AreabrickManagerInterface $areabrickManager
+    )
     {
-        parent::setContainer($container);
-
-        $this->bundleManager    = $this->get('pimcore.extension.bundle_manager');
-        $this->areabrickManager = $this->get('pimcore.area.brick_manager');
+        $this->bundleManager    = $bundleManager;
+        $this->areabrickManager = $areabrickManager;
     }
 
     /**
@@ -153,10 +153,11 @@ class ExtensionManagerController extends AdminController implements EventedContr
      * @Route("/admin/toggle-extension-state")
      *
      * @param Request $request
+     * @param AssetsInstaller $assetsInstaller
      *
      * @return JsonResponse
      */
-    public function toggleExtensionStateAction(Request $request)
+    public function toggleExtensionStateAction(Request $request, AssetsInstaller $assetsInstaller)
     {
         if (null !== $response = $this->handleLegacyRequest($request, __FUNCTION__)) {
             return $response;
@@ -174,7 +175,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $reload = true;
 
             if ($enable) {
-                $message = $this->installAssets();
+                $message = $this->installAssets($assetsInstaller);
             }
         } elseif ($type === 'areabrick') {
             $this->areabrickManager->setState($id, $enable);
@@ -196,12 +197,12 @@ class ExtensionManagerController extends AdminController implements EventedContr
     /**
      * Runs array:install command and returns its result as array (line-by-line)
      *
+     * @param AssetsInstaller $assetsInstaller
+     *
      * @return array
      */
-    private function installAssets(): array
+    private function installAssets(AssetsInstaller $assetsInstaller): array
     {
-        $assetsInstaller = $this->get('pimcore.tool.assets_installer');
-
         try {
             $installProcess = $assetsInstaller->install();
 
@@ -529,10 +530,8 @@ class ExtensionManagerController extends AdminController implements EventedContr
      */
     private function getBrickList()
     {
-        $am = $this->get('pimcore.area.brick_manager');
-
         $results = [];
-        foreach ($am->getBricks() as $brick) {
+        foreach ($this->areabrickManager->getBricks() as $brick) {
             $results[] = $this->buildBrickInfo($brick);
         }
 

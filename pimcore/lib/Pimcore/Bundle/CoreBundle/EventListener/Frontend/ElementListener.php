@@ -15,14 +15,15 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Version;
-use Pimcore\Service\Request\DocumentResolver;
-use Pimcore\Service\Request\EditmodeResolver;
-use Pimcore\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -37,9 +38,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * Handles element setup logic from request. Basically this does what the init() method
  * on the ZF frontend controller did.
  */
-class ElementListener extends AbstractFrontendListener implements EventSubscriberInterface, LoggerAwareInterface
+class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var DocumentResolver

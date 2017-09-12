@@ -288,7 +288,7 @@ class ClassificationstoreController extends AdminController
             }
 
             $allParams = array_merge($request->request->all(), $request->query->all());
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($allParams);
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
                 $orderKey = $sortingSettings['orderKey'];
                 $order = $sortingSettings['order'];
@@ -436,7 +436,7 @@ class ClassificationstoreController extends AdminController
             }
 
             $allParams = array_merge($request->request->all(), $request->query->all());
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($allParams);
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
                 $orderKey = $sortingSettings['orderKey'];
                 $order = $sortingSettings['order'];
@@ -570,7 +570,7 @@ class ClassificationstoreController extends AdminController
             }
 
             $allParams = array_merge($request->request->all(), $request->query->all());
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($allParams);
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
                 $orderKey = $sortingSettings['orderKey'];
                 $order = $sortingSettings['order'];
@@ -690,7 +690,7 @@ class ClassificationstoreController extends AdminController
         }
 
         $allParams = array_merge($request->request->all(), $request->query->all());
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($allParams);
+        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
             $orderKey = $sortingSettings['orderKey'];
             $order = $sortingSettings['order'];
@@ -816,7 +816,7 @@ class ClassificationstoreController extends AdminController
             }
 
             $allParams = array_merge($request->request->all(), $request->query->all());
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($allParams);
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
                 $orderKey = $sortingSettings['orderKey'];
                 $order = $sortingSettings['order'];
@@ -1176,7 +1176,7 @@ class ClassificationstoreController extends AdminController
             }
 
             $allParams = array_merge($request->request->all(), $request->query->all());
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($allParams);
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
                 $orderKey = $sortingSettings['orderKey'];
                 $order = $sortingSettings['order'];

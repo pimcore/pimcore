@@ -14,11 +14,11 @@
 
 namespace Pimcore\Templating\Renderer;
 
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Loader\TagLoaderInterface;
-use Pimcore\Service\Request\EditmodeResolver;
 use Pimcore\Templating\Model\ViewModel;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

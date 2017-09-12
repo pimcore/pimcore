@@ -14,15 +14,17 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Service\Request\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 
-class CookiePolicyNoticeListener extends AbstractFrontendListener
+class CookiePolicyNoticeListener
 {
     use ResponseInjectionTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var bool
@@ -35,7 +37,7 @@ class CookiePolicyNoticeListener extends AbstractFrontendListener
     protected $templateCode = null;
 
     /**
-     * @var Kernel
+     * @var KernelInterface
      */
     protected $kernel;
 
@@ -45,11 +47,9 @@ class CookiePolicyNoticeListener extends AbstractFrontendListener
     protected $translator;
 
     /**
-     * CookiePolicyNotice constructor.
-     *
-     * @param Kernel $kernel
+     * @param KernelInterface $kernel
      */
-    public function __construct(Kernel $kernel)
+    public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
     }

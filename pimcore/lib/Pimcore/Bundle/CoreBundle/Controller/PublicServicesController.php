@@ -118,7 +118,6 @@ class PublicServicesController extends FrameworkController
      */
     public function robotsTxtAction(Request $request)
     {
-
         // check for site
         $site = null;
         try {

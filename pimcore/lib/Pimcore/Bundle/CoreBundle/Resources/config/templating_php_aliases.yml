@@ -1,0 +1,24 @@
+services:
+    _defaults:
+        public: true
+
+    # aliases to templating helpers for backwards compatibility
+    pimcore.templating.action_renderer: '@Pimcore\Templating\Renderer\ActionRenderer'
+    pimcore.templating.include_renderer: '@Pimcore\Templating\Renderer\IncludeRenderer'
+    pimcore.templating.tag_renderer: '@Pimcore\Templating\Renderer\TagRenderer'
+    pimcore.templating.view_helper.action: '@Pimcore\Templating\Helper\Action'
+    pimcore.templating.view_helper.get_param: '@Pimcore\Templating\Helper\GetParam'
+    pimcore.templating.view_helper.get_all_params: '@Pimcore\Templating\Helper\GetAllParams'
+    pimcore.templating.view_helper.glossary: '@Pimcore\Templating\Helper\Glossary'
+    pimcore.templating.view_helper.inc: '@Pimcore\Templating\Helper\Inc'
+    pimcore.templating.view_helper.pimcore_url: '@Pimcore\Templating\Helper\PimcoreUrl'
+    pimcore.templating.view_helper.placeholder: '@Pimcore\Templating\Helper\Placeholder'
+    pimcore.templating.view_helper.head_title: '@Pimcore\Templating\Helper\HeadTitle'
+    pimcore.templating.view_helper.head_link: '@Pimcore\Templating\Helper\HeadLink'
+    pimcore.templating.view_helper.head_script: '@Pimcore\Templating\Helper\HeadScript'
+    pimcore.templating.view_helper.inline_script: '@Pimcore\Templating\Helper\InlineScript'
+    pimcore.templating.view_helper.head_style: '@Pimcore\Templating\Helper\HeadStyle'
+    pimcore.templating.view_helper.head_meta: '@Pimcore\Templating\Helper\HeadMeta'
+    pimcore.templating.view_helper.device: '@Pimcore\Templating\Helper\Device'
+    pimcore.templating.view_helper.cache: '@Pimcore\Templating\Helper\Cache'
+    pimcore.templating.view_helper.navigation: '@Pimcore\Templating\Helper\Navigation'

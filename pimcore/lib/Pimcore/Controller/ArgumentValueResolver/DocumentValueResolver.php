@@ -14,8 +14,8 @@
 
 namespace Pimcore\Controller\ArgumentValueResolver;
 
+use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Model\Document;
-use Pimcore\Service\Request\DocumentResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

@@ -119,7 +119,7 @@ abstract class Kernel extends SymfonyKernel
         Runtime::getInstance();
 
         // set the extension config on the container
-        $this->getContainer()->set('pimcore.extension.config', $this->extensionConfig);
+        $this->getContainer()->set(Extension\Config::class, $this->extensionConfig);
 
         \Pimcore::initLogger();
         \Pimcore\Cache::init();

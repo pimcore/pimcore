@@ -14,7 +14,7 @@
 
 namespace Pimcore\Controller\ArgumentValueResolver;
 
-use Pimcore\Service\Request\ViewModelResolver;
+use Pimcore\Http\Request\Resolver\ViewModelResolver;
 use Pimcore\Templating\Model\ViewModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;

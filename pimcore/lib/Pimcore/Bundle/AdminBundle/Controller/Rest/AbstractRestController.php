@@ -37,14 +37,9 @@ abstract class AbstractRestController extends AdminController
      */
     protected $service;
 
-    /**
-     * @inheritDoc
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function __construct(Service $service)
     {
-        parent::setContainer($container);
-
-        $this->service = $container->get('pimcore_admin.webservice.service');
+        $this->service = $service;
     }
 
     /**

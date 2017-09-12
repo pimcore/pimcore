@@ -1,143 +1,38 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
     #
     # SESSION
     #
 
     Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator:
-        arguments: ['%pimcore.admin.session.attribute_bags%']
+        arguments:
+            - '%pimcore.admin.session.attribute_bags%'
         tags:
             - { name: pimcore.session.configurator }
 
     Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler:
-        arguments:
-            - '@session'
+        public: true
         calls:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: pimcore_admin.session }
 
     #
-    # SERIALIZER
-    #
-    # We use an isolated serializer instance in the admin area to make sure the admin doesn't break when the global
-    # serializer is used and configured in client applications. For example, we don't want to use most of the normalizers
-    # which are preconfigured as we basically only need json_encode with error handling and reference loop detection.
-    #
-    # This allows to use the power and flexibility of the serializer component in both admin and website contexts
-    # without influencing each other.
-    #
-
-    pimcore_admin.serializer:
-        class: Symfony\Component\Serializer\Serializer
-        arguments: ['@?', '@?']
-
-    pimcore_admin.serializer.encoder.json:
-        class: Symfony\Component\Serializer\Encoder\JsonEncoder
-        tags:
-            -  { name: pimcore_admin.serializer.encoder }
-
-    pimcore_admin.serializer.normalizer.reference_loop:
-        class: Pimcore\Bundle\AdminBundle\Serializer\Normalizer\ReferenceLoopNormalizer
-        tags:
-            -  { name: pimcore_admin.serializer.normalizer }
-
-    #
-    # SECURITY
-    #
-
-    # standard user provider returning admin users wrapped in a Pimcore\Bundle\AdminBundle\Security\User\User proxy object.
-    # using this user providers allows implementations to authenticate against pimcore users on every desired firewall
-    pimcore_admin.security.user_provider:
-        class: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
-
-    # the password encoder factory builds a dedicated encoder per user
-    # as we need the user instance to encode passwords. see pimcore.security.encoder_factories
-    pimcore_admin.security.password_encoder_factory:
-        class: Pimcore\Security\Encoder\Factory\UserAwareEncoderFactory
-        arguments:
-            - Pimcore\Bundle\AdminBundle\Security\Encoder\AdminPasswordEncoder
-
-    # guard implementation handling admin form login for the main admin firewall
-    pimcore_admin.security.admin_authenticator:
-        class: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
-        arguments:
-            - '@security.token_storage'
-            - '@router'
-            - '@event_dispatcher'
-            - '@translator'
-            - '@security.http_utils'
-            - '@pimcore_admin.security.bruteforce_protection_handler'
-
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
-
-    # guard implementation handling webservice login
-    pimcore_admin.security.webservice_authenticator:
-        class: Pimcore\Bundle\AdminBundle\Security\Guard\WebserviceAuthenticator
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
-
-    pimcore_admin.security.logout_success_handler:
-        class: Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler
-        arguments: ['@security.token_storage', '@router', '@event_dispatcher']
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
-
-    pimcore_admin.security.token_storage_user_resolver:
-        class: Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver
-        arguments: ['@security.token_storage']
-
-    pimcore_admin.security.user_loader:
-        class: Pimcore\Bundle\AdminBundle\Security\User\UserLoader
-        arguments: ['@pimcore_admin.security.token_storage_user_resolver', '@pimcore.http.request_helper']
-
-    pimcore_admin.security.bruteforce_protection_handler:
-        class: Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler
-        arguments: ['@pimcore.http.request_helper']
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
-
-    # user checker checking admin users for validity
-    pimcore_admin.security.user_checker:
-        class: Pimcore\Bundle\AdminBundle\Security\User\UserChecker
-
-    #
-    # pimcore_admin_pre_auth authentication provider
-    #
-    # The 'pimcore_admin_pre_auth' authentication provider checks against already logged in admin users. Logging in through
-    # this provider is not possible, only previously authenticated users.
-    #
-    # Provider instances are built by Pimcore\Bundle\AdminBundle\Security\Factory\PreAuthenticatedAdminSessionFactory
-    #
-    pimcore.security.authentication.provider.admin_pre_auth:
-        class: Symfony\Component\Security\Core\Authentication\Provider\PreAuthenticatedAuthenticationProvider
-        public: false
-        abstract: true
-        arguments:
-            - '' # user provider will be set by factory
-            - '@pimcore_admin.security.user_checker'
-            - '' # provider key will be set by factory
-
-    pimcore.security.authentication.listener.admin_pre_auth:
-        class: Pimcore\Bundle\AdminBundle\Security\Firewall\PreAuthenticatedAdminSessionListener
-        public: false
-        abstract: true
-        arguments:
-            - '@security.token_storage'
-            - '@security.authentication.manager'
-            - '' # provider key will be set by factory
-
-    #
     # API
     #
 
-    pimcore_admin.webservice.service:
-        class: Pimcore\Model\Webservice\Service
+    Pimcore\Model\Webservice\Service: ~
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\AdminBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
