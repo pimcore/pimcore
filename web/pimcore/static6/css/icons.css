@@ -770,6 +770,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/currency_exchange.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_inputQuantityValue {
+    background: url(/pimcore/static6/img/flat-color-icons/add_row.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_calculatedValue {
     background: url(/pimcore/static6/img/flat-color-icons/calculator.svg) center center no-repeat !important;
 }
