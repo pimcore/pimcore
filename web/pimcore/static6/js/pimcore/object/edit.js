@@ -86,35 +86,28 @@ pimcore.object.edit = Class.create({
         var isInvalidMandatory;
 
         for (var i = 0; i < dataKeys.length; i++) {
+            if (this.dataFields[dataKeys[i]] && typeof this.dataFields[dataKeys[i]] == "object") {
+                currentField = this.dataFields[dataKeys[i]];
+                if (this.object.ignoreMandatoryFields != true) {
+                    if(currentField.isMandatory() == true) {
+                        isInvalidMandatory = currentField.isInvalidMandatory();
+                        if (isInvalidMandatory != false) {
 
-            try {
-                if (this.dataFields[dataKeys[i]] && typeof this.dataFields[dataKeys[i]] == "object") {
-                    currentField = this.dataFields[dataKeys[i]];
-                    if (this.object.ignoreMandatoryFields != true) {
-                        if(currentField.isMandatory() == true) {
-                            isInvalidMandatory = currentField.isInvalidMandatory();
-                            if (isInvalidMandatory != false) {
-
-                                // some fields can return their own error messages like fieldcollections, ...
-                                if(typeof isInvalidMandatory == "object") {
-                                    invalidMandatoryFields = array_merge(isInvalidMandatory, invalidMandatoryFields);
-                                } else {
-                                    invalidMandatoryFields.push(currentField.getTitle() + " ("
-                                                                        + currentField.getName() + ")");
-                                }
+                            // some fields can return their own error messages like fieldcollections, ...
+                            if(typeof isInvalidMandatory == "object") {
+                                invalidMandatoryFields = array_merge(isInvalidMandatory, invalidMandatoryFields);
+                            } else {
+                                invalidMandatoryFields.push(currentField.getTitle() + " ("
+                                                                    + currentField.getName() + ")");
                             }
                         }
                     }
-
-                    //only include changed values in save response.
-                    if(currentField.isDirty()) {
-                        values[currentField.getName()] =  currentField.getValue();
-                    }
                 }
-            }
-            catch (e) {
-                console.log(e);
-                values[currentField.getName()] = "";
+
+                //only include changed values in save response.
+                if(currentField.isDirty()) {
+                    values[currentField.getName()] =  currentField.getValue();
+                }
             }
         }
 
