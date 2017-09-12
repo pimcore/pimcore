@@ -104,9 +104,22 @@ abstract class Admin extends Action
                 }
             } else {
                 // try to authenticate with http basic auth, but this is only allowed for WebDAV
-                if ($this->getParam("module") == "admin" && $this->getParam("controller") == "asset" && $this->getParam("action") == "webdav") {
+                $isWebdavAction = (
+                    $this->getParam("module") == "admin" &&
+                    $this->getParam("controller") == "asset" &&
+                    $this->getParam("action") == "webdav"
+                );
+
+                $isOthers = (
+                    ($this->getRequest()->getMethod() == 'PROPFIND' || $this->getRequest()->getMethod() == 'OPTIONS') &&
+                    $this->getRequest()->getPathInfo() == '/admin/asset'
+                );
+
+                if ($isWebdavAction || $isOthers) {
+                    // $isOthers is only allowed for sending authentication required headers (not for actual actions)
+                    // this required by the Windows Client, no idea why ...
                     $user = Authentication::authenticateHttpBasic();
-                    if ($user instanceof Model\User) {
+                    if ($user instanceof Model\User && $isWebdavAction) {
                         $this->setUser($user);
 
                         \Zend_Registry::set("pimcore_admin_user", $this->getUser());
