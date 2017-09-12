@@ -324,11 +324,3 @@ Choose the class:
 ![Newsletter - objects list source adapter class](../img/newsletter_objects_list_adapter_class.png)
 
 and at the end, just push the **Send Newsletter Now** button.
-
-## Sending Newsletter from the Command Line
-
-You can use the command-line interface to send newsletters (cron-jobs, scheduling...)
-
-```bash
-php pimcore/cli/console.php internal:newsletter-send NAME-OF-NEWSLETTER
-```
