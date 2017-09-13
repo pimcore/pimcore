@@ -24,7 +24,7 @@ class Version
     /**
      * @var int
      */
-    public static $revision = 108;
+    public static $revision = 109;
 
     /**
      * @return string
