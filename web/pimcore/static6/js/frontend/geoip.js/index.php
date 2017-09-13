@@ -54,6 +54,8 @@ if (file_exists($geoDbFile)) {
     } catch (\Exception $e) {
         $exception = $e->getMessage();
     }
+} else {
+    throw new \Exception("GeoIP database doesn't exist. Please run the maintenance command to download the latest database.");
 }
 
 /* SOME FUNCTIONS */
