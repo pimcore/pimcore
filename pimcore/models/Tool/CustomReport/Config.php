@@ -155,10 +155,19 @@ class Config extends Model\AbstractModel
      */
     public static function getAdapter($configuration, $fullConfig = null)
     {
-        $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
-        $adapter = "\\Pimcore\\Model\\Tool\\CustomReport\\Adapter\\{$type}";
+        $type = $configuration->type ? $configuration->type : 'Sql';
+        $serviceLocator = \Pimcore::getContainer()->get('pimcore.custom_report.adapter.factories');
 
-        return new $adapter($configuration, $fullConfig);
+        if (!$serviceLocator->has($type)) {
+            throw new \RuntimeException(sprintf("Could not find Custom Report Adapter with type %s", $type));
+        }
+
+        /**
+         * @var $factory Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface
+         */
+        $factory = $serviceLocator->get($type);
+
+        return $factory->create($configuration, $fullConfig);
     }
 
     /**
