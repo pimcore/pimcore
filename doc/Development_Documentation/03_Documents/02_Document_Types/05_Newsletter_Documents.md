@@ -55,7 +55,7 @@ the email addresses. It needs to implement the interface `AddressSourceAdapterIn
       arguments:
         - 'App\Document\Newsletter\AddressSourceAdapter\MyAdapter'
   ```
-- If you are using a more complex Source Adapter, you can create your own Factory by implementing the interface Pimcore\Document\Newsletter\Factory\AddressSourceAdapterFactoryInterface
+- If you are using a more complex Source Adapter, you can create your own Factory by implementing the interface Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface
 - Add your Adapter Factory to the configuration:
 
 ```yml
