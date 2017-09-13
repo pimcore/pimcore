@@ -349,7 +349,7 @@ class NewsletterController extends DocumentControllerBase
          * @var $addressAdapterFactory AddressSourceAdapterFactoryInterface
          */
         $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
-        $addressAdapter = $addressAdapterFactory->configure($adapterParams);
+        $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
         $sendingContainer = $addressAdapter->getParamsForTestSending($request->get('testMailAddress'));
 

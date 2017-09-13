@@ -61,7 +61,7 @@ the email addresses. It needs to implement the interface `AddressSourceAdapterIn
 ```yml
 pimcore:
     newsletter:
-        adapters:
+        source_adapters:
             myAdapter: app.document.newsletter.factory.myAdapter
 
 ````

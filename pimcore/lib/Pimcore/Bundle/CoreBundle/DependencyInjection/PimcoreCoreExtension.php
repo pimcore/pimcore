@@ -98,7 +98,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordEncoders($container, $config);
-        $this->configureNewsletterAdapterFactories($container, $config['documents']['newsletter']['adapters']);
+        $this->configureNewsletterAdapterFactories($container, $config['newsletter']['source_adapters']);
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];

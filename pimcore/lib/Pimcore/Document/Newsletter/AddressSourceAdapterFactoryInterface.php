@@ -14,8 +14,6 @@
 
 namespace Pimcore\Document\Newsletter;
 
-use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
-
 interface AddressSourceAdapterFactoryInterface
 {
     /**
@@ -24,5 +22,5 @@ interface AddressSourceAdapterFactoryInterface
      * @param $params
      * @return AddressSourceAdapterInterface
      */
-    public function configure($params);
+    public function create($params);
 }

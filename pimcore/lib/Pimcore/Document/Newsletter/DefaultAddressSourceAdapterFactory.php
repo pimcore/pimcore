@@ -29,7 +29,7 @@ class DefaultAddressSourceAdapterFactory implements AddressSourceAdapterFactoryI
     /**
      * {@inheritdoc}
      */
-    public function configure($params)
+    public function create($params)
     {
         return new $this->className($params);
     }

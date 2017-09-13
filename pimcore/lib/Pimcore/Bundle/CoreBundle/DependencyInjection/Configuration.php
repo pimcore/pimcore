@@ -87,6 +87,7 @@ class Configuration implements ConfigurationInterface
         $this->addAdminNode($rootNode);
         $this->addWebProfilerNode($rootNode);
         $this->addSecurityNode($rootNode);
+        $this->addNewsletterNode($rootNode);
 
         return $treeBuilder;
     }
@@ -158,20 +159,6 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->booleanNode('autoload')
                                 ->defaultTrue()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-
-        $documentsNode
-            ->children()
-                ->arrayNode('newsletter')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('adapters')
-                            ->useAttributeAsKey('name')
-                                ->prototype('scalar')
                             ->end()
                         ->end()
                     ->end()
@@ -533,5 +520,26 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end();
+    }
+
+    /**
+     * Adds configuration tree for newsletter source adapters
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addNewsletterNode(ArrayNodeDefinition $rootNode) {
+        $rootNode
+            ->children()
+                ->arrayNode('newsletter')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('source_adapters')
+                            ->useAttributeAsKey('name')
+                                ->prototype('scalar')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 }
