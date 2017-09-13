@@ -116,7 +116,7 @@
   },
   "require-dev": {
     "cache/integration-tests": "^0.15.0",
-    "codeception/codeception": "2.2.*"
+    "codeception/codeception": "^2.3"
   },
   "suggest": {
     "ext-curl": "*",
