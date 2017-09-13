@@ -149,8 +149,9 @@ class Config extends Model\AbstractModel
     /**
      * @param $configuration
      * @param null $fullConfig
+     * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      *
-     * @return mixed
+     * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface
      */
     public static function getAdapter($configuration, $fullConfig = null)
     {

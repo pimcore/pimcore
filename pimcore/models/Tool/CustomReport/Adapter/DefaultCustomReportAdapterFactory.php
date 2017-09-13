@@ -17,30 +17,26 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
-abstract class AbstractAdapter implements CustomReportAdapterInterface
+class DefaultCustomReportAdapterFactory implements CustomReportAdapterFactoryInterface
 {
     /**
-     * @param $config
-     * @param null $fullConfig
+     * @var string
      */
-    public function __construct($config, $fullConfig = null)
+    private $className;
+
+    /**
+     * @param string $className
+     */
+    public function __construct($className)
     {
-        $this->config = $config;
-        $this->fullConfig = $fullConfig;
+        $this->className = $className;
     }
 
     /**
      * {@inheritdoc}
      */
-    abstract public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null);
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function getColumns($configuration);
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function getAvailableOptions($filters, $field, $drillDownFilters);
+    public function create($config, $fullConfig = null)
+    {
+        return new $this->className($config, $fullConfig);
+    }
 }

@@ -32,7 +32,6 @@ pimcore.report.custom.settings = Class.create({
                 id: "pimcore_custom_reports_settings",
                 title: t("custom_reports"),
                 iconCls: "pimcore_icon_reports",
-                bodyStyle: "padding: 10px;",
                 layout: "fit",
                 closable:true,
                 items: [editor.getTabPanel()]

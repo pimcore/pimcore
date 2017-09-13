@@ -187,7 +187,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $result = [];
 
         try {
-            $adapter = CustomReport\Config::getAdapter($configuration);
+            $adapter = $this->getReportAdapter($configuration->type, $configuration);
             $columns = $adapter->getColumns($configuration);
             if (!is_array($columns)) {
                 $columns = [];
@@ -273,7 +273,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $config = CustomReport\Config::getByName($request->get('name'));
         $configuration = $config->getDataSourceConfig();
 
-        $adapter = CustomReport\Config::getAdapter($configuration, $config);
+        $adapter = $this->getReportAdapter($configuration->type, $configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters, $config);
 
@@ -300,7 +300,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $config = CustomReport\Config::getByName($request->get('name'));
         $configuration = $config->getDataSourceConfig();
 
-        $adapter = CustomReport\Config::getAdapter($configuration, $config);
+        $adapter = $this->getReportAdapter($configuration->type, $configuration, $config);
         $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
 
         return $this->json([
@@ -327,8 +327,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
         $configuration = $config->getDataSourceConfig();
 
-        $adapter = CustomReport\Config::getAdapter($configuration, $config);
-
+        $adapter = $this->getReportAdapter($configuration->type, $configuration, $config);
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
         return $this->json([
@@ -371,8 +370,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
             ? $configuration[0]
             : $configuration;
 
-        $adapter = CustomReport\Config::getAdapter($configuration, $config);
-
+        $adapter = $this->getReportAdapter($configuration->type, $configuration, $config);
         $result = $adapter->getData($filters, $sort, $dir, null, null, $fields, $drillDownFilters);
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
@@ -396,6 +394,29 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $response->deleteFileAfterSend(true);
 
         return $response;
+    }
+
+    /**
+     * Creates an instanceof CustomReportAdapterInterface based on $type
+     *
+     * @param $type
+     * @param $configuration
+     * @param null $fullConfig
+     * @return CustomReport\Adapter\CustomReportAdapterInterface
+     */
+    private function getReportAdapter($type, $configuration, $fullConfig = null) {
+        $serviceLocator = $this->get('pimcore.custom_report.adapter.factories');
+
+        if (!$serviceLocator->has($type)) {
+            throw new \RuntimeException(sprintf("Could not find Custom Report Adapter with type %s", $type));
+        }
+
+        /**
+         * @var $factory CustomReport\Adapter\CustomReportAdapterFactoryInterface
+         */
+        $factory = $serviceLocator->get($type);
+
+        return $factory->create($configuration, $fullConfig);
     }
 
     /**

@@ -17,18 +17,19 @@ namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Model\DataObject\Listing;
+use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface;
 
 class ReportAdapter implements AddressSourceAdapterInterface
 {
     /**
-     * @var int
-     */
-    protected $reportId;
-
-    /**
      * @var string[]
      */
     protected $emailFieldName;
+
+    /**
+     * @var CustomReportAdapterInterface
+     */
+    protected $reportAdapter;
 
     /**
      * @var string[]
@@ -46,14 +47,13 @@ class ReportAdapter implements AddressSourceAdapterInterface
     protected $list;
 
     /**
-     * IAddressSourceAdapter constructor.
-     *
-     * @param $params
+     * @param $emailFieldName
+     * @param CustomReportAdapterInterface $reportAdapter
      */
-    public function __construct($params)
+    public function __construct($emailFieldName, CustomReportAdapterInterface $reportAdapter)
     {
-        $this->reportId = $params['reportId'];
-        $this->emailFieldName = $params['emailFieldName'];
+        $this->emailFieldName = $emailFieldName;
+        $this->reportAdapter = $reportAdapter;
     }
 
     /**
@@ -61,10 +61,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
      */
     protected function getListing()
     {
-        $config = \Pimcore\Model\Tool\CustomReport\Config::getByName($this->reportId);
-        $configuration = $config->getDataSourceConfig();
-        $adapter = \Pimcore\Model\Tool\CustomReport\Config::getAdapter($configuration, $config);
-        $result = $adapter->getData(null, $this->emailFieldName, 'ASC', null, null);
+        $result = $this->reportAdapter->getData(null, $this->emailFieldName, 'ASC', null, null);
 
         $this->list = $result['data'];
         $this->elementsTotal = intval($result['total']);

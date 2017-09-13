@@ -88,6 +88,7 @@ class Configuration implements ConfigurationInterface
         $this->addWebProfilerNode($rootNode);
         $this->addSecurityNode($rootNode);
         $this->addNewsletterNode($rootNode);
+        $this->addCustomReportsNode($rootNode);
 
         return $treeBuilder;
     }
@@ -534,6 +535,27 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('source_adapters')
+                            ->useAttributeAsKey('name')
+                                ->prototype('scalar')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * Adds configuration tree for custom report adapters
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addCustomReportsNode(ArrayNodeDefinition $rootNode) {
+        $rootNode
+            ->children()
+                ->arrayNode('custom_report')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('adapters')
                             ->useAttributeAsKey('name')
                                 ->prototype('scalar')
                             ->end()

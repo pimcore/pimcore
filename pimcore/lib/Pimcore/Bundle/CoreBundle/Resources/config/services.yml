@@ -110,10 +110,26 @@ services:
         - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
 
     pimcore.document.newsletter.factory.report:
-      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      class: Pimcore\Document\Newsletter\ReportAddressSourceAdapterFactory
       arguments:
-        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\ReportAdapter'
+        - '@pimcore.custom_report.adapter.factories'
 
     pimcore.newsletter.address_source_adapter.factories:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']
+
+
+    # CustomReport Adapter
+    pimcore.custom_report.adapter.factory.sql:
+      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
+      arguments:
+        - 'Pimcore\Model\Tool\CustomReport\Adapter\Sql'
+
+    pimcore.custom_report.adapter.factory.analytics:
+      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
+      arguments:
+        - 'Pimcore\Model\Tool\CustomReport\Adapter\Analytics'
+
+    pimcore.custom_report.adapter.factories:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
