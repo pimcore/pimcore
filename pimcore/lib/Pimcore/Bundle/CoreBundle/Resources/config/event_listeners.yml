@@ -16,10 +16,17 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\DocumentFallbackListener: ~
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\LocaleListener: ~
-
     Pimcore\Bundle\CoreBundle\EventListener\PimcoreHeaderListener: ~
 
+    #
+    # TRANSLATIONS/LOCALE
+    #
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\LocaleListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener:
+        arguments:
+            $translator: '@pimcore.translator'
 
     #
     # PIMCORE OBJECTS/PARAMS LOGIC

@@ -47,6 +47,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     protected $adminPath = '';
 
     /**
+     * If true, the translator will just return the translation key instead of actually translating
+     * the message. Can be useful for debugging and to get an overview over used translation keys on
+     * a page.
+     *
+     * @var bool
+     */
+    protected $disableTranslations = false;
+
+    /**
      * @var Kernel
      */
     protected $kernel;
@@ -69,6 +78,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     public function trans($id, array $parameters = [], $domain = null, $locale = null)
     {
+        if ($this->disableTranslations) {
+            return $id;
+        }
+
         if (null === $domain) {
             $domain = 'messages';
         }
@@ -94,6 +107,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
     {
+        if ($this->disableTranslations) {
+            return $id;
+        }
+
         $parameters = array_merge([
             '%count%' => $number,
         ], $parameters);
@@ -341,6 +358,16 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     public function setKernel($kernel)
     {
         $this->kernel = $kernel;
+    }
+
+    public function getDisableTranslations(): bool
+    {
+        return $this->disableTranslations;
+    }
+
+    public function setDisableTranslations(bool $disableTranslations)
+    {
+        $this->disableTranslations = $disableTranslations;
     }
 
     /**

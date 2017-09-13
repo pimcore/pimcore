@@ -23,3 +23,20 @@ This parameter only works if [`DEBUG MODE`](../18_Tools_and_Features/25_System_S
 ### pimcore_disable_host_redirect
 Disables the "redirect to main domain" feature. This is especially useful when using Pimcore behind 
 a reverse proxy. 
+
+### pimcore_debug_translations
+
+Configures the translator to return the given translation key instead of actually translating the message. This can be
+useful to debug translations or to get an overview over used translation keys. Example: http://www.example.com/my/page?pimcore_debug_translations=1
+
+This parameter is only available if activated via configuration and is enabled by default in the `dev` environment which
+is by default automatically chosen when debug mode is active:
+
+```yaml
+pimcore:
+    translations:
+        debugging:
+            enabled: true
+            # you could also change the parameter from pimcore_debug_translations to something else
+            parameter: my_custom_parameter
+```
