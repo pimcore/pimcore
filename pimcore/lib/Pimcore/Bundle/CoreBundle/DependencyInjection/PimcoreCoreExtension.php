@@ -49,7 +49,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
     {
         // TODO use ConfigurableExtension or getExtension()??
         $configuration = new Configuration();
-        $config        = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration($configuration, $configs);
 
         // bundle manager/locator config
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
@@ -98,6 +98,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordEncoders($container, $config);
+        $this->configureNewsletterAdapterFactories($container, $config['newsletter']['source_adapters']);
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];
@@ -151,16 +152,16 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
     private function configureImplementationLoaders(ContainerBuilder $container, array $config)
     {
         $services = [
-            'pimcore.implementation_loader.document.tag'  => [
-                'config'       => $config['documents']['tags'],
+            'pimcore.implementation_loader.document.tag' => [
+                'config' => $config['documents']['tags'],
                 'prefixLoader' => DocumentTagPrefixLoader::class
             ],
-            'pimcore.implementation_loader.object.data'  => [
-                'config'       => $config['objects']['class_definitions']['data'],
+            'pimcore.implementation_loader.object.data' => [
+                'config' => $config['objects']['class_definitions']['data'],
                 'prefixLoader' => PrefixLoader::class
             ],
-            'pimcore.implementation_loader.object.layout'  => [
-                'config'       => $config['objects']['class_definitions']['layout'],
+            'pimcore.implementation_loader.object.layout' => [
+                'config' => $config['objects']['class_definitions']['layout'],
                 'prefixLoader' => PrefixLoader::class
             ]
         ];
@@ -207,8 +208,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      * Configure pimcore core cache
      *
      * @param ContainerBuilder $container
-     * @param LoaderInterface  $loader
-     * @param array            $config
+     * @param LoaderInterface $loader
+     * @param array $config
      */
     private function configureCache(ContainerBuilder $container, LoaderInterface $loader, array $config)
     {
@@ -383,5 +384,30 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
 
         $property->setValue($container, $extensionConfigs);
         $property->setAccessible(false);
+    }
+
+    /**
+     * Configure Container for Newsletter Source Adapters
+     *
+     * @param ContainerBuilder $container
+     * @param $adapters
+     */
+    private function configureNewsletterAdapterFactories(ContainerBuilder $container, $adapters)
+    {
+        $serviceLocator = $container->getDefinition('pimcore.newsletter.address_source_adapter.factories');
+        $arguments = [];
+
+        foreach ($adapters as $key => $serviceId) {
+            if (!$container->has($serviceId)) {
+                throw new RuntimeException(sprintf(
+                'The Service with id %s as Newsletter Address Source Adapter Factory could not be found',
+                $serviceId
+            ));
+            }
+
+            $arguments[$key] = new Reference($serviceId);
+        }
+
+        $serviceLocator->setArgument(0, $arguments);
     }
 }

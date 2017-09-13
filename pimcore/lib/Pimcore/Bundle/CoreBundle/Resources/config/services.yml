@@ -98,3 +98,22 @@ services:
         arguments:
             - '@pimcore.http_client'
 
+    # Newsletter Adapter
+    pimcore.document.newsletter.factory.default:
+      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      arguments:
+        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
+
+    pimcore.document.newsletter.factory.csv:
+      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      arguments:
+        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
+
+    pimcore.document.newsletter.factory.report:
+      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      arguments:
+        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\ReportAdapter'
+
+    pimcore.newsletter.address_source_adapter.factories:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']

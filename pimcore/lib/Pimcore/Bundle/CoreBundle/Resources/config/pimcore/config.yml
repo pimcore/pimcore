@@ -150,6 +150,11 @@ pimcore:
             prefixes:
                 - \Pimcore\Model\Document\Tag\
                 - \Document_Tag_
+    newsletter:
+        source_adapters:
+            defaultAdapter: pimcore.document.newsletter.factory.default
+            csvList: pimcore.document.newsletter.factory.csv
+            reportAdapter: pimcore.document.newsletter.factory.report
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:
