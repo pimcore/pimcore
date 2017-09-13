@@ -48,6 +48,7 @@ the namespace `pimcore.document.newsletters.addressSourceAdapters`, named like t
 - PHP Class: This class is the server side implementation of the adapter. It is responsible for retrieving and preparing 
 the email addresses. It needs to implement the interface `AddressSourceAdapterInterface`. As sample see
  [csvList](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Document/Newsletter/AddressSourceAdapter/CsvList.php).
+- Register your Adapter Source as Service
 - Add your Adapter Source to the configuration:
 
 ```yml
