@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
@@ -95,6 +96,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureDocumentEditableNamingStrategy($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureCache($container, $loader, $config);
+        $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordEncoders($container, $config);
 
         // load engine specific configuration only if engine is active
@@ -264,6 +266,19 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
 
         // set core cache pool alias
         $container->setAlias('pimcore.cache.core.pool', $coreCachePool);
+    }
+
+    private function configureTranslations(ContainerBuilder $container, array $config)
+    {
+        $parameter = $config['debugging']['parameter'];
+
+        // remove the listener as it isn't needed at all if it is disabled or the parameter is empty
+        if (!$config['debugging']['enabled'] || empty($parameter)) {
+            $container->removeDefinition(TranslationDebugListener::class);
+        } else {
+            $definition = $container->getDefinition(TranslationDebugListener::class);
+            $definition->setArgument('$parameterName', $parameter);
+        }
     }
 
     /**

@@ -59,20 +59,33 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('flags')
                     ->info('Generic map for feature flags, such as `zend_date`')
-                    ->prototype('scalar')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('translations')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('debugging')
+                            ->info('If debugging is enabled, the translator will return the plain translation key instead of the translated message.')
+                            ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
+                            ->children()
+                                ->scalarNode('parameter')
+                                    ->defaultValue('pimcore_debug_translations')
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
+                ->end()
             ->end();
 
         $this->addObjectsNode($rootNode);
         $this->addDocumentsNode($rootNode);
         $this->addModelsNode($rootNode);
-
         $this->addRoutingNode($rootNode);
         $this->addCacheNode($rootNode);
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
         $this->addWebProfilerNode($rootNode);
-
         $this->addSecurityNode($rootNode);
 
         return $treeBuilder;

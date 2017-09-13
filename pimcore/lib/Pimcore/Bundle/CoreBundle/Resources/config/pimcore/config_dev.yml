@@ -29,3 +29,9 @@ pimcore:
     web_profiler:
         toolbar:
             excluded_routes: ~
+
+    translations:
+        # enables support for the pimcore_debug_translations magic parameter
+        # see https://www.pimcore.org/docs/5.0.0/Development_Tools_and_Details/Magic_Parameters.html
+        debugging:
+            enabled: true
