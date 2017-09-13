@@ -22,3 +22,4 @@ services:
     pimcore.templating.view_helper.device: '@Pimcore\Templating\Helper\Device'
     pimcore.templating.view_helper.cache: '@Pimcore\Templating\Helper\Cache'
     pimcore.templating.view_helper.navigation: '@Pimcore\Templating\Helper\Navigation'
+    pimcore.templating.view_helper.placeholder.container_service: '@Pimcore\Templating\Helper\Placeholder\ContainerService'
