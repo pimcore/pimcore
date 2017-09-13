@@ -21,7 +21,7 @@ interface AddressSourceAdapterInterface
      *
      * @param $params
      */
-    public function __construct($params);
+    public function configure($params);
 
     /**
      * returns array of email addresses for batch sending

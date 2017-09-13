@@ -163,6 +163,20 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+
+        $documentsNode
+            ->children()
+                ->arrayNode('newsletter')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('adapters')
+                            ->useAttributeAsKey('name')
+                                ->prototype('scalar')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**

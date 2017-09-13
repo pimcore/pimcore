@@ -50,7 +50,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
      *
      * @param $params
      */
-    public function __construct($params)
+    public function configure($params)
     {
         $this->reportId = $params['reportId'];
         $this->emailFieldName = $params['emailFieldName'];

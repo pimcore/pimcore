@@ -63,12 +63,19 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $addressSourceAdapterName = $data['addressSourceAdapterName'];
         $adapterParams = $data['adapterParams'];
 
-        $adapterClass = '\\Pimcore\\Document\\Newsletter\\AddressSourceAdapter\\' . ucfirst($addressSourceAdapterName);
+        $serviceLocator = $this->getContainer()->get('pimcore.newsletter.address_source_adapter');
+
+        if (!$serviceLocator->has($addressSourceAdapterName)) {
+            //TODO: Shouldn't this throw an exception?
+            Logger::alert(sprintf("Cannot send newsletters because Address Source Adapter with identifier %s could not be found", $addressSourceAdapterName));
+            exit;
+        }
 
         /**
-         * @var $addressAdapter \Pimcore\Document\Newsletter\AddressSourceAdapterInterface
+         * @var $addressAdapter AddressSourceAdapterInterface
          */
-        $addressAdapter = new $adapterClass($adapterParams);
+        $addressAdapter = $serviceLocator->get($addressSourceAdapterName);
+        $addressAdapter->configure($adapterParams);
 
         if ($document->getSendingMode() == Newsletter::SENDING_MODE_BATCH) {
             $this->doSendMailInBatchMode($document, $addressAdapter, $sendingId, $hostUrl);

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -338,12 +339,17 @@ class NewsletterController extends DocumentControllerBase
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
 
-        $adapterClass = '\\Pimcore\\Document\\Newsletter\\AddressSourceAdapter\\' . ucfirst($addressSourceAdapterName);
+        $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter');
+
+        if (!$serviceLocator->has($addressSourceAdapterName)) {
+            return $this->json(['success' => false, 'error' => sprintf("Cannot send newsletters because Address Source Adapter with identifier %s could not be found", $addressSourceAdapterName)]);
+        }
 
         /**
-         * @var $addressAdapter \Pimcore\Document\Newsletter\AddressSourceAdapterInterface
+         * @var $addressAdapter AddressSourceAdapterInterface
          */
-        $addressAdapter = new $adapterClass($adapterParams);
+        $addressAdapter = $serviceLocator->get($addressSourceAdapterName);
+        $addressAdapter->configure($adapterParams);
 
         $sendingContainer = $addressAdapter->getParamsForTestSending($request->get('testMailAddress'));
 
