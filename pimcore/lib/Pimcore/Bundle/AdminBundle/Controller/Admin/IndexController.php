@@ -116,6 +116,7 @@ class IndexController extends AdminController
         $settings = new ViewModel([
             'version'   => Version::getVersion(),
             'build'     => Version::getRevision(),
+            'buildDate'     => Version::getBuildDate(),
             'debug'     => \Pimcore::inDebugMode(),
             'devmode'   => PIMCORE_DEVMODE || $view->extjsDev,
             'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
