@@ -15,7 +15,14 @@ for shared translations, ... simply everywhere the editor can choose or use a la
 Fallback languages are currently used in object's localized fields and shared translations.
 
 ## Debug
-Several debugging settings for Pimcore, like Debug Mode, Password Protection, Core Logger, and Application Logger settings. 
+
+Several debugging settings for Pimcore, like Debug Mode and Application Logger settings.
+
+Please note that the core logger (log levels, files, ...) can now directly be configured via Symfony's Monolog configuration.
+For details see:
+
+* [Symfony Logging](https://symfony.com/doc/current/logging.html#handlers-writing-logs-to-different-locations)
+* [Logging](../19_Development_Tools_and_Details/07_Logging.md) 
 
 ### Debug Mode
 The Debug Mode is useful if you're developing an application with Pimcore.
@@ -54,7 +61,7 @@ Settings for default values of Mails sent via `Pimcore\Mail`.
 
 
 ## Website
-System settins about the CMS part of Pimcore. 
+System settings about the CMS part of Pimcore.
 
 ### EU Cookie Policy Notice
 Pimcore has a default implementation for EU cookie policy that looks like as follows. 
