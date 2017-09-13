@@ -246,7 +246,7 @@ class Console
     {
         $phpCli = self::getPhpCli();
 
-        $cmd = $phpCli . ' ' . $script;
+        $cmd = 'PIMCORE_PROJECT_ROOT=' . PIMCORE_PROJECT_ROOT . ' ' . $phpCli . ' ' . $script;
 
         if (Config::getEnvironment()) {
             $cmd .= ' --env=' . Config::getEnvironment();
