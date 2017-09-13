@@ -22,7 +22,6 @@ use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Intl\Exception\RuntimeException;
 
 class InternalNewsletterDocumentSendCommand extends AbstractCommand
 {
@@ -68,7 +67,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $serviceLocator = $this->getContainer()->get('pimcore.newsletter.address_source_adapter.factories');
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
-            throw new RuntimeException(sprintf("Cannot send newsletters because Address Source Adapter with identifier %s could not be found", $addressSourceAdapterName));
+            throw new \RuntimeException(sprintf("Cannot send newsletters because Address Source Adapter with identifier %s could not be found", $addressSourceAdapterName));
         }
 
         /**
