@@ -98,7 +98,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordEncoders($container, $config);
-        $this->configureNewsletterAdapters($container, $config['documents']['newsletter']['adapters']);
+        $this->configureNewsletterAdapterFactories($container, $config['documents']['newsletter']['adapters']);
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];
@@ -392,15 +392,15 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
      * @param ContainerBuilder $container
      * @param $adapters
      */
-    private function configureNewsletterAdapters(ContainerBuilder $container, $adapters)
+    private function configureNewsletterAdapterFactories(ContainerBuilder $container, $adapters)
     {
-        $serviceLocator = $container->getDefinition('pimcore.newsletter.address_source_adapter');
+        $serviceLocator = $container->getDefinition('pimcore.newsletter.address_source_adapter.factories');
         $arguments = [];
 
         foreach ($adapters as $key => $serviceId) {
             if (!$container->has($serviceId)) {
                 throw new RuntimeException(sprintf(
-                'The Service with id %s as Newsletter Address Source Adapter could not be found',
+                'The Service with id %s as Newsletter Address Source Adapter Factory could not be found',
                 $serviceId
             ));
             }

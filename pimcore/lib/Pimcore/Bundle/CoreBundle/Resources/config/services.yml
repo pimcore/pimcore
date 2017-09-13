@@ -114,6 +114,6 @@ services:
       arguments:
         - 'Pimcore\Document\Newsletter\AddressSourceAdapter\ReportAdapter'
 
-    pimcore.newsletter.address_source_adapter:
+    pimcore.newsletter.address_source_adapter.factories:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']

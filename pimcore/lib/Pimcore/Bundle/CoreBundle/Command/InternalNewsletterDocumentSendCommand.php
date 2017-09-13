@@ -64,7 +64,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $addressSourceAdapterName = $data['addressSourceAdapterName'];
         $adapterParams = $data['adapterParams'];
 
-        $serviceLocator = $this->getContainer()->get('pimcore.newsletter.address_source_adapter');
+        $serviceLocator = $this->getContainer()->get('pimcore.newsletter.address_source_adapter.factories');
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
             //TODO: Shouldn't this throw an exception?
