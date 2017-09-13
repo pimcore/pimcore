@@ -398,6 +398,13 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $arguments = [];
 
         foreach ($adapters as $key => $serviceId) {
+            if (!$container->has($serviceId)) {
+                throw new RuntimeException(sprintf(
+                'The Service with id %s as Newsletter Address Source Adapter could not be found',
+                $serviceId
+            ));
+            }
+
             $arguments[$key] = new Reference($serviceId);
         }
 

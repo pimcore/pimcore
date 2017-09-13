@@ -152,9 +152,9 @@ pimcore:
                 - \Document_Tag_
         newsletter:
             adapters:
-              defaultAdapter: Pimcore\Document\Newsletter\AddressSourceAdapter\DefaultAdapter
-              csvList: Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList
-              reportAdapter: Pimcore\Document\Newsletter\AddressSourceAdapter\ReportAdapter
+              defaultAdapter: pimcore.document.newsletter.factory.default
+              csvList: pimcore.document.newsletter.factory.csv
+              reportAdapter: pimcore.document.newsletter.factory.report
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

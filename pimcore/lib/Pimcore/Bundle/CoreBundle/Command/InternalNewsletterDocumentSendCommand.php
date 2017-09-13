@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
+use Pimcore\Document\Newsletter\Factory\AddressSourceAdapterFactoryInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
@@ -72,10 +73,10 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         }
 
         /**
-         * @var $addressAdapter AddressSourceAdapterInterface
+         * @var $addressAdapterFactory AddressSourceAdapterFactoryInterface
          */
-        $addressAdapter = $serviceLocator->get($addressSourceAdapterName);
-        $addressAdapter->configure($adapterParams);
+        $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
+        $addressAdapter = $addressAdapterFactory->configure($adapterParams);
 
         if ($document->getSendingMode() == Newsletter::SENDING_MODE_BATCH) {
             $this->doSendMailInBatchMode($document, $addressAdapter, $sendingId, $hostUrl);

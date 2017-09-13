@@ -29,7 +29,7 @@ class CsvList implements AddressSourceAdapterInterface
      *
      * @param $params
      */
-    public function configure($params)
+    public function __construct($params)
     {
         $this->emailAddresses = array_filter(explode(',', $params['csvList']));
     }

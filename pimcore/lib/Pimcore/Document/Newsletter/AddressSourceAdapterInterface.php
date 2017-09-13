@@ -17,13 +17,6 @@ namespace Pimcore\Document\Newsletter;
 interface AddressSourceAdapterInterface
 {
     /**
-     * AddressSourceAdapterInterface constructor.
-     *
-     * @param $params
-     */
-    public function configure($params);
-
-    /**
      * returns array of email addresses for batch sending
      *
      * @return SendingParamContainer[]

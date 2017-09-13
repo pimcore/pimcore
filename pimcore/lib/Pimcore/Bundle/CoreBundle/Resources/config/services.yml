@@ -99,9 +99,20 @@ services:
             - '@pimcore.http_client'
 
     # Newsletter Adapter
-    Pimcore\Document\Newsletter\AddressSourceAdapter\DefaultAdapter: ~
-    Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList: ~
-    Pimcore\Document\Newsletter\AddressSourceAdapter\ReportAdapter: ~
+    pimcore.document.newsletter.factory.default:
+      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      arguments:
+        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
+
+    pimcore.document.newsletter.factory.csv:
+      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      arguments:
+        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
+
+    pimcore.document.newsletter.factory.report:
+      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      arguments:
+        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\ReportAdapter'
 
     pimcore.newsletter.address_source_adapter:
         class: Symfony\Component\DependencyInjection\ServiceLocator

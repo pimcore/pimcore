@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
+use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -346,10 +346,10 @@ class NewsletterController extends DocumentControllerBase
         }
 
         /**
-         * @var $addressAdapter AddressSourceAdapterInterface
+         * @var $addressAdapterFactory AddressSourceAdapterFactoryInterface
          */
-        $addressAdapter = $serviceLocator->get($addressSourceAdapterName);
-        $addressAdapter->configure($adapterParams);
+        $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
+        $addressAdapter = $addressAdapterFactory->configure($adapterParams);
 
         $sendingContainer = $addressAdapter->getParamsForTestSending($request->get('testMailAddress'));
 
