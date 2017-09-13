@@ -37,8 +37,7 @@ class TranslationDebugListener implements EventSubscriberInterface
     public function __construct(
         Translator $translator,
         string $parameterName
-    )
-    {
+    ) {
         $this->translator    = $translator;
         $this->parameterName = $parameterName;
     }
