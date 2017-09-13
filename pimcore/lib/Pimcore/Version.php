@@ -27,6 +27,11 @@ class Version
     public static $revision = 113;
 
     /**
+     * @var string
+     */
+    public static $buildDate = '2017-09-13T15:19:19+02:00';
+
+    /**
      * @return string
      */
     public static function getVersion()
@@ -40,5 +45,13 @@ class Version
     public static function getRevision()
     {
         return self::$revision;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getBuildDate(): string
+    {
+        return self::$buildDate;
     }
 }
