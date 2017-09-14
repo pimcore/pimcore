@@ -84,10 +84,7 @@ class AssetsInstaller
      */
     public function buildProcess(array $options = []): Process
     {
-        $resolver = new OptionsResolver();
-        $this->configureOptions($resolver);
-
-        $options = $resolver->resolve($options);
+        $options = $this->resolveOptions($options);
 
         $builder = new ProcessBuilder([
             'assets:install',
@@ -114,6 +111,22 @@ class AssetsInstaller
         }
 
         return $builder->getProcess();
+    }
+
+    /**
+     * Takes a set of options as defined in configureOptions and validates and merges them
+     * with values from composer.json
+     *
+     * @param array $options
+     *
+     * @return array
+     */
+    public function resolveOptions(array $options = [])
+    {
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        return $resolver->resolve($options);
     }
 
     private function configureOptions(OptionsResolver $resolver)

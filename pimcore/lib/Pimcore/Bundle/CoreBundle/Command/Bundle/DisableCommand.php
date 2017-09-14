@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,6 +31,8 @@ class DisableCommand extends AbstractBundleCommand
             ->configureDescriptionAndHelp('Disables a bundle')
             ->addArgument('bundle', InputArgument::REQUIRED, 'The bundle to disable')
             ->configureFailWithoutErrorOption();
+
+        PostStateChange::configureStateChangeCommandOptions($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -43,6 +46,11 @@ class DisableCommand extends AbstractBundleCommand
             $this->io->success(sprintf('Bundle "%s" was successfully disabled', $bundle->getName()));
         } catch (\Exception $e) {
             $this->handlePrerequisiteError($e->getMessage());
+
+            return;
         }
+
+        $postStateChange = new PostStateChange($this->getApplication());
+        $postStateChange->runPostStateChangeCommands($this->io);
     }
 }
