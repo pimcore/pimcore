@@ -467,7 +467,7 @@ Ext.onReady(function () {
     // check for updates
     window.setTimeout(function () {
         var script = document.createElement("script");
-        script.src = "https://www.pimcore.org/update/v2/statusbarUpdateCheck.php?revision=" + pimcore.settings.build;
+        script.src = "https://liveupdate.pimcore.org/update-check?revision=" + pimcore.settings.build;
         script.type = "text/javascript";
         Ext.query("body")[0].appendChild(script);
     }, 5000);
