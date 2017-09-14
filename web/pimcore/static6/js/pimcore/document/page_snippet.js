@@ -294,15 +294,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 overflowHandler: 'scroller'
             });
 
-            this.toolbar.on("afterrender", function () {
-                window.setTimeout(function () {
-                    if (!this.data.published) {
-                        this.toolbarButtons.unpublish.hide();
-                    } else if (this.isAllowed("publish")) {
-                        this.toolbarButtons.save.hide();
-                    }
-                }.bind(this), 500);
-            }.bind(this));
+            if (!this.data.published) {
+                this.toolbarButtons.unpublish.hide();
+            } else if (this.isAllowed("publish")) {
+                this.toolbarButtons.save.hide();
+            }
         }
 
         return this.toolbar;

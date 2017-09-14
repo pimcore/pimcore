@@ -517,15 +517,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 overflowHandler: 'scroller'
             });
 
-            this.toolbar.on("afterrender", function () {
-                window.setTimeout(function () {
-                    if (!this.data.general.o_published) {
-                        this.toolbarButtons.unpublish.hide();
-                    } else if (this.isAllowed("publish")) {
-                        this.toolbarButtons.save.hide();
-                    }
-                }.bind(this), 500);
-            }.bind(this));
+            if (!this.data.general.o_published) {
+                this.toolbarButtons.unpublish.hide();
+            } else if (this.isAllowed("publish")) {
+                this.toolbarButtons.save.hide();
+            }
         }
 
         return this.toolbar;
