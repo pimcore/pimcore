@@ -2843,9 +2843,10 @@ pimcore.helpers.initMenuTooltips = function(){
         $("#pimcore_tooltip").show();
         $("#pimcore_tooltip").html($(this).data("menu-tooltip"));
 
-        var offset = $(e.target).offset();
+        var closestEl = $(e.target).closest('[data-menu-tooltip]');
+        var offset = closestEl.offset();
         var top = offset.top;
-        top = top + ($(e.target).height() / 2);
+        top = top + (closestEl.height() / 2);
 
         $("#pimcore_tooltip").css({top: top, left: 60});
     });
