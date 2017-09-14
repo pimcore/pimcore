@@ -37,11 +37,31 @@ class InstallerKernel extends Kernel
     use MicroKernelTrait;
 
     /**
+     * @var string
+     */
+    private $projectRoot;
+
+    public function __construct(string $projectRoot, string $environment, bool $debug)
+    {
+        $this->projectRoot = $projectRoot;
+
+        parent::__construct($environment, $debug);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getProjectDir()
+    {
+        return $this->projectRoot;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getRootDir()
     {
-        return $this->getProjectDir() . '/var/installer';
+        return $this->projectRoot . '/var/installer';
     }
 
     /**

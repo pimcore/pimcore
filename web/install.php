@@ -57,7 +57,7 @@ if ($request->getRequestUri() === '/install.php') {
     return;
 }
 
-$kernel = new InstallerKernel(Config::getEnvironment(), true);
+$kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 
 $request  = Request::createFromGlobals();
 $response = $kernel->handle($request);
