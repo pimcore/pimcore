@@ -45,6 +45,10 @@
           "reference": "master"
         }
       }
+    },
+    "plugins": {
+      "type": "path",
+      "url": "./local-packages/*"
     }
   },
   "require": {
