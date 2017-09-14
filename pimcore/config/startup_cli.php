@@ -17,7 +17,7 @@ use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
 
 // ensure the cli arguments are set
-if(!isset($_SERVER['argv'])) {
+if (!isset($_SERVER['argv'])) {
     $_SERVER['argv'] = [];
 }
 
