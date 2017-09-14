@@ -476,6 +476,7 @@ Ext.onReady(function () {
     // remove loading
     Ext.get("pimcore_loading").addCls("loaded");
     Ext.get("pimcore_loading").hide();
+    Ext.get("pimcore_signet").show();
 
     // init general layout
     try {

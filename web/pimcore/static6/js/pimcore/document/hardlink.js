@@ -122,7 +122,8 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
             this.toolbarButtons.publish = new Ext.Button({
                 text: t('save_and_publish'),
-                iconCls: "pimcore_icon_publish",
+                iconCls: "pimcore_icon_save_white",
+                cls: "pimcore_save_button",
                 scale: "medium",
                 handler: this.publish.bind(this)
             });

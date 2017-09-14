@@ -38,10 +38,14 @@
     box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
 }
 
-.x-tab-default-top.x-tab-active {
+.pimcore_body .x-tab-default-top.x-tab-active {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+    border-top: 3px solid #0078BE;
+    padding-top: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
 }
 
 .x-tab-over.x-tab-default.x-tab-over {

@@ -15,12 +15,12 @@
 
 #pimcore_body {
     padding: 4px 10px 0 60px !important;
-    background: #222;
+    background: #191919;
 }
 
 #pimcore_navigation {
     position: absolute;
-    left: 8px;
+    left: 0px;
     top: -10px;
 }
 
@@ -31,59 +31,65 @@
 }
 
 #pimcore_navigation li {
+    position: relative;
     display: block;
     list-style: none;
-    width: 44px;
-    height:44px;
+    width: 60px;
+    height:48px;
     cursor: pointer;
     color: #d7d7d7;
-    text-indent: -9999px; /* hide text contents */
-    filter: grayscale(100%) brightness(200%);
-    -webkit-filter: grayscale(100%) brightness(200%);
+}
 
+#pimcore_navigation li > svg {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    top: 13px;
+    left: 19px;
+}
+
+#pimcore_navigation li svg path {
+    fill: #969696;
+}
+
+#pimcore_navigation li:hover svg path {
+    fill: #fff;
+}
+
+#pimcore_navigation li:empty {
+    text-indent: -9999px; /* hide text contents */
     background-position: center center;
-    background-size: 20px;
+    background-size: 20px 20px;
     background-repeat: no-repeat;
     background-image: url(/pimcore/static6/img/flat-color-icons/puzzle.svg);
 }
 
-#pimcore_navigation li:hover, #pimcore_logout:hover {
-    filter: grayscale(0%) brightness(100%);
-    -webkit-filter: grayscale(0%) brightness(100%);
+#pimcore_navigation li:hover {
+    background-color: #282828;
 }
 
-#pimcore_menu_file {
-    background-image: url(/pimcore/static6/img/flat-color-icons/four-squares.svg) !important;
-}
-
-#pimcore_menu_extras {
-    background-image: url(/pimcore/static6/img/flat-color-icons/tools.svg) !important;
-}
-
-#pimcore_menu_marketing {
-    background-image: url(/pimcore/static6/img/flat-color-icons/bullish.svg) !important;
-}
-
-#pimcore_menu_settings {
-    background-image: url(/pimcore/static6/img/flat-color-icons/settings.svg) !important;
+#pimcore_navigation li:hover:after {
+    position: absolute;
+    left:0;
+    top:0;
+    width: 6px;
+    height:48px;
+    background-color: #0078BE;
+    content: "";
 }
 
 #pimcore_menu_maintenance {
-    background-image: url(/pimcore/static6/img/flat-color-icons/automotive.svg) !important;
+    background-image: url(/pimcore/static6/img/flat-color-icons/stop-circle.svg) !important;
     filter: grayscale(0%) !important;
     -webkit-filter: grayscale(0%) !important;
+    background-size: 28px;
 }
-
-#pimcore_menu_search {
-    background-image: url(/pimcore/static6/img/flat-color-icons/search.svg) !important;
-}
-
 
 #pimcore_status {
     position: absolute;
     z-index: 10;
     left: 8px;
-    bottom: 115px;
+    bottom: 160px;
     width: 44px;
 }
 
@@ -91,7 +97,7 @@
     height:30px;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 20px;
+    background-size: 20px 20px;
     display: block;
 }
 
@@ -119,24 +125,38 @@
 #pimcore_logout {
     position: absolute;
     z-index: 2;
-    bottom: 1px;
-    left: 8px;
-    width: 44px;
-    height:38px;
-    background: url(/pimcore/static6/img/flat-color-icons/logout.svg) center center/20px no-repeat;
-
-    filter: grayscale(100%) brightness(200%);
-    -webkit-filter: grayscale(100%) brightness(200%);
+    bottom: 65px;
+    left: 0px;
+    width: 60px;
+    height:23px;
+    text-align: center;
 }
 
+#pimcore_logout svg {
+    width: 23px;
+    height: 23px;
+}
+
+#pimcore_logout svg path {
+    fill: #969696;
+}
+
+#pimcore_logout:hover svg path {
+    fill: #f03d29;
+}
+
+#pimcore_logout:hover {
+    filter: grayscale(0%) brightness(100%);
+    -webkit-filter: grayscale(0%) brightness(100%);
+}
 
 #pimcore_avatar {
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: 50px;
     z-index: 1;
     width: 60px;
-    height: 80px;
+    height: 100px;
     text-align: center;
     background: #3c3f41;
 }
@@ -144,7 +164,7 @@
 #pimcore_avatar img {
     position: absolute;
     left: 12px;
-    bottom: 34px;
+    bottom: 50px;
     width:36px;
     border-radius: 18px;
 }
@@ -153,7 +173,7 @@
     position: absolute;
     z-index: 10;
     left: 8px;
-    bottom: 90px;
+    bottom: 140px;
     width:44px;
     padding:0;
 }
@@ -167,6 +187,23 @@
     background-color: #fff;
     width: 10px;
     height: 10px;
+}
+
+#pimcore_signet {
+    position: absolute;
+    z-index: 10000;
+    bottom:0px;
+    left: 0px;
+    width: 60px;
+    height: 50px;
+    display: none;
+    font-size: 0;
+    cursor: pointer;
+    background-color: #0078BE;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iRWJlbmVfMSIgZGF0YS1uYW1lPSJFYmVuZSAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MiAxOS43MiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNmZmY7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5VbmJlbmFubnQtMTwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjIuNjQsMjAuMzgsMjEuMjQsMTlhOS44Niw5Ljg2LDAsMSwwLDAsMTRsNC4xNi00LjIsNC4xNiw0LjJhOS44Niw5Ljg2LDAsMSwwLDAtMTRMMTguNDMsMzAuMTRhNS45Miw1LjkyLDAsMSwxLDAtOC4zN2wxLjQsMS40Wm0xOC4xMSw5Ljc3YTUuOTIsNS45MiwwLDAsMS04LjM3LDBMMjguMiwyNmw0LjE4LTQuMThhNS45Miw1LjkyLDAsMCwxLDguMzcsOC4zN1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00LjQgLTE2LjA5KSIvPjwvc3ZnPg==);
+    background-repeat: no-repeat;
+    background-size: 40px 40px;
+    background-position: 9px 6px;
 }
 
 #pimcore_tooltip {
@@ -1260,12 +1297,7 @@ span.warning {
 
 /* ExtJS 6.0 specific styles */
 
-#pimcore_panel_tabs-body {
-    background-image: url(/pimcore/static6/img/logo-gray.svg);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 300px auto;
-}
+
 
 #pimcore_panel_tabs > .x-tab-bar {
     background: #222222;
@@ -1286,8 +1318,8 @@ span.warning {
 
 #pimcore_panel_tabs > .x-tab-bar .x-tab-default-top {
     background-color: #3c3f41;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+    border-top: 0;
+    padding-top: 5px;
 }
 
 #pimcore_panel_tabs > .x-tab-bar .x-tab-over .x-tab-default-top {
@@ -1459,4 +1491,24 @@ span.warning {
     font-size:14px;
     padding: 11px 0 0 0;
     border-top:1px solid #EEEEEE;
+}
+
+.pimcore_save_button {
+    background: #28a050;
+}
+
+.pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active, .pimcore_save_button.x-btn-focus {
+    background: #298e4b !important;
+}
+
+.pimcore_save_button .x-btn-inner {
+    color: #fff;
+}
+
+.pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right:after {
+    color: #fff;
+}
+
+.pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right > .x-btn-button:after {
+    border-color: #53b373;
 }

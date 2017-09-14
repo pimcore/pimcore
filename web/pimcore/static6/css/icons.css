@@ -178,6 +178,11 @@
     background: url(/pimcore/static6/img/flat-color-icons/ok.svg) center center no-repeat !important;
 }
 
+
+.pimcore_icon_save_white {
+    background: url(/pimcore/static6/img/flat-color-icons/checkmark-white.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_reload {
     background: url(/pimcore/static6/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
 }
@@ -606,7 +611,7 @@
 }
 
 .pimcore_icon_maintenance {
-    background: url(/pimcore/static6/img/flat-color-icons/automotive.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_info {

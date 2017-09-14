@@ -165,7 +165,8 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
             this.toolbarButtons.publish = new Ext.Button({
                 text: t('save'),
-                iconCls: "pimcore_icon_publish",
+                iconCls: "pimcore_icon_save_white",
+                cls: "pimcore_save_button",
                 scale: "medium",
                 handler: this.save.bind(this)
             });

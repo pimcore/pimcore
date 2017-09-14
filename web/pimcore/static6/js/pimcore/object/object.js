@@ -342,7 +342,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             this.toolbarButtons.save = new Ext.SplitButton({
                 text: t('save'),
-                iconCls: "pimcore_icon_save",
+                iconCls: "pimcore_icon_save_white",
+                cls: "pimcore_save_button",
                 scale: "medium",
                 handler: this.save.bind(this, "unpublish"),
                 menu:[{
@@ -355,7 +356,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             this.toolbarButtons.publish = new Ext.SplitButton({
                 text: t('save_and_publish'),
-                iconCls: "pimcore_icon_publish",
+                iconCls: "pimcore_icon_save_white",
+                cls: "pimcore_save_button",
                 scale: "medium",
                 handler: this.publish.bind(this),
                 menu: [{
@@ -515,15 +517,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 overflowHandler: 'scroller'
             });
 
-            this.toolbar.on("afterrender", function () {
-                window.setTimeout(function () {
-                    if (!this.data.general.o_published) {
-                        this.toolbarButtons.unpublish.hide();
-                    } else if (this.isAllowed("publish")) {
-                        this.toolbarButtons.save.hide();
-                    }
-                }.bind(this), 500);
-            }.bind(this));
+            if (!this.data.general.o_published) {
+                this.toolbarButtons.unpublish.hide();
+            } else if (this.isAllowed("publish")) {
+                this.toolbarButtons.save.hide();
+            }
         }
 
         return this.toolbar;
