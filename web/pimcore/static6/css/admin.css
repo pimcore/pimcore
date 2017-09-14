@@ -89,7 +89,7 @@
     position: absolute;
     z-index: 10;
     left: 8px;
-    bottom: 160px;
+    bottom: 180px;
     width: 44px;
 }
 
@@ -129,12 +129,15 @@
     left: 0px;
     width: 60px;
     height:23px;
-    text-align: center;
 }
 
 #pimcore_logout svg {
+    position: absolute;
+    left: 17px;
+    top: 0;
     width: 23px;
     height: 23px;
+    transform: rotate(180deg);
 }
 
 #pimcore_logout svg path {
@@ -173,7 +176,7 @@
     position: absolute;
     z-index: 10;
     left: 8px;
-    bottom: 140px;
+    bottom: 160px;
     width:44px;
     padding:0;
 }
