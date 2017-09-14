@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,8 +51,9 @@ class EnableCommand extends AbstractBundleCommand
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'If defined, the bundle will be configured to only be loaded in the specified environments'
             )
-            ->configureFailWithoutErrorOption()
-        ;
+            ->configureFailWithoutErrorOption();
+
+        PostStateChange::configureStateChangeCommandOptions($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -73,7 +75,12 @@ class EnableCommand extends AbstractBundleCommand
             $this->io->success(sprintf('Bundle "%s" was successfully enabled', $bundleClass));
         } catch (\Exception $e) {
             $this->handlePrerequisiteError($e->getMessage());
+
+            return;
         }
+
+        $postStateChange = new PostStateChange($this->getApplication());
+        $postStateChange->runPostStateChangeCommands($this->io);
     }
 
     /**
