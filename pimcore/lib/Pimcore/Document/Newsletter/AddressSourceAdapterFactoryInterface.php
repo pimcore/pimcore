@@ -20,6 +20,7 @@ interface AddressSourceAdapterFactoryInterface
      * Configures and creates the AddressSourceAdapterInterface
      *
      * @param $params
+     *
      * @return AddressSourceAdapterInterface
      */
     public function create($params);

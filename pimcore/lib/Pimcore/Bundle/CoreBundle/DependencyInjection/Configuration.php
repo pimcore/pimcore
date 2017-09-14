@@ -527,7 +527,8 @@ class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    private function addNewsletterNode(ArrayNodeDefinition $rootNode) {
+    private function addNewsletterNode(ArrayNodeDefinition $rootNode)
+    {
         $rootNode
             ->children()
                 ->arrayNode('newsletter')

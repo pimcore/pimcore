@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
+use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
@@ -67,7 +67,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $serviceLocator = $this->getContainer()->get('pimcore.newsletter.address_source_adapter.factories');
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
-            throw new \RuntimeException(sprintf("Cannot send newsletters because Address Source Adapter with identifier %s could not be found", $addressSourceAdapterName));
+            throw new \RuntimeException(sprintf('Cannot send newsletters because Address Source Adapter with identifier %s could not be found', $addressSourceAdapterName));
         }
 
         /**
