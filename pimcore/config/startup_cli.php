@@ -16,6 +16,11 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
 
+// ensure the cli arguments are set
+if(!isset($_SERVER['argv'])) {
+    $_SERVER['argv'] = [];
+}
+
 // although this was already defined in console, we re-check here as simple CLI scripts could
 // just include this file to get started
 if (!defined('PIMCORE_PROJECT_ROOT')) {
