@@ -41,7 +41,7 @@ Pimcore::setAutoloader($loader);
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/constants.php';
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/lib/helper-functions.php';
 
-$kernel = new InstallerKernel(Config::getEnvironment(), true);
+$kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 
 $application = new Application($kernel);
 $application->setName('Pimcore Installer');
