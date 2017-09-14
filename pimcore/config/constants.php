@@ -16,7 +16,6 @@ use Symfony\Component\Dotenv\Dotenv;
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 $resolveConstant = function (string $name, $default, bool $define = true) {
     // return constant if defined
     if (defined($name)) {
@@ -68,18 +67,18 @@ if ($testMode) {
 }
 
 // paths relying on basic paths above
-$resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY',PIMCORE_APP_ROOT . '/config/pimcore');
-$resolveConstant('PIMCORE_CONFIGURATION_DIRECTORY',PIMCORE_PRIVATE_VAR . '/config');
-$resolveConstant('PIMCORE_ASSET_DIRECTORY',PIMCORE_PUBLIC_VAR . '/assets');
-$resolveConstant('PIMCORE_VERSION_DIRECTORY',PIMCORE_PRIVATE_VAR . '/versions');
-$resolveConstant('PIMCORE_LOG_DIRECTORY',PIMCORE_PRIVATE_VAR . '/logs');
-$resolveConstant('PIMCORE_LOG_FILEOBJECT_DIRECTORY',PIMCORE_LOG_DIRECTORY . '/fileobjects');
-$resolveConstant('PIMCORE_LOG_MAIL_TEMP',PIMCORE_LOG_DIRECTORY . '/mail');
-$resolveConstant('PIMCORE_TEMPORARY_DIRECTORY',PIMCORE_PUBLIC_VAR . '/tmp');
-$resolveConstant('PIMCORE_CACHE_DIRECTORY',PIMCORE_PRIVATE_VAR . '/cache/pimcore');
-$resolveConstant('PIMCORE_CLASS_DIRECTORY',PIMCORE_PRIVATE_VAR . '/classes');
-$resolveConstant('PIMCORE_CUSTOMLAYOUT_DIRECTORY',PIMCORE_CLASS_DIRECTORY . '/customlayouts');
-$resolveConstant('PIMCORE_RECYCLEBIN_DIRECTORY',PIMCORE_PRIVATE_VAR . '/recyclebin');
-$resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY',PIMCORE_PRIVATE_VAR . '/tmp');
-$resolveConstant('PIMCORE_LOG_MAIL_PERMANENT',PIMCORE_PRIVATE_VAR . '/email');
-$resolveConstant('PIMCORE_USERIMAGE_DIRECTORY',PIMCORE_PRIVATE_VAR . '/user-image');
+$resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_APP_ROOT . '/config/pimcore');
+$resolveConstant('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/config');
+$resolveConstant('PIMCORE_ASSET_DIRECTORY', PIMCORE_PUBLIC_VAR . '/assets');
+$resolveConstant('PIMCORE_VERSION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/versions');
+$resolveConstant('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/logs');
+$resolveConstant('PIMCORE_LOG_FILEOBJECT_DIRECTORY', PIMCORE_LOG_DIRECTORY . '/fileobjects');
+$resolveConstant('PIMCORE_LOG_MAIL_TEMP', PIMCORE_LOG_DIRECTORY . '/mail');
+$resolveConstant('PIMCORE_TEMPORARY_DIRECTORY', PIMCORE_PUBLIC_VAR . '/tmp');
+$resolveConstant('PIMCORE_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache/pimcore');
+$resolveConstant('PIMCORE_CLASS_DIRECTORY', PIMCORE_PRIVATE_VAR . '/classes');
+$resolveConstant('PIMCORE_CUSTOMLAYOUT_DIRECTORY', PIMCORE_CLASS_DIRECTORY . '/customlayouts');
+$resolveConstant('PIMCORE_RECYCLEBIN_DIRECTORY', PIMCORE_PRIVATE_VAR . '/recyclebin');
+$resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
+$resolveConstant('PIMCORE_LOG_MAIL_PERMANENT', PIMCORE_PRIVATE_VAR . '/email');
+$resolveConstant('PIMCORE_USERIMAGE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/user-image');
