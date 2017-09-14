@@ -17,7 +17,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-require_once __DIR__ . '/../pimcore/config/bootstrap.php';
+if (!defined('PIMCORE_PROJECT_ROOT')) {
+    define(
+        'PIMCORE_PROJECT_ROOT',
+        getenv('PIMCORE_PROJECT_ROOT')
+            ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
+            ?: realpath(__DIR__ . '/..')
+    );
+}
+
+require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/bootstrap.php';
 
 $request = Request::createFromGlobals();
 
@@ -26,7 +35,7 @@ $request = Request::createFromGlobals();
 Tool::setCurrentRequest($request);
 
 /** @var \Pimcore\Kernel $kernel */
-$kernel = require_once __DIR__ . '/../pimcore/config/kernel.php';
+$kernel = require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/kernel.php';
 
 // redirect to installer if pimcore is not installed
 if (!is_file(\Pimcore\Config::locateConfigFile('system.php'))) {

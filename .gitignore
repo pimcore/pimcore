@@ -9,6 +9,7 @@
 /web/bundles/
 
 # local config
+/.env
 !/app/config/local
 /app/config/local/*
 !app/config/local/.gitkeep

@@ -14,8 +14,7 @@
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
-/** @var $loader \Composer\Autoload\ClassLoader */
-$loader = require PIMCORE_COMPOSER_PATH . '/autoload.php';
+$loader = Pimcore::getAutoloader();
 
 // tell the autoloader where to find Pimcore's generated class stubs
 // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
@@ -61,7 +60,3 @@ if (!class_exists('Zend_Date')) {
     // for a detailed description see the included file
     require_once PIMCORE_PATH . '/lib/compatibility-stubs.php';
 }
-
-\Pimcore::setAutoloader($loader);
-
-return $loader;

@@ -19,17 +19,27 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+@ini_set('display_errors', 'On');
 
 $maxExecutionTime = 300;
 @ini_set('max_execution_time', $maxExecutionTime);
 set_time_limit($maxExecutionTime);
 
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-@ini_set('display_errors', 'On');
+if (!defined('PIMCORE_PROJECT_ROOT')) {
+    define(
+        'PIMCORE_PROJECT_ROOT',
+        getenv('PIMCORE_PROJECT_ROOT')
+            ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
+            ?: realpath(__DIR__ . '/..')
+    );
+}
 
-require_once __DIR__ . '/../pimcore/config/constants.php';
-require_once __DIR__ . '/../vendor/autoload.php';
-include_once(__DIR__ . '/../pimcore/lib/helper-functions.php');
+/** @var $loader \Composer\Autoload\ClassLoader */
+$loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+Pimcore::setAutoloader($loader);
+
+require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/constants.php';
+require_once PIMCORE_PROJECT_ROOT . '/pimcore/lib/helper-functions.php';
 
 // no installer if Pimcore is already installed
 if (is_file(Config::locateConfigFile('system.php'))) {
@@ -47,7 +57,7 @@ if ($request->getRequestUri() === '/install.php') {
     return;
 }
 
-$kernel = new InstallerKernel(Config::getEnvironment(), true);
+$kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 
 $request  = Request::createFromGlobals();
 $response = $kernel->handle($request);
