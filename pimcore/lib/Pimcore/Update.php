@@ -76,7 +76,6 @@ class Update
 
         $xmlRaw = Tool::getHttpData($updateInfoUrl);
 
-
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
 
         $revisions = [];
