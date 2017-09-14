@@ -87,12 +87,16 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             }.bind(this)
         });
 
-        var textValue = "[not set]";
+        var text = "[" + t("not_set") + "]";
         if (this.data.text) {
-            textValue = this.data.text;
+            text = this.data.text;
+        } else if (this.data.path) {
+            text = this.data.path;
         }
+
+
         this.displayField = new Ext.form.DisplayField({
-            value: textValue
+            value: text
         });
 
         this.component = new Ext.form.FieldContainer({
@@ -148,11 +152,14 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         }
         this.data = values;
 
-        var textValue = "[not set]";
+        var text = "[" + t("not_set") + "]";
         if (this.data.text) {
-            textValue = this.data.text;
+            text = this.data.text;
+        } else if (this.data.path) {
+            text = this.data.path;
         }
-        this.displayField.setValue(textValue);
+
+        this.displayField.setValue(text);
 
         // close window
         this.window.close();
@@ -167,7 +174,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         this.dirty = true;
 
         // set text
-        this.displayField.setValue("[not set]");
+        this.displayField.setValue("[" + t("not_set") + "]");
     },
 
     cancel: function () {
