@@ -139,7 +139,8 @@
       "Website\\": "legacy/website/lib"
     },
     "classmap": [
-      "app/AppKernel.php"
+      "app/AppKernel.php",
+      "pimcore/lib/Pimcore.php"
     ],
     "exclude-from-classmap": [
       "install-profiles/",
