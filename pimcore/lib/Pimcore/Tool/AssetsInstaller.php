@@ -87,6 +87,7 @@ class AssetsInstaller
         $options = $this->resolveOptions($options);
 
         $builder = new ProcessBuilder([
+            'bin/console',
             'assets:install',
             'web',
             '--env=' . $this->kernel->getEnvironment()
@@ -94,7 +95,7 @@ class AssetsInstaller
 
         $builder
             ->setWorkingDirectory(PIMCORE_PROJECT_ROOT)
-            ->setPrefix('bin/console');
+            ->setPrefix(Console::getPhpCli());
 
         if (!$options['ansi']) {
             $builder->add('--no-ansi');
