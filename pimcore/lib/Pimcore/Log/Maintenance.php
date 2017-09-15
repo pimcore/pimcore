@@ -38,7 +38,7 @@ class Maintenance
         }
 
         $logFile = PIMCORE_LOG_DIRECTORY . '/usagelog.log';
-        if (is_file($logFile) && filesize($logFile) > 20) {
+        if (is_file($logFile) && filesize($logFile) > 200000) {
             $data = gzencode(file_get_contents($logFile));
             $response = Tool::getHttpData('https://liveupdate.pimcore.org/usage-statistics', [], ['data' => $data]);
             if (strpos($response, 'true') !== false) {
