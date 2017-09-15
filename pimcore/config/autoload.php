@@ -58,5 +58,5 @@ if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
 if (!class_exists('Zend_Date')) {
     // if ZF is not loaded, we need to provide some compatibility stubs
     // for a detailed description see the included file
-    require_once PIMCORE_PATH . '/lib/compatibility-stubs.php';
+    require_once PIMCORE_PATH . '/stubs/compatibility-v4.php';
 }
