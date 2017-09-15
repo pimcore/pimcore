@@ -20,6 +20,7 @@ namespace Pimcore\Install;
 use Pimcore\Composer\PackageInfo;
 use Pimcore\Install\Command\InstallCommand;
 use Pimcore\Install\Controller\InstallController;
+use Pimcore\Install\DependencyInjection\InstallerExtension;
 use Pimcore\Install\Profile\ProfileLocator;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -87,6 +88,8 @@ class InstallerKernel extends Kernel
      */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
+        $c->registerExtension(new InstallerExtension());
+
         // configure bundles
         $c->loadFromExtension('framework', [
             'secret'     => uniqid('installer-', true),
@@ -141,6 +144,15 @@ class InstallerKernel extends Kernel
         // register controller and tag it with service_arguments to enable action injection
         $c->autowire(InstallController::class, InstallController::class);
         $c->findDefinition(InstallController::class)->addTag('controller.service_arguments');
+
+        // load installer config files if available
+        foreach (['php', 'yml', 'xml'] as $extension) {
+            $file = sprintf('%s/config/installer.%s', $this->getRootDir(), $extension);
+
+            if (file_exists($file)) {
+                $loader->load($file);
+            }
+        }
     }
 
     /**
