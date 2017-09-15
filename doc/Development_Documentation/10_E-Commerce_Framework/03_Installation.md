@@ -61,7 +61,7 @@ Possibly the index update scripts need to be adapted.
 ## Configuring Pimcore Ecommerce Framework
 
 The E-Commerce Framework is split up into multiple components which can be configured individually. You can take a look 
-at a [sample Ecommerce Framework configuration file](https://github.com/pimcore/demo-ecommerce/blob/ecommerce-config/src/AppBundle/Resources/config/pimcore/ecommerce/ecommerce-config.yml)
+at a [sample Ecommerce Framework configuration file](https://github.com/pimcore/demo-ecommerce/blob/master/src/AppBundle/Resources/config/pimcore/ecommerce/ecommerce-config.yml)
 to get an overview what can be configured. For further reading please see:
 
 - [Configuration](./04_Configuration) describes configuration features valid for the whole framework configuration
