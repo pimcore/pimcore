@@ -97,15 +97,10 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin,{
                 menuItems.add(item);
             }
 
-            // add ecommerce framewokr main menu
+            // add e-commerce framework main menu
             if (menuItems.items.length > 0) {
-                this.navEl = Ext.get(
-                    insertPoint.insertHtml(
-                        "afterEnd",
-                        '<li id="pimcore_menu_ecommerce" class="pimcore_menu_item icon-basket" data-menu-tooltip="' + t('bundle_ecommerce_mainmenu') + '"></li>'
-                    )
-                );
-
+                this.navEl = Ext.get('pimcore_menu_ecommerce');
+                this.navEl.show();
                 this.navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
                 pimcore.helpers.initMenuTooltips();
             }

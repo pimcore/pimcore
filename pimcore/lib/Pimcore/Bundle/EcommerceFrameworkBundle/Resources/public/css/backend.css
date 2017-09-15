@@ -40,7 +40,3 @@
 .plugin_voucherservice_icon {
     background: url("/pimcore/static6/img/flat-color-icons/diamond.svg") center center no-repeat !important;
 }
-
-#pimcore_menu_ecommerce {
-    background-image: url("/pimcore/static6/img/flat-color-icons/shopping-cart.svg") !important;
-}

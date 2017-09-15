@@ -2838,6 +2838,7 @@ pimcore.helpers.hideRedundantSeparators = function(menu) {
 pimcore.helpers.initMenuTooltips = function(){
 
     var items = $("[data-menu-tooltip]:not(.initialized)");
+    $('#pimcore_navigation li:not(:has(>svg))').addClass('compatibility');
 
     items.mouseenter(function (e) {
         $("#pimcore_tooltip").show();
