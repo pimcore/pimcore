@@ -24,9 +24,13 @@ use Pimcore\Model\Redirect;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
+ * @method bool hasPersonaSpecificElements()
  */
 class Page extends Model\Document\PageSnippet
 {
+    const PERSONA_ELEMENT_PREFIX_PREFIXPART = 'persona_-';
+    const PERSONA_ELEMENT_PREFIX_SUFFIXPART = '-_';
+
     /**
      * Contains the title of the page (meta-title)
      *
@@ -318,7 +322,7 @@ class Page extends Model\Document\PageSnippet
         }
 
         if ($personaId) {
-            $prefix = 'persona_-' . $personaId . '-_';
+            $prefix = self::PERSONA_ELEMENT_PREFIX_PREFIXPART . $personaId . self::PERSONA_ELEMENT_PREFIX_SUFFIXPART;
         }
 
         return $prefix;

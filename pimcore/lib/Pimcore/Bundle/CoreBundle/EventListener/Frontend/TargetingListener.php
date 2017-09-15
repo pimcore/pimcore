@@ -156,7 +156,7 @@ class TargetingListener
                     // check for persona specific variants of this page
                     $personaVariants = [];
                     foreach ($document->getElements() as $key => $tag) {
-                        if (preg_match('/^persona_-([0-9]+)-_/', $key, $matches)) {
+                        if (preg_match('/^' . Document\Page::PERSONA_ELEMENT_PREFIX_PREFIXPART . '([0-9]+)' . Document\Page::PERSONA_ELEMENT_PREFIX_SUFFIXPART . '/', $key, $matches)) {
                             $id = (int) $matches[1];
                             if (Model\Tool\Targeting\Persona::isIdActive($id)) {
                                 $personaVariants[] = $id;

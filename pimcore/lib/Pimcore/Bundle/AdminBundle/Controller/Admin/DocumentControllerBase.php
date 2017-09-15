@@ -126,7 +126,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     protected function addDataToDocument(Request $request, Model\Document $document)
     {
         // if a persona variant get's saved, we have to load all other editables first, otherwise they will get deleted
-        if ($request->get('appendEditables')) {
+        if ($request->get('appendEditables') || ($document instanceof Model\Document\Page && $document->hasPersonaSpecificElements())) {
             $document->getElements();
         }
 

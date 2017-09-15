@@ -41,7 +41,7 @@ class Dao extends Model\Document\PageSnippet\Dao
             $data = $this->db->fetchRow("SELECT documents.*, documents_page.*, tree_locks.locked FROM documents
                 LEFT JOIN documents_page ON documents.id = documents_page.id
                 LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                    WHERE documents.id = ?", $this->model->getId());
+                    WHERE documents.id = ?", [$this->model->getId()]);
 
             if ($data['id'] > 0) {
                 $data['metaData'] = @unserialize($data['metaData']);
@@ -90,5 +90,21 @@ class Dao extends Model\Document\PageSnippet\Dao
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPersonaSpecificElements() {
+
+        $count = $this->db->fetchOne(
+            "SELECT count(*) FROM documents_elements WHERE documentId = ? AND name LIKE ?",
+            [
+                $this->model->getId(),
+                '%' . Model\Document\Page::PERSONA_ELEMENT_PREFIX_PREFIXPART . '%' . Model\Document\Page::PERSONA_ELEMENT_PREFIX_SUFFIXPART . '%'
+            ]
+        );
+
+        return $count != 0;
     }
 }
