@@ -550,7 +550,8 @@ class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    private function addCustomReportsNode(ArrayNodeDefinition $rootNode) {
+    private function addCustomReportsNode(ArrayNodeDefinition $rootNode)
+    {
         $rootNode
             ->children()
                 ->arrayNode('custom_report')

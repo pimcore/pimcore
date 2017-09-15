@@ -404,7 +404,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
             if (!$container->has($serviceId)) {
                 throw new RuntimeException(sprintf(
                     'The Service with id %s as %s could not be found',
-                    $serviceId, $type
+                    $serviceId,
+                    $type
                 ));
             }
 

@@ -95,10 +95,10 @@ class Dao extends Model\Document\PageSnippet\Dao
     /**
      * @return bool
      */
-    public function hasPersonaSpecificElements() {
-
+    public function hasPersonaSpecificElements()
+    {
         $count = $this->db->fetchOne(
-            "SELECT count(*) FROM documents_elements WHERE documentId = ? AND name LIKE ?",
+            'SELECT count(*) FROM documents_elements WHERE documentId = ? AND name LIKE ?',
             [
                 $this->model->getId(),
                 '%' . Model\Document\Page::PERSONA_ELEMENT_PREFIX_PREFIXPART . '%' . Model\Document\Page::PERSONA_ELEMENT_PREFIX_SUFFIXPART . '%'

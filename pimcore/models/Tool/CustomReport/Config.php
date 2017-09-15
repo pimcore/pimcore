@@ -149,6 +149,7 @@ class Config extends Model\AbstractModel
     /**
      * @param $configuration
      * @param null $fullConfig
+     *
      * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      *
      * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface
@@ -159,7 +160,7 @@ class Config extends Model\AbstractModel
         $serviceLocator = \Pimcore::getContainer()->get('pimcore.custom_report.adapter.factories');
 
         if (!$serviceLocator->has($type)) {
-            throw new \RuntimeException(sprintf("Could not find Custom Report Adapter with type %s", $type));
+            throw new \RuntimeException(sprintf('Could not find Custom Report Adapter with type %s', $type));
         }
 
         /**
