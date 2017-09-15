@@ -112,6 +112,9 @@ of calculation or require a huge amount of objects (like navigations, ...).
 | `$force`        | Force caching, even when request is done within Pimcore admin interface |
 
 ##### Example
+
+<div class="code-section">
+
 ```php
 <?php $cache = $this->cache("test_cache_key", 60); ?>
 <?php if (!$cache->start()): ?>
@@ -129,6 +132,8 @@ of calculation or require a huge amount of objects (like navigations, ...).
     {% do cache.end() %}
 {% endif %}
 ```
+
+</div>
 
 ### `$this->device()`
 
