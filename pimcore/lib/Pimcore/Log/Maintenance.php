@@ -38,12 +38,12 @@ class Maintenance
         }
 
         $logFile = PIMCORE_LOG_DIRECTORY . '/usagelog.log';
-        if (is_file($logFile) && filesize($logFile) > 200000) {
+        if (is_file($logFile) && filesize($logFile) > 20) {
             $data = gzencode(file_get_contents($logFile));
             $response = Tool::getHttpData('https://liveupdate.pimcore.org/usage-statistics', [], ['data' => $data]);
             if (strpos($response, 'true') !== false) {
                 rename($logFile, $logFile . '-archive-' . date('m-d-Y-H-i'));
-                Logger::debug('Usage statistics are transmitted and logfile was archived');
+                Logger::debug('Usage statistics were transmitted and logfile was archived');
             } else {
                 Logger::debug('Unable to send usage statistics');
             }
