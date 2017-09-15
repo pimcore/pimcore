@@ -113,13 +113,22 @@ of calculation or require a huge amount of objects (like navigations, ...).
 
 ##### Example
 ```php
-<?php if(!$this->cache("test_cache_key", 60)->start()) { ?>
+<?php $cache = $this->cache("test_cache_key", 60); ?>
+<?php if (!$cache->start()): ?>
     <h1>This is some cached microtime</h1>
     <?= microtime() ?>
-    <?php $this->cache("test_cache_key")->end(); ?>
-<?php } ?>
+    <?php $cache->end(); ?>
+<?php endif ?>
 ```
 
+```twig
+{% set cache = pimcore_cache("test_cache_key", 60) %}
+{% if not cache.start() %}
+    <h1>This is some cached microtime</h1>
+    {{ 'now'|date('U') }}
+    {% do cache.end() %}
+{% endif %}
+```
 
 ### `$this->device()`
 
