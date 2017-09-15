@@ -49,6 +49,7 @@ class TemplatingHelperExtension extends \Twig_Extension
             'headTitle'    => 'pimcore_head_title',
             'inlineScript' => 'pimcore_inline_script',
             'placeholder'  => 'pimcore_placeholder',
+            'cache'        => 'pimcore_cache',
             'pimcoreUrl'   => [
                 'name'    => 'pimcore_url',
                 'is_safe' => null
