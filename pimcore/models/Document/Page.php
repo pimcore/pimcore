@@ -23,6 +23,7 @@ use Pimcore\Logger;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
+ * @method bool hasPersonaSpecificElements()
  */
 class Page extends Model\Document\PageSnippet
 {

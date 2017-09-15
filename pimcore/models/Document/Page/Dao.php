@@ -91,4 +91,20 @@ class Dao extends Model\Document\PageSnippet\Dao
             throw $e;
         }
     }
+
+    /**
+     * @return bool
+     */
+    public function hasPersonaSpecificElements() {
+
+        $count = $this->db->fetchOne(
+            "SELECT count(*) FROM documents_elements WHERE documentId = ? AND name LIKE ?",
+            [
+                $this->model->getId(),
+                '%persona_-%-_%'
+            ]
+        );
+
+        return $count != 0;
+    }
 }
