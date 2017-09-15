@@ -88,9 +88,9 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
         if (!this.editPanel) {
             var frameUrl = '/admin/asset/get-preview-document?id=' + this.id;
 
-            //check for native/plugin PDF viewer
+            // Check for native/plugin PDF viewer
             if(this.hasNativePDFViewer()) {
-                frameUrl += "?native-viewer=true"
+                frameUrl += "&native-viewer=true"
             }
 
             this.editPanel = new Ext.Panel({
