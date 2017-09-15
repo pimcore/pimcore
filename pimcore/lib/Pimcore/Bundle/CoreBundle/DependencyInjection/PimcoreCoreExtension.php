@@ -98,7 +98,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordEncoders($container, $config);
-        $this->configureNewsletterAdapterFactories($container, $config['newsletter']['source_adapters']);
+        $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories', 'Newsletter Address Source Adapter Factory');
+        $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories', 'Custom Report Adapter Factory');
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];
@@ -387,22 +388,24 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
     }
 
     /**
-     * Configure Container for Newsletter Source Adapters
+     * Configure Adapter Factories
      *
      * @param ContainerBuilder $container
-     * @param $adapters
+     * @param $factories
+     * @param $serviceLocatorId
+     * @param $type
      */
-    private function configureNewsletterAdapterFactories(ContainerBuilder $container, $adapters)
+    private function configureAdapterFactories(ContainerBuilder $container, $factories, $serviceLocatorId, $type)
     {
-        $serviceLocator = $container->getDefinition('pimcore.newsletter.address_source_adapter.factories');
+        $serviceLocator = $container->getDefinition($serviceLocatorId);
         $arguments = [];
 
-        foreach ($adapters as $key => $serviceId) {
+        foreach ($factories as $key => $serviceId) {
             if (!$container->has($serviceId)) {
                 throw new RuntimeException(sprintf(
-                'The Service with id %s as Newsletter Address Source Adapter Factory could not be found',
-                $serviceId
-            ));
+                    'The Service with id %s as %s could not be found',
+                    $serviceId, $type
+                ));
             }
 
             $arguments[$key] = new Reference($serviceId);

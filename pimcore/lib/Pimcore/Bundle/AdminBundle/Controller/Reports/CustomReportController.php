@@ -328,7 +328,6 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $configuration = $config->getDataSourceConfig();
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
-
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
         return $this->json([
@@ -372,7 +371,6 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
             : $configuration;
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
-
         $result = $adapter->getData($filters, $sort, $dir, null, null, $fields, $drillDownFilters);
 
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
