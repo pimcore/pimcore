@@ -53,10 +53,9 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
                 "click": this.openEditor.bind(this)
             }
         });
-        editButton.render(id);
 
         var openButton = new Ext.Button({
-            iconCls: "pimcore_icon_edit",
+            iconCls: "pimcore_icon_open",
             cls: "pimcore_open_link_button",
             listeners: {
                 "click": function () {
@@ -70,7 +69,9 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
                 }.bind(this)
             }
         });
+
         openButton.render(id);
+        editButton.render(id);
     },
 
     openEditor: function () {

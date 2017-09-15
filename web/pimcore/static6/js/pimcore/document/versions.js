@@ -197,7 +197,7 @@ pimcore.document.versions = Class.create({
 
         menu.add(new Ext.menu.Item({
             text: t('open'),
-            iconCls: "pimcore_icon_cursor",
+            iconCls: "pimcore_icon_open",
             handler: this.openVersion.bind(this, rowIndex, grid)
         }));
 

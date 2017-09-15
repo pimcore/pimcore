@@ -108,7 +108,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     handler: this.clearData.bind(this)
                 },{
                     xtype: "button",
-                    iconCls: "pimcore_icon_edit",
+                    iconCls: "pimcore_icon_open",
                     handler: this.openImage.bind(this)
                 }, {
                     xtype: "button",

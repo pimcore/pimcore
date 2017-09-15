@@ -74,7 +74,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         });
 
         this.openButton = new Ext.Button({
-            iconCls: "pimcore_icon_edit",
+            iconCls: "pimcore_icon_open",
             style: "margin-left: 5px",
             handler: function() {
                 if (this.data && this.data.path) {

@@ -320,7 +320,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             });
 
             var openButton = new Ext.Button({
-                iconCls: "pimcore_icon_edit",
+                iconCls: "pimcore_icon_open",
                 style: "margin-left: 5px",
                 handler: function() {
                     if (linkTypeField.getValue() == "internal") {

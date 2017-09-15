@@ -100,7 +100,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
                 this.inputField,
                 {
                     xtype: "button",
-                    iconCls: "pimcore_icon_edit",
+                    iconCls: "pimcore_icon_open",
                     handler: this.openImage.bind(this),
                     style: "margin-left: 5px",
                 },

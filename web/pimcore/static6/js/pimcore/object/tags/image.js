@@ -78,7 +78,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                     handler: this.uploadDialog.bind(this)
                 }, {
                     xtype: "button",
-                    iconCls: "pimcore_icon_edit",
+                    iconCls: "pimcore_icon_open",
                     handler: this.openImage.bind(this)
                 }, {
                     xtype: "button",

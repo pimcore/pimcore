@@ -151,13 +151,13 @@
 
 .pimcore_tag_link .pimcore_edit_link_button {
 	position: absolute;
-    right: -30px;
+    right: 0;
 	top: -3px;
 }
 
 .pimcore_tag_link .pimcore_open_link_button {
     position: absolute;
-    right: 0;
+    right: -30px;
     top: -3px;
 }
 

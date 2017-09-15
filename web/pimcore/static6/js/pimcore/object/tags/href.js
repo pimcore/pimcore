@@ -112,7 +112,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         var items = [this.component, {
             xtype: "button",
-            iconCls: "pimcore_icon_edit",
+            iconCls: "pimcore_icon_open",
             style: "margin-left: 5px",
             handler: this.openElement.bind(this)
         }, {
@@ -188,7 +188,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             layout: 'hbox',
             items: [this.component, {
                 xtype: "button",
-                iconCls: "pimcore_icon_edit",
+                iconCls: "pimcore_icon_open",
                 handler: this.openElement.bind(this)
             }],
             componentCls: "object_field",

@@ -101,7 +101,7 @@ pimcore.document.settings_abstract = Class.create({
                         }.bind(this)
                     }, {
                         text: t("open_master_document"),
-                        iconCls: "pimcore_icon_edit",
+                        iconCls: "pimcore_icon_open",
                         autoWidth: true,
                         handler: function () {
                             var masterPath = Ext.getCmp("contentMasterDocumentPath_" + this.document.id).getValue();

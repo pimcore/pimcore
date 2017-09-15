@@ -227,11 +227,9 @@
     background: url(/pimcore/static6/img/flat-color-icons/lock.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_cursor {
+.pimcore_icon_open {
     background: url(/pimcore/static6/img/flat-color-icons/cursor.svg) center center no-repeat !important;
 }
-
-
 
 /* assets */
 
@@ -548,10 +546,6 @@
 /* to keep compatibility with icon_notification_success - pimcore.helpers.showNotification */
 .pimcore_icon_apply, .pimcore_icon_success {
     background: url(/pimcore/static6/img/flat-color-icons/ok.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_open {
-    background: url(/pimcore/static6/img/flat-color-icons/cursor.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_accept {

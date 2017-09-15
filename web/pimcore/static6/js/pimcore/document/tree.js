@@ -598,7 +598,7 @@ pimcore.document.tree = Class.create({
         if ((record.data.type == "page" || record.data.type == "hardlink") && record.data.permissions.view && perspectiveCfg.inTreeContextMenu("document.open")) {
             menu.add(new Ext.menu.Item({
                 text: t('open'),
-                iconCls: "pimcore_icon_cursor",
+                iconCls: "pimcore_icon_open",
                 handler: function () {
                     window.open(record.data.url);
                 }.bind(this)

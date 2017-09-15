@@ -97,7 +97,7 @@ pimcore.asset.audio = Class.create(pimcore.asset.asset, {
                 title: t("preview"),
                 html: html,
                 bodyCls: "pimcore_panel_body_centered",
-                iconCls: "pimcore_icon_edit"
+                iconCls: "pimcore_icon_preview"
             });
         }
 
