@@ -35,7 +35,7 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
                     rootProperty: 'data',
                     idProperty: 'key'
                 },
-                extraParams: {class_id: fieldConfig.classId, add_empty: !this.fieldConfig.mandatory, filtergroup: this.fieldConfig.filterGroups }
+                extraParams: {class_id: fieldConfig.classId, add_empty: !this.fieldConfig.mandatory, "filtergroup[]": this.fieldConfig.filterGroups }
             },
             fields: ['key', 'name']
         });

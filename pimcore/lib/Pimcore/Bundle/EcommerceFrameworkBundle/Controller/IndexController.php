@@ -111,7 +111,6 @@ class IndexController extends AdminController
 
         if ($request->get('filtergroup')) {
             $filtergroups = $request->get('filtergroup');
-            $filtergroups = explode(',', $filtergroups);
 
             $indexColumns = [];
             foreach ($filtergroups as $filtergroup) {
