@@ -33,6 +33,15 @@ var/config/system.php
 > **Note:** If you put your configurations into `app/config/pimcore/` they might not writable by the Pimcore backend UI. 
 > This can be especially useful when having automated building environments and don't want the user to allow changing settings.  
 
+If you add an new environment which is not an existing one by default (those are `dev`, `test` and `prod`), you need to create manually a YAML config file for the project.
+If you set environment before installation, this is needed to be done before installation.
+For instance, for a `staging` environment, you will add `config_staging.yml` in `app/config directory`, and put in this file:
+
+```
+imports:
+    - { resource: config.yml }
+```
+
 
 ## Set the Environment
 
