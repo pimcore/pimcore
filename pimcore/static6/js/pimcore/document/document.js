@@ -16,7 +16,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     urlprefix: "/admin/",
 
-    getData: function () {        
+    getData: function () {
         Ext.Ajax.request({
             url: this.urlprefix + this.getType() + "/get-data-by-id/",
             params: {id: this.id},
@@ -56,8 +56,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     selectInTree: function () {
         try {
-            Ext.getCmp("pimcore_panel_tree_documents").expand();
-            var tree = pimcore.globalmanager.get("layout_document_tree");
             pimcore.treenodelocator.showInTree(this.id, "document");
         } catch (e) {
             console.log(e);
@@ -138,8 +136,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             this.tab.unmask();
         }
     },
-    
-    
+
+
     isAllowed : function (key) {
         return this.data.userPermissions[key];
     },

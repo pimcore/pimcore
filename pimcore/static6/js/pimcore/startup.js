@@ -586,6 +586,8 @@ Ext.onReady(function () {
             var treepanel = null;
             var tree = null;
 
+            var locateKey = "layout_" + type + "_locateintree_tree";
+
             switch (type) {
                 case "documents":
                     if (user.isAllowed("documents") && !treeConfig.hidden) {
@@ -616,6 +618,8 @@ Ext.onReady(function () {
                 case "customview":
                     if (!treeConfig.hidden) {
                         var treetype = treeConfig.treetype ? treeConfig.treetype : "object";
+                        locateKey = "layout_" + treetype + "s_locateintree_tree";
+
                         if (user.isAllowed(treetype + "s")) {
                             treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
 
@@ -637,9 +641,14 @@ Ext.onReady(function () {
                             pimcore.globalmanager.add("layout_" + treetype + "_tree_" + treeConfig.id, tree);
 
                             treepanel.setHidden(false);
+                            locateTree = treepanel;
                         }
                     }
                     break;
+            }
+
+            if (!pimcore.globalmanager.get(locateKey)) {
+                pimcore.globalmanager.add(locateKey, tree);
             }
         }
     }

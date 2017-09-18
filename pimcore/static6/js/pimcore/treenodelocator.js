@@ -21,16 +21,17 @@ pimcore.treenodelocator.showInTree = function(id, elementType, button) {
                         accordion.expand();
                     }
 
-                    Ext.getCmp("pimcore_panel_tree_" + elementType + "s").expand();
-                    var tree = pimcore.globalmanager.get("layout_" + elementType + "_tree");
+                    var tree = pimcore.globalmanager.get("layout_" + elementType + "s_locateintree_tree");
+                    if (tree) {
+                        tree.tree.expand();
 
-
-                    var callback = function() {
-                        if (button) {
-                            button.enable();
-                        }
+                        var callback = function () {
+                            if (button) {
+                                button.enable();
+                            }
+                        };
+                        pimcore.treenodelocator.searchInTree(res, elementType, tree.tree, res.idPath, callback);
                     }
-                    pimcore.treenodelocator.searchInTree(res, elementType, tree.tree, res.idPath, callback);
                 }
             } catch (e) {
                 console.log(e);
