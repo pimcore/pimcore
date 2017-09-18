@@ -9,6 +9,11 @@ if [[ -n "$PIMCORE_TEST_SUITE" ]]; then
     CMD="$CMD $PIMCORE_TEST_SUITE"
 fi
 
+# add test group if configured
+if [[ -n "$PIMCORE_TEST_GROUP" ]]; then
+    CMD="$CMD -g $PIMCORE_TEST_GROUP"
+fi
+
 # add env if configured
 if [[ -n "$PIMCORE_TEST_ENV" ]]; then
     CMD="$CMD --env $PIMCORE_TEST_ENV"
