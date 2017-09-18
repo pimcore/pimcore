@@ -72,7 +72,7 @@ pimcore.object.versions = Class.create({
                 plugins: [this.cellEditing],
                 columns: [
                     {header: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
-                        if (d == this.object.data.general.o_modificationDate) {
+                        if (d == this.object.data.general.versionDate) {
                             metaData.tdCls = "pimcore_icon_publish";
                         }
                         return "";

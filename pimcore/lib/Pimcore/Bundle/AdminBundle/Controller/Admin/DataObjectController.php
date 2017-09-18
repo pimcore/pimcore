@@ -354,6 +354,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['showVariants'] = $object->getClass()->getShowVariants();
             $objectData['general']['showAppLoggerTab'] = $object->getClass()->getShowAppLoggerTab();
             $objectData['general']['fullpath'] = $object->getRealFullPath();
+            $objectData['general']['versionDate'] = $object->getModificationDate();
 
             if ($object->getElementAdminStyle()->getElementIcon()) {
                 $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
@@ -1243,9 +1244,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $object->save();
                 $treeData = $this->getTreeNodeConfig($object);
 
+                $newObject = DataObject\AbstractObject::getById($object->getId(), true);
+
                 return $this->json([
                     'success' => true,
-                    'general' => ['o_modificationDate' => $object->getModificationDate()],
+                    'general' => ['o_modificationDate' => $object->getModificationDate(),
+                        'versionDate' => $newObject->getModificationDate()
+                    ],
                     'treeData' => $treeData]);
             } elseif ($request->get('task') == 'session') {
 
@@ -1262,9 +1267,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $object->saveVersion();
                     $treeData = $this->getTreeNodeConfig($object);
 
+                    $newObject = DataObject\AbstractObject::getById($object->getId(), true);
+
                     return $this->json([
                         'success' => true,
-                        'general' => ['o_modificationDate' => $object->getModificationDate()],
+                        'general' => ['o_modificationDate' => $object->getModificationDate(),
+                            'versionDate' => $newObject->getModificationDate()
+                        ],
+
                         'treeData' => $treeData]);
                 }
             }
