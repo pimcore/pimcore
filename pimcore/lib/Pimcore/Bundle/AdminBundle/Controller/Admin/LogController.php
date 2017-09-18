@@ -200,8 +200,9 @@ class LogController extends AdminController implements EventedControllerInterfac
         $filePath = $request->get('filePath');
         $filePath = PIMCORE_PROJECT_ROOT . '/' . $filePath;
         $filePath = realpath($filePath);
+        $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
 
-        if (!preg_match('@^' . PIMCORE_LOG_FILEOBJECT_DIRECTORY . '@', $filePath)) {
+        if (!preg_match('@^' . $fileObjectPath . '@', $filePath)) {
             throw new AccessDeniedHttpException('Accessing file out of scope');
         }
 
