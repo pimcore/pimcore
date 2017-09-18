@@ -14,6 +14,7 @@
 
 namespace Pimcore\HttpKernel\BundleLocator;
 
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class BundleLocator implements BundleLocatorInterface
@@ -21,17 +22,12 @@ class BundleLocator implements BundleLocatorInterface
     /**
      * @var KernelInterface
      */
-    protected $kernel;
+    private $kernel;
 
     /**
      * @var array
      */
-    protected $bundlePathCache = [];
-
-    /**
-     * @var array
-     */
-    protected $classPathCache = [];
+    private $bundleCache = [];
 
     /**
      * @param KernelInterface $kernel
@@ -42,93 +38,60 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function getBundle($className)
+    public function getBundle($class): BundleInterface
     {
-        // TODO there's a simpler method in TemplateGuesser - check we can use that
+        return $this->getBundleForClass($class);
+    }
 
-        $classBundlePath = $this->resolveBundlePath($className);
+    /**
+     * @inheritDoc
+     */
+    public function getBundlePath($class): string
+    {
+        return $this->getBundleForClass($class)->getPath();
+    }
 
-        if (isset($this->bundlePathCache[$classBundlePath])) {
-            return $this->bundlePathCache[$classBundlePath];
+    /**
+     * @deprecated Use getBundlePath instead
+     */
+    public function resolveBundlePath($class)
+    {
+        return $this->getBundlePath($class);
+    }
+
+    private function getBundleForClass($class): BundleInterface
+    {
+        if (is_object($class)) {
+            $class = get_class($class);
         }
 
-        foreach ($this->kernel->getBundles() as $bundle) {
-            if (strpos($bundle->getPath(), $classBundlePath) !== false) {
-                $bundlePath = $this->sanitizePath($bundle->getPath());
+        if (!isset($this->bundleCache[$class])) {
+            $this->bundleCache[$class] = $this->findBundleForClass($class);
+        }
 
-                if ($bundlePath === $classBundlePath) {
-                    $this->bundlePathCache[$classBundlePath] = $bundle;
+        return $this->bundleCache[$class];
+    }
 
+    private function findBundleForClass(string $class): BundleInterface
+    {
+        // see TemplateGuesser from SensioFrameworkExtraBundle
+        $reflectionClass = new \ReflectionClass($class);
+        $bundles         = $this->kernel->getBundles();
+
+        do {
+            $namespace = $reflectionClass->getNamespaceName();
+
+            foreach ($bundles as $bundle) {
+                if (0 === strpos($namespace, $bundle->getNamespace())) {
                     return $bundle;
                 }
             }
-        }
 
-        throw new NotFoundException(sprintf('Unable to find bundle for class %s', is_object($className) ? get_class($className) : $className));
-    }
+            $reflectionClass = $reflectionClass->getParentClass();
+        } while ($reflectionClass);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveBundlePath($className)
-    {
-        $cacheKey = is_object($className) ? get_class($className) : $className;
-
-        if (isset($this->classPathCache[$cacheKey])) {
-            return $this->classPathCache[$cacheKey];
-        }
-
-        if (!is_object($className)) {
-            if (!class_exists($className)) {
-                throw new InvalidArgumentException(sprintf('Class name %s does not exist', $className));
-            }
-        }
-
-        $reflector = new \ReflectionClass($className);
-
-        $classDir      = $this->sanitizePath(dirname($reflector->getFileName()));
-        $classDirParts = explode(DIRECTORY_SEPARATOR, $classDir);
-
-        $matched        = false;
-        $bundleDirParts = [];
-
-        // walk through parts until we find *Bundle
-        while ($part = array_pop($classDirParts)) {
-            if (!$matched && preg_match('/^([a-zA-Z]+Bundle)$/', $part)) {
-                $matched = true;
-            }
-
-            if ($matched) {
-                $bundleDirParts[] = $part;
-            }
-        }
-
-        if (count($bundleDirParts) === 0) {
-            throw new NotFoundException(sprintf('Unable to extract bundle path from class %s', $reflector->getName()));
-        }
-
-        $bundleDirParts = array_reverse($bundleDirParts);
-        $bundleDir      = implode(DIRECTORY_SEPARATOR, $bundleDirParts);
-
-        $this->classPathCache[$cacheKey] = $bundleDir;
-
-        return $bundleDir;
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    protected function sanitizePath($path)
-    {
-        $root = realpath($this->kernel->getRootDir() . '/..');
-
-        $sanitizedPath = str_replace($root, '', $path);
-        $sanitizedPath = trim($sanitizedPath, DIRECTORY_SEPARATOR);
-
-        return $sanitizedPath;
+        throw new NotFoundException(sprintf('Unable to find bundle for class %s', $class));
     }
 }

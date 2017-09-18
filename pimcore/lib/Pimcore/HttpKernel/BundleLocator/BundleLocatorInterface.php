@@ -21,19 +21,29 @@ interface BundleLocatorInterface
     /**
      * Loads bundle for a class name. Returns the AppBundle for AppBundle\Controller\FooController
      *
-     * @param string $className
+     * @param string|object $class
      *
      * @return BundleInterface
+     *
+     * @throws NotFoundException
      */
-    public function getBundle($className);
+    public function getBundle($class): BundleInterface;
 
     /**
      * Resolves bundle directory from a class name.
+     *
      * AppBundle\Controller\FooController returns src/AppBundle
      *
-     * @param string $className
+     * @param string|object $class
      *
      * @return string
+     *
+     * @throws NotFoundException
      */
-    public function resolveBundlePath($className);
+    public function getBundlePath($class): string;
+
+    /**
+     * @deprecated Use getBundlePath instead
+     */
+    public function resolveBundlePath($class);
 }
