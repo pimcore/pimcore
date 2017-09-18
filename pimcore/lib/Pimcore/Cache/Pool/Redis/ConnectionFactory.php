@@ -28,7 +28,7 @@ class ConnectionFactory
      *
      * @param array $options
      *
-     * @return \Credis_Client
+     * @return Connection
      *
      * @throws CacheException
      */
@@ -43,7 +43,7 @@ class ConnectionFactory
             throw new CacheException('Redis \'port\' not specified.');
         }
 
-        $redis = new \Credis_Client($options['server'], $options['port'], $options['timeout'], $options['persistent']);
+        $redis = new Connection($options['server'], $options['port'], $options['timeout'], $options['persistent']);
 
         if ($options['force_standalone']) {
             $redis->forceStandalone();
