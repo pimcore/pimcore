@@ -147,7 +147,7 @@ class CheckoutManager implements ICheckoutManager
             if (!isset($this->checkoutSteps[$currentStepItem])) {
                 throw new \RuntimeException(sprintf(
                     'Environment defines current step as "%s", but step "%s" does not exist',
-                    $currentStepItem
+                    $currentStepItem, $currentStepItem
                 ));
             }
 
