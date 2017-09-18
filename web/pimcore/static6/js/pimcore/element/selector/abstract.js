@@ -39,6 +39,7 @@ pimcore.element.selector.abstract = Class.create({
 
 
         this.parent.setSearch(this.searchPanel);
+        this.parent.window.setTitle(t(this.getTabTitle()));
     },
 
     addToSelection: function (data) {
