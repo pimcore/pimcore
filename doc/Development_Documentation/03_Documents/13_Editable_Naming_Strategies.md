@@ -21,9 +21,10 @@ headlinecontent_accordioncontent77_1
 content:7.accordion:1.headline
 ```
 
-> If you installed Pimcore 5 before build 54 or migrated Pimcore from version 4, you'll need to migrate your document
-  structure to the new `nested` naming strategy. If you installed Pimcore after build 54 you don't need to migrate
-  anything as your documents already use the new naming strategy.
+> If you installed Pimcore 5 before build 54 or migrated Pimcore from version 4, you'll need to make sure you either migrate
+  your document structure to the new `nested` naming strategy or you configure the system to use the `legacy` naming scheme.
+  If you installed Pimcore after build 54 you don't need to migrate anything as your documents already use the new naming
+  strategy.
 
 You can check the currently configured naming strategy by issuing the following command:
 
