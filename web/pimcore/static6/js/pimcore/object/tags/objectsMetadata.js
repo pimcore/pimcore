@@ -301,7 +301,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     // probably a ExtJS 6.0 bug. withou this, dropdowns not working anymore if plugin is enabled
                     // TODO: investigate if there this is already fixed 6.2
                     cellmousedown: function (element, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                        if (cellIndex > visibleFields.length) {
+                        if (cellIndex >= visibleFields.length) {
                             return false;
                         } else {
                             return true;
