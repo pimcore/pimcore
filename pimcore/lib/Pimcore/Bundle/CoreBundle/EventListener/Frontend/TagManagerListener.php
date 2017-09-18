@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Tag;
@@ -27,9 +28,19 @@ class TagManagerListener
     use ResponseInjectionTrait;
 
     /**
+     * @var EditmodeResolver
+     */
+    private $editmodeResolver;
+
+    /**
      * @var bool
      */
     protected $enabled = true;
+
+    public function __construct(EditmodeResolver $editmodeResolver)
+    {
+        $this->editmodeResolver = $editmodeResolver;
+    }
 
     /**
      * @return bool
@@ -95,6 +106,8 @@ class TagManagerListener
         $content = $response->getContent();
         $requestParams = array_merge($_GET, $_POST);
 
+        $editmode = $this->editmodeResolver->isEditmode($request);
+
         /** @var $tag Tag\Config */
         foreach ($tags as $tag) {
             if ($tag->isDisabled()) {
@@ -139,6 +152,11 @@ class TagManagerListener
                         if ($item['disabled']) {
                             continue;
                         }
+
+                        if ($editmode && !$item['enabledInEditmode']) {
+                            continue;
+                        }
+
                         if (!empty($item['element']) && !empty($item['code']) && !empty($item['position'])) {
                             if (in_array($item['element'], ['body', 'head'])) {
                                 // check if the code should be inserted using one of the presets
