@@ -80,7 +80,7 @@ if (!defined("PIMCORE_LOG_DEBUG")) {
     define("PIMCORE_LOG_DEBUG", PIMCORE_LOG_DIRECTORY . "/debug.log");
 }
 if (!defined("PIMCORE_LOG_FILEOBJECT_DIRECTORY")) {
-    define("PIMCORE_LOG_FILEOBJECT_DIRECTORY", realpath(PIMCORE_LOG_DIRECTORY . "/fileobjects"));
+    define("PIMCORE_LOG_FILEOBJECT_DIRECTORY", PIMCORE_LOG_DIRECTORY . "/fileobjects");
 }
 if (!defined("PIMCORE_LOG_MAIL_TEMP")) {
     define("PIMCORE_LOG_MAIL_TEMP", PIMCORE_LOG_DIRECTORY . "/mail");
