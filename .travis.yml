@@ -59,7 +59,7 @@ install:
 
 before_script:
   - .travis/setup-php.sh
-  - if [[ "$TRAVIS_SUDO" == "true" ]]; then .travis/setup-sudo.sh; fi
+  - .travis/setup-functional-tests.sh
 
 script:
   - .travis/run-tests.sh
