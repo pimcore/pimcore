@@ -15,6 +15,7 @@
 namespace Pimcore\Cache\Pool;
 
 use Pimcore\Cache\Pool\Exception\CacheException;
+use Pimcore\Cache\Pool\Redis\Connection;
 
 /**
  * Redis2 item pool with tagging and LUA support.
@@ -45,7 +46,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     const LUA_GC_SH1 = 'c00416b970f1aa6363b44965d4cf60ee99a6f065';
 
     /**
-     * @var \Credis_Client
+     * @var Connection
      */
     protected $redis;
 
@@ -96,11 +97,11 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     protected $luaMaxCStack = 5000;
 
     /**
-     * @param \Credis_Client $redis
+     * @param Connection $redis
      * @param array $options
      * @param int $defaultLifetime
      */
-    public function __construct(\Credis_Client $redis, $options = [], $defaultLifetime = 0)
+    public function __construct(Connection $redis, $options = [], $defaultLifetime = 0)
     {
         parent::__construct($defaultLifetime);
 
@@ -168,33 +169,39 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
             static::FIELD_MTIME
         ];
 
-        $fieldIndexes = array_flip($fields);
-
         foreach ($ids as $id) {
-            $pipeline->hMGet(static::PREFIX_KEY . $id, [
-                static::FIELD_DATA,
-                static::FIELD_TAGS,
-                static::FIELD_MTIME
-            ]);
+            $pipeline->hMGet(static::PREFIX_KEY . $id, $fields);
         }
 
         $result = $pipeline->exec();
 
         foreach ($result as $idx => $entry) {
+            if (empty($entry)) {
+                continue;
+            }
+
+            // map response indexes from numeric indexes to their named key only
+            // if redis is running as standalone version without redis extension as
+            // the extension directly returns an array indexed by name instead of by
+            // index
+            if ($this->redis->isStandalone()) {
+                $entry = $this->mapResponseIndexes($entry, $fields);
+            }
+
             // we rely on mtime always being set
-            if (empty($entry) || !isset($entry[$fieldIndexes[static::FIELD_MTIME]]) || !$entry[$fieldIndexes[static::FIELD_MTIME]]) {
+            if (!isset($entry[static::FIELD_MTIME]) || !$entry[static::FIELD_MTIME]) {
                 continue;
             }
 
-            if (null === $entry[$fieldIndexes[static::FIELD_DATA]]) {
+            if (null === $entry[static::FIELD_DATA]) {
                 continue;
             }
 
-            $value = $this->decodeData($entry[$fieldIndexes[static::FIELD_DATA]]);
+            $value = $this->decodeData($entry[static::FIELD_DATA]);
             $value = $this->unserializeData($value);
 
             $tags    = [];
-            $tagData = $this->decodeData($entry[$fieldIndexes[static::FIELD_TAGS]]);
+            $tagData = $this->decodeData($entry[static::FIELD_TAGS]);
 
             if (!empty($tagData)) {
                 $tags = explode(',', $tagData);
@@ -205,6 +212,28 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                 'tags'  => $tags
             ];
         }
+    }
+
+    /**
+     * Maps response fields indexed by numeric index to an array with values indexed
+     * by field name. This is only used when the redis extension is not used as the extension
+     * already returns the expected format.
+     *
+     * @param array $entry
+     * @param array $fields
+     *
+     * @return array
+     */
+    private function mapResponseIndexes(array $entry, array $fields): array
+    {
+        $result = [];
+        foreach ($fields as $index => $fieldName) {
+            if (isset($entry[$index])) {
+                $result[$fieldName] = $entry[$index];
+            }
+        }
+
+        return $result;
     }
 
     /**
