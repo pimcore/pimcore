@@ -68,7 +68,7 @@ few lines of code.
  
  ```
 
-For simple CSV exports, Pimcore backend interface provides a CSV export functionality, see User Documentation for details.
+For simple CSV exports, Pimcore backend interface provides a CSV export functionality.
  
  
 ## Memory Issues
