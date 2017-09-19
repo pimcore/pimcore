@@ -52,7 +52,7 @@ All helpers are described below in detail, the following tables give just a shor
 
 
 You can also create your own custom templating helpers to make certain functionalities available to your views.  
-Here you can find an example how to [create](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Templating/Example.php) 
+Here you can find an example how to [create](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Templating/Helper/Example.php) 
 and [register](https://github.com/pimcore/pimcore/blob/master/app/config/services.yml) your own templating helper. 
 
 ### `$this->action()`
