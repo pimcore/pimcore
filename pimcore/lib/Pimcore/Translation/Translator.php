@@ -21,6 +21,7 @@ use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -31,6 +32,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      * @var TranslatorInterface|TranslatorBagInterface
      */
     protected $translator;
+
+    /**
+     * @var bool
+     */
+    private $caseInsensitive = false;
 
     /**
      * @var array
@@ -63,8 +69,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
     /**
      * @param TranslatorInterface $translator The translator must implement TranslatorBagInterface
+     * @param bool $caseInsensitive
      */
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
@@ -72,6 +79,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
         $this->translator = $translator;
         $this->selector = new MessageSelector();
+
+        $this->caseInsensitive = $caseInsensitive;
     }
 
     /**
@@ -91,8 +100,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         $locale = $catalogue->getLocale();
         $this->lazyInitialize($domain, $locale);
 
-        $term = $catalogue->get((string) $id, $domain);
-        $term = $this->checkForEmptyTranslation($id, $term, $domain, $locale);
+        $term = $this->getFromCatalogue($catalogue, (string)$id, $domain, $locale);
         $term = strtr($term, $parameters);
 
         // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
@@ -134,11 +142,46 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             }
         }
 
-        $term = $catalogue->get($id, $domain);
-        $term = $this->checkForEmptyTranslation($id, $term, $domain, $locale);
+        $term = $this->getFromCatalogue($catalogue, $id, $domain, $locale);
         $term = $this->selector->choose($term, (int) $number, $locale);
 
         return strtr($term, $parameters);
+    }
+
+    private function getFromCatalogue(MessageCatalogueInterface $catalogue, $id, $domain, $locale)
+    {
+        $term = $catalogue->get($id, $domain);
+
+        // handle case insensitive translations if caseInsensitive is configured
+        if ($this->caseInsensitive && (empty($term) || $term == $id) && in_array($domain, ['messages', 'admin'])) {
+            $term = $this->getCaseInsensitiveFromCatalogue($catalogue, $term, $id, $domain);
+        }
+
+        // only check for empty translation on original ID - we don't want to create empty
+        // translations for normalized IDs when case insensitive
+        $term = $this->checkForEmptyTranslation($id, $term, $domain, $locale);
+
+        return $term;
+    }
+
+    private function getCaseInsensitiveFromCatalogue(MessageCatalogueInterface $catalogue, $term, $id, $domain)
+    {
+        $normalizedId = strtolower($id);
+
+        // nothing to do - we already looked up that key
+        if ($normalizedId === $id) {
+            return $term;
+        }
+
+        if ($catalogue->has($normalizedId, $domain)) {
+            $normalizedTerm = $catalogue->get($normalizedId, $domain);
+
+            if (!empty($normalizedTerm) && $normalizedTerm !== $normalizedId) {
+                $term = $normalizedTerm;
+            }
+        }
+
+        return $term;
     }
 
     /**
@@ -211,7 +254,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                     if (
                         (!isset($data[$translation['key']]) && !$this->getCatalogue($locale)->has($translation['key'], $domain)) ||
                         !empty($translationTerm)) {
-                        $data[$translation['key']] = $translationTerm;
+
+                        $translationKey = $translation['key'];
+
+                        // store as case insensitive if configured
+                        if ($this->caseInsensitive) {
+                            $translationKey = strtolower($translationKey);
+                        }
+
+                        $data[$translationKey] = $translationTerm;
                     }
                 }
 

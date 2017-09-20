@@ -7,11 +7,10 @@ services:
     # TRANSLATOR
     #
 
-    pimcore.translator:
-        class: Pimcore\Translation\Translator
+    Pimcore\Translation\Translator:
         decorates: translator
         arguments:
-            - '@pimcore.translator.inner'
+            - '@Pimcore\Translation\Translator.inner'
         calls:
             - [setKernel, ['@kernel']]
             - [setAdminPath, ['%pimcore.admin.translations.path%']]
@@ -24,7 +23,7 @@ services:
         arguments:
             # TODO can we just type hint against TranslatorInterface and use autowiring here or do we need to call
             # this on the pimcore.translator?
-            $translator: '@pimcore.translator'
+            $translator: '@Pimcore\Translation\Translator'
 
     # formatting service for dates, times and numbers
     Pimcore\Localization\IntlFormatter: ~

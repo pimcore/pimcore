@@ -30,6 +30,7 @@ services:
     pimcore.service.context.pimcore_context_guesser: '@Pimcore\Http\Context\PimcoreContextGuesser'
     pimcore.service.request_matcher_factory: '@Pimcore\Http\RequestMatcherFactory'
 
+    pimcore.translator: '@Pimcore\Translation\Translator'
     pimcore.locale: '@Pimcore\Localization\Locale'
     pimcore.locale.intl_formatter: '@Pimcore\Localization\IntlFormatter'
 
