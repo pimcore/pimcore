@@ -144,6 +144,17 @@ class Datatrans implements IPayment
     }
 
     /**
+     * @param array $formAttributes
+     * @param IPrice $price
+     * @param array $config
+     * @return array
+     */
+    protected function extendFormAttributes(array $formAttributes, IPrice $price, array $config) : array
+    {
+        return $formAttributes;
+    }
+
+    /**
      * start payment
      *
      * @param IPrice $price
@@ -159,15 +170,7 @@ class Datatrans implements IPayment
     public function initPayment(IPrice $price, array $config)
     {
         // check params
-        $required = [
-            'successUrl' => null,
-            'errorUrl'   => null,
-            'cancelUrl'  => null,
-            'refno'      => null,
-            'useAlias'   => null,
-            'reqtype'    => null,
-            'language'   => null
-        ];
+        $required = $this->getRequiredRequestFields();
 
         $config = array_intersect_key($config, $required);
 
@@ -216,6 +219,8 @@ class Datatrans implements IPayment
         }
 
         $formAttributes['id'] = 'paymentForm';
+
+        $formAttributes = $this->extendFormAttributes($formAttributes, $price, $config);
 
         // create form
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
@@ -337,6 +342,22 @@ class Datatrans implements IPayment
                 'datatrans_response'             => $response
             ]
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRequiredRequestFields() : array
+    {
+        return [
+            'successUrl' => null,
+            'errorUrl'   => null,
+            'cancelUrl'  => null,
+            'refno'      => null,
+            'useAlias'   => null,
+            'reqtype'    => null,
+            'language'   => null,
+        ];
     }
 
     /**

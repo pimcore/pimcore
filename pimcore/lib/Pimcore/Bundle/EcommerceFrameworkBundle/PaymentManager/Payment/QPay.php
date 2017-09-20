@@ -163,6 +163,17 @@ class QPay implements IPayment
     }
 
     /**
+     * @param array $formAttributes
+     * @param IPrice $price
+     * @param array $config
+     * @return array
+     */
+    protected function extendFormAttributes(array $formAttributes, IPrice $price, array $config) : array
+    {
+        return $formAttributes;
+    }
+
+    /**
      * Start payment
      *
      * @param IPrice $price
@@ -175,15 +186,7 @@ class QPay implements IPayment
     public function initPayment(IPrice $price, array $config)
     {
         // check params
-        $required = [
-            'successURL'       => null,
-            'cancelURL'        => null,
-            'failureURL'       => null,
-            'serviceURL'       => null,
-            'orderDescription' => null,
-            'orderIdent'       => null,
-            'language'         => null
-        ];
+        $required = $this->getRequiredRequestFields();
 
         $check = array_intersect_key($config, $required);
         if (count($required) != count($check)) {
@@ -220,10 +223,15 @@ class QPay implements IPayment
 
         // create form
         $formData = [];
+        $formAttributes = [];
+
+        $formAttributes['id'] = 'paymentForm';
+
+        $formAttributes = $this->extendFormAttributes(['id' => 'paymentForm'], $price, $config);
 
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
         $form = $this->formFactory->createNamedBuilder(null, FormType::class, [], [
-            'attr' => ['id' => 'paymentForm']
+            'attr' => $formAttributes
         ]);
 
         $form->setAction('https://www.qenta.com/qpay/init.php');
@@ -329,6 +337,22 @@ class QPay implements IPayment
                 'qpay_response'     => $response
             ]
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRequiredRequestFields() : array
+    {
+        return [
+            'successURL'       => null,
+            'cancelURL'        => null,
+            'failureURL'       => null,
+            'serviceURL'       => null,
+            'orderDescription' => null,
+            'orderIdent'       => null,
+            'language'         => null,
+        ];
     }
 
     /**
