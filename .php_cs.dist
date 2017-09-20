@@ -37,6 +37,7 @@ return PhpCsFixer\Config::create()
         'hash_to_slash_comment'               => true,
         'lowercase_cast'                      => true,
         'magic_constant_casing'               => true,
+        'method_argument_space'               => ['ensure_fully_multiline' => false],
         'method_separation'                   => true,
         'native_function_casing'              => true,
         'no_blank_lines_after_class_opening'  => true,
