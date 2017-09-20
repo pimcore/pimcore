@@ -25,7 +25,7 @@ class Website extends AbstractTranslation
     /**
      * @return array
      */
-    protected static function getLanguages()
+    public static function getLanguages(): array
     {
         return \Pimcore\Tool::getValidLanguages();
     }

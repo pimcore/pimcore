@@ -20,6 +20,22 @@ namespace Pimcore\Model\Translation;
 interface TranslationInterface
 {
     /**
+     * Returns a list of valid languages
+     *
+     * @return array
+     */
+    public static function getLanguages(): array;
+
+    /**
+     * Detemines if backend can handle the language
+     *
+     * @param $locale
+     *
+     * @return bool
+     */
+    public static function isValidLanguage($locale): bool;
+
+    /**
      * @param $id
      *
      * @return mixed

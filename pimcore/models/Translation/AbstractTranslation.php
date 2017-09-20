@@ -47,6 +47,14 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public $modificationDate;
 
     /**
+     * @inheritDoc
+     */
+    public static function isValidLanguage($locale): bool
+    {
+        return in_array($locale, (array)static::getLanguages());
+    }
+
+    /**
      * @return string
      */
     public function getKey()
