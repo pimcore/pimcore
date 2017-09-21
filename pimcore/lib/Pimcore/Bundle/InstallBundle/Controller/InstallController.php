@@ -57,8 +57,11 @@ class InstallController extends AbstractController
         }, array_values($profileLocator->getProfiles()));
 
         return $this->render('@PimcoreInstall/Install/install.html.twig', [
-            'errors'   => $installer->checkPrerequisites(),
-            'profiles' => $profiles
+            'info'         => $this->infoMessage ?? '',
+            'profiles'     => $profiles,
+            'errors'       => $installer->checkPrerequisites(),
+            'needsProfile' => $installer->needsProfile(),
+            'needsDb'      => $installer->needsDbCredentials(),
         ]);
     }
 
