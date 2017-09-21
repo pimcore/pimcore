@@ -32,6 +32,7 @@ services:
         public: false
         arguments:
             $templating: '@templating'
+            $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
         calls:
             - [setLogger, ['@logger']]
         tags:
