@@ -47,7 +47,7 @@ public function onKernelController(FilterControllerEvent $event)
 }
 ``` 
 - Remove `$this->enableLayout()`. Use `$this->extend` in view template instead, see 
-[layouts](../../../02_MVC/02_Template/00_Layouts.md) for details. 
+[layouts](../../../02_MVC/02_Template/01_Layouts.md) for details. 
 - Replace `$this->getParam()` by adding `Request $request` as action Parameter and call 
 `$request->get()` instead. 
 - Replace `$this->getAllParams()` by adding `Request $request` as action Parameter and call 
@@ -82,7 +82,7 @@ This will result in data loss!
    - Use `$this->extend('layout.html.php');` for including layouts in templates
    - Do not call `$this->extend('layout.html.php');` twice, for example via including templates via `$this->render()`.
     This will result in double rendering of the template (e.g. two menus, ...). 
-   - For details on layouts see [layout docs](../../../02_MVC/02_Template/00_Layouts.md). 
+   - For details on layouts see [layout docs](../../../02_MVC/02_Template/01_Layouts.md). 
 
 - Templates location
   - move view scripts to `/app/Resources/views/[ControllerName]/[actionName].html.php` 

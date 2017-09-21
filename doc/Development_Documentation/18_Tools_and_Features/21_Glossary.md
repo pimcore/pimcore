@@ -19,6 +19,8 @@ Open the glossary editor ![Tools](../img/Icon_tools.png) **Tools -> Glossary** a
 
 Then you have to define one or more regions in your views, telling the glossary where you want it to replace your terms.
 
+<div class="code-section">
+
 ```php
 <?php $this->glossary()->start(); ?>
 <div>
@@ -29,9 +31,19 @@ Then you have to define one or more regions in your views, telling the glossary 
 <?php $this->glossary()->stop() ?>
 ```
 
-Now the outpu of the WYSIWYG field will look like this.
+```twig
+{% pimcoreglossary %}
+<div>
+    {{ pimcore_wysiwyg('content', { height: 200 }) }}
+</div>
+{% endpimcoreglossary %}
+```
 
-![Glossary fomntend](../img/glossary_frontend.png)
+</div>
+
+Now the output of the WYSIWYG field will look like this.
+
+![Glossary frontend](../img/glossary_frontend.png)
 
 And the HTML-markup will look like, below.
 

@@ -22,7 +22,9 @@ The returned configuration is a `Pimcore\Config\Config` object containing your s
 ### Example Configuration
 ![Website Setting Config](../img/website-settings.png)
 
-### Example in a PHP template
+Usage in a template:
+
+<div class="code-section">
 
 ```php 
 <?php
@@ -37,8 +39,6 @@ $this->websiteConfig('googleMapsKey', 'NOT SET');
 ?>
 ```
 
-### Example in a Twig template
-
 ```twig
 {# access the whole configuration #}
 {{ pimcore_website_config() }}
@@ -50,7 +50,9 @@ $this->websiteConfig('googleMapsKey', 'NOT SET');
 {{ pimcore_website_config('googleMapsKey', 'NOT SET') }}
 ```
 
-### Example in a Controller
+</div>
+
+Usage in a controller:
 
 ```php
 <?php

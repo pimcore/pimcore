@@ -14,7 +14,10 @@ It builds a navigation container based on the existing document structure. The p
 
 **Only documents are included** in this structure, directories are ignored, regardless of their navigation properties.
 
+<div class="code-section">
+
 ```php
+<?php
 // get root node if there is no document defined (for pages which are routed directly through static route)
 if(!$this->document instanceof \Pimcore\Model\Document\Page) {
     $this->document = \Pimcore\Model\Document\Page::getById(1);
@@ -28,11 +31,36 @@ if(!$navStartNode instanceof \Pimcore\Model\Document\Page) {
 
 // this returns us the navigation container we can use to render the navigation
 $mainNavigation = $this->navigation()->buildNavigation($document, $mainNavStartNode);
+
+// later you can render the navigation
+echo $this->navigation()->render($mainNavigation);
 ```
+
+```twig
+{# get root node if there is no document defined (for pages which are routed directly through static route) #}
+{% if not document is defined or not document %}
+    {% set document = pimcore_document(1) %}
+{% endif %}
+
+{# get the document which should be used to start in navigation | default home #}
+{% set navStartNode = document.getProperty('navigationRoot') %}
+{% if not navStartNode is instanceof('\\Pimcore\\Model\\Document\\Page') %}
+    {% set navStartNode = pimcore_document(1) %}
+{% endif %}
+
+{% set mainNavigation = pimcore_build_nav(document, navStartNode) %}
+
+{# later you can render the navigation #}
+{{ pimcore_render_nav(mainNavigation }}
+```
+
+</div>
 
 Having set up the navigation container as shown above, you can easily use it to render a navigation tree, menus, or breadcrumbs.
 
 ### Meta Navigation - Only the 1st Level
+
+<div class="code-section">
 
 ```php
 <div class="my-menu">
@@ -52,6 +80,18 @@ Having set up the navigation container as shown above, you can easily use it to 
     ]); ?>
 </div>
 ```
+
+```twig
+<div class="my-menu">
+    {# the menu() shortcut is not available in twig #}
+    {{ pimcore_render_nav(mainNavigation, 'menu', 'renderMenu', {
+        maxDepth: 1,
+        ulClass: 'nav navbar-nav'
+    }) }}
+</div>
+```
+
+</div>
 
 ### Breadcrumbs
 
