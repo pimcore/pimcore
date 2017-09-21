@@ -52,5 +52,5 @@ $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), tr
 $application = new Application($kernel);
 $application->setName('Pimcore Installer');
 $application->setVersion(Version::getVersion());
-$application->setDefaultCommand('pimcore:install', true);
+$application->setDefaultCommand('pimcore:install');
 $application->run();
