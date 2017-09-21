@@ -171,6 +171,12 @@ class InstallCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Do not abort if a <comment>system.php</comment> file already exists'
+            )
+            ->addOption(
+                'no-copy-profile-files',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not copy any profile files. Just install DB structure'
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -322,6 +328,10 @@ class InstallCommand extends Command
             $this->io->listing($missing);
 
             return 1;
+        }
+
+        if ($input->getOption('no-copy-profile-files')) {
+            $this->installer->setCopyProfileFiles(false);
         }
 
         if ($input->getOption('no-overwrite')) {

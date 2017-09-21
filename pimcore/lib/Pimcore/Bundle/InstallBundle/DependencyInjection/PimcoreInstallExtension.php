@@ -47,17 +47,19 @@ class PimcoreInstallExtension extends ConfigurableExtension
         $parameters = $config['parameters'] ?? [];
         $definition = $container->getDefinition(Installer::class);
 
+        $definition->addMethodCall('setCopyProfileFiles', [$config['copy_profile_files']]);
+
         $dbCredentials = $parameters['database_credentials'] ?? [];
         $dbCredentials = $this->normalizeDbCredentials($dbCredentials);
 
         if (!empty($dbCredentials)) {
-            $definition->setArgument('$dbCredentials', $dbCredentials);
+            $definition->addMethodCall('setDbCredentials', [$dbCredentials]);
         }
 
         $profile = $parameters['profile'] ?? null;
 
         if (!empty($profile)) {
-            $definition->setArgument('$profile', $profile);
+            $definition->addMethodCall('setProfile', [$profile]);
         }
     }
 
