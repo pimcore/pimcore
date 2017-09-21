@@ -136,7 +136,9 @@ class GD extends Adapter
 
     protected function destroy()
     {
-        imagedestroy($this->resource);
+        if ($this->resource) {
+            imagedestroy($this->resource);
+        }
     }
 
     /**
