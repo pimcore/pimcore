@@ -77,7 +77,8 @@ class InstallCommand extends Command
                 'prompt'      => 'Please choose the install profile you want to use',
                 'mode'        => InputOption::VALUE_REQUIRED,
                 'default'     => 'empty',
-                'choices'     => $profiles
+                'choices'     => $profiles,
+                'group'       => 'profile',
             ],
             'admin-username'    => [
                 'description' => 'Admin username',
@@ -93,27 +94,32 @@ class InstallCommand extends Command
             'mysql-host-socket' => [
                 'description' => 'MySQL Host or Socket',
                 'mode'        => InputOption::VALUE_REQUIRED,
-                'default'     => 'localhost'
+                'default'     => 'localhost',
+                'group'       => 'db_credentials',
             ],
             'mysql-username'    => [
                 'description' => 'MySQL username',
                 'mode'        => InputOption::VALUE_REQUIRED,
                 'insecure'    => true,
+                'group'       => 'db_credentials',
             ],
             'mysql-password'    => [
                 'description'  => 'MySQL password',
                 'mode'         => InputOption::VALUE_REQUIRED,
                 'insecure'     => true,
-                'hidden-input' => true
+                'hidden-input' => true,
+                'group'       => 'db_credentials',
             ],
             'mysql-database'    => [
                 'description' => 'MySQL database',
                 'mode'        => InputOption::VALUE_REQUIRED,
+                'group'       => 'db_credentials',
             ],
             'mysql-port'        => [
                 'description' => 'MySQL Port (will be omitted if socket is set)',
                 'mode'        => InputOption::VALUE_REQUIRED,
-                'default'     => 3306
+                'default'     => 3306,
+                'group'       => 'db_credentials',
             ],
         ];
 
@@ -191,6 +197,10 @@ class InstallCommand extends Command
         $this->io = new PimcoreStyle($input, $output);
 
         foreach ($this->getOptions() as $name => $config) {
+            if (!$this->installerNeedsOption($config)) {
+                continue;
+            }
+
             $value          = $input->getOption($name);
             $isDefaultValue = isset($config['default']) && $value === $config['default'];
 
@@ -227,6 +237,10 @@ class InstallCommand extends Command
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         foreach ($this->getOptions() as $name => $config) {
+            if (!$this->installerNeedsOption($config)) {
+                continue;
+            }
+
             $value          = $input->getOption($name);
             $isDefaultValue = isset($config['default']) && $value === $config['default'];
 
@@ -263,6 +277,19 @@ class InstallCommand extends Command
         }
     }
 
+    private function installerNeedsOption(array $config): bool
+    {
+        if ('profile' === ($config['group'] ?? null) && !$this->installer->needsProfile()) {
+            return false;
+        }
+
+        if ('db_credentials' === ($config['group'] ?? null) && !$this->installer->needsDbCredentials()) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * @inheritDoc
      */
@@ -275,7 +302,11 @@ class InstallCommand extends Command
         $params  = [];
         $missing = [];
 
-        foreach (array_keys($this->getOptions()) as $name) {
+        foreach ($this->getOptions() as $name => $config) {
+            if (!$this->installerNeedsOption($config)) {
+                continue;
+            }
+
             $value = $input->getOption($name);
 
             if ($value) {
