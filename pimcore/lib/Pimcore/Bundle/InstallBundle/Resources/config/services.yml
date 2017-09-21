@@ -25,3 +25,7 @@ services:
     Pimcore\Install\Installer: ~
 
     Pimcore\Install\Profile\ProfileLocator: ~
+
+    Pimcore\Install\Profile\FileInstaller:
+        arguments:
+            '$projectRoot': '%kernel.project_dir%'
