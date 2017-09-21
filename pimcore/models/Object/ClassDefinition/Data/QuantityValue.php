@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
+use Pimcore\Cache;
 use Pimcore\Model;
 
 class QuantityValue extends Model\Object\ClassDefinition\Data
@@ -491,12 +492,38 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public function configureOptions()
     {
         if (!$this->validUnits) {
-            $list = new \Pimcore\Model\Object\QuantityValue\Unit\Listing();
-            $units = $list->getUnits();
-            if (is_array($units)) {
+            try {
+                if (\Zend_Registry::isRegistered(Model\Object\QuantityValue\Unit::CACHE_KEY)) {
+                    $table = \Zend_Registry::get(Model\Object\QuantityValue\Unit::CACHE_KEY);
+                }
+
+                if (!is_array($table)) {
+                    $table = Cache::load(Model\Object\QuantityValue\Unit::CACHE_KEY);
+                    if (is_array($table)) {
+                        \Zend_Registry::set(Model\Object\QuantityValue\Unit::CACHE_KEY, $table);
+                    }
+                }
+
+                if (!is_array($table)) {
+                    $table = [];
+                    $list = new Model\Object\QuantityValue\Unit\Listing();
+                    $list = $list->load();
+                    /** @var  $item Model\Object\QuantityValue\Unit */
+                    foreach ($list as $item) {
+                        $table[$item->getId()] = $item;
+                    }
+
+                    Cache::save($table, Model\Object\QuantityValue\Unit::CACHE_KEY, [], null, 995, true);
+                    \Zend_Registry::set(Model\Object\QuantityValue\Unit::CACHE_KEY, $table);
+                }
+            } catch (\Exception $e) {
+                Logger::error($e);
+            }
+
+            if (is_array($table)) {
                 $this->validUnits = [];
                 /** @var  $unit Model\Object\QuantityValue\Unit */
-                foreach ($units as $unit) {
+                foreach ($table as $unit) {
                     $this->validUnits[] = $unit->getId();
                 }
             }
