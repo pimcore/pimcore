@@ -36,3 +36,9 @@ services:
         resource: '../../Controller'
         public: true
         tags: ['controller.service_arguments']
+
+    #
+    # TRANSLATIONS
+    #
+
+    Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~

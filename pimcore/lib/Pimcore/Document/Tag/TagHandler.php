@@ -167,8 +167,8 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
             }
 
             if ($view->editmode) {
-                $name = $this->translator->trans($name, [], 'admin');
-                $desc = $this->translator->trans($desc, [], 'admin');
+                $name = $this->translator->trans($name);
+                $desc = $this->translator->trans($desc);
             }
 
             $areas[$brick->getId()] = [
