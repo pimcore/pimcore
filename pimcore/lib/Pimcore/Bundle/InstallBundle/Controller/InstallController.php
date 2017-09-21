@@ -36,9 +36,15 @@ class InstallController extends AbstractController
      */
     private $logger;
 
-    public function __construct(LoggerInterface $logger)
+    /**
+     * @var string
+     */
+    private $infoMessage;
+
+    public function __construct(LoggerInterface $logger, string $infoMessage = null)
     {
-        $this->logger = $logger;
+        $this->logger      = $logger;
+        $this->infoMessage = $infoMessage;
     }
 
     public function indexAction(Installer $installer, ProfileLocator $profileLocator)
@@ -72,18 +78,19 @@ class InstallController extends AbstractController
         }
     }
 
-    public function checkAction(Request $request)
+    public function checkAction(Request $request, Installer $installer)
     {
         $checksPHP  = Requirements::checkPhp();
         $checksFS   = Requirements::checkFilesystem();
         $checksApps = Requirements::checkExternalApplications();
 
-        $db = $this->buildDatabaseConnection($request);
+        $dbConfig = $installer->resolveDbConfig($request->request->all());
+        $db       = $this->buildDatabaseConnection($dbConfig);
 
         if ($db) {
             $checksMySQL = Requirements::checkMysql($db);
         } else {
-            return new Response('Not possible... no or wrong database settings given.<br />Please fill out the MySQL Settings in the install form an click again on `Check Requirements´');
+            return new Response('Not possible as no or wrong database settings were given.<br />Please fill out the MySQL Settings in the install form an click on "Check Requirements" again.');
         }
 
         $viewParams = [
@@ -94,33 +101,17 @@ class InstallController extends AbstractController
             'headless'    => (bool)$request->get('headless')
         ];
 
-        return $this->render('@PimcoreAdmin/Admin/Install/check.html.twig', $viewParams);
+        return $this->render('@PimcoreAdminBundle/Admin/Install/check.html.twig', $viewParams);
     }
 
     /**
-     * @param Request $request
+     * @param array $dbConfig
      *
      * @return Connection|null
      */
-    private function buildDatabaseConnection(Request $request)
+    private function buildDatabaseConnection(array $dbConfig)
     {
         try {
-            $dbConfig = [
-                'user'         => $request->get('mysql_username'),
-                'password'     => $request->get('mysql_password'),
-                'dbname'       => $request->get('mysql_database'),
-                'driver'       => 'pdo_mysql',
-                'wrapperClass' => Connection::class,
-            ];
-
-            $hostSocketValue = $request->get('mysql_host_socket');
-            if (!empty($hostSocketValue) && file_exists($hostSocketValue)) {
-                $dbConfig['unix_socket'] = $hostSocketValue;
-            } else {
-                $dbConfig['host'] = $hostSocketValue;
-                $dbConfig['port'] = $request->get('mysql_port');
-            }
-
             $config = new Configuration();
 
             /** @var Connection $db */

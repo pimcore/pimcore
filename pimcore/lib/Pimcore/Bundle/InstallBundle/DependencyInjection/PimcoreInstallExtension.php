@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\DependencyInjection;
 
+use Pimcore\Bundle\InstallBundle\Controller\InstallController;
+use Pimcore\Install\Installer;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -32,5 +34,49 @@ class PimcoreInstallExtension extends ConfigurableExtension
         );
 
         $loader->load('services.yml');
+
+        $container
+            ->getDefinition(InstallController::class)
+            ->setArgument('$infoMessage', $config['info_message']);
+
+        $this->configureInstaller($container, $config);
+    }
+
+    private function configureInstaller(ContainerBuilder $container, array $config)
+    {
+        $parameters = $config['parameters'] ?? [];
+        $definition = $container->getDefinition(Installer::class);
+
+        $dbCredentials = $parameters['database_credentials'] ?? [];
+        $dbCredentials = $this->normalizeDbCredentials($dbCredentials);
+
+        if (!empty($dbCredentials)) {
+            $definition->setArgument('$dbCredentials', $dbCredentials);
+        }
+
+        $profile = $parameters['profile'] ?? null;
+
+        if (!empty($profile)) {
+            $definition->setArgument('$profile', $profile);
+        }
+    }
+
+    /**
+     * Only add DB credentials which are not empty
+     *
+     * @param array $dbCredentials
+     *
+     * @return array
+     */
+    private function normalizeDbCredentials(array $dbCredentials): array
+    {
+        $normalized = [];
+        foreach ($dbCredentials as $key => $value) {
+            if (!empty($value)) {
+                $normalized[$key] = $value;
+            }
+        }
+
+        return $normalized;
     }
 }

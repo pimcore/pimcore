@@ -54,13 +54,40 @@ class Installer
     private $symlink = false;
 
     /**
-     * @param LoggerInterface $logger
-     * @param ProfileLocator $profileLocator
+     * Predefined profile from config
+     *
+     * @var string
      */
-    public function __construct(LoggerInterface $logger, ProfileLocator $profileLocator)
+    private $profile;
+
+    /**
+     * Predefined DB credentials from config
+     *
+     * @var array
+     */
+    private $dbCredentials;
+
+    public function __construct(
+        LoggerInterface $logger,
+        ProfileLocator $profileLocator,
+        string $profile = null,
+        array $dbCredentials = []
+    )
     {
         $this->logger         = $logger;
         $this->profileLocator = $profileLocator;
+        $this->profile        = $profile;
+        $this->dbCredentials  = $dbCredentials ?? [];
+    }
+
+    public function needsProfile(): bool
+    {
+        return null === $this->profile;
+    }
+
+    public function needsDbCredentials(): bool
+    {
+        return empty($this->dbCredentials);
     }
 
     /**
@@ -112,7 +139,7 @@ class Installer
      */
     public function install(array $params): array
     {
-        $dbConfig = $this->normalizeDbConfig($params);
+        $dbConfig = $this->resolveDbConfig($params);
 
         // try to establish a mysql connection
         try {
@@ -138,9 +165,20 @@ class Installer
             $errors[] = 'Username and password should have at least 4 characters';
         }
 
-        $profileId = 'empty';
-        if (isset($params['profile'])) {
-            $profileId = $params['profile'];
+        $profileId = null;
+        if (null !== $this->profile) {
+            $profileId = $this->profile;
+        } else {
+            $profileId = 'empty';
+            if (isset($params['profile'])) {
+                $profileId = $params['profile'];
+            }
+        }
+
+        if (empty($profileId)) {
+            $errors[] = sprintf('Invalid profile ID');
+
+            return $errors;
         }
 
         $profile = null;
@@ -175,18 +213,33 @@ class Installer
         }
     }
 
-    private function normalizeDbConfig(array $params): array
+    public function resolveDbConfig(array $params): array
     {
-        // database configuration host/unix socket
         $dbConfig = [
-            'user'         => $params['mysql_username'],
-            'password'     => $params['mysql_password'],
-            'dbname'       => $params['mysql_database'],
+            'host'         => 'localhost',
+            'port'         => 3306,
             'driver'       => 'pdo_mysql',
-            'wrapperClass' => 'Pimcore\Db\Connection',
+            'wrapperClass' => Connection::class,
         ];
 
+        // do not handle parameters if db credentials are set via config
+        if (!empty($this->dbCredentials)) {
+            return array_merge(
+                $dbConfig,
+                $this->dbCredentials
+            );
+        }
+
+        // database configuration host/unix socket
+        $dbConfig = array_merge($dbConfig, [
+            'user'     => $params['mysql_username'],
+            'password' => $params['mysql_password'],
+            'dbname'   => $params['mysql_database'],
+        ]);
+
         $hostSocketValue = $params['mysql_host_socket'];
+
+        // use value as unix socket if file exists
         if (file_exists($hostSocketValue)) {
             $dbConfig['unix_socket'] = $hostSocketValue;
         } else {

@@ -31,7 +31,9 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('info_message')->end()
+                ->scalarNode('info_message')
+                    ->defaultNull()
+                ->end()
                 ->booleanNode('copy_profile_files')
                     ->defaultTrue()
                 ->end()
@@ -48,8 +50,8 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('password')->end()
                                 ->scalarNode('dbname')->end()
                                 ->scalarNode('host')->end()
-                                ->scalarNode('socket')->end()
                                 ->scalarNode('port')->end()
+                                ->scalarNode('unix_socket')->end()
                             ->end()
                         ->end()
                     ->end()

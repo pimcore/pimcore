@@ -9,6 +9,12 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+    Pimcore\Bundle\InstallBundle\Controller\InstallController:
+        public: true
+        arguments:
+            $infoMessage:
+        tags: ['controller.service_arguments']
+
     Pimcore\Bundle\InstallBundle\Command\:
         resource: '../../Command'
         public: true
