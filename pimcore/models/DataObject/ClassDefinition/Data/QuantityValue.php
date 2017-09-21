@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Cache;
+use Pimcore\Cache\Runtime;
+use Pimcore\Logger;
 use Pimcore\Model;
 
 class QuantityValue extends Model\DataObject\ClassDefinition\Data
@@ -511,17 +514,44 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
     public function configureOptions()
     {
         if (!$this->validUnits) {
-            $list = new \Pimcore\Model\DataObject\QuantityValue\Unit\Listing();
-            $units = $list->getUnits();
-            if (is_array($units)) {
+            try {
+                if (Runtime::isRegistered(Model\DataObject\QuantityValue\Unit::CACHE_KEY)) {
+                    $table = Runtime::get(Model\DataObject\QuantityValue\Unit::CACHE_KEY);
+                }
+
+                if (!is_array($table)) {
+                    $table = Cache::load(Model\DataObject\QuantityValue\Unit::CACHE_KEY);
+                    if (is_array($table)) {
+                        Runtime::set(Model\DataObject\QuantityValue\Unit::CACHE_KEY, $table);
+                    }
+                }
+
+                if (!is_array($table)) {
+                    $table = [];
+                    $list = new Model\DataObject\QuantityValue\Unit\Listing();
+                    $list = $list->load();
+                    /** @var  $item Model\DataObject\QuantityValue\Unit */
+                    foreach ($list as $item) {
+                        $table[$item->getId()] = $item;
+                    }
+
+                    Cache::save($table, Model\DataObject\QuantityValue\Unit::CACHE_KEY, [], null, 995, true);
+                    Runtime::set(Model\DataObject\QuantityValue\Unit::CACHE_KEY, $table);
+                }
+            } catch (\Exception $e) {
+                Logger::error($e);
+            }
+
+            if (is_array($table)) {
                 $this->validUnits = [];
-                /** @var $unit Model\DataObject\QuantityValue\Unit */
-                foreach ($units as $unit) {
+                /** @var  $unit Model\DataObject\QuantityValue\Unit */
+                foreach ($table as $unit) {
                     $this->validUnits[] = $unit->getId();
                 }
             }
         }
     }
+
 
     /**
      * @param $data
