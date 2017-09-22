@@ -12,14 +12,12 @@ The Maintenance Mode is also activated by Pimcore during Pimcore Update.
 
 ## Customize Maintenance Page
 
-Overwrite the service `pimcore.event_listener.maintenance_page` in your `app/config/services.yml`. 
+Overwrite the service `Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener` in your `app/config/services.yml`. 
 
 ```yaml
-pimcore.event_listener.maintenance_page:
-    class: Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener
-    arguments: ['@kernel']
+Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
     calls:
         - [loadTemplateFromResource, ['@@AppBundle/Resources/misc/maintenance.html']]
     tags:
-      - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
+        - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 ```

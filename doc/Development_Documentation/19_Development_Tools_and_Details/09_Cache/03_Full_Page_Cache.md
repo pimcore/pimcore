@@ -41,7 +41,8 @@ it's not possible to define an exclude-regex, or for similar reasons.
 
 In this case you can use obtain the pull page cache service from the container and disable it, eg. in an action: 
 ```php
-$this->get("pimcore.event_listener.frontend.full_page_cache")->disable("Your disable reason");
+<?php
+$this->get(\Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener::class)->disable("Your disable reason");
 ```
 
 ### Disable the Full Page Cache for a Single Request (only in DEBUG MODE)
