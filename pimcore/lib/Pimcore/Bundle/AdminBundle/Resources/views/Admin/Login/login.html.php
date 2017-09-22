@@ -54,7 +54,7 @@ $config = $this->config;
 <div id="vcenter" class="<?= ($config->general->loginscreencustomimage ? "customimage" : ""); ?>">
     <div id="hcenter">
         <div id="header">
-            <img src="/pimcore/static6/img/logo-white.svg">
+            <img src="/pimcore/static6/img/logo-claim-gray.svg">
         </div>
         <div id="content">
             <div id="loginform">
@@ -131,6 +131,6 @@ $config = $this->config;
         $("#username").select();
     </script>
 
-    <script type="text/javascript" src="https://www.pimcore.org/imageservice/"></script>
+
 
 <?php $view->slots()->stop() ?>

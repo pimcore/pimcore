@@ -74,7 +74,7 @@
     top:0;
     width: 6px;
     height:48px;
-    background-color: #0078BE;
+    background-color: #6428b4;
     content: "";
 }
 
@@ -202,8 +202,8 @@
     display: none;
     font-size: 0;
     cursor: pointer;
-    background-color: #0078BE;
-    background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iRWJlbmVfMSIgZGF0YS1uYW1lPSJFYmVuZSAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MiAxOS43MiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNmZmY7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5VbmJlbmFubnQtMTwvdGl0bGU+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjIuNjQsMjAuMzgsMjEuMjQsMTlhOS44Niw5Ljg2LDAsMSwwLDAsMTRsNC4xNi00LjIsNC4xNiw0LjJhOS44Niw5Ljg2LDAsMSwwLDAtMTRMMTguNDMsMzAuMTRhNS45Miw1LjkyLDAsMSwxLDAtOC4zN2wxLjQsMS40Wm0xOC4xMSw5Ljc3YTUuOTIsNS45MiwwLDAsMS04LjM3LDBMMjguMiwyNmw0LjE4LTQuMThhNS45Miw1LjkyLDAsMCwxLDguMzcsOC4zN1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00LjQgLTE2LjA5KSIvPjwvc3ZnPg==);
+    background-color: #6428b4;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSAyNi4yNSI+DQoJPHBhdGggZD0iTTM4LjEzLDE2LjYzYTkuMzcsOS4zNywwLDAsMC03LjgyLDQuMjFMMjMuNDQsMzEuMThhOS4zOCw5LjM4LDAsMSwxLDAtMTAuNDJsMS4yMywxLjg2LDIuMjUtMy40LS4zMy0uNWExMy4xMiwxMy4xMiwwLDEsMCwwLDE0LjUzbDIuNTUtMy44NSwxLjE4LDEuNzhhOS4zOCw5LjM4LDAsMSwwLDcuODItMTQuNTVabTAsMTVhNS42Miw1LjYyLDAsMCwxLTQuNy0yLjU0bC0yLTMuMDksMi4wNi0zLjExYTUuNjIsNS42MiwwLDEsMSw0LjY5LDguNzNaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMi41IC0xMi44OCkiIHN0eWxlPSJmaWxsOiNmZmYiLz4NCjwvc3ZnPg0K);
     background-repeat: no-repeat;
     background-size: 40px 40px;
     background-position: 9px 6px;
@@ -1301,10 +1301,10 @@ span.warning {
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {
-    background-image: url(/pimcore/static6/img/logo-gray.svg);
+    background-image: url(/pimcore/static6/img/logo-claim-gray.svg);
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: 300px auto;
+    background-size: 500px auto;
 }
 
 #pimcore_panel_tabs > .x-tab-bar {
@@ -1312,8 +1312,8 @@ span.warning {
 
     background-image: url(/pimcore/static6/img/logo-gray.svg);
     background-repeat: no-repeat;
-    background-position: right 22px top 4px;
-    background-size: 80px;
+    background-position: right -5px top 4px;
+    background-size: 105px;
 }
 
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body {
