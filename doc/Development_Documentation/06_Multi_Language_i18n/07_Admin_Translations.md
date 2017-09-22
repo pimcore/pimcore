@@ -20,6 +20,8 @@ and after the string, if Pimcore is in DEBUG mode.
 But you can use the admin translation also in your custom templates. 
 Admin translations use the same translator component (Symfony) but on a different domain.
 
+Admin translations underly the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#page_Translations_case_sensitivity).
+
 #### Example: Translate Options of a Select Editable
 ```php
  <?= $this->select("select", [

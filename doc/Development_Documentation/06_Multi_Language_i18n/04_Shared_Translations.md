@@ -12,11 +12,24 @@ For more information, please also check out [Symfony's Translations Component](h
 ![Shared Translations](../img/localization-translations.png)
 
 Available languages are defined within the system languages, see [here](./README.md).
- 
+
+## Translations case sensitivity
+
+In constrast to previous Pimcore versions, starting from Pimcore 5 translations are case sensitive by default. You can
+reconfigure Pimcore to handle website and admin translations as case insensitive, however as this implies a performance
+hit (translations might be looked up twice) and it does not  conform with Symfony's translators you're encouraged to reference
+translation keys with the same casing as they were saved.
+
+You can turn case insensitive handling on by setting the following config setting (see [#2005](https://github.com/pimcore/pimcore/pull/2005)):
+  
+```yaml
+pimcore:
+  translations:
+      case_insensitive: true
+```
 
 ## Working with Shared Translations / the Translator in Code
- 
- 
+  
 #### Example in Templates / Views
 
 ```php
