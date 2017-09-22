@@ -530,7 +530,7 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
                     $table = [];
                     $list = new Model\DataObject\QuantityValue\Unit\Listing();
                     $list = $list->load();
-                    /** @var  $item Model\DataObject\QuantityValue\Unit */
+                    /** @var $item Model\DataObject\QuantityValue\Unit */
                     foreach ($list as $item) {
                         $table[$item->getId()] = $item;
                     }
@@ -544,14 +544,13 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
 
             if (is_array($table)) {
                 $this->validUnits = [];
-                /** @var  $unit Model\DataObject\QuantityValue\Unit */
+                /** @var $unit Model\DataObject\QuantityValue\Unit */
                 foreach ($table as $unit) {
                     $this->validUnits[] = $unit->getId();
                 }
             }
         }
     }
-
 
     /**
      * @param $data

@@ -254,7 +254,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                     if (
                         (!isset($data[$translation['key']]) && !$this->getCatalogue($locale)->has($translation['key'], $domain)) ||
                         !empty($translationTerm)) {
-
                         $translationKey = $translation['key'];
 
                         // store as case insensitive if configured

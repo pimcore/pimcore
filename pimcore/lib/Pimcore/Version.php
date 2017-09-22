@@ -24,12 +24,12 @@ class Version
     /**
      * @var int
      */
-    public static $revision = 121;
+    public static $revision = 122;
 
     /**
      * @var string
      */
-    public static $buildDate = '2017-09-18T15:04:28+02:00';
+    public static $buildDate = '2017-09-22T08:05:22+00:00';
 
     /**
      * @return string

@@ -166,9 +166,10 @@ class QPay implements IPayment
      * @param array $formAttributes
      * @param IPrice $price
      * @param array $config
+     *
      * @return array
      */
-    protected function extendFormAttributes(array $formAttributes, IPrice $price, array $config) : array
+    protected function extendFormAttributes(array $formAttributes, IPrice $price, array $config): array
     {
         return $formAttributes;
     }
@@ -342,7 +343,7 @@ class QPay implements IPayment
     /**
      * @return array
      */
-    protected function getRequiredRequestFields() : array
+    protected function getRequiredRequestFields(): array
     {
         return [
             'successURL'       => null,
