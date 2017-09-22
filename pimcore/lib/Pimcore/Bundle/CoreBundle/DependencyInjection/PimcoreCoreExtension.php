@@ -401,14 +401,6 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $arguments = [];
 
         foreach ($factories as $key => $serviceId) {
-            if (!$container->has($serviceId)) {
-                throw new RuntimeException(sprintf(
-                    'The Service with id %s as %s could not be found',
-                    $serviceId,
-                    $type
-                ));
-            }
-
             $arguments[$key] = new Reference($serviceId);
         }
 
