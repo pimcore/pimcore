@@ -178,8 +178,8 @@ class Installer
         }
 
         // check username & password
-        $adminUser = $params['admin_username'];
-        $adminPass = $params['admin_password'];
+        $adminUser = $params['admin_username'] ?? '';
+        $adminPass = $params['admin_password'] ?? '';
 
         if (strlen($adminPass) < 4 || strlen($adminUser) < 4) {
             $errors[] = 'Username and password should have at least 4 characters';
