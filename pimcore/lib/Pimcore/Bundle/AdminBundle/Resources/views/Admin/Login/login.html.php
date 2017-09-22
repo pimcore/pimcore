@@ -10,19 +10,19 @@ $browser        = new \Pimcore\Browser();
 $browserVersion = (int)$browser->getVersion();
 $platform       = $browser->getPlatform();
 
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 39) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
     $supported = true;
 }
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_IE && $browserVersion >= 11) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 40) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 58) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 7) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 10) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 30) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 42) {
     $supported = true;
 }
 
