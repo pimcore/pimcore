@@ -11,6 +11,10 @@ Google Analytics code is automaticaly injected during rendering the page.
 This behaviour can be disabled using:
 
 ```
-$gaListener = $container->get('pimcore.event_listener.frontend.google_analytics_code');
+<?php
+// either
+$gaListener = $container->get(\Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener::class);
+// or
+$gaListener = $container->get('Pimcore\\Bundle\\CoreBundle\\EventListener\\Frontend\\GoogleAnalyticsCodeListener');
 $gaListener->disable();
 ```
