@@ -660,9 +660,7 @@ class Tool
             $realCacheDir = PIMCORE_PRIVATE_VAR . '/cache';
         }
 
-        // the old cache dir name must not be longer than the real one to avoid exceeding
-        // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
-        $oldCacheDir = substr($realCacheDir, 0, -1).('~' === substr($realCacheDir, -1) ? '+' : '~');
+        $oldCacheDir = self::getSymfonyCacheDirRemoveTempLocation($realCacheDir);
         $filesystem = $container->get('filesystem');
         if ($filesystem->exists($oldCacheDir)) {
             $filesystem->remove($oldCacheDir);
@@ -674,6 +672,13 @@ class Tool
 
         $filesystem->rename($realCacheDir, $oldCacheDir);
         $filesystem->remove($oldCacheDir);
+    }
+
+    public static function getSymfonyCacheDirRemoveTempLocation(string $realCacheDir): string
+    {
+        // the temp cache dir name must not be longer than the real one to avoid exceeding
+        // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
+        return substr($realCacheDir, 0, -1) . ('~' === substr($realCacheDir, -1) ? '+' : '~');
     }
 
     /**

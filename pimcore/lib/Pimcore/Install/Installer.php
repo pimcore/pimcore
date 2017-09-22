@@ -30,6 +30,7 @@ use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class Installer
 {
@@ -219,7 +220,14 @@ class Installer
             ],
         ]);
 
-        $kernel = new \AppKernel(Config::getEnvironment(), true);
+        // resolve environment with default=dev here as we set debug mode to true and want to
+        // load the kernel for the same environment as the app.php would do. the kernel booted here
+        // will always be in "dev" with the exception of an environment set via env vars
+        $environment = Config::getEnvironment(true, 'dev');
+        $kernel = new \AppKernel($environment, true);
+
+        $this->clearKernelCacheDir($kernel);
+
         \Pimcore::setKernel($kernel);
 
         $kernel->boot();
@@ -240,6 +248,26 @@ class Installer
         $writer->writeSystemConfig($config);
         $writer->writeDebugModeConfig();
         $writer->generateParametersFile();
+    }
+
+    private function clearKernelCacheDir(KernelInterface $kernel)
+    {
+        $cacheDir = $kernel->getCacheDir();
+
+        if (!file_exists($cacheDir)) {
+            return;
+        }
+
+        // see CacheClearCommand and Pimcore\Tool
+        $oldCacheDir = Tool::getSymfonyCacheDirRemoveTempLocation($cacheDir);
+
+        $filesystem = new Filesystem();
+        if ($filesystem->exists($oldCacheDir)) {
+            $filesystem->remove($oldCacheDir);
+        }
+
+        $filesystem->rename($cacheDir, $oldCacheDir);
+        $filesystem->remove($oldCacheDir);
     }
 
     private function copyProfileFiles(Profile $profile, array $errors = []): array

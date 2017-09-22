@@ -705,11 +705,14 @@ class Config
     }
 
     /**
+     * @param bool $reset
+     * @param string|null $default
+     *
      * @return string
      */
-    public static function getEnvironment()
+    public static function getEnvironment(bool $reset = false, string $default = null)
     {
-        if (null === static::$environment) {
+        if (null === static::$environment || $reset) {
             $environment = false;
 
             // check env vars - fall back to default (prod)
@@ -736,10 +739,14 @@ class Config
             }
 
             if (!$environment) {
-                if (\Pimcore::inDebugMode()) {
-                    $environment = 'dev';
+                if (null !== $default) {
+                    $environment = $default;
                 } else {
-                    $environment = static::DEFAULT_ENVIRONMENT;
+                    if (\Pimcore::inDebugMode()) {
+                        $environment = 'dev';
+                    } else {
+                        $environment = static::DEFAULT_ENVIRONMENT;
+                    }
                 }
             }
 
