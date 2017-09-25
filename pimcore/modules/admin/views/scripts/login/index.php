@@ -173,7 +173,7 @@ $config = \Pimcore\Config::getSystemConfig();
     $("#username").select();
 </script>
 
-<script type="text/javascript" src="https://www.pimcore.org/imageservice/"></script>
+<script type="text/javascript" src="https://update.pimcore.org/imageservice.php"></script>
 
 </body>
 </html>
