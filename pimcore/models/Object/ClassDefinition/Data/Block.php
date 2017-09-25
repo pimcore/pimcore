@@ -217,6 +217,7 @@ class Block extends Model\Object\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
+        $params = (array)$params;
         $result = [];
         $idx = -1;
 
