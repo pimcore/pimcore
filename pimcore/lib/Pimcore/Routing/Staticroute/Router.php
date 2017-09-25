@@ -25,6 +25,7 @@ use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -134,6 +135,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             }
         }
 
+        // ABSOLUTE_URL = http://example.com
+        // NETWORK_PATH = //example.com
+        $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
+
         $siteId = null;
         if (Site::isSiteRequest()) {
             $siteId = Site::getCurrentSite()->getId();
@@ -144,12 +149,17 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         if (isset($parameters['site'])) {
             $config = Config::getSystemConfig();
             $site   = $parameters['site'];
+
             if (!empty($site)) {
                 try {
                     $site = Site::getBy($site);
                     unset($parameters['site']);
                     $hostname = $site->getMainDomain();
-                    $siteId   = $site->getId();
+
+                    if ($site->getId() !== $siteId) {
+                        $needsHostname = true;
+                        $siteId = $site->getId();
+                    }
                 } catch (\Exception $e) {
                     $this->logger->warning('The site {site} does not exist for route {route}', [
                         'site'      => $siteId,
@@ -157,9 +167,15 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                         'exception' => $e
                     ]);
                 }
-            } elseif ($config->general->domain) {
-                $hostname = $config->general->domain;
+            } else {
+                if ($needsHostname && !empty($config->general->domain)) {
+                    $hostname = $config->general->domain;
+                }
             }
+        }
+
+        if (null === $hostname && $needsHostname) {
+            $hostname = $this->context->getHost();
         }
 
         if ($name && $route = Staticroute::getByName($name, $siteId)) {
@@ -169,9 +185,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($parameters, $reset, $encode);
 
-            // if there's a site, prepend the host to the generated URL
-            if ($hostname && !preg_match('/^https?:/i', $url)) {
-                $url = '//' . $hostname . $url;
+            if ($needsHostname) {
+                if (self::ABSOLUTE_URL === $referenceType) {
+                    $url = $this->context->getScheme() . '://' . $hostname . $url;
+                } else {
+                    $url = '//' . $hostname . $url;
+                }
+            } else {
+                if (self::RELATIVE_PATH === $referenceType) {
+                    $url = UrlGenerator::getRelativePath($this->context->getPathInfo(), $url);
+                }
             }
 
             return $url;
