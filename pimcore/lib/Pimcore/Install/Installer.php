@@ -23,12 +23,14 @@ use Pimcore\Config;
 use Pimcore\Db\Connection;
 use Pimcore\Install\Profile\Profile;
 use Pimcore\Install\Profile\ProfileLocator;
+use Pimcore\Install\SystemConfig\ConfigWriter;
 use Pimcore\Model\Tool\Setup;
 use Pimcore\Tool;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class Installer
 {
@@ -207,23 +209,30 @@ class Installer
             return $errors;
         }
 
-        $setup = new Setup();
-
         $dbConfig['username'] = $dbConfig['user'];
         unset($dbConfig['user']);
         unset($dbConfig['driver']);
         unset($dbConfig['wrapperClass']);
 
-        $setup->config([
+        $this->createConfigFiles([
             'database' => [
                 'params' => $dbConfig
             ],
         ]);
 
-        $kernel = new \AppKernel(Config::getEnvironment(), true);
+        // resolve environment with default=dev here as we set debug mode to true and want to
+        // load the kernel for the same environment as the app.php would do. the kernel booted here
+        // will always be in "dev" with the exception of an environment set via env vars
+        $environment = Config::getEnvironment(true, 'dev');
+        $kernel = new \AppKernel($environment, true);
+
+        $this->clearKernelCacheDir($kernel);
+
         \Pimcore::setKernel($kernel);
 
         $kernel->boot();
+
+        $setup = new Setup();
         $setup->database();
 
         $errors = $this->setupProfileDatabase($setup, $profile, $userCredentials, $errors);
@@ -231,6 +240,34 @@ class Installer
         Tool::clearSymfonyCache($kernel->getContainer());
 
         return $errors;
+    }
+
+    private function createConfigFiles(array $config)
+    {
+        $writer = new ConfigWriter();
+        $writer->writeSystemConfig($config);
+        $writer->writeDebugModeConfig();
+        $writer->generateParametersFile();
+    }
+
+    private function clearKernelCacheDir(KernelInterface $kernel)
+    {
+        $cacheDir = $kernel->getCacheDir();
+
+        if (!file_exists($cacheDir)) {
+            return;
+        }
+
+        // see CacheClearCommand and Pimcore\Tool
+        $oldCacheDir = Tool::getSymfonyCacheDirRemoveTempLocation($cacheDir);
+
+        $filesystem = new Filesystem();
+        if ($filesystem->exists($oldCacheDir)) {
+            $filesystem->remove($oldCacheDir);
+        }
+
+        $filesystem->rename($cacheDir, $oldCacheDir);
+        $filesystem->remove($oldCacheDir);
     }
 
     private function copyProfileFiles(Profile $profile, array $errors = []): array
