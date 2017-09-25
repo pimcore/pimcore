@@ -160,6 +160,7 @@ final class Runtime extends \ArrayObject
 
     /**
      * @param string $index
+     *
      * @return mixed
      *
      * Workaround for http://bugs.php.net/bug.php?id=40442 (ZF-960).
