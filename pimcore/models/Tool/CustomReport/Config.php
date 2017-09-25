@@ -156,7 +156,7 @@ class Config extends Model\AbstractModel
      */
     public static function getAdapter($configuration, $fullConfig = null)
     {
-        $type = $configuration->type ? $configuration->type : 'Sql';
+        $type = $configuration->type ? $configuration->type : 'sql';
         $serviceLocator = \Pimcore::getContainer()->get('pimcore.custom_report.adapter.factories');
 
         if (!$serviceLocator->has($type)) {
