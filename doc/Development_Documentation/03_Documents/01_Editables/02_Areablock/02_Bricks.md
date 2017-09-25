@@ -46,8 +46,7 @@ defined in the special namespace. Let's define our brick as above, but assume it
 ```yaml
 # a service.yml file defining services
 services:
-    app.area.brick.iframe:
-        class: AppBundle\Document\Areabrick\Iframe
+    AppBundle\Document\Areabrick\Iframe:
         arguments: ['@logger']
         tags:
             - { name: pimcore.area.brick, id: iframe }
