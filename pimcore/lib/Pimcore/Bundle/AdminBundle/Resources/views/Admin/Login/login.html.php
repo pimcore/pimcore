@@ -131,6 +131,6 @@ $config = $this->config;
         $("#username").select();
     </script>
 
-    <script type="text/javascript" src="https://www.pimcore.org/imageservice-5/"></script>
+    <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
 
 <?php $view->slots()->stop() ?>
