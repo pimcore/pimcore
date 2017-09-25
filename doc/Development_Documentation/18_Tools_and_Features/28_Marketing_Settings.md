@@ -10,11 +10,9 @@ The `Marketing Settings` give you the possibility to configure marketing-specifi
 Google Analytics code is automaticaly injected during rendering the page.
 This behaviour can be disabled using:
 
-```
+```php
 <?php
-// either
+// fetch the listener through container or (better) inject it as dependency into your code
 $gaListener = $container->get(\Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleAnalyticsCodeListener::class);
-// or
-$gaListener = $container->get('Pimcore\\Bundle\\CoreBundle\\EventListener\\Frontend\\GoogleAnalyticsCodeListener');
 $gaListener->disable();
 ```
