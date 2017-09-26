@@ -207,6 +207,14 @@ pimcore.layout.toolbar = Class.create({
             }
 
             if (perspectiveCfg.inToolbar("file.help")) {
+                // link to docs as major.minor.x
+                var docsVersion = pimcore.settings.version.match(/^(\d+\.\d+)/);
+                if (docsVersion) {
+                    docsVersion = docsVersion[0] + '.x';
+                } else {
+                    docsVersion = 'latest';
+                }
+
                 fileItems.push({
                     text: t('help'),
                     iconCls: "pimcore_icon_help",
@@ -219,14 +227,14 @@ pimcore.layout.toolbar = Class.create({
                             text: t("documentation"),
                             iconCls: "pimcore_icon_documentation",
                             handler: function () {
-                                window.open("http://www.pimcore.org/wiki/");
+                                window.open("https://pimcore.com/docs/" + docsVersion);
                             }
                         },
                             {
                                 text: t("report_bugs"),
                                 iconCls: "pimcore_icon_bugs",
                                 handler: function () {
-                                    window.open("http://www.pimcore.org/issues");
+                                    window.open("https://github.com/pimcore/pimcore/issues");
                                 }
                             }
                         ]
