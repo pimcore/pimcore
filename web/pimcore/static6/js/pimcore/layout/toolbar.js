@@ -232,7 +232,7 @@ pimcore.layout.toolbar = Class.create({
                         },
                             {
                                 text: t("report_bugs"),
-                                iconCls: "pimcore_icon_bugs",
+                                iconCls: "pimcore_icon_github",
                                 handler: function () {
                                     window.open("https://github.com/pimcore/pimcore/issues");
                                 }
