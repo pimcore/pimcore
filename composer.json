@@ -64,7 +64,7 @@
     "ext-zlib": "*",
     "amnuts/opcache-gui": "~2",
     "cache/tag-interop": "^1",
-    "colinmollenhour/credis": "~1",
+    "colinmollenhour/credis": "1.8.*",
     "composer/ca-bundle": "^1",
     "debril/rss-atom-bundle": "^3.0",
     "defuse/php-encryption": "~2",
