@@ -4,6 +4,7 @@ namespace Pimcore\Tests\Cache\Pool\Traits;
 
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Tests\Cache\Traits\LogHandlerTrait;
+use Psr\Cache\CacheItemPoolInterface;
 
 trait CacheItemPoolTestTrait
 {
@@ -13,6 +14,11 @@ trait CacheItemPoolTestTrait
      * @var int
      */
     protected $defaultLifetime = 0;
+
+    /**
+     * @var CacheItemPoolInterface
+     */
+    protected $cache;
 
     public static function setUpBeforeClass()
     {
@@ -33,6 +39,8 @@ trait CacheItemPoolTestTrait
     {
         $itemPool = $this->buildCachePool();
         $itemPool->setLogger(static::$logger);
+
+        $this->cache = $itemPool;
 
         return $itemPool;
     }

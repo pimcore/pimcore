@@ -39,4 +39,16 @@ trait RedisItemPoolTrait
 
         return (new Factory())->createRedisItemPool($this->defaultLifetime, $connectionOptions, $this->redisOptions);
     }
+
+    protected function getRedisConnection(Redis $cache): Redis\Connection
+    {
+        $reflector = new \ReflectionClass($cache);
+        $property = $reflector->getProperty('redis');
+
+        $property->setAccessible(true);
+        $connection = $property->getValue($cache);
+        $property->setAccessible(false);
+
+        return $connection;
+    }
 }

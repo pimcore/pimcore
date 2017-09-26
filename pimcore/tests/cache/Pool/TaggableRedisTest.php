@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Cache\Pool;
 
 use Cache\IntegrationTests\TaggableCachePoolTest;
+use Pimcore\Cache\Pool\Redis;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\RedisItemPoolTrait;
 
@@ -79,5 +80,63 @@ class TaggableRedisTest extends TaggableCachePoolTest
 
         // the following fails as the cache pool behaves wrong
         // $this->assertTrue($this->cache->hasItem('key'), 'Item key list should be removed when clearing the tags');
+    }
+
+    public function testInvalidateTagsAreClearedFromSet()
+    {
+        if (isset($this->skippedTests[__FUNCTION__])) {
+            $this->markTestSkipped($this->skippedTests[__FUNCTION__]);
+
+            return;
+        }
+
+        /** @var Redis $cache */
+        $cache      = $this->cache;
+        $connection = $this->getRedisConnection($cache);
+
+        $this->assertEmpty($connection->sMembers(Redis::SET_TAGS));
+
+        $foo = $cache->getItem('foo');
+        $foo->setTags(['A1']);
+
+        $bar = $cache->getItem('bar');
+        $bar->setTags(['A1', 'A2']);
+
+        $baz = $cache->getItem('baz');
+        $baz->setTags(['A2', 'A3']);
+
+        $cache->save($foo);
+        $cache->save($bar);
+        $cache->save($baz);
+
+        $this->assertArraysAreSameIgnoringOrder(['A1', 'A2', 'A3'], $connection->sMembers(Redis::SET_TAGS));
+
+        $this->assertTrue($cache->getItem('foo')->isHit());
+        $this->assertTrue($cache->getItem('bar')->isHit());
+        $this->assertTrue($cache->getItem('baz')->isHit());
+
+        $cache->invalidateTag('A1');
+
+        $this->assertFalse($cache->getItem('foo')->isHit());
+        $this->assertFalse($cache->getItem('bar')->isHit());
+        $this->assertTrue($cache->getItem('baz')->isHit());
+
+        $this->assertArraysAreSameIgnoringOrder(['A2', 'A3'], $connection->sMembers(Redis::SET_TAGS));
+
+        $cache->invalidateTags(['A2', 'A3']);
+
+        $this->assertFalse($cache->getItem('foo')->isHit());
+        $this->assertFalse($cache->getItem('bar')->isHit());
+        $this->assertFalse($cache->getItem('baz')->isHit());
+
+        $this->assertEmpty($connection->sMembers(Redis::SET_TAGS));
+    }
+
+    private function assertArraysAreSameIgnoringOrder(array $expected, array $test)
+    {
+        sort($expected);
+        sort($test);
+
+        $this->assertEquals($expected, $test);
     }
 }
