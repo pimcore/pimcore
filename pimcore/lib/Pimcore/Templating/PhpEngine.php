@@ -106,7 +106,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method Tag\Input input($name, $options = [])
  * @method Tag\Link link($name, $options = [])
  * @method Tag\Multihref multihref($name, $options = [])
- * @method Tag\Multiselect mutliselect($name, $options = [])
+ * @method Tag\Multiselect multiselect($name, $options = [])
  * @method Tag\Numeric numeric($name, $options = [])
  * @method Tag\Pdf pdf($name, $options = [])
  * @method Tag\Renderlet renderlet($name, $options = [])
