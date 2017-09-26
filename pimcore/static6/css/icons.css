@@ -328,8 +328,8 @@
     background: url(/pimcore/static6/img/flat-color-icons/reading.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_bugs {
-    background: url(/pimcore/static6/img/flat-color-icons/medium_priority.svg) center center no-repeat !important;
+.pimcore_icon_github {
+    background: url(/pimcore/static6/img/github.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_about {
