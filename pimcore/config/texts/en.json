@@ -4597,6 +4597,10 @@
         "definition": "Select"
     },
     {
+        "term": "objectsMetadata_type_multiselect",
+        "definition": "Multiselect"
+    },
+    {
         "term": "objectsMetadata",
         "definition": "Objects with Metadata"
     },

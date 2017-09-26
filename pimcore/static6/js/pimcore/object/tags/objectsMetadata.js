@@ -121,6 +121,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             }
 
             var editor = null;
+            var cellEditor = null;
             var renderer = null;
             var listeners = null;
 
@@ -153,6 +154,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     valueField: 'value',
                     displayField: 'label'
                 });
+            } else if(this.fieldConfig.columns[i].type == "multiselect" && !readOnly) {
+                cellEditor =  function(fieldInfo) {
+                    return new pimcore.object.helpers.metadataMultiselectEditor({
+                        fieldInfo: fieldInfo
+                    });
+                }.bind(this, this.fieldConfig.columns[i]);
             } else if(this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
@@ -178,15 +185,22 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
             }
 
-            columns.push({
+            var columnConfig = {
                 header: ts(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
-                editor: editor,
                 renderer: renderer,
                 listeners: listeners,
                 sortable: true,
                 width: width
-            });
+            };
+            if (editor) {
+                columnConfig.editor = editor;
+            }
+            if (cellEditor) {
+                columnConfig.getEditor = cellEditor;
+            }
+
+            columns.push(columnConfig);
         }
 
 

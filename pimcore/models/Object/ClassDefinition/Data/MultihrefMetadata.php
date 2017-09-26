@@ -248,6 +248,16 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                         $key = $columnConfig["key"];
                         $setter = "set" . ucfirst($key);
                         $value = $element[$key];
+                        if ($columnConfig["type"] == "multiselect") {
+                            if ($value) {
+                                if (is_array($value) && count($value)) {
+                                    $value = implode(",", $value);
+                                }
+                            } else {
+                                $value = null;
+                            }
+                        }
+
                         $metaData->$setter($value);
                     }
                     $multihrefMetadata[] = $metaData;
@@ -748,14 +758,14 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
         if (is_array($data)) {
             foreach ($data as &$metaObject) {
-                $eo = $metaObject->getElement();
+                $eo = $metaObject->getObject();
                 if ($eo instanceof Element\ElementInterface) {
                     $id = $eo->getId();
                     $type = Element\Service::getElementType($eo);
 
                     if (array_key_exists($type, $idMapping) && array_key_exists($id, $idMapping[$type])) {
                         $newElement = Element\Service::getElementById($type, $idMapping[$type][$id]);
-                        $metaObject->setElement($newElement);
+                        $metaObject->setObject($newElement);
                     }
                 }
             }

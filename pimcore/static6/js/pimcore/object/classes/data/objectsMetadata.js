@@ -249,7 +249,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 number: t("objectsMetadata_type_number"),
                 text: t("objectsMetadata_type_text"),
                 select: t("objectsMetadata_type_select"),
-                bool: t("objectsMetadata_type_bool")
+                bool: t("objectsMetadata_type_bool"),
+                multiselect: t("objectsMetadata_type_multiselect")
             };
 
             var typeComboBox = new Ext.form.ComboBox({
@@ -265,7 +266,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                         'label'
                     ],
                     data: [['number', types.number], ['text', types.text], ['select', types.select],
-                        ['bool', types.bool]]
+                        ['bool', types.bool], ['multiselect', types.multiselect]]
                 }),
                 valueField: 'value',
                 displayField: 'label'
