@@ -42,7 +42,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     const COMPRESS_PREFIX = ":\x1f\x8b";
 
     const LUA_SAVE_SH1 = '1617c9fb2bda7d790bb1aaa320c1099d81825e64';
-    const LUA_CLEAN_SH1 = '23ba963bcb43ee8f62822dd7684ffd43117fc16d';
+    const LUA_CLEAN_SH1 = '9255d2172b02be1219e6accb37c6a2d184d6736f';
     const LUA_GC_SH1 = 'c00416b970f1aa6363b44965d4cf60ee99a6f065';
 
     /**
@@ -492,7 +492,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                     'end ' .
                     'end ' .
                     "redis.call('DEL', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
-                    'local unprefixedTags={}; local prefixLength=string.len(ARGV[6]); for i=1, #KEYS do unprefixedTags[i] = string.sub(KEYS[i], prefixLength + 1) end ' .
+                    'local unprefixedTags={}; local prefixLength=string.len(ARGV[6]); for up=1, #KEYS do unprefixedTags[up] = string.sub(KEYS[up], prefixLength + 1) end ' .
                     "redis.call('SREM', ARGV[2], unpack(unprefixedTags, i, math.min(#unprefixedTags, i + ARGV[5] - 1))) " .
                     'end ' .
                     'return true';
