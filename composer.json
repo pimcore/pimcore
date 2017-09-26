@@ -64,7 +64,7 @@
     "sabre/dav": "~3.1",
     "pear/net_url2": "~2.2",
     "ramsey/uuid": "~3",
-    "colinmollenhour/credis": "~1",
+    "colinmollenhour/credis": "1.8.*",
     "endroid/qrcode": "~2.2",
     "mpratt/embera": "~1",
     "defuse/php-encryption": "~2",
