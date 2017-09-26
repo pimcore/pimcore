@@ -117,25 +117,16 @@ class PdfReactor8 extends Processor
 
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
-
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
-
-        $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/pdf-reactor-input-' . $document->getId() . '.html';
-
-        file_put_contents($filePath, $html);
-        $html = null;
-
-        $this->updateStatus($document->getId(), 45, 'saved_html_file');
 
         ini_set('default_socket_timeout', 3000);
         ini_set('max_input_time', -1);
 
         $pdfreactor = $this->getClient();
-        $filePath = str_replace(PIMCORE_WEB_ROOT, '', $filePath);
 
         $reactorConfig = $this->getConfig($config);
         $web2PrintConfig = Config::getWeb2PrintConfig();
-        $reactorConfig['document'] = (string)$web2PrintConfig->pdfreactorBaseUrl . $filePath;
+        $reactorConfig['document'] = $html;
 
         $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig, 'document' => $document]);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
