@@ -15,28 +15,28 @@ use Symfony\Component\Yaml\Yaml;
 $migrations = [];
 
 // queries as documented in migration guide
-$migrations['pre update scripts'] = function() {
+$migrations['pre update scripts'] = function () {
     $db     = Db::get();
     $schema = $db->getSchemaManager()->createSchema();
 
     if (!$schema->getTable('documents_page')->hasColumn('legacy')) {
-        $db->query("ALTER TABLE `documents_page` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `personas`");
+        $db->query('ALTER TABLE `documents_page` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `personas`');
     }
 
     if (!$schema->getTable('documents_snippet')->hasColumn('legacy')) {
-        $db->query("ALTER TABLE `documents_snippet` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `contentMasterDocumentId`");
+        $db->query('ALTER TABLE `documents_snippet` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `contentMasterDocumentId`');
     }
 
     if (!$schema->getTable('documents_newsletter')->hasColumn('legacy')) {
-        $db->query("ALTER TABLE `documents_newsletter` ADD COLUMN `legacy` TINYINT(1) NULL");
+        $db->query('ALTER TABLE `documents_newsletter` ADD COLUMN `legacy` TINYINT(1) NULL');
     }
 
     if (!$schema->getTable('documents_printpage')->hasColumn('legacy')) {
-        $db->query("ALTER TABLE `documents_printpage` ADD COLUMN `legacy` TINYINT(1) NULL");
+        $db->query('ALTER TABLE `documents_printpage` ADD COLUMN `legacy` TINYINT(1) NULL');
     }
 
     if (!$schema->getTable('documents_email')->hasColumn('legacy')) {
-        $db->query("ALTER TABLE `documents_email` ADD COLUMN `legacy` TINYINT(1) NULL");
+        $db->query('ALTER TABLE `documents_email` ADD COLUMN `legacy` TINYINT(1) NULL');
     }
 
     $db->query("ALTER TABLE `translations_website` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin'");
@@ -44,7 +44,7 @@ $migrations['pre update scripts'] = function() {
 };
 
 // build 48
-$migrations[48] = function() {
+$migrations[48] = function () {
     $db     = Db::get();
     $schema = $db->getSchemaManager()->createSchema();
 
@@ -54,7 +54,7 @@ $migrations[48] = function() {
 };
 
 // build 54
-$migrations[54] = function() {
+$migrations[54] = function () {
     $fs = new Filesystem();
 
     $configFile = implode(DIRECTORY_SEPARATOR, [
@@ -95,7 +95,7 @@ EOF;
 };
 
 // build 66
-$migrations[66] = function() {
+$migrations[66] = function () {
     $list = new \Pimcore\Model\DataObject\Objectbrick\Definition\Listing();
     $list = $list->load();
 
@@ -120,13 +120,13 @@ $migrations[66] = function() {
 };
 
 // build 74
-$migrations[74] = function() {
+$migrations[74] = function () {
     $db = Db::get();
     $db->query("ALTER TABLE `documents_link` CHANGE COLUMN `internalType` `internalType` ENUM('document','asset','object') NULL DEFAULT NULL AFTER `id`;");
 };
 
 // build 90
-$migrations[90] = function() {
+$migrations[90] = function () {
     $db = Db::get();
     $db->query('ALTER TABLE `tags` CHANGE COLUMN `idPath` `idPath` VARCHAR(190) NULL DEFAULT NULL;');
     $db->query('ALTER TABLE `tracking_events` CHANGE COLUMN `category` `category` VARCHAR(190) NULL DEFAULT NULL;');
@@ -142,7 +142,8 @@ $migrations[90] = function() {
 };
 
 // build 97
-function build97Check($fieldDefinitions, $needsSave) {
+function build97Check($fieldDefinitions, $needsSave)
+{
     /** @var $fieldDefinition */
     foreach ($fieldDefinitions as $fieldDefinition) {
         if ($fieldDefinition instanceof  \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields) {
@@ -156,9 +157,9 @@ function build97Check($fieldDefinitions, $needsSave) {
     }
 
     return $needsSave;
-};
+}
 
-$migrations[97] = function() {
+$migrations[97] = function () {
     $list = new \Pimcore\Model\DataObject\Fieldcollection\Definition\Listing();
     $list = $list->load();
 
@@ -176,7 +177,7 @@ $migrations[97] = function() {
 };
 
 // build 100
-$migrations[100] = function() {
+$migrations[100] = function () {
     $filesystem = new Filesystem();
 
     if ($filesystem->exists(PIMCORE_CLASS_DIRECTORY . '/Object')) {
@@ -204,7 +205,7 @@ $migrations[100] = function() {
 
 foreach ($migrations as $type => $migration) {
     echo sprintf(
-        "Executing migration for %s...",
+        'Executing migration for %s...',
         is_numeric($type) ? 'build ' . $type : $type
     );
 

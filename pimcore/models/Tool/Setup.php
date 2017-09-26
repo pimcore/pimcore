@@ -31,6 +31,7 @@ class Setup extends Model\AbstractModel
 {
     /**
      * @param array $config
+     *
      * @deprecated use ConfigWriter instead
      */
     public function config($config = [])
