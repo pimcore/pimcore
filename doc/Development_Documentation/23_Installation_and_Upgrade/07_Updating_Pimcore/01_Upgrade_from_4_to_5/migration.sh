@@ -97,6 +97,5 @@ if [ -d "plugins" ]; then
     mv plugins legacy/plugins
 fi
 
-echo "Migration succeeded...running composer update now"
-composer require pimcore/pimcore4-compatibility-bridge
-composer update
+echo "Migration succeeded...you should run composer update now"
+

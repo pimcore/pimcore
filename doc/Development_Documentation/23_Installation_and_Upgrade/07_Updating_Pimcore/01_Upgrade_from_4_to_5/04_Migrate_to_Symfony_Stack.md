@@ -6,25 +6,20 @@ list for every Pimcore application. Depending on your application additional ste
 be necessary. 
 
 ### Prerequisites 
-- If not already done, following database changes are needed: 
+
+- Execute the [Basic Migration](./01_Basic_Migration.md) steps
+
+- If you were running the Compatibility Bridge before - please run the following SQL: 
 ```sql 
-ALTER TABLE `documents_page` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `personas`;
-ALTER TABLE `documents_snippet` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `contentMasterDocumentId`;
-ALTER TABLE `documents_newsletter` ADD COLUMN `legacy` TINYINT(1) NULL;
-ALTER TABLE `documents_printpage` ADD COLUMN `legacy` TINYINT(1) NULL;
-ALTER TABLE `documents_email` ADD COLUMN `legacy` TINYINT(1) NULL;
-ALTER TABLE `translations_website` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin';
-ALTER TABLE `translations_admin` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin'; 
+UPDATE documents_email SET legacy = NULL; 
+UPDATE documents_newsletter SET legacy = NULL; 
+UPDATE documents_page SET legacy = NULL; 
+UPDATE documents_snippet SET legacy = NULL; 
+UPDATE documents_printpage SET legacy = NULL;  
 ```
 
-If you were running the Compatibility Bridge before - please also run the following SQL: 
-```sql 
-update documents_email set legacy = NULL; 
-update documents_newsletter set legacy = NULL; 
-update documents_page set legacy = NULL; 
-update documents_snippet set legacy = NULL; 
-update documents_printpage set legacy = NULL;  
-```
+- The Pimcore CLI can help you with code migrations. Make sure to check the [docs](https://github.com/pimcore/pimcore-cli/blob/master/doc/pimcore_5_migration.md) 
+  to see what you can migrate automatically.
 
 ### Controller
 - Move Controllers to `/src/AppBundle/Controllers/`.

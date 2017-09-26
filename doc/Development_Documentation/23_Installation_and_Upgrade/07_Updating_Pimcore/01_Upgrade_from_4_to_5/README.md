@@ -2,19 +2,30 @@
 
 Since Pimcore 5 is built on an entire different platform/framework (Symfony replaced ZF1), an automatic update from 
 Pimcore 4 to Pimcore 5 is not possible.
+
 This guide shows you how to migrate your Pimcore applications.
 
 The [Pimcore CLI](https://github.com/pimcore/pimcore-cli) project provides a set of tools which ease the migration by
 handling certain migration tasks automatically. Please see its the documentation for further details.
 
-Migration of applications to Pimcore 5 can be seen as a two-step process: 
+Migration of applications to Pimcore 5 can be seen as a two-step process:
 
-## 1) Get your application up and running with the `Compatibility Bridge` of Pimcore 5 
+1. Execute the steps described in [Basic Migration](./01_Basic_Migration.md) to migrate the filesystem layout and the pimcore
+   core.
+2. Migrate your application code.
+
+## Migrate Application Code
+
+Regarding your application code, you have 2 possibilities:
+
+## 1) Get your application up and running with the `Compatibility Bridge` of Pimcore 5
+ 
 Pimcore 5 ships with a `Compatibility Bridge` that should enable Pimcore 5 to run Pimcore 4 applications with some file 
- moves and minor code updates.
+moves and minor code updates.
  
 In theory, you can stop your migration here and run your application with the `Compatibility Bridge`. But keep in mind that
 this is not recommended as it has some major consequences like
+
 - Performance will be significantly poorer than running Pimcore without the `Compatibility Bridge`. 
 - New features of Pimcore will not be available with the `Compatibility Bridge`. 
 - The `Compatibility Bridge` will be removed in future Pimcore versions.

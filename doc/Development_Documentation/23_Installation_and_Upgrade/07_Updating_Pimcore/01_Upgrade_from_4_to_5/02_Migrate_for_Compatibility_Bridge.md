@@ -1,59 +1,17 @@
 # Get your application up and running with the `Compatibility Bridge` of Pimcore 5
 Pimcore 5 ships with a `Compatibility Bridge` that should enable Pimcore 5 to run Pimcore 4 applications with some file 
-moves and minor code updates.
-This guide describes the steps needed in detail. 
-  
-- **Backup your system!** 
+moves and minor code updates. This guide describes the steps needed in detail.
 
-- The [Pimcore CLI](https://github.com/pimcore/pimcore-cli) provides a set of commands to ease the migration. It is able
-  to do the following:
+- [Migrate your filesystem](./01_Basic_Migration.md)
+- Install the compatibility bridge 
 
-  - extract Pimcore 5 build
-  - create several necessary directories
-  - move config files to new locations
-  - move class files to new location
-  - move versions to new location
-  - move logs to new location
-  - move email logs to new location
-  - move assets to new location
-  - move website folder to /legacy/website
-  - move plugins folder to /legacy/plugins
-
-- A simpler [migration.sh](./migration.sh) script handles basic file moving and can be adapted to your needs
-
-- Refactor `constants.php` and move it to `app/constants.php`
-- Refactor `startup.php` and move content either to `AppKernel::boot()` or `AppBundle::boot()`
-- Update system configs in `/var/config/system.php`
-    - `email` > `method` => if `''` change to `null`
-    - `email` > `smtp` > `ssl` => if `''` change to `null`
-    - `email` > `smtp` > `auth` > `method` => if `''` change to `null`
-    - `email` > `smtp` > `auth` > `password` => add if not there with value `''`
-    - `newsletter` > `method` => if `''` change to `null`
-    - `newsletter` > `smtp` > `ssl` => if `''` change to `null`
-    - `newsletter` > `smtp` > `auth` > `method` => if `''` change to `null`
-    - `newsletter` > `smtp` > `auth` > `password` => add if not there with value `''`
-
+    $ composer require pimcore/pimcore4-compatibility-bridge
+    $ composer update
 
 - Probably you need to fix some of your Plugins - e.g. remove calls to `$db->describeTable('tablename');`
 - Add symlinks to static files, e.g.: 
   - Add Symlink in `/web/website` to `../../legacy/website/static`
   - Add Symlinks in `/web/` to your static plugin directories
-
-- Change document root of your webserver to `/web` directory - document root must not be project root anymore
-
-- Run `composer update` once more if it failed before. Now it should run through, other wise you have to fix the 
-remaining problems. 
-
-- Run following database updates: 
-```sql 
-ALTER TABLE `documents_page` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `personas`;
-ALTER TABLE `documents_snippet` ADD COLUMN `legacy` TINYINT(1) NULL AFTER `contentMasterDocumentId`;
-ALTER TABLE `documents_newsletter` ADD COLUMN `legacy` TINYINT(1) NULL;
-ALTER TABLE `documents_printpage` ADD COLUMN `legacy` TINYINT(1) NULL;
-ALTER TABLE `documents_email` ADD COLUMN `legacy` TINYINT(1) NULL;
-ALTER TABLE `translations_website` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin';
-ALTER TABLE `translations_admin` CHANGE COLUMN `key` `key` VARCHAR(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin'; 
-```
 
 - Change your Pimcore Documents to legacy mode with following DB statements and clear the Pimcore cache afterwards: 
 ```sql
