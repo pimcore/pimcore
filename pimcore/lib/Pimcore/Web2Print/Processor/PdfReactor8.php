@@ -34,13 +34,6 @@ class PdfReactor8 extends Processor
         $html = $document->renderDocument($params);
         $this->updateStatus($document->getId(), 40, "finished_html_rendering");
 
-        $filePath = PIMCORE_TEMPORARY_DIRECTORY . "/pdf-reactor-input-" . $document->getId() . ".html";
-
-        file_put_contents($filePath, $html);
-        $html = null;
-
-        $this->updateStatus($document->getId(), 45, "saved_html_file");
-
         ini_set("default_socket_timeout", 3000);
         ini_set('max_input_time', -1);
 
@@ -52,10 +45,8 @@ class PdfReactor8 extends Processor
 
         $pdfreactor = new \PDFreactor($protocol . "://" . $web2PrintConfig->pdfreactorServer . ":" . $port . "/service/rest");
 
-        $filePath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $filePath);
-
         $reactorConfig = [
-            "document" => (string) $web2PrintConfig->pdfreactorBaseUrl . $filePath,
+            "document" => $html,
             "baseURL" => (string) $web2PrintConfig->pdfreactorBaseUrl,
             "author" => $config->author ? $config->author : "",
             "title" => $config->title ? $config->title : "",
