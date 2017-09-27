@@ -109,7 +109,7 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                     width: source.datax.width,
                     defaultValue: source.datax.defaultValue,
                     defaultUnit: source.datax.defaultUnit,
-                    valueUnits: source.datax.validUnits,
+                    validUnits: source.datax.validUnits,
                     decimalPrecision: source.datax.decimalPrecision
                 });
         }
