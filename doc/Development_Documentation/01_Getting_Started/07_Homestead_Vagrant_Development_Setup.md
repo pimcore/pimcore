@@ -128,3 +128,22 @@ $ vagrant up
 This will take a couple of minutes on the first start as it needs to download, import and provision
 your machine. If everything went well you should be able to open [https://pimcore.app](https://pimcore.app)
 in your browser and see a working Pimcore installation.
+
+## Troubleshooting
+
+### Error `Warning: SessionHandler::read(): Session data file is not created by your uid`
+
+This happens as vagrant mounts the whole Pimcore directory including the session storage in `var/sessions`. As the uid of
+created files in this directory is not the same as the webserver user's one, the session storage complains. To circumvent
+this problem, you can reconfigure the session storage to be in a location on the virtual machine with the following setting.
+
+```yaml
+framework:
+    session:
+        # http://symfony.com/doc/current/session/sessions_directory.html
+        save_path: /tmp/pimcore/var/sessions"
+```
+
+As this config setting is only valid for your local environment, you should add this to a config file which is not tracked
+by VCS to avoid deploying the setting to other installations. Config files in `app/config/local` will be automatically loaded
+and are excluded in Pimcore's default `.gitignore`. For example, you can add the setting above in a file `app/config/local/session_save_path.yml`.
