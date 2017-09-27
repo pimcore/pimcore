@@ -57,9 +57,9 @@ Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
         });
 
         this.context = this.editingPlugin.context;
-        var height = 50 + store.getCount() * 30;
-        if (height > 700) {
-            height = 700;
+        var height = 50 + store.getCount() * 33;
+        if (height > 610) {
+            height = 610;
         }
 
         var options = {
@@ -96,7 +96,20 @@ Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
             xtype: "form",
             border: false,
             items: [multiselect],
-            bodyStyle: "padding: 10px;",
+            bodyStyle: "padding: 10px;"
+        });
+        this.editWin = new Ext.Window({
+            modal: false,
+            title: fieldConfig.label ? fieldConfig.label : fieldConfig.key,
+            items: [formPanel],
+            bodyStyle: "background: #fff;",
+            width: 700,
+            maxHeight: 850,
+            listeners:{
+                close:function(){
+                    this.cancelEdit(false);
+                }.bind(this)
+            },
             buttons: [
                 {
                     text: t("save"),
@@ -118,19 +131,6 @@ Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
                     }.bind(this)
                 }
             ]
-        });
-        this.editWin = new Ext.Window({
-            modal: false,
-            title: fieldConfig.label ? fieldConfig.label : fieldConfig.key,
-            items: [formPanel],
-            bodyStyle: "background: #fff;",
-            width: 700,
-            maxHeight: 850,
-            listeners:{
-                close:function(){
-                    this.cancelEdit(false);
-                }.bind(this)
-            }
         });
         this.editWin.show();
         this.editWin.updateLayout();
