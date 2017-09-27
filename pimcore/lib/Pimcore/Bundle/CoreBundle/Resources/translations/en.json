@@ -1104,6 +1104,7 @@
   "objectsMetadata_type_text": "Text",
   "objectsMetadata_type_bool": "Bool",
   "objectsMetadata_type_select": "Select",
+  "objectsMetadata_type_multiselect": "Multiselect",
   "objectsMetadata": "Objects with Metadata",
   "objectbrick_saved_successfully": "Object brick saved successfully",
   "cut": "Cut",

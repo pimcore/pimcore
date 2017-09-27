@@ -351,6 +351,17 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                         $key = $columnConfig['key'];
                         $setter = 'set'.ucfirst($key);
                         $value = $element[$key];
+
+                        if ($columnConfig["type"] == "multiselect") {
+                            if ($value) {
+                                if (is_array($value) && count($value)) {
+                                    $value = implode(",", $value);
+                                }
+                            } else {
+                                $value = null;
+                            }
+                        }
+
                         $metaData->$setter($value);
                     }
                     $multihrefMetadata[] = $metaData;
