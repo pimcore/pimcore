@@ -57,54 +57,28 @@ Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
         });
 
         this.context = this.editingPlugin.context;
-        var height = 50 + store.getCount() * 33;
-        if (height > 610) {
-            height = 610;
-        }
 
         var options = {
-            // name: fieldConfig.label ? fieldConfig.label : fieldConfig.key,
             triggerAction: "all",
             editable: false,
-            // fieldLabel: this.fieldConfig.title,
             store: store,
             componentCls: "object_field",
-            height: height,
+            height: '100%',
             valueField: 'id',
             displayField: 'label',
-            value: value,
-            listeners: {
-                // change : function  ( multiselect , newValue , oldValue , eOpts ) {
-                //     if (this.fieldConfig.maxItems && multiselect.getValue().length > this.fieldConfig.maxItems) {
-                //         // we need to set a timeout so setValue is applied when change event is totally finished
-                //         // without this, multiselect wont be updated visually with oldValue (but internal value will be oldValue)
-                //         setTimeout(function(multiselect, oldValue){
-                //             multiselect.setValue(oldValue);
-                //         }, 100, multiselect, oldValue);
-                //
-                //         Ext.Msg.alert(t("error"),t("limit_reached"));
-                //     }
-                //     return true;
-                // }.bind(this)
-            }
+            value: value
         };
 
         var multiselect = Ext.create('Ext.ux.form.MultiSelect', options);
 
-
-        var formPanel = Ext.create('Ext.form.Panel', {
-            xtype: "form",
-            border: false,
-            items: [multiselect],
-            bodyStyle: "padding: 10px;"
-        });
         this.editWin = new Ext.Window({
             modal: false,
+            layout : 'fit',
             title: fieldConfig.label ? fieldConfig.label : fieldConfig.key,
-            items: [formPanel],
+            items: [multiselect],
             bodyStyle: "background: #fff;",
             width: 700,
-            maxHeight: 850,
+            maxHeight: 600,
             listeners:{
                 close:function(){
                     this.cancelEdit(false);
@@ -134,8 +108,6 @@ Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
         });
         this.editWin.show();
         this.editWin.updateLayout();
-
-
     },
 
     getValue: function() {
