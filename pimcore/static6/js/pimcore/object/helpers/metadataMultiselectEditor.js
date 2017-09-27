@@ -125,7 +125,7 @@ Ext.define('pimcore.object.helpers.metadataMultiselectEditor', {
             items: [formPanel],
             bodyStyle: "background: #fff;",
             width: 700,
-            maxHeight: 600,
+            maxHeight: 850,
             listeners:{
                 close:function(){
                     this.cancelEdit(false);
