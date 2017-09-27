@@ -71,6 +71,10 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             input.width = this.fieldConfig.width;
         }
 
+        if (this.fieldConfig["decimalPrecision"] !== null) {
+            input.decimalPrecision = this.fieldConfig["decimalPrecision"];
+        }
+
         var labelWidth = 100;
         if (this.fieldConfig.labelWidth) {
             labelWidth = this.fieldConfig.labelWidth;
