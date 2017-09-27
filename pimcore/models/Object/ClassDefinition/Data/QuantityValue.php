@@ -50,6 +50,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public $validUnits;
 
     /**
+     * @var int
+     */
+    public $decimalPrecision;
+
+    /**
      * Type for the column to query
      *
      * @var int
@@ -144,7 +149,21 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         $this->defaultUnit = $defaultUnit;
     }
 
+    /**
+     * @return int
+     */
+    public function getDecimalPrecision()
+    {
+        return $this->decimalPrecision;
+    }
 
+    /**
+     * @param int $decimalPrecision
+     */
+    public function setDecimalPrecision($decimalPrecision)
+    {
+        $this->decimalPrecision = $decimalPrecision;
+    }
 
 
     /**
