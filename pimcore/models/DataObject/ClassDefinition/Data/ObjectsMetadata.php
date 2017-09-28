@@ -226,13 +226,13 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                         ]);
 
                     foreach ($this->getColumns() as $c) {
-                        $setter = "set" . ucfirst($c["key"]);
-                        $value = $object[$c["key"]];
+                        $setter = 'set' . ucfirst($c['key']);
+                        $value = $object[$c['key']];
 
-                        if ($c["type"] == "multiselect") {
+                        if ($c['type'] == 'multiselect') {
                             if ($value) {
                                 if (is_array($value) && count($value)) {
-                                    $value = implode(",", $value);
+                                    $value = implode(',', $value);
                                 }
                             } else {
                                 $value = null;

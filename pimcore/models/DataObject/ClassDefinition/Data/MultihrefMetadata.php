@@ -352,10 +352,10 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                         $setter = 'set'.ucfirst($key);
                         $value = $element[$key];
 
-                        if ($columnConfig["type"] == "multiselect") {
+                        if ($columnConfig['type'] == 'multiselect') {
                             if ($value) {
                                 if (is_array($value) && count($value)) {
-                                    $value = implode(",", $value);
+                                    $value = implode(',', $value);
                                 }
                             } else {
                                 $value = null;
