@@ -154,29 +154,30 @@ pimcore.object.helpers.edit = {
 
                         if(l.fieldtype =='tabpanel') {
                             tmpItems = this.getRecursiveLayout(childConfig, noteditable, context, true, false, dataProvider);
-                            if(!tmpItems['listeners']) {
-                                tmpItems['listeners'] = {};
-                            }
-                            tmpItems['listeners']['afterrender'] = function (childConfig, panel) {
-                                if (!panel.__tabpanel_initialized) {
-                                    var children = this.getRecursiveLayout(childConfig, noteditable, context, false, true, dataProvider);
-                                    panel.add(children);
-                                    panel.updateLayout();
-
-                                    if (panel.setActiveTab) {
-                                        var activeTab = panel.items.items[0];
-                                        if (activeTab) {
-                                            activeTab.updateLayout();
-                                            panel.setActiveTab(activeTab);
-                                        }
-                                    }
-
-                                    panel.__tabpanel_initialized = true;
-
-
+                            if (tmpItems) {
+                                if (!tmpItems['listeners']) {
+                                    tmpItems['listeners'] = {};
                                 }
-                            }.bind(this, childConfig);
+                                tmpItems['listeners']['afterrender'] = function (childConfig, panel) {
+                                    if (!panel.__tabpanel_initialized) {
+                                        var children = this.getRecursiveLayout(childConfig, noteditable, context, false, true, dataProvider);
+                                        panel.add(children);
+                                        panel.updateLayout();
 
+                                        if (panel.setActiveTab) {
+                                            var activeTab = panel.items.items[0];
+                                            if (activeTab) {
+                                                activeTab.updateLayout();
+                                                panel.setActiveTab(activeTab);
+                                            }
+                                        }
+
+                                        panel.__tabpanel_initialized = true;
+
+
+                                    }
+                                }.bind(this, childConfig);
+                            }
                         } else {
                             tmpItems = this.getRecursiveLayout(childConfig, noteditable, context, false, false, dataProvider);
                         }

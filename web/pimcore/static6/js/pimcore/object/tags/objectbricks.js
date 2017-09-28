@@ -278,7 +278,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                             });
                         }
 
-                        panel.add(children);
+                        if (children) {
+                            panel.add(children);
+                        }
+
                         panel.updateLayout();
 
                         if (panel.setActiveTab) {
