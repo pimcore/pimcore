@@ -444,7 +444,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             } else {
                 $return = $this->frontend();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (\Pimcore::inDebugMode()) {
                 // the __toString method isn't allowed to throw exceptions
                 $return = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
