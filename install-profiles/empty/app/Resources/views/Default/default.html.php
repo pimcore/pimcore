@@ -80,7 +80,7 @@
 
     .buttons a {
         display: inline-block;
-        background: #0078be;
+        background: #6428b4;
         color:#fff;
         padding: 5px 10px;
         margin-right: 10px;
@@ -102,17 +102,14 @@
 
 <div id="site">
     <div id="logo">
-        <a href="http://www.pimcore.org/"><img src="/pimcore/static6/img/logo-gray.svg" style="width: 200px;" /></a>
+        <a href="http://www.pimcore.com/"><img src="/pimcore/static6/img/logo-claim-gray.svg" style="width: 400px;" /></a>
         <hr />
-        <div class="claim">
-            THE OPEN-SOURCE ENTERPRISE PLATFORM FOR PIM, CMS, DAM & COMMERCE
-        </div>
     </div>
 
     <?php if($this->editmode) { ?>
         <div class="buttons">
-            <a target="_blank" href="https://www.pimcore.org/docs/latest/Getting_Started/Installation.html">Install Sample Data / Boilerplate</a>
-            <a target="_blank" href="https://www.pimcore.org/docs/latest/Getting_Started/index.html">Getting Started</a>
+            <a target="_blank" href="https://www.pimcore.com/docs/5.0.0/Getting_Started/Installation.html">Install Sample Data / Boilerplate</a>
+            <a target="_blank" href="https://www.pimcore.com/docs/5.0.0/Getting_Started/index.html">Getting Started</a>
         </div>
 
         <div class="info">

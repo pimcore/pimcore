@@ -27,11 +27,11 @@ body {
     margin: 0;
     font-size: 14px;
     color: #222222;
-    background: #222;
+    background: #fff;
 }
 
 a, a:hover, a:visited, a:active {
-    color: #3c8dbc;
+    color: #6428b4;
     text-decoration: none;
 }
 
@@ -53,7 +53,7 @@ a, a:hover, a:visited, a:active {
 
 #header {
     text-align: center;
-    padding: 10px 0 20px 0;
+    padding: 10px 0 0 0;
 }
 
 #header img {
@@ -74,8 +74,6 @@ a, a:hover, a:visited, a:active {
 
 #content .form-fields {
     width: 100%;
-    border-top: 3px solid #cbcbcb;
-    background: #eaeaec;
     padding: 30px 20px 10px 20px;
 }
 
@@ -121,9 +119,14 @@ input:-webkit-autofill {
     text-align: right;
 }
 
+#loginform {
+    border-top: 3px solid #cbcbcb;
+    background: #eaeaec;
+}
+
 #loginform button {
     font-weight: 500;
-    background: #54aeea;
+    background: #6428b4;
     display: block;
     width: 100%;
 
@@ -157,16 +160,15 @@ input:-webkit-autofill {
     position: absolute;
     z-index: 10;
     bottom: 0;
-    color: #fff;
+    color: #000;
     text-align: center;
     font-size: 13px;
     line-height: 18px;
-    text-shadow: 0 0 3px #000;
     padding: 10px 0;
 }
 
 #footer a {
-    color: #fff;
+    color: #000;
     text-decoration: none;
 }
 
