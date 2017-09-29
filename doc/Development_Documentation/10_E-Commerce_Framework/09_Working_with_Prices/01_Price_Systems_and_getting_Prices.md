@@ -56,7 +56,7 @@ services:
         arguments:
             - '@pimcore_ecommerce.pricing_manager'
             - '@pimcore_ecommerce.environment'
-            - { attibute_name: 'customPriceField' }
+            - { attribute_name: 'customPriceField' }
 ```
 
 
