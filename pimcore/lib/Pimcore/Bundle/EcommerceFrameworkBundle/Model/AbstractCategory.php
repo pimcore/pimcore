@@ -20,24 +20,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 class AbstractCategory extends \Pimcore\Model\DataObject\Concrete
 {
     /**
-     * @static
-     *
-     * @param int $id
-     *
-     * @return null|\Pimcore\Model\DataObject\AbstractObject
-     */
-    public static function getById($id)
-    {
-        $object = \Pimcore\Model\DataObject\AbstractObject::getById($id);
-
-        if ($object instanceof AbstractCategory) {
-            return $object;
-        }
-
-        return null;
-    }
-
-    /**
      * defines if product is visible in product index queries for parent categories of product category.
      * e.g.
      *   football
