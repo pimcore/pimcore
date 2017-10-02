@@ -189,7 +189,7 @@ class ConfigWriter
 
         // generate parameters.yml
         $parametersFilePath = PIMCORE_APP_ROOT . '/config/parameters.yml';
-        if (!file_exists($parametersFilePath)) {
+        if (file_exists($parametersFilePath)) {
             return;
         }
 
