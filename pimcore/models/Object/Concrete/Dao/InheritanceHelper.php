@@ -361,6 +361,8 @@ class InheritanceHelper
      */
     protected function buildTree($currentParentId, $fields = "", $parentIdGroups = null)
     {
+        $objects = [];
+
         if (!$parentIdGroups) {
             $object = Object::getById($currentParentId);
             $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ".\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . " GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC";
@@ -372,8 +374,6 @@ class InheritanceHelper
 
             if (!$parentIdGroups) {
                 $result = $this->db->fetchAll($query);
-
-                $objects = [];
 
                 // group the results together based on the parent id's
                 $parentIdGroups = [];
@@ -433,6 +433,8 @@ class InheritanceHelper
                 }
             }
             $node->relations = $objectRelations;
+        } else {
+            $node->relations = [];
         }
 
         return $node;
@@ -484,7 +486,11 @@ class InheritanceHelper
     protected function getIdsToCheckForDeletionForRelationfields($currentNode, $fieldname)
     {
         $this->getRelationsForNode($currentNode);
-        $value = $currentNode->relations[$fieldname];
+        if (isset($currentNode->relations[$fieldname])) {
+            $value = $currentNode->relations[$fieldname];
+        } else {
+		    $value = null;
+        }
         if (!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             return;
         }
@@ -504,7 +510,11 @@ class InheritanceHelper
     protected function getIdsToUpdateForRelationfields($currentNode, $fieldname)
     {
         $this->getRelationsForNode($currentNode);
-        $value = $currentNode->relations[$fieldname];
+        if (isset($currentNode->relations[$fieldname])) {
+            $value = $currentNode->relations[$fieldname];
+        } else {
+            $value = null;
+        }
         if ($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             $this->fieldIds[$fieldname][] = $currentNode->id;
             if (!empty($currentNode->childs)) {
