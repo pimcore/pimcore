@@ -70,8 +70,8 @@ trait PimcoreMigrationsConfiguration
         if (!$this->migrationConfiguration) {
             $factory = $this->getApplication()->getKernel()->getContainer()->get(ConfigurationFactory::class);
 
-            $bundle       = $this->getBundle($input);
-            $connection   = $this->getConnection($input);
+            $bundle = $this->getBundle($input);
+            $connection = $this->getConnection($input);
             $outputWriter = $this->getOutputWriter($output);
 
             if ($bundle) {

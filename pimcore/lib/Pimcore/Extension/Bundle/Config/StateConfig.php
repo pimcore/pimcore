@@ -33,8 +33,8 @@ final class StateConfig
      * @var array
      */
     private static $optionDefaults = [
-        'enabled'      => false,
-        'priority'     => 0,
+        'enabled' => false,
+        'priority' => 0,
         'environments' => []
     ];
 
@@ -58,7 +58,7 @@ final class StateConfig
      */
     public function getEnabledBundles(): array
     {
-        $result  = [];
+        $result = [];
         $bundles = $this->getBundlesFromConfig();
 
         foreach ($bundles as $bundleName => $options) {
@@ -222,7 +222,7 @@ final class StateConfig
         }
 
         $resolver = self::getOptionsResolver();
-        $options  = $resolver->resolve($options);
+        $options = $resolver->resolve($options);
 
         return $options;
     }

@@ -244,7 +244,7 @@ class Builder
      */
     protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null)
     {
-        $pages  = [];
+        $pages = [];
         $childs = $this->getChilds($parentDocument);
 
         if (!is_array($childs)) {

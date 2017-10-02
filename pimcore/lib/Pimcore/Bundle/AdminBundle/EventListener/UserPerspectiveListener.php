@@ -85,7 +85,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
                 $existingPerspectives = array_keys(Config::getPerspectivesConfig()->toArray());
                 if (!in_array($requestedPerspective, $existingPerspectives)) {
                     $this->logger->warning('Requested perspective {perspective} for {user} is not does not exist.', [
-                        'user'        => $user->getName(),
+                        'user' => $user->getName(),
                         'perspective' => $requestedPerspective
                     ]);
 
@@ -104,13 +104,13 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
 
             if (null !== $previouslyRequested) {
                 $this->logger->warning('User {user} is not allowed requested perspective {requestedPerspective}. Falling back to {perspective}.', [
-                    'user'                 => $user->getName(),
+                    'user' => $user->getName(),
                     'requestedPerspective' => $previouslyRequested,
-                    'perspective'          => $requestedPerspective
+                    'perspective' => $requestedPerspective
                 ]);
             } else {
                 $this->logger->debug('Perspective for user {user} was not requested. Falling back to {perspective}.', [
-                    'user'        => $user->getName(),
+                    'user' => $user->getName(),
                     'perspective' => $requestedPerspective
                 ]);
             }
@@ -118,7 +118,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
 
         if ($requestedPerspective !== $user->getActivePerspective()) {
             $this->logger->info('Setting active perspective for user {user} to {perspective}.', [
-                'user'        => $user->getName(),
+                'user' => $user->getName(),
                 'perspective' => $requestedPerspective
             ]);
 

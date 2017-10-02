@@ -46,7 +46,7 @@ class AgentFactory implements IOrderAgentFactory
         IPaymentManager $paymentManager,
         array $options = []
     ) {
-        $this->environment    = $environment;
+        $this->environment = $environment;
         $this->paymentManager = $paymentManager;
 
         $resolver = new OptionsResolver();

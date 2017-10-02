@@ -96,7 +96,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
         if (!empty($value)) {
             $quotedValues = [];
             foreach ($value as $v) {
-                $v =   '%' . IWorker::MULTISELECT_DELIMITER  . $v .  IWorker::MULTISELECT_DELIMITER . '%' ;
+                $v = '%' . IWorker::MULTISELECT_DELIMITER  . $v .  IWorker::MULTISELECT_DELIMITER . '%' ;
                 $quotedValues[] = $field . ' like '.$productList->quote($v);
             }
 

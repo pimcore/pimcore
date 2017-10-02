@@ -206,7 +206,7 @@ class Block extends Model\Document\Tag implements BlockInterface
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
 
-        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
@@ -251,7 +251,7 @@ class Block extends Model\Document\Tag implements BlockInterface
     public function blockStart()
     {
         $attributes = [
-            'data-name'      => $this->getName(),
+            'data-name' => $this->getName(),
             'data-real-name' => $this->getRealName(),
         ];
 
@@ -259,7 +259,7 @@ class Block extends Model\Document\Tag implements BlockInterface
             'key' => $this->indices[$this->current]
         ];
 
-        $attr  = HtmlUtils::assembleAttributeString($attributes);
+        $attr = HtmlUtils::assembleAttributeString($attributes);
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
         // outer element
@@ -380,7 +380,7 @@ class Block extends Model\Document\Tag implements BlockInterface
     {
         $document = Model\Document\Page::getById($this->getDocumentId());
 
-        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
         $list = [];

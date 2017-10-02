@@ -67,41 +67,41 @@ class SystemConfigParamResource
     protected function getDefaultParameters()
     {
         return [
-            'database'   => [
+            'database' => [
                 'params' => [
-                    'host'     => 'localhost',
-                    'port'     => 3306,
-                    'dbname'   => '',
+                    'host' => 'localhost',
+                    'port' => 3306,
+                    'dbname' => '',
                     'username' => 'root',
                     'password' => '',
                 ]
             ],
-            'email'      => [
+            'email' => [
                 'method' => 'mail',
-                'smtp'   => [
+                'smtp' => [
                     'host' => '',
                     'port' => '',
-                    'ssl'  => null,
+                    'ssl' => null,
                     'name' => '',
                     'auth' => [
-                        'method'   => null,
+                        'method' => null,
                         'username' => '',
                         'password' => ''
                     ]
                 ],
-                'debug'  => [
+                'debug' => [
                     'emailaddresses' => ''
                 ]
             ],
             'newsletter' => [
                 'method' => 'mail',
-                'smtp'   => [
+                'smtp' => [
                     'host' => '',
                     'port' => '',
-                    'ssl'  => null,
+                    'ssl' => null,
                     'name' => '',
                     'auth' => [
-                        'method'   => null,
+                        'method' => null,
                         'username' => '',
                         'password' => ''
                     ]

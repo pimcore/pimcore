@@ -36,9 +36,9 @@ abstract class AbstractItem implements ItemInterface
 
     public function __construct(int $priority = 0, array $environments = [], string $source = self::SOURCE_PROGRAMATICALLY)
     {
-        $this->priority     = $priority;
+        $this->priority = $priority;
         $this->environments = $environments;
-        $this->source       = $source;
+        $this->source = $source;
     }
 
     public function getPriority(): int

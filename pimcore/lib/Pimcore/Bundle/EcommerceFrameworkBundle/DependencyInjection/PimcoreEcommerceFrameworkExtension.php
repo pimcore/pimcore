@@ -248,7 +248,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config)
     {
-        $commitOrderProcessorMapping   = [];
+        $commitOrderProcessorMapping = [];
         $checkoutManagerFactoryMapping = [];
 
         foreach ($config['tenants'] as $tenant => $tenantConfig) {
@@ -287,7 +287,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $container->setDefinition($commitOrderProcessorAliasName, $commitOrderProcessor);
             $container->setDefinition($checkoutManagerFactoryAliasName, $checkoutManagerFactory);
 
-            $commitOrderProcessorMapping[$tenant]   = $commitOrderProcessorAliasName;
+            $commitOrderProcessorMapping[$tenant] = $commitOrderProcessorAliasName;
             $checkoutManagerFactoryMapping[$tenant] = $checkoutManagerFactoryAliasName;
         }
 
@@ -358,10 +358,10 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
             $config = new ChildDefinition($tenantConfig['config_id']);
             $config->setArguments([
-                '$tenantName'       => $tenant,
-                '$attributes'       => $attributeFactory->createAttributes($tenantConfig['attributes']),
+                '$tenantName' => $tenant,
+                '$attributes' => $attributeFactory->createAttributes($tenantConfig['attributes']),
                 '$searchAttributes' => $tenantConfig['search_attributes'],
-                '$filterTypes'      => []
+                '$filterTypes' => []
             ]);
 
             if (!empty($tenantConfig['config_options'])) {

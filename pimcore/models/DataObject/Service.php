@@ -635,7 +635,7 @@ class Service extends Model\Element\Service
 
                 if ($field instanceof ClassDefinition\Data) {
                     $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
-                    $joins[] =  ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId'=> $keyid];
+                    $joins[] = ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId' => $keyid];
                     $condition = $field->getFilterConditionExt(
                         $filter['value'],
                         $operator,
@@ -1355,7 +1355,7 @@ class Service extends Model\Element\Service
             } else {
                 $context['ownerType'] = 'localizedfield';
             }
-            $context['ownerName']= 'localizedfields';
+            $context['ownerName'] = 'localizedfields';
         }
 
         if (method_exists($layout, 'getChilds')) {

@@ -36,17 +36,17 @@ class InstallController extends AdminController
      */
     public function checkAction(Request $request, Connection $db)
     {
-        $checksPHP   = Requirements::checkPhp();
-        $checksFS    = Requirements::checkFilesystem();
-        $checksApps  = Requirements::checkExternalApplications();
+        $checksPHP = Requirements::checkPhp();
+        $checksFS = Requirements::checkFilesystem();
+        $checksApps = Requirements::checkExternalApplications();
         $checksMySQL = Requirements::checkMysql($db);
 
         $viewParams = [
-            'checksApps'  => $checksApps,
-            'checksPHP'   => $checksPHP,
+            'checksApps' => $checksApps,
+            'checksPHP' => $checksPHP,
             'checksMySQL' => $checksMySQL,
-            'checksFS'    => $checksFS,
-            'headless'    => (bool)$request->get('headless')
+            'checksFS' => $checksFS,
+            'headless' => (bool)$request->get('headless')
         ];
 
         return $this->render('PimcoreAdminBundle:Admin/Install:check.html.twig', $viewParams);

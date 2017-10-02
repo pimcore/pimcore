@@ -154,10 +154,10 @@ class HeadLink extends CacheBusterAware
     public function __call($method, $args)
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(?P<type>Stylesheet|Alternate)$/', $method, $matches)) {
-            $argc   = count($args);
+            $argc = count($args);
             $action = $matches['action'];
-            $type   = $matches['type'];
-            $index  = null;
+            $type = $matches['type'];
+            $index = null;
 
             if ('offsetSet' == $action) {
                 if (0 < $argc) {
@@ -174,7 +174,7 @@ class HeadLink extends CacheBusterAware
                 $item = $this->createData($args[0]);
             } else {
                 $dataMethod = 'createData' . $type;
-                $item       = $this->$dataMethod($args);
+                $item = $this->$dataMethod($args);
             }
 
             if ($item) {
@@ -204,8 +204,8 @@ class HeadLink extends CacheBusterAware
             return false;
         }
 
-        $vars         = get_object_vars($value);
-        $keys         = array_keys($vars);
+        $vars = get_object_vars($value);
+        $keys = array_keys($vars);
         $intersection = array_intersect($this->_itemKeys, $keys);
         if (empty($intersection)) {
             return false;
@@ -289,7 +289,7 @@ class HeadLink extends CacheBusterAware
     public function itemToString(\stdClass $item)
     {
         $attributes = (array) $item;
-        $link       = '<link ';
+        $link = '<link ';
 
         foreach ($this->_itemKeys as $itemKey) {
             if (isset($attributes[$itemKey])) {
@@ -390,11 +390,11 @@ class HeadLink extends CacheBusterAware
      */
     public function createDataStylesheet(array $args)
     {
-        $rel                   = 'stylesheet';
-        $type                  = 'text/css';
-        $media                 = 'screen';
+        $rel = 'stylesheet';
+        $type = 'text/css';
+        $media = 'screen';
         $conditionalStylesheet = false;
-        $href                  = array_shift($args);
+        $href = array_shift($args);
 
         if ($this->_isDuplicateStylesheet($href)) {
             return false;
@@ -458,9 +458,9 @@ class HeadLink extends CacheBusterAware
             throw new Exception(sprintf('Alternate tags require 3 arguments; %s provided', count($args)));
         }
 
-        $rel   = 'alternate';
-        $href  = array_shift($args);
-        $type  = array_shift($args);
+        $rel = 'alternate';
+        $href = array_shift($args);
+        $type = array_shift($args);
         $title = array_shift($args);
 
         if (0 < count($args) && is_array($args[0])) {
@@ -472,8 +472,8 @@ class HeadLink extends CacheBusterAware
             }
         }
 
-        $href  = (string) $href;
-        $type  = (string) $type;
+        $href = (string) $href;
+        $type = (string) $type;
         $title = (string) $title;
 
         $attributes = compact('rel', 'href', 'type', 'title', 'extras');
@@ -491,7 +491,7 @@ class HeadLink extends CacheBusterAware
     protected function _applyExtras($attributes)
     {
         if (isset($attributes['extras'])) {
-            foreach ($attributes['extras'] as $eKey=>$eVal) {
+            foreach ($attributes['extras'] as $eKey => $eVal) {
                 if (isset($attributes[$eKey])) {
                     $attributes[$eKey] = $eVal;
                     unset($attributes['extras'][$eKey]);

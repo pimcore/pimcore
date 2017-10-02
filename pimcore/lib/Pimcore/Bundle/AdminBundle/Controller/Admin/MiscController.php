@@ -64,7 +64,7 @@ class MiscController extends AdminController
      */
     public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
     {
-        $bundle      = $request->get('moduleName');
+        $bundle = $request->get('moduleName');
         $controllers = $provider->getControllers($bundle, 'AppBundle');
 
         $result = array_map(function ($controller) {
@@ -94,7 +94,7 @@ class MiscController extends AdminController
         }
 
         $controller = $request->get('controllerName');
-        $actions    = $provider->getActions($controller, $bundle);
+        $actions = $provider->getActions($controller, $bundle);
 
         $result = array_map(function ($action) {
             return [

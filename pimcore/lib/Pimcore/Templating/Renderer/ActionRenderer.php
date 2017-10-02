@@ -39,7 +39,7 @@ class ActionRenderer
      */
     public function __construct(ActionsHelper $actionsHelper, ConfigNormalizer $configNormalizer)
     {
-        $this->actionsHelper    = $actionsHelper;
+        $this->actionsHelper = $actionsHelper;
         $this->configNormalizer = $configNormalizer;
     }
 
@@ -130,7 +130,7 @@ class ActionRenderer
         $attributes[DynamicRouter::CONTENT_KEY] = $document;
 
         if ($document->getTemplate()) {
-            $template                                    = $this->configNormalizer->normalizeTemplateName($document->getTemplate());
+            $template = $this->configNormalizer->normalizeTemplateName($document->getTemplate());
             $attributes[DynamicRouter::CONTENT_TEMPLATE] = $template;
         }
 

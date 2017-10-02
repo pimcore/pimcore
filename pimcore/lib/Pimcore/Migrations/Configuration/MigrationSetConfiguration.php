@@ -42,9 +42,9 @@ final class MigrationSetConfiguration
     public function __construct(string $identifier, string $name, string $namespace, string $directory)
     {
         $this->identifier = $identifier;
-        $this->name       = $name;
-        $this->namespace  = $namespace;
-        $this->directory  = $directory;
+        $this->name = $name;
+        $this->namespace = $namespace;
+        $this->directory = $directory;
     }
 
     public function getIdentifier(): string

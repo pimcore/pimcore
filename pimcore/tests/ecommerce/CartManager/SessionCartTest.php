@@ -26,13 +26,13 @@ class SessionCartTest extends TestCase
          * @var $product AbstractProduct
          */
         $cart = Stub::construct('\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart', [], [
-            'getSession'     => function () {
+            'getSession' => function () {
                 return [];
             },
             'isCartReadOnly' => function () {
                 return false;
             },
-            'modified'       => function () {
+            'modified' => function () {
             }
         ]);
 

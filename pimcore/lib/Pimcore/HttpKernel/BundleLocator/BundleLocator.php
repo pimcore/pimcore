@@ -78,7 +78,7 @@ class BundleLocator implements BundleLocatorInterface
     {
         // see TemplateGuesser from SensioFrameworkExtraBundle
         $reflectionClass = new \ReflectionClass($class);
-        $bundles         = $this->kernel->getBundles();
+        $bundles = $this->kernel->getBundles();
 
         do {
             $namespace = $reflectionClass->getNamespaceName();

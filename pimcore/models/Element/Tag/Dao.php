@@ -234,8 +234,8 @@ class Dao extends Model\Dao\AbstractDao
 
         $map = [
             'document' => ['documents', 'id', 'type', '\Pimcore\Model\Document'],
-            'asset'    => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
-            'object'   => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
+            'asset' => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
+            'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
         $select = $this->db->select()

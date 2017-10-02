@@ -74,7 +74,7 @@ class ControllerDataProvider
      */
     public function __construct(KernelInterface $kernel, array $serviceControllers)
     {
-        $this->kernel             = $kernel;
+        $this->kernel = $kernel;
         $this->serviceControllers = $serviceControllers;
     }
 
@@ -127,7 +127,7 @@ class ControllerDataProvider
     public function getControllers(string $bundleName = null, string $defaultBundleName = null): array
     {
         $controllers = [];
-        $classNames  = [];
+        $classNames = [];
 
         $bundle = null;
         if (null !== $bundleName) {
@@ -149,7 +149,7 @@ class ControllerDataProvider
             }
 
             $controllers[] = $controllerId;
-            $classNames[]  = $className;
+            $classNames[] = $className;
         }
 
         sort($controllers);
@@ -165,7 +165,7 @@ class ControllerDataProvider
             }
         }
 
-        $bundleControllers     = $this->findBundleControllers($bundle);
+        $bundleControllers = $this->findBundleControllers($bundle);
         $bundleControllerNames = [];
 
         /** @var \ReflectionClass $controllerReflector */
@@ -340,7 +340,7 @@ class ControllerDataProvider
         }
 
         $controllers = [];
-        $reflector   = $this->getReflector($bundle);
+        $reflector = $this->getReflector($bundle);
 
         $controllerDirectory = rtrim($bundle->getPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Controller';
         if (!file_exists($controllerDirectory)) {
@@ -357,12 +357,12 @@ class ControllerDataProvider
 
         foreach ($finder as $controllerFile) {
             $relativeClassName = str_replace(['.php', '/'], ['', '\\'], $controllerFile->getRelativePathname());
-            $fullClassName     = $reflector->getNamespaceName() . '\\Controller\\' . $relativeClassName;
+            $fullClassName = $reflector->getNamespaceName() . '\\Controller\\' . $relativeClassName;
 
             if (class_exists($fullClassName)) {
                 $controllerReflector = $this->getReflector($fullClassName);
                 if ($controllerReflector->isInstantiable()) {
-                    $controllerName               = preg_replace('/Controller$/', '', $relativeClassName);
+                    $controllerName = preg_replace('/Controller$/', '', $relativeClassName);
                     $controllers[$controllerName] = $controllerReflector;
                 }
             }

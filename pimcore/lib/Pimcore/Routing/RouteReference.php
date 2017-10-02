@@ -40,9 +40,9 @@ class RouteReference implements RouteReferenceInterface
      */
     public function __construct($route, array $parameters = [], $type = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
-        $this->route      = $route;
+        $this->route = $route;
         $this->parameters = $parameters;
-        $this->type       = $type;
+        $this->type = $type;
     }
 
     /**

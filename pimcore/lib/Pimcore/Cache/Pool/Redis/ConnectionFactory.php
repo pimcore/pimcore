@@ -91,14 +91,14 @@ class ConnectionFactory
     public static function getDefaultOptions()
     {
         return [
-            'port'             => 6379,
-            'database'         => 0, // always select database on startup in case persistent connection is re-used by other code
-            'persistent'       => '',
+            'port' => 6379,
+            'database' => 0, // always select database on startup in case persistent connection is re-used by other code
+            'persistent' => '',
             'force_standalone' => false,
-            'connect_retries'  => static::DEFAULT_CONNECT_RETRIES,
-            'timeout'          => static::DEFAULT_CONNECT_TIMEOUT,
-            'read_timeout'     => 0,
-            'password'         => null,
+            'connect_retries' => static::DEFAULT_CONNECT_RETRIES,
+            'timeout' => static::DEFAULT_CONNECT_TIMEOUT,
+            'read_timeout' => 0,
+            'password' => null,
         ];
     }
 

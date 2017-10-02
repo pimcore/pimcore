@@ -119,10 +119,10 @@ class CacheWarmingCommand extends AbstractCommand
         }
 
         try {
-            $types         = $this->getArrayOption('types', 'validTypes', 'type', true);
+            $types = $this->getArrayOption('types', 'validTypes', 'type', true);
             $documentTypes = $this->getArrayOption('documentTypes', 'validDocumentTypes', 'document type');
-            $assetTypes    = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type');
-            $objectTypes   = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type');
+            $assetTypes = $this->getArrayOption('assetTypes', 'validAssetTypes', 'asset type');
+            $objectTypes = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type');
         } catch (\InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 

@@ -332,7 +332,7 @@ abstract class PageSnippet extends Model\Document
     {
         try {
             if ($type) {
-                $loader  = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
+                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
                 $element = $loader->build($type);
 
                 $this->elements[$name] = $element;

@@ -37,19 +37,19 @@ class LegacyNamingStrategyTest extends AbstractNamingStrategyTest
     {
         return [
             // top level elements
-            'title'                                          => 'title',
-            'content'                                        => 'content',
-            'B_card'                                         => 'B_card',
+            'title' => 'title',
+            'content' => 'content',
+            'B_card' => 'B_card',
 
             // first card
-            'B_card[1].BI_card_header'                       => 'BI_card_headerB_card1',
-            'B_card[1].BB_card_block'                        => 'BB_card_blockB_card1',
+            'B_card[1].BI_card_header' => 'BI_card_headerB_card1',
+            'B_card[1].BB_card_block' => 'BB_card_blockB_card1',
             'B_card[1].BB_card_block[1].BBI_card_block_text' => 'BBI_card_block_textB_card_BB_card_blockB_card11_1',
             'B_card[1].BB_card_block[2].BBI_card_block_text' => 'BBI_card_block_textB_card_BB_card_blockB_card11_2',
 
             // second card
-            'B_card[2].BI_card_header'                       => 'BI_card_headerB_card2',
-            'B_card[2].BB_card_block'                        => 'BB_card_blockB_card2',
+            'B_card[2].BI_card_header' => 'BI_card_headerB_card2',
+            'B_card[2].BB_card_block' => 'BB_card_blockB_card2',
             'B_card[2].BB_card_block[1].BBI_card_block_text' => 'BBI_card_block_textB_card_BB_card_blockB_card22_1',
             'B_card[2].BB_card_block[2].BBI_card_block_text' => 'BBI_card_block_textB_card_BB_card_blockB_card22_2',
         ];

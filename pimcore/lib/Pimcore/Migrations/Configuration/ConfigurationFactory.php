@@ -57,7 +57,7 @@ class ConfigurationFactory implements EventSubscriberInterface
     public function __construct(ContainerInterface $container, string $rootDir)
     {
         $this->container = $container;
-        $this->rootDir   = $rootDir;
+        $this->rootDir = $rootDir;
 
         $this->buildDefaultMigrationSets();
     }
@@ -89,7 +89,7 @@ class ConfigurationFactory implements EventSubscriberInterface
         Connection $connection,
         OutputWriter $outputWriter = null
     ): Configuration {
-        $migrationSet  = $this->getMigrationSetForBundle($bundle);
+        $migrationSet = $this->getMigrationSetForBundle($bundle);
         $configuration = $this->getConfiguration($migrationSet, $connection, $outputWriter);
 
         if ($bundle instanceof PimcoreBundleInterface) {

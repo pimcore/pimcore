@@ -67,7 +67,7 @@ class IndexController extends AdminController
         $runtimePerspective = Config::getRuntimePerspective($user);
 
         $view->runtimePerspective = $runtimePerspective;
-        $view->extjsDev           = isset($runtimePerspective['extjsDev']) ? $runtimePerspective['extjsDev'] : false;
+        $view->extjsDev = isset($runtimePerspective['extjsDev']) ? $runtimePerspective['extjsDev'] : false;
 
         return $this;
     }
@@ -94,7 +94,7 @@ class IndexController extends AdminController
     {
         $bundleManager = $this->get('pimcore.extension.bundle_manager');
 
-        $view->pluginJsPaths  = $bundleManager->getJsPaths();
+        $view->pluginJsPaths = $bundleManager->getJsPaths();
         $view->pluginCssPaths = $bundleManager->getCssPaths();
 
         return $this;
@@ -114,18 +114,18 @@ class IndexController extends AdminController
         $config = $view->config;
 
         $settings = new ViewModel([
-            'version'   => Version::getVersion(),
-            'build'     => Version::getRevision(),
-            'buildDate'     => Version::getBuildDate(),
-            'debug'     => \Pimcore::inDebugMode(),
-            'devmode'   => PIMCORE_DEVMODE || $view->extjsDev,
+            'version' => Version::getVersion(),
+            'build' => Version::getRevision(),
+            'buildDate' => Version::getBuildDate(),
+            'debug' => \Pimcore::inDebugMode(),
+            'devmode' => PIMCORE_DEVMODE || $view->extjsDev,
             'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
             'isLegacyModeAvailable' => \Pimcore::isLegacyModeAvailable()
         ]);
 
         // languages
         $settings->getParameters()->add([
-            'language'         => $request->getLocale(),
+            'language' => $request->getLocale(),
             'websiteLanguages' => Admin::reorderWebsiteLanguages(
                 $this->getUser(),
                 $config->general->validLanguages,
@@ -151,16 +151,16 @@ class IndexController extends AdminController
 
         // perspective and portlets
         $settings->getParameters()->add([
-            'perspective'           => $view->runtimePerspective,
+            'perspective' => $view->runtimePerspective,
             'availablePerspectives' => Config::getAvailablePerspectives($user),
-            'disabledPortlets'      => $dashboardHelper->getDisabledPortlets(),
+            'disabledPortlets' => $dashboardHelper->getDisabledPortlets(),
         ]);
 
         // google settings
         $settings->getParameters()->add([
-            'google_analytics_enabled'      => (bool)Google\Analytics::isConfigured(),
+            'google_analytics_enabled' => (bool)Google\Analytics::isConfigured(),
             'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
-            'google_maps_api_key'           => $config->services->google->browserapikey ?: ''
+            'google_maps_api_key' => $config->services->google->browserapikey ?: ''
         ]);
 
         $this
@@ -182,8 +182,8 @@ class IndexController extends AdminController
     {
         // upload limit
         $max_upload = filesize2bytes(ini_get('upload_max_filesize') . 'B');
-        $max_post   = filesize2bytes(ini_get('post_max_size') . 'B');
-        $upload_mb  = min($max_upload, $max_post);
+        $max_post = filesize2bytes(ini_get('post_max_size') . 'B');
+        $upload_mb = min($max_upload, $max_post);
 
         $settings->upload_max_filesize = (int)$upload_mb;
 
@@ -239,7 +239,7 @@ class IndexController extends AdminController
         }
 
         $settings->maintenance_active = $maintenance_active;
-        $settings->maintenance_mode    = Admin::isInMaintenanceMode();
+        $settings->maintenance_mode = Admin::isInMaintenanceMode();
 
         return $this;
     }
@@ -291,9 +291,9 @@ class IndexController extends AdminController
                 $rootNode = Service::getElementByPath($treeType, $tmpData['rootfolder']);
 
                 if ($rootNode) {
-                    $tmpData['rootId']         = $rootNode->getId();
+                    $tmpData['rootId'] = $rootNode->getId();
                     $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
-                    $tmpData['showroot']       = (bool)$tmpData['showroot'];
+                    $tmpData['showroot'] = (bool)$tmpData['showroot'];
 
                     // Check if a user has privileges to that node
                     if ($rootNode->isAllowed('list')) {

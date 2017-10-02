@@ -35,12 +35,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql;
 class DefaultWorkerConfigMapper
 {
     private $mapping = [
-        OptimizedMysqlConfig::class        => OptimizedMysql::class,
-        DefaultMysqlConfig::class          => DefaultMysql::class,
+        OptimizedMysqlConfig::class => OptimizedMysql::class,
+        DefaultMysqlConfig::class => DefaultMysql::class,
         DefaultMysqlSubTenantConfig::class => DefaultMysql::class,
-        ElasticSearch::class               => DefaultElasticSearch::class,
-        DefaultFactFinderConfig::class     => DefaultFactFinder::class,
-        DefaultFindologicConfig::class     => DefaultFindologic::class,
+        ElasticSearch::class => DefaultElasticSearch::class,
+        DefaultFactFinderConfig::class => DefaultFactFinder::class,
+        DefaultFindologicConfig::class => DefaultFindologic::class,
     ];
 
     public function getWorkerForConfig(string $config)

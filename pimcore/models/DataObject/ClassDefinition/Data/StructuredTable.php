@@ -642,7 +642,7 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     public function getDiffDataForEditMode($data, $object = null, $params = [])
     {
         $defaultData = parent::getDiffDataForEditMode($data, $object, $params);
-        $html =  $defaultData[0]['value'];
+        $html = $defaultData[0]['value'];
         $value = [];
         $value['html'] = $html;
         $value['type'] = 'html';

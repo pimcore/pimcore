@@ -32,7 +32,7 @@ class FileObject
      * @param string $data
      * @param string $filename
      */
-    public function __construct($data, $filename=null)
+    public function __construct($data, $filename = null)
     {
         if (!is_dir(PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
             File::mkdir(PIMCORE_LOG_FILEOBJECT_DIRECTORY);

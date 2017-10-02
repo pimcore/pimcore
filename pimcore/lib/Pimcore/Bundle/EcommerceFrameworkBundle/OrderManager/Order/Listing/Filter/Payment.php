@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
 
 class Payment implements IOrderListFilter
 {
-    const PAYMENT_STATE_OK   = 'ok';
+    const PAYMENT_STATE_OK = 'ok';
     const PAYMENT_STATE_FAIL = 'fail';
 
     /**

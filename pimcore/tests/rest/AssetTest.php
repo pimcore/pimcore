@@ -42,7 +42,7 @@ class AssetTest extends RestTestCase
         $id = $result->data->id;
         $this->assertTrue($id > 1, 'id must be greater than 1');
 
-        $assetDirect  = Asset::getById($id);
+        $assetDirect = Asset::getById($id);
         $creationDate = $assetDirect->getCreationDate();
 
         $this->assertGreaterThanOrEqual($time, $creationDate, 'wrong creation date');
@@ -68,7 +68,7 @@ class AssetTest extends RestTestCase
     public function testDelete()
     {
         $originalContent = $this->getAssetFileContent();
-        $savedAsset      = TestHelper::createImageAsset('', $originalContent, true);
+        $savedAsset = TestHelper::createImageAsset('', $originalContent, true);
 
         $savedAsset = Asset::getById($savedAsset->getId());
         $this->assertNotNull($savedAsset);

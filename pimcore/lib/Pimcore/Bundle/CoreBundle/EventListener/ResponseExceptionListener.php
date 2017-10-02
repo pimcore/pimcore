@@ -49,7 +49,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
      */
     public function __construct(ActionRenderer $actionRenderer, $renderErrorPage = true)
     {
-        $this->actionRenderer  = $actionRenderer;
+        $this->actionRenderer = $actionRenderer;
         $this->renderErrorPage = (bool)$renderErrorPage;
     }
 
@@ -93,17 +93,17 @@ class ResponseExceptionListener implements EventSubscriberInterface
         $exception = $event->getException();
 
         $statusCode = 500;
-        $headers    = [];
+        $headers = [];
 
         if ($exception instanceof HttpExceptionInterface) {
             $statusCode = $exception->getStatusCode();
-            $header     = $exception->getHeaders();
+            $header = $exception->getHeaders();
         }
 
         $errorPath = Config::getSystemConfig()->documents->error_pages->default;
 
         if (Site::isSiteRequest()) {
-            $site      = Site::getCurrentSite();
+            $site = Site::getCurrentSite();
             $errorPath = $site->getErrorDocument();
         }
 

@@ -63,9 +63,9 @@ class FrontendRoutingListener implements EventSubscriberInterface
         RedirectHandler $redirectHandler,
         SiteResolver $siteResolver
     ) {
-        $this->requestHelper   = $requestHelper;
+        $this->requestHelper = $requestHelper;
         $this->redirectHandler = $redirectHandler;
-        $this->siteResolver    = $siteResolver;
+        $this->siteResolver = $siteResolver;
     }
 
     /**
@@ -75,7 +75,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
     {
         return [
             // run with high priority as we need to set the site early
-            KernelEvents::REQUEST   => ['onKernelRequest', 512],
+            KernelEvents::REQUEST => ['onKernelRequest', 512],
 
             // run with high priority before handling real errors
             KernelEvents::EXCEPTION => ['onKernelException', 64]
@@ -186,7 +186,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
     protected function handleMainDomainRedirect(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        $config  = Config::getSystemConfig();
+        $config = Config::getSystemConfig();
 
         $hostRedirect = null;
 

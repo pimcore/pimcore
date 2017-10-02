@@ -54,7 +54,7 @@ class InstallCommand extends Command
      */
     public function __construct(Installer $installer, ProfileLocator $profileLocator)
     {
-        $this->installer      = $installer;
+        $this->installer = $installer;
         $this->profileLocator = $profileLocator;
 
         parent::__construct();
@@ -69,51 +69,51 @@ class InstallCommand extends Command
         $profiles = array_keys($this->profileLocator->getProfiles());
 
         $options = [
-            'profile'           => [
+            'profile' => [
                 'description' => sprintf(
                     'The install profile to use. Available profiles: %s',
                     implode(', ', $profiles)
                 ),
-                'prompt'      => 'Please choose the install profile you want to use',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'default'     => 'empty',
-                'choices'     => $profiles
+                'prompt' => 'Please choose the install profile you want to use',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'default' => 'empty',
+                'choices' => $profiles
             ],
-            'admin-username'    => [
+            'admin-username' => [
                 'description' => 'Admin username',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'insecure'    => true,
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
             ],
-            'admin-password'    => [
-                'description'  => 'Admin password',
-                'mode'         => InputOption::VALUE_REQUIRED,
-                'insecure'     => true,
+            'admin-password' => [
+                'description' => 'Admin password',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
                 'hidden-input' => true,
             ],
             'mysql-host-socket' => [
                 'description' => 'MySQL Host or Socket',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'default'     => 'localhost'
+                'mode' => InputOption::VALUE_REQUIRED,
+                'default' => 'localhost'
             ],
-            'mysql-username'    => [
+            'mysql-username' => [
                 'description' => 'MySQL username',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'insecure'    => true,
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
             ],
-            'mysql-password'    => [
-                'description'  => 'MySQL password',
-                'mode'         => InputOption::VALUE_REQUIRED,
-                'insecure'     => true,
+            'mysql-password' => [
+                'description' => 'MySQL password',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
                 'hidden-input' => true
             ],
-            'mysql-database'    => [
+            'mysql-database' => [
                 'description' => 'MySQL database',
-                'mode'        => InputOption::VALUE_REQUIRED,
+                'mode' => InputOption::VALUE_REQUIRED,
             ],
-            'mysql-port'        => [
+            'mysql-port' => [
                 'description' => 'MySQL Port (will be omitted if socket is set)',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'default'     => 3306
+                'mode' => InputOption::VALUE_REQUIRED,
+                'default' => 3306
             ],
         ];
 
@@ -168,10 +168,10 @@ class InstallCommand extends Command
             );
 
         foreach ($this->getOptions() as $name => $config) {
-            $shortcut    = $config['shortcut'] ?? null;
-            $mode        = $config['mode'] ?? null;
+            $shortcut = $config['shortcut'] ?? null;
+            $mode = $config['mode'] ?? null;
             $description = $config['description'] ?? '';
-            $default     = $config['default'] ?? null;
+            $default = $config['default'] ?? null;
 
             $this->addOption($name, $shortcut, $mode, $description, $default);
         }
@@ -191,7 +191,7 @@ class InstallCommand extends Command
         $this->io = new PimcoreStyle($input, $output);
 
         foreach ($this->getOptions() as $name => $config) {
-            $value          = $input->getOption($name);
+            $value = $input->getOption($name);
             $isDefaultValue = isset($config['default']) && $value === $config['default'];
 
             // show warning for insecure options
@@ -227,7 +227,7 @@ class InstallCommand extends Command
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         foreach ($this->getOptions() as $name => $config) {
-            $value          = $input->getOption($name);
+            $value = $input->getOption($name);
             $isDefaultValue = isset($config['default']) && $value === $config['default'];
 
             if ($value && !$isDefaultValue) {
@@ -253,7 +253,7 @@ class InstallCommand extends Command
 
                 if ($config['hidden-input'] ?? false) {
                     $question .= ' (input will be hidden)';
-                    $value    = $this->io->askHidden($question, $validator);
+                    $value = $this->io->askHidden($question, $validator);
                 } else {
                     $value = $this->io->ask($question, $value, $validator);
                 }
@@ -272,14 +272,14 @@ class InstallCommand extends Command
             return 0;
         }
 
-        $params  = [];
+        $params = [];
         $missing = [];
 
         foreach (array_keys($this->getOptions()) as $name) {
             $value = $input->getOption($name);
 
             if ($value) {
-                $param          = str_replace('-', '_', $name);
+                $param = str_replace('-', '_', $name);
                 $params[$param] = $value;
             } else {
                 $missing[] = $name;

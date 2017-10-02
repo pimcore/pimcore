@@ -69,7 +69,7 @@ class Dao extends Model\Element\Dao
 
         $data = $this->db->fetchRow('SELECT id FROM documents WHERE path = :path AND `key` = :key', [
             'path' => $_path,
-            'key'  => $_key
+            'key' => $_key
         ]);
 
         if ($data['id']) {

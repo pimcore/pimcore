@@ -63,7 +63,7 @@ class DynamicRouteProvider implements RouteProviderInterface
     public function getRouteCollectionForRequest(Request $request)
     {
         $collection = new RouteCollection();
-        $path       = $originalPath = urldecode($request->getPathInfo());
+        $path = $originalPath = urldecode($request->getPathInfo());
 
         // site path handled by FrontendRoutingListener which runs before routing is started
         if (null !== $sitePath = $this->siteResolver->getSitePath($request)) {

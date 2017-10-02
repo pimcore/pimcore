@@ -629,8 +629,8 @@ class Log extends Model\AbstractModel
         $tmp = explode(',', trim($data));
 
         foreach ($tmp as $entry) {
-            $entry  = trim($entry);
-            $tmp2   = explode(' ', $entry);
+            $entry = trim($entry);
+            $tmp2 = explode(' ', $entry);
             $dataArray[] = ['email' => trim($tmp2[0]),
                                  'name' => str_replace(['(', ')'], '', $tmp2[1])
             ];

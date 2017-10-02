@@ -37,13 +37,13 @@ class AreabrickPass implements CompilerPassInterface
         $config = $container->getParameter('pimcore.config');
 
         $areaManagerDefinition = $container->getDefinition(AreabrickManager::class);
-        $taggedServices        = $container->findTaggedServiceIds('pimcore.area.brick');
+        $taggedServices = $container->findTaggedServiceIds('pimcore.area.brick');
 
         // keep a list of areas loaded via tags - those classes won't be autoloaded
         $taggedAreas = [];
 
         foreach ($taggedServices as $id => $tags) {
-            $definition    = $container->getDefinition($id);
+            $definition = $container->getDefinition($id);
             $taggedAreas[] = $definition->getClass();
 
             // tags must define the id attribute which will be used to register the brick
@@ -186,15 +186,15 @@ class AreabrickPass implements CompilerPassInterface
             if (class_exists($className)) {
                 $reflector = new \ReflectionClass($className);
                 if ($reflector->isInstantiable() && $reflector->implementsInterface(AreabrickInterface::class)) {
-                    $brickId   = $this->generateBrickId($reflector);
+                    $brickId = $this->generateBrickId($reflector);
                     $serviceId = $this->generateServiceId($name, $subNamespace, $shortClassName);
 
                     $areas[] = [
-                        'brickId'        => $brickId,
-                        'serviceId'      => $serviceId,
-                        'bundleName'     => $name,
+                        'brickId' => $brickId,
+                        'serviceId' => $serviceId,
+                        'bundleName' => $name,
                         'bundleMetadata' => $metadata,
-                        'reflector'      => $reflector,
+                        'reflector' => $reflector,
                     ];
                 }
             }

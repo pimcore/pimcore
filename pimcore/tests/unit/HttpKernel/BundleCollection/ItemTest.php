@@ -27,7 +27,7 @@ class ItemTest extends TestCase
     public function testGetBundle()
     {
         $bundle = new ItemTestBundleA();
-        $item   = new Item(new ItemTestBundleA());
+        $item = new Item(new ItemTestBundleA());
 
         $this->assertEquals($bundle, $item->getBundle());
     }

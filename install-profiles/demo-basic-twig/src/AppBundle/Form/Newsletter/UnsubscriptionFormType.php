@@ -19,9 +19,9 @@ class UnsubscriptionFormType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label'    => 'E-Mail',
+                'label' => 'E-Mail',
                 'required' => true,
-                'attr'     => [
+                'attr' => [
                     'placeholder' => 'example@example.com'
                 ]
             ])

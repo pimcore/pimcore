@@ -42,16 +42,16 @@ class TemplatingHelperExtension extends \Twig_Extension
     public function getFunctions(): array
     {
         $helperNames = [
-            'headLink'     => 'pimcore_head_link',
-            'headMeta'     => 'pimcore_head_meta',
-            'headScript'   => 'pimcore_head_script',
-            'headStyle'    => 'pimcore_head_style',
-            'headTitle'    => 'pimcore_head_title',
+            'headLink' => 'pimcore_head_link',
+            'headMeta' => 'pimcore_head_meta',
+            'headScript' => 'pimcore_head_script',
+            'headStyle' => 'pimcore_head_style',
+            'headTitle' => 'pimcore_head_title',
             'inlineScript' => 'pimcore_inline_script',
-            'placeholder'  => 'pimcore_placeholder',
-            'cache'        => 'pimcore_cache',
-            'pimcoreUrl'   => [
-                'name'    => 'pimcore_url',
+            'placeholder' => 'pimcore_placeholder',
+            'cache' => 'pimcore_cache',
+            'pimcoreUrl' => [
+                'name' => 'pimcore_url',
                 'is_safe' => null
             ]
         ];
@@ -59,7 +59,7 @@ class TemplatingHelperExtension extends \Twig_Extension
         $functions = [];
         foreach ($helperNames as $helperName => $helperOptions) {
             $functionName = null;
-            $options      = [
+            $options = [
                 'is_safe' => ['html']
             ];
 

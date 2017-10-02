@@ -37,7 +37,7 @@ class Inc extends Helper
      */
     public function __construct(IncludeRenderer $includeRenderer, EditmodeResolver $editmodeResolver)
     {
-        $this->includeRenderer  = $includeRenderer;
+        $this->includeRenderer = $includeRenderer;
         $this->editmodeResolver = $editmodeResolver;
     }
 

@@ -65,14 +65,14 @@ class ClassController extends AbstractRestController
     {
         $this->checkPermission('classes');
 
-        $list    = new DataObject\ClassDefinition\Listing();
+        $list = new DataObject\ClassDefinition\Listing();
         $classes = $list->load();
 
         $result = [];
 
         foreach ($classes as $class) {
             $item = [
-                'id'   => $class->getId(),
+                'id' => $class->getId(),
                 'name' => $class->getName()
             ];
 

@@ -28,10 +28,10 @@ class ObjectTest extends RestTestCase
         $originalCount = TestHelper::getObjectCount();
 
         $emptyObject = TestHelper::createEmptyObject();
-        $id          = $emptyObject->getId();
+        $id = $emptyObject->getId();
 
         $newLocalCount = TestHelper::getObjectCount();
-        $newApiCount   = $this->restClient->getObjectCount();
+        $newApiCount = $this->restClient->getObjectCount();
         $expectedCount = $originalCount + 1;
 
         $this->assertEquals($expectedCount, $newLocalCount);

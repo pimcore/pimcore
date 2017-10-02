@@ -37,19 +37,19 @@ class NestedNamingStrategyTest extends AbstractNamingStrategyTest
     {
         return [
             // top level elements
-            'title'                                          => 'title',
-            'content'                                        => 'content',
-            'B_card'                                         => 'B_card',
+            'title' => 'title',
+            'content' => 'content',
+            'B_card' => 'B_card',
 
             // first card
-            'B_card[1].BI_card_header'                       => 'B_card:1.BI_card_header',
-            'B_card[1].BB_card_block'                        => 'B_card:1.BB_card_block',
+            'B_card[1].BI_card_header' => 'B_card:1.BI_card_header',
+            'B_card[1].BB_card_block' => 'B_card:1.BB_card_block',
             'B_card[1].BB_card_block[1].BBI_card_block_text' => 'B_card:1.BB_card_block:1.BBI_card_block_text',
             'B_card[1].BB_card_block[2].BBI_card_block_text' => 'B_card:1.BB_card_block:2.BBI_card_block_text',
 
             // second card
-            'B_card[2].BI_card_header'                       => 'B_card:2.BI_card_header',
-            'B_card[2].BB_card_block'                        => 'B_card:2.BB_card_block',
+            'B_card[2].BI_card_header' => 'B_card:2.BI_card_header',
+            'B_card[2].BB_card_block' => 'B_card:2.BB_card_block',
             'B_card[2].BB_card_block[1].BBI_card_block_text' => 'B_card:2.BB_card_block:1.BBI_card_block_text',
             'B_card[2].BB_card_block[2].BBI_card_block_text' => 'B_card:2.BB_card_block:2.BBI_card_block_text',
         ];

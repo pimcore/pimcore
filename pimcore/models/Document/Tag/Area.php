@@ -55,7 +55,7 @@ class Area extends Model\Document\Tag
         $options = $this->getEditmodeOptions();
         $this->outputEditmodeOptions($options);
 
-        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
@@ -180,13 +180,13 @@ class Area extends Model\Document\Tag
      */
     public function getElement(string $name)
     {
-        $document       = Model\Document\Page::getById($this->getDocumentId());
+        $document = Model\Document\Page::getById($this->getDocumentId());
         $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
 
-        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
-        $id      = $namingStrategy->buildChildElementTagName($name, 'area', $parentBlockNames, 1);
+        $id = $namingStrategy->buildChildElementTagName($name, 'area', $parentBlockNames, 1);
         $element = $document->getElement($id);
 
         if ($element) {

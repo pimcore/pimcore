@@ -60,7 +60,7 @@ class Installer
      */
     public function __construct(LoggerInterface $logger, ProfileLocator $profileLocator)
     {
-        $this->logger         = $logger;
+        $this->logger = $logger;
         $this->profileLocator = $profileLocator;
     }
 
@@ -180,10 +180,10 @@ class Installer
     {
         // database configuration host/unix socket
         $dbConfig = [
-            'user'         => $params['mysql_username'],
-            'password'     => $params['mysql_password'],
-            'dbname'       => $params['mysql_database'],
-            'driver'       => 'pdo_mysql',
+            'user' => $params['mysql_username'],
+            'password' => $params['mysql_password'],
+            'dbname' => $params['mysql_database'],
+            'driver' => 'pdo_mysql',
             'wrapperClass' => 'Pimcore\Db\Connection',
         ];
 

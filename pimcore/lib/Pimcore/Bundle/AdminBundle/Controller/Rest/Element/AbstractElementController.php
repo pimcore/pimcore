@@ -32,7 +32,7 @@ abstract class AbstractElementController extends AbstractRestController
      */
     protected function inquire(Request $request, $type)
     {
-        $table      = $type . 's';
+        $table = $type . 's';
         $permission = $type . 's'; // objects
 
         $this->checkPermission($permission);
@@ -40,7 +40,7 @@ abstract class AbstractElementController extends AbstractRestController
         $condense = $request->get('condense');
 
         if ($request->getMethod() === 'POST') {
-            $data   = $request->getContent();
+            $data = $request->getContent();
             $idList = explode(',', $data);
         } elseif ($request->get('ids')) {
             $idList = explode(',', $request->get('ids'));
@@ -102,7 +102,7 @@ abstract class AbstractElementController extends AbstractRestController
     protected function checkElementPermission(AbstractElement $element, $type)
     {
         $map = [
-            'get'    => 'view',
+            'get' => 'view',
             'delete' => 'delete',
             'update' => 'publish',
             'create' => 'create'
@@ -117,10 +117,10 @@ abstract class AbstractElementController extends AbstractRestController
             $this->get('monolog.logger.security')->error(
                 'User {user} attempted to access {permission} on {elementType} {elementId}, but has no permission to do so',
                 [
-                    'user'        => $this->getUser()->getName(),
-                    'permission'  => $permission,
+                    'user' => $this->getUser()->getName(),
+                    'permission' => $permission,
                     'elementType' => $element->getType(),
-                    'elementId'   => $element->getId(),
+                    'elementId' => $element->getId(),
                 ]
             );
 

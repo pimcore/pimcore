@@ -99,7 +99,7 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
             if ($sourceSite) {
                 if ($sourceSite->getMainDomain()) {
                     $sourceSiteRelPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $hardlinkCanonicalSourceDocument->getRealFullPath());
-                    $canonical         = $request->getScheme() . '://' . $sourceSite->getMainDomain() . $sourceSiteRelPath;
+                    $canonical = $request->getScheme() . '://' . $sourceSite->getMainDomain() . $sourceSiteRelPath;
                 }
             }
         }

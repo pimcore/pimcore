@@ -56,7 +56,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         PimcoreBundleManager $bundleManager,
         AreabrickManagerInterface $areabrickManager
     ) {
-        $this->bundleManager    = $bundleManager;
+        $this->bundleManager = $bundleManager;
         $this->areabrickManager = $areabrickManager;
     }
 
@@ -161,11 +161,11 @@ class ExtensionManagerController extends AdminController implements EventedContr
             return $response;
         }
 
-        $type   = $request->get('type');
-        $id     = $request->get('id');
+        $type = $request->get('type');
+        $id = $request->get('id');
         $enable = $request->get('method', 'enable') === 'enable' ? true : false;
 
-        $reload  = false;
+        $reload = false;
         $message = null;
 
         if ($type === 'bundle') {
@@ -182,7 +182,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
         $data = [
             'success' => true,
-            'reload'  => $reload,
+            'reload' => $reload,
         ];
 
         if ($message) {
@@ -264,7 +264,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
             $data = [
                 'success' => true,
-                'bundle'  => $this->buildBundleInfo($bundle, true, true)
+                'bundle' => $this->buildBundleInfo($bundle, true, true)
             ];
 
             if (!empty($message = $this->getInstallerOutput($bundle))) {
@@ -342,7 +342,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
             $data = [
                 'success' => true,
-                'reload'  => $this->bundleManager->needsReloadAfterInstall($bundle)
+                'reload' => $this->bundleManager->needsReloadAfterInstall($bundle)
             ];
 
             if (!empty($message = $this->getInstallerOutput($bundle))) {
@@ -443,7 +443,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         } catch (\Exception $e) {
             $this->get('monolog.logger.pimcore')->error('Failed to build instance of bundle {bundle}: {error}', [
                 'bundle' => $bundleName,
-                'error'  => $e->getMessage()
+                'error' => $e->getMessage()
             ]);
         }
     }
@@ -462,27 +462,27 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $state = $bm->getState($bundle);
 
         $info = [
-            'id'             => $bm->getBundleIdentifier($bundle),
-            'type'           => 'bundle',
-            'name'           => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
-            'active'         => $enabled,
-            'installable'    => false,
-            'uninstallable'  => false,
-            'updateable'     => false,
-            'installed'      => $installed,
+            'id' => $bm->getBundleIdentifier($bundle),
+            'type' => 'bundle',
+            'name' => !empty($bundle->getNiceName()) ? $bundle->getNiceName() : $bundle->getName(),
+            'active' => $enabled,
+            'installable' => false,
+            'uninstallable' => false,
+            'updateable' => false,
+            'installed' => $installed,
             'canChangeState' => $bm->canChangeState($bundle),
-            'configuration'  => $this->getIframePath($bundle),
-            'version'        => $bundle->getVersion(),
-            'priority'       => $state['priority'],
-            'environments'   => implode(', ', $state['environments'])
+            'configuration' => $this->getIframePath($bundle),
+            'version' => $bundle->getVersion(),
+            'priority' => $state['priority'],
+            'environments' => implode(', ', $state['environments'])
         ];
 
         // only check for installation specifics if the bundle is enabled
         if ($enabled) {
             $info = array_merge($info, [
-                'installable'   => $bm->canBeInstalled($bundle),
+                'installable' => $bm->canBeInstalled($bundle),
                 'uninstallable' => $bm->canBeUninstalled($bundle),
-                'updateable'    => $bm->canBeUpdated($bundle),
+                'updateable' => $bm->canBeUpdated($bundle),
             ]);
         }
 
@@ -544,16 +544,16 @@ class ExtensionManagerController extends AdminController implements EventedContr
     private function buildBrickInfo(AreabrickInterface $brick)
     {
         return [
-            'id'            => $brick->getId(),
-            'type'          => 'areabrick',
-            'name'          => $this->trans($brick->getName()),
-            'description'   => $this->trans($brick->getDescription()),
-            'installable'   => false,
+            'id' => $brick->getId(),
+            'type' => 'areabrick',
+            'name' => $this->trans($brick->getName()),
+            'description' => $this->trans($brick->getDescription()),
+            'installable' => false,
             'uninstallable' => false,
-            'updateable'    => false,
-            'installed'     => true,
-            'active'        => $this->areabrickManager->isEnabled($brick->getId()),
-            'version'       => $brick->getVersion()
+            'updateable' => false,
+            'installed' => true,
+            'active' => $this->areabrickManager->isEnabled($brick->getId()),
+            'version' => $brick->getVersion()
         ];
     }
 

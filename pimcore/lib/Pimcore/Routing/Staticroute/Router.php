@@ -67,7 +67,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer)
     {
-        $this->context          = $context;
+        $this->context = $context;
         $this->configNormalizer = $configNormalizer;
     }
 
@@ -148,7 +148,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $hostname = null;
         if (isset($parameters['site'])) {
             $config = Config::getSystemConfig();
-            $site   = $parameters['site'];
+            $site = $parameters['site'];
 
             if (!empty($site)) {
                 try {
@@ -162,8 +162,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                     }
                 } catch (\Exception $e) {
                     $this->logger->warning('The site {site} does not exist for route {route}', [
-                        'site'      => $siteId,
-                        'route'     => $name,
+                        'site' => $siteId,
+                        'route' => $name,
                         'exception' => $e
                     ]);
                 }
@@ -179,7 +179,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         }
 
         if ($name && $route = Staticroute::getByName($name, $siteId)) {
-            $reset  = isset($parameters['reset']) ? (bool)$parameters['reset'] : false;
+            $reset = isset($parameters['reset']) ? (bool)$parameters['reset'] : false;
             $encode = isset($parameters['encode']) ? (bool)$parameters['encode'] : true;
 
             // assemble the route / url in Staticroute::assemble()
@@ -240,7 +240,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                 // to determine if a call to an action was made through a staticroute or not
                 // more on that infos see Pimcore_Controller_Action_Frontend::getRenderScript()
                 $routeParams['pimcore_request_source'] = 'staticroute';
-                $routeParams['_route']                 = $route->getName();
+                $routeParams['_route'] = $route->getName();
 
                 $routeParams = $this->processRouteParams($routeParams);
 

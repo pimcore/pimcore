@@ -63,7 +63,7 @@ class Service
     {
         $to_class = 'Pimcore\\Model\\Document\\Hardlink\\Wrapper\\' . ucfirst($doc->getType());
 
-        $old_serialized_prefix  = 'O:'.strlen(get_class($doc));
+        $old_serialized_prefix = 'O:'.strlen(get_class($doc));
         $old_serialized_prefix .= ':"'.get_class($doc).'":';
 
         // unset eventually existing children, because of performance reasons when serializing the document

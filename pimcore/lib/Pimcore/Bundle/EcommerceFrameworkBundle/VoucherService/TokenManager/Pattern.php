@@ -590,9 +590,9 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         /** @var Token $token */
         foreach ($paginator as $token) {
             $data[] = [
-                'token'     => $token->getToken(),
-                'usages'    => $token->getUsages(),
-                'length'    => $token->getLength(),
+                'token' => $token->getToken(),
+                'usages' => $token->getUsages(),
+                'length' => $token->getLength(),
                 'timestamp' => $token->getTimestamp()
             ];
         }

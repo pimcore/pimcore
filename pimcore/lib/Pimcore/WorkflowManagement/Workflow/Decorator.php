@@ -26,7 +26,7 @@ class Decorator
     /**
      * @param null $workflow Workflow
      */
-    public function __construct($workflow=null)
+    public function __construct($workflow = null)
     {
         $this->workflow = $workflow;
     }

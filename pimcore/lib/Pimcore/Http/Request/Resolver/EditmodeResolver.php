@@ -51,7 +51,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
      */
     public function __construct(RequestStack $requestStack, UserLoader $userLoader, RequestHelper $requestHelper)
     {
-        $this->userLoader    = $userLoader;
+        $this->userLoader = $userLoader;
         $this->requestHelper = $requestHelper;
 
         parent::__construct($requestStack);
@@ -91,9 +91,9 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
         }
 
         $logData = [
-            'param'        => false,
+            'param' => false,
             'adminRequest' => false,
-            'user'         => false
+            'user' => false
         ];
 
         // read editmode from request params
@@ -121,7 +121,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
 
         $this->logger->debug('Resolved editmode to {editmode}', [
             'editmode' => $result ? 'true' : 'false',
-            'params'   => $logData
+            'params' => $logData
         ]);
 
         $request->attributes->set(static::ATTRIBUTE_EDITMODE, $result);

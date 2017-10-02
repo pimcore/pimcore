@@ -455,7 +455,7 @@ class Pdf extends Model\Document\Tag
                 return $data;
             };
 
-            for ($i=1; $i <= $pageCount; $i++) {
+            for ($i = 1; $i <= $pageCount; $i++) {
                 $pageData = [
                     'thumbnail' => (string) $asset->getImageThumbnail([
                         'width' => 200,

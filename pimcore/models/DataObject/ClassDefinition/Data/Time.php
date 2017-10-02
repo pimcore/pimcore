@@ -161,7 +161,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return int
      */
-    protected function toTimestamp($string, $baseTimestamp=null)
+    protected function toTimestamp($string, $baseTimestamp = null)
     {
         if ($baseTimestamp === null) {
             $baseTimestamp = time();

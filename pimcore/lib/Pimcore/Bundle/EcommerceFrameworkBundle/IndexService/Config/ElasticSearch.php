@@ -55,16 +55,16 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     protected $fieldMapping = [
         'o_id' => 'system.o_id',
         'o_classId' => 'system.o_classId',
-        'o_virtualProductId'=> 'system.o_virtualProductId',
-        'o_virtualProductActive'=> 'system.o_virtualProductActive',
-        'o_parentId'=> 'system.o_parentId',
-        'o_type'=> 'system.o_type',
-        'categoryIds'=> 'system.categoryIds',
-        'parentCategoryIds'=> 'system.parentCategoryIds',
-        'categoryPaths'=> 'system.categoryPaths',
-        'priceSystemName'=> 'system.priceSystemName',
-        'active'=> 'system.active',
-        'inProductList'=> 'system.inProductList',
+        'o_virtualProductId' => 'system.o_virtualProductId',
+        'o_virtualProductActive' => 'system.o_virtualProductActive',
+        'o_parentId' => 'system.o_parentId',
+        'o_type' => 'system.o_type',
+        'categoryIds' => 'system.categoryIds',
+        'parentCategoryIds' => 'system.parentCategoryIds',
+        'categoryPaths' => 'system.categoryPaths',
+        'priceSystemName' => 'system.priceSystemName',
+        'active' => 'system.active',
+        'inProductList' => 'system.inProductList',
     ];
 
     protected function addAttribute(Attribute $attribute)

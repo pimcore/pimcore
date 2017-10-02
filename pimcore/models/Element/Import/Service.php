@@ -309,7 +309,7 @@ class Service
                                     } elseif ($collectionItem->type == 'href' and $collectionItem->value['id']) {
                                         $collectionItem->value['id'] = $idMapping[$collectionItem->value['type']][$collectionItem->value['id']];
                                     } elseif (($collectionItem->type == 'objects' or $collectionItem->type == 'multihref') and is_array($collectionItem->value) and count($collectionItem->value) > 0) {
-                                        for ($i=0; $i < count($collectionItem->value); $i++) {
+                                        for ($i = 0; $i < count($collectionItem->value); $i++) {
                                             if ($collectionItem->value[$i]['id']) {
                                                 $collectionItem->value[$i]['id'] = $idMapping[$collectionItem->value[$i]['type']][$collectionItem->value[$i]['id']];
                                             }

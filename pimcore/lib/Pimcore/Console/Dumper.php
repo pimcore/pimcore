@@ -24,7 +24,7 @@ use Symfony\Component\VarDumper\Dumper\CliDumper;
 class Dumper
 {
     const NEWLINE_BEFORE = 1;
-    const NEWLINE_AFTER  = 2;
+    const NEWLINE_AFTER = 2;
 
     /**
      * @var ConsoleOutput

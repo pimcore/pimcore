@@ -371,7 +371,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
      *
      * @return array
      */
-    public function getResults($retry=true)
+    public function getResults($retry = true)
     {
         if (empty($this->results) && $retry) {
             $this->load();

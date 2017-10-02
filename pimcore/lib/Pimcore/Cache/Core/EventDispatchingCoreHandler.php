@@ -75,7 +75,7 @@ class EventDispatchingCoreHandler extends CoreHandler
      */
     public function purge()
     {
-        $result     = parent::purge();
+        $result = parent::purge();
         $purgeEvent = new ResultEvent($result);
 
         $this->dispatcher->dispatch(CoreCacheEvents::PURGE, $purgeEvent);

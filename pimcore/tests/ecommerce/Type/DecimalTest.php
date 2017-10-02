@@ -164,7 +164,7 @@ class DecimalTest extends TestCase
 
     public function testFromDecimal()
     {
-        $value        = Decimal::fromRawValue(100000, 4);
+        $value = Decimal::fromRawValue(100000, 4);
         $createdValue = Decimal::fromDecimal($value, 4);
 
         $this->assertEquals($value, $createdValue);
@@ -172,7 +172,7 @@ class DecimalTest extends TestCase
 
     public function testFromDecimalWithDifferentScale()
     {
-        $value        = Decimal::fromRawValue(100000, 4);
+        $value = Decimal::fromRawValue(100000, 4);
         $createdValue = Decimal::fromDecimal($value, 8);
 
         $this->assertEquals($value->asNumeric(), $createdValue->asNumeric());
@@ -486,7 +486,7 @@ class DecimalTest extends TestCase
 
     public function testPercentageOf()
     {
-        $origPrice       = Decimal::create('129.99');
+        $origPrice = Decimal::create('129.99');
         $discountedPrice = Decimal::create('88.00');
 
         $this->assertEquals(68, round($discountedPrice->percentageOf($origPrice), 0));
@@ -503,7 +503,7 @@ class DecimalTest extends TestCase
 
     public function testDiscountPercentageOf()
     {
-        $origPrice       = Decimal::create('129.99');
+        $origPrice = Decimal::create('129.99');
         $discountedPrice = Decimal::create('88.00');
 
         $this->assertEquals(32, round($discountedPrice->discountPercentageOf($origPrice), 0));
@@ -703,7 +703,7 @@ class DecimalTest extends TestCase
      */
     private function mixPairs(array $input, $expected): array
     {
-        $data  = [];
+        $data = [];
         $count = count($input);
 
         for ($i = 0; $i < $count; $i++) {

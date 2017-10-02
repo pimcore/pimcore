@@ -83,7 +83,7 @@ class Datatrans implements IPayment
     protected function processOptions(array $options)
     {
         $this->merchantId = $options['merchant_id'];
-        $this->sign       = $options['sign'];
+        $this->sign = $options['sign'];
 
         // use digital signature if configured
         if (isset($options['use_digital_signature'])) {
@@ -93,15 +93,15 @@ class Datatrans implements IPayment
         // set endpoint depending on mode
         if ('live' === $options['mode']) {
             $this->endpoint = array_merge($this->endpoint, [
-                'form'         => 'https://payment.datatrans.biz/upp/jsp/upStart.jsp',
-                'script'       => 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
+                'form' => 'https://payment.datatrans.biz/upp/jsp/upStart.jsp',
+                'script' => 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
                 'xmlAuthorize' => 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp',
                 'xmlProcessor' => 'https://payment.datatrans.biz/upp/jsp/XML_processor.jsp',
             ]);
         } else {
             $this->endpoint = array_merge($this->endpoint, [
-                'form'         => 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp',
-                'script'       => 'https://pilot.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
+                'form' => 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp',
+                'script' => 'https://pilot.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
                 'xmlAuthorize' => 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp',
                 'xmlProcessor' => 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp',
             ]);
@@ -192,9 +192,9 @@ class Datatrans implements IPayment
         } else {
             $data = [
                 'merchantId' => $this->merchantId,
-                'amount'     => $paymentData['amount'],
-                'currency'   => $paymentData['currency'],
-                'refno'      => $config['refno']
+                'amount' => $paymentData['amount'],
+                'currency' => $paymentData['currency'],
+                'refno' => $config['refno']
             ];
 
             $sign = hash_hmac('SHA256', implode('', $data), hex2bin($this->sign));
@@ -207,7 +207,7 @@ class Datatrans implements IPayment
         $formAttributes['data-language'] = $config['language'];
         $formAttributes['data-merchant-id'] = $this->merchantId;
         $formAttributes['data-sign'] = $sign;
-        $formAttributes['data-amount'] =  $paymentData['amount'];
+        $formAttributes['data-amount'] = $paymentData['amount'];
         $formAttributes['data-currency'] = $paymentData['currency'];
         $formAttributes['data-refno'] = $config['refno'];
         $formAttributes['data-reqtype'] = $paymentData['reqtype'];
@@ -294,14 +294,14 @@ class Datatrans implements IPayment
         // check required fields
         $required = $this->getRequiredResponseFields($response);
         $authorizedData = [
-            'aliasCC'          => null,
-            'expm'             => null,
-            'expy'             => null,
-            'reqtype'          => null,
+            'aliasCC' => null,
+            'expm' => null,
+            'expy' => null,
+            'reqtype' => null,
             'uppTransactionId' => null,
-            'amount'           => null,
-            'currency'         => null,
-            'refno'            => null
+            'amount' => null,
+            'currency' => null,
+            'refno' => null
         ];
 
         // check fields
@@ -338,9 +338,9 @@ class Datatrans implements IPayment
             $message,
             $paymentState,
             [
-                'datatrans_amount'               => (string)$price,
+                'datatrans_amount' => (string)$price,
                 'datatrans_acqAuthorizationCode' => $response['acqAuthorizationCode'],
-                'datatrans_response'             => $response
+                'datatrans_response' => $response
             ]
         );
     }
@@ -352,12 +352,12 @@ class Datatrans implements IPayment
     {
         return [
             'successUrl' => null,
-            'errorUrl'   => null,
-            'cancelUrl'  => null,
-            'refno'      => null,
-            'useAlias'   => null,
-            'reqtype'    => null,
-            'language'   => null,
+            'errorUrl' => null,
+            'cancelUrl' => null,
+            'refno' => null,
+            'useAlias' => null,
+            'reqtype' => null,
+            'language' => null,
         ];
     }
 
@@ -369,17 +369,17 @@ class Datatrans implements IPayment
     protected function getRequiredResponseFields($response)
     {
         $required = [
-            'uppTransactionId'     => null,
-            'responseCode'         => null,
-            'responseMessage'      => null,
-            'pmethod'              => null,
-            'reqtype'              => null,
+            'uppTransactionId' => null,
+            'responseCode' => null,
+            'responseMessage' => null,
+            'pmethod' => null,
+            'reqtype' => null,
             'acqAuthorizationCode' => null,
-            'status'               => null,
-            'uppMsgType'           => null,
-            'refno'                => null,
-            'amount'               => null,
-            'currency'             => null,
+            'status' => null,
+            'uppMsgType' => null,
+            'refno' => null,
+            'amount' => null,
+            'currency' => null,
         ];
 
         switch ($response['pmethod']) {
@@ -468,8 +468,8 @@ class Datatrans implements IPayment
             $message,
             $paymentState,
             [
-                'datatrans_amount'               => (string)$price,
-                'datatrans_responseXML'          => $transaction->asXML(),
+                'datatrans_amount' => (string)$price,
+                'datatrans_responseXML' => $transaction->asXML(),
                 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
             ]
         );
@@ -527,8 +527,8 @@ class Datatrans implements IPayment
             $message,
             $paymentState,
             [
-                'datatrans_amount'               => (string)$price,
-                'datatrans_responseXML'          => $transaction->asXML(),
+                'datatrans_amount' => (string)$price,
+                'datatrans_responseXML' => $transaction->asXML(),
                 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode
             ]
         );
@@ -556,20 +556,20 @@ class Datatrans implements IPayment
 
         // handle response
         $transaction = $xml->body->transaction;
-        $status      = (string)$transaction->attributes()['trxStatus'];
+        $status = (string)$transaction->attributes()['trxStatus'];
 
         /* @var \SimpleXMLElement $response */
         $response = $transaction->{$status};
 
-        $message      = null;
+        $message = null;
         $paymentState = null;
 
         if ($status === 'response' && in_array($response->responseCode, ['01', '02'])) {
             $paymentState = AbstractOrder::ORDER_STATE_CANCELLED;
-            $message      = (string)$response->responseMessage;
+            $message = (string)$response->responseMessage;
         } else {
             $paymentState = AbstractOrder::ORDER_STATE_ABORTED;
-            $message      = (string)$response->errorMessage . ' | ' . (string)$response->errorDetail;
+            $message = (string)$response->errorMessage . ' | ' . (string)$response->errorDetail;
         }
 
         // create and return status
@@ -579,8 +579,8 @@ class Datatrans implements IPayment
             $message,
             $paymentState,
             [
-                'datatrans_amount'               => (string)$price,
-                'datatrans_responseXML'          => $transaction->asXML(),
+                'datatrans_amount' => (string)$price,
+                'datatrans_responseXML' => $transaction->asXML(),
                 'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode,
             ]
         );

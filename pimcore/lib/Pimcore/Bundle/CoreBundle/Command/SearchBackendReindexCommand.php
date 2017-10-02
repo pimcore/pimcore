@@ -53,7 +53,7 @@ class SearchBackendReindexCommand extends AbstractCommand
 
             $elementsTotal = $list->getTotalCount();
 
-            for ($i=0; $i < (ceil($elementsTotal / $elementsPerLoop)); $i++) {
+            for ($i = 0; $i < (ceil($elementsTotal / $elementsPerLoop)); $i++) {
                 $list->setLimit($elementsPerLoop);
                 $list->setOffset($i * $elementsPerLoop);
 

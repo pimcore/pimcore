@@ -423,7 +423,7 @@ class PortalController extends AdminController implements EventedControllerInter
 
         $data = [];
 
-        for ($i=0; $i < $days; $i++) {
+        for ($i = 0; $i < $days; $i++) {
             // documents
             $end = $startDate - ($i * 86400);
             $start = $end - 86399;

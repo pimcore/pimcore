@@ -136,7 +136,7 @@ class Installer extends AbstractInstaller
     {
         parent::__construct();
 
-        $this->logger             = $logger;
+        $this->logger = $logger;
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
     }
 
@@ -261,8 +261,8 @@ class Installer extends AbstractInstaller
         $result = [];
         foreach ($this->classes as $className) {
             $filename = sprintf('class_%s_export.json', $className);
-            $path     = $this->installSourcesPath . '/class_sources/' . $filename;
-            $path     = realpath($path);
+            $path = $this->installSourcesPath . '/class_sources/' . $filename;
+            $path = realpath($path);
 
             if (false === $path || !is_file($path)) {
                 throw new \RuntimeException(sprintf(
@@ -320,7 +320,7 @@ class Installer extends AbstractInstaller
         $results = [];
         foreach ($finder as $file) {
             if (preg_match($pattern, $file->getFilename(), $matches)) {
-                $key           = $matches[1];
+                $key = $matches[1];
                 $results[$key] = $file->getRealPath();
             }
         }
@@ -345,7 +345,7 @@ class Installer extends AbstractInstaller
                 $fieldCollection->setKey($key);
             }
 
-            $data    = file_get_contents($path);
+            $data = file_get_contents($path);
             $success = Service::importFieldCollectionFromJson($fieldCollection, $data);
 
             if (!$success) {
@@ -372,7 +372,7 @@ class Installer extends AbstractInstaller
                 throw new \Exception("Class $classname already exists, ");
             }
 
-            $data    = file_get_contents($path);
+            $data = file_get_contents($path);
             $success = Service::importClassDefinitionFromJson($class, $data);
 
             if (!$success) {
@@ -400,7 +400,7 @@ class Installer extends AbstractInstaller
                 $brick->setKey($key);
             }
 
-            $data    = file_get_contents($path);
+            $data = file_get_contents($path);
             $success = Service::importObjectBrickFromJson($brick, $data);
 
             if (!$success) {

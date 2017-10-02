@@ -23,7 +23,7 @@ class DefaultBrickGetterSequenceToMultiselect implements IGetter
 
     public function get($object, $config = null)
     {
-        $config     = $this->resolveOptions($config ?? []);
+        $config = $this->resolveOptions($config ?? []);
         $sourceList = $config['source'];
 
         // normalize single entry to list
@@ -90,7 +90,7 @@ class DefaultBrickGetterSequenceToMultiselect implements IGetter
             DefaultBrickGetter::setupBrickGetterOptionsResolver($resolver);
 
             $resolver->setDefaults([
-                'invert'    => false,
+                'invert' => false,
                 'forceBool' => false
             ]);
 

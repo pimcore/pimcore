@@ -37,12 +37,12 @@ class CacheItem implements PimcoreCacheItemInterface
      */
     public function __construct($key, $value, $isHit = false, array $previousTags = [], $defaultLifetime = null)
     {
-        $this->key             = $key;
-        $this->value           = $value;
-        $this->isHit           = $isHit;
+        $this->key = $key;
+        $this->value = $value;
+        $this->isHit = $isHit;
         $this->defaultLifetime = $defaultLifetime;
-        $this->previousTags    = $previousTags;
-        $this->tags            = $previousTags;
+        $this->previousTags = $previousTags;
+        $this->tags = $previousTags;
     }
 
     /**

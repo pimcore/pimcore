@@ -69,7 +69,7 @@ abstract class AbstractNamingStrategyTest extends TestCase
         parent::setUp();
 
         $this->blockState = new BlockState();
-        $this->strategy   = $this->buildNamingStrategy();
+        $this->strategy = $this->buildNamingStrategy();
     }
 
     /**
@@ -121,7 +121,7 @@ abstract class AbstractNamingStrategyTest extends TestCase
         $this->blockState->pushIndex($cardIndex);
 
         // header element
-        $expectedHeaderKey  = sprintf('B_card[%d].BI_card_header', $cardIndex);
+        $expectedHeaderKey = sprintf('B_card[%d].BI_card_header', $cardIndex);
         $expectedHeaderName = $expected[$expectedHeaderKey];
 
         $this->assertEquals(
@@ -131,7 +131,7 @@ abstract class AbstractNamingStrategyTest extends TestCase
         );
 
         // add sub-block
-        $expectedSubBlockKey  = sprintf('B_card[%d].BB_card_block', $cardIndex);
+        $expectedSubBlockKey = sprintf('B_card[%d].BB_card_block', $cardIndex);
         $expectedSubBlockName = $expected[$expectedSubBlockKey];
 
         $subBlockName = $this->strategy->buildTagName('BB_card_block', 'block', $this->blockState);
@@ -159,7 +159,7 @@ abstract class AbstractNamingStrategyTest extends TestCase
         // inner index
         $this->blockState->pushIndex($subIndex);
 
-        $expectedTextKey  = sprintf('B_card[%d].BB_card_block[%d].BBI_card_block_text', $cardIndex, $subIndex);
+        $expectedTextKey = sprintf('B_card[%d].BB_card_block[%d].BBI_card_block_text', $cardIndex, $subIndex);
         $expectedTextName = $expected[$expectedTextKey];
 
         $this->assertEquals(

@@ -57,7 +57,7 @@ class ProfileLocator
      */
     public function __construct(LoggerInterface $logger, Composer\PackageInfo $packageInfo)
     {
-        $this->logger      = $logger;
+        $this->logger = $logger;
         $this->packageInfo = $packageInfo;
     }
 
@@ -108,7 +108,7 @@ class ProfileLocator
                 $profiles[$profileId] = $this->buildProfile($profileId, $manifest->getRealPath());
             } catch (\Throwable $e) {
                 $this->logger->error('Failed to build profile {profile}: {exception}', [
-                    'profile'   => $profileId,
+                    'profile' => $profileId,
                     'exception' => $e
                 ]);
             }
@@ -174,7 +174,7 @@ class ProfileLocator
     {
         if (null === $this->configProcessor) {
             $this->configProcessor = new Processor();
-            $this->configuration   = new ManifestConfiguration();
+            $this->configuration = new ManifestConfiguration();
         }
 
         return $this->configProcessor->processConfiguration(

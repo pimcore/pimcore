@@ -53,7 +53,7 @@ class AssetController extends AbstractElementController
      */
     public function getAction(Request $request, $id = null)
     {
-        $id    = $this->resolveId($request, $id);
+        $id = $this->resolveId($request, $id);
         $asset = $this->loadAsset($id);
 
         $this->checkElementPermission($asset, 'get');
@@ -61,13 +61,13 @@ class AssetController extends AbstractElementController
         if ($asset instanceof Asset\Folder) {
             $object = $this->service->getAssetFolderById($id);
         } else {
-            $light   = $request->get('light');
+            $light = $request->get('light');
             $options = [
                 'LIGHT' => $light ? 1 : 0
             ];
 
             $object = $this->service->getAssetFileById($id, $options);
-            $algo   = 'sha1';
+            $algo = 'sha1';
 
             $thumbnailConfig = $request->get('thumbnail');
             if ($thumbnailConfig && $asset->getType() === 'image') {
@@ -80,7 +80,7 @@ class AssetController extends AbstractElementController
             }
 
             $object->checksum = [
-                'algo'  => $algo,
+                'algo' => $algo,
                 'value' => $checksum
             ];
 
@@ -109,7 +109,7 @@ class AssetController extends AbstractElementController
 
         // add support for legacy behaviour, accepting the ID as payload parameter
         if (isset($data['id'])) {
-            $id    = $data['id'];
+            $id = $data['id'];
             $asset = $this->loadAsset($id);
 
             return $this->updateAsset($asset, $type, $data);
@@ -129,7 +129,7 @@ class AssetController extends AbstractElementController
      */
     public function updateAction(Request $request, $id)
     {
-        $id   = $this->resolveId($request, $id);
+        $id = $this->resolveId($request, $id);
         $data = $this->getJsonData($request);
 
         // get and normalize type
@@ -172,7 +172,7 @@ class AssetController extends AbstractElementController
      */
     public function deleteAction(Request $request, $id = null)
     {
-        $id    = $this->resolveId($request, $id);
+        $id = $this->resolveId($request, $id);
         $asset = $this->loadAsset($id);
 
         $this->checkElementPermission($asset, 'delete');
@@ -211,11 +211,11 @@ class AssetController extends AbstractElementController
         $this->checkPermission('assets');
 
         $condition = urldecode($request->get('condition'));
-        $order     = $request->get('order');
-        $orderKey  = $request->get('orderKey');
-        $offset    = $request->get('offset');
-        $limit     = $request->get('limit');
-        $groupBy   = $request->get('groupBy');
+        $order = $request->get('order');
+        $orderKey = $request->get('orderKey');
+        $offset = $request->get('offset');
+        $limit = $request->get('limit');
+        $groupBy = $request->get('groupBy');
 
         $result = $this->service->getAssetList($condition, $order, $orderKey, $offset, $limit, $groupBy);
 
@@ -242,7 +242,7 @@ class AssetController extends AbstractElementController
         $this->checkPermission('assets');
 
         $condition = urldecode($request->get('condition'));
-        $groupBy   = $request->get('groupBy');
+        $groupBy = $request->get('groupBy');
 
         $params = [];
         if (!empty($condition)) {
@@ -300,7 +300,7 @@ class AssetController extends AbstractElementController
         }
 
         throw $this->createNotFoundException([
-            'msg'  => sprintf('Asset %d does not exist', (int)$id),
+            'msg' => sprintf('Asset %d does not exist', (int)$id),
             'code' => static::ELEMENT_DOES_NOT_EXIST
         ]);
     }
@@ -316,10 +316,10 @@ class AssetController extends AbstractElementController
     protected function createAsset($type, array $data)
     {
         if ($type === 'folder') {
-            $class  = WebserviceAssetFolderIn::class;
+            $class = WebserviceAssetFolderIn::class;
             $method = 'createAssetFolder';
         } else {
-            $class  = WebserviceAssetFileIn::class;
+            $class = WebserviceAssetFileIn::class;
             $method = 'createAssetFile';
         }
 
@@ -358,10 +358,10 @@ class AssetController extends AbstractElementController
 
         $success = false;
         if ($type === 'folder') {
-            $wsData  = $this->fillWebserviceData(WebserviceAssetFolderIn::class, $data);
+            $wsData = $this->fillWebserviceData(WebserviceAssetFolderIn::class, $data);
             $success = $this->service->updateAssetFolder($wsData);
         } else {
-            $wsData  = $this->fillWebserviceData(WebserviceAssetFileIn::class, $data);
+            $wsData = $this->fillWebserviceData(WebserviceAssetFileIn::class, $data);
             $success = $this->service->updateAssetFile($wsData);
         }
 

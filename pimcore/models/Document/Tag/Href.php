@@ -324,8 +324,8 @@ class Href extends Model\Document\Tag
                 Logger::notice('Detected insane relation, removing reference to non existent '.$this->type.' with id ['.$this->id.']');
                 $this->id = null;
                 $this->type = null;
-                $this->subtype=null;
-                $this->element=null;
+                $this->subtype = null;
+                $this->element = null;
             }
         }
 

@@ -283,7 +283,7 @@ class Dao extends Model\Dao\AbstractDao
                 $containerKey = $context['containerKey'];
                 $container = DataObject\Fieldcollection\Definition::getByKey($containerKey);
             } else {
-                $container =  $object->getClass();
+                $container = $object->getClass();
             }
 
             if ($deleteQuery) {

@@ -59,7 +59,7 @@ class HeadScript extends CacheBusterAware
      * Script type contants
      * @const string
      */
-    const FILE   = 'FILE';
+    const FILE = 'FILE';
     const SCRIPT = 'SCRIPT';
     /**#@-*/
 
@@ -82,7 +82,7 @@ class HeadScript extends CacheBusterAware
      * @var string
      */
     protected $_captureLock;
-    protected $_captureScriptType  = null;
+    protected $_captureScriptType = null;
     protected $_captureScriptAttrs = null;
     protected $_captureType;
     /**#@-*/
@@ -149,7 +149,7 @@ class HeadScript extends CacheBusterAware
     public function __invoke($mode = self::FILE, $spec = null, $placement = 'APPEND', array $attrs = [], $type = 'text/javascript')
     {
         if ((null !== $spec) && is_string($spec)) {
-            $action    = ucfirst(strtolower($mode));
+            $action = ucfirst(strtolower($mode));
             $placement = strtolower($placement);
             switch ($placement) {
                 case 'set':
@@ -181,9 +181,9 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Cannot nest headScript captures');
         }
 
-        $this->_captureLock        = true;
-        $this->_captureType        = $captureType;
-        $this->_captureScriptType  = $type;
+        $this->_captureLock = true;
+        $this->_captureType = $captureType;
+        $this->_captureScriptType = $type;
         $this->_captureScriptAttrs = $attrs;
         ob_start();
     }
@@ -195,12 +195,12 @@ class HeadScript extends CacheBusterAware
      */
     public function captureEnd()
     {
-        $content                   = ob_get_clean();
-        $type                      = $this->_captureScriptType;
-        $attrs                     = $this->_captureScriptAttrs;
-        $this->_captureScriptType  = null;
+        $content = ob_get_clean();
+        $type = $this->_captureScriptType;
+        $attrs = $this->_captureScriptAttrs;
+        $this->_captureScriptType = null;
         $this->_captureScriptAttrs = null;
-        $this->_captureLock        = false;
+        $this->_captureLock = false;
 
         switch ($this->_captureType) {
             case Container::SET:
@@ -242,10 +242,10 @@ class HeadScript extends CacheBusterAware
                 throw new Exception(sprintf('Method "%s" requires at least one argument', $method));
             }
 
-            $action  = $matches['action'];
-            $mode    = strtolower($matches['mode']);
-            $type    = 'text/javascript';
-            $attrs   = [];
+            $action = $matches['action'];
+            $mode = strtolower($matches['mode']);
+            $type = 'text/javascript';
+            $attrs = [];
 
             if ('offsetSet' == $action) {
                 $index = array_shift($args);
@@ -449,7 +449,7 @@ class HeadScript extends CacheBusterAware
         $addScriptEscape = !(isset($item->attributes['noescape']) && filter_var($item->attributes['noescape'], FILTER_VALIDATE_BOOLEAN));
 
         $type = ($this->_autoEscape) ? $this->_escape($item->type) : $item->type;
-        $html  = '<script type="' . $type . '"' . $attrString . '>';
+        $html = '<script type="' . $type . '"' . $attrString . '>';
         if (!empty($item->source)) {
             $html .= PHP_EOL ;
 
@@ -501,7 +501,7 @@ class HeadScript extends CacheBusterAware
             $useCdata = $this->useCdata ? true : false;
         }
         $escapeStart = ($useCdata) ? '//<![CDATA[' : '//<!--';
-        $escapeEnd   = ($useCdata) ? '//]]>' : '//-->';
+        $escapeEnd = ($useCdata) ? '//]]>' : '//-->';
 
         $items = [];
         $this->getContainer()->ksort();
@@ -554,10 +554,10 @@ class HeadScript extends CacheBusterAware
      */
     public function createData($type, array $attributes, $content = null)
     {
-        $data             = new \stdClass();
-        $data->type       = $type;
+        $data = new \stdClass();
+        $data->type = $type;
         $data->attributes = $attributes;
-        $data->source     = $content;
+        $data->source = $content;
 
         return $data;
     }

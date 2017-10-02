@@ -102,24 +102,24 @@ class VoucherController extends FrontendController
             throw new \InvalidArgumentException('Token manager does not support exporting');
         }
 
-        $format      = $request->get('format', IExportableTokenManager::FORMAT_CSV);
+        $format = $request->get('format', IExportableTokenManager::FORMAT_CSV);
         $contentType = null;
-        $suffix      = null;
-        $download    = true;
+        $suffix = null;
+        $download = true;
 
         $result = '';
         switch ($format) {
             case IExportableTokenManager::FORMAT_CSV:
-                $result      = $tokenManager->exportCsv($request->query->all());
+                $result = $tokenManager->exportCsv($request->query->all());
                 $contentType = 'text/csv';
-                $suffix      = 'csv';
+                $suffix = 'csv';
                 break;
 
             case IExportableTokenManager::FORMAT_PLAIN:
-                $result      = $tokenManager->exportPlain($request->query->all());
+                $result = $tokenManager->exportPlain($request->query->all());
                 $contentType = 'text/plain';
-                $suffix      = 'txt';
-                $download    = false;
+                $suffix = 'txt';
+                $download = false;
                 break;
 
             default:

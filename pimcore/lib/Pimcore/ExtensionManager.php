@@ -250,9 +250,9 @@ class ExtensionManager
             }
 
             $paths['plugin'][$pluginName] = [
-                'js'           => static::resolveAssetPaths($pluginConfig['plugin'], 'js'),
-                'css'          => static::resolveAssetPaths($pluginConfig['plugin'], 'css'),
-                'editmode_js'  => static::resolveAssetPaths($pluginConfig['plugin'], 'js', 'editmode'),
+                'js' => static::resolveAssetPaths($pluginConfig['plugin'], 'js'),
+                'css' => static::resolveAssetPaths($pluginConfig['plugin'], 'css'),
+                'editmode_js' => static::resolveAssetPaths($pluginConfig['plugin'], 'js', 'editmode'),
                 'editmode_css' => static::resolveAssetPaths($pluginConfig['plugin'], 'css', 'editmode'),
             ];
         }
@@ -296,7 +296,7 @@ class ExtensionManager
                     $paths = $pluginConfig[$key]['path'];
                     break;
                 } elseif (null !== $pluginConfig[$key]['path']) {
-                    $paths[]  = $pluginConfig[$key]['path'];
+                    $paths[] = $pluginConfig[$key]['path'];
                     break;
                 }
             }

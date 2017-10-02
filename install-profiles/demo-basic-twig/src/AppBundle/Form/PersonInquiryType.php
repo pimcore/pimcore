@@ -22,41 +22,41 @@ class PersonInquiryType extends AbstractType
     {
         $builder
             ->add('gender', ChoiceType::class, [
-                'label'    => 'Gender',
+                'label' => 'Gender',
                 'required' => true,
 
                 // when working with objects, you could fetch the available
                 // choices from the field definition - we kept it hardcoded
                 // here for simplicity
-                'choices'  => [
+                'choices' => [
                     'Female' => 'female',
-                    'Male'   => 'male'
+                    'Male' => 'male'
                 ]
             ])
             ->add('firstname', TextType::class, [
-                'label'       => 'Firstname',
-                'required'    => true,
+                'label' => 'Firstname',
+                'required' => true,
                 'constraints' => [ // validation constraints
                     new Length(['min' => 5])
                 ]
             ])
             ->add('lastname', TextType::class, [
-                'label'    => 'Lastname',
+                'label' => 'Lastname',
                 'required' => true
             ])
             ->add('email', EmailType::class, [
-                'label'    => 'E-Mail',
+                'label' => 'E-Mail',
                 'required' => true,
-                'attr'     => [
+                'attr' => [
                     'placeholder' => 'example@example.com'
                 ]
             ])
             ->add('message', TextareaType::class, [
-                'label'    => 'Message',
+                'label' => 'Message',
                 'required' => true
             ])
             ->add('terms', CheckboxType::class, [
-                'label'    => 'I accept the terms of use',
+                'label' => 'I accept the terms of use',
                 'required' => true
             ])
             ->add('submit', SubmitType::class, [

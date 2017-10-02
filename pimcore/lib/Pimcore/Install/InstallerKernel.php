@@ -89,8 +89,8 @@ class InstallerKernel extends Kernel
     {
         // configure bundles
         $c->loadFromExtension('framework', [
-            'secret'     => uniqid('installer-', true),
-            'profiler'   => false,
+            'secret' => uniqid('installer-', true),
+            'profiler' => false,
             'templating' => ['engines' => ['twig']],
             'php_errors' => [
                 'log' => true
@@ -98,10 +98,10 @@ class InstallerKernel extends Kernel
         ]);
 
         $c->loadFromExtension('twig', [
-            'debug'            => '%kernel.debug%',
+            'debug' => '%kernel.debug%',
             'strict_variables' => '%kernel.debug%',
-            'paths'            => [
-                __DIR__ . '/Resources/views/Install'               => 'install',
+            'paths' => [
+                __DIR__ . '/Resources/views/Install' => 'install',
                 __DIR__ . '/../Bundle/AdminBundle/Resources/views' => 'PimcoreAdminBundle'
             ]
         ]);
@@ -109,15 +109,15 @@ class InstallerKernel extends Kernel
         $c->loadFromExtension('monolog', [
             'handlers' => [
                 'main' => [
-                    'type'     => 'stream',
-                    'path'     => '%kernel.logs_dir%/%kernel.environment%.log',
-                    'level'    => 'debug',
+                    'type' => 'stream',
+                    'path' => '%kernel.logs_dir%/%kernel.environment%.log',
+                    'level' => 'debug',
                     'channels' => ['!event']
                 ],
 
                 'console' => [
-                    'type'     => 'console',
-                    'level'    => 'debug',
+                    'type' => 'console',
+                    'level' => 'debug',
                     'channels' => ['!event'],
 
                     // make sure we show all logs on the console

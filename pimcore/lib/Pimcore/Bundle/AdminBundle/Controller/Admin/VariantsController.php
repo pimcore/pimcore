@@ -180,7 +180,7 @@ class VariantsController extends AdminController
                 $conditionFilters = ['o_parentId = ' . $parentObject->getId()];
                 // create filter condition
                 if ($request->get('filter')) {
-                    $conditionFilters[] =  DataObject\Service::getFilterCondition($request->get('filter'), $class);
+                    $conditionFilters[] = DataObject\Service::getFilterCondition($request->get('filter'), $class);
                 }
                 if ($request->get('condition')) {
                     $conditionFilters[] = '(' . $request->get('condition') . ')';

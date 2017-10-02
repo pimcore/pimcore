@@ -80,7 +80,7 @@ class ViewModelResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        $vars      = $this->templateVarsResolver->getTemplateVars($request);
+        $vars = $this->templateVarsResolver->getTemplateVars($request);
         $viewModel = new ViewModel($vars);
 
         return $viewModel;

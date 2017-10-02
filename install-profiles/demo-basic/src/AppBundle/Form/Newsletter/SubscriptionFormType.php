@@ -21,25 +21,25 @@ class SubscriptionFormType extends AbstractType
     {
         $builder
             ->add('gender', ChoiceType::class, [
-                'label'    => 'Gender',
+                'label' => 'Gender',
                 'required' => true,
-                'choices'  => [
+                'choices' => [
                     'Female' => 'female',
-                    'Male'   => 'male'
+                    'Male' => 'male'
                 ]
             ])
             ->add('firstname', TextType::class, [
-                'label'    => 'Firstname',
+                'label' => 'Firstname',
                 'required' => true
             ])
             ->add('lastname', TextType::class, [
-                'label'    => 'Lastname',
+                'label' => 'Lastname',
                 'required' => true
             ])
             ->add('email', EmailType::class, [
-                'label'    => 'E-Mail',
+                'label' => 'E-Mail',
                 'required' => true,
-                'attr'     => [
+                'attr' => [
                     'placeholder' => 'example@example.com'
                 ]
             ])

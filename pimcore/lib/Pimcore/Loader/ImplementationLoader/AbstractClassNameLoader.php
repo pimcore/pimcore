@@ -40,7 +40,7 @@ abstract class AbstractClassNameLoader implements LoaderInterface
         $params = array_values($params);
 
         $className = $this->getClassName($name);
-        $instance  = new $className(...$params);
+        $instance = new $className(...$params);
 
         return $instance;
     }

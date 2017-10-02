@@ -213,7 +213,7 @@ class Mail extends \Swift_Message
     public function init($type = 'email')
     {
         $systemConfig = \Pimcore\Config::getSystemConfig()->toArray();
-        $emailSettings =& $systemConfig[$type];
+        $emailSettings = & $systemConfig[$type];
 
         if ($emailSettings['sender']['email']) {
             $this->setFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);

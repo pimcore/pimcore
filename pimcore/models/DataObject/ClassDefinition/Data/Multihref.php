@@ -934,7 +934,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
             foreach ($value as $element) {
                 $type = Element\Service::getType($element);
                 $id = $element->getId();
-                $result[] =  [
+                $result[] = [
                     'type' => $type,
                     'id' => $id
                 ];

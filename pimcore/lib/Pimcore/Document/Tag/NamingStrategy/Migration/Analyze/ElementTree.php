@@ -76,7 +76,7 @@ final class ElementTree
      * @var array
      */
     private $blockTypes = [
-        'block'     => Block::class,
+        'block' => Block::class,
         'areablock' => Areablock::class
     ];
 
@@ -88,7 +88,7 @@ final class ElementTree
         Document\PageSnippet $document,
         ConflictResolverInterface $conflictResolver
     ) {
-        $this->document         = $document;
+        $this->document = $document;
         $this->conflictResolver = $conflictResolver;
     }
 
@@ -107,7 +107,7 @@ final class ElementTree
             return;
         }
 
-        $this->map[$name]  = $type;
+        $this->map[$name] = $type;
         $this->data[$name] = $data;
 
         if ($inherited && !in_array($name, $this->inheritedElements)) {
@@ -153,8 +153,8 @@ final class ElementTree
 
     private function reset()
     {
-        $this->processed       = false;
-        $this->elements        = [];
+        $this->processed = false;
+        $this->elements = [];
         $this->ignoredElements = [];
     }
 
@@ -169,10 +169,10 @@ final class ElementTree
         $this->inheritedElements = array_unique($this->inheritedElements);
         sort($this->inheritedElements);
 
-        $blockNames            = $this->getBlockNames();
+        $blockNames = $this->getBlockNames();
         $blockParentCandidates = $this->findBlockParentCandidates($blockNames);
-        $blocks                = $this->buildBlocks($blockNames, $blockParentCandidates);
-        $editables             = $this->buildEditables($this->getBlocksSortedByLevel($blocks));
+        $blocks = $this->buildBlocks($blockNames, $blockParentCandidates);
+        $editables = $this->buildEditables($this->getBlocksSortedByLevel($blocks));
 
         // just add not inherited elements to elements array
         $this->elements = [];
@@ -363,7 +363,7 @@ final class ElementTree
             }
 
             $resolvedBlocks = [];
-            $errors         = [];
+            $errors = [];
 
             // try to build a candidate block - set parent check will fail if parent indexes can not match
             foreach ($candidateBlocks as $candidateBlock) {
@@ -442,7 +442,7 @@ final class ElementTree
                 if (preg_match($pattern, $matchingBlockName, $match)) {
                     if (isset($match['indexes']) && !empty($match['indexes'])) {
                         $indexes = explode('_', $match['indexes']);
-                        $index   = (int)array_pop($indexes);
+                        $index = (int)array_pop($indexes);
 
                         if ($tmpBlock->hasChildIndex($index)) {
                             $parentCandidates[$matchingBlockName][] = $blockName;
@@ -467,7 +467,7 @@ final class ElementTree
      */
     private function reduceBlockParentCandidates(array $parentCandidates): array
     {
-        $changed       = false;
+        $changed = false;
         $directParents = $this->buildDirectParents($parentCandidates);
 
         foreach ($parentCandidates as $name => $candidates) {
@@ -480,7 +480,7 @@ final class ElementTree
                 // check if the parent of the candidate is in our candidates list
                 // if found (array_keys has a result), remove the parent from our candidates list
                 if (isset($directParents[$candidate])) {
-                    $parent          = $directParents[$candidate];
+                    $parent = $directParents[$candidate];
                     $indexesToRemove = array_merge($indexesToRemove, array_keys($candidates, $parent));
                 }
             }

@@ -49,7 +49,7 @@ class BruteforceProtectionListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::CONTROLLER => 'onKernelController',
-            KernelEvents::EXCEPTION  => 'onKernelException'
+            KernelEvents::EXCEPTION => 'onKernelException'
         ];
     }
 

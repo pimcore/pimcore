@@ -16,7 +16,7 @@ $migrations = [];
 
 // queries as documented in migration guide
 $migrations['pre update scripts'] = function () {
-    $db     = Db::get();
+    $db = Db::get();
     $schema = $db->getSchemaManager()->createSchema();
 
     if (!$schema->getTable('documents_page')->hasColumn('legacy')) {
@@ -45,7 +45,7 @@ $migrations['pre update scripts'] = function () {
 
 // build 48
 $migrations[48] = function () {
-    $db     = Db::get();
+    $db = Db::get();
     $schema = $db->getSchemaManager()->createSchema();
 
     if (!$schema->getTable('schedule_tasks')->hasColumn('version')) {

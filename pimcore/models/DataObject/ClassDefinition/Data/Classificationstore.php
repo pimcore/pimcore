@@ -162,7 +162,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                     $childData = new DataObject\Data\CalculatedValue($this->getName());
                     $childData->setContextualData('classificationstore', $this->getName(), null, $language, $groupId, $keyId, $childDef);
                     $childData = $childDef->getDataForEditmode($childData, $object, $params);
-                    $result['data'][$language][$groupId][$keyId]= $childData;
+                    $result['data'][$language][$groupId][$keyId] = $childData;
                 }
             }
         }
@@ -924,7 +924,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
         if ($errors) {
             $messages = [];
             foreach ($errors as $e) {
-                $messages[]= $e->getMessage() . ' (' . $validLanguage . ')';
+                $messages[] = $e->getMessage() . ' (' . $validLanguage . ')';
             }
             $validationException = new Model\Element\ValidationException(implode(', ', $messages));
             $validationException->setSubItems($errors);
@@ -1164,7 +1164,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                         $context['class'] = $object->getClass();
                         $context['ownerType'] = 'classificationstore';
                         $context['ownerName'] = $this->getName();
-                        $context['keyId'] =  $keyGroupRelation->getKeyId();
+                        $context['keyId'] = $keyGroupRelation->getKeyId();
                         $context['groupId'] = $keyGroupRelation->getGroupId();
                         $context['keyDefinition'] = $definition;
                         $definition = $definition->enrichLayoutDefinition($object, $context);

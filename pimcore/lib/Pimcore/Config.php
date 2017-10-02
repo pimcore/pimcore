@@ -528,7 +528,7 @@ class Config
                     $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
-                    $cfConfigMapping[$customViewId]= $tmpData;
+                    $cfConfigMapping[$customViewId] = $tmpData;
                 }
             }
         }

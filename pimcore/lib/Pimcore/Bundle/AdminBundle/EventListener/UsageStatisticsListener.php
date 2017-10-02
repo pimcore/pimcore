@@ -71,7 +71,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
     protected function logUsageStatistics(Request $request)
     {
         $params = $this->getParams($request);
-        $user   = $this->userResolver->getUser();
+        $user = $this->userResolver->getUser();
 
         $parts = [
             $user ? $user->getId() : '0',

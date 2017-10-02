@@ -402,10 +402,10 @@ class ImageMagick extends Adapter
             //defines the position in order to the origin value
             switch ($origin) {
                 case 'top-right':
-                    $x =  $this->getWidth() - $overlayImage->getWidth() - $x;
+                    $x = $this->getWidth() - $overlayImage->getWidth() - $x;
                     break;
                 case 'bottom-left':
-                    $y =  $this->getHeight() - $overlayImage->getHeight() - $y;
+                    $y = $this->getHeight() - $overlayImage->getHeight() - $y;
                     break;
                 case 'bottom-right':
                     $x = $this->getWidth() - $overlayImage->getWidth() - $x;

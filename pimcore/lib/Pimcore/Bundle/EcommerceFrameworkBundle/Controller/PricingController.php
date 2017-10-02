@@ -307,7 +307,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
         return $this->json([
             'condition' => array_keys($pricingManager->getConditionMapping()),
-            'action'    => array_keys($pricingManager->getActionMapping())
+            'action' => array_keys($pricingManager->getActionMapping())
         ]);
     }
 

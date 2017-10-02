@@ -178,7 +178,7 @@ abstract class AbstractTokenManager implements ITokenManager
     public function exportPlain(array $params)
     {
         $result = [];
-        $data   = null;
+        $data = null;
 
         try {
             $data = $this->getExportData($params);

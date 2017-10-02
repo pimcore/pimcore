@@ -132,8 +132,8 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                         $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
                             'username' => $username,
-                            'token'    => $token,
-                            'reset'    => 'true'
+                            'token' => $token,
+                            'reset' => 'true'
                         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
                         try {
@@ -204,7 +204,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $bundleManager = $this->get('pimcore.extension.bundle_manager');
 
         $view = new ViewModel([
-            'config'         => Config::getSystemConfig(),
+            'config' => Config::getSystemConfig(),
             'pluginCssPaths' => $bundleManager->getCssPaths()
         ]);
 

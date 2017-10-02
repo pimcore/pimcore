@@ -69,7 +69,7 @@ class PostStateChange
         }
 
         $runAssetsInstall = $input->getOption('no-assets-install') ? false : true;
-        $runCacheClear    = $input->getOption('no-cache-clear') ? false : true;
+        $runCacheClear = $input->getOption('no-cache-clear') ? false : true;
 
         $commands = [];
 
@@ -97,7 +97,7 @@ class PostStateChange
     {
         $this->writeCommandInfo($io, $command, $arguments);
 
-        $command   = $this->application->find($command);
+        $command = $this->application->find($command);
         $arguments = array_merge(['command' => $command], $arguments);
 
         $code = $command->run(new ArrayInput($arguments), $io);

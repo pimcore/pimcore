@@ -23,7 +23,7 @@ class DefaultBrickGetterSequence implements IGetter
 
     public function get($object, $config = null)
     {
-        $config     = $this->resolveOptions($config ?? []);
+        $config = $this->resolveOptions($config ?? []);
         $sourceList = $config['source'];
 
         // normalize single entry to list

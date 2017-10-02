@@ -63,7 +63,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
                 // if we need previous tags, update the query to join the tags table and to return them as result
                 yield $row['id'] => [
                     'value' => $value,
-                    'tags'  => []
+                    'tags' => []
                 ];
             }
         }
@@ -79,7 +79,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
     protected function doHave($id)
     {
         $result = $this->db->fetchColumn('SELECT 1 FROM cache WHERE id = :id AND (expire IS NULL OR expire > :time)', [
-            'id'   => $id,
+            'id' => $id,
             'time' => time()
         ]);
 
@@ -120,7 +120,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
         $this->db->beginTransaction();
 
         $cacheStmt = $this->db->prepare('DELETE FROM cache WHERE id = ?');
-        $tagsStmt  = $this->db->prepare('DELETE FROM cache_tags WHERE id = ?');
+        $tagsStmt = $this->db->prepare('DELETE FROM cache_tags WHERE id = ?');
 
         try {
             foreach ($ids as $id) {
@@ -206,10 +206,10 @@ INSERT INTO
 SQL;
 
                 $stmt = $this->db->executeQuery($insertQuery, [
-                    'id'     => $item->getKey(),
-                    'data'   => $this->serializeData($item->get()),
+                    'id' => $item->getKey(),
+                    'data' => $this->serializeData($item->get()),
                     'expire' => $item->getExpiry(),
-                    'mtime'  => time()
+                    'mtime' => time()
                 ]);
 
                 $result = $stmt->execute();
@@ -222,7 +222,7 @@ SQL;
                     $this->removeNotMatchingTags($item->getKey(), $tags);
 
                     $tagQuery = 'INSERT INTO cache_tags (id, tag) VALUES (?, ?) ON DUPLICATE KEY UPDATE tag = VALUES(tag)';
-                    $tagStmt  = $this->db->prepare($tagQuery);
+                    $tagStmt = $this->db->prepare($tagQuery);
 
                     while ($tag = array_shift($tags)) {
                         $tagStmt->execute([$item->getKey(), $tag]);
@@ -275,7 +275,7 @@ SQL;
     {
         // TODO purge tags only if expired items job was successful?
         $items = $this->purgeExpiredItems();
-        $tags  = $this->purgeOrphanedTags();
+        $tags = $this->purgeOrphanedTags();
 
         return $items && $tags;
     }
@@ -286,7 +286,7 @@ SQL;
     protected function purgeExpiredItems()
     {
         $stmt = $this->db->executeQuery('SELECT id FROM cache WHERE expire < UNIX_TIMESTAMP() OR mtime < (UNIX_TIMESTAMP() - 864000)');
-        $ids  = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $ids = $stmt->fetchAll(\PDO::FETCH_COLUMN);
 
         if (!empty($ids)) {
             return $this->deleteItems($ids);
@@ -310,7 +310,7 @@ SQL;
 
             while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                 $deleteStmt->execute([
-                    'id'  => $row['id'],
+                    'id' => $row['id'],
                     'tag' => $row['tag']
                 ]);
             }

@@ -477,7 +477,7 @@ class Asset extends Element\AbstractElement
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
         $maxRetries = 5;
-        for ($retries=0; $retries < $maxRetries; $retries++) {
+        for ($retries = 0; $retries < $maxRetries; $retries++) {
             $this->beginTransaction();
 
             try {

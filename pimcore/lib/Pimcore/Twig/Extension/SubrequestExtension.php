@@ -35,7 +35,7 @@ class SubrequestExtension extends \Twig_Extension
      */
     public function __construct(Inc $incHelper, Action $actionHelper)
     {
-        $this->incHelper    = $incHelper;
+        $this->incHelper = $incHelper;
         $this->actionHelper = $actionHelper;
     }
 

@@ -77,8 +77,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     ) {
         $this->documentResolver = $documentResolver;
         $this->editmodeResolver = $editmodeResolver;
-        $this->requestHelper    = $requestHelper;
-        $this->userLoader       = $userLoader;
+        $this->requestHelper = $requestHelper;
+        $this->userLoader = $userLoader;
     }
 
     /**
@@ -151,7 +151,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $version = Version::getById($request->get('v'));
                 if ($version->getPublic()) {
                     $this->logger->info('Setting version to {version} for document {document}', [
-                        'version'  => $version->getId(),
+                        'version' => $version->getId(),
                         'document' => $document->getFullPath()
                     ]);
 
@@ -159,7 +159,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 }
             } catch (\Exception $e) {
                 $this->logger->notice('Failed to load {version} for document {document}', [
-                    'version'  => $request->get('v'),
+                    'version' => $request->get('v'),
                     'document' => $document->getFullPath()
                 ]);
             }
@@ -182,7 +182,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
             if ($request->get('_ptp')) {
                 $this->logger->info('Setting persona to {persona} for document {document}', [
-                    'persona'  => $request->get('_ptp'),
+                    'persona' => $request->get('_ptp'),
                     'document' => $document->getFullPath()
                 ]);
 
@@ -214,7 +214,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // why was it an object?
             // $docKey = "document_" . $this->getParam("document")->getId();
 
-            $docKey     = 'document_' . $document->getId();
+            $docKey = 'document_' . $document->getId();
             $docSession = Session::getReadOnly('pimcore_documents');
 
             if ($docSession->has($docKey)) {
@@ -231,16 +231,16 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         if ($request->get('pimcore_version')) {
             // TODO there was a check with a registry flag here - check if the master request handling is sufficient
             try {
-                $version  = Version::getById($request->get('pimcore_version'));
+                $version = Version::getById($request->get('pimcore_version'));
                 $document = $version->getData();
 
                 $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
-                    'version'  => $version->getId(),
+                    'version' => $version->getId(),
                     'document' => $document->getFullPath()
                 ]);
             } catch (\Exception $e) {
                 $this->logger->warning('Failed to load {version} for document {document} from pimcore_version parameter', [
-                    'version'  => $request->get('pimcore_version'),
+                    'version' => $request->get('pimcore_version'),
                     'document' => $document->getFullPath()
                 ]);
 
@@ -260,7 +260,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     protected function handleEditmode(Document $document)
     {
         // check if there is the document in the session
-        $docKey     = 'document_' . $document->getId();
+        $docKey = 'document_' . $document->getId();
         $docSession = Session::getReadOnly('pimcore_documents');
 
         if ($docSession->has($docKey)) {
@@ -304,7 +304,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 $object = $session->get($key);
 
                 $this->logger->debug('Loading object {object} ({objectId}) from session', [
-                    'object'   => $object->getFullPath(),
+                    'object' => $object->getFullPath(),
                     'objectId' => $object->getId()
                 ]);
 

@@ -94,13 +94,13 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         RequestHelper $requestHelper,
         TranslatorInterface $translator
     ) {
-        $this->brickManager    = $brickManager;
-        $this->templating      = $templating;
-        $this->bundleLocator   = $bundleLocator;
+        $this->brickManager = $brickManager;
+        $this->templating = $templating;
+        $this->bundleLocator = $bundleLocator;
         $this->webPathResolver = $webPathResolver;
-        $this->actionRenderer  = $actionRenderer;
-        $this->requestHelper   = $requestHelper;
-        $this->translator      = $translator;
+        $this->actionRenderer = $actionRenderer;
+        $this->requestHelper = $requestHelper;
+        $this->translator = $translator;
     }
 
     /**
@@ -172,10 +172,10 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
             }
 
             $areas[$brick->getId()] = [
-                'name'        => $name,
+                'name' => $name,
                 'description' => $desc,
-                'type'        => $brick->getId(),
-                'icon'        => $icon,
+                'type' => $brick->getId(),
+                'icon' => $icon,
             ];
         }
 
@@ -187,11 +187,11 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      */
     public function renderAreaFrontend(Info $info)
     {
-        $tag    = $info->getTag();
+        $tag = $info->getTag();
         $params = $info->getParams();
 
         /** @var ViewModelInterface $view */
-        $view  = $tag->getView();
+        $view = $tag->getView();
         $brick = $this->brickManager->getBrick($info->getId());
 
         $info->setView($view);
@@ -200,8 +200,8 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         // assign parameters to view
         $view->getParameters()->add($params);
         $view->getParameters()->add([
-            'brick'    => $info, // alias of `info` for compatibility reasons
-            'info'     => $info,
+            'brick' => $info, // alias of `info` for compatibility reasons
+            'info' => $info,
             'instance' => $brick,
         ]);
 

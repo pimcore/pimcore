@@ -513,7 +513,7 @@ class DefaultMysql implements IProductList
     {
         $excludedFieldName = $fieldname;
         if (!$fieldnameShouldBeExcluded) {
-            $excludedFieldName=null;
+            $excludedFieldName = null;
         }
         if ($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             return $this->resource->loadGroupByValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, IProductList::VARIANT_MODE_INCLUDE), $countValues);
@@ -531,11 +531,11 @@ class DefaultMysql implements IProductList
      *
      * @throws \Exception
      */
-    public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded=true)
+    public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
-        $excludedFieldName=$fieldname;
+        $excludedFieldName = $fieldname;
         if (!$fieldnameShouldBeExcluded) {
-            $excludedFieldName=null;
+            $excludedFieldName = null;
         }
         if ($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, IProductList::VARIANT_MODE_INCLUDE), $countValues);

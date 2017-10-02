@@ -113,7 +113,7 @@ class MultiCartManager implements ICartManager
                 } else {
                     // cart is already committed - cleanup cart and environment
                     $this->logger->warning('Deleting cart with id {cartId} because linked order {orderId} is already committed.', [
-                        'cartId'  => $cart->getId(),
+                        'cartId' => $cart->getId(),
                         'orderId' => $order->getId()
                     ]);
 

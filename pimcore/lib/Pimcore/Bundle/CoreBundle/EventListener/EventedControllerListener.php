@@ -29,7 +29,7 @@ class EventedControllerListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::CONTROLLER => 'onKernelController',
-            KernelEvents::RESPONSE   => 'onKernelResponse'
+            KernelEvents::RESPONSE => 'onKernelResponse'
         ];
     }
 
@@ -43,7 +43,7 @@ class EventedControllerListener implements EventSubscriberInterface
             return;
         }
 
-        $request    = $event->getRequest();
+        $request = $event->getRequest();
         $controller = $callable[0];
 
         if ($controller instanceof EventedControllerInterface) {
@@ -57,7 +57,7 @@ class EventedControllerListener implements EventSubscriberInterface
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $request    = $event->getRequest();
+        $request = $event->getRequest();
         $controller = $request->attributes->get('_evented_controller');
 
         if (!$controller || !($controller instanceof EventedControllerInterface)) {

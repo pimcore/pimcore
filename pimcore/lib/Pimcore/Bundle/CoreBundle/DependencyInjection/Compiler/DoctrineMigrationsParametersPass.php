@@ -35,7 +35,7 @@ class DoctrineMigrationsParametersPass implements CompilerPassInterface
     {
         // process an empty configuration to fetch default values
         $processor = new Processor();
-        $config    = $processor->processConfiguration(new Configuration(), []);
+        $config = $processor->processConfiguration(new Configuration(), []);
 
         // set values on container if not existing
         foreach ($config as $key => $value) {

@@ -949,7 +949,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . '?pimcore_version=';
 
         $fromUrl = $prefix . $from . '&' . $sessionName . '=' . $sessionId;
-        $toUrl   = $prefix . $to . '&' . $sessionName . '=' . $sessionId;
+        $toUrl = $prefix . $to . '&' . $sessionName . '=' . $sessionId;
 
         $toFileId = uniqid();
         $fromFileId = uniqid();
@@ -1328,15 +1328,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if (method_exists($document, 'getTitle') && method_exists($document, 'getDescription')) {
 
             // anaylze content
-            $nodeConfig['links']         = 0;
+            $nodeConfig['links'] = 0;
             $nodeConfig['externallinks'] = 0;
-            $nodeConfig['h1']            = 0;
-            $nodeConfig['h1_text']       = '';
-            $nodeConfig['hx']            = 0;
-            $nodeConfig['imgwithalt']    = 0;
+            $nodeConfig['h1'] = 0;
+            $nodeConfig['h1_text'] = '';
+            $nodeConfig['hx'] = 0;
+            $nodeConfig['imgwithalt'] = 0;
             $nodeConfig['imgwithoutalt'] = 0;
 
-            $title       = null;
+            $title = null;
             $description = null;
 
             try {
@@ -1345,15 +1345,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 // $content = Document\Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
 
                 $contentUrl = $request->getScheme() . '://' . $request->getHttpHost() . $document->getFullPath();
-                $content    = Tool::getHttpData($contentUrl, ['pimcore_preview' => true, 'pimcore_admin' => true, '_dc' => time()]);
+                $content = Tool::getHttpData($contentUrl, ['pimcore_preview' => true, 'pimcore_admin' => true, '_dc' => time()]);
 
                 if ($content) {
                     include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
                     $html = str_get_html($content);
                     if ($html) {
-                        $nodeConfig['links']         = count($html->find('a'));
+                        $nodeConfig['links'] = count($html->find('a'));
                         $nodeConfig['externallinks'] = count($html->find('a[href^=http]'));
-                        $nodeConfig['h1']            = count($html->find('h1'));
+                        $nodeConfig['h1'] = count($html->find('h1'));
 
                         $h1 = $html->find('h1', 0);
                         if ($h1) {
@@ -1399,10 +1399,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $description = $document->getDescription();
             }
 
-            $nodeConfig['title']       = $title;
+            $nodeConfig['title'] = $title;
             $nodeConfig['description'] = $description;
 
-            $nodeConfig['title_length']       = mb_strlen($title);
+            $nodeConfig['title_length'] = mb_strlen($title);
             $nodeConfig['description_length'] = mb_strlen($description);
 
             $qtip = '';

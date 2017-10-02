@@ -51,9 +51,9 @@ class Profile
 
     public function __construct(string $id, string $path, array $config)
     {
-        $this->id     = $id;
-        $this->name   = $config['name'] ?? $id;
-        $this->path   = $path;
+        $this->id = $id;
+        $this->name = $config['name'] ?? $id;
+        $this->path = $path;
         $this->config = $config;
     }
 
@@ -73,12 +73,12 @@ class Profile
             return $this->filesToAdd;
         }
 
-        $files  = [];
+        $files = [];
         $prefix = $this->path . '/';
 
         foreach ($this->config['files']['add'] as $entry) {
             $pathEntry = $prefix . ltrim($entry, '/');
-            $glob      = glob($pathEntry);
+            $glob = glob($pathEntry);
 
             foreach ($glob as $file) {
                 // key is the full path to the source file, value the relative
@@ -147,7 +147,7 @@ class Profile
         }
 
         $dbFiles = [];
-        $prefix  = $this->path . '/';
+        $prefix = $this->path . '/';
 
         foreach ($this->config['db']['data_files'] as $dbFile) {
             $path = $prefix . '/' . ltrim($dbFile, '/');

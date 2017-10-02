@@ -212,7 +212,7 @@ class ClassManager extends Module
      */
     protected function resolveFilePath($filename)
     {
-        $fs   = new Filesystem();
+        $fs = new Filesystem();
         $path = $filename;
 
         // prepend standard resources dir if relative path

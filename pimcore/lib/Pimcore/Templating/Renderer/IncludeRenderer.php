@@ -57,7 +57,7 @@ class IncludeRenderer
         }
 
         // check if output-cache is enabled, if so, we're also using the cache here
-        $cacheKey    = null;
+        $cacheKey = null;
         $cacheConfig = false;
 
         if ($cacheEnabled) {
@@ -110,7 +110,7 @@ class IncludeRenderer
             }
         }
 
-        $params  = array_merge($params, ['document' => $include]);
+        $params = array_merge($params, ['document' => $include]);
         $content = '';
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
@@ -196,9 +196,9 @@ class IncludeRenderer
             $childs = $html->find('*');
             if (is_array($childs)) {
                 foreach ($childs as $child) {
-                    $child->class        = $child->class . $editmodeClass;
+                    $child->class = $child->class . $editmodeClass;
                     $child->pimcore_type = $include->getType();
-                    $child->pimcore_id   = $include->getId();
+                    $child->pimcore_id = $include->getId();
                 }
             }
             $content = $html->save();

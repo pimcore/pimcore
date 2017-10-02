@@ -162,9 +162,9 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
                         $allowedTypes[] = $t;
                     } elseif (is_array($t) && count($t) > 0) {
                         if (isset($t['assetTypes'])) {
-                            $allowedTypes[]= $t['assetTypes'];
+                            $allowedTypes[] = $t['assetTypes'];
                         } else {
-                            $allowedTypes[]= $t;
+                            $allowedTypes[] = $t;
                         }
                     }
                 }

@@ -29,17 +29,17 @@ class SearchBackendListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DataObjectEvents::POST_ADD  => 'onPostAddElement',
-            DocumentEvents::POST_ADD  => 'onPostAddElement',
-            AssetEvents::POST_ADD  => 'onPostAddElement',
+            DataObjectEvents::POST_ADD => 'onPostAddElement',
+            DocumentEvents::POST_ADD => 'onPostAddElement',
+            AssetEvents::POST_ADD => 'onPostAddElement',
 
             DataObjectEvents::PRE_DELETE => 'onPreDeleteElement',
             DocumentEvents::PRE_DELETE => 'onPreDeleteElement',
             AssetEvents::PRE_DELETE => 'onPreDeleteElement',
 
-            DataObjectEvents::POST_UPDATE  => 'onPostUpdateElement',
-            DocumentEvents::POST_UPDATE  => 'onPostUpdateElement',
-            AssetEvents::POST_UPDATE  => 'onPostUpdateElement',
+            DataObjectEvents::POST_UPDATE => 'onPostUpdateElement',
+            DocumentEvents::POST_UPDATE => 'onPostUpdateElement',
+            AssetEvents::POST_UPDATE => 'onPostUpdateElement',
         ];
     }
 

@@ -57,17 +57,17 @@ class ContentController extends FrontendController
         /** @var Form $form */
         $form = $this->createFormBuilder()
             ->add('firstname', TextType::class, [
-                'label'       => 'Firstname',
-                'required'    => true
+                'label' => 'Firstname',
+                'required' => true
             ])
             ->add('lastname', TextType::class, [
-                'label'    => 'Lastname',
+                'label' => 'Lastname',
                 'required' => true
             ])
             ->add('email', EmailType::class, [
-                'label'    => 'E-Mail',
+                'label' => 'E-Mail',
                 'required' => true,
-                'attr'     => [
+                'attr' => [
                     'placeholder' => 'example@example.com'
                 ]
             ])
@@ -94,7 +94,7 @@ class ContentController extends FrontendController
 
         // add success state and form view to the view
         $this->view->success = $success;
-        $this->view->form    = $form->createView();
+        $this->view->form = $form->createView();
     }
 
     /**

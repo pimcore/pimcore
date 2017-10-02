@@ -42,9 +42,9 @@ final class MappingError
      */
     public function __construct(Document $document, \Throwable $exception)
     {
-        $this->documentId   = $document->getId();
+        $this->documentId = $document->getId();
         $this->documentPath = $document->getRealFullPath();
-        $this->exception    = $exception;
+        $this->exception = $exception;
     }
 
     /**

@@ -200,7 +200,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
             $value = $this->decodeData($entry[static::FIELD_DATA]);
             $value = $this->unserializeData($value);
 
-            $tags    = [];
+            $tags = [];
             $tagData = $this->decodeData($entry[static::FIELD_TAGS]);
 
             if (!empty($tagData)) {
@@ -209,7 +209,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
             yield $ids[$idx] => [
                 'value' => $value,
-                'tags'  => $tags
+                'tags' => $tags
             ];
         }
     }
@@ -293,7 +293,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                 $this->redis->sRem(static::PREFIX_TAG_IDS . $tag, $id);
             }
 
-            $result      = $this->redis->exec();
+            $result = $this->redis->exec();
             $totalResult = $totalResult && count($result) > 0 && $result[0] !== false;
         }
 
@@ -333,23 +333,23 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      */
     protected function commitItem(PimcoreCacheItemInterface $item)
     {
-        $id  = $item->getKey();
+        $id = $item->getKey();
         $now = time();
 
         $lifetime = null;
-        $expiry   = $item->getExpiry();
-        $data     = $this->serializeData($item->get());
-        $tags     = $item->getTags();
+        $expiry = $item->getExpiry();
+        $data = $this->serializeData($item->get());
+        $tags = $item->getTags();
 
         if ($expiry) {
             $lifetime = $expiry - $now;
         }
 
         $values = [
-            static::FIELD_DATA  => $this->encodeData($data, $this->compressData),
-            static::FIELD_TAGS  => $this->encodeData(implode(',', $tags), $this->compressTags),
+            static::FIELD_DATA => $this->encodeData($data, $this->compressData),
+            static::FIELD_TAGS => $this->encodeData(implode(',', $tags), $this->compressTags),
             static::FIELD_MTIME => $now,
-            static::FIELD_INF   => $lifetime ? 0 : 1,
+            static::FIELD_INF => $lifetime ? 0 : 1,
         ];
 
         if ($this->useLua) {
@@ -553,9 +553,9 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                 ($this->notMatchingTags ? 1 : 0)
             ];
 
-            $allTags   = (array)$this->redis->sMembers(static::SET_TAGS);
+            $allTags = (array)$this->redis->sMembers(static::SET_TAGS);
             $tagsCount = count($allTags);
-            $counter   = 0;
+            $counter = 0;
             $tagsBatch = [];
 
             foreach ($allTags as $tag) {
@@ -617,14 +617,14 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         }
 
         $exists = [];
-        $tags   = (array)$this->redis->sMembers(static::SET_TAGS);
+        $tags = (array)$this->redis->sMembers(static::SET_TAGS);
 
         foreach ($tags as $tag) {
             // Get list of expired ids for each tag
-            $tagMembers    = $this->redis->sMembers(static::PREFIX_TAG_IDS . $tag);
+            $tagMembers = $this->redis->sMembers(static::PREFIX_TAG_IDS . $tag);
             $numTagMembers = count($tagMembers);
-            $expired       = [];
-            $numExpired    = $numNotExpired = 0;
+            $expired = [];
+            $numExpired = $numNotExpired = 0;
 
             if ($numTagMembers) {
                 while ($id = array_pop($tagMembers)) {
