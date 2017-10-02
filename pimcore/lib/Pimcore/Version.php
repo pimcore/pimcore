@@ -29,7 +29,7 @@ class Version
     /**
      * @var string
      */
-    public static $buildDate = '2017-10-02T13:04:04+00:00';
+    public static $buildDate = '2017-10-02T12:26:37+00:00';
 
     /**
      * @return string
