@@ -93,7 +93,7 @@
     "oyejorge/less.php": "~1.7",
     "pear/net_url2": "~2.2",
     "phive/twig-extensions-deferred": "^2.0",
-    "pimcore/core-version": "v5.0.1",
+    "pimcore/core-version": "v5.0.0",
     "ramsey/uuid": "~3",
     "sabre/dav": "~3.1",
     "sensio/distribution-bundle": "^5.0.19",

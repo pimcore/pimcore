@@ -49,7 +49,7 @@ class QueryParams
                 $groupId = $groupKeyId[0];
                 $keyid = $groupKeyId[1];
 
-                return ['fieldname' => $fieldname, 'groupId' => $groupId, 'keyId' => $keyid, 'order' => $order, 'isFeature' => 1];
+                return ['fieldname' => $fieldname, 'groupId' => $groupId, 'keyId'=> $keyid, 'order' => $order, 'isFeature' => 1];
             }
         }
 

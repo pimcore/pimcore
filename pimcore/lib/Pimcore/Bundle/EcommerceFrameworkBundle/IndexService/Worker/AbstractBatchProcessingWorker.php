@@ -91,7 +91,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
     {
         $categories = $object->getCategories();
         $categoryIds = [];
-        $parentCategoryIds = [];
+        $parentCategoryIds =[];
         $categoryIdPaths = [];
         if ($categories) {
             foreach ($categories as $c) {

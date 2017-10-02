@@ -52,7 +52,7 @@ class AssetsInstaller
      */
     public function __construct(KernelInterface $kernel, Serializer $serializer)
     {
-        $this->kernel = $kernel;
+        $this->kernel     = $kernel;
         $this->serializer = $serializer;
     }
 
@@ -133,8 +133,8 @@ class AssetsInstaller
     private function configureOptions(OptionsResolver $resolver)
     {
         $defaults = [
-            'ansi' => false,
-            'symlink' => true,
+            'ansi'     => false,
+            'symlink'  => true,
             'relative' => true
         ];
 
@@ -142,12 +142,12 @@ class AssetsInstaller
         if (null !== $composerJsonSetting) {
             if ('symlink' === $composerJsonSetting) {
                 $defaults = array_merge([
-                    'symlink' => true,
+                    'symlink'  => true,
                     'relative' => false
                 ], $defaults);
             } elseif ('relative' === $composerJsonSetting) {
                 $defaults = array_merge([
-                    'symlink' => true,
+                    'symlink'  => true,
                     'relative' => true
                 ], $defaults);
             }

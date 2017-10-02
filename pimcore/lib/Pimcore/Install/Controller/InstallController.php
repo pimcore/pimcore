@@ -51,7 +51,7 @@ class InstallController extends AbstractController
         }, array_values($profileLocator->getProfiles()));
 
         return $this->render('@install/install.html.twig', [
-            'errors' => $installer->checkPrerequisites(),
+            'errors'   => $installer->checkPrerequisites(),
             'profiles' => $profiles
         ]);
     }
@@ -67,15 +67,15 @@ class InstallController extends AbstractController
         } else {
             return $this->json([
                 'success' => false,
-                'errors' => $errors
+                'errors'  => $errors
             ], 400);
         }
     }
 
     public function checkAction(Request $request)
     {
-        $checksPHP = Requirements::checkPhp();
-        $checksFS = Requirements::checkFilesystem();
+        $checksPHP  = Requirements::checkPhp();
+        $checksFS   = Requirements::checkFilesystem();
         $checksApps = Requirements::checkExternalApplications();
 
         $db = $this->buildDatabaseConnection($request);
@@ -87,11 +87,11 @@ class InstallController extends AbstractController
         }
 
         $viewParams = [
-            'checksApps' => $checksApps,
-            'checksPHP' => $checksPHP,
+            'checksApps'  => $checksApps,
+            'checksPHP'   => $checksPHP,
             'checksMySQL' => $checksMySQL,
-            'checksFS' => $checksFS,
-            'headless' => (bool)$request->get('headless')
+            'checksFS'    => $checksFS,
+            'headless'    => (bool)$request->get('headless')
         ];
 
         return $this->render('@PimcoreAdminBundle/Admin/Install/check.html.twig', $viewParams);
@@ -106,10 +106,10 @@ class InstallController extends AbstractController
     {
         try {
             $dbConfig = [
-                'user' => $request->get('mysql_username'),
-                'password' => $request->get('mysql_password'),
-                'dbname' => $request->get('mysql_database'),
-                'driver' => 'pdo_mysql',
+                'user'         => $request->get('mysql_username'),
+                'password'     => $request->get('mysql_password'),
+                'dbname'       => $request->get('mysql_database'),
+                'driver'       => 'pdo_mysql',
                 'wrapperClass' => Connection::class,
             ];
 

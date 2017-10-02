@@ -13,7 +13,7 @@ class PwnscriptumTest extends TestCase
     public function testNormalFrom()
     {
         $email = 'foo@example.com';
-        $name = 'Sender\'s name';
+        $name  = 'Sender\'s name';
 
         $mail = new Mail();
         $mail->setFrom($email, $name);

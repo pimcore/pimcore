@@ -63,9 +63,9 @@ class InfoController extends AbstractRestController
         $this->checkPermission('system_settings');
 
         $systemSettings = \Pimcore\Config::getSystemConfig()->toArray();
-        $system = [
+        $system         = [
             'currentTime' => time(),
-            'phpCli' => Console::getPhpCli(),
+            'phpCli'      => Console::getPhpCli(),
         ];
 
         $pimcoreConstants = []; // only Pimcore_ constants
@@ -76,10 +76,10 @@ class InfoController extends AbstractRestController
         }
 
         $pimcore = [
-            'version' => Version::getVersion(),
-            'revision' => Version::getRevision(),
+            'version'            => Version::getVersion(),
+            'revision'           => Version::getRevision(),
             'instanceIdentifier' => $systemSettings['general']['instanceIdentifier'],
-            'constants' => $pimcoreConstants,
+            'constants'          => $pimcoreConstants,
         ];
 
         // TODO add new bundles here
@@ -101,7 +101,7 @@ class InfoController extends AbstractRestController
         $this->checkPermission('translations');
 
         try {
-            $type = $request->get('type');
+            $type   = $request->get('type');
             $params = $request->query->all();
             $result = $this->service->getTranslations($type, $params);
 

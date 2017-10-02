@@ -43,8 +43,8 @@ class Job
      */
     public function __construct(string $id, $callable, array $arguments = [])
     {
-        $this->id = $id;
-        $this->callable = $callable;
+        $this->id        = $id;
+        $this->callable  = $callable;
         $this->arguments = $arguments;
     }
 

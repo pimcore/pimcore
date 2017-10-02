@@ -46,8 +46,8 @@ class DynamicRequestContext
      */
     public function __construct(Request $request, string $path, string $originalPath)
     {
-        $this->request = $request;
-        $this->path = $path;
+        $this->request      = $request;
+        $this->path         = $path;
         $this->originalPath = $originalPath;
     }
 

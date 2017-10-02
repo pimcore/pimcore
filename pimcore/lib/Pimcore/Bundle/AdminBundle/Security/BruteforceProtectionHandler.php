@@ -62,20 +62,20 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
     public function checkProtection($username = null, Request $request = null)
     {
         $username = $this->normalizeUsername($username);
-        $ip = $this->requestHelper->getAnonymizedClientIp($request);
+        $ip       = $this->requestHelper->getAnonymizedClientIp($request);
 
         $this->logger->info('Checking bruteforce protection for user {username} with ip {ip}', [
             'username' => $username,
-            'ip' => $ip
+            'ip'       => $ip
         ]);
 
-        $matchesIpOnly = 0;
+        $matchesIpOnly   = 0;
         $matchesUserOnly = 0;
-        $matchesUserIp = 0;
+        $matchesUserIp   = 0;
 
         $data = $this->getLogEntries();
         foreach ($data as $login) {
-            $matchIp = false;
+            $matchIp   = false;
             $matchUser = false;
 
             $time = strtotime($login[0]);
@@ -99,7 +99,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
         if ($matchesIpOnly > 49 || $matchesUserOnly > 9 || $matchesUserIp > 4) {
             $this->logger->warning('Security Alert: Too many login attempts for username {username} with IP {ip}', [
                 'username' => $username,
-                'ip' => $ip
+                'ip'       => $ip
             ]);
 
             throw new BruteforceProtectionException('Security Alert: Too many login attempts, please wait 5 minutes and try again.');
@@ -115,11 +115,11 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
     public function addEntry($username = null, Request $request = null)
     {
         $username = $this->normalizeUsername($username);
-        $ip = $this->requestHelper->getAnonymizedClientIp($request);
+        $ip       = $this->requestHelper->getAnonymizedClientIp($request);
 
         $this->logger->warning('Adding bruteforce entry for username {username} with IP {ip}', [
             'username' => $username,
-            'ip' => $ip
+            'ip'       => $ip
         ]);
 
         $this->writeLogEntry($username, $ip);
@@ -156,8 +156,8 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      */
     protected function getLogEntries()
     {
-        $data = $this->readLogFile();
-        $lines = explode("\n", $data);
+        $data    = $this->readLogFile();
+        $lines   = explode("\n", $data);
         $entries = [];
 
         if (is_array($lines) && count($lines) > 0) {
@@ -177,7 +177,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      */
     protected function writeLogEntry($username, $ip)
     {
-        $entries = $this->getLogEntries();
+        $entries   = $this->getLogEntries();
         $entries[] = [
             date(\DateTime::ISO8601),
             $ip ?: '',

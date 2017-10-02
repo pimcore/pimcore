@@ -36,9 +36,9 @@ abstract class AbstractBlockItem
 
     public function __construct(Document\PageSnippet $document, array $parentBlockNames, int $index)
     {
-        $this->document = $document;
+        $this->document         = $document;
         $this->parentBlockNames = $parentBlockNames;
-        $this->index = $index;
+        $this->index            = $index;
     }
 
     abstract protected function getItemType(): string;
@@ -52,7 +52,7 @@ abstract class AbstractBlockItem
     {
         $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
 
-        $id = $namingStrategy->buildChildElementTagName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
+        $id      = $namingStrategy->buildChildElementTagName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
         $element = $this->document->getElement($id);
 
         if ($element) {

@@ -42,7 +42,7 @@ chdir(__DIR__);
 
 if ($pimcoreConsole) {
     $input = new ArgvInput();
-    $env = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
+    $env   = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
     $debug = Pimcore::inDebugMode() && !$input->hasParameterOption(['--no-debug', '']);
 
     Config::setEnvironment($env);

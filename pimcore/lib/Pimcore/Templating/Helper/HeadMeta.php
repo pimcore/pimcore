@@ -65,7 +65,7 @@ class HeadMeta extends AbstractHelper
      *
      * @var array
      */
-    protected $_typeKeys = ['name', 'http-equiv', 'charset', 'property'];
+    protected $_typeKeys     = ['name', 'http-equiv', 'charset', 'property'];
     protected $_requiredKeys = ['content'];
     protected $_modifierKeys = ['lang', 'scheme'];
     protected $rawItems = [];
@@ -110,7 +110,7 @@ class HeadMeta extends AbstractHelper
     public function __invoke($content = null, $keyValue = null, $keyType = 'name', $modifiers = [], $placement = Container::APPEND)
     {
         if ((null !== $content) && (null !== $keyValue)) {
-            $item = $this->createData($keyType, $keyValue, $content, $modifiers);
+            $item   = $this->createData($keyType, $keyValue, $content, $modifiers);
             $action = strtolower($placement);
             switch ($action) {
                 case 'append':
@@ -167,9 +167,9 @@ class HeadMeta extends AbstractHelper
     {
         if (preg_match('/^(?P<action>set|(pre|ap)pend|offsetSet)(?P<type>Name|HttpEquiv|Property)$/', $method, $matches)) {
             $action = $matches['action'];
-            $type = $this->_normalizeType($matches['type']);
-            $argc = count($args);
-            $index = null;
+            $type   = $this->_normalizeType($matches['type']);
+            $argc   = count($args);
+            $index  = null;
 
             if ('offsetSet' == $action) {
                 if (0 < $argc) {
@@ -186,7 +186,7 @@ class HeadMeta extends AbstractHelper
                 $args[] = [];
             }
 
-            $item = $this->createData($type, $args[0], $args[1], $args[2]);
+            $item  = $this->createData($type, $args[0], $args[1], $args[2]);
 
             if ('offsetSet' == $action) {
                 return $this->offsetSet($index, $item);
@@ -407,10 +407,10 @@ class HeadMeta extends AbstractHelper
      */
     public function createData($type, $typeValue, $content, array $modifiers)
     {
-        $data = new \stdClass;
-        $data->type = $type;
-        $data->$type = $typeValue;
-        $data->content = $content;
+        $data            = new \stdClass;
+        $data->type      = $type;
+        $data->$type     = $typeValue;
+        $data->content   = $content;
         $data->modifiers = $modifiers;
 
         return $data;

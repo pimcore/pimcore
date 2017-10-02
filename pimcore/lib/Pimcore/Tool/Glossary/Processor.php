@@ -58,7 +58,7 @@ class Processor
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver
     ) {
-        $this->requestHelper = $requestHelper;
+        $this->requestHelper    = $requestHelper;
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
     }
@@ -95,8 +95,8 @@ class Processor
         $es = $html->find('text');
 
         $tmpData = [
-            'search' => [],
-            'replace' => [],
+            'search'      => [],
+            'replace'     => [],
             'placeholder' => []
         ];
 
@@ -116,7 +116,7 @@ class Processor
                 }
             }
 
-            $tmpData['search'][] = $entry['search'];
+            $tmpData['search'][]  = $entry['search'];
             $tmpData['replace'][] = $entry['replace'];
         }
 
@@ -192,9 +192,9 @@ class Processor
         $tmpData = [];
         foreach ($data as $d) {
             if ($d['text'] != htmlentities($d['text'], null, 'UTF-8')) {
-                $td = $d;
+                $td         = $d;
                 $td['text'] = htmlentities($d['text'], null, 'UTF-8');
-                $tmpData[] = $td;
+                $tmpData[]  = $td;
             }
 
             $tmpData[] = $d;
@@ -215,18 +215,18 @@ class Processor
                 $r = '<acronym class="pimcore_glossary" title="' . $d['acronym'] . '">' . $r . '</acronym>';
             }
 
-            $linkType = '';
+            $linkType   = '';
             $linkTarget = '';
 
             if ($d['link']) {
-                $linkType = 'external';
+                $linkType   = 'external';
                 $linkTarget = $d['link'];
 
                 if (intval($d['link'])) {
                     if ($doc = Document::getById($d['link'])) {
                         $d['link'] = $doc->getFullPath();
 
-                        $linkType = 'internal';
+                        $linkType   = 'internal';
                         $linkTarget = $doc->getId();
                     }
                 }
@@ -246,9 +246,9 @@ class Processor
             }
 
             $mappedData[] = [
-                'replace' => $r,
-                'search' => $d['text'],
-                'linkType' => $linkType,
+                'replace'    => $r,
+                'search'     => $d['text'],
+                'linkType'   => $linkType,
                 'linkTarget' => $linkTarget
             ];
         }

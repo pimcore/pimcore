@@ -40,7 +40,7 @@ class PimcoreStyle extends SymfonyStyle
      */
     public function __construct(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
+        $this->input  = $input;
         $this->output = $output;
 
         parent::__construct($input, $output);
@@ -74,8 +74,8 @@ class PimcoreStyle extends SymfonyStyle
         $underline = str_repeat($underlineChar, Helper::strlenWithoutDecoration($this->getFormatter(), $message));
 
         if (null !== $style) {
-            $format = '<%s>%s</>';
-            $message = sprintf($format, $style, $message);
+            $format    = '<%s>%s</>';
+            $message   = sprintf($format, $style, $message);
             $underline = sprintf($format, $style, $underline);
         }
 

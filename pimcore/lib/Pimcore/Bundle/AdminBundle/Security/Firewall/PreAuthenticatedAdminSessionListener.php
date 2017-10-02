@@ -58,9 +58,9 @@ class PreAuthenticatedAdminSessionListener implements ListenerInterface
         AuthenticationManagerInterface $authenticationManager,
         string $providerKey
     ) {
-        $this->tokenStorage = $tokenStorage;
+        $this->tokenStorage          = $tokenStorage;
         $this->authenticationManager = $authenticationManager;
-        $this->providerKey = $providerKey;
+        $this->providerKey           = $providerKey;
     }
 
     /**

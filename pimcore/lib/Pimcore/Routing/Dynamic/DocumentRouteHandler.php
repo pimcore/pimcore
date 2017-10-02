@@ -73,9 +73,9 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         RequestHelper $requestHelper,
         ConfigNormalizer $configNormalizer
     ) {
-        $this->documentService = $documentService;
-        $this->siteResolver = $siteResolver;
-        $this->requestHelper = $requestHelper;
+        $this->documentService  = $documentService;
+        $this->siteResolver     = $siteResolver;
+        $this->requestHelper    = $requestHelper;
         $this->configNormalizer = $configNormalizer;
     }
 

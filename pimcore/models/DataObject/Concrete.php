@@ -102,7 +102,7 @@ class Concrete extends AbstractObject
      */
     public function addLazyLoadedField($fieldName)
     {
-        $this->lazyLoadedFields[] = $fieldName;
+        $this->lazyLoadedFields[]=$fieldName;
     }
 
     /**

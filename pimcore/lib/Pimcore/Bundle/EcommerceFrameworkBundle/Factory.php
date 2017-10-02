@@ -125,14 +125,14 @@ class Factory
         ICommitOrderProcessorLocator $commitOrderProcessors,
         IFilterServiceLocator $filterServices
     ) {
-        $this->container = $container;
-        $this->cartManagers = $cartManagers;
-        $this->orderManagers = $orderManagers;
-        $this->priceSystems = $priceSystems;
-        $this->availabilitySystems = $availabilitySystems;
+        $this->container                = $container;
+        $this->cartManagers             = $cartManagers;
+        $this->orderManagers            = $orderManagers;
+        $this->priceSystems             = $priceSystems;
+        $this->availabilitySystems      = $availabilitySystems;
         $this->checkoutManagerFactories = $checkoutManagerFactories;
-        $this->commitOrderProcessors = $commitOrderProcessors;
-        $this->filterServices = $filterServices;
+        $this->commitOrderProcessors    = $commitOrderProcessors;
+        $this->filterServices           = $filterServices;
     }
 
     public static function getInstance(): self

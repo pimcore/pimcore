@@ -93,10 +93,10 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         BruteforceProtectionHandler $bruteforceProtectionHandler
     ) {
         $this->tokenStorage = $tokenStorage;
-        $this->router = $router;
-        $this->dispatcher = $dispatcher;
-        $this->translator = $translator;
-        $this->httpUtils = $httpUtils;
+        $this->router       = $router;
+        $this->dispatcher   = $dispatcher;
+        $this->translator   = $translator;
+        $this->httpUtils    = $httpUtils;
 
         $this->bruteforceProtectionHandler = $bruteforceProtectionHandler;
     }
@@ -141,8 +141,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             } elseif ($token = $request->get('token')) {
                 $credentials = [
                     'username' => $username,
-                    'token' => $token,
-                    'reset' => (bool)$request->get('reset', false)
+                    'token'    => $token,
+                    'reset'    => (bool)$request->get('reset', false)
                 ];
             }
 

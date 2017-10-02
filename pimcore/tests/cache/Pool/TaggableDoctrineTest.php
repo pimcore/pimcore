@@ -15,8 +15,8 @@ class TaggableDoctrineTest extends TaggableCachePoolTest
     use CacheItemPoolTestTrait;
 
     protected $skippedTests = [
-        'testPreviousTag' => 'Previous tags are not loaded for performance reasons.',
-        'testPreviousTagDeferred' => 'Previous tags are not loaded for performance reasons.',
+        'testPreviousTag'              => 'Previous tags are not loaded for performance reasons.',
+        'testPreviousTagDeferred'      => 'Previous tags are not loaded for performance reasons.',
         'testTagAccessorDuplicateTags' => 'Previous tags are not loaded for performance reasons.',
     ];
 

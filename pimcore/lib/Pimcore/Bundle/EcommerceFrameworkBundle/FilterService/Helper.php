@@ -95,7 +95,7 @@ class Helper
 
         $viewModel->pageLimit = $pageLimit;
 
-        $orderByField = null;
+        $orderByField     = null;
         $orderByDirection = null;
 
         if (isset($params['orderBy'])) {

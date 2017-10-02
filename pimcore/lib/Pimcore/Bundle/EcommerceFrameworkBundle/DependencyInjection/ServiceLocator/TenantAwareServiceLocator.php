@@ -50,8 +50,8 @@ abstract class TenantAwareServiceLocator
         IEnvironment $environment,
         bool $strictTenants = false
     ) {
-        $this->locator = $locator;
-        $this->environment = $environment;
+        $this->locator       = $locator;
+        $this->environment   = $environment;
         $this->strictTenants = $strictTenants;
     }
 

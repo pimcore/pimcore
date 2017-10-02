@@ -1590,7 +1590,7 @@ class SettingsController extends AdminController
 
         // parameters get/post
         $params = [];
-        for ($i = 0; $i < 5; $i++) {
+        for ($i=0; $i < 5; $i++) {
             $params[] = [
                 'name' => $data['params.name' . $i],
                 'value' => $data['params.value' . $i]
@@ -1756,7 +1756,7 @@ class SettingsController extends AdminController
     {
         $options = [
             [
-                'key' => 'password_hash',
+                'key'   => 'password_hash',
                 'value' => 'password_hash',
             ]
         ];

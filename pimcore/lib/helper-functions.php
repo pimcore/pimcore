@@ -33,7 +33,7 @@ function xmlToArray($file)
  *
  * @return bool|null|string
  */
-function gzcompressfile($source, $level = null, $target = null)
+function gzcompressfile($source, $level=null, $target = null)
 {
     // this is a very memory efficient way of gzipping files
     if ($target) {
@@ -42,8 +42,8 @@ function gzcompressfile($source, $level = null, $target = null)
         $dest = $source.'.gz';
     }
 
-    $mode = 'wb'.$level;
-    $error = false;
+    $mode='wb'.$level;
+    $error=false;
 
     $fp_out = gzopen($dest, $mode);
     $fp_in = fopen($source, 'rb');
@@ -56,7 +56,7 @@ function gzcompressfile($source, $level = null, $target = null)
         fclose($fp_in);
         gzclose($fp_out);
     } else {
-        $error = true;
+        $error=true;
     }
 
     if ($error) {
@@ -534,7 +534,7 @@ function resolvePath($filename)
  */
 function closureHash(Closure $closure)
 {
-    $ref = new ReflectionFunction($closure);
+    $ref  = new ReflectionFunction($closure);
     $file = new SplFileObject($ref->getFileName());
     $file->seek($ref->getStartLine() - 1);
     $content = '';
@@ -577,7 +577,7 @@ function is_dir_empty($dir)
  *
  * @return mixed|string
  */
-function var_export_pretty($var, $indent = '')
+function var_export_pretty($var, $indent='')
 {
     switch (gettype($var)) {
         case 'string':

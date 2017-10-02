@@ -402,7 +402,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             $this->logger->warning(
                 'Not saving {key} to cache as it did not fit into the save queue (max items on queue: {maxItems})',
                 [
-                    'key' => $item->getKey(),
+                    'key'      => $item->getKey(),
                     'maxItems' => $this->maxWriteToCacheItems
                 ]
             );
@@ -481,8 +481,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 'Prepared {class} {id} for data cache',
                 [
                     'class' => get_class($data),
-                    'id' => $data->getId(),
-                    'tags' => $tags
+                    'id'    => $data->getId(),
+                    'tags'  => $tags
                 ]
             );
         }
@@ -500,9 +500,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         foreach ($tags as $tag) {
             if (in_array($tag, $this->clearedTags)) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the cleared tags list', [
-                    'key' => $cacheItem->getKey(),
-                    'tag' => $tag,
-                    'tags' => $tags,
+                    'key'         => $cacheItem->getKey(),
+                    'tag'         => $tag,
+                    'tags'        => $tags,
                     'clearedTags' => $this->clearedTags
                 ]);
 
@@ -511,9 +511,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             if (in_array($tag, $this->tagsIgnoredOnSave)) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the ignored tags on save list', [
-                    'key' => $cacheItem->getKey(),
-                    'tag' => $tag,
-                    'tags' => $tags,
+                    'key'               => $cacheItem->getKey(),
+                    'tag'               => $tag,
+                    'tags'              => $tags,
                     'tagsIgnoredOnSave' => $this->tagsIgnoredOnSave
                 ]);
 
@@ -567,7 +567,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             $this->logger->error(
                 'Failed to add entry {key} to cache. Item size was {itemSize}',
                 [
-                    'key' => $item->getKey(),
+                    'key'      => $item->getKey(),
                     'itemSize' => formatBytes(strlen($item->get()))
                 ]
             );
@@ -654,7 +654,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $this->logger->warning(
             'Could not clear tags as tag list is empty after normalization',
             [
-                'tags' => $tags,
+                'tags'         => $tags,
                 'originalTags' => $originalTags
             ]
         );

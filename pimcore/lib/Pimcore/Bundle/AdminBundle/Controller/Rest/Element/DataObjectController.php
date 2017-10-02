@@ -101,7 +101,7 @@ class DataObjectController extends AbstractElementController
     {
         $id = $this->resolveId($request, $id);
 
-        $profile = $request->get('profiling');
+        $profile     = $request->get('profiling');
         $profileName = 'rest_object_get';
 
         /** @var Stopwatch $stopwatch */
@@ -231,7 +231,7 @@ class DataObjectController extends AbstractElementController
 
         // add support for legacy behaviour, accepting the ID as payload parameter
         if (isset($data['id'])) {
-            $id = $data['id'];
+            $id     = $data['id'];
             $object = $this->loadObject($id);
 
             return $this->updateObject($object, $type, $data);
@@ -321,7 +321,7 @@ class DataObjectController extends AbstractElementController
      */
     public function updateAction(Request $request, $id)
     {
-        $id = $this->resolveId($request, $id);
+        $id   = $this->resolveId($request, $id);
         $data = $this->getJsonData($request);
 
         // get and normalize type
@@ -367,7 +367,7 @@ class DataObjectController extends AbstractElementController
      */
     public function deleteAction(Request $request, $id = null)
     {
-        $id = $this->resolveId($request, $id);
+        $id     = $this->resolveId($request, $id);
         $object = $this->loadObject($id);
 
         $this->checkElementPermission($object, 'delete');
@@ -407,12 +407,12 @@ class DataObjectController extends AbstractElementController
     {
         $this->checkPermission('objects');
 
-        $condition = urldecode($request->get('condition'));
-        $order = $request->get('order');
-        $orderKey = $request->get('orderKey');
-        $offset = $request->get('offset');
-        $limit = $request->get('limit');
-        $groupBy = $request->get('groupBy');
+        $condition   = urldecode($request->get('condition'));
+        $order       = $request->get('order');
+        $orderKey    = $request->get('orderKey');
+        $offset      = $request->get('offset');
+        $limit       = $request->get('limit');
+        $groupBy     = $request->get('groupBy');
         $objectClass = $request->get('objectClass');
 
         $result = $this->service->getObjectList($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
@@ -469,8 +469,8 @@ class DataObjectController extends AbstractElementController
     {
         $this->checkPermission('objects');
 
-        $condition = urldecode($request->get('condition'));
-        $groupBy = $request->get('groupBy');
+        $condition   = urldecode($request->get('condition'));
+        $groupBy     = $request->get('groupBy');
         $objectClass = $request->get('objectClass');
 
         $params = [
@@ -544,7 +544,7 @@ class DataObjectController extends AbstractElementController
         }
 
         throw $this->createNotFoundException([
-            'msg' => sprintf('Object %d does not exist', (int)$id),
+            'msg'  => sprintf('Object %d does not exist', (int)$id),
             'code' => static::ELEMENT_DOES_NOT_EXIST
         ]);
     }
@@ -560,10 +560,10 @@ class DataObjectController extends AbstractElementController
     protected function createObject($type, array $data)
     {
         if ($type === 'folder') {
-            $class = WebserviceFolderIn::class;
+            $class  = WebserviceFolderIn::class;
             $method = 'createObjectFolder';
         } else {
-            $class = WebserviceObjectIn::class;
+            $class  = WebserviceObjectIn::class;
             $method = 'createObjectConcrete';
         }
 
@@ -602,10 +602,10 @@ class DataObjectController extends AbstractElementController
 
         $success = false;
         if ($type === 'folder') {
-            $wsData = $this->fillWebserviceData(WebserviceFolderIn::class, $data);
+            $wsData  = $this->fillWebserviceData(WebserviceFolderIn::class, $data);
             $success = $this->service->updateObjectFolder($wsData);
         } else {
-            $wsData = $this->fillWebserviceData(WebserviceObjectIn::class, $data);
+            $wsData  = $this->fillWebserviceData(WebserviceObjectIn::class, $data);
             $success = $this->service->updateObjectConcrete($wsData);
         }
 

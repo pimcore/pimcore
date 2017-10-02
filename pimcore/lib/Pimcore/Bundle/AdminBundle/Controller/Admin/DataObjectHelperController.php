@@ -107,7 +107,7 @@ class DataObjectHelperController extends AdminController
         $gridConfig = [];
         if ($objectId) {
             $searchType = $request->get('searchType');
-            $postfix = $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
+            $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
 
             $configFiles['configFileClassUser'] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $request->get('objectId') . '_' . $class->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
             $configFiles['configFileUser'] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $request->get('objectId') . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
@@ -341,10 +341,10 @@ class DataObjectHelperController extends AdminController
                 $classId = $request->get('class_id');
 
                 $searchType = $request->get('searchType');
-                $postfix = $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
+                $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
 
                 $configFiles = [];
-                $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '_' . $classId . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
+                $configFiles[]= PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '_' . $classId . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
                 $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
 
                 foreach ($configFiles as $configFile) {
@@ -381,7 +381,7 @@ class DataObjectHelperController extends AdminController
                 $classId = $request->get('class_id');
 
                 $searchType = $request->get('searchType');
-                $postfix = $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
+                $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
 
                 // grid config
                 $gridConfig = $this->decodeJson($request->get('gridconfig'));
@@ -904,7 +904,7 @@ class DataObjectHelperController extends AdminController
         $fileHandle = uniqid('export-');
         file_put_contents($this->getCsvFile($fileHandle), '');
 
-        return $this->json(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
+        return $this->json(['success'=>true, 'jobs'=> $jobs, 'fileHandle' => $fileHandle]);
     }
 
     /**
@@ -1218,7 +1218,7 @@ class DataObjectHelperController extends AdminController
 
         $jobs = $list->loadIdList();
 
-        return $this->json(['success' => true, 'jobs' => $jobs]);
+        return $this->json(['success'=>true, 'jobs'=>$jobs]);
     }
 
     /**

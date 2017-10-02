@@ -48,7 +48,7 @@ class AdminExceptionListener implements EventSubscriberInterface
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
         $request = $event->getRequest();
-        $ex = $event->getException();
+        $ex      = $event->getException();
 
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             // only return JSON error for XHR requests
@@ -76,7 +76,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             $data = [
                 'success' => false,
-                'msg' => $message
+                'msg'     => $message
             ];
 
             $response = new JsonResponse($data, $code, $headers);
@@ -88,7 +88,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
     private function getResponseData(\Exception $ex, int $defaultStatusCode = 500): array
     {
-        $code = $defaultStatusCode;
+        $code    = $defaultStatusCode;
         $headers = [];
 
         $message = $ex->getMessage();
@@ -98,7 +98,7 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $message = Response::$statusTexts[$ex->getStatusCode()];
             }
 
-            $code = $ex->getStatusCode();
+            $code    = $ex->getStatusCode();
             $headers = $ex->getHeaders();
         }
 

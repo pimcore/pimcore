@@ -52,11 +52,11 @@ class RestClient extends AbstractRestClient
      */
     public function getResponse($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null)
     {
-        $uri = $this->prepareUri($uri);
+        $uri        = $this->prepareUri($uri);
         $parameters = $this->prepareParameters($parameters);
-        $server = $this->prepareHeaders($server);
+        $server     = $this->prepareHeaders($server);
 
-        $request = $this->lastRequest = new Request($method, $uri, $server, $content);
+        $request  = $this->lastRequest = new Request($method, $uri, $server, $content);
         $response = $this->lastResponse = $this->client->send($request, [
             'query' => $parameters
         ]);

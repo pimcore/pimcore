@@ -39,7 +39,7 @@ class BundleRoutingLoader extends Loader
     public function load($resource, $type = null)
     {
         $collection = new RouteCollection();
-        $files = $this->locator->locate('routing');
+        $files      = $this->locator->locate('routing');
 
         if (empty($files)) {
             return $collection;

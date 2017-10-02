@@ -31,9 +31,9 @@ class UUIDListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DataObjectEvents::POST_ADD => 'onPostAdd',
-            DocumentEvents::POST_ADD => 'onPostAdd',
-            AssetEvents::POST_ADD => 'onPostAdd',
+            DataObjectEvents::POST_ADD  => 'onPostAdd',
+            DocumentEvents::POST_ADD  => 'onPostAdd',
+            AssetEvents::POST_ADD  => 'onPostAdd',
             DataObjectClassDefinitionEvents::POST_ADD => 'onPostAdd',
 
             DataObjectEvents::POST_DELETE => 'onPostDelete',

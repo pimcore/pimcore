@@ -72,7 +72,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
     public function testPriceWithoutTaxEntries()
     {
         $product = $this->setUpProduct(100);
-        $price = $product->getOSPrice();
+        $price   = $product->getOSPrice();
 
         $this->assertSame('100.0000', $price->getAmount()->asString(), 'Get Price Amount without any tax entries');
         $this->assertSame('100.0000', $price->getNetAmount()->asString(), 'Get net amount without any tax entries');
@@ -82,7 +82,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
     public function testPriceWithTaxEntriesCombine()
     {
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_COMBINE);
-        $price = $product->getOSPrice();
+        $price   = $product->getOSPrice();
 
         $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount with tax 10% + 15% combine');
         $this->assertSame('80.0000', $price->getNetAmount()->asString(), 'Get net amount 10% + 15% combine');
@@ -91,7 +91,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
     public function testPriceWithTaxEntriesOneAfterAnother()
     {
         $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
-        $price = $product->getOSPrice();
+        $price   = $product->getOSPrice();
 
         $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount with tax 10% + 15% one-after-another');
         $this->assertSame('79.0514', $price->getNetAmount()->asString(), 'Get net amount 10% + 15% one-after-another');

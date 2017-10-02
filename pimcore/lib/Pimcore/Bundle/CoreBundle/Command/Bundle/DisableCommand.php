@@ -37,7 +37,7 @@ class DisableCommand extends AbstractBundleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bm = $this->getBundleManager();
+        $bm     = $this->getBundleManager();
         $bundle = $this->getBundle();
 
         try {

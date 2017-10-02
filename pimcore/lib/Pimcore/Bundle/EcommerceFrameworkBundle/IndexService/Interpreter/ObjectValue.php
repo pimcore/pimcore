@@ -24,7 +24,7 @@ class ObjectValue implements IInterpreter
 
     public function interpret($value, $config = null)
     {
-        $config = $this->resolveOptions($config ?? []);
+        $config     = $this->resolveOptions($config ?? []);
         $targetList = $this->resolveOptions($config['target'], 'target');
 
         if ($value instanceof AbstractObject) {

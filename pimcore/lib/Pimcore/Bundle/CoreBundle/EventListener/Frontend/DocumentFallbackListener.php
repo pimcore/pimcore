@@ -61,10 +61,10 @@ class DocumentFallbackListener implements EventSubscriberInterface
         SiteResolver $siteResolver,
         Document\Service $documentService
     ) {
-        $this->requestStack = $requestStack;
+        $this->requestStack     = $requestStack;
         $this->documentResolver = $documentResolver;
-        $this->siteResolver = $siteResolver;
-        $this->documentService = $documentService;
+        $this->siteResolver     = $siteResolver;
+        $this->documentService  = $documentService;
     }
 
     /**

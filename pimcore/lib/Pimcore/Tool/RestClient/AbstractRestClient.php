@@ -97,7 +97,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     public function __construct(array $parameters = [], array $headers = [], array $options = [])
     {
         $this->defaultParameters = $parameters;
-        $this->defaultHeaders = $headers;
+        $this->defaultHeaders    = $headers;
 
         $this->setValues($options);
     }
@@ -505,7 +505,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true, $objectClass = null)
     {
-        $params = $this->buildRestParameters([], $condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
+        $params   = $this->buildRestParameters([], $condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
         $response = $this->getJsonResponse('GET', '/object-list', $params);
         $response = $response->data ?: null;
 
@@ -543,7 +543,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getAssetList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true)
     {
-        $params = $this->buildRestParameters([], $condition, $order, $orderKey, $offset, $limit, $groupBy);
+        $params   = $this->buildRestParameters([], $condition, $order, $orderKey, $offset, $limit, $groupBy);
         $response = $this->getJsonResponse('GET', '/asset-list', $params);
         $response = $response->data ?: null;
 
@@ -557,8 +557,8 @@ abstract class AbstractRestClient implements LoggerAwareInterface
             if (!$decode) {
                 $result[] = $wsDocument;
             } else {
-                $type = $wsDocument->type;
-                $type = '\\Pimcore\\Model\\Asset\\' . ucfirst($type);
+                $type  = $wsDocument->type;
+                $type  = '\\Pimcore\\Model\\Asset\\' . ucfirst($type);
                 $asset = new $type();
                 $wsDocument->reverseMap($asset);
                 $result[] = $asset;
@@ -699,7 +699,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
 
             return $doc;
         } else {
-            $type = ucfirst($response->type);
+            $type  = ucfirst($response->type);
             $class = '\\Pimcore\\Model\\Webservice\\Data\\Document\\' . $type . '\\In';
 
             $wsDocument = $this->fillWebserviceData($class, $response);
@@ -708,7 +708,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
             }
 
             if (!empty($type)) {
-                $type = '\\Pimcore\\Model\\Document\\' . ucfirst($wsDocument->type);
+                $type     = '\\Pimcore\\Model\\Document\\' . ucfirst($wsDocument->type);
                 $document = new $type();
                 $wsDocument->reverseMap($document, $this->getDisableMappingExceptions(), $idMapper);
 
@@ -773,13 +773,13 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                     $client->setMethod('GET');
 
                     $assetType = $asset->getType();
-                    $data = null;
+                    $data      = null;
 
                     if ($assetType == 'image' && strlen($thumbnail) > 0) {
                         // try to retrieve thumbnail first
                         // http://example.com/var/tmp/thumb_9__fancybox_thumb
                         $tmpPath = preg_replace('@^' . preg_quote(PIMCORE_WEB_ROOT, '@') . '@', '', PIMCORE_TEMPORARY_DIRECTORY);
-                        $uri = $protocol . $this->getHost() . $tmpPath . '/thumb_' . $asset->getId() . '__' . $thumbnail;
+                        $uri     = $protocol . $this->getHost() . $tmpPath . '/thumb_' . $asset->getId() . '__' . $thumbnail;
                         $client->setUri($uri);
 
                         if ($this->getLoggingEnabled()) {
@@ -815,9 +815,9 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                     }
 
                     if (!$data) {
-                        $path = $wsDocument->path;
+                        $path     = $wsDocument->path;
                         $filename = $wsDocument->filename;
-                        $uri = $protocol . $this->getHost() . '/var/assets' . $path . $filename;
+                        $uri      = $protocol . $this->getHost() . '/var/assets' . $path . $filename;
                         $client->setUri($uri);
                         $result = $client->request();
                         if ($result->getStatus() != 200 && !$tolerant) {
@@ -842,11 +842,11 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function createDocument(Document $document)
     {
-        $type = $document->getType();
+        $type      = $document->getType();
         $typeUpper = ucfirst($type);
         $className = '\\Pimcore\\Model\\Webservice\\Data\\Document\\' . $typeUpper . '\\In';
 
-        $wsDocument = Webservice\Data\Mapper::map($document, $className, 'out');
+        $wsDocument  = Webservice\Data\Mapper::map($document, $className, 'out');
         $encodedData = json_encode($wsDocument);
 
         $response = $this->getJsonResponse('POST', '/document', [], [], [], $encodedData);
@@ -869,7 +869,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
             $documentType = '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Concrete\\Out';
         }
 
-        $wsDocument = Webservice\Data\Mapper::map($object, $documentType, 'out');
+        $wsDocument  = Webservice\Data\Mapper::map($object, $documentType, 'out');
         $encodedData = json_encode($wsDocument);
 
         $response = $this->getJsonResponse('POST', '/object', [], [], [], $encodedData);
@@ -893,7 +893,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
             $documentType = '\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\Out';
         }
 
-        $wsDocument = Webservice\Data\Mapper::map($asset, $documentType, 'out');
+        $wsDocument  = Webservice\Data\Mapper::map($asset, $documentType, 'out');
         $encodedData = json_encode($wsDocument);
 
         $response = $this->getJsonResponse('POST', '/asset', [], [], [], $encodedData);
@@ -989,7 +989,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getClassById($id, $decode = true)
     {
-        $response = $this->getJsonResponse('GET', sprintf('/class/id/%d', $id));
+        $response     = $this->getJsonResponse('GET', sprintf('/class/id/%d', $id));
         $responseData = $response->data;
 
         if (!$decode) {
@@ -1248,7 +1248,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                 foreach ($value as $subkey => $subvalue) {
                     if (is_array($subvalue)) {
                         $object = new \stdClass();
-                        $tmp[] = $this->map($object, $subvalue);
+                        $tmp[]  = $this->map($object, $subvalue);
                     } else {
                         $tmp[$subkey] = $subvalue;
                     }

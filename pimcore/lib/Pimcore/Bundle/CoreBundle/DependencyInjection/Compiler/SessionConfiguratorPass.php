@@ -55,7 +55,7 @@ class SessionConfiguratorPass implements CompilerPassInterface
      */
     protected function addTaggedConfigurators(ContainerBuilder $container)
     {
-        $configurator = $container->getDefinition(SessionConfigurator::class);
+        $configurator   = $container->getDefinition(SessionConfigurator::class);
         $taggedServices = $container->findTaggedServiceIds('pimcore.session.configurator');
 
         foreach ($taggedServices as $id => $tags) {

@@ -57,7 +57,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     protected function processOptions(array $options)
     {
         $this->attributeName = $options['attribute_name'];
-        $this->priceClass = $options['price_class'];
+        $this->priceClass    = $options['price_class'];
     }
 
     protected function configureOptions(OptionsResolver $resolver)
@@ -69,7 +69,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
 
         $resolver->setDefaults([
             'attribute_name' => 'price',
-            'price_class' => Price::class
+            'price_class'    => Price::class
         ]);
 
         $resolver->setAllowedTypes('attribute_name', 'string');
@@ -163,7 +163,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     protected function getPriceClassInstance(Decimal $amount): IPrice
     {
         $priceClass = $this->priceClass;
-        $price = new $priceClass($amount, $this->getDefaultCurrency(), false);
+        $price      = new $priceClass($amount, $this->getDefaultCurrency(), false);
 
         return $price;
     }

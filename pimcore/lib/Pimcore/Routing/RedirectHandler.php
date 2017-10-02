@@ -49,7 +49,7 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         $matchRequestUri = urldecode($request->getPathInfo());
-        $config = Config::getSystemConfig();
+        $config          = Config::getSystemConfig();
 
         // get current site if available
         $sourceSite = null;
@@ -126,7 +126,7 @@ class RedirectHandler implements LoggerAwareInterface
                 $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
             } catch (\Exception $e) {
                 $this->logger->error('Site with ID {targetSite} not found', [
-                    'redirect' => $redirect->getId(),
+                    'redirect'   => $redirect->getId(),
                     'targetSite' => $redirect->getTargetSite()
                 ]);
 
@@ -150,7 +150,7 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
-        $response = new RedirectResponse($url, $statusCode);
+        $response   = new RedirectResponse($url, $statusCode);
 
         // log all redirects to the redirect log
         \Pimcore\Log\Simple::log(

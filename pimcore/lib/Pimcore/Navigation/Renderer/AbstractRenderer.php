@@ -202,7 +202,7 @@ abstract class AbstractRenderer implements RendererInterface
     public function getPrefixForId()
     {
         if (null === $this->_prefixForId) {
-            $prefix = get_class($this);
+            $prefix             = get_class($this);
             $this->_prefixForId = str_replace('\\', '-', strtolower(
                     trim(substr($prefix, strrpos($prefix, '_')), '_')
                 )) . '-';
@@ -261,7 +261,7 @@ abstract class AbstractRenderer implements RendererInterface
             $maxDepth = $this->getMaxDepth();
         }
 
-        $found = null;
+        $found  = null;
         $foundDepth = -1;
         $iterator = new \RecursiveIteratorIterator(
             $container,
@@ -319,10 +319,10 @@ abstract class AbstractRenderer implements RendererInterface
         // get attribs for anchor element
         $attribs = array_merge(
             [
-                'id' => $page->getId(),
-                'title' => $title,
-                'class' => $page->getClass(),
-                'href' => $page->getHref(),
+                'id'     => $page->getId(),
+                'title'  => $title,
+                'class'  => $page->getClass(),
+                'href'   => $page->getHref(),
                 'target' => $page->getTarget()
             ],
             $page->getCustomHtmlAttribs()

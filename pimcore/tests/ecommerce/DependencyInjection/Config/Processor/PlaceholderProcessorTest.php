@@ -93,7 +93,7 @@ class PlaceholderProcessorTest extends TestCase
     {
         $input = [
             'locales' => [
-                'locale' => '%locale2%',
+                'locale'  => '%locale2%',
                 'locales' => [
                     '%locale1%',
                     '%locale2%'
@@ -103,7 +103,7 @@ class PlaceholderProcessorTest extends TestCase
 
         $expected = [
             'locales' => [
-                'locale' => 'en_US',
+                'locale'  => 'en_US',
                 'locales' => [
                     'de_AT',
                     'en_US'
@@ -123,7 +123,7 @@ class PlaceholderProcessorTest extends TestCase
     {
         $input = [
             'locales' => [
-                'locale' => '%locale1%',
+                'locale'  => '%locale1%',
                 'locales' => [
                     '%locale1%',
                     '%locale2%'
@@ -137,7 +137,7 @@ class PlaceholderProcessorTest extends TestCase
 
         $expected = [
             'locales' => [
-                'locale' => 'de_AT',
+                'locale'  => 'de_AT',
                 'locales' => [
                     'de_AT',
                     'en_US'

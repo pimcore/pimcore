@@ -51,7 +51,7 @@ abstract class AbstractWorker implements IWorker
         $tenantConfig->setTenantWorker($this);
 
         $this->name = $tenantConfig->getTenantName();
-        $this->db = $db;
+        $this->db   = $db;
     }
 
     public function getTenantConfig()

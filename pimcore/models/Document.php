@@ -423,7 +423,7 @@ class Document extends Element\AbstractElement
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
         $maxRetries = 5;
-        for ($retries = 0; $retries < $maxRetries; $retries++) {
+        for ($retries=0; $retries < $maxRetries; $retries++) {
             $this->beginTransaction();
 
             try {
@@ -655,13 +655,13 @@ class Document extends Element\AbstractElement
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->childs=$children;
         if (is_array($children) and count($children > 0)) {
-            $this->hasChilds = true;
+            $this->hasChilds=true;
         } elseif ($children === null) {
             $this->hasChilds = null;
         } else {
-            $this->hasChilds = false;
+            $this->hasChilds=false;
         }
 
         return $this;
@@ -875,7 +875,7 @@ class Document extends Element\AbstractElement
 
             // TODO using the container directly is discouraged, maybe we find a better way (e.g. moving this into a service)?
             $request = \Pimcore::getContainer()->get('pimcore.http.request_helper')->getRequest();
-            $scheme = $request->getScheme() . '://';
+            $scheme  = $request->getScheme() . '://';
 
             /** @var Site $site */
             if ($site = FrontendTool::getSiteForDocument($this)) {

@@ -58,9 +58,9 @@ class DocumentRenderer implements DocumentRendererInterface
         FragmentRendererInterface $fragmentRenderer,
         DocumentRouteHandler $documentRouteHandler
     ) {
-        $this->requestHelper = $requestHelper;
-        $this->actionRenderer = $actionRenderer;
-        $this->fragmentRenderer = $fragmentRenderer;
+        $this->requestHelper        = $requestHelper;
+        $this->actionRenderer       = $actionRenderer;
+        $this->fragmentRenderer     = $fragmentRenderer;
         $this->documentRouteHandler = $documentRouteHandler;
     }
 
@@ -82,7 +82,7 @@ class DocumentRenderer implements DocumentRendererInterface
             $request = new Request();
         }
 
-        $uri = $this->actionRenderer->createDocumentReference($document, $attributes, $query);
+        $uri      = $this->actionRenderer->createDocumentReference($document, $attributes, $query);
         $response = $this->fragmentRenderer->render($uri, $request, $options);
 
         return $response->getContent();

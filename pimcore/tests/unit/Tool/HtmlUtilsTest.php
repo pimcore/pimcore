@@ -28,7 +28,7 @@ class HtmlUtilsTest extends TestCase
         'noop' => null,
         'quux' => true,
         'john' => 1,
-        'doe' => 2,
+        'doe'  => 2,
     ];
 
     public function testAssembleAttributeString()

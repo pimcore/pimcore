@@ -190,7 +190,7 @@ class Csv
         }
 
         // a potential delimiter must be present on every non-empty line
-        foreach ($tmp as $char => $array) {
+        foreach ($tmp as $char=>$array) {
             if (count($array) < 0.98 * $linecount) {
                 // ... so drop any delimiters that aren't
                 unset($tmp[$char]);

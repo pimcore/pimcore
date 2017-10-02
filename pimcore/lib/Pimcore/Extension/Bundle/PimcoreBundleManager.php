@@ -85,11 +85,11 @@ class PimcoreBundleManager
         EventDispatcherInterface $dispatcher,
         RouterInterface $router
     ) {
-        $this->stateConfig = $stateConfig;
-        $this->bundleLocator = $bundleLocator;
-        $this->kernel = $kernel;
-        $this->dispatcher = $dispatcher;
-        $this->router = $router;
+        $this->stateConfig    = $stateConfig;
+        $this->bundleLocator  = $bundleLocator;
+        $this->kernel         = $kernel;
+        $this->dispatcher     = $dispatcher;
+        $this->router         = $router;
     }
 
     /**
@@ -207,7 +207,7 @@ class PimcoreBundleManager
     private function getManuallyRegisteredBundleState()
     {
         if (null === $this->manuallyRegisteredBundleState) {
-            $collection = $this->kernel->getBundleCollection();
+            $collection     = $this->kernel->getBundleCollection();
             $enabledBundles = array_keys($this->getActiveBundles(false));
 
             $bundles = [];
@@ -221,8 +221,8 @@ class PimcoreBundleManager
                 }
 
                 $bundles[$item->getBundleIdentifier()] = $this->stateConfig->normalizeOptions([
-                    'enabled' => in_array($item->getBundleIdentifier(), $enabledBundles),
-                    'priority' => $item->getPriority(),
+                    'enabled'      => in_array($item->getBundleIdentifier(), $enabledBundles),
+                    'priority'     => $item->getPriority(),
                     'environments' => $item->getEnvironments()
                 ]);
             }

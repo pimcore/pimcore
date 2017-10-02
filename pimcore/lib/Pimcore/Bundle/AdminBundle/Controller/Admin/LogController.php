@@ -81,7 +81,7 @@ class LogController extends AdminController implements EventedControllerInterfac
         if ($request->get('fromDate')) {
             $datetime = $request->get('fromDate');
             if ($request->get('fromTime')) {
-                $datetime = substr($datetime, 0, 11) . substr($request->get('fromTime'), strpos($request->get('fromTime'), 'T') + 1, strlen($request->get('fromTime')));
+                $datetime =  substr($datetime, 0, 11) . substr($request->get('fromTime'), strpos($request->get('fromTime'), 'T') + 1, strlen($request->get('fromTime')));
             }
             $queryString .= " AND timestamp >= '" . $datetime . "'";
         }
@@ -89,7 +89,7 @@ class LogController extends AdminController implements EventedControllerInterfac
         if ($request->get('toDate')) {
             $datetime = $request->get('toDate');
             if ($request->get('toTime')) {
-                $datetime = substr($datetime, 0, 11) . substr($request->get('toTime'), strpos($request->get('toTime'), 'T') + 1, strlen($request->get('toTime')));
+                $datetime =  substr($datetime, 0, 11) . substr($request->get('toTime'), strpos($request->get('toTime'), 'T') + 1, strlen($request->get('toTime')));
             }
             $queryString .= " AND timestamp <= '" . $datetime . "'";
         }
@@ -123,11 +123,11 @@ class LogController extends AdminController implements EventedControllerInterfac
                 $filename = $parts[count($parts) - 1];
                 $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $r['fileobject']);
 
-                $errorData = ['id' => $r['id'],
+                $errorData =  ['id'=>$r['id'],
                                     'pid' => $r['pid'],
-                                    'message' => $r['message'],
-                                    'timestamp' => $r['timestamp'],
-                                    'priority' => $this->getPriorityName($r['priority']),
+                                    'message'=>$r['message'],
+                                    'timestamp'=>$r['timestamp'],
+                                    'priority'=>$this->getPriorityName($r['priority']),
                                     'filename' => $filename,
                                     'fileobject' => $fileobject,
                                     'relatedobject' => $r['relatedobject'],
@@ -137,7 +137,7 @@ class LogController extends AdminController implements EventedControllerInterfac
             }
         }
 
-        return $this->json(['p_totalCount' => $total, 'p_results' => $errorDataList]);
+        return $this->json(['p_totalCount'=>$total, 'p_results'=>$errorDataList]);
     }
 
     /**

@@ -47,7 +47,7 @@ class PimcoreBundleLocator
         $this->setPaths($paths);
 
         $this->composerPackageInfo = $composerPackageInfo;
-        $this->handleComposer = $handleComposer;
+        $this->handleComposer      = $handleComposer;
     }
 
     /**
@@ -132,7 +132,7 @@ class PimcoreBundleLocator
     private function findComposerBundles()
     {
         $pimcoreBundles = $this->composerPackageInfo->getInstalledPackages('pimcore-bundle');
-        $composerPaths = [];
+        $composerPaths  = [];
 
         $result = [];
         foreach ($pimcoreBundles as $packageInfo) {

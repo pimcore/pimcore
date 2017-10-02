@@ -66,8 +66,8 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         RouterInterface $router,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->tokenStorage = $tokenStorage;
-        $this->router = $router;
+        $this->tokenStorage    = $tokenStorage;
+        $this->router          = $router;
         $this->eventDispatcher = $eventDispatcher;
     }
 

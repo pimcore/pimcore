@@ -41,7 +41,7 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
     public function trackCheckoutComplete(AbstractOrder $order)
     {
         $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
-        $items = $this->trackingItemBuilder->buildCheckoutItems($order);
+        $items       = $this->trackingItemBuilder->buildCheckoutItems($order);
 
         $parameters = [];
         $parameters['transaction'] = $transaction;
@@ -85,11 +85,11 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
     protected function transformTransaction(Transaction $transaction)
     {
         return $this->filterNullValues([
-            'id' => $transaction->getId(),                     // Transaction ID. Required.
+            'id'          => $transaction->getId(),                     // Transaction ID. Required.
             'affiliation' => $transaction->getAffiliation() ?: '',      // Affiliation or store name.
-            'revenue' => $transaction->getTotal(),                  // Grand Total.
-            'shipping' => $transaction->getShipping(),               // Shipping.
-            'tax' => $transaction->getTax()                     // Tax.
+            'revenue'     => $transaction->getTotal(),                  // Grand Total.
+            'shipping'    => $transaction->getShipping(),               // Shipping.
+            'tax'         => $transaction->getTax()                     // Tax.
         ]);
     }
 
@@ -103,11 +103,11 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
     protected function transformProductAction(ProductAction $item)
     {
         return $this->filterNullValues([
-            'id' => $item->getTransactionId(),                    // Transaction ID. Required.
-            'sku' => $item->getId(),                               // SKU/code.
-            'name' => $item->getName(),                             // Product name. Required.
+            'id'       => $item->getTransactionId(),                    // Transaction ID. Required.
+            'sku'      => $item->getId(),                               // SKU/code.
+            'name'     => $item->getName(),                             // Product name. Required.
             'category' => $item->getCategory(),                         // Category or variation.
-            'price' => $item->getPrice(),                            // Unit price.
+            'price'    => $item->getPrice(),                            // Unit price.
             'quantity' => $item->getQuantity() ?: 1,                    // Quantity.
         ]);
     }

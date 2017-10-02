@@ -79,7 +79,7 @@ class Manager
      *
      * @throws \Exception
      */
-    public function __construct($element, $user = null)
+    public function __construct($element, $user=null)
     {
         $this->element = $element;
         $this->user = $user;
@@ -401,7 +401,7 @@ class Manager
      *
      * @throws \Exception
      */
-    public function userCanPerformAction($actionName, $statusName = null)
+    public function userCanPerformAction($actionName, $statusName=null)
     {
         if (!$this->user) {
             throw new \Exception('No user is defined in this Workflow Manager!');
@@ -503,7 +503,7 @@ class Manager
      *
      * @throws \Exception
      */
-    public function performAction($actionName, $formData = [])
+    public function performAction($actionName, $formData=[])
     {
         //store the current action data
         $this->setActionData($formData);

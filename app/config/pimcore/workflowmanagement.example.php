@@ -14,7 +14,7 @@ return [
         'enabled' => true,                                                  // flag to enable / disable to workflow
         'defaultState' => 'open',                                          // the default state that all new objects are given (Must be in this workflow)
         'defaultStatus' => 'todo',                                         // the default status that all new objects are given (Must be in this workflow)
-        'allowUnpublished' => true,                                         // true to allow workflow on unpublished objects, false to only allow published
+        'allowUnpublished'=> true,                                         // true to allow workflow on unpublished objects, false to only allow published
         // if set to true, elements are set to unpublished on state transition if not configured otherwise is statuses definition
 
         //state definitions, these are high level statuses for separating out statuses
@@ -56,12 +56,12 @@ return [
             ],
             [
                 'name' => 'in_review',
-                'label' => 'In Review',
+                'label'=> 'In Review',
                 'objectLayout' => 3                                        // objectLayout the editor loads by default (objects only)
             ],
             [
                 'name' => 'ready_to_deploy',
-                'label' => 'Ready to deploy',
+                'label'=> 'Ready to deploy',
                 'objectLayout' => 2,
                 'elementPublished' => true                                 // the element gets published in this step (objects and PageSnippets only)
             ],
@@ -87,8 +87,8 @@ return [
                 ],
                 'notes' => [
                     'required' => false,                                     // disable / enable notes to be optional
-                    'type' => 'Worklog',                                 // an optional alternative "type" to the note, defaults to "Status update" or "Global action" if blank
-                    'title' => 'Progress Started'                         // an optional alternative "title" to the note, if blank he actions transition result is used (See Decorator).
+                    'type'     => 'Worklog',                                 // an optional alternative "type" to the note, defaults to "Status update" or "Global action" if blank
+                    'title'    => 'Progress Started'                         // an optional alternative "title" to the note, if blank he actions transition result is used (See Decorator).
                 ],
                 'users' => [8],                                             // add user-ids or role-ids that are allowed this action - admin always is allowed for everything
                 /*"events" => [
@@ -113,7 +113,7 @@ return [
             ],
 
             [
-                'name' => 'mark_as_in_review',
+                'name' =>'mark_as_in_review',
                 'label' => 'Send for Review',
                 'transitionTo' => [
                     'in_progress' => [
@@ -126,7 +126,7 @@ return [
             ],
 
             [
-                'name' => 'mark_as_done',
+                'name' =>'mark_as_done',
                 'label' => 'Mark as Done',
                 'transitionTo' => [
                     'done' => [
@@ -140,9 +140,9 @@ return [
 
             [
                 'name' => 'block',
-                'label' => 'Block Issue',
+                'label'=> 'Block Issue',
                 'transitionTo' => [
-                    'open' => [
+                    'open'=> [
                         'blocked'
                     ]
                 ],
@@ -151,12 +151,12 @@ return [
                 ],
                 'additionalFields' => [                    //define additional fields needed
                     [
-                        'name' => 'notifyUser',              // the name (for the frontend form)
-                        'fieldType' => 'input',              // the fieldtype (pimcore object tag name)
-                        'title' => 'Notify Email',           // the title
-                        'blankText' => 'john@example.com',   // emptytext / blank text
-                        'required' => false,                 // whether or not the field is required
-                        'setterFn' => null                  // optional setter function, if not specified, data will be added to notes
+                        'name'=> 'notifyUser',              // the name (for the frontend form)
+                        'fieldType'=> 'input',              // the fieldtype (pimcore object tag name)
+                        'title'=> 'Notify Email',           // the title
+                        'blankText'=> 'john@example.com',   // emptytext / blank text
+                        'required'=> false,                 // whether or not the field is required
+                        'setterFn'=> null                  // optional setter function, if not specified, data will be added to notes
                     ]
                 ]
             ],
@@ -194,19 +194,19 @@ return [
                 ],
                 'additionalFields' => [
                     [
-                        'name' => 'timeWorked',
-                        'fieldType' => 'input',
-                        'title' => 'Time spent',
-                        'blankText' => '30m',
-                        'required' => true,
-                        'setterFn' => null
+                        'name'=> 'timeWorked',
+                        'fieldType'=> 'input',
+                        'title'=> 'Time spent',
+                        'blankText'=> '30m',
+                        'required'=> true,
+                        'setterFn'=> null
                     ],
 
                     // define the note date through the special noteDate name (see #743)
                     // this will set the note datetime to the selected value instead of the datetime the action
                     // was executed
                     [
-                        'name' => 'noteDate',
+                        'name'=> 'noteDate',
                         'fieldType' => 'datetime',
                         'title' => 'Date of Conversation',
                         'required' => true
@@ -218,40 +218,40 @@ return [
 
         'transitionDefinitions' => [
 
-            'todo' => [                                  // the starting status
+            'todo'=> [                                  // the starting status
                 'validActions' => [                    // valid actions that can be done at that status
-                    'start_progress' => null,
-                    'mark_as_in_review' => null,
-                    'block' => null
+                    'start_progress'=> null,
+                    'mark_as_in_review'=> null,
+                    'block'=> null
                 ]
             ],
-            'reopened' => [
+            'reopened'=> [
                 'validActions' => [
-                    'start_progress' => null,
-                    'mark_as_in_review' => null
+                    'start_progress'=> null,
+                    'mark_as_in_review'=> null
                 ]
             ],
-            'in_progress' => [
+            'in_progress'=> [
                 'validActions' => [
-                    'mark_as_in_review' => null,
-                    'stop_progress' => null
+                    'mark_as_in_review'=> null,
+                    'stop_progress'=> null
                 ]
             ],
-            'done' => [
+            'done'=> [
                 'validActions' => [
-                    'reopen_issue' => null
+                    'reopen_issue'=> null
                 ]
             ],
-            'blocked' => [
+            'blocked'=> [
                 'validActions' => [
-                    'start_progress' => null,
+                    'start_progress'=> null,
                     'add_to_todo' => null
                 ]
             ],
-            'in_review' => [
+            'in_review'=> [
                 'validActions' => [
-                    'reopen_issue' => null,
-                    'mark_as_done' => null
+                    'reopen_issue'=> null,
+                    'mark_as_done'=> null
                 ]
             ],
 

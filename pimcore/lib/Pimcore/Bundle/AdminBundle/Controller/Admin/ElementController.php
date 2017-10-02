@@ -209,7 +209,7 @@ class ElementController extends AdminController
                 } else {
                     if ($filter['type'] == 'date' && $filter[$comparisonKey] == 'eq') {
                         $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
-                        $dateCondition = '`' . $filter[$propertyKey] . '` ' . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
+                        $dateCondition =  '`' . $filter[$propertyKey] . '` ' . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
                         $conditions[] = $dateCondition;
                     } else {
                         $field = '`'.$filter[$propertyKey].'` ';

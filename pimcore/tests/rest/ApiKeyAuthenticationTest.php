@@ -30,10 +30,10 @@ class ApiKeyAuthenticationTest extends RestTestCase
         $this->tester->canSeeResponseContainsJson([
             'success' => true,
             'data' => [
-                'type' => 'user',
-                'admin' => true,
+                'type'   => 'user',
+                'admin'  => true,
                 'active' => true,
-                'name' => $username
+                'name'   => $username
             ]
         ]);
     }

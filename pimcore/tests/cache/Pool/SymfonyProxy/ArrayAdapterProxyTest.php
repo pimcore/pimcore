@@ -54,7 +54,7 @@ class ArrayAdapterProxyTest extends ArrayAdapterTest
 
         /** @var ArrayAdapter $adapter */
         $adapter = $this->getItemsAdapter($this->getTagAwareAdapter($cache));
-        $values = $adapter->getValues();
+        $values  = $adapter->getValues();
 
         $this->assertCount(2 * 2, $values); // value + tag = *2
         $this->assertArrayHasKey('foo', $values);

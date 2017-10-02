@@ -72,7 +72,7 @@ class Tool
     {
         if (is_array($data)) {
             $values = [];
-            foreach ($data as $k => $d) {
+            foreach ($data as $k=>$d) {
                 $values[$k] = self::keyValueReverseMapping($d);
             }
 

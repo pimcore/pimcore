@@ -55,7 +55,7 @@ class SerializerPass implements CompilerPassInterface
 
         $definition->setArguments([
             '$normalizers' => $normalizers,
-            '$encoders' => $encoders
+            '$encoders'    => $encoders
         ]);
     }
 }

@@ -48,7 +48,7 @@ class Text
         $matches = self::getElementsTagsInWysiwyg($text);
 
         if (count($matches[2]) > 0) {
-            for ($i = 0; $i < count($matches[2]); $i++) {
+            for ($i=0; $i < count($matches[2]); $i++) {
                 preg_match('/[0-9]+/', $matches[2][$i], $idMatches);
                 preg_match('/asset|object|document/', $matches[3][$i], $typeMatches);
 
@@ -215,7 +215,7 @@ class Text
                 } else {
                     //remove relation, not found in mapping
                     $el->pimcore_id = null;
-                    $el->src = null;
+                    $el->src=null;
                 }
             }
 
@@ -272,7 +272,7 @@ class Text
         $matches = self::getElementsTagsInWysiwyg($text);
 
         if (count($matches[2]) > 0) {
-            for ($i = 0; $i < count($matches[2]); $i++) {
+            for ($i=0; $i < count($matches[2]); $i++) {
                 preg_match('/[0-9]+/', $matches[2][$i], $idMatches);
                 preg_match('/asset|object|document/', $matches[3][$i], $typeMatches);
 

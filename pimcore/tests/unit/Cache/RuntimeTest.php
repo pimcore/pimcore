@@ -38,7 +38,7 @@ class RuntimeTest extends TestCase
      */
     public function testThrowsExceptionOnBlockedIndexConstruct(string $index)
     {
-        $data = [];
+        $data         = [];
         $data[$index] = 'foo';
 
         new Runtime($data);
@@ -52,7 +52,7 @@ class RuntimeTest extends TestCase
      */
     public function testThrowsExceptionOnBlockedIndexMagicSet(string $index)
     {
-        $cache = new Runtime();
+        $cache         = new Runtime();
         $cache->$index = 'foo';
     }
 

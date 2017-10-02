@@ -31,13 +31,13 @@ abstract class AbstractNamingStrategy implements NamingStrategyInterface
             return $name;
         }
 
-        $blocks = $blockState->getBlocks();
+        $blocks  = $blockState->getBlocks();
         $indexes = $blockState->getIndexes();
 
         // check if the previous block is the name we're about to build
         // TODO: can this be avoided at the block level?
         if ($type === 'block') {
-            $tmpBlocks = $blocks;
+            $tmpBlocks  = $blocks;
             $tmpIndexes = $indexes;
 
             array_pop($tmpBlocks);

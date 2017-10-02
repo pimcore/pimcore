@@ -39,7 +39,7 @@ class Discount implements IDiscount
      */
     public function __construct(IRule $rule)
     {
-        $this->rule = $rule;
+        $this->rule   = $rule;
         $this->amount = Decimal::create(0);
     }
 

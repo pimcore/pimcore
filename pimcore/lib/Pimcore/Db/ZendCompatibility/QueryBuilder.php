@@ -42,49 +42,49 @@ use Pimcore\Db\Connection;
 
 class QueryBuilder
 {
-    const DISTINCT = 'distinct';
-    const COLUMNS = 'columns';
-    const FROM = 'from';
-    const UNION = 'union';
-    const WHERE = 'where';
-    const GROUP = 'group';
-    const HAVING = 'having';
-    const ORDER = 'order';
-    const LIMIT_COUNT = 'limitcount';
-    const LIMIT_OFFSET = 'limitoffset';
-    const FOR_UPDATE = 'forupdate';
+    const DISTINCT       = 'distinct';
+    const COLUMNS        = 'columns';
+    const FROM           = 'from';
+    const UNION          = 'union';
+    const WHERE          = 'where';
+    const GROUP          = 'group';
+    const HAVING         = 'having';
+    const ORDER          = 'order';
+    const LIMIT_COUNT    = 'limitcount';
+    const LIMIT_OFFSET   = 'limitoffset';
+    const FOR_UPDATE     = 'forupdate';
 
-    const INNER_JOIN = 'inner join';
-    const LEFT_JOIN = 'left join';
-    const RIGHT_JOIN = 'right join';
-    const FULL_JOIN = 'full join';
-    const CROSS_JOIN = 'cross join';
-    const NATURAL_JOIN = 'natural join';
+    const INNER_JOIN     = 'inner join';
+    const LEFT_JOIN      = 'left join';
+    const RIGHT_JOIN     = 'right join';
+    const FULL_JOIN      = 'full join';
+    const CROSS_JOIN     = 'cross join';
+    const NATURAL_JOIN   = 'natural join';
 
-    const SQL_WILDCARD = '*';
-    const SQL_SELECT = 'SELECT';
-    const SQL_UNION = 'UNION';
-    const SQL_UNION_ALL = 'UNION ALL';
-    const SQL_FROM = 'FROM';
-    const SQL_WHERE = 'WHERE';
-    const SQL_DISTINCT = 'DISTINCT';
-    const SQL_GROUP_BY = 'GROUP BY';
-    const SQL_ORDER_BY = 'ORDER BY';
-    const SQL_HAVING = 'HAVING';
+    const SQL_WILDCARD   = '*';
+    const SQL_SELECT     = 'SELECT';
+    const SQL_UNION      = 'UNION';
+    const SQL_UNION_ALL  = 'UNION ALL';
+    const SQL_FROM       = 'FROM';
+    const SQL_WHERE      = 'WHERE';
+    const SQL_DISTINCT   = 'DISTINCT';
+    const SQL_GROUP_BY   = 'GROUP BY';
+    const SQL_ORDER_BY   = 'ORDER BY';
+    const SQL_HAVING     = 'HAVING';
     const SQL_FOR_UPDATE = 'FOR UPDATE';
-    const SQL_AND = 'AND';
-    const SQL_AS = 'AS';
-    const SQL_OR = 'OR';
-    const SQL_ON = 'ON';
-    const SQL_ASC = 'ASC';
-    const SQL_DESC = 'DESC';
+    const SQL_AND        = 'AND';
+    const SQL_AS         = 'AS';
+    const SQL_OR         = 'OR';
+    const SQL_ON         = 'ON';
+    const SQL_ASC        = 'ASC';
+    const SQL_DESC       = 'DESC';
 
-    const REGEX_COLUMN_EXPR = '/^([\w]*\s*\(([^\(\)]|(?1))*\))$/';
+    const REGEX_COLUMN_EXPR       = '/^([\w]*\s*\(([^\(\)]|(?1))*\))$/';
     const REGEX_COLUMN_EXPR_ORDER = '/^([\w]+\s*\(([^\(\)]|(?1))*\))$/';
     const REGEX_COLUMN_EXPR_GROUP = '/^([\w]+\s*\(([^\(\)]|(?1))*\))$/';
 
     // @see http://stackoverflow.com/a/13823184/2028814
-    const REGEX_SQL_COMMENTS = '@
+    const REGEX_SQL_COMMENTS      = '@
     (([\'"]).*?[^\\\]\2) # $1 : Skip single & double quoted expressions
     |(                   # $3 : Match comments
         (?:\#|--).*?$    # - Single line comments
@@ -115,17 +115,17 @@ class QueryBuilder
      * @var array
      */
     protected static $_partsInit = [
-        self::DISTINCT => false,
-        self::COLUMNS => [],
-        self::UNION => [],
-        self::FROM => [],
-        self::WHERE => [],
-        self::GROUP => [],
-        self::HAVING => [],
-        self::ORDER => [],
-        self::LIMIT_COUNT => null,
+        self::DISTINCT     => false,
+        self::COLUMNS      => [],
+        self::UNION        => [],
+        self::FROM         => [],
+        self::WHERE        => [],
+        self::GROUP        => [],
+        self::HAVING       => [],
+        self::ORDER        => [],
+        self::LIMIT_COUNT  => null,
         self::LIMIT_OFFSET => null,
-        self::FOR_UPDATE => false
+        self::FOR_UPDATE   => false
     ];
 
     /**
@@ -773,7 +773,7 @@ class QueryBuilder
      */
     public function limit($count = null, $offset = null)
     {
-        $this->_parts[self::LIMIT_COUNT] = (int) $count;
+        $this->_parts[self::LIMIT_COUNT]  = (int) $count;
         $this->_parts[self::LIMIT_OFFSET] = (int) $offset;
 
         return $this;
@@ -789,9 +789,9 @@ class QueryBuilder
      */
     public function limitPage($page, $rowCount)
     {
-        $page = ($page > 0) ? $page : 1;
+        $page     = ($page > 0) ? $page : 1;
         $rowCount = ($rowCount > 0) ? $rowCount : 1;
-        $this->_parts[self::LIMIT_COUNT] = (int) $rowCount;
+        $this->_parts[self::LIMIT_COUNT]  = (int) $rowCount;
         $this->_parts[self::LIMIT_OFFSET] = (int) $rowCount * ($page - 1);
 
         return $this;
@@ -996,9 +996,9 @@ class QueryBuilder
                 $tmpFromParts = [];
             }
             $this->_parts[self::FROM][$correlationName] = [
-                'joinType' => $type,
-                'schema' => $schema,
-                'tableName' => $tableName,
+                'joinType'      => $type,
+                'schema'        => $schema,
+                'tableName'     => $tableName,
                 'joinCondition' => $cond
             ];
             while ($tmpFromParts) {
@@ -1047,14 +1047,14 @@ class QueryBuilder
             throw new \Exception('You can only perform a joinUsing after specifying a FROM table');
         }
 
-        $join = $this->_adapter->quoteIdentifier(key($this->_parts[self::FROM]), true);
-        $from = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($name), true);
+        $join  = $this->_adapter->quoteIdentifier(key($this->_parts[self::FROM]), true);
+        $from  = $this->_adapter->quoteIdentifier($this->_uniqueCorrelation($name), true);
 
         $joinCond = [];
         foreach ((array)$cond as $fieldName) {
             $cond1 = $from . '.' . $fieldName;
             $cond2 = $join . '.' . $fieldName;
-            $joinCond[] = $cond1 . ' = ' . $cond2;
+            $joinCond[]  = $cond1 . ' = ' . $cond2;
         }
         $cond = implode(' '.self::SQL_AND.' ', $joinCond);
 
@@ -1564,7 +1564,7 @@ class QueryBuilder
 
     public function __sleep()
     {
-        $vars = get_object_vars($this);
+        $vars      = get_object_vars($this);
         $blacklist = ['_adapter'];
 
         $result = [];

@@ -442,7 +442,7 @@ class Console
                 continue;
             }
             $exploded = explode('=', $optionString, 2);
-            $options[str_replace('-', '', $exploded[0])] = $exploded[1];
+            $options[str_replace('-', '', $exploded[0])] =  $exploded[1];
         }
 
         return $options;

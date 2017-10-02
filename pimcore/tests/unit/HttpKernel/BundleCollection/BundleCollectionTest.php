@@ -182,7 +182,7 @@ class BundleCollectionTest extends TestCase
     public function testBundlesAreOrderedByPriority()
     {
         $collection = $this->collection;
-        $bundles = $this->bundles;
+        $bundles    = $this->bundles;
 
         $collection->addBundle($bundles[0], 10);
         $collection->addBundle($bundles[1], 5);
@@ -201,7 +201,7 @@ class BundleCollectionTest extends TestCase
     {
         $collection = $this->collection;
 
-        $bundles = $this->bundles;
+        $bundles   = $this->bundles;
         $bundles[] = new BundleD;
 
         $collection->addBundle($bundles[0]); // this will always be loaded

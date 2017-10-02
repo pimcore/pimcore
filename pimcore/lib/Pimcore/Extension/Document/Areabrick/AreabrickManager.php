@@ -50,7 +50,7 @@ class AreabrickManager implements AreabrickManagerInterface
      */
     public function __construct(Extension\Config $config, ContainerInterface $container)
     {
-        $this->config = $config;
+        $this->config    = $config;
         $this->container = $container;
     }
 
@@ -228,7 +228,7 @@ class AreabrickManager implements AreabrickManagerInterface
     public function setState(string $id, bool $state)
     {
         // load the brick to make sure it exists
-        $brick = $this->getBrick($id);
+        $brick  = $this->getBrick($id);
         $config = $this->getBrickConfig();
 
         if ($state) {
@@ -280,7 +280,7 @@ class AreabrickManager implements AreabrickManagerInterface
      */
     private function setBrickConfig(array $config)
     {
-        $cfg = $this->config->loadConfig();
+        $cfg            = $this->config->loadConfig();
         $cfg->areabrick = $config;
 
         $this->config->saveConfig($cfg);

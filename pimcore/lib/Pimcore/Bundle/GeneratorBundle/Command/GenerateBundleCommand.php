@@ -106,7 +106,7 @@ EOT
         $generator->generateBundle($bundle);
 
         $errors = [];
-        $fs = $this->getContainer()->get('filesystem');
+        $fs     = $this->getContainer()->get('filesystem');
 
         try {
             // remove tests until we defined a standard setup for bundle tests

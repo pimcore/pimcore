@@ -208,7 +208,7 @@ class Ghostscript extends Adapter
                 Console::exec(self::getGhostscriptCli() . ' -dBATCH -dNOPAUSE -sDEVICE=txtwrite ' . $pageRange . '-dTextFormat=2 -sOutputFile=' . $textFile . ' ' . escapeshellarg($path), null, 120);
 
                 if (is_file($textFile)) {
-                    $text = file_get_contents($textFile);
+                    $text =  file_get_contents($textFile);
 
                     // this is a little bit strange the default option -dTextFormat=3 from ghostscript should return utf-8 but it doesn't
                     // so we use option 2 which returns UCS-2LE and convert it here back to UTF-8 which works fine

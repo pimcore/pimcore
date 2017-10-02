@@ -81,7 +81,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         MigrationFinderInterface $finder = null
     ) {
         $this->migrationSet = $migrationSet;
-        $this->connection = $connection;
+        $this->connection   = $connection;
 
         parent::setMigrationsTableName('pimcore_migrations');
         parent::__construct($connection, $outputWriter, $finder);
@@ -215,8 +215,8 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
             return false;
         }
 
-        $setColumn = $this->migrationSetColumnName;
-        $versionColumn = $this->getMigrationsColumnName();
+        $setColumn           = $this->migrationSetColumnName;
+        $versionColumn       = $this->getMigrationsColumnName();
         $migrationDateColumn = $this->migrationDateColumnName;
 
         $columns = [
@@ -373,7 +373,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
     public function getNumberOfNewMigrations(): int
     {
         $availableMigrations = $this->getAvailableVersions();
-        $executedMigrations = $this->getMigratedVersions();
+        $executedMigrations  = $this->getMigratedVersions();
 
         $newMigrations = count(array_diff(
             $availableMigrations,
@@ -394,10 +394,10 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
     public function formatQuery(string $query): string
     {
         $replacements = [
-            'table' => $this->getMigrationsTableName(),
+            'table'         => $this->getMigrationsTableName(),
             'migration_set' => $this->migrationSetColumnName,
-            'version' => $this->getMigrationsColumnName(),
-            'migrated_at' => $this->migrationDateColumnName
+            'version'       => $this->getMigrationsColumnName(),
+            'migrated_at'   => $this->migrationDateColumnName
         ];
 
         $from = array_map(function ($key) {

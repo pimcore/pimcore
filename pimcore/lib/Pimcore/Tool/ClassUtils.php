@@ -45,10 +45,10 @@ class ClassUtils
     public static function findClassName(\SplFileInfo $file): string
     {
         $namespace = '';
-        $class = '';
+        $class     = '';
 
         $gettingNamespace = false;
-        $gettingClass = false;
+        $gettingClass     = false;
 
         if (!$file->isReadable() || !file_exists($file->getPathname())) {
             throw new \InvalidArgumentException(sprintf('File %s does not exist or is not readable'));

@@ -41,7 +41,7 @@ class DocumentTagExtension extends \Twig_Extension
         return [
             new \Twig_Function('pimcore_*', [$this, 'renderTag'], [
                 'needs_context' => true,
-                'is_safe' => ['html'],
+                'is_safe'       => ['html'],
             ]),
             new \Twig_Function('pimcore_iterate_block', [$this, 'getBlockIterator'])
         ];

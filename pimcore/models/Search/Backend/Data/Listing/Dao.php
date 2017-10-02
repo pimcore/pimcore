@@ -56,7 +56,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
                 $entry->setCreationDate($entryData['creationDate']);
                 $entry->setModificationDate($entryData['modificationDate']);
                 $entry->setPublished($entryData['published'] === 0 ? false : true);
-                $entries[] = $entry;
+                $entries[]=$entry;
             }
         }
         $this->model->setEntries($entries);

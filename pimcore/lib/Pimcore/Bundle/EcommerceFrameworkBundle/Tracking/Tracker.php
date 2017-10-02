@@ -45,7 +45,7 @@ abstract class Tracker implements ITracker
         array $options = []
     ) {
         $this->trackingItemBuilder = $trackingItemBuilder;
-        $this->templatingEngine = $templatingEngine;
+        $this->templatingEngine    = $templatingEngine;
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -54,7 +54,7 @@ abstract class Tracker implements ITracker
 
     protected function processOptions(array $options)
     {
-        $this->templatePrefix = $options['template_prefix'];
+        $this->templatePrefix    = $options['template_prefix'];
         $this->templateExtension = $options['template_extension'];
     }
 

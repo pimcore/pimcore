@@ -78,7 +78,7 @@ class Gift implements IGift
     public function toJSON()
     {
         return json_encode([
-            'type' => 'Gift',
+            'type'    => 'Gift',
             'product' => $this->getProduct() ? $this->getProduct()->getFullPath() : null,
         ]);
     }

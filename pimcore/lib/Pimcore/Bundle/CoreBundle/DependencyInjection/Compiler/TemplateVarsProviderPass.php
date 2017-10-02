@@ -30,7 +30,7 @@ class TemplateVarsProviderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $definition = $container->getDefinition(TemplateVarsResolver::class);
+        $definition     = $container->getDefinition(TemplateVarsResolver::class);
         $taggedServices = $container->findTaggedServiceIds('pimcore.templating.vars_provider');
 
         foreach ($taggedServices as $id => $tags) {

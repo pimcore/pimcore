@@ -95,7 +95,7 @@ class QPay implements IPayment
     protected function processOptions(array $options)
     {
         $this->customer = $options['customer'];
-        $this->secret = $options['secret'];
+        $this->secret   = $options['secret'];
 
         if (isset($options['toolkit_password'])) {
             $this->toolkitPassword = $options['toolkit_password'];
@@ -283,9 +283,9 @@ class QPay implements IPayment
 
         $authorizedData = [
             'orderNumber' => null,
-            'language' => null,
-            'amount' => null,
-            'currency' => null
+            'language'    => null,
+            'amount'      => null,
+            'currency'    => null
         ];
 
         // check fields
@@ -332,10 +332,10 @@ class QPay implements IPayment
                 ? IStatus::STATUS_AUTHORIZED
                 : IStatus::STATUS_CANCELLED,
             [
-                'qpay_amount' => (string)$price,
-                'qpay_paymentType' => $response['paymentType'],
+                'qpay_amount'       => (string)$price,
+                'qpay_paymentType'  => $response['paymentType'],
                 'qpay_paymentState' => $response['paymentState'],
-                'qpay_response' => $response
+                'qpay_response'     => $response
             ]
         );
     }
@@ -346,13 +346,13 @@ class QPay implements IPayment
     protected function getRequiredRequestFields(): array
     {
         return [
-            'successURL' => null,
-            'cancelURL' => null,
-            'failureURL' => null,
-            'serviceURL' => null,
+            'successURL'       => null,
+            'cancelURL'        => null,
+            'failureURL'       => null,
+            'serviceURL'       => null,
             'orderDescription' => null,
-            'orderIdent' => null,
-            'language' => null,
+            'orderIdent'       => null,
+            'language'         => null,
         ];
     }
 
@@ -459,8 +459,8 @@ class QPay implements IPayment
                 '',
                 IStatus::STATUS_CLEARED,
                 [
-                    'qpay_amount' => (string)$price,
-                    'qpay_command' => $request['command'],
+                    'qpay_amount'   => (string)$price,
+                    'qpay_command'  => $request['command'],
                     'qpay_response' => $response
                 ]
             );
@@ -478,8 +478,8 @@ class QPay implements IPayment
                 implode("\n", $error),
                 IStatus::STATUS_CANCELLED,
                 [
-                    'qpay_amount' => (string)$price,
-                    'qpay_command' => $request['command'],
+                    'qpay_amount'   => (string)$price,
+                    'qpay_command'  => $request['command'],
                     'qpay_response' => $response
                 ]
             );
@@ -540,8 +540,8 @@ class QPay implements IPayment
                 'executeCredit',
                 IStatus::STATUS_CLEARED,
                 [
-                    'qpay_amount' => (string)$price,
-                    'qpay_command' => $request['command'],
+                    'qpay_amount'   => (string)$price,
+                    'qpay_command'  => $request['command'],
                     'qpay_response' => $response
                 ]
             );
@@ -554,8 +554,8 @@ class QPay implements IPayment
                 $response['message'],
                 IStatus::STATUS_CANCELLED,
                 [
-                    'qpay_amount' => (string)$price,
-                    'qpay_command' => $request['command'],
+                    'qpay_amount'   => (string)$price,
+                    'qpay_command'  => $request['command'],
                     'qpay_response' => $response
                 ]
             );
@@ -573,7 +573,7 @@ class QPay implements IPayment
      */
     protected function computeFingerprint(array $params)
     {
-        $data = implode('', $params);
+        $data   = implode('', $params);
         $result = null;
 
         switch ($this->hashAlgorithm) {

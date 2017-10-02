@@ -51,7 +51,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest',
+            KernelEvents::REQUEST  => 'onKernelRequest',
             KernelEvents::RESPONSE => 'onKernelResponse'
         ];
     }

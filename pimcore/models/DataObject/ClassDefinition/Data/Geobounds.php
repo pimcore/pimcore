@@ -321,7 +321,7 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     {
         if ($value) {
             return [
-                'value' => json_encode([$value[$this->getName() . '__NElatitude'], $value[$this->getName() . '__NElongitude']]),
+                'value' =>  json_encode([$value[$this->getName() . '__NElatitude'], $value[$this->getName() . '__NElongitude']]),
                 'value2' => json_encode([$value[$this->getName() . '__SWlatitude'], $value[$this->getName() . '__SWlongitude']])
             ];
         }

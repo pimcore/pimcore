@@ -925,7 +925,7 @@ abstract class Data
     public function getGetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        $code = '/**' . "\n";
+        $code  = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
@@ -965,7 +965,7 @@ abstract class Data
             $classname = $class->getName();
         }
 
-        $code = '/**' . "\n";
+        $code  = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";

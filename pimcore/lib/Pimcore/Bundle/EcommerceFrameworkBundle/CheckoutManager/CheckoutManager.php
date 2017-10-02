@@ -108,7 +108,7 @@ class CheckoutManager implements ICheckoutManager
         $this->cart = $cart;
         $this->environment = $environment;
 
-        $this->orderManagers = $orderManagers;
+        $this->orderManagers         = $orderManagers;
         $this->commitOrderProcessors = $commitOrderProcessors;
 
         $this->payment = $paymentProvider;

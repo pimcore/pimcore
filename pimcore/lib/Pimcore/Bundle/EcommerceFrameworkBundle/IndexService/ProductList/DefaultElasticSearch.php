@@ -798,7 +798,7 @@ class DefaultElasticSearch implements IProductList
     public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
         if ($fieldname) {
-            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)]= ['countValues' => $countValues, 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded];
             $this->preparedGroupByValuesLoaded = false;
         }
     }

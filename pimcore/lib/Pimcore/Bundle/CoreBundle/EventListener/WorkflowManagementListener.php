@@ -43,9 +43,9 @@ class WorkflowManagementListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DataObjectEvents::POST_ADD => 'onElementPostAdd',
-            DocumentEvents::POST_ADD => 'onElementPostAdd',
-            AssetEvents::POST_ADD => 'onElementPostAdd',
+            DataObjectEvents::POST_ADD  => 'onElementPostAdd',
+            DocumentEvents::POST_ADD  => 'onElementPostAdd',
+            AssetEvents::POST_ADD  => 'onElementPostAdd',
 
             DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',

@@ -134,7 +134,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                 } catch (\Exception $e) {
                     Logger::err($e);
 
-                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                    return $this->json(['success' => false, 'message'=>$e->getMessage()]);
                 }
             } else {
                 if ($page->isAllowed('save')) {
@@ -147,7 +147,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                     } catch (\Exception $e) {
                         Logger::err($e);
 
-                        return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                        return $this->json(['success' => false, 'message'=>$e->getMessage()]);
                     }
                 }
             }

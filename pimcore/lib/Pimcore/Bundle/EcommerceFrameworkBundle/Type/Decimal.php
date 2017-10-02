@@ -55,7 +55,7 @@ class Decimal
     protected function __construct(int $amount, int $scale)
     {
         $this->amount = $amount;
-        $this->scale = $scale;
+        $this->scale  = $scale;
     }
 
     /**
@@ -194,7 +194,7 @@ class Decimal
             // e.g. 123.45 at scale 4 -> 123 (integer) . 4500 (zero padded decimal part) => 1234500
             if (strlen($captures[3]) <= $scale) {
                 $fractionalPart = str_pad($captures[3], $scale, '0', STR_PAD_RIGHT);
-                $result = (int)($captures[1] . $captures[2] . $fractionalPart);
+                $result         = (int)($captures[1] . $captures[2] . $fractionalPart);
             }
         }
 
@@ -328,8 +328,8 @@ class Decimal
             $amount = '0.' . $fractionalPart;
         } else {
             $fractionalOffset = strlen($string) - $this->scale;
-            $integerPart = substr($string, 0, $fractionalOffset);
-            $fractionalPart = substr($string, $fractionalOffset);
+            $integerPart      = substr($string, 0, $fractionalOffset);
+            $fractionalPart   = substr($string, $fractionalOffset);
 
             $amount = $integerPart . '.' . $fractionalPart;
         }
@@ -352,7 +352,7 @@ class Decimal
      */
     private function truncateDecimalString(string $amount, int $digits): string
     {
-        $integerPart = $amount;
+        $integerPart    = $amount;
         $fractionalPart = '0';
 
         if (false !== strpos($amount, '.')) {

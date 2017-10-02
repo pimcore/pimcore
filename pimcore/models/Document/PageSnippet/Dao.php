@@ -44,7 +44,7 @@ abstract class Dao extends Model\Document\Dao
         $elementsRaw = $this->db->fetchAll('SELECT * FROM documents_elements WHERE documentId = ?', [$this->model->getId()]);
 
         $elements = [];
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
+        $loader   = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
 
         foreach ($elementsRaw as $elementRaw) {
             /** @var Document\Tag $element */

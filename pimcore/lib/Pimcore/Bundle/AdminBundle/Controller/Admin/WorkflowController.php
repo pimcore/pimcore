@@ -79,20 +79,20 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
         //this is the default returned workflow data
         $wfConfig = [
-            'message' => '',
-            'available_actions' => [],
-            'available_states' => [],
-            'available_statuses' => [],
-            'notes_required' => false,
-            'additional_fields' => []
+            'message'               => '',
+            'available_actions'     => [],
+            'available_states'      => [],
+            'available_statuses'    => [],
+            'notes_required'        => false,
+            'additional_fields'     => []
         ];
 
         try {
 
             //get user selections
             $this->selectedAction = empty($params['action']) ? null : $params['action'];
-            $this->newState = empty($params['newState']) ? null : $params['newState'];
-            $this->newStatus = empty($params['newStatus']) ? null : $params['newStatus'];
+            $this->newState       = empty($params['newState']) ? null : $params['newState'];
+            $this->newStatus      = empty($params['newStatus']) ? null : $params['newStatus'];
 
             //always return the available actions
             $wfConfig['available_actions'] = $this->getDecorator()->getAvailableActionsForForm(

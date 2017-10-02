@@ -63,7 +63,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
             throw new \InvalidArgumentException('File name does not match expected format');
         }
 
-        $json = $this->getJson($path);
+        $json  = $this->getJson($path);
         $force = $this->input->getOption('force');
 
         $logName = sprintf('(%s) <comment>%s</comment>', $type, $name);

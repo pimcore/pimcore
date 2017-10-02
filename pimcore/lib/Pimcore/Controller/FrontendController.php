@@ -169,7 +169,7 @@ abstract class FrontendController extends Controller implements EventedControlle
      */
     public function renderTemplate($view, array $parameters = [], Response $response = null)
     {
-        $viewModel = $this->get(ViewModelResolver::class)->getViewModel();
+        $viewModel  = $this->get(ViewModelResolver::class)->getViewModel();
         $parameters = array_merge($viewModel->getAllParameters(), $parameters);
 
         return $this->render($view, $parameters, $response);

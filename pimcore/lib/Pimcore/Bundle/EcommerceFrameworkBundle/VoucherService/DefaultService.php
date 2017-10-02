@@ -54,7 +54,7 @@ class DefaultService implements IVoucherService
 
         $resolver->setDefaults([
             'reservation_minutes_threshold' => 5,
-            'statistics_days_threshold' => 30
+            'statistics_days_threshold'     => 30
         ]);
 
         $resolver->setAllowedTypes('reservation_minutes_threshold', 'int');

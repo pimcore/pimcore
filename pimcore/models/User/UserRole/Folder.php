@@ -38,7 +38,7 @@ class Folder extends Model\User\AbstractUser
      */
     public function setHasChilds($state)
     {
-        $this->hasChilds = $state;
+        $this->hasChilds= $state;
 
         return $this;
     }

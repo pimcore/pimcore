@@ -57,8 +57,8 @@ class ResponseHeaderResolver extends AbstractRequestResolver
 
         // manually add a @ResponseHeader config annotation to the list of headers
         $responseHeaders[] = new ResponseHeader([
-            'key' => $key,
-            'values' => $values,
+            'key'     => $key,
+            'values'  => $values,
             'replace' => $replace
         ]);
 

@@ -69,7 +69,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
         array $unauthenticatedRoutes
     ) {
         $this->requestMatcherFactory = $factory;
-        $this->tokenResolver = $tokenResolver;
+        $this->tokenResolver         = $tokenResolver;
         $this->unauthenticatedRoutes = $unauthenticatedRoutes;
     }
 
@@ -89,7 +89,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
             return;
         }
 
-        $request = $event->getRequest();
+        $request    = $event->getRequest();
 
         /** @var DoubleAuthenticationControllerInterface $controller */
         $controller = $this->getControllerType($event, DoubleAuthenticationControllerInterface::class);

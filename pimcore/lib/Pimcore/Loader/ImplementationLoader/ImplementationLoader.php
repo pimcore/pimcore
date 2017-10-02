@@ -47,7 +47,7 @@ class ImplementationLoader implements LoaderInterface
      */
     private function setLoaders(array $loaders)
     {
-        $this->loaders = [];
+        $this->loaders     = [];
         $this->loaderCache = [];
 
         foreach ($loaders as $loader) {

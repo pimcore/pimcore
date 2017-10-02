@@ -37,7 +37,7 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
         $currentFilter[$field] = $value;
 
         if (!empty($value)) {
-            $value = '.*"' . $value .  '".*';
+            $value =  '.*"' . $value .  '".*';
             $productList->addCondition(['regexp' => ['attributes.' . $field => $value]], $field);
         }
 

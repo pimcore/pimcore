@@ -178,13 +178,13 @@ class PimcoreRest extends REST
             $this->debug(sprintf('[REST] Creating user %s', $username));
 
             $apikey = md5(time()) . md5($username);
-            $user = User::create([
+            $user   = User::create([
                 'parentId' => 0,
                 'username' => 'rest',
                 'password' => Authentication::getPasswordHash($username, $password),
-                'active' => true,
-                'apiKey' => $apikey,
-                'admin' => $admin
+                'active'   => true,
+                'apiKey'   => $apikey,
+                'admin'    => $admin
             ]);
         }
 

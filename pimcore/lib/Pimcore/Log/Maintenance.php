@@ -138,7 +138,7 @@ class Maintenance
         $db = \Pimcore\Db::get();
 
         $date = new \DateTime('now');
-        $tablename = \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . $date->format('m') . '_' . $date->format('Y');
+        $tablename =  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . $date->format('m') . '_' . $date->format('Y');
 
         if ($config->archive_alternative_database) {
             $tablename = $config->archive_alternative_database . '.' . $tablename;

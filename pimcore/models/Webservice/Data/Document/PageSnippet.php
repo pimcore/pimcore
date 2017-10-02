@@ -50,7 +50,7 @@ class PageSnippet extends Model\Webservice\Data\Document
     {
         $originalElements = [];
         if (is_array($object->getElements())) {
-            $originalElements = $object->getElements();
+            $originalElements=$object->getElements();
         }
 
         parent::map($object);

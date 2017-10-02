@@ -42,7 +42,7 @@ class ConflictResolver implements ConflictResolverInterface
 
     public function __construct(PimcoreStyle $io, NamingStrategyInterface $namingStrategy)
     {
-        $this->io = $io;
+        $this->io             = $io;
         $this->namingStrategy = $namingStrategy;
     }
 
@@ -138,11 +138,11 @@ EOF;
         });
 
         $leaveUnresolved = 'Leave unresolved';
-        $resultChoice = $leaveUnresolved;
-        $result = null;
+        $resultChoice    = $leaveUnresolved;
+        $result          = null;
 
         if ($this->io->getInput()->isInteractive()) {
-            $choices = $this->buildChoices($elements);
+            $choices   = $this->buildChoices($elements);
             $choices[] = $leaveUnresolved;
 
             $inverseChoices = array_flip($choices);

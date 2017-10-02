@@ -183,7 +183,7 @@ class GeneralTest extends ModelTestCase
         $this->assertEquals(1, count($relationobjects), 'inheritance for object relations failed');
         $this->assertEquals($one->getId(), $relationobjects[0]->getId(), 'inheritance for object relations failed (wrong object)');
 
-        $db = $this->tester->getContainer()->get('database_connection');
+        $db    = $this->tester->getContainer()->get('database_connection');
         $table = 'object_' . $one->getClassId();
 
         $relationobjectsString = $db->fetchColumn('SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?', [

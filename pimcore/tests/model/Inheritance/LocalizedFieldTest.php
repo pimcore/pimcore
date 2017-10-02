@@ -59,8 +59,8 @@ class LocalizedFieldTest extends ModelTestCase
         $id2 = $two->getId();
         $id3 = $three->getId();
 
-        $one = AbstractObject::getById($id1);
-        $two = AbstractObject::getById($id2);
+        $one   = AbstractObject::getById($id1);
+        $two   = AbstractObject::getById($id2);
         $three = AbstractObject::getById($id3);
 
         $three->delete();

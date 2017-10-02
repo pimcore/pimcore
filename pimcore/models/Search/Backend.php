@@ -40,7 +40,7 @@ class Backend
      * @param null $userModification
      * @param bool $countOnly
      */
-    protected function createBackendSearchQuery($queryStr, $type = null, $subtype = null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $countOnly = false)
+    protected function createBackendSearchQuery($queryStr, $type= null, $subtype = null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $countOnly=false)
     {
         if ($countOnly) {
             $selectFields = ' count(*) as count ';
@@ -122,7 +122,7 @@ class Backend
     {
         $this->createBackendSearchQuery($queryStr, $webResourceType, $type, $subtype, $modifiedRange, $createdRange, $userOwner, $userModification, $classname, true);
         $db = Db::get();
-        $result = $db->fetchRow($this->backendQuery, $this->backendQueryParams);
+        $result =  $db->fetchRow($this->backendQuery, $this->backendQueryParams);
         if ($result['count']) {
             return $result['count'];
         } else {
@@ -144,7 +144,7 @@ class Backend
      *
      * @return array
      */
-    public function findInDb($queryStr, $type = null, $subtype = null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $offset = 0, $limit = 25)
+    public function findInDb($queryStr, $type=null, $subtype=null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $offset=0, $limit=25)
     {
         $this->createBackendSearchQuery($queryStr, $type, $subtype, $classname, $modifiedRange, $createdRange, $userOwner, $userModification, false);
         $db = Db::get();

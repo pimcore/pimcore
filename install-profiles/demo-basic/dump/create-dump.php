@@ -17,7 +17,7 @@ $tables = [];
 
 foreach ($tablesRaw as $table) {
     if ($table['Table_type'] == 'VIEW') {
-        $views[] = current($table);
+        $views[]  = current($table);
     } else {
         $tables[] = current($table);
     }

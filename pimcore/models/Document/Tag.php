@@ -130,7 +130,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $options = $this->getEditmodeOptions();
         $code = $this->outputEditmodeOptions($options, true);
 
-        $attributes = $this->getEditmodeElementAttributes($options);
+        $attributes      = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $code .= ('<div ' . $attributeString . '></div>');
@@ -146,12 +146,12 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected function getEditmodeOptions(): array
     {
         $options = [
-            'id' => 'pimcore_editable_' . $this->getName(),
-            'name' => $this->getName(),
-            'realName' => $this->getRealName(),
-            'options' => $this->getOptions(),
-            'data' => $this->getEditmodeData(),
-            'type' => $this->getType(),
+            'id'        => 'pimcore_editable_' . $this->getName(),
+            'name'      => $this->getName(),
+            'realName'  => $this->getRealName(),
+            'options'   => $this->getOptions(),
+            'data'      => $this->getEditmodeData(),
+            'type'      => $this->getType(),
             'inherited' => $this->getInherited()
         ];
 
@@ -189,7 +189,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         $attributes = array_merge($this->getEditmodeBlockStateAttributes(), [
-            'id' => $options['id'],
+            'id'    => $options['id'],
             'class' => implode(' ', $this->getEditmodeElementClasses()),
         ]);
 
@@ -204,10 +204,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }, $blockState->getBlocks());
 
         $attributes = [
-            'data-name' => $this->getName(),
-            'data-real-name' => $this->getRealName(),
-            'data-type' => $this->getType(),
-            'data-block-names' => implode(', ', $blockNames),
+            'data-name'          => $this->getName(),
+            'data-real-name'     => $this->getRealName(),
+            'data-type'          => $this->getType(),
+            'data-block-names'   => implode(', ', $blockNames),
             'data-block-indexes' => implode(', ', $blockState->getIndexes())
         ];
 
@@ -635,8 +635,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
 
-        $container = \Pimcore::getContainer();
-        $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        $container      = \Pimcore::getContainer();
+        $blockState     = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         $tagName = $namingStrategy->buildTagName($name, $type, $blockState);

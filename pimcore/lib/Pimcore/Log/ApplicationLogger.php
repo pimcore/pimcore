@@ -58,7 +58,7 @@ class ApplicationLogger implements LoggerInterface
      */
     public static function getInstance($component = 'default', $initDbHandler = false)
     {
-        $container = \Pimcore::getContainer();
+        $container   = \Pimcore::getContainer();
         $containerId = 'pimcore.app_logger.' . $component;
 
         if ($container->has($containerId)) {
@@ -214,13 +214,13 @@ class ApplicationLogger implements LoggerInterface
         ];
 
         $previousCall = null;
-        $logCall = null;
+        $logCall      = null;
 
         // look for the first call to this class calling one of the logging methods
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         for ($i = count($backtrace) - 1; $i >= 0; $i--) {
             $previousCall = $logCall;
-            $logCall = $backtrace[$i];
+            $logCall      = $backtrace[$i];
 
             if (!empty($logCall['class']) && $logCall['class'] === __CLASS__) {
                 if (in_array($logCall['function'], $validMethods)) {

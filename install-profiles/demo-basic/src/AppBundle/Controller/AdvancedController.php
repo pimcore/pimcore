@@ -42,10 +42,10 @@ class AdvancedController extends FrontendController
                     $userData = $adapter->getUserProfile();
                     if ($userData) {
                         $form->setData([
-                            'gender' => $userData->gender,
+                            'gender'    => $userData->gender,
                             'firstname' => $userData->firstName,
-                            'lastname' => $userData->lastName,
-                            'email' => $userData->email
+                            'lastname'  => $userData->lastName,
+                            'email'     => $userData->email
                         ]);
                     }
                 }
@@ -87,7 +87,7 @@ class AdvancedController extends FrontendController
         $queryString = $request->get('q');
 
         if (!empty($queryString)) {
-            $page = (int)$request->get('page', 1);
+            $page    = (int)$request->get('page', 1);
             $perPage = 10;
 
             $result = \Pimcore\Google\Cse::search($queryString, (($page - 1) * $perPage), null, [
@@ -99,8 +99,8 @@ class AdvancedController extends FrontendController
             $paginator->setItemCountPerPage($perPage);
 
             $this->view->queryString = $queryString;
-            $this->view->paginator = $paginator;
-            $this->view->result = $result;
+            $this->view->paginator   = $paginator;
+            $this->view->result      = $result;
         }
     }
 
@@ -112,8 +112,8 @@ class AdvancedController extends FrontendController
         $form = $this->createForm(PersonInquiryType::class);
         $form->handleRequest($request);
 
-        $this->view->success = false;
-        $this->view->error = false;
+        $this->view->success   = false;
+        $this->view->error     = false;
         $this->view->submitted = $form->isSubmitted();
 
         if ($form->isSubmitted()) {

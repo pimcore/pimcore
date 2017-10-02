@@ -23,7 +23,7 @@ class SecureController extends FrontendController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         $formData = [
-            '_username' => $lastUsername,
+            '_username'    => $lastUsername,
             '_target_path' => '/' . $request->getLocale()
         ];
 
@@ -32,11 +32,11 @@ class SecureController extends FrontendController
         ]);
 
         return [
-            'hideLeftNav' => true,
+            'hideLeftNav'     => true,
             'showBreadcrumbs' => false,
-            'form' => $form->createView(),
-            'error' => $error,
-            'availableUsers' => $this->loadAvailableUsers()
+            'form'            => $form->createView(),
+            'error'           => $error,
+            'availableUsers'  => $this->loadAvailableUsers()
         ];
     }
 
@@ -55,7 +55,7 @@ class SecureController extends FrontendController
         foreach ($users as $user) {
             $result[] = [
                 'username' => $user->getUsername(),
-                'roles' => $user->getRoles(),
+                'roles'    => $user->getRoles(),
                 'password' => 'doe'
             ];
         }

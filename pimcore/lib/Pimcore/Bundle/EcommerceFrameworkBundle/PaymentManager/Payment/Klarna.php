@@ -51,7 +51,7 @@ class Klarna implements IPayment
 
     protected function processOptions(array $options)
     {
-        $this->eid = $options['eid'];
+        $this->eid             = $options['eid'];
         $this->sharedSecretKey = $options['shared_secret_key'];
 
         // set endpoint depending on mode
@@ -108,8 +108,8 @@ class Klarna implements IPayment
     {
         // check params
         $required = [
-            'purchase_country' => null,
-            'locale' => null,
+            'purchase_country'   => null,
+            'locale'             => null,
             'merchant_reference' => null
         ];
 
@@ -175,10 +175,10 @@ class Klarna implements IPayment
                 ? $statMap[$order['status']]
                 : IStatus::STATUS_CANCELLED,
             [
-                'klarna_amount' => $order['cart']['total_price_including_tax'],
-                'klarna_marshal' => json_encode($order->marshal()),
+                'klarna_amount'      => $order['cart']['total_price_including_tax'],
+                'klarna_marshal'     => json_encode($order->marshal()),
                 'klarna_reservation' => $order['reservation'],
-                'klarna_reference' => $order['reference']
+                'klarna_reference'   => $order['reference']
             ]
         );
     }
@@ -227,7 +227,7 @@ class Klarna implements IPayment
                     ? IStatus::STATUS_CLEARED
                     : IStatus::STATUS_CANCELLED,
                 [
-                    'klarna_amount' => $order['cart']['total_price_including_tax'],
+                    'klarna_amount'  => $order['cart']['total_price_including_tax'],
                     'klarna_marshal' => json_encode($order->marshal())
                 ]
             );

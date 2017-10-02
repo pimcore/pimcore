@@ -166,8 +166,8 @@ class HeadStyle extends AbstractHelper
     public function __call($method, $args)
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(Style)$/', $method, $matches)) {
-            $index = null;
-            $argc = count($args);
+            $index  = null;
+            $argc   = count($args);
             $action = $matches['action'];
 
             if ('offsetSet' == $action) {
@@ -182,7 +182,7 @@ class HeadStyle extends AbstractHelper
             }
 
             $content = $args[0];
-            $attrs = [];
+            $attrs   = [];
             if (isset($args[1])) {
                 $attrs = (array) $args[1];
             }
@@ -299,9 +299,9 @@ class HeadStyle extends AbstractHelper
             throw new Exception('Cannot nest headStyle captures');
         }
 
-        $this->_captureLock = true;
-        $this->_captureAttrs = $attrs;
-        $this->_captureType = $type;
+        $this->_captureLock        = true;
+        $this->_captureAttrs       = $attrs;
+        $this->_captureType        = $type;
         ob_start();
     }
 
@@ -312,10 +312,10 @@ class HeadStyle extends AbstractHelper
      */
     public function captureEnd()
     {
-        $content = ob_get_clean();
-        $attrs = $this->_captureAttrs;
+        $content             = ob_get_clean();
+        $attrs               = $this->_captureAttrs;
         $this->_captureAttrs = null;
-        $this->_captureLock = false;
+        $this->_captureLock  = false;
 
         switch ($this->_captureType) {
             case Container::SET:
@@ -438,7 +438,7 @@ class HeadStyle extends AbstractHelper
         }
 
         $data = new \stdClass();
-        $data->content = $content;
+        $data->content    = $content;
         $data->attributes = $attributes;
 
         return $data;

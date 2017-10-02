@@ -62,8 +62,8 @@ class Price implements IPrice
     public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false)
     {
         $this->grossAmount = $this->netAmount = $amount;
-        $this->currency = $currency;
-        $this->minPrice = $minPrice;
+        $this->currency    = $currency;
+        $this->minPrice    = $minPrice;
     }
 
     public function __toString()

@@ -61,8 +61,8 @@ class ConsoleColorFormatter extends LineFormatter
     {
         $formatted = parent::format($record);
         $levelName = strtolower($record['level_name']);
-        $wrapped = sprintf('<%1$s>%2$s</%1$s>', $levelName, $formatted);
-        $result = $this->getOutputFormatter()->format($wrapped);
+        $wrapped   = sprintf('<%1$s>%2$s</%1$s>', $levelName, $formatted);
+        $result    = $this->getOutputFormatter()->format($wrapped);
 
         return $result;
     }

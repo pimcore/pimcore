@@ -14,8 +14,8 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
      */
     protected function setUpTestClasses()
     {
-        $name = 'csstoreclass';
-        $file = 'classificationstore.json';
+        $name  = 'csstoreclass';
+        $file  = 'classificationstore.json';
         $class = ClassDefinition::getByName($name);
 
         if (!$class) {
@@ -65,7 +65,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
 
         $keyNames = ['key1', 'key2', 'key3', 'key4', 'key5', 'key6'];
         for ($i = 0; $i < count($keyNames); $i++) {
-            $keyName = $keyNames[$i];
+            $keyName   = $keyNames[$i];
             $keyConfig = Classificationstore\KeyConfig::getByName($keyName, $i < 3 ? $group1->getId() : $group2->getId());
             if (!$keyConfig) {
                 $keyConfig = new Classificationstore\KeyConfig();

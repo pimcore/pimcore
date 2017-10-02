@@ -79,7 +79,7 @@ abstract class AbstractAdminSessionHandler implements AdminSessionHandlerInterfa
      */
     public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin')
     {
-        $session = $this->loadSession();
+        $session      = $this->loadSession();
         $attributeBag = $this->loadAttributeBag($name, $session);
 
         $result = call_user_func_array($callable, [$attributeBag, $session]);

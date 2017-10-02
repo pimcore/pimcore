@@ -324,7 +324,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
 
         // these are named after what MySQL expects - DECIMAL(precision, scale)
         $precision = self::DECIMAL_SIZE_DEFAULT;
-        $scale = self::DECIMAL_PRECISION_DEFAULT;
+        $scale     = self::DECIMAL_PRECISION_DEFAULT;
 
         if (null !== $this->decimalSize) {
             $precision = intval($this->decimalSize);

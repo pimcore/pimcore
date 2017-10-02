@@ -174,7 +174,7 @@ class Config implements Countable, Iterator, ArrayAccess
     public function toArray()
     {
         $array = [];
-        $data = $this->data;
+        $data  = $this->data;
 
         /** @var self $value */
         foreach ($data as $key => $value) {

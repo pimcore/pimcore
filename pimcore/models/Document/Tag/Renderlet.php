@@ -348,8 +348,8 @@ class Renderlet extends Model\Document\Tag
                 Logger::notice('Detected insane relation, removing reference to non existent '.$this->type.' with id ['.$this->id.']');
                 $this->id = null;
                 $this->type = null;
-                $this->o = null;
-                $this->subtype = null;
+                $this->o=null;
+                $this->subtype=null;
             }
         }
 

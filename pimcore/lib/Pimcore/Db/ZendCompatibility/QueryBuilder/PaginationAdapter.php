@@ -205,9 +205,9 @@ class PaginationAdapter implements AdapterInterface
         $db = $rowCount->getAdapter();
 
         $countColumn = $db->quoteIdentifier(self::ROW_COUNT_COLUMN);
-        $countPart = 'COUNT(1) AS ';
-        $groupPart = null;
-        $unionParts = $rowCount->getPart(QueryBuilder::UNION);
+        $countPart   = 'COUNT(1) AS ';
+        $groupPart   = null;
+        $unionParts  = $rowCount->getPart(QueryBuilder::UNION);
 
         /**
          * If we're dealing with a UNION query, execute the UNION as a subquery
@@ -222,9 +222,9 @@ class PaginationAdapter implements AdapterInterface
                 ->from($rowCount, $expression);
         } else {
             $columnParts = $rowCount->getPart(QueryBuilder::COLUMNS);
-            $groupParts = $rowCount->getPart(QueryBuilder::GROUP);
+            $groupParts  = $rowCount->getPart(QueryBuilder::GROUP);
             $havingParts = $rowCount->getPart(QueryBuilder::HAVING);
-            $isDistinct = $rowCount->getPart(QueryBuilder::DISTINCT);
+            $isDistinct  = $rowCount->getPart(QueryBuilder::DISTINCT);
 
             /**
              * If there is more than one column AND it's a DISTINCT query, more

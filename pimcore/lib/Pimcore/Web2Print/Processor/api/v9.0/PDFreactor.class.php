@@ -78,10 +78,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'POST',
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -156,10 +156,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'POST',
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -246,10 +246,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'POST',
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -302,7 +302,7 @@ class PDFreactor
                     $keepDocument = $config->{'keepDocument'};
                 }
                 if (!isset($this->stickyMap[$documentId])) {
-                    $this->stickyMap[$documentId] = ['cookies' => [], 'keepDocument' => $keepDocument];
+                    $this->stickyMap[$documentId] = ['cookies'=>[], 'keepDocument'=>$keepDocument];
                 }
                 foreach ($tmp as $name => $value) {
                     $this->stickyMap[$documentId]['cookies'][$name] = $value;
@@ -350,10 +350,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'GET',
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -434,10 +434,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'GET',
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -518,10 +518,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'GET',
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -613,10 +613,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'DELETE',
+                'method'  => 'DELETE',
                 'ignore_errors' => true
             ],
         ];
@@ -684,10 +684,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'GET',
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -757,10 +757,10 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
+                'header'  => $headerStr,
                 'follow_location' => false,
                 'max_redirects' => 0,
-                'method' => 'GET',
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];

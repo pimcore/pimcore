@@ -29,7 +29,7 @@ class DataTypeOutTest extends AbstractDataTypeRestTestCase
         $this->assertNotNull($restObject);
         $this->assertInstanceOf(Unittest::class, $restObject);
 
-        $this->testObject = $restObject;
+        $this->testObject       = $restObject;
         $this->comparisonObject = $object;
 
         return $this->testObject;

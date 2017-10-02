@@ -132,7 +132,7 @@ class Api
 
         // token cache
         $hash = crc32(serialize([$scope]));
-        $tokenId = 'google-api.token.' . $hash;
+        $tokenId =  'google-api.token.' . $hash;
         if ($tokenData = TmpStore::get($tokenId)) {
             $tokenInfo = json_decode($tokenData->getData(), true);
             if (($tokenInfo['created'] + $tokenInfo['expires_in']) > (time() - 900)) {
@@ -225,13 +225,13 @@ class Api
                             $name .= ' '.$i;
                         }
                         $result[] = [
-                            'id' => str_replace('XX', $i, $item['id']),
-                            'name' => $name
+                            'id'=>str_replace('XX', $i, $item['id']),
+                            'name'=>$name
                         ];
                     }
                 } else {
                     $result[] = [
-                        'id' => $item['id'],
+                        'id'=>$item['id'],
                         'name' => $translator->trans($item['attributes']['uiName'], [], 'admin')
                     ];
                 }

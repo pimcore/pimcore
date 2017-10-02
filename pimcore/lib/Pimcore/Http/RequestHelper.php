@@ -80,7 +80,7 @@ class RequestHelper
      */
     public function isFrontendRequest(Request $request = null): bool
     {
-        $request = $this->getRequest($request);
+        $request   = $this->getRequest($request);
         $attribute = self::ATTRIBUTE_FRONTEND_REQUEST;
 
         if ($request->attributes->has($attribute) && $request->attributes->get($attribute)) {

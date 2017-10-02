@@ -46,7 +46,7 @@ class UserLoader
      */
     public function __construct(TokenStorageUserResolver $userResolver, RequestHelper $requestHelper)
     {
-        $this->userResolver = $userResolver;
+        $this->userResolver  = $userResolver;
         $this->requestHelper = $requestHelper;
     }
 

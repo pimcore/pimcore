@@ -219,7 +219,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
                 AbstractObject::setHideUnpublished($hidePublishedMemory);
 
                 foreach ($data as $key => $value) {
-                    $data[$key] = Text::removeLineBreaks($value);
+                    $data[$key]= Text::removeLineBreaks($value);
                 }
                 $data['crc_current'] = crc32(serialize($data));
                 $this->insertDataToIndex($data, $subObjectId);

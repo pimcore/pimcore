@@ -30,7 +30,7 @@ class PimcoreContextResolverAwarePass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $listeners = $container->findTaggedServiceIds('kernel.event_listener');
+        $listeners   = $container->findTaggedServiceIds('kernel.event_listener');
         $subscribers = $container->findTaggedServiceIds('kernel.event_subscriber');
 
         $this->processList($container, $listeners);

@@ -43,7 +43,7 @@ class MappingConflictResolver implements ConflictResolverInterface
     public function __construct(NamingStrategyInterface $namingStrategy, array $map = [])
     {
         $this->namingStrategy = $namingStrategy;
-        $this->map = $map;
+        $this->map            = $map;
     }
 
     /**
@@ -84,7 +84,7 @@ class MappingConflictResolver implements ConflictResolverInterface
      */
     private function findElement(array $elements, BuildEditableException $exception): AbstractElement
     {
-        $name = $exception->getName();
+        $name    = $exception->getName();
         $newName = $this->map[$name] ?? null;
 
         if ($newName) {

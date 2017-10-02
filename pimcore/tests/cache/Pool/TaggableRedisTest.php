@@ -91,7 +91,7 @@ class TaggableRedisTest extends TaggableCachePoolTest
         }
 
         /** @var Redis $cache */
-        $cache = $this->cache;
+        $cache      = $this->cache;
         $connection = $this->getRedisConnection($cache);
 
         $this->assertEmpty($connection->sMembers(Redis::SET_TAGS));

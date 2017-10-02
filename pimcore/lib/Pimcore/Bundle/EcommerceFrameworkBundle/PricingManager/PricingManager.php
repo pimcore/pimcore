@@ -66,8 +66,8 @@ class PricingManager implements IPricingManager
         array $options = []
     ) {
         $this->conditionMapping = $conditionMapping;
-        $this->actionMapping = $actionMapping;
-        $this->session = $session;
+        $this->actionMapping    = $actionMapping;
+        $this->session          = $session;
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -82,8 +82,8 @@ class PricingManager implements IPricingManager
         $resolver->setRequired($classProperties);
 
         $resolver->setDefaults([
-            'rule_class' => Rule::class,
-            'price_info_class' => PriceInfo::class,
+            'rule_class'        => Rule::class,
+            'price_info_class'  => PriceInfo::class,
             'environment_class' => Environment::class,
         ]);
 
@@ -159,7 +159,7 @@ class PricingManager implements IPricingManager
         $env->setCategories(array_values($categories));
 
         // clean up discount pricing modificators in cart price calculator
-        $priceCalculator = $cart->getPriceCalculator();
+        $priceCalculator   = $cart->getPriceCalculator();
         $priceModificators = $priceCalculator->getModificators();
 
         foreach ($priceModificators as $priceModificator) {

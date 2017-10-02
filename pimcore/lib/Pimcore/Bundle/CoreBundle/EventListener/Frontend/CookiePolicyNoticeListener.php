@@ -141,8 +141,8 @@ class CookiePolicyNoticeListener
         }
 
         $response = $event->getResponse();
-        $config = \Pimcore\Config::getSystemConfig();
-        $locale = $request->getLocale();
+        $config   = \Pimcore\Config::getSystemConfig();
+        $locale   = $request->getLocale();
 
         if ($this->enabled && $config->general->show_cookie_notice && \Pimcore\Tool::useFrontendOutputFilters()) {
             if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
@@ -156,7 +156,7 @@ class CookiePolicyNoticeListener
                 $translations = $this->getTranslations($locale);
 
                 foreach ($translations as $key => &$value) {
-                    $value = htmlentities($value, ENT_COMPAT, 'UTF-8');
+                    $value    = htmlentities($value, ENT_COMPAT, 'UTF-8');
                     $template = str_replace('%' . $key . '%', $value, $template);
                 }
 
@@ -215,7 +215,7 @@ class CookiePolicyNoticeListener
 
         // most common translations
         $defaultTranslations = [
-            'text' => [
+            'text'     => [
                 'en' => 'Cookies help us deliver our services. By using our services, you agree to our use of cookies.',
                 'de' => 'Cookies helfen uns bei der Bereitstellung unserer Dienste. Durch die Nutzung unserer Dienste erklären Sie sich mit dem Einsatz von Cookies einverstanden.',
                 'it' => "I cookie ci aiutano a fornire i nostri servizi. Utilizzando tali servizi, accetti l'utilizzo dei cookie da parte.",
@@ -271,7 +271,7 @@ class CookiePolicyNoticeListener
                 'lt' => 'Sužinoti daugiau',
                 'ro' => 'Aflați mai multe',
             ],
-            'ok' => [
+            'ok'       => [
                 'en' => 'OK',
                 'de' => 'Ok',
                 'it' => 'Ho capito',
@@ -306,7 +306,7 @@ class CookiePolicyNoticeListener
         if ($this->getTranslator()) {
             foreach (['text', 'linkText', 'ok', 'linkTarget'] as $key) {
                 $translationKey = 'cookie-policy-' . $key;
-                $translation = $this->getTranslator()->trans($translationKey);
+                $translation    = $this->getTranslator()->trans($translationKey);
                 if ($translation != $translationKey) {
                     $translations[$key] = $translation;
                 }

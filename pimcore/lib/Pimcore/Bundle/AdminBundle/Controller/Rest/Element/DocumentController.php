@@ -84,7 +84,7 @@ class DocumentController extends AbstractElementController
 
         $this->checkElementPermission($document, 'get');
 
-        $type = $document->getType();
+        $type   = $document->getType();
         $getter = sprintf('getDocument%sById', ucfirst($type));
         $object = null;
 
@@ -139,7 +139,7 @@ class DocumentController extends AbstractElementController
 
         // add support for legacy behaviour, accepting the ID as payload parameter
         if (isset($data['id'])) {
-            $id = $data['id'];
+            $id       = $data['id'];
             $document = $this->loadDocument($id);
 
             return $this->updateDocument($document, $type, $data);
@@ -180,9 +180,9 @@ class DocumentController extends AbstractElementController
      */
     public function updateAction(Request $request, $id)
     {
-        $id = $this->resolveId($request, $id);
-        $data = $this->getJsonData($request);
-        $type = $data['type'];
+        $id       = $this->resolveId($request, $id);
+        $data     = $this->getJsonData($request);
+        $type     = $data['type'];
         $document = $this->loadDocument($id);
 
         return $this->updateDocument($document, $type, $data);
@@ -223,7 +223,7 @@ class DocumentController extends AbstractElementController
      */
     public function deleteAction(Request $request, $id = null)
     {
-        $id = $this->resolveId($request, $id);
+        $id       = $this->resolveId($request, $id);
         $document = $this->loadDocument($id);
 
         $this->checkElementPermission($document, 'delete');
@@ -262,11 +262,11 @@ class DocumentController extends AbstractElementController
         $this->checkPermission('documents');
 
         $condition = urldecode($request->get('condition'));
-        $order = $request->get('order');
-        $orderKey = $request->get('orderKey');
-        $offset = $request->get('offset');
-        $limit = $request->get('limit');
-        $groupBy = $request->get('groupBy');
+        $order     = $request->get('order');
+        $orderKey  = $request->get('orderKey');
+        $offset    = $request->get('offset');
+        $limit     = $request->get('limit');
+        $groupBy   = $request->get('groupBy');
 
         $result = $this->service->getDocumentList($condition, $order, $orderKey, $offset, $limit, $groupBy);
 
@@ -293,7 +293,7 @@ class DocumentController extends AbstractElementController
         $this->checkPermission('documents');
 
         $condition = urldecode($request->get('condition'));
-        $groupBy = $request->get('groupBy');
+        $groupBy   = $request->get('groupBy');
 
         $params = [];
         if (!empty($condition)) {
@@ -351,7 +351,7 @@ class DocumentController extends AbstractElementController
         }
 
         throw $this->createNotFoundException([
-            'msg' => sprintf('Document %d does not exist', (int)$id),
+            'msg'  => sprintf('Document %d does not exist', (int)$id),
             'code' => static::ELEMENT_DOES_NOT_EXIST
         ]);
     }
@@ -368,7 +368,7 @@ class DocumentController extends AbstractElementController
     {
         $typeUpper = ucfirst($type);
         $className = $this->getWebserviceInClassName($type);
-        $method = 'createDocument' . $typeUpper;
+        $method    = 'createDocument' . $typeUpper;
 
         $this->checkWebserviceMethod($method);
 
@@ -407,11 +407,11 @@ class DocumentController extends AbstractElementController
 
         $typeUpper = ucfirst($type);
         $className = $this->getWebserviceInClassName($type);
-        $method = 'updateDocument' . $typeUpper;
+        $method    = 'updateDocument' . $typeUpper;
 
         $this->checkWebserviceMethod($method);
 
-        $wsData = $this->fillWebserviceData($className, $data);
+        $wsData  = $this->fillWebserviceData($className, $data);
         $success = $this->service->$method($wsData);
 
         if ($success) {

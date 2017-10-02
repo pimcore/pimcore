@@ -58,7 +58,7 @@ class TaxCalculationService
      */
     protected function calculationFromNet(IPrice $price): IPrice
     {
-        $netAmount = $price->getNetAmount();
+        $netAmount   = $price->getNetAmount();
         $grossAmount = $netAmount;
 
         $taxEntries = $price->getTaxEntries();
@@ -111,7 +111,7 @@ class TaxCalculationService
     protected function calculationFromGross(IPrice $price): IPrice
     {
         $grossAmount = $price->getGrossAmount();
-        $netAmount = $grossAmount;
+        $netAmount   = $grossAmount;
 
         $taxEntries = $price->getTaxEntries();
         if (empty($taxEntries)) {

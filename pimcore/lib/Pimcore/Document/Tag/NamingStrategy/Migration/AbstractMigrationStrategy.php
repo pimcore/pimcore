@@ -48,7 +48,7 @@ abstract class AbstractMigrationStrategy
             throw new \LogicException('Strategy is already initialized');
         }
 
-        $this->io = $io;
+        $this->io             = $io;
         $this->namingStrategy = $namingStrategy;
 
         $this->initializeEnvironment();

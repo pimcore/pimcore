@@ -435,7 +435,7 @@ class Imagick extends Adapter
             $this->setColorspaceToRGB();
         }
 
-        $width = (int)$width;
+        $width  = (int)$width;
         $height = (int)$height;
 
         $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);

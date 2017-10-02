@@ -445,7 +445,7 @@ class DefaultFactFinder implements IProductList
         $searchResult = $data['searchResult'];
 
         // load products found
-        $this->products = $this->productPositionMap = [];
+        $this->products = $this->productPositionMap= [];
         $i = 0;
         foreach ($searchResult['records'] as $item) {
             $id = null;
@@ -814,7 +814,7 @@ class DefaultFactFinder implements IProductList
 
         // add paging
         if ($this->getOffset() == 0) {
-            $params['page'] = 1;
+            $params['page']=1;
         } else {
             $params['page'] = ceil($this->getOffset() / $this->getLimit()) + 1;
         }
@@ -870,7 +870,7 @@ class DefaultFactFinder implements IProductList
      */
     protected function sendRequest()
     {
-        $url = $this->getQuery();
+        $url  = $this->getQuery();
         $this->requestUrl = $url;
         $response = $this->doRequest($url);
         $data = json_decode((string)$response->getBody(), true);

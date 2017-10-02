@@ -341,12 +341,12 @@ class ClassificationstoreController extends AdminController
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
+                    $conditionParts[]= $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
                 }
             }
 
             if ($allowedCollectionIds) {
-                $conditionParts[] = ' id in (' . implode(',', $allowedCollectionIds) . ')';
+                $conditionParts[]= ' id in (' . implode(',', $allowedCollectionIds) . ')';
             }
 
             $condition = implode(' AND ', $conditionParts);
@@ -471,7 +471,7 @@ class ClassificationstoreController extends AdminController
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
+                    $conditionParts[]= $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
                 }
             }
 
@@ -482,7 +482,7 @@ class ClassificationstoreController extends AdminController
                 $allowedGroupIds = $fd->getAllowedGroupIds();
 
                 if ($allowedGroupIds) {
-                    $conditionParts[] = 'ID in (' . implode(',', $allowedGroupIds) . ')';
+                    $conditionParts[]= 'ID in (' . implode(',', $allowedGroupIds) . ')';
                 }
             }
 
@@ -729,7 +729,7 @@ class ClassificationstoreController extends AdminController
             foreach ($filters as $f) {
                 $count++;
                 $fieldname = $mapping[$f->property];
-                $conditionParts[] = $fieldname . ' LIKE ' . $db->quote('%' . $f->value . '%');
+                $conditionParts[]= $fieldname . ' LIKE ' . $db->quote('%' . $f->value . '%');
             }
         }
 
@@ -854,13 +854,13 @@ class ClassificationstoreController extends AdminController
                 foreach ($filters as $f) {
                     $count++;
                     $fieldname = $mapping[$f->field];
-                    $conditionParts[] = $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
+                    $conditionParts[]= $db->quoteIdentifier($fieldname) . ' LIKE ' . $db->quote('%' . $f->value . '%');
                 }
             }
 
             if (!$request->get('relationIds')) {
                 $groupId = $request->get('groupId');
-                $conditionParts[] = ' groupId = ' . $list->quote($groupId);
+                $conditionParts[]= ' groupId = ' . $list->quote($groupId);
             }
 
             $relationIds = $request->get('relationIds');
@@ -996,7 +996,7 @@ class ClassificationstoreController extends AdminController
                     $context['class'] = $object ? $object->getClass() : null;
                     $context['ownerType'] = 'classificationstore';
                     $context['ownerName'] = $fieldname;
-                    $context['keyId'] = $keyData->getKeyId();
+                    $context['keyId'] =  $keyData->getKeyId();
                     $context['groupId'] = $groupId;
                     $context['keyDefinition'] = $definition;
                     if (method_exists($definition, 'enrichLayoutDefinition')) {
@@ -1074,7 +1074,7 @@ class ClassificationstoreController extends AdminController
             $context['class'] = $object ? $object->getClass() : null;
             $context['ownerType'] = 'classificationstore';
             $context['ownerName'] = $fieldname;
-            $context['keyId'] = $keyData->getKeyId();
+            $context['keyId'] =  $keyData->getKeyId();
             $context['groupId'] = $groupId;
             $context['keyDefinition'] = $definition;
             if (method_exists($definition, 'enrichLayoutDefinition')) {
@@ -1217,7 +1217,7 @@ class ClassificationstoreController extends AdminController
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    $conditionParts[] = $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
+                    $conditionParts[]= $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
                 }
             }
             $condition = implode(' AND ', $conditionParts);
@@ -1472,7 +1472,7 @@ class ClassificationstoreController extends AdminController
         }
 
         $db->query('select @rownum := 0;');
-        $result = $db->fetchAll($query);
+        $result= $db->fetchAll($query);
 
         $page = (int) $result[0]['page'] ;
 

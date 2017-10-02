@@ -46,7 +46,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         PimcoreContextResolver $resolver,
         RequestStack $requestStack
     ) {
-        $this->resolver = $resolver;
+        $this->resolver     = $resolver;
         $this->requestStack = $requestStack;
     }
 
@@ -71,7 +71,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
 
             if ($context) {
                 $this->logger->debug('Resolved pimcore context for path {path} to {context}', [
-                    'path' => $request->getPathInfo(),
+                    'path'    => $request->getPathInfo(),
                     'context' => $context
                 ]);
             } else {

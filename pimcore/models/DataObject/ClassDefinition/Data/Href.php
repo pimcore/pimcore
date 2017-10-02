@@ -212,7 +212,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
     public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
-            $type = Element\Service::getType($data);
+            $type =  Element\Service::getType($data);
             $id = $data->getId();
 
             return [[

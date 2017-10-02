@@ -139,7 +139,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
 
             if ($new_child !== null) {
                 $node = dom_import_simplexml($new_child);
-                $no = $node->ownerDocument;
+                $no   = $node->ownerDocument;
                 $node->appendChild($no->createCDATASection($value));
             }
 

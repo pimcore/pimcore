@@ -41,7 +41,7 @@ class MigrationManager
         Connection $connection,
         ConfigurationFactory $configurationFactory
     ) {
-        $this->connection = $connection;
+        $this->connection           = $connection;
         $this->configurationFactory = $configurationFactory;
     }
 

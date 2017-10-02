@@ -114,7 +114,7 @@ class PageController extends DocumentControllerBase
                 // see also self::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
                 // outdated and unused data elements in this document (eg. entries of area-blocks)
                 $pageSession = Session::useSession(function (AttributeBagInterface $session) use ($page) {
-                    $documentKey = 'document_' . $page->getId();
+                    $documentKey   = 'document_' . $page->getId();
                     $useForSaveKey = 'document_' . $page->getId() . '_useForSave';
 
                     if ($session->has($documentKey) && $session->has($useForSaveKey)) {
@@ -160,7 +160,7 @@ class PageController extends DocumentControllerBase
                             $existingRedirectIds[$existingRedirect->getId()] = $existingRedirect->getId();
                         }
 
-                        for ($i = 1; $i < 100; $i++) {
+                        for ($i=1; $i < 100; $i++) {
                             if (array_key_exists('redirect_url_'.$i, $settings)) {
 
                                 // check for existing
@@ -190,7 +190,7 @@ class PageController extends DocumentControllerBase
                 // check if settings exist, before saving meta data
                 if ($request->get('settings') && is_array($settings)) {
                     $metaData = [];
-                    for ($i = 1; $i < 30; $i++) {
+                    for ($i=1; $i < 30; $i++) {
                         if (array_key_exists('metadata_' . $i, $settings)) {
                             $metaData[] = $settings['metadata_' . $i];
                         }
@@ -213,7 +213,7 @@ class PageController extends DocumentControllerBase
                         }
                         Logger::err($e);
 
-                        return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                        return $this->json(['success' => false, 'message'=>$e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed('save')) {
@@ -227,7 +227,7 @@ class PageController extends DocumentControllerBase
                         } catch (\Exception $e) {
                             Logger::err($e);
 
-                            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                            return $this->json(['success' => false, 'message'=>$e->getMessage()]);
                         }
                     }
                 }

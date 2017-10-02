@@ -20,8 +20,8 @@ class PDFreactor
         $url = $this->url .'/convert.json';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'POST',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -50,8 +50,8 @@ class PDFreactor
         $url = $this->url .'/convert.bin';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'POST',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -78,8 +78,8 @@ class PDFreactor
         $url = $this->url .'/convert/async.json';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'POST',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -119,8 +119,8 @@ class PDFreactor
         $url = $this->url .'/progress/' . $documentId . '.json';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'GET',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -148,8 +148,8 @@ class PDFreactor
         $url = $this->url .'/document/' . $documentId . '.json';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'GET',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -177,8 +177,8 @@ class PDFreactor
         $url = $this->url .'/document/' . $documentId . '.bin';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'GET',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -206,8 +206,8 @@ class PDFreactor
         $url = $this->url .'/document/' . $documentId . '.json';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'DELETE',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'DELETE',
                 'ignore_errors' => true
             ],
         ];
@@ -230,8 +230,8 @@ class PDFreactor
         $url = $this->url .'/version.json';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'GET',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -256,8 +256,8 @@ class PDFreactor
         $url = $this->url .'/document.json';
         $options = [
             'http' => [
-                'header' => "Content-type: application/json\r\n",
-                'method' => 'GET',
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];

@@ -57,7 +57,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
      */
     public function getNameMapping(\Generator $documents, CacheInterface $cache): array
     {
-        $errors = [];
+        $errors  = [];
         $mapping = $cache->get('mapping', []);
 
         $conflictResolver = new ConflictResolver(

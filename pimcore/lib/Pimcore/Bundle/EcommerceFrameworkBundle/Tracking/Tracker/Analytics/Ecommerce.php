@@ -41,7 +41,7 @@ class Ecommerce extends Tracker implements ICheckoutComplete
     public function trackCheckoutComplete(AbstractOrder $order)
     {
         $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
-        $items = $this->trackingItemBuilder->buildCheckoutItems($order);
+        $items       = $this->trackingItemBuilder->buildCheckoutItems($order);
 
         $parameters = [];
         $parameters['transaction'] = $transaction;

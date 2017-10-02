@@ -91,12 +91,12 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
         AdminSessionBagConfigurator $adminSessionConfigurator,
         DocumentRouteHandler $documentRouteHandler
     ) {
-        $this->dispatcher = $dispatcher;
-        $this->requestStack = $requestStack;
-        $this->editmodeResolver = $editmodeResolver;
-        $this->userLoader = $userLoader;
+        $this->dispatcher               = $dispatcher;
+        $this->requestStack             = $requestStack;
+        $this->editmodeResolver         = $editmodeResolver;
+        $this->userLoader               = $userLoader;
         $this->adminSessionConfigurator = $adminSessionConfigurator;
-        $this->documentRouteHandler = $documentRouteHandler;
+        $this->documentRouteHandler     = $documentRouteHandler;
     }
 
     public function getName(): string
@@ -192,7 +192,7 @@ class RenderMigrationStrategy extends AbstractMigrationStrategy
 
     public function getNameMapping(\Generator $documents, CacheInterface $cache): array
     {
-        $stopwatch = new Stopwatch();
+        $stopwatch     = new Stopwatch();
         $totalDuration = 0; // TODO can total duration be read directly from Stopwatch?
 
         $errors = [];

@@ -36,7 +36,7 @@ class PimcoreUrl extends Helper
      */
     public function __construct(UrlGeneratorInterface $generator, RequestHelper $requestHelper)
     {
-        $this->generator = $generator;
+        $this->generator     = $generator;
         $this->requestHelper = $requestHelper;
     }
 

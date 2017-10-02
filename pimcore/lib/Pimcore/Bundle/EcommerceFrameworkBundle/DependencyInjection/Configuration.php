@@ -73,7 +73,7 @@ class Configuration implements ConfigurationInterface
 
     public function __construct()
     {
-        $this->tenantProcessor = new TenantProcessor();
+        $this->tenantProcessor      = new TenantProcessor();
         $this->placeholderProcessor = new PlaceholderProcessor();
 
         $this->indexWorkerConfigMapper = new DefaultWorkerConfigMapper();
@@ -286,7 +286,7 @@ class Configuration implements ConfigurationInterface
                                         ->info('Service id of cart factory and configuration array')
                                     ->end()
                                     ->append($this->buildOptionsNode('factory_options', [
-                                        'cart_class_name' => Cart::class,
+                                        'cart_class_name'       => Cart::class,
                                         'guest_cart_class_name' => SessionCart::class
                                     ]))
                                 ->end()
@@ -780,11 +780,11 @@ class Configuration implements ConfigurationInterface
                                             }
 
                                             $v = $this->remapProperties($v, [
-                                                'fieldname' => 'field_name',
-                                                'filtergroup' => 'filter_group',
-                                                'getter' => 'getter_id',
-                                                'interpreter' => 'interpreter_id',
-                                                'config' => 'options',
+                                                'fieldname'               => 'field_name',
+                                                'filtergroup'             => 'filter_group',
+                                                'getter'                  => 'getter_id',
+                                                'interpreter'             => 'interpreter_id',
+                                                'config'                  => 'options',
                                                 'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype'
                                             ]);
 
@@ -857,7 +857,7 @@ class Configuration implements ConfigurationInterface
                                             }
 
                                             return $this->remapProperties($v, [
-                                                'class' => 'filter_type_id',
+                                                'class'  => 'filter_type_id',
                                                 'script' => 'template'
                                             ]);
                                         })

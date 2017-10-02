@@ -132,7 +132,7 @@ abstract class AbstractRestController extends AdminController
     {
         return $this->createSuccessResponse([
             'total' => count($data),
-            'data' => $data,
+            'data'  => $data,
         ], false, $status);
     }
 
@@ -172,7 +172,7 @@ abstract class AbstractRestController extends AdminController
      */
     protected function getJsonData(Request $request)
     {
-        $data = null;
+        $data  = null;
         $error = null;
 
         try {
@@ -182,7 +182,7 @@ abstract class AbstractRestController extends AdminController
                 'request' => $request->getPathInfo()
             ]);
 
-            $data = null;
+            $data  = null;
             $error = $e->getMessage();
         }
 

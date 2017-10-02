@@ -56,8 +56,8 @@ abstract class AbstractCommand extends ContainerAwareCommand
     {
         parent::initialize($input, $output);
 
-        $this->io = new PimcoreStyle($input, $output);
-        $this->input = $input;
+        $this->io     = new PimcoreStyle($input, $output);
+        $this->input  = $input;
         $this->output = $output;
 
         // use Console\Dumper for nice debug output

@@ -15,7 +15,7 @@ class SymfonyProxyTest extends TestCase
 
     public function testAdapterIsWrappedInTagAdapter()
     {
-        $adapter = new ArrayAdapter();
+        $adapter   = new ArrayAdapter();
         $proxyPool = new SymfonyAdapterProxy($adapter);
 
         $tagAdapter = $this->getTagAwareAdapter($proxyPool);
@@ -27,9 +27,9 @@ class SymfonyProxyTest extends TestCase
 
     public function testTagAdapterIsNotWrappedAgain()
     {
-        $adapter = new ArrayAdapter();
+        $adapter    = new ArrayAdapter();
         $tagAdapter = new TagAwareAdapter($adapter);
-        $proxyPool = new SymfonyAdapterProxy($tagAdapter);
+        $proxyPool  = new SymfonyAdapterProxy($tagAdapter);
 
         $proxyTagAdapter = $this->getTagAwareAdapter($proxyPool);
         $this->assertEquals($tagAdapter, $proxyTagAdapter);

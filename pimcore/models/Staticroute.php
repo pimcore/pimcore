@@ -505,7 +505,7 @@ class Staticroute extends AbstractModel
      *
      * @return mixed|string
      */
-    public function assemble(array $urlOptions = [], $reset = false, $encode = true)
+    public function assemble(array $urlOptions = [], $reset=false, $encode=true)
     {
         // get request parameters
         $blockedRequestParams = ['controller', 'action', 'module', 'document'];

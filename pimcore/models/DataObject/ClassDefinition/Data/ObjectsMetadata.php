@@ -912,7 +912,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 
                 $type = Element\Service::getType($element);
                 $id = $element->getId();
-                $result[] = [
+                $result[] =  [
                     'element' => [
                         'type' => $type,
                         'id' => $id

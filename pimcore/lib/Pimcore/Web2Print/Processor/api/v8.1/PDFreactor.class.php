@@ -62,8 +62,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'POST',
+                'header'  => $headerStr,
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -113,8 +113,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'POST',
+                'header'  => $headerStr,
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -165,8 +165,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'POST',
+                'header'  => $headerStr,
+                'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
             ],
@@ -208,7 +208,7 @@ class PDFreactor
                     $keepDocument = $config->{'keepDocument'};
                 }
                 if (!isset($this->stickyMap[$documentId])) {
-                    $this->stickyMap[$documentId] = ['cookies' => [], 'keepDocument' => $keepDocument];
+                    $this->stickyMap[$documentId] = ['cookies'=>[], 'keepDocument'=>$keepDocument];
                 }
                 foreach ($tmp as $name => $value) {
                     $this->stickyMap[$documentId]['cookies'][$name] = $value;
@@ -248,8 +248,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'GET',
+                'header'  => $headerStr,
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -309,8 +309,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'GET',
+                'header'  => $headerStr,
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -370,8 +370,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'GET',
+                'header'  => $headerStr,
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -431,8 +431,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'DELETE',
+                'header'  => $headerStr,
+                'method'  => 'DELETE',
                 'ignore_errors' => true
             ],
         ];
@@ -479,8 +479,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'GET',
+                'header'  => $headerStr,
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];
@@ -529,8 +529,8 @@ class PDFreactor
         }
         $options = [
             'http' => [
-                'header' => $headerStr,
-                'method' => 'GET',
+                'header'  => $headerStr,
+                'method'  => 'GET',
                 'ignore_errors' => true
             ],
         ];

@@ -43,7 +43,7 @@ class LostPasswordEvent extends Event
      */
     public function __construct(User $user, $loginUrl)
     {
-        $this->user = $user;
+        $this->user     = $user;
         $this->loginUrl = $loginUrl;
     }
 

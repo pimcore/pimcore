@@ -350,7 +350,7 @@ class Service extends Model\Element\Service
             if ($item->getType() == 'folder') {
                 $key = $key . '_' . $nr;
             } else {
-                $keypart = substr($key, 0, strrpos($key, '.'));
+                $keypart  = substr($key, 0, strrpos($key, '.'));
                 $extension = str_replace($keypart, '', $key);
                 $key = $keypart . '_' . $nr . $extension;
             }

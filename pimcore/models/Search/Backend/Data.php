@@ -364,8 +364,8 @@ class Data extends \Pimcore\Model\AbstractModel
 
         $this->id = new Data\Id($element);
         $this->fullPath = $element->getRealFullPath();
-        $this->creationDate = $element->getCreationDate();
-        $this->modificationDate = $element->getModificationDate();
+        $this->creationDate=$element->getCreationDate();
+        $this->modificationDate=$element->getModificationDate();
         $this->userModification = $element->getUserModification();
         $this->userOwner = $element->getUserOwner();
 
@@ -478,7 +478,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
                 DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);
             } elseif ($element instanceof DataObject\Folder) {
-                $this->data = $element->getKey();
+                $this->data=$element->getKey();
                 $this->published = true;
             }
         } else {

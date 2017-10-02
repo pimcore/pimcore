@@ -34,9 +34,9 @@ class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo
 
     public function __construct(IPrice $price, $quantity, IPrice $totalPrice)
     {
-        $this->price = $price;
+        $this->price      = $price;
         $this->totalPrice = $totalPrice;
-        $this->quantity = $quantity;
+        $this->quantity   = $quantity;
     }
 
     public function getPrice(): IPrice

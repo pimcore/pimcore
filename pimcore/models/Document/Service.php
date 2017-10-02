@@ -530,7 +530,7 @@ class Service extends Model\Element\Service
         if (isset($this->nearestPathCache[$cacheKey])) {
             $document = $this->nearestPathCache[$cacheKey];
         } else {
-            $paths = ['/'];
+            $paths    = ['/'];
             $tmpPaths = [];
 
             $pathParts = explode('/', $path);

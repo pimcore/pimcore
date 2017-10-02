@@ -1209,22 +1209,22 @@ abstract class Page extends Container
         return array_merge(
             $this->getCustomProperties(),
             [
-                'label' => $this->getlabel(),
-                'fragment' => $this->getFragment(),
-                'id' => $this->getId(),
-                'class' => $this->getClass(),
-                'title' => $this->getTitle(),
-                'target' => $this->getTarget(),
-                'accesskey' => $this->getAccesskey(),
-                'rel' => $this->getRel(),
-                'rev' => $this->getRev(),
+                'label'             => $this->getlabel(),
+                'fragment'          => $this->getFragment(),
+                'id'                => $this->getId(),
+                'class'             => $this->getClass(),
+                'title'             => $this->getTitle(),
+                'target'            => $this->getTarget(),
+                'accesskey'         => $this->getAccesskey(),
+                'rel'               => $this->getRel(),
+                'rev'               => $this->getRev(),
                 'customHtmlAttribs' => $this->getCustomHtmlAttribs(),
-                'order' => $this->getOrder(),
-                'resource' => $this->getResource(),
-                'active' => $this->isActive(),
-                'visible' => $this->isVisible(),
-                'type' => get_class($this),
-                'pages' => parent::toArray()
+                'order'             => $this->getOrder(),
+                'resource'          => $this->getResource(),
+                'active'            => $this->isActive(),
+                'visible'           => $this->isVisible(),
+                'type'              => get_class($this),
+                'pages'             => parent::toArray()
             ]
         );
     }
