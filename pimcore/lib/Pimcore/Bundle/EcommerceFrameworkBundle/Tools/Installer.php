@@ -164,6 +164,9 @@ class Installer extends AbstractInstaller
 
         $this->addPermissions();
 
+        // reset installed state
+        $this->installed = null;
+
         return true;
     }
 
@@ -483,6 +486,9 @@ class Installer extends AbstractInstaller
 
         $key = 'bundle_ecommerce_back-office_order';
         $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key));
+
+        // reset installed state
+        $this->installed = null;
 
         return true;
     }
