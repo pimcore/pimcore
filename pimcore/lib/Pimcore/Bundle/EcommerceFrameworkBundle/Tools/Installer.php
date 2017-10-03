@@ -37,6 +37,11 @@ class Installer extends AbstractInstaller
     private $installSourcesPath;
 
     /**
+     * @var bool
+     */
+    private $installed;
+
+    /**
      * @var array - contains all tables that need to be created
      */
     private $tables = [
@@ -158,6 +163,9 @@ class Installer extends AbstractInstaller
         $this->importTranslations();
 
         $this->addPermissions();
+
+        // reset installed state
+        $this->installed = null;
 
         return true;
     }
@@ -479,6 +487,9 @@ class Installer extends AbstractInstaller
         $key = 'bundle_ecommerce_back-office_order';
         $db->deleteWhere('users_permission_definitions', '`key` = ' . $db->quote($key));
 
+        // reset installed state
+        $this->installed = null;
+
         return true;
     }
 
@@ -498,6 +509,10 @@ class Installer extends AbstractInstaller
      */
     public function isInstalled()
     {
+        if (null !== $this->installed) {
+            return $this->installed;
+        }
+
         $result = null;
         try {
             if (Config::getSystemConfig()) {
@@ -507,6 +522,8 @@ class Installer extends AbstractInstaller
             $this->logger->error($e);
         }
 
-        return !empty($result);
+        $this->installed = !empty($result);
+
+        return $this->installed;
     }
 }
