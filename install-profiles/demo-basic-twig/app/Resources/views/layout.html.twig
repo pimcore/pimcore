@@ -114,7 +114,7 @@
     {{ include('Includes/jumbotron.html.twig') }}
 
     <div id="content" class="container">
-        {% set hideLeftNav = false %}
+        {% set hideLeftNav = document.getProperty('leftNavHide') %}
         {% set showBreadcrumbs = true %}
         {% set mainColClass = hideLeftNav ? 'col-md-12': 'col-md-9 col-md-push-3' %}
 
