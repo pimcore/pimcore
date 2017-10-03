@@ -57,6 +57,12 @@ if ($request->getRequestUri() === '/install.php') {
     return;
 }
 
+if (!class_exists('Zend_Date')) {
+    // if ZF is not loaded, we need to provide some compatibility stubs
+    // for a detailed description see the included file
+    require_once PIMCORE_PATH . '/stubs/compatibility-v4.php';
+}
+
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 
 $request  = Request::createFromGlobals();

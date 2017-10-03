@@ -41,6 +41,12 @@ Pimcore::setAutoloader($loader);
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/constants.php';
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/lib/helper-functions.php';
 
+if (!class_exists('Zend_Date')) {
+    // if ZF is not loaded, we need to provide some compatibility stubs
+    // for a detailed description see the included file
+    require_once PIMCORE_PATH . '/stubs/compatibility-v4.php';
+}
+
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 
 $application = new Application($kernel);
