@@ -38,9 +38,16 @@ command which can be used to generate new Pimcore Bundles:
 # generate bundle interactively
 $ bin/console pimcore:generate:bundle
 
+# if the command is not available, make sure you are running the console in dev environment (see note below)
+$ bin/console pimcore:generate:bundle --env=dev
+
 # generate bundle with a given name and don't ask questions
 $ bin/console pimcore:generate:bundle --namespace=Acme/FooBundle --no-interaction
 ```
+
+> The `pimcore:generate:bundle` command is only available in the `dev` environment by default as the generator bundle is 
+  not loaded in the `prod` environment. If you need the generator bundle in another environment than `dev` please load it
+  manually in your `AppKernel`.
 
 ## Common tasks
 
