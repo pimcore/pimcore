@@ -116,6 +116,9 @@ class Wysiwyg extends Model\Document\Tag
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
+        if (is_array($data)) {
+            $data =  (object) $data;
+        }
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {
