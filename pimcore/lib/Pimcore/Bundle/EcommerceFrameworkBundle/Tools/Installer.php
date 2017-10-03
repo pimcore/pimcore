@@ -37,6 +37,11 @@ class Installer extends AbstractInstaller
     private $installSourcesPath;
 
     /**
+     * @var bool
+     */
+    private $installed;
+
+    /**
      * @var array - contains all tables that need to be created
      */
     private $tables = [
@@ -498,6 +503,10 @@ class Installer extends AbstractInstaller
      */
     public function isInstalled()
     {
+        if (null !== $this->installed) {
+            return $this->installed;
+        }
+
         $result = null;
         try {
             if (Config::getSystemConfig()) {
@@ -507,6 +516,8 @@ class Installer extends AbstractInstaller
             $this->logger->error($e);
         }
 
-        return !empty($result);
+        $this->installed = !empty($result);
+
+        return $this->installed;
     }
 }
