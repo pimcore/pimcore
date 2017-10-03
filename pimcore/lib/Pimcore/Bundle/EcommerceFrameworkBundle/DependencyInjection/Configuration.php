@@ -117,7 +117,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->booleanNode('use_legacy_class_mapping')
                     ->info('If true, the bundle will alias legacy class names (OnlineShop\Framework\*) to the new namespace')
-                    ->defaultTrue()
+                    ->defaultFalse()
                 ->end()
                ->integerNode('decimal_scale')
                     ->info('Default scale used for Decimal objects')
