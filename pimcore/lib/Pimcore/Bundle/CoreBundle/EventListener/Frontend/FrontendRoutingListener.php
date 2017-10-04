@@ -95,6 +95,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
         // handle main domain redirect in admin context
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             $this->handleMainDomainRedirect($event, true);
+
             return;
         }
 

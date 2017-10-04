@@ -299,7 +299,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $parentDocument = Document::getById($request->get('id'));
 
             $list = new Document\Listing();
-            $list->setCondition("path LIKE ?", [$parentDocument->getRealFullPath() . "/%"]);
+            $list->setCondition('path LIKE ?', [$parentDocument->getRealFullPath() . '/%']);
             $list->setLimit(intval($request->get('amount')));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -372,7 +372,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($hasChilds) {
                 // get amount of childs
                 $list = new Document\Listing();
-                $list->setCondition("path LIKE ?", [$document->getRealFullPath() . "/%"]);
+                $list->setCondition('path LIKE ?', [$document->getRealFullPath() . '/%']);
                 $childs = $list->getTotalCount();
 
                 if ($childs > 0) {
@@ -755,7 +755,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($document->hasChildren()) {
                 // get amount of childs
                 $list = new Document\Listing();
-                $list->setCondition("path LIKE ?", [$document->getRealFullPath() . "/%"]);
+                $list->setCondition('path LIKE ?', [$document->getRealFullPath() . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();

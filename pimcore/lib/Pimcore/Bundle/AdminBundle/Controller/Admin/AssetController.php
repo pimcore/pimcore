@@ -460,7 +460,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $parentAsset = Asset::getById($request->get('id'));
 
             $list = new Asset\Listing();
-            $list->setCondition("path LIKE ?", [$parentAsset->getRealFullPath() . '/%']);
+            $list->setCondition('path LIKE ?', [$parentAsset->getRealFullPath() . '/%']);
             $list->setLimit(intval($request->get('amount')));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -541,7 +541,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if ($hasChilds) {
                     // get amount of childs
                     $list = new Asset\Listing();
-                    $list->setCondition("path LIKE ?", [$asset->getRealFullPath() . '/%']);
+                    $list->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
                     $childs = $list->getTotalCount();
                     $totalChilds += $childs;
 
@@ -1439,7 +1439,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $conditionFilters = [];
         $list = new Asset\Listing();
-        $conditionFilters[] = "path LIKE " . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . "/%")) ." AND type != 'folder'";
+        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%')) ." AND type != 'folder'";
 
         if (!$this->getUser()->isAdmin()) {
             $userIds = $this->getUser()->getRoles();
@@ -1529,7 +1529,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($asset->hasChildren()) {
                 // get amount of children
                 $list = new Asset\Listing();
-                $list->setCondition("path LIKE ?", [$asset->getRealFullPath() . '/%']);
+                $list->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
@@ -2109,7 +2109,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($request->get('only_direct_children') == 'true') {
                 $conditionFilters[] = 'parentId = ' . $folder->getId();
             } else {
-                $conditionFilters[] = "path LIKE " . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . "/%"));
+                $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
             }
 
             $conditionFilters[] = "type != 'folder'";
@@ -2172,7 +2172,6 @@ class AssetController extends ElementControllerBase implements EventedController
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
             }
-
 
             $condition = implode(' AND ', $conditionFilters);
             $list->setCondition($condition);
