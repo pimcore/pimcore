@@ -175,7 +175,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
             $baseClass = Element\Service::getBaseClassNameForElement($type);
             $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
             $list = new $listClass();
-            $list->setCondition((($type == 'object') ? 'o_' : '') . "path LIKE '" . $element->getRealFullPath() . "/%'");
+            $list->setCondition((($type == 'object') ? 'o_' : '') . "path LIKE " . $list->quote($element->getRealFullPath() . "/%"));
             $children = $list->getTotalCount();
 
             if ($children <= 100) {
