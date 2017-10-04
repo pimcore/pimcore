@@ -830,7 +830,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $parentObject = Object::getById($this->getParam("id"));
 
             $list = new Object\Listing();
-            $list->setCondition("o_path LIKE '" . $parentObject->getRealFullPath() . "/%'");
+            $list->setCondition("o_path LIKE " . $list->quote($parentObject->getRealFullPath() . "/%"));
             $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(o_path)", false);
             $list->setOrder("DESC");
@@ -904,7 +904,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 if ($hasChilds) {
                     // get amount of childs
                     $list = new Object\Listing();
-                    $list->setCondition("o_path LIKE '" . $object->getRealFullPath() . "/%'");
+                    $list->setCondition("o_path LIKE " . $list->quote($object->getRealFullPath() . "/%"));
                     $childs = $list->getTotalCount();
 
                     $totalChilds += $childs;
@@ -1563,11 +1563,16 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
+            /**
+             * @var $list Object\Listing\Concrete
+             */
+            $list = new $listClass();
+
             $conditionFilters = [];
             if ($this->getParam("only_direct_children") == "true") {
                 $conditionFilters[] = "o_parentId = " . $folder->getId();
             } else {
-                $conditionFilters[] = "(o_path = '" . $folder->getRealFullPath() . "' OR o_path LIKE '" . str_replace("//", "/", $folder->getRealFullPath() . "/") . "%')";
+                $conditionFilters[] = "(o_path = " . $list->quote($folder->getRealFullPath()) . " OR o_path LIKE " . $list->quote(str_replace("//", "/", $folder->getRealFullPath() . "/") . "%") . ")";
             }
 
             if (!$this->getUser()->isAdmin()) {
@@ -1597,7 +1602,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $conditionFilters[] = "(" . $this->getParam("condition") . ")";
             }
 
-            $list = new $listClass();
+
             if (!empty($bricks)) {
                 foreach ($bricks as $b) {
                     $list->addObjectbrick($b);
@@ -1700,7 +1705,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             if ($object->hasChilds([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT])) {
                 // get amount of childs
                 $list = new Object\Listing();
-                $list->setCondition("o_path LIKE '" . $object->getRealFullPath() . "/%'");
+                $list->setCondition("o_path LIKE " . $list->quote($object->getRealFullPath() . "/%"));
                 $list->setOrderKey("LENGTH(o_path)", false);
                 $list->setOrder("ASC");
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT]);

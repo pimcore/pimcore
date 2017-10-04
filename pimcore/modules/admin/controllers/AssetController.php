@@ -400,7 +400,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $parentAsset = Asset::getById($this->getParam("id"));
 
             $list = new Asset\Listing();
-            $list->setCondition("path LIKE '" . $parentAsset->getRealFullPath() . "/%'");
+            $list->setCondition("path LIKE ", [$parentAsset->getRealFullPath() . "/%"]);
             $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(path)", false);
             $list->setOrder("DESC");
@@ -473,7 +473,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 if ($hasChilds) {
                     // get amount of childs
                     $list = new Asset\Listing();
-                    $list->setCondition("path LIKE '" . $asset->getRealFullPath() . "/%'");
+                    $list->setCondition("path LIKE ", [$asset->getRealFullPath() . "/%"]);
                     $childs = $list->getTotalCount();
                     $totalChilds += $childs;
 
@@ -1253,7 +1253,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $conditionFilters = [];
-        $conditionFilters[] = "path LIKE '" . ($folder->getRealFullPath() == "/" ? "/%'" : $folder->getRealFullPath() . "/%'") ." AND type != 'folder'";
+        $list = new Asset\Listing();
+        $conditionFilters[] = "path LIKE " . ($folder->getRealFullPath() == "/" ? "'/%'" : $list->quote($folder->getRealFullPath() . "/%")) ." AND type != 'folder'";
 
         if (!$this->getUser()->isAdmin()) {
             $userIds = $this->getUser()->getRoles();
@@ -1266,13 +1267,12 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $condition = implode(" AND ", $conditionFilters);
-        $list = Asset::getList([
-            "condition" => $condition,
-            "limit" => $limit,
-            "offset" => $start,
-            "orderKey" => "filename",
-            "order" => "asc"
-        ]);
+
+        $list->setCondition($condition);
+        $list->setLimit($limit);
+        $list->setOffset($start);
+        $list->setOrderKey('filename');
+        $list->setOrder('asc');
 
         $assets = [];
 
@@ -1339,7 +1339,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             if ($asset->hasChilds()) {
                 // get amount of childs
                 $list = new Asset\Listing();
-                $list->setCondition("path LIKE '" . $asset->getRealFullPath() . "/%'");
+                $list->setCondition("path LIKE ", [$asset->getRealFullPath() . "/%"]);
                 $list->setOrderKey("LENGTH(path)", false);
                 $list->setOrder("ASC");
                 $childIds = $list->loadIdList();
@@ -1839,10 +1839,12 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $conditionFilters = [];
+            $list = new Asset\Listing();
+
             if ($this->getParam("only_direct_children") == "true") {
                 $conditionFilters[] = "parentId = " . $folder->getId();
             } else {
-                $conditionFilters[] = "path LIKE '" . ($folder->getRealFullPath() == "/" ? "/%'" : $folder->getRealFullPath() . "/%'");
+                $conditionFilters[] = "path LIKE " . ($folder->getRealFullPath() == "/" ? "'/%'" : $list->quote($folder->getRealFullPath() . "/%"));
             }
 
             $conditionFilters[] = "type != 'folder'";
@@ -1902,7 +1904,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                                                  )";
             }
 
-            $list = new Asset\Listing();
+
             $condition = implode(" AND ", $conditionFilters);
             $list->setCondition($condition);
             $list->setLimit($limit);
