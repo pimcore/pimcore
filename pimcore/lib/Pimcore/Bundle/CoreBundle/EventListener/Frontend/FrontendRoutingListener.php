@@ -204,7 +204,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
             }
         }
 
-        if ($hostRedirect && $request->request->has('pimcore_disable_host_redirect')) {
+        if ($hostRedirect && !$request->query->has('pimcore_disable_host_redirect')) {
             $qs = '';
             if (null !== $qs = $request->getQueryString()) {
                 $qs = '?' . $qs;
