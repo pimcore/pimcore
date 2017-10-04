@@ -86,6 +86,10 @@ class FrontendRoutingListener implements EventSubscriberInterface
 
     public function onKernelRequest(GetResponseEvent $event)
     {
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
         $request = $event->getRequest();
 
         // handle main domain redirect in admin context
