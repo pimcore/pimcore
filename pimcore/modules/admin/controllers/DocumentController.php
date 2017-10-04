@@ -269,7 +269,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $parentDocument = Document::getById($this->getParam("id"));
 
             $list = new Document\Listing();
-            $list->setCondition("path LIKE ?",  [$parentDocument->getRealFullPath() . "/%"]);
+            $list->setCondition("path LIKE ?", [$parentDocument->getRealFullPath() . "/%"]);
             $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(path)", false);
             $list->setOrder("DESC");

@@ -489,7 +489,7 @@ class InheritanceHelper
         if (isset($currentNode->relations[$fieldname])) {
             $value = $currentNode->relations[$fieldname];
         } else {
-		    $value = null;
+            $value = null;
         }
         if (!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             return;
