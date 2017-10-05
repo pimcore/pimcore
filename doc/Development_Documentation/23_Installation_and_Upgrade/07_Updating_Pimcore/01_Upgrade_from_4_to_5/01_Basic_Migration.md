@@ -5,6 +5,14 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 
 - **Backup your system!**
 
+- Download the [Pimcore 5.0.0 build zip file](https://downloads.sourceforge.net/project/pimcorebuilds/archive-5/100/pimcore-latest-131.zip?r=&ts=1507212244&use_mirror=netix).
+
+    > **IMPORTANT**: make sure you use the 5.0.0 zip file and not the latest release build as you may miss important update
+      scripts if directly updating to the latest build. After migrating the installation to this zip file, you can use the 
+      web updater to update to the latest version.
+      If you want to migrate directly to the latest build you can do so, but you must take care of running any migration
+      scripts which were added after build 131.
+
 - The [Pimcore CLI](https://github.com/pimcore/pimcore-cli) provides a set of commands to ease the migration. It is able
   to do the following:
 
@@ -59,3 +67,4 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
   
 - Run `composer update` once again to update the autoloaded and class maps
 - The admin interface of your system should now work again and you can proceed to [migrate your application code](./README.md). 
+- Use the web updater to update to the latest stable build
