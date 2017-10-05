@@ -1194,11 +1194,14 @@ class Service extends Model\Element\Service
 
     /**
      * @param $definition
+     *
      * @return mixed
      */
-    public static function cloneDefinition($definition) {
+    public static function cloneDefinition($definition)
+    {
         $deepCopy = new \DeepCopy\DeepCopy();
         $theCopy = $deepCopy->copy($definition);
+
         return $theCopy;
     }
 

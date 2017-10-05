@@ -625,7 +625,7 @@ class Configuration implements ConfigurationInterface
                                             ->ifTrue(function ($v) {
                                                 return empty(trim($v));
                                             })
-                                            ->then(function() {
+                                            ->then(function () {
                                                 return null;
                                             })
                                         ->end()
