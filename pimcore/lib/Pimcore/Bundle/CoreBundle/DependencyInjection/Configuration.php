@@ -594,7 +594,13 @@ class Configuration implements ConfigurationInterface
                                         'name'       => 'Custom Migrations',
                                         'namespace'  => 'App\\Migrations\\Custom',
                                         'directory'  => 'src/App/Migrations/Custom'
-                                    ]
+                                    ],
+                                    'custom_set_2' => [
+                                        'name'       => 'Custom Migrations 2',
+                                        'namespace'  => 'App\\Migrations\\Custom2',
+                                        'directory'  => 'src/App/Migrations/Custom2',
+                                        'connection' => 'custom_connection'
+                                    ],
                                 ]
                             ])
                             ->prototype('array')
@@ -611,6 +617,18 @@ class Configuration implements ConfigurationInterface
                                     ->scalarNode('directory')
                                         ->isRequired()
                                         ->cannotBeEmpty()
+                                    ->end()
+                                    ->scalarNode('connection')
+                                        ->info('If defined, the DBAL connection defined here will be used')
+                                        ->defaultNull()
+                                        ->beforeNormalization()
+                                            ->ifTrue(function ($v) {
+                                                return empty(trim($v));
+                                            })
+                                            ->then(function() {
+                                                return null;
+                                            })
+                                        ->end()
                                     ->end()
                                 ->end()
                             ->end()

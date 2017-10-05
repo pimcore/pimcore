@@ -89,6 +89,12 @@ trait PimcoreMigrationsConfiguration
             } else {
                 $this->migrationConfiguration = $factory->getForSet($input->getOption('set'), $connection, $outputWriter);
             }
+
+            // the migration configuration might use another connection than the one resolved in getConnection
+            // e.g. when the migration set defines a dedicate connection
+            if ($this->migrationConfiguration->getConnection() !== $this->connection) {
+                $this->connection = $this->migrationConfiguration->getConnection();
+            }
         }
 
         return $this->migrationConfiguration;

@@ -115,6 +115,14 @@ class ConfigurationFactory implements EventSubscriberInterface
             return $this->configurations[$migrationSet->getIdentifier()];
         }
 
+        // fetch custom connection if migration set defines a dedicated one
+        if (null !== $migrationSet->getConnection()) {
+            $connection = $this->container->get(sprintf(
+                'doctrine.dbal.%s_connection',
+                $migrationSet->getConnection()
+            ));
+        }
+
         $configuration = new Configuration(
             $migrationSet->getIdentifier(),
             $connection,

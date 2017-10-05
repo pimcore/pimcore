@@ -42,16 +42,24 @@ final class MigrationSetConfiguration
     private $directory;
 
     /**
+     * Optional database connection name
+     *
+     * @var string|null
+     */
+    private $connection;
+
+    /**
      * @var OptionsResolver
      */
     private static $configResolver;
 
-    public function __construct(string $identifier, string $name, string $namespace, string $directory)
+    public function __construct(string $identifier, string $name, string $namespace, string $directory, string $connection = null)
     {
         $this->identifier = $identifier;
         $this->name       = $name;
         $this->namespace  = $namespace;
         $this->directory  = $directory;
+        $this->connection = $connection;
     }
 
     public static function fromConfig(array $config): self
@@ -67,7 +75,8 @@ final class MigrationSetConfiguration
             $resolvedConfig['identifier'],
             $resolvedConfig['name'],
             $resolvedConfig['namespace'],
-            $resolvedConfig['directory']
+            $resolvedConfig['directory'],
+            $resolvedConfig['connection']
         );
     }
 
@@ -79,6 +88,9 @@ final class MigrationSetConfiguration
         foreach ($keys as $key) {
             $resolver->setAllowedTypes($key, 'string');
         }
+
+        // database connection name
+        $resolver->setDefault('connection', null);
     }
 
     public function getIdentifier(): string
@@ -99,5 +111,13 @@ final class MigrationSetConfiguration
     public function getDirectory(): string
     {
         return $this->directory;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getConnection()
+    {
+        return $this->connection;
     }
 }
