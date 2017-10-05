@@ -27,9 +27,6 @@ class PimcoreDataCollector extends DataCollector
      */
     protected $contextResolver;
 
-    /**
-     * @param PimcoreContextResolver $contextResolver
-     */
     public function __construct(PimcoreContextResolver $contextResolver)
     {
         $this->contextResolver = $contextResolver;
@@ -41,9 +38,11 @@ class PimcoreDataCollector extends DataCollector
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         $this->data = [
-            'context'  => $this->contextResolver->getPimcoreContext($request),
-            'version'  => Version::getVersion(),
-            'revision' => Version::getRevision(),
+            'version'    => Version::getVersion(),
+            'revision'   => Version::getRevision(),
+            'debug_mode' => (bool)\Pimcore::inDebugMode(),
+            'dev_mode'   => defined('PIMCORE_DEVMODE') ? (bool)PIMCORE_DEVMODE : false,
+            'context'    => $this->contextResolver->getPimcoreContext($request),
         ];
     }
 
@@ -77,5 +76,21 @@ class PimcoreDataCollector extends DataCollector
     public function getRevision()
     {
         return $this->data['revision'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDebugMode()
+    {
+        return $this->data['debug_mode'];
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDevMode()
+    {
+        return $this->data['dev_mode'];
     }
 }
