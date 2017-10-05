@@ -9,7 +9,5 @@ services:
 
     Pimcore\Migrations\Configuration\ConfigurationFactory:
         public: true
-        arguments:
-            $rootDir: '%kernel.root_dir%'
 
     Pimcore\Migrations\MigrationManager: ~

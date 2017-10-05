@@ -35,11 +35,6 @@ class ConfigurationFactory implements EventSubscriberInterface
     private $container;
 
     /**
-     * @var string
-     */
-    private $rootDir;
-
-    /**
      * @var MigrationSetConfiguration[]
      */
     private $migrationSets = [];
@@ -54,12 +49,11 @@ class ConfigurationFactory implements EventSubscriberInterface
      */
     private $installConfigurations = [];
 
-    public function __construct(ContainerInterface $container, string $rootDir)
+    public function __construct(ContainerInterface $container, array $migrationSetConfigurations = [])
     {
         $this->container = $container;
-        $this->rootDir   = $rootDir;
 
-        $this->buildDefaultMigrationSets();
+        $this->buildMigrationSets($migrationSetConfigurations);
     }
 
     public static function getSubscribedEvents()
@@ -68,6 +62,13 @@ class ConfigurationFactory implements EventSubscriberInterface
         return [
             TestEvents::KERNEL_BOOTED => 'reset'
         ];
+    }
+
+    private function buildMigrationSets(array $configurations)
+    {
+        foreach ($configurations as $configuration) {
+            $this->registerMigrationSet(MigrationSetConfiguration::fromConfig($configuration));
+        }
     }
 
     public function getForSet(
@@ -205,18 +206,6 @@ class ConfigurationFactory implements EventSubscriberInterface
         }
     }
 
-    protected function buildDefaultMigrationSets()
-    {
-        $this->registerMigrationSet(
-            new MigrationSetConfiguration(
-                'app',
-                'Migrations',
-                'App\\Migrations',
-                $this->rootDir . '/Resources/migrations'
-            )
-        );
-    }
-
     private function getMigrationSetForBundle(BundleInterface $bundle): MigrationSetConfiguration
     {
         if (!isset($this->migrationSets[$bundle->getName()])) {
@@ -239,7 +228,7 @@ class ConfigurationFactory implements EventSubscriberInterface
     private function registerMigrationSet(MigrationSetConfiguration $migrationSet)
     {
         if (isset($this->migrationSets[$migrationSet->getIdentifier()])) {
-            throw new \RuntimeException(sprintf('Migration set "%s" is already registered', $migrationSet->getIdentifier()));
+            throw new \RuntimeException(sprintf('Migration set "%s" is already registered.', $migrationSet->getIdentifier()));
         }
 
         $this->migrationSets[$migrationSet->getIdentifier()] = $migrationSet;
@@ -248,7 +237,7 @@ class ConfigurationFactory implements EventSubscriberInterface
     protected function getMigrationSet(string $set): MigrationSetConfiguration
     {
         if (!isset($this->migrationSets[$set])) {
-            throw new \InvalidArgumentException(sprintf('Migration set "%s" is not registered', $set));
+            throw new \InvalidArgumentException(sprintf('Migration set "%s" is not registered.', $set));
         }
 
         return $this->migrationSets[$set];

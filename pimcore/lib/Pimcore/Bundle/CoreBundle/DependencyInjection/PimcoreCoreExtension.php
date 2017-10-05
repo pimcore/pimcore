@@ -18,6 +18,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
+use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
@@ -101,6 +102,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configurePasswordEncoders($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories', 'Newsletter Address Source Adapter Factory');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories', 'Custom Report Adapter Factory');
+        $this->configureMigrations($container, $config['migrations']);
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];
@@ -306,6 +308,22 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         }
 
         $definition->replaceArgument(1, $factoryMapping);
+    }
+
+    private function configureMigrations(ContainerBuilder $container, array $config)
+    {
+        $configurations = [];
+        foreach ($config['sets'] as $identifier => $set) {
+            $configurations[] = array_merge([
+                'identifier' => $identifier
+            ], $set);
+        }
+
+        $factory = $container->findDefinition(ConfigurationFactory::class);
+        $factory->setArgument(
+            '$migrationSetConfigurations',
+            $configurations
+        );
     }
 
     /**

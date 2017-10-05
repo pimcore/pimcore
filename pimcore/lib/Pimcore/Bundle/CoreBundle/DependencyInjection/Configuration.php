@@ -93,6 +93,7 @@ class Configuration implements ConfigurationInterface
         $this->addSecurityNode($rootNode);
         $this->addNewsletterNode($rootNode);
         $this->addCustomReportsNode($rootNode);
+        $this->addMigrationsNode($rootNode);
 
         return $treeBuilder;
     }
@@ -564,6 +565,54 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('adapters')
                             ->useAttributeAsKey('name')
                                 ->prototype('scalar')
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * Adds configuration tree node for migrations
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addMigrationsNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('migrations')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('sets')
+                            ->useAttributeAsKey('identifier')
+                            ->defaultValue([])
+                            ->info('Migration sets which can be used apart from bundle migrations. Use the -s option in migration commands to select a specific set.')
+                            ->example([
+                                [
+                                    'custom_set' => [
+                                        'name'       => 'Custom Migrations',
+                                        'namespace'  => 'App\\Migrations\\Custom',
+                                        'directory'  => 'src/App/Migrations/Custom'
+                                    ]
+                                ]
+                            ])
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('identifier')->end()
+                                    ->scalarNode('name')
+                                        ->isRequired()
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                    ->scalarNode('namespace')
+                                        ->isRequired()
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                    ->scalarNode('directory')
+                                        ->isRequired()
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                ->end()
                             ->end()
                         ->end()
                     ->end()

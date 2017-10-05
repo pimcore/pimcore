@@ -198,6 +198,18 @@ pimcore:
         translations:
             path: "@PimcoreCoreBundle/Resources/translations"
 
+    # Pimcore migration sets
+    # Bundles can define their own migration sets - the sets defined here act as global sets
+    # available to the whole application
+    migrations:
+        sets:
+            # this is the default migration set which will be used if the
+            # migration commands do not specify --set or --bundle
+            app:
+                name: Migrations
+                namespace: App\Migrations
+                directory: "%kernel.root_dir%/Resources/migrations"
+
 swiftmailer:
     default_mailer: pimcore_mailer
     mailers:
