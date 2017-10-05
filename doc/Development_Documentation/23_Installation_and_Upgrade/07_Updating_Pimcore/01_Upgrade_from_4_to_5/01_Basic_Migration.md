@@ -38,7 +38,9 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 
 - Update your `composer.json` to include all dependencies and settings from Pimcore's `composer.json`. The Pimcore CLI will
   use Pimcore's `composer.json` and back up your existing one. If you have any custom dependencies or settings please make
-  sure to re-add them to the `composer.json`
+  sure to re-add them to the `composer.json`, or better create a file named `composer.local.json` only including your custom
+  dependencies.  It will be merged with `composer.json` dynamically during composer operations thanks to the
+  `wikimedia/composer-merge-plugin` composer plugin.
 
 - Run `composer update` to install new dependencies. If you encounter errors, please fix them until the command works properly.
   You can use `--no-scripts` to install dependencies and then iterate through errors in subsequent calls to save some time.
