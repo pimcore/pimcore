@@ -13,11 +13,12 @@ To give bundles full control over their install routines, Pimcore only defines a
 implemented by your installer. The methods implemented by your installer drive the extension manager UI and are called when
 an action is triggered from the extension manager or from commands like `pimcore:bundle:install`. The basic installer
 interface can be found in [InstallerInterface](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/InstallerInterface.php) which
-is implemented in [AbstractInstaller](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/AbstractInstaller.php) which you can take as starting point.
+is implemented in [AbstractInstaller](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/AbstractInstaller.php)
+which you can use as starting point.
 
 A pimcore bundle is expected to return an installer instance in `getInstaller()`. This method can also return `null` if you
 don't need any installation functionality. In this case, actions which would be handled by an installer will not be available
-in the extension manager.
+in the extension manager (e.g. the install button is not shown).
 
 It's recommended to define the installer as service and to fetch it from the container from your bundle class on demand.  
 As example:
@@ -57,6 +58,9 @@ provides a powerful migration framework. Building on Doctrine Migrations, Pimcor
   changes (e.g. changing class definitions).
 * An installer can define a specialized install version, which is independent of the remaining migrations. This migration
   is executed on bundle install and reverted on bundle uninstall.
+  
+There is a [dedicated documentation page](../../../19_Development_Tools_and_Details/37_Migrations.md) regarding migrations 
+which you should read before continuing on this page. 
   
 To use the migrations for your bundle, you can extend the [MigrationInstaller](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/MigrationInstaller.php)
 in your own installer class to make your bundle installer handle migrations. This installer implements the [MigrationInstallerInterface](https://github.com/pimcore/pimcore/blob/898f53756004b2d0e0fdd4079e420b71fd2f2481/pimcore/lib/Pimcore/Extension/Bundle/Installer/MigrationInstallerInterface.php)
@@ -122,10 +126,10 @@ down to `0`, thus reverting the install migration and calling the `migrateUninst
 
 The methods receive a [Schema](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/schema-representation.html)
 object which can be used to modify the database in an object oriented way and a `Version` object which contains metadata
-on the current migration and provides an `addSql()` method to register raw SQL queries which should be executed instead 
-of the schema changes. Please see the Docrine Migrations documentation for details (the version on a normal migration is
-available as `$this->version` and a normal migration class provides an `addSql` method which in turn is delegated to the
-version);
+on the current migration. The `Version` class also provides an `addSql()` method to register raw SQL queries which should
+be executed instead of the schema changes. Please see the Docrine Migrations documentation for details (the version on a
+normal migration is available as `$this->version` and a normal migration class provides an `addSql` method which in turn
+is delegated to the version);
 
 In addition to those methods, a couple of before/after methods are available to execute logic before or after install/uninstall
 migrations. In addition, `executeMigration` and `migrateToVersion` methods can be used to specifically execute a certain
@@ -161,9 +165,9 @@ The installer migrated to the special version `00000001` and applied our databas
 
 ### Writing migrations
 
-As you can see in the example above, the schema above defines the initial database schema for our bundle. Now assume we
+As you can see in the example above, the schema defines the initial database schema for our bundle. Now assume we
 need an additional column on our database. We want to create this column on every instance which either installs the bundle
-the first time or which updated an already installed bundle. On installation, the `MigrationInstaller` will internally call
+for the first time or which updates an already installed bundle. On installation, the `MigrationInstaller` will internally call
 the `update` method after installation which makes sure that all unmigrated migrations are migrated. Already existing instances
 can directly use `update` to apply unmigrated migrations. 
 
@@ -174,7 +178,7 @@ $ bin/console pimcore:migrations:generate -b AppBundle
 Generated new migration class to "src/AppBundle/Migrations/Version20170822151849.php"
 ```
 
-This migration class defines an `up` and `down` method which are executed when the migration is executed/reverted. You can 
+This migration class defines `up` and `down` methods which are executed when the migration is executed/reverted. You can 
 use the same `schema` object as above or add raw SQL queries:
 
 ```php
@@ -233,7 +237,7 @@ Migrating up to 20170822151849 from 00000001
 While developing your application, you might generate numerous migrations. Instead of applying every single migration on
 every fresh install, you can also configure the installer to mark a given version as migrated without actually executing
 the migration classes. This gives you the advantage to define the whole schema in the same migration and to have a complete
-overview what has to be installed. You just need to make sure to apply the same changes instances which are updates. To mark
+overview what has to be installed. You just need to make sure to apply the same changes to instances which are updates. To mark
 a specific version, implement the `getMigrationVersion()` method. This version and all lower versions will be marked as
 migrated and won't be executed on an update.
  
@@ -330,8 +334,8 @@ Migrating up to 20170822151849 from 00000001
 
 This does what we expect, but now we have duplicate code in installation migration and our migration class. Depending on
 your use case you could also tell the installer to manually execute your migration after installation. In this example it
-basically does the same as not defining a version to mark, but you could use this to execute only a handful of needed migration
-(e.g. ones with complex logic):
+basically does the same as it would do if you don't mark a version, but you could use this to execute only a handful of
+needed migrations (e.g. ones with complex logic):
 
 
 ```php
@@ -443,158 +447,6 @@ class Installer extends MigrationInstaller
 }
 ```
 
-
-### Non-DB Changes
-
-Despite being a DB-oriented approach, migrations can be used to alter other structural elements as class definitions. Inside
-migrations, you can make full use of Pimcore's APIs, for example to alter or import a class definition. As an example, we'll
-alter the description field in a `blogArticle` class:
-
-```php
-<?php
-
-namespace AppBundle\Migrations;
-
-use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
-use Pimcore\Model\DataObject\ClassDefinition;
-
-class Version20170822160703 extends AbstractPimcoreMigration
-{
-    public function up(Schema $schema)
-    {
-        /** @var ClassDefinition $classDefinition */
-        $classDefinition = ClassDefinition::getByName('blogArticle');
-        $classDefinition->setDescription('[MIGRATIONS] ' . $classDefinition->getDescription() ?? '');
-        $classDefinition->save();
-    }
-
-    public function down(Schema $schema)
-    {
-        /** @var ClassDefinition $classDefinition */
-        $classDefinition = ClassDefinition::getByName('blogArticle');
-        $classDefinition->setDescription(preg_replace('/^\[MIGRATIONS\] /', '', $classDefinition->getDescription()));
-        $classDefinition->save();
-    }
-}
-```
-
-This migration can be executed as every other migration by excuting `update`:
-
-```bash
-$ bin/console pimcore:bundle:update AppBundle
-Migrating up to 20170822160703 from 20170822151849
-
-  ++ migrating 20170822160703
-
-Migration 20170822160703 was executed but did not result in any SQL statements.
-
-  ++ migrated (0.37s)
-
-  ------------------------
-
-  ++ finished in 0.37s
-  ++ 1 migrations executed
-  ++ 0 sql queries
-
-
- [OK] Bundle "AppBundle" was successfully updated
-
-```
-
-As you can see, the change was successfully applied, but yielded a warning about SQL statements not being applied. As our
-changes are not executed through the `schema` object or the `addSql` method, the migrations library does not know what has
-been applied triggers the warning. To avoid this, the `AbstractPimcoreMigration` defines the following method, which can
-be used to suppress the warning if it returns `false`:
-
-```php
-<?php
-
-namespace AppBundle\Migrations;
-
-use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
-
-class Version20170822160703 extends AbstractPimcoreMigration
-{
-    public function doesSqlMigrations(): bool
-    {
-        return false;
-    }
-
-    // [...]
-}
-```
-
-```bash
- bin/console pimcore:bundle:update AppBundle
-Migrating up to 20170822160703 from 20170822151849
-
-  ++ migrating 20170822160703
-
-
-  ++ migrated (0.35s)
-
-  ------------------------
-
-  ++ finished in 0.35s
-  ++ 1 migrations executed
-  ++ 0 sql queries
-
-
- [OK] Bundle "AppBundle" was successfully updated
-
-```
-
-### Handling `--dry-run` in non-DB migrations
-
-Doctrine Migrations can be executed in a `dry-run` mode which does not actually change data. For plain SQL migrations this
-is quite easy as all SQL queries are collected before being executed. In `dry-run` mode those collected queries are simply
-not executed. For migrations not only handling DB changes, this is more complicated. By default, migrations do not know
-about the `dry-run` state, but the `AbstractPimcoreMigration` implements the `DryRunMigrationInterface` which adds the 
-`dry-run` context on the migration itself:
-
-```php
-<?php
-
-namespace AppBundle\Migrations;
-
-use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
-use Pimcore\Model\DataObject\ClassDefinition;
-
-class Version20170822160703 extends AbstractPimcoreMigration
-{
-    public function up(Schema $schema)
-    {
-        // dryRunMessage will prefix the message with "DRY-RUN:" in dry run mode
-        $this->writeMessage($this->dryRunMessage('Adding description to blogArticle class'));
-        
-        if ($this->isDryRun()) {
-            return;
-        }
-        
-        /** @var ClassDefinition $classDefinition */
-        $classDefinition = ClassDefinition::getByName('blogArticle');
-        $classDefinition->setDescription('[MIGRATIONS] ' . $classDefinition->getDescription() ?? '');
-        $classDefinition->save();            
-    }
-
-    public function down(Schema $schema)
-    {
-        $this->writeMessage($this->dryRunMessage('Removing description from blogArticle class'));
-        
-        if ($this->isDryRun()) {
-            return;
-        }
-        
-        /** @var ClassDefinition $classDefinition */
-        $classDefinition = ClassDefinition::getByName('blogArticle');
-        $classDefinition->setDescription(preg_replace('/^\[MIGRATIONS\] /', '', $classDefinition->getDescription()));
-        $classDefinition->save();
-    }
-}
-```
-
 ### Interacting with migrations directly
 
 If needed, you can directly interact with the migrations library (actually, we already did that above when generating a
@@ -629,7 +481,10 @@ use the global migration set which is not bundle specific by omitting the `-b` o
 define application wide migrations which are not bound to an installer. To execute those migrations, please directly use
 the `pimcore:migrations:migrate` command instead of `pimcore:bundle:update`.
 
+---
+
 For further details please see
 
+* [Migrations](../../../19_Development_Tools_and_Details/37_Migrations.md)
 * [Doctrine Migrations](http://docs.doctrine-project.org/projects/doctrine-migrations/en/latest/index.html)
 * [Doctrine Migrations Bundle](http://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html)
