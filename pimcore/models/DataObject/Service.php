@@ -1140,7 +1140,7 @@ class Service extends Model\Element\Service
             }
         }
 
-        $mergedFieldDefinition = unserialize(serialize($masterFieldDefinition));
+        $mergedFieldDefinition = self::cloneDefinition($masterFieldDefinition);
 
         if (count($layoutDefinitions)) {
             foreach ($mergedFieldDefinition as $key => $def) {
@@ -1190,6 +1190,16 @@ class Service extends Model\Element\Service
         }
 
         return $mergedFieldDefinition;
+    }
+
+    /**
+     * @param $definition
+     * @return mixed
+     */
+    public static function cloneDefinition($definition) {
+        $deepCopy = new \DeepCopy\DeepCopy();
+        $theCopy = $deepCopy->copy($definition);
+        return $theCopy;
     }
 
     /**
