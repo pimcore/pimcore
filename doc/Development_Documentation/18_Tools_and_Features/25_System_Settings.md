@@ -76,11 +76,12 @@ texts and links:
 ![Cookie Policy Translation](../img/system-settings2.png)
 
 ##### Use a Custom Template Code
+
 ```php
-// anywhere in your code, preferred in Website\Controller\Action::init() 
-$front = \Zend_Controller_Front::getInstance();
-$euCookiePlugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\EuCookieLawNotice");
-$euCookiePlugin->setTemplateCode("<b>Your Custom Template</b> ...");
+<?php
+// this example is inside a controller, but you can also inject the listener as dependency
+$cookieListener = $this->get(\Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener::class);
+$cookieListener->setTemplateCode("<b>Your Custom Template</b> ...");
 ```
  
 ## MySQL Database
