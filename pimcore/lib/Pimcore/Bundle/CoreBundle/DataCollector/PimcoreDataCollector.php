@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\DataCollector;
 
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -40,7 +41,9 @@ class PimcoreDataCollector extends DataCollector
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         $this->data = [
-            'context' => $this->contextResolver->getPimcoreContext($request)
+            'context'  => $this->contextResolver->getPimcoreContext($request),
+            'version'  => Version::getVersion(),
+            'revision' => Version::getRevision(),
         ];
     }
 
@@ -58,5 +61,21 @@ class PimcoreDataCollector extends DataCollector
     public function getContext()
     {
         return $this->data['context'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->data['version'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getRevision()
+    {
+        return $this->data['revision'];
     }
 }

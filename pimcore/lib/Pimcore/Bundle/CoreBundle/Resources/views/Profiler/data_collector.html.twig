@@ -12,6 +12,11 @@
         {# this is the content displayed when hovering the mouse over
            the toolbar panel #}
         <div class="sf-toolbar-info-piece">
+            <b>Version</b>
+            <span>{{ collector.version }} build {{ collector.revision }}</span>
+        </div>
+
+        <div class="sf-toolbar-info-piece">
             <b>Context</b>
             <span>{{ collector.context }}</span>
         </div>
