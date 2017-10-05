@@ -115,7 +115,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         this.classCombo = new Ext.form.ComboBox({
             typeAhead: true,
             triggerAction: 'all',
-            width: 400,
+            width: 600,
             store: pimcore.globalmanager.get("object_types_store"),
             valueField: 'id',
             editable: true,

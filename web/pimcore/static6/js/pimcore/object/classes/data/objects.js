@@ -151,7 +151,7 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
             displayField: "text",
             valueField: "text",
             store: classesStore,
-            width: 300,
+            width: 600,
             disabled: this.isInCustomLayoutEditor()
         }));
 
