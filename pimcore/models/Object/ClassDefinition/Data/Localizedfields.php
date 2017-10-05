@@ -103,6 +103,11 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public $fieldDefinitionsCache;
 
+    /**
+     * @var bool
+     */
+    protected static $serializeReferencedFields;
+
 
     /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
@@ -1108,7 +1113,9 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         $vars = get_object_vars($this);
         unset($vars['fieldDefinitionsCache']);
-        unset($vars['referencedFields']);
+        if (!self::getSerializeReferencedFields()) {
+            unset($vars['referencedFields']);
+        }
 
         return array_keys($vars);
     }
@@ -1269,4 +1276,22 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
         return $lf;
     }
+
+    /**
+     * @return bool
+     */
+    public static function getSerializeReferencedFields()
+    {
+        return self::$serializeReferencedFields;
+    }
+
+    /**
+     * @param bool $serializeReferencedFields
+     */
+    public static function setSerializeReferencedFields($serializeReferencedFields)
+    {
+        self::$serializeReferencedFields = $serializeReferencedFields;
+    }
+
+
 }

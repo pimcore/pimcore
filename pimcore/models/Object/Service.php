@@ -1167,7 +1167,9 @@ class Service extends Model\Element\Service
             }
         }
 
+        Model\Object\ClassDefinition\Data\Localizedfields::setSerializeReferencedFields(true);
         $mergedFieldDefinition = unserialize(serialize($masterFieldDefinition));
+        Model\Object\ClassDefinition\Data\Localizedfields::setSerializeReferencedFields(false);
 
         if (count($layoutDefinitions)) {
             foreach ($mergedFieldDefinition as $key => $def) {
