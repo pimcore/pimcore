@@ -13,5 +13,5 @@ services:
             -
                 name:     data_collector
                 template: 'PimcoreCoreBundle:Profiler:data_collector.html.twig'
-                id:       'pimcore.data_collector'
+                id:       'pimcore'
                 priority: 500

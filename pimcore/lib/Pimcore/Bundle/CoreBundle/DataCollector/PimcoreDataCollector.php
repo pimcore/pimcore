@@ -51,7 +51,7 @@ class PimcoreDataCollector extends DataCollector
      */
     public function getName()
     {
-        return 'pimcore.data_collector';
+        return 'pimcore';
     }
 
     /**

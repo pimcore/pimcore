@@ -34,5 +34,45 @@
 
     {# the 'link' value set to 'false' means that this panel doesn't
        show a section in the web profiler #}
-    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: false }) }}
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true }) }}
+{% endblock %}
+
+{% block menu %}
+    <span class="label">
+        <span class="icon">
+            {{ include("PimcoreCoreBundle:Profiler:logo.svg.twig") }}
+        </span>
+        <strong>Pimcore</strong>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>Pimcore</h2>
+
+    <div class="metrics">
+        <div class="metric">
+            <span class="value">{{ collector.version }}</span>
+            <span class="label">Version</span>
+        </div>
+
+        <div class="metric">
+            <span class="value">{{ collector.revision }}</span>
+            <span class="label">Build</span>
+        </div>
+
+        <div class="metric">
+            <span class="value">{{ collector.debugMode ? 'enabled' : 'disabled' }}</span>
+            <span class="label">Debug Mode</span>
+        </div>
+
+        <div class="metric">
+            <span class="value">{{ collector.devMode ? 'enabled' : 'disabled' }}</span>
+            <span class="label">Dev Mode</span>
+        </div>
+
+        <div class="metric">
+            <span class="value">{{ collector.context }}</span>
+            <span class="label">Request Context</span>
+        </div>
+    </div>
 {% endblock %}
