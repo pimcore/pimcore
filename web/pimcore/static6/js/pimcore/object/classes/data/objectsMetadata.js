@@ -86,8 +86,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 xtype: "checkbox",
                 fieldLabel: t("lazy_loading"),
                 name: "lazyLoading",
-                checked: this.datax.lazyLoading && !this.ladyLoadingNotPossible(),
-                disabled: this.isInCustomLayoutEditor() || this.ladyLoadingNotPossible()
+                checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible(),
+                disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible()
             },
             {
                 xtype: "displayfield",

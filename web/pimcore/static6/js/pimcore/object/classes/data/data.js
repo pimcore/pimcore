@@ -333,7 +333,7 @@ pimcore.object.classes.data.data = Class.create({
         return this.inCustomLayoutEditor;
     },
 
-    ladyLoadingNotPossible: function() {
+    lazyLoadingNotPossible: function() {
         return this.context == "fieldcollection";
     },
 

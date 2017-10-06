@@ -164,8 +164,8 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         xtype: "checkbox",
                         fieldLabel: t("lazy_loading"),
                         name: "lazyLoading",
-                        disabled: this.isInCustomLayoutEditor() || this.ladyLoadingNotPossible(),
-                        checked: this.datax.lazyLoading && !this.ladyLoadingNotPossible()
+                        disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible(),
+                        checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible()
                     },
                     {
                         xtype: "displayfield",
