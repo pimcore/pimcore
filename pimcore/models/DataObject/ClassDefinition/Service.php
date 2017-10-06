@@ -206,7 +206,7 @@ class Service
      *
      * @throws \Exception
      */
-    public static function generateLayoutTreeFromArray($array, $throwException = false)
+    public static function generateLayoutTreeFromArray($array, $throwException = false, $insideLocalizedField = false)
     {
         if (is_array($array) && count($array) > 0) {
             /** @var LoaderInterface $loader */
@@ -215,16 +215,18 @@ class Service
             if ($loader->supports($array['fieldtype'])) {
                 $item = $loader->build($array['fieldtype']);
 
+                $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
+
                 if (method_exists($item, 'addChild')) { // allows childs
 
                     $item->setValues($array, ['childs']);
 
                     if (is_array($array) && is_array($array['childs']) && isset($array['childs']['datatype']) && $array['childs']['datatype']) {
-                        $childO = self::generateLayoutTreeFromArray($array['childs'], $throwException);
+                        $childO = self::generateLayoutTreeFromArray($array['childs'], $throwException, $insideLocalizedField);
                         $item->addChild($childO);
                     } elseif (is_array($array['childs']) && count($array['childs']) > 0) {
                         foreach ($array['childs'] as $child) {
-                            $childO = self::generateLayoutTreeFromArray($child, $throwException);
+                            $childO = self::generateLayoutTreeFromArray($child, $throwException, $insideLocalizedField);
                             if ($childO !== false) {
                                 $item->addChild($childO);
                             } else {
@@ -240,6 +242,12 @@ class Service
                     }
                 } else {
                     $item->setValues($array);
+                    if ($insideLocalizedField && $item instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ($item->getLazyLoading()) {
+                            Logger::error("WARNING: lazy loading relations not supported inside localizedfields");
+                            $item->setLazyLoading(false);
+                        }
+                    }
                 }
 
                 return $item;
