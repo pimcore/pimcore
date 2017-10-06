@@ -30,6 +30,9 @@ security:
                 path:   demo_logout
                 target: demo_login
 
+                # optional: to keep logins of other firewalls (like admin)
+                invalidate_session: false
+
     # ROLE_ADMIN inherits ROLE_USER (is allowed everything a user is allowed)
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER]
