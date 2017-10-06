@@ -7,7 +7,7 @@ To be able to execute migration changes across environments, Pimcore integrates 
 library which provides a powerful migration framework. Building on Doctrine Migrations, Pimcore adds the following features:
 
 * Migrations can be split up into multiple migration sets which are independent from each other. By default, there is one
-  global `app` migration set and one set for every bundle which implements migrations in its installer, but you configure
+  global `app` migration set and one set for every bundle which implements migrations in its installer, but you can configure
   Pimcore to handle additional migration sets.
 * As Doctrine Migrations is targeted to DB migrations only, Pimcore adds a couple of features to use migrations also for 
   other changes such as changing class definitions. For example, a migration in Pimcore is able to determine if it is in
