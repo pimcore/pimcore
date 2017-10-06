@@ -19,8 +19,6 @@ addons:
     - pimcore-test.dev
 
 matrix:
-  allow_failures:
-    - php: 7.2
   include:
     - os: linux
       sudo: required
