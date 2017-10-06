@@ -35,6 +35,12 @@ matrix:
           - PIMCORE_TEST_SUITE=rest
           - PIMCORE_TEST_ENV=http
     - os: linux
+      sudo: required
+      php: 7.2
+      env:
+          - PIMCORE_TEST_SUITE=rest
+          - PIMCORE_TEST_ENV=http
+    - os: linux
       php: 7.1
       env:
           - PIMCORE_TEST_SUITE=cache
