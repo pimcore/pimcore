@@ -217,22 +217,4 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IInd
     {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
     }
-
-    /**
-     * @static
-     *
-     * @param int $id
-     *
-     * @return null|\Pimcore\Model\DataObject\AbstractObject
-     */
-    public static function getById($id)
-    {
-        $object = \Pimcore\Model\DataObject\AbstractObject::getById($id);
-
-        if ($object instanceof AbstractProduct) {
-            return $object;
-        }
-
-        return null;
-    }
 }

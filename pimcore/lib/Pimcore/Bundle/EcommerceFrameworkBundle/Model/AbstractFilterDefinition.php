@@ -20,24 +20,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 abstract class AbstractFilterDefinition extends \Pimcore\Model\DataObject\Concrete
 {
     /**
-     * @static
-     *
-     * @param int $id
-     *
-     * @return null|\Pimcore\Model\DataObject\AbstractObject
-     */
-    public static function getById($id)
-    {
-        $object = \Pimcore\Model\DataObject\AbstractObject::getById($id);
-
-        if ($object instanceof AbstractFilterDefinition) {
-            return $object;
-        }
-
-        return null;
-    }
-
-    /**
      * returns page limit for product list
      *
      * @abstract
