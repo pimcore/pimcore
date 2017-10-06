@@ -258,7 +258,7 @@ SQL;
                 $tags
             ],
             [
-                \PDO::PARAM_INT,
+                \PDO::PARAM_STR,
                 Connection::PARAM_STR_ARRAY
             ]
         );
