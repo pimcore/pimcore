@@ -55,7 +55,7 @@ env:
 
 before_install:
   - mysql --version
-  - mysql -e "CREATE DATABASE pimcore_test;"
+  - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
 
 install:
   # add config templates
