@@ -37,8 +37,8 @@ it is a set of tools and functionality to help building e-commerce applications 
 - Tools for working with and managing Orders
 - Concepts for setting up multi tenant and multi shop solutions
 
-For a first impression have a look at our [E-Commerce Demo](http://ecommercedemo.pimcore.org). For more complex solutions
-have a look at our [case studies](https://www.pimcore.org/en/resources/casestudies). 
+For a first impression have a look at our [Advanced Demo](/home/pimcore_demo_advanced/reset.sh). For more complex solutions
+have a look at our [case studies](https://pimcore.com/en/customers?industry=&capability=618). 
 
 
 ## Working With E-Commerce Framework
