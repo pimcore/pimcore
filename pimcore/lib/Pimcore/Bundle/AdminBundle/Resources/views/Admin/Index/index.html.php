@@ -153,7 +153,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
     <div id="pimcore_status_dev" data-menu-tooltip="DEV MODE" style="display: none;"></div>
     <div id="pimcore_status_debug" data-menu-tooltip="<?= $this->translate("debug_mode_on") ?>" style="display: none;"></div>
     <div id="pimcore_status_email" data-menu-tooltip="<?= $this->translate("mail_settings_incomplete") ?>" style="display: none;"></div>
-    <a id="pimcore_status_maintenance" data-menu-tooltip="<?= $this->translate("maintenance_not_active") ?>" style="display: none;" href="https://www.pimcore.org/wiki/pages/viewpage.action?pageId=16854184#Installation(Apache)-SetuptheMaintenance-Script"></a>
+    <a id="pimcore_status_maintenance" data-menu-tooltip="<?= $this->translate("maintenance_not_active") ?>" style="display: none;" href="https://pimcore.com/docs/5.0.x/Getting_Started/Installation.html#page_5_Maintenance_Cron_Job"></a>
     <div id="pimcore_status_update" data-menu-tooltip="<?= $this->translate("update_available") ?>" style="display: none;"></div>
 </div>
 

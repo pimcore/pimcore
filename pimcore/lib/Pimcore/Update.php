@@ -281,7 +281,7 @@ class Update
                 }
 
                 if (array_key_exists('id', $file) && $file['id']) {
-                    // this is the new style, see https://www.pimcore.org/issues/browse/PIMCORE-2722
+                    // this is the new style
                     $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/update/'.$revision.'/files/' . $file['id'] . '-' . $file['revision'];
                 } else {
                     // this is the old style, which we still have to support here, otherwise there's the risk that the
