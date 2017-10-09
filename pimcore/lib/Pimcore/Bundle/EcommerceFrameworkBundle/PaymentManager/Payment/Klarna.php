@@ -56,9 +56,9 @@ class Klarna implements IPayment
 
         // set endpoint depending on mode
         if ('live' === $options['mode']) {
-            $this->endpoint = 'https://checkout.klarna.com/checkout/orders';
+            $this->endpoint = \Klarna_Checkout_Connector::BASE_URL
         } else {
-            $this->endpoint = 'https://checkout.testdrive.klarna.com/checkout/orders';
+            $this->endpoint = \Klarna_Checkout_Connector::BASE_TEST_URL;
         }
     }
 
@@ -261,10 +261,9 @@ class Klarna implements IPayment
     public function createOrder($uri = null)
     {
         // init
-        \Klarna_Checkout_Order::$baseUri = $this->endpoint;
-        \Klarna_Checkout_Order::$contentType = 'application/vnd.klarna.checkout.aggregated-order-v2+json';
-
-        $connector = \Klarna_Checkout_Connector::create($this->sharedSecretKey);
+        $connector = \Klarna_Checkout_Connector::create(
+            $this->sharedSecretKey,
+            $this->endpoint);
 
         return new \Klarna_Checkout_Order($connector, $uri);
     }
