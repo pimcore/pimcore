@@ -402,7 +402,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                 $this->deleteFromStoreTable($objectId);
                 $this->deleteFromMockupCache($objectId);
             } catch (\Exception $e) {
-                $check = json_decode($e->getMessage());
+                $check = json_decode($e->getMessage(), true);
                 if (!$check['found']) { //not in es index -> we can delete it from store table
                     $this->deleteFromStoreTable($objectId);
                     $this->deleteFromMockupCache($objectId);
