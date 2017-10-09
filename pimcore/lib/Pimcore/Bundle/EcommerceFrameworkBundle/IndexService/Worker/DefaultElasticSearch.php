@@ -96,8 +96,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
 
     protected function getVersionFile()
     {
-        // TODO fix path
-        return PIMCORE_WEBSITE_VAR.'/plugins/EcommerceFramework/elasticsearch-index-version-' . $this->indexName.'.txt';
+        return PIMCORE_PRIVATE_VAR . '/ecommerce/elasticsearch-index-version-' . $this->indexName.'.txt';
     }
 
     /**
@@ -403,7 +402,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                 $this->deleteFromStoreTable($objectId);
                 $this->deleteFromMockupCache($objectId);
             } catch (\Exception $e) {
-                $check = json_decode($e->getMessage());
+                $check = json_decode($e->getMessage(), true);
                 if (!$check['found']) { //not in es index -> we can delete it from store table
                     $this->deleteFromStoreTable($objectId);
                     $this->deleteFromMockupCache($objectId);
@@ -547,7 +546,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                     Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
                 }
 
-                $this->db->updateWhere($this->getStoreTableName(), $data, ['o_id = ?' => $response['index']['_id']]);
+                $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote($response['index']['_id']));
             }
         }
 
