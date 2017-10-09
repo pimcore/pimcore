@@ -56,7 +56,7 @@ class Klarna implements IPayment
 
         // set endpoint depending on mode
         if ('live' === $options['mode']) {
-            $this->endpoint = \Klarna_Checkout_Connector::BASE_URL
+            $this->endpoint = \Klarna_Checkout_Connector::BASE_URL;
         } else {
             $this->endpoint = \Klarna_Checkout_Connector::BASE_TEST_URL;
         }
