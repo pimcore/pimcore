@@ -802,6 +802,7 @@ class Configuration implements ConfigurationInterface
                                         ->append($this->buildOptionsNode('getter_options'))
                                         ->scalarNode('interpreter_id')->defaultNull()->info('Service id of interpreter for this field')->end()
                                         ->append($this->buildOptionsNode('interpreter_options'))
+                                        ->append($this->buildOptionsNode('mapping'))
                                         ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->info('Hides field in field list selection data type of filter service - default to false')->end()
                                     ->end()
                                 ->end()

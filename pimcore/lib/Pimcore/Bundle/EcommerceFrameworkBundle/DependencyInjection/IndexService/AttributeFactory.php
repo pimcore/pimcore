@@ -52,14 +52,15 @@ class AttributeFactory
             'getter_options' => [],
             'interpreter_id' => null,
             'interpreter_options' => [],
-            'hide_in_fieldlist_datatype' => false
+            'hide_in_fieldlist_datatype' => false,
+            'mapping' => null
         ]);
 
         foreach (['field_name', 'type', 'locale', 'filter_group', 'getter_id', 'interpreter_id'] as $stringOption) {
             $resolver->setAllowedTypes($stringOption, ['string', 'null']);
         }
 
-        foreach (['options', 'getter_options', 'interpreter_options'] as $arrayOption) {
+        foreach (['options', 'getter_options', 'interpreter_options', 'mapping'] as $arrayOption) {
             $resolver->setAllowedTypes($arrayOption, 'array');
         }
 
@@ -106,7 +107,8 @@ class AttributeFactory
             $options['getter_options'],
             $interpreter,
             $options['interpreter_options'],
-            $options['hide_in_fieldlist_datatype']
+            $options['hide_in_fieldlist_datatype'],
+            $options['mapping'],
         ]);
 
         return $attribute;
