@@ -268,6 +268,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     },
                     listeners: {
                         beforedrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
+                            console.log("beforedrop");
                             var target = overModel.getOwnerTree().getView();
                             var source = data.view;
 
@@ -354,43 +355,65 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                         }.bind(this),
                         nodedragover: function (targetNode, position, dragData, e, eOpts ) {
+                            console.log("nodegragover");
                             var sourceNode = dragData.records[0];
-
                             if (sourceNode.data.isOperator) {
                                 var sourceType = this.getNodeTypeAndClass(sourceNode);
                                 var targetType = this.getNodeTypeAndClass(targetNode);
                                 var allowed = true;
 
+                                // //check allowed Parents
+                                // if (sourceNode.data.allowedParents) {
+                                //     if (position == "append" && sourceNode.data.allowedParents[targetType.type] && sourceNode.data.allowedParents[targetType.type][targetType.className] == true) {
+                                //         allowed = true;
+                                //     }
+                                // }
+                                //
+                                // //check allowed Types
+                                // if (targetNode.data.allowedTypes) {
+                                //     if (position == "append" && targetNode.data.allowedTypes[sourceType.type] && targetNode.data.allowedTypes[sourceType.type][sourceType.className] == true) {
+                                //         allowed = true;
+                                //     }
+                                // }
+                                //
+                                // //if nothing is set --> true
+                                // if (!sourceNode.data.allowedParents && !targetNode.data.allowedTypes) {
+                                //     allowed = true;
+                                // }
+                                //
+                                // //check count
+                                // if (targetNode.data.maxChildCount && targetNode.childNodes.length >= targetNode.data.maxChildCount && position == 'append') {
+                                //     allowed = false;
+                                // }
+
                                 if (typeof targetNode.data.isChildAllowed == "function") {
-                                    allowed = allowed && targetNode.data.isChildAllowed(targetNode, sourceNode);
+                                    allowed = allowed & targetNode.data.isChildAllowed(targetNode, sourceNode);
                                 }
 
-                                if (typeof sourceNode.data.isParentAllowed == "function") {
-                                    allowed = allowed && sourceNode.data.isParentAllowed(targetNode, sourceNode);
-                                }
-
+                                // if (targetNode.parentNode && targetNode.parentNode.data.maxChildCount && targetNode.parentNode.childNodes.length >= targetNode.parentNode.data.maxChildCount) {
+                                //     allowed = false;
+                                // }
 
                                 return allowed;
                             } else {
                                 var targetNode = targetNode;
 
-                                var allowed = true;
                                 if (this.parentIsOperator(targetNode)) {
                                     if (position == "before" || position == "after") {
                                         targetNode = targetNode.parentNode;
                                     }
 
-                                    if (typeof targetNode.data.isChildAllowed == "function") {
-                                        allowed = allowed && targetNode.data.isChildAllowed(targetNode, sourceNode);
-                                    }
+                                    // if (targetNode.data.maxChildCount && targetNode.childNodes.length >= targetNode.data.maxChildCount) {
+                                    //     return false;
+                                    // }
 
-                                    if (typeof sourceNode.data.isParentAllowed == "function") {
-                                        allowed = allowed && sourceNode.data.isParentAllowed(targetNode, sourceNode);
+                                    if (typeof targetNode.data.isChildAllowed == "function") {
+                                        allowed = allowed & targetNode.data.isChildAllowed(targetNode, sourceNode);
                                     }
 
                                 }
 
-                                return allowed;
+                                return true;
                             }
                         }.bind(this),
                         options: {

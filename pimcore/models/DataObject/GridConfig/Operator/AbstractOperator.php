@@ -19,20 +19,18 @@
 namespace Pimcore\Model\DataObject\GridConfig\Operator;
 
 use Pimcore\Model\DataObject\GridConfig\AbstractConfigElement;
-use Pimcore\Model\DataObject\GridConfig\ConfigElementInterface;
+use Pimcore\Model\DataObject\GridConfig\IConfigElement;
 
 
-abstract class AbstractOperator extends AbstractConfigElement
-{
+abstract class AbstractOperator extends AbstractConfigElement {
 
     /**
-     * @var ConfigElementInterface
+     * @var IConfigElement
      */
     protected $childs;
 
 
-    public function __construct($config, $context = null)
-    {
+    public function __construct($config, $context = null) {
         $this->label = $config->label;
         $this->childs = $config->childs;
 
@@ -40,18 +38,16 @@ abstract class AbstractOperator extends AbstractConfigElement
     }
 
     /**
-     * @return ConfigElementInterface
+     * @return IConfigElement
      */
-    public function getChilds()
-    {
+    public function getChilds() {
         return $this->childs;
     }
 
     /**
      * @return bool
      */
-    public function expandLocales()
-    {
+    public function expandLocales() {
         return false;
     }
 }
