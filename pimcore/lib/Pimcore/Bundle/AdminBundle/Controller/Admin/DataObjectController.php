@@ -1757,7 +1757,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
                 }
             }
-            if ($request->get('condition')) {
+            if ($request->get('condition') && $this->getUser()->isAdmin()) {
                 $conditionFilters[] = '(' . $request->get('condition') . ')';
             }
 
