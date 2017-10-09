@@ -240,25 +240,31 @@ pimcore.object.helpers.grid = Class.create({
                         return Ext.Date.format(d, "Y-m-d H:i:s");
                     }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
-                var fieldType = fields[i].type;
-                var tag = pimcore.object.tags[fieldType];
-                if (tag) {
-                    var fc = tag.prototype.getGridColumnConfig(field);
-                    fc.width = this.getColumnWidth(field, 100);
+                if (fields[i].isOperator) {
+                    gridColumns.push({header: field.attributes.label ? field.attributes.label : field.attributes.key, width: 200, sortable: false,
+                        dataIndex: fields[i].key, editable: false});
 
-                    if (typeof gridFilters[field.key] !== 'undefined') {
-                        fc.filter = gridFilters[field.key];
-                    }
-
-                    if (this.isSearch) {
-                        fc.sortable = false;
-                    }
-
-                    gridColumns.push(fc);
-                    gridColumns[gridColumns.length-1].hidden = false;
-                    gridColumns[gridColumns.length-1].layout = fields[i];
                 } else {
-                    console.log("could not resolve field type: " + fieldType);
+                    var fieldType = fields[i].type;
+                    var tag = pimcore.object.tags[fieldType];
+                    if (tag) {
+                        var fc = tag.prototype.getGridColumnConfig(field);
+                        fc.width = this.getColumnWidth(field, 100);
+
+                        if (typeof gridFilters[field.key] !== 'undefined') {
+                            fc.filter = gridFilters[field.key];
+                        }
+
+                        if (this.isSearch) {
+                            fc.sortable = false;
+                        }
+
+                        gridColumns.push(fc);
+                        gridColumns[gridColumns.length - 1].hidden = false;
+                        gridColumns[gridColumns.length - 1].layout = fields[i];
+                    } else {
+                        console.log("could not resolve field type: " + fieldType);
+                    }
                 }
             }
         }
@@ -295,6 +301,10 @@ pimcore.object.helpers.grid = Class.create({
                         type: "string"
                     };
                 } else {
+                    if (fields[i].isOperator) {
+                        continue;
+                    }
+
                     var fieldType = fields[i].type;
                     var tag = pimcore.object.tags[fieldType];
                     if (tag) {
@@ -319,6 +329,10 @@ pimcore.object.helpers.grid = Class.create({
     applyGridEvents: function(grid) {
         var fields = this.fields;
         for (var i = 0; i < fields.length; i++) {
+
+            if (fields[i].isOperator) {
+                continue;
+            }
 
             if(fields[i].key != "id" && fields[i].key != "published" && fields[i].key != "fullpath"
                 && fields[i].key != "filename" && fields[i].key != "classname"

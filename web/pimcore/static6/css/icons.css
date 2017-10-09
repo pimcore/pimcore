@@ -1054,6 +1054,29 @@
     background: url(/pimcore/static6/img/flat-color-icons/data_configuration.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_operator_concatenator {
+    background: url("/pimcore/static6/img/flat-color-icons/capacitor.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_text {
+    background: url("/pimcore/static6/img/flat-color-icons/text.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_cell_formatter {
+    background: url("/pimcore/static6/img/icon/style_edit.png") no-repeat scroll left center transparent !important;
+}
+
+.pimcore_icon_operator_object_field_getter {
+    background: url("/pimcore/static6/img/flat-color-icons/reuse.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_lfexpander {
+    background: url("/pimcore/static6/img/flat-color-icons/globe.svg") center center no-repeat !important;
+}
+
+
+
+
 .pimcore_icon_piwik {
     background: url(/pimcore/static6/img/piwik.svg) center center no-repeat !important;
     color: #d4291f;

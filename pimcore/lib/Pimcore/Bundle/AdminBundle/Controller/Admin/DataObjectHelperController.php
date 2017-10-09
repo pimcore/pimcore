@@ -16,15 +16,18 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
+use Pimcore\Localization\Locale;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
+use Pimcore\Version;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -265,25 +268,32 @@ class DataObjectHelperController extends AdminController
                                 }
                             }
                         } else {
-                            $fd = $class->getFieldDefinition($key);
-                            //if not found, look for localized fields
-                            if (empty($fd)) {
-                                foreach ($localizedFields as $lf) {
-                                    $fd = $lf->getFieldDefinition($key);
-                                    if (!empty($fd)) {
-                                        break;
+                            if (DataObject\Service::isHelperGridColumnConfig($key)) {
+                                $calculatedColumnConfig = $this->getCalculatedColumnConfig($savedColumns[$key]);;
+                                if ($calculatedColumnConfig) {
+                                    $availableFields[] = $calculatedColumnConfig;
+                                }
+                            } else {
+                                $fd = $class->getFieldDefinition($key);
+                                //if not found, look for localized fields
+                                if (empty($fd)) {
+                                    foreach ($localizedFields as $lf) {
+                                        $fd = $lf->getFieldDefinition($key);
+                                        if (!empty($fd)) {
+                                            break;
+                                        }
                                     }
                                 }
-                            }
 
-                            if (!empty($fd)) {
-                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, null, $class, $objectId);
-                                if (!empty($fieldConfig)) {
-                                    if (isset($sc['width'])) {
-                                        $fieldConfig['width'] = $sc['width'];
+                                if (!empty($fd)) {
+                                    $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, null, $class, $objectId);
+                                    if (!empty($fieldConfig)) {
+                                        if (isset($sc['width'])) {
+                                            $fieldConfig['width'] = $sc['width'];
+                                        }
+
+                                        $availableFields[] = $fieldConfig;
                                     }
-
-                                    $availableFields[] = $fieldConfig;
                                 }
                             }
                         }
@@ -323,6 +333,87 @@ class DataObjectHelperController extends AdminController
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
             'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false
         ]);
+    }
+
+
+    protected function getCalculatedColumnConfig($config) {
+        try {
+            $calculatedColumnConfig = Tool\Session::useSession(function (AttributeBagInterface $session) use ($config) {
+
+                //otherwise create a new one
+
+                $calculatedColumn = [];
+                // note that we have to generate a new key!
+
+                $existingKey = $config["fieldConfig"]["key"];;
+                $calculatedColumnConfig["key"] = $existingKey;
+                $calculatedColumnConfig["position"] = $config["position"];
+                $calculatedColumnConfig["isOperator"] = true;
+                $calculatedColumnConfig["attributes"] = $config["fieldConfig"]["attributes"];
+
+                $existingColumns = $session->get("helpercolumns", []);
+
+                if (isset($existingColumns[$existingKey])) {
+                    // if the configuration is still in the session, then reuse it
+                    return $calculatedColumnConfig;
+                }
+
+                $newKey = "#" . uniqid();
+                $calculatedColumnConfig["key"] = $newKey;
+
+                // prepare a column config on the fly
+                $phpConfig = json_encode($config["fieldConfig"]);
+                $phpConfig = json_decode($phpConfig);
+                $helperColumns = [];
+                $helperColumns[$newKey] = $phpConfig;
+
+
+                $helperColumns = array_merge($helperColumns, $existingColumns);
+                $session->set("helpercolumns", $helperColumns);
+                return $calculatedColumnConfig;
+
+            }, 'pimcore_gridconfig');
+
+
+            return $calculatedColumnConfig;
+        } catch (\Exception $e) {
+            Logger::error($e);
+        }
+    }
+
+    /**
+     * @Route("/prepare-helper-column-configs")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function prepareHelperColumnConfigs(Request $request) {
+
+        $helperColumns = array();
+        $newData = array();
+        $data = json_decode($request->get("columns"));
+        foreach ($data as $item) {
+            if ($item->isOperator) {
+                $itemKey = "#" . uniqid();
+
+                $item->key = $itemKey;
+                $newData[] = $item;
+                $helperColumns[$itemKey] = $item;
+            } else {
+                $newData[] = $item;
+            }
+        }
+
+        Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+            $existingColumns = $session->get("helpercolumns", []);
+            $helperColumns = array_merge($helperColumns, $existingColumns);
+            $session->set("helpercolumns", $helperColumns);
+        }, 'pimcore_gridconfig');
+
+
+        return $this->json(['success' => true, 'columns' => $newData]);
+
     }
 
     /**
@@ -385,6 +476,8 @@ class DataObjectHelperController extends AdminController
 
                 // grid config
                 $gridConfig = $this->decodeJson($request->get('gridconfig'));
+                $gridConfig["pimcore_version"] = Version::getVersion();
+                $gridConfig["pimcore_revision"] = Version::getRevision();
                 if ($classId) {
                     $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '_' . $classId . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
                 } else {
@@ -966,9 +1059,17 @@ class DataObjectHelperController extends AdminController
      *
      * @return string
      */
-    protected function mapFieldname($field)
+    protected function mapFieldname($field, $helperDefinitions)
     {
-        if (substr($field, 0, 1) == '~') {
+        if (strpos($field, "#") === 0) {
+            if (isset($helperDefinitions[$field])) {
+                if ($helperDefinitions[$field]->attributes) {
+                    return $helperDefinitions[$field]->attributes->label ? $helperDefinitions[$field]->attributes->label : $field;
+                }
+                return $field;
+            }
+
+        }  else if (substr($field, 0, 1) == '~') {
             $fieldParts = explode('~', $field);
             $type = $fieldParts[1];
 
@@ -1005,26 +1106,42 @@ class DataObjectHelperController extends AdminController
         Logger::debug('objects in list:' . count($list->getObjects()));
         //add inherited values to objects
         DataObject\AbstractObject::setGetInheritedValues(true);
+
+        $helperDefinitions = DataObject\Service::getHelperDefinitions();
+
+        $container = \Pimcore::getContainer();
+        $localeService = $container->get(Locale::class);
+
+
         foreach ($list->getObjects() as $object) {
             if ($fields) {
                 $objectData = [];
                 foreach ($fields as $field) {
-                    $fieldData = $this->getCsvFieldData($request, $field, $object, $requestedLanguage);
-                    if (!$mappedFieldnames[$field]) {
-                        $mappedFieldnames[$field] = $this->mapFieldname($field);
-                    }
+                    if (DataObject\Service::isHelperGridColumnConfig($field) && DataObject\Service::expandGridColumnForExport($helperDefinitions, $field)) {
+                        $validLanguages = Tool::getValidLanguages();
+                        $currentLocale = $localeService->getLocale();
+                        $mappedFieldnameBase = $this->mapFieldname($field, $helperDefinitions);
 
-                    $objectData[$mappedFieldnames[$field]] = $fieldData;
+                        foreach ($validLanguages as $validLanguage) {
+                            $localeService->setLocale($validLanguage);
+                            $fieldData = $this->getCsvFieldData($request, $field, $object, $validLanguage, $helperDefinitions);
+                            $localizedFieldKey = $field . "-" . $validLanguage;
+                            if (!isset($mappedFieldnames[$localizedFieldKey])) {
+                                $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . "-" . $validLanguage;
+                            }
+                            $objectData[$localizedFieldKey] = $fieldData;
+                        }
+
+                        $localeService->setLocale($currentLocale);
+                    } else {
+                        $fieldData = $this->getCsvFieldData($request, $field, $object, $requestedLanguage, $helperDefinitions);
+                        if (!isset($mappedFieldnames[$field])) {
+                            $mappedFieldnames[$field] = $this->mapFieldname($field, $helperDefinitions);
+                        }
+                        $objectData[$field] = $fieldData;
+                    }
                 }
                 $objects[] = $objectData;
-            } else {
-                /**
-                 * @extjs - TODO remove this, when old ext support is removed
-                 */
-                if ($object instanceof DataObject\Concrete) {
-                    $o = $this->csvObjectData($object);
-                    $objects[] = $o;
-                }
             }
         }
         //create csv
@@ -1032,8 +1149,9 @@ class DataObjectHelperController extends AdminController
         if (!empty($objects)) {
             if ($addTitles) {
                 $columns = array_keys($objects[0]);
-                foreach ($columns as $key => $value) {
-                    $columns[$key] = '"' . $value . '"';
+                foreach ($columns as $columnIdx => $columnKey) {
+                    $columnName = $mappedFieldnames[$columnKey];
+                    $columns[$columnIdx] = '"' . $columnName . '"';
                 }
                 $csv = implode(';', $columns) . "\r\n";
             }
@@ -1057,6 +1175,7 @@ class DataObjectHelperController extends AdminController
         return $csv;
     }
 
+
     /**
      * @param Request $request
      * @param $field
@@ -1065,9 +1184,8 @@ class DataObjectHelperController extends AdminController
      *
      * @return mixed
      */
-    protected function getCsvFieldData(Request $request, $field, $object, $requestedLanguage)
+    protected function getCsvFieldData(Request $request, $field, $object, $requestedLanguage, $helperDefinitions)
     {
-
         //check if field is systemfield
         $systemFieldMap = [
             'id' => 'getId',
@@ -1089,7 +1207,12 @@ class DataObjectHelperController extends AdminController
                 $fieldParts = explode('~', $field);
 
                 // check for objects bricks and localized fields
-                if (substr($field, 0, 1) == '~') {
+                if (DataObject\Service::isHelperGridColumnConfig($field)) {
+                    if ($helperDefinitions[$field]) {
+                        return DataObject\Service::calculateCellValue($object, $helperDefinitions, $field);
+
+                    }
+                } else  if (substr($field, 0, 1) == '~') {
                     $type = $fieldParts[1];
 
                     if ($type == 'classificationstore') {

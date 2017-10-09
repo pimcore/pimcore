@@ -329,16 +329,24 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var visibleColumns = [];
         for(var i = 0; i < fieldKeys.length; i++) {
-            if(!fields[fieldKeys[i]].hidden) {
+            var field = fields[fieldKeys[i]];
+            if(!field.hidden) {
                 var fc = {
                     key: fieldKeys[i],
-                    label: fields[fieldKeys[i]].fieldConfig.label,
-                    dataType: fields[fieldKeys[i]].fieldConfig.type,
-                    layout: fields[fieldKeys[i]].fieldConfig.layout
+                    label: field.fieldConfig.label,
+                    dataType: field.fieldConfig.type,
+                    layout: field.fieldConfig.layout
                 };
-                if (fields[fieldKeys[i]].fieldConfig.width) {
-                    fc.width = fields[fieldKeys[i]].fieldConfig.width;
+                if (field.fieldConfig.width) {
+                    fc.width = field.fieldConfig.width;
                 }
+
+                if (field.isOperator) {
+                    fc.isOperator = true;
+                    fc.attributes = field.fieldConfig.attributes;
+
+                }
+
                 visibleColumns.push(fc);
             }
         }
@@ -413,9 +421,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             columns: {}
         };
 
-        //var header = this.grid.getHeader();
+
         var cm = this.grid.getView().getHeaderCt().getGridColumns();
-        //var cm = this.grid.getColumnModel();
+
         for (var i=0; i < cm.length; i++) {
             if(cm[i].dataIndex) {
                 config.columns[cm[i].dataIndex] = {
@@ -423,7 +431,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     position: i,
                     hidden: cm[i].hidden,
                     width: cm[i].width,
-                    fieldConfig: this.fieldObject[cm[i].dataIndex]
+                    fieldConfig: this.fieldObject[cm[i].dataIndex],
+                    isOperator: this.fieldObject[cm[i].dataIndex].isOperator
                 };
             }
         }
