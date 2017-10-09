@@ -96,8 +96,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
 
     protected function getVersionFile()
     {
-        // TODO fix path
-        return PIMCORE_WEBSITE_VAR.'/plugins/EcommerceFramework/elasticsearch-index-version-' . $this->indexName.'.txt';
+        return PIMCORE_PRIVATE_VAR . '/ecommerce/elasticsearch-index-version-' . $this->indexName.'.txt';
     }
 
     /**
