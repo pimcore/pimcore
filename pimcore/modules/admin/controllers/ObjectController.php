@@ -1598,7 +1598,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $featureJoins = array_merge($featureJoins, $featureFilters["joins"]);
                 }
             }
-            if ($this->getParam("condition")) {
+            if ($this->getParam("condition") && $this->getUser()->isAdmin()) {
                 $conditionFilters[] = "(" . $this->getParam("condition") . ")";
             }
 
