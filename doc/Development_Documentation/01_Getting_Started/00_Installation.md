@@ -17,7 +17,7 @@ Change into the root folder of your project (**please remember project root != d
 cd /your/project
 ```
 
-Pimcore is offering [2 installation packages](https://www.pimcore.org/download) for different use-cases:
+Pimcore is offering [2 installation packages](https://pimcore.com/en/download) for different use-cases:
 
 | Version | Description |
 |--------------------|---------------------------------------------------------------------------------|
@@ -27,7 +27,7 @@ Pimcore is offering [2 installation packages](https://www.pimcore.org/download) 
 ### Download a Package:
 
 ```bash
-wget https://www.pimcore.org/download-5/pimcore-latest.zip -O pimcore-install.zip
+wget https://pimcore.com/download-5/pimcore-latest.zip -O pimcore-install.zip
 ```
 
 Unzip the installer package into the current folder (project root):
@@ -45,7 +45,7 @@ Specific configurations and optimizations for your webserver are available here:
 Pimcore requires write access to the following directories (relative to your project root): `/var`, `/web/var` and `/pimcore`
 ([Details](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md))
 
-> No CLI? Click [Latest Release](https://www.pimcore.org/download/pimcore-latest.zip) or [Nightly Build](https://www.pimcore.org/download/pimcore-data.zip) to download the package with your browser and extract/upload Pimcore manually on your server (outside document root!).
+> No CLI? Click [Latest Release](https://pimcore.com/download/pimcore-latest.zip) or [Nightly Build](https://www.pimcore.org/download/pimcore-data.zip) to download the package with your browser and extract/upload Pimcore manually on your server (outside document root!).
 
 ## 3. Create Database
 

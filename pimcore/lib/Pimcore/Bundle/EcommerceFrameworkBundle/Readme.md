@@ -33,6 +33,6 @@ Run `composer update`
 
 ### E-Commerce Framework Demo
 
-The e-commerce framework demo implementation can be downloaded at https://www.pimcore.org/download/pimcore-ecommerce-demo.zip. 
+The e-commerce framework demo implementation can be downloaded at https://pimcore.com/download/pimcore-ecommerce-demo.zip. 
 This demo is always based on the latest build of pimcore. 
 > Database user needs the permission FILE in order to install the demo. 

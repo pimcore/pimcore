@@ -32,6 +32,6 @@ pimcore:
 
     translations:
         # enables support for the pimcore_debug_translations magic parameter
-        # see https://www.pimcore.org/docs/5.0.0/Development_Tools_and_Details/Magic_Parameters.html
+        # see https://pimcore.com/docs/5.0.x/Development_Tools_and_Details/Magic_Parameters.html
         debugging:
             enabled: true

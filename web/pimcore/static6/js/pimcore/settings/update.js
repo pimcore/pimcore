@@ -21,7 +21,7 @@ pimcore.settings.update = Class.create({
             + 'Please do not update this pimcore installation unless you are sure what you are doing.<br/>'
             + '<b style="color:red;"><u>Updates should be performed only by developers!</u></b><br />'
             + 'Please read the '
-            + ' <a href="https://www.pimcore.org/docs/latest/Installation_and_Upgrade/Upgrade_Notes/index.html" target="_blank">'
+            + ' <a href="https://pimcore.com/docs/5.0.x/Installation_and_Upgrade/Upgrade_Notes/index.html" target="_blank">'
             + 'upgrade notes</a> before you start the update.<br /><br />Are you sure?',
             function (buttonValue) {
                 if (buttonValue == "yes") {
