@@ -33,6 +33,7 @@ class Objects extends DefaultValue implements ArrayTypeInterface {
 
         $result = new \stdClass();
         $result->label = $this->label;
+        $result->isArrayType = true;
 
 
         $getter = "get" . ucfirst($this->attribute);
