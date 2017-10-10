@@ -45,8 +45,6 @@ class ObjectFieldGetter extends AbstractOperator {
         $getter = "get" . ucfirst($this->attribute);
 
         if (!$childs) {
-            //TODO check if this actually makes sense
-
             if (method_exists($object, $getter)) {
                 $result->value = $object->$getter();
                 if ($result->value instanceof ElementInterface) {
