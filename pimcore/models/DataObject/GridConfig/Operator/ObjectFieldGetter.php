@@ -20,7 +20,7 @@ namespace Pimcore\Model\DataObject\GridConfig\Operator;
 
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\GridConfig\IArrayType;
+use Pimcore\Model\DataObject\GridConfig\ArrayTypeInterface;
 use Pimcore\Model\Element\ElementInterface;
 
 class ObjectFieldGetter extends AbstractOperator {
@@ -74,7 +74,7 @@ class ObjectFieldGetter extends AbstractOperator {
             $value = $c->getLabeledValue($forwardObject)->value;
             $result->value = $value;
 
-            if ($c instanceof IArrayType) {
+            if ($c instanceof ArrayTypeInterface) {
                 if (is_array($value)) {
                     $newValues = array();
                     foreach ($value as $o) {

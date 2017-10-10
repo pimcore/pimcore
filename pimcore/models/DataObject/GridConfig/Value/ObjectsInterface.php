@@ -18,9 +18,9 @@
 namespace Pimcore\Model\DataObject\GridConfig\Value;
 
 
-use Pimcore\Model\DataObject\GridConfig\IArrayType;
+use Pimcore\Model\DataObject\GridConfig\ArrayTypeInterface;
 
-class Objects extends DefaultValue implements IArrayType {
+class Objects extends DefaultValue implements ArrayTypeInterface {
 
     protected $format;
 
