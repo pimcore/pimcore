@@ -61,6 +61,8 @@ The complete list of configuration options you can find in the [CKEditor toolbar
 The WYSIWYG editable allows us to specify the toolbar. 
 If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.
 
+<div class="code-section">
+
 ```php
 <section id="marked-content">
     <?= $this->wysiwyg("specialContent", [
@@ -74,6 +76,21 @@ If you have to limit styling options (for example only basic styles like `<b>` t
     ]); ?>
 </section>
 ```
+
+```twig
+<section id="marked-content">
+    {{  pimcore_wysiwyg("specialContent", {
+        "height": 200,
+        "toolbarGroups": [
+            {
+                "name": 'basicstyles',
+                "groups": [ 'basicstyles', 'list', "links"]
+            }
+        ]}) 
+    }}
+</section>
+```
+</div>
 
 Now the user can use only the limited toolbar.
 
