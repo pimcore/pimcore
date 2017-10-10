@@ -79,7 +79,7 @@ pimcore.object.classes.data.data = Class.create({
             }
         });
 
-        var indexCombo = new Ext.form.field.Checkbox({
+        var indexCheckbox = new Ext.form.field.Checkbox({
             fieldLabel: t("index"),
             name: "index",
             itemId: "index",
@@ -88,12 +88,20 @@ pimcore.object.classes.data.data = Class.create({
             hidden: true
         });
 
-        var uniqueCombo = new Ext.form.field.Checkbox({
+        var uniqueCheckbox = new Ext.form.field.Checkbox({
             fieldLabel: t("unique"),
             name: "unique",
             itemId: "unique",
             checked: this.datax.unique,
             hidden: true
+        });
+
+        this.mandatoryCheckbox = new Ext.form.field.Checkbox({
+            fieldLabel: t("mandatoryfield"),
+            name: "mandatory",
+            itemId: "mandatory",
+            checked: this.datax.mandatory,
+            disabled: !in_array("mandatory",this.availableSettingsFields) || this.isInCustomLayoutEditor()
         });
 
         var standardSettings = [
@@ -147,16 +155,9 @@ pimcore.object.classes.data.data = Class.create({
                 value: this.datax.tooltip,
                 disabled: !in_array("tooltip",this.availableSettingsFields)
             },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("mandatoryfield"),
-                name: "mandatory",
-                itemId: "mandatory",
-                checked: this.datax.mandatory,
-                disabled: !in_array("mandatory",this.availableSettingsFields) || this.isInCustomLayoutEditor()
-            },
-            indexCombo,
-            uniqueCombo,
+            this.mandatoryCheckbox,
+            indexCheckbox,
+            uniqueCheckbox,
             {
                 xtype: "checkbox",
                 fieldLabel: t("not_editable"),
@@ -194,11 +195,11 @@ pimcore.object.classes.data.data = Class.create({
                 disabled: !in_array("visibleSearch",this.availableSettingsFields)
             });
 
-            indexCombo.setHidden(false);
+            indexCheckbox.setHidden(false);
             if (this.datax.hasOwnProperty("unique")) {
-                uniqueCombo.setHidden(false);
+                uniqueCheckbox.setHidden(false);
                 Ext.QuickTips.init();
-                Ext.QuickTips.register({target:  uniqueCombo, text: t("unique_qtip")});
+                Ext.QuickTips.register({target:  uniqueCheckbox, text: t("unique_qtip")});
             }
         }
 
