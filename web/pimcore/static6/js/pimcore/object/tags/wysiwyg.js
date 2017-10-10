@@ -162,7 +162,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         eConfig.entities = false;
         eConfig.entities_greek = false;
         eConfig.entities_latin = false;
-        eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
+        eConfig.extraAllowedContent = "*(*)[pimcore_type,pimcore_id,id]";
 
         if(eConfig.hasOwnProperty('removePlugins'))
             eConfig.removePlugins += ",tableresize";
