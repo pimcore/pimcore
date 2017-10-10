@@ -1078,6 +1078,10 @@
     background: url("/pimcore/static6/img/flat-color-icons/word.svg") center center no-repeat !important;
 }
 
+.pimcore_icon_operator_trimmer {
+    background: url("/pimcore/static6/img/flat-color-icons/word.svg") center center no-repeat !important;
+}
+
 .pimcore_icon_piwik {
     background: url(/pimcore/static6/img/piwik.svg) center center no-repeat !important;
     color: #d4291f;

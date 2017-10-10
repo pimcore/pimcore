@@ -461,6 +461,7 @@ $scripts = array(
     "pimcore/object/gridcolumn/operator/CaseConverter.js",
     "pimcore/object/gridcolumn/operator/CellFormatter.js",
     "pimcore/object/gridcolumn/operator/LFExpander.js",
+    "pimcore/object/gridcolumn/operator/Trimmer.js",
     "pimcore/object/gridcolumn/value/Date.js",
     "pimcore/object/gridcolumn/value/DateTime.js",
     "pimcore/object/gridcolumn/value/Href.js",

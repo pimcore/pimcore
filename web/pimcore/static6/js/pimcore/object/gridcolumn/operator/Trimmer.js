@@ -15,13 +15,13 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.caseconverter");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.trimmer");
 
-pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcolumn.operator.Text, {
     type: "operator",
-    class: "CaseConverter",
-    iconCls: "pimcore_icon_operator_caseconverter",
-    defaultText: "operator_caseconverter",
+    class: "Trimmer",
+    iconCls: "pimcore_icon_operator_trimmer",
+    defaultText: "operator_trimmer",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -40,7 +40,7 @@ pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.g
         } else {
 
             //For building up operator list
-            var configAttributes = {type: this.type, class: this.class, capitalization: 0};
+            var configAttributes = {type: this.type, class: this.class, trim: 0};
 
             var node = {
                 draggable: true,
@@ -88,25 +88,26 @@ pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.g
             value: this.node.data.configAttributes.label
         });
 
-        var capitalization = this.node.data.configAttributes.capitalization;
+        var trim = this.node.data.configAttributes.trim;
 
-        this.caseField = new Ext.form.RadioGroup({
+        this.trimField = new Ext.form.RadioGroup({
             xtype: 'radiogroup',
-            fieldLabel: t('capitalization'),
+            fieldLabel: t('trim'),
             border: true,
             columns: 1,
             vertical: true,
             items: [
-                {boxLabel: t('upper'), name: 'rb', inputValue: '1', checked: capitalization == 1},
-                {boxLabel: t('disabled'), name: 'rb', inputValue: '0', checked: capitalization != 1 && capitalization != -1},
-                {boxLabel: t('lower'), name: 'rb', inputValue: '-1', checked: capitalization == -1}
+                {boxLabel: t('left'), name: 'rb', inputValue: '1', checked: trim == 1},
+                {boxLabel: t('right'), name: 'rb', inputValue: '2', checked: trim == 2},
+                {boxLabel: t('both'), name: 'rb', inputValue: '2', checked: trim == 3},
+                {boxLabel: t('disabled'), name: 'rb', inputValue: '0', checked: isNaN(trim) || trim == 0}
             ]
         });
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textfield, this.caseField],
+            items: [this.textfield, this.trimField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -120,7 +121,7 @@ pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.g
             width: 400,
             height: 300,
             modal: true,
-            title: t('caseconverter_operator_settings'),
+            title: t('trim_operator_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -134,7 +135,7 @@ pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.g
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
 
-        this.node.data.configAttributes.capitalization = parseInt(this.caseField.getValue().rb);
+        this.node.data.configAttributes.trim = parseInt(this.trimField.getValue().rb);
         this.window.close();
     },
 
