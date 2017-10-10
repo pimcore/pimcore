@@ -35,7 +35,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
                 expanded: true,
                 leaf: false,
                 expandable: false,
-                isChildAllowed: this.checkChild
+                isChildAllowed: this.allowChild
             };
         } else {
 
@@ -49,7 +49,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
-                isChildAllowed: this.checkChild
+                isChildAllowed: this.allowChild
             };
         }
         node.isOperator = true;
@@ -65,7 +65,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
             leaf: false,
             expandable: false,
             isOperator: true,
-            isChildAllowed: this.checkChild,
+            isChildAllowed: this.allowChild,
             configAttributes: {
                 label: source.data.text,
                 type: this.type,
@@ -119,6 +119,13 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
         this.window.close();
+    },
+
+    allowChild: function(targetNode, dropNode) {
+        if (targetNode.childNodes.length > 0) {
+            return false;
+        }
+        return true;
     }
 
 });
