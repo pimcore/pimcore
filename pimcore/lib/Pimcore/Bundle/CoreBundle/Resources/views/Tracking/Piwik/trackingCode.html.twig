@@ -1,0 +1,28 @@
+<!-- Piwik -->
+<script type="text/javascript">
+    {%- block init %}
+        {{ beforeInit|raw }}
+    {% endblock -%}
+
+    var _paq = _paq || [];
+
+    {%- block track %}
+        {{ track|raw }}
+    {% endblock -%}
+
+    (function() {
+        var u="//{{ piwikUrl }}/";
+
+        {%- block asyncInit %}
+            {{ asyncInit|raw }}
+        {% endblock -%}
+
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+
+        {%- block afterAsync %}
+            {{ afterAsync|raw }}
+        {% endblock -%}
+    })();
+</script>
+<!-- End Piwik Code -->

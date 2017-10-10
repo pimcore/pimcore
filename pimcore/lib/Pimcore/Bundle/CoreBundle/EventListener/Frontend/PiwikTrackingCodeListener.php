@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -16,53 +19,63 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Google\Analytics as AnalyticsHelper;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Http\Request\Resolver\SiteResolver;
+use Pimcore\Tool;
+use Pimcore\Tracking\Piwik\Tracker;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class GoogleAnalyticsCodeListener
+class PiwikTrackingCodeListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
 
     /**
+     * @var Tracker
+     */
+    private $tracker;
+
+    /**
      * @var bool
      */
-    protected $enabled = true;
+    private $enabled = true;
 
-    /**
-     * @return bool
-     */
-    public function disable()
+    public function __construct(Tracker $tracker)
     {
-        $this->enabled = false;
-
-        return true;
+        $this->tracker = $tracker;
     }
 
-    /**
-     * @return bool
-     */
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::RESPONSE => ['onKernelResponse', -110]
+        ];
+    }
+
     public function enable()
     {
         $this->enabled = true;
-
-        return true;
     }
 
-    /**
-     * @return bool
-     */
-    public function isEnabled()
+    public function disable()
+    {
+        $this->enabled = false;
+    }
+
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param FilterResponseEvent $event
-     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $request = $event->getRequest();
         if (!$event->isMasterRequest()) {
             return;
@@ -73,19 +86,27 @@ class GoogleAnalyticsCodeListener
             return;
         }
 
-        // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
-        if ($request->server->get('HTTP_X_PURPOSE') == 'preview') {
+        // it's standard industry practice to exclude tracking if the request includes
+        // the header 'X-Purpose:preview'
+        if ($request->server->get('HTTP_X_PURPOSE') === 'preview') {
+            return;
+        }
+
+        // output filters are disabled
+        if (!Tool::useFrontendOutputFilters($event->getRequest())) {
             return;
         }
 
         $response = $event->getResponse();
-
-        if (\Pimcore\Tool::useFrontendOutputFilters()) {
-            if ($this->isHtmlResponse($response)) {
-                if ($this->enabled && $code = AnalyticsHelper::getCode()) {
-                    $this->injectBeforeHeadEnd($response, $code);
-                }
-            }
+        if (!$this->isHtmlResponse($response)) {
+            return;
         }
+
+        $code = $this->tracker->getCode();
+        if (empty($code)) {
+            return;
+        }
+
+        $this->injectBeforeHeadEnd($response, $code);
     }
 }
