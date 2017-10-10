@@ -15,10 +15,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig;
 
-abstract class AbstractConfigElementInterface implements ConfigElementInterface {
+abstract class AbstractConfigElement implements ConfigElementInterface {
 
     protected $attribute;
     protected $label;
