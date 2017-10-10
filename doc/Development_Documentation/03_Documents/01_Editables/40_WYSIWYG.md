@@ -29,6 +29,8 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 `wysiwyg` helper doesn't require any additional configuration options.
 The following code specifies tje height for the rendered WYSIWYG editable (has no effect in frontend).
 
+<div class="code-section">
+
 ```php
 <section id="marked-content">
     <?= $this->wysiwyg("specialContent", [
@@ -36,6 +38,16 @@ The following code specifies tje height for the rendered WYSIWYG editable (has n
     ]); ?>
 </section>
 ```
+
+```twig
+<section id="marked-content">
+    {{  pimcore_wysiwyg("specialContent", {
+            "height": 200
+        }) 
+    }}
+</section>
+```
+</div
 
 If you have a look at the editmode, you will see that our WYSIWYG is rendered with the full toolbar.
 
