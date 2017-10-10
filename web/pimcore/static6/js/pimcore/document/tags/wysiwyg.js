@@ -98,7 +98,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
-            eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
+            eConfig.extraAllowedContent = "*(*)[pimcore_type,pimcore_id,id]";
 
             if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
                 eConfig = mergeObject(pimcore.document.tags.wysiwyg.defaultEditorConfig,eConfig);
