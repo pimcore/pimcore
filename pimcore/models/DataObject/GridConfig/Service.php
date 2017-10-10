@@ -22,7 +22,7 @@ class Service {
 
     /**
      * @param $outputDataConfig
-     * @return IConfigElement[]
+     * @return ConfigElementInterface[]
      */
     public static function buildOutputDataConfig($outputDataConfig, $context = null) {
         $config = array();

@@ -20,12 +20,12 @@ namespace Pimcore\Model\DataObject\GridConfig\Value;
 
 use Elements\OutputDataConfigToolkit\ConfigElement as ConfigElement;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
-use Pimcore\Model\DataObject\GridConfig\AbstractConfigElement;
+use Pimcore\Model\DataObject\GridConfig\AbstractConfigElementInterface;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Object\AbstractObject;
 
-class DefaultValue extends AbstractConfigElement {
+class DefaultValue extends AbstractConfigElementInterface {
 
     public function getLabeledValue($object) {
 

@@ -18,7 +18,7 @@
 
 namespace Pimcore\Model\DataObject\GridConfig;
 
-interface IConfigElement {
+interface ConfigElementInterface {
 
     public function getLabeledValue($object);
     

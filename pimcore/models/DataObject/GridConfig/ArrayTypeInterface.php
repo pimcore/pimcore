@@ -18,6 +18,6 @@
 
 namespace Pimcore\Model\DataObject\GridConfig;
 
-interface IArrayType {
+interface ArrayTypeInterface {
     
 }

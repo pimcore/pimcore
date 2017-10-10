@@ -18,7 +18,7 @@
 
 namespace Pimcore\Model\DataObject\GridConfig;
 
-abstract class AbstractConfigElement implements IConfigElement {
+abstract class AbstractConfigElementInterface implements ConfigElementInterface {
 
     protected $attribute;
     protected $label;
