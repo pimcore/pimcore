@@ -451,7 +451,7 @@
   "only_for_ip": "Only for IP (optional)",
   "files": "Files",
   "next": "Next",
-  "please_dont_forget_to_reload_pimcore_after_modifications": "Please don't forget to reload pimcore after your modifications",
+  "please_dont_forget_to_reload_pimcore_after_modifications": "Please don't forget to clear the cache and reload pimcore after your modifications",
   "clear_cache_and_reload": "Clear cache and reload",
   "extension_manager_state_change_not_allowed": "State changes are not allowed for this extension.",
   "enable": "Enable",
