@@ -115,20 +115,27 @@ class Tracker
 
     private function buildTemplateData(Config $config, Config $siteConfig, Site $site = null): array
     {
+        $beforeInitData = [];
+        if (!empty($siteConfig->code_before_init)) {
+            $beforeInitData = [
+                $siteConfig->code_before_init
+            ];
+        }
+
         $data = [
             'piwikUrl'   => $config->piwik_url,
             'siteId'     => $siteConfig->site_id,
             'beforeInit' => $this->generateCodeSnippet(
                 PiwikTrackingCodeEvents::BEFORE_INIT,
-                new CodeSnippetEvent([], $site)
+                new CodeSnippetEvent($beforeInitData, $site)
             ),
             'track'      => $this->generateCodeSnippet(
                 PiwikTrackingCodeEvents::TRACK,
-                new CodeSnippetEvent($this->generateTrackingCalls(), $site)
+                new CodeSnippetEvent($this->generateTrackingCalls($siteConfig), $site)
             ),
             'asyncInit'  => $this->generateCodeSnippet(
                 PiwikTrackingCodeEvents::ASYNC_INIT,
-                new CodeSnippetEvent($this->generateAsyncInitCalls($siteConfig->site_id), $site)
+                new CodeSnippetEvent($this->generateAsyncInitCalls((int)$siteConfig->site_id), $site)
             ),
             'afterAsync' => $this->generateCodeSnippet(
                 PiwikTrackingCodeEvents::AFTER_ASYNC,
@@ -149,12 +156,22 @@ class Tracker
         });
     }
 
-    private function generateTrackingCalls(): array
+    private function generateTrackingCalls(Config $siteConfig): array
     {
-        return [
+        $calls = [
             "_paq.push(['trackPageView']);",
             "_paq.push(['enableLinkTracking']);",
         ];
+
+        if (!empty($siteConfig->code_before_track)) {
+            array_unshift($calls, $siteConfig->code_before_track);
+        }
+
+        if (!empty($siteConfig->code_after_track)) {
+            $calls[] = $siteConfig->code_after_track;
+        }
+
+        return $calls;
     }
 
     private function generateAsyncInitCalls(int $siteId): array

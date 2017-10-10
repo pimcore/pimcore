@@ -535,6 +535,7 @@ $scripts = array(
     "pimcore/report/analytics/elementexplorer.js",
     "pimcore/report/webmastertools/settings.js",
     "pimcore/report/tagmanager/settings.js",
+    "pimcore/report/piwik/settings.js",
     "pimcore/report/custom/item.js",
     "pimcore/report/custom/panel.js",
     "pimcore/report/custom/settings.js",
