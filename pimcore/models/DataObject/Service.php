@@ -240,7 +240,6 @@ class Service extends Model\Element\Service
      */
     public static function gridObjectData($object, $fields = null, $requestedLanguage = null)
     {
-        $localizedPermissionsResolved = false;
         $data = Element\Service::gridElementData($object);
 
         if ($object instanceof Concrete) {
