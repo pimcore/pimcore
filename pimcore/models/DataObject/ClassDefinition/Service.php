@@ -244,7 +244,7 @@ class Service
                     $item->setValues($array);
                     if ($insideLocalizedField && $item instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ($item->getLazyLoading()) {
-                            Logger::error("WARNING: lazy loading relations not supported inside localizedfields");
+                            Logger::error('WARNING: lazy loading relations not supported inside localizedfields');
                             $item->setLazyLoading(false);
                         }
                     }
