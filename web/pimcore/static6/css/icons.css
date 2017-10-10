@@ -1074,8 +1074,9 @@
     background: url("/pimcore/static6/img/flat-color-icons/globe.svg") center center no-repeat !important;
 }
 
-
-
+.pimcore_icon_operator_caseconverter {
+    background: url("/pimcore/static6/img/flat-color-icons/word.svg") center center no-repeat !important;
+}
 
 .pimcore_icon_piwik {
     background: url(/pimcore/static6/img/piwik.svg) center center no-repeat !important;

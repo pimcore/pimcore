@@ -69,10 +69,11 @@ class ObjectFieldGetter extends AbstractOperator {
                 }
             }
 
-            $value = $c->getLabeledValue($forwardObject)->value;
+            $valueContainer = $c->getLabeledValue($forwardObject);
+            $value = $valueContainer->value;
             $result->value = $value;
 
-            if ($c instanceof ArrayTypeInterface) {
+            if ($valueContainer->isArrayType) {
                 if (is_array($value)) {
                     $newValues = array();
                     foreach ($value as $o) {

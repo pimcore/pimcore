@@ -18,20 +18,18 @@
 namespace Pimcore\Model\DataObject\GridConfig\Value;
 
 
-class Href extends DefaultValue {
+class Href extends DefaultValue
+{
 
-    protected $format;
-
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         parent::__construct($config, $context);
-
     }
 
-    public function getLabeledValue($object) {
-
+    public function getLabeledValue($object)
+    {
         $result = new \stdClass();
         $result->label = $this->label;
-
 
         $getter = "get" . ucfirst($this->attribute);
         if (method_exists($object, $getter)) {

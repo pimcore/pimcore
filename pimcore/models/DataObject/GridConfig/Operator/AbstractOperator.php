@@ -18,11 +18,11 @@
 
 namespace Pimcore\Model\DataObject\GridConfig\Operator;
 
-use Pimcore\Model\DataObject\GridConfig\AbstractConfigElementInterface;
+use Pimcore\Model\DataObject\GridConfig\AbstractConfigElement;
 use Pimcore\Model\DataObject\GridConfig\ConfigElementInterface;
 
 
-abstract class AbstractOperator extends AbstractConfigElementInterface
+abstract class AbstractOperator extends AbstractConfigElement
 {
 
     /**
