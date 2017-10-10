@@ -1292,6 +1292,4 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         self::$serializeReferencedFields = $serializeReferencedFields;
     }
-
-
 }
