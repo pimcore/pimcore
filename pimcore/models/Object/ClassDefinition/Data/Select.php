@@ -46,19 +46,27 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public $defaultValue;
 
+
     /**
      * Type for the column to query
      *
      * @var string
      */
-    public $queryColumnType = "varchar(190)";
+    public $queryColumnType = "varchar";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(190)";
+    public $columnType = "varchar";
+
+    /**
+     * Column length
+     *
+     * @var integer
+     */
+    public $columnLength = 190;
 
     /**
      * Type for the generated phpdoc
@@ -66,6 +74,44 @@ class Select extends Model\Object\ClassDefinition\Data
      * @var string
      */
     public $phpdocType = "string";
+
+
+    /**
+     * @return integer
+     */
+    public function getColumnLength()
+    {
+        return $this->columnLength;
+    }
+
+    /**
+     * @param $columnLength
+     * @return $this
+     */
+    public function setColumnLength($columnLength)
+    {
+        if ($columnLength) {
+            $this->columnLength = $columnLength;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnType()
+    {
+        return $this->columnType . "(" . $this->getColumnLength() . ")";
+    }
+
+    /**
+     * @return string
+     */
+    public function getQueryColumnType()
+    {
+        return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
+    }
 
     /**
      * @return array
@@ -250,6 +296,7 @@ class Select extends Model\Object\ClassDefinition\Data
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
     {
         $this->options = $masterDefinition->options;
+        $this->columnLength = $masterDefinition->columnLength;
     }
 
     /**
