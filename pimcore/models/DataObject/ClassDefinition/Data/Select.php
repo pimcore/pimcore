@@ -276,6 +276,9 @@ class Select extends Model\DataObject\ClassDefinition\Data
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->options = $masterDefinition->options;
+        $this->defaultValue = $masterDefinition->defaultValue;
+        $this->optionsProviderClass = $masterDefinition->optionsProviderClass;
+        $this->optionsProviderData = $masterDefinition->optionsProviderData;
     }
 
     /**
