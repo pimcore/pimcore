@@ -216,35 +216,52 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
-            {
+
+        var items  = [];
+
+
+        items.push({
+            xtype: "numberfield",
+            fieldLabel: t("width"),
+            name: "width",
+            value: this.datax.width
+        });
+
+        if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
+            items.push({
                 xtype: "numberfield",
-                fieldLabel: t("width"),
-                name: "width",
-                value: this.datax.width
-            },
-            {
-                xtype: "textfield",
-                fieldLabel: t("default_value"),
-                name: "defaultValue",
-                value: this.datax.defaultValue
-            },
-            {
-                xtype: "textfield",
-                fieldLabel: t("options_provider_class"),
-                width: 600,
-                name: "optionsProviderClass",
-                value: this.datax.optionsProviderClass
-            },
-            {
-                xtype: "textfield",
-                fieldLabel: t("options_provider_data"),
-                width: 600,
-                value: this.datax.optionsProviderData,
-                name: "optionsProviderData"
-            },
-            this.valueGrid
-        ]);
+                fieldLabel: t("columnlength"),
+                name: "columnLength",
+                value: this.datax.columnLength
+            });
+        }
+
+        items.push({
+            xtype: "textfield",
+            fieldLabel: t("default_value"),
+            name: "defaultValue",
+            value: this.datax.defaultValue
+        });
+
+        items.push({
+            xtype: "textfield",
+            fieldLabel: t("options_provider_class"),
+            width: 600,
+            name: "optionsProviderClass",
+            value: this.datax.optionsProviderClass
+        });
+
+        items.push({
+            xtype: "textfield",
+            fieldLabel: t("options_provider_data"),
+            width: 600,
+            value: this.datax.optionsProviderData,
+            name: "optionsProviderData"
+        });
+
+        items.push(this.valueGrid);
+
+        this.specificPanel.add(items);
 
         return this.layout;
     },
