@@ -26,11 +26,20 @@ For a multi-line alternative have a look at the [textarea editable](./36_Textare
 
 ### Basic usage 
 
+<div class="code-section">
+
 ```php
 <h2>
  <?= $this->input("myHeadline"); ?>
 </h2>
 ```
+
+```twig
+<h2>
+ {{ pimcore_input("myHeadline"); }}
+</h2>
+```
+</div>
 
 The above code generates an editable area which you can fill with the text, see:
 ![Inpute preview in the backend](../../img/input_backend_preview.png)
@@ -39,11 +48,20 @@ The above code generates an editable area which you can fill with the text, see:
 
 You could also specify other parameters, like the size:
 
+<div class="code-section">
+
 ```php
 <h2>
     <?= $this->input("myHeadline", ["width" => 540]); ?>
 </h2>
 ```
+
+```twig
+<h2>
+    {{ pimcore_input("headerLine", {'width': 540}) }}
+</h2>
+```
+</div>
 
 ## Validation
 To validate the input you have to add `validator` parameter to the configuration array. 
