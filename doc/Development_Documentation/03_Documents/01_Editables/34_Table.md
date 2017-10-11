@@ -23,6 +23,8 @@ The table editable provides the ability to edit a table structure.
 
 ### Basic usage
 
+<div class="code-section">
+
 ```php
 <h4><?= $this->translate("Product Attributes"); ?></h4>
 <?= $this->table("productProperties", [
@@ -40,6 +42,25 @@ The table editable provides the ability to edit a table structure.
     ]
 ]); ?>
 ```
+
+```twig
+{{ pimcore_table("productProperties", {
+    "width": 700,
+    "height": 400,
+    "defaults": {
+        "cols": 2,
+        "rows": 3,
+        "data": [
+            ["Attribute name", "Value"],
+            ["Color", "Black"],
+            ["Size", "Large"],
+            ["Availability", "Out of stock"]
+            ]
+        }
+    })
+}}
+```
+</div>
 
 You're now able to change columns and the predefined data in the editmode.
 
