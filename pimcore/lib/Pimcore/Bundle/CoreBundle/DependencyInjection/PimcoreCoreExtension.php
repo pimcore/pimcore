@@ -100,8 +100,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
         $this->configurePasswordEncoders($container, $config);
-        $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories', 'Newsletter Address Source Adapter Factory');
-        $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories', 'Custom Report Adapter Factory');
+        $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories.service_locator', 'Newsletter Address Source Adapter Factory');
+        $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories.service_locator', 'Custom Report Adapter Factory');
         $this->configureMigrations($container, $config['migrations']);
 
         // load engine specific configuration only if engine is active
