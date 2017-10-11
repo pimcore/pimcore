@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,18 +15,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
+namespace Pimcore\Event\Tracking;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Config;
-
-class ReportsControllerBase extends AdminController
+final class PiwikReportEvents
 {
     /**
-     * @return \Pimcore\Config\Config
+     * Triggered when the available Piwik reports are generated. Can be used to add additional reports (iframes) to the
+     * report panel.
+     *
+     * @Event("Pimcore\Event\Tracking\Piwik\ReportConfigEvent")
+     *
+     * @var string
      */
-    public function getConfig()
-    {
-        return Config::getReportConfig();
-    }
+    const GENERATE_REPORTS = 'pimcore.tracking.piwik.reports.generate_reports';
 }

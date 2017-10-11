@@ -9,4 +9,5 @@ services:
     #
 
     Pimcore\Tracking\Piwik\Tracker: ~
+    Pimcore\Tracking\Piwik\ReportBroker: ~
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\PiwikTrackingCodeListener: ~

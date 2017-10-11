@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,18 +15,33 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
+namespace Pimcore\Tracking\Piwik;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Config;
-
-class ReportsControllerBase extends AdminController
+final class ReportConfig
 {
     /**
-     * @return \Pimcore\Config\Config
+     * @var string
      */
-    public function getConfig()
+    private $title;
+
+    /**
+     * @var string
+     */
+    private $url;
+
+    public function __construct(string $title, string $url)
     {
-        return Config::getReportConfig();
+        $this->title = $title;
+        $this->url   = $url;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
     }
 }
