@@ -35,6 +35,9 @@ class ReportConfigEvent extends Event
         $this->setReports($reports);
     }
 
+    /**
+     * @return ReportConfig[]
+     */
     public function getReports(): array
     {
         return $this->reports;

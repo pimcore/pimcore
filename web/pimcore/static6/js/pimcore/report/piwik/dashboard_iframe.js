@@ -26,65 +26,101 @@ pimcore.report.piwik.dashboard.iframe = Class.create(pimcore.report.abstract, {
     },
 
     getPanel: function () {
-        var url = this.config.url;
+        var that = this;
 
-        var panelId = 'report_piwik_dashboard_' + this.config.id;
-        var iframeId = panelId + '_iframe';
-        var toolbarId = panelId + '_toolbar';
+        this.panelId = 'report_piwik_dashboard_' + this.config.id;
+        this.iframeId = this.panelId + '_iframe';
+        this.toolbarId = this.panelId + '_toolbar';
 
         var panel = new Ext.Panel({
             title: this.config.title,
-            id: panelId,
+            id: this.panelId,
             layout: "fit",
             border: false,
-            items: [
-                new Ext.Component({
-                    id: iframeId,
-                    autoEl: {
-                        tag: 'iframe',
-                        src: url,
-                        frameborder: 0
-                    }
-                })
-            ],
+            items: [],
             tbar: Ext.create('Ext.Toolbar', {
-                id: toolbarId,
+                id: this.toolbarId,
                 cls: 'main-toolbar',
                 items: [{
                     text: t("reload"),
                     iconCls: "pimcore_icon_reload",
-                    handler: function () {
-                        try {
-                            Ext.get(iframeId).dom.src = url;
-                        } catch (e) {
-                        }
-                    }
+                    handler: this.reloadFrame.bind(this)
                 }, {
                     text: t("open"),
                     iconCls: "pimcore_icon_open",
-                    handler: function () {
-                        window.open(url);
-                    }
+                    handler: this.openWindow.bind(this)
                 }]
             })
         });
 
+        var loadMask = new Ext.LoadMask({
+            target: panel,
+            msg: t("please_wait")
+        });
+
+        panel.on("afterrender", function (panel) {
+            loadMask.show();
+        }.bind(this));
+
+        this.getReportConfig().then(function(config) {
+            panel.add(new Ext.Component({
+                id: that.iframeId,
+                autoEl: {
+                    tag: 'iframe',
+                    src: config.url,
+                    frameborder: 0
+                }
+            }));
+
+            loadMask.hide();
+        });
+
         return panel;
+    },
+
+    reloadFrame: function() {
+        var that = this;
+
+        this.getReportConfig().then(function(config) {
+            Ext.get(that.iframeId).dom.src = config.url;
+        });
+    },
+
+    openWindow: function() {
+        var that = this;
+
+        this.getReportConfig().then(function(config) {
+            window.open(config.url);
+        });
+    },
+
+    /**
+     * @returns {Ext.Promise}
+     */
+    getReportConfig: function() {
+        var that = this;
+
+        if (!this.configPromise) {
+            this.configPromise = new Ext.Promise(function (resolve, reject) {
+                Ext.Ajax.request({
+                    url: '/admin/reports/piwik/report/' + that.config.id,
+                    success: function (response) {
+                        resolve(Ext.decode(response.responseText));
+                    }
+                });
+            });
+        }
+
+        return this.configPromise;
     }
 });
 
-// TODO do this on demand, not when loading the file as this is done on every pimcore admin load
-Ext.Ajax.request({
-    url: '/admin/reports/piwik/reports',
-    success: function (response) {
-        var reports = Ext.decode(response.responseText);
+if ('undefined' !== typeof pimcore.settings.piwik && 'undefined' !== typeof pimcore.settings.piwik.reports) {
+    Ext.Object.each(pimcore.settings.piwik.reports, function (reportId, reportConfig) {
+        reportConfig.text = reportConfig.title;
 
-        Ext.Array.each(reports, function(report) {
-            report.text = report.title;
-
-            // add to report broker
-            pimcore.report.broker.addGroup("piwik", "Piwik", "pimcore_icon_analytics");
-            pimcore.report.broker.addReport(pimcore.report.piwik.dashboard.iframe, "piwik", report);
-        });
-    }.bind(this)
-});
+        // add to report broker
+        pimcore.report.broker.addGroup("piwik", "Piwik", "pimcore_icon_analytics");
+        pimcore.report.broker.addReport(pimcore.report.piwik.dashboard.iframe, "piwik", reportConfig);
+    });
+}

@@ -18,17 +18,20 @@ declare(strict_types=1);
 namespace Pimcore\Tracking\Piwik;
 
 use Pimcore\Config;
+use Pimcore\Event\Admin\IndexSettingsEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Tracking\Piwik\ReportConfigEvent;
 use Pimcore\Event\Tracking\PiwikReportEvents;
 use Pimcore\Model\Site;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Builds a list of all available Piwik reports which should be shown in reports panel. A ReportConfig references an
  * iframe URL with a title. Additional reports can be added by adding them in the GENERATE_REPORTS event.
  */
-class ReportBroker
+class ReportBroker implements EventSubscriberInterface
 {
     /**
      * @var TranslatorInterface
@@ -40,6 +43,11 @@ class ReportBroker
      */
     private $eventDispatcher;
 
+    /**
+     * @var ReportConfig[]
+     */
+    private $reports;
+
     public function __construct(TranslatorInterface $translator, EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -47,16 +55,69 @@ class ReportBroker
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            AdminEvents::INDEX_SETTINGS => 'addIndexSettings'
+        ];
+    }
+
+    /**
+     * Handles INDEX_SETTINGS event and adds piwik reports to settings
+     *
+     * @param IndexSettingsEvent $event
+     */
+    public function addIndexSettings(IndexSettingsEvent $event)
+    {
+        $reports  = $this->getReports();
+        if (count($reports) > 0) {
+            $piwikReports = [];
+            foreach ($reports as $report) {
+                $piwikReports[$report->getId()] = [
+                    'id'    => $report->getId(),
+                    'title' => $report->getTitle()
+                ];
+            }
+
+            $event->getSettings()->piwik = [
+                'reports' => $piwikReports
+            ];
+        }
+    }
+
+    /**
      * @return ReportConfig[]
      */
     public function getReports(): array
     {
+        if (null !== $this->reports) {
+            return $this->reports;
+        }
+
         $reports = $this->buildReports();
 
         $event = new ReportConfigEvent($reports);
         $this->eventDispatcher->dispatch(PiwikReportEvents::GENERATE_REPORTS, $event);
 
-        return $event->getReports();
+        $this->reports = [];
+        foreach ($event->getReports() as $report) {
+            $this->reports[$report->getId()] = $report;
+        }
+
+        return $this->reports;
+    }
+
+    public function getReport(string $id): ReportConfig
+    {
+        $reports = $this->getReports();
+
+        if (!isset($reports[$id])) {
+            throw new \InvalidArgumentException(sprintf('Report "%s" was not found', $id));
+        }
+
+        return $reports[$id];
     }
 
     private function buildReports(): array
