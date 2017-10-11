@@ -114,9 +114,14 @@ services:
       arguments:
         - '@pimcore.custom_report.adapter.factories'
 
-    pimcore.newsletter.address_source_adapter.factories:
+    pimcore.newsletter.address_source_adapter.factories.service_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
+
+    pimcore.newsletter.address_source_adapter.factories:
+        class: Pimcore\Locator\ServiceLocatorFacade
+        arguments:
+          - '@pimcore.newsletter.address_source_adapter.factories.service_locator'
 
 
     # CustomReport Adapter
@@ -130,6 +135,11 @@ services:
       arguments:
         - 'Pimcore\Model\Tool\CustomReport\Adapter\Analytics'
 
-    pimcore.custom_report.adapter.factories:
+    pimcore.custom_report.adapter.factories.service_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
+
+    pimcore.custom_report.adapter.factories:
+        class: Pimcore\Locator\ServiceLocatorFacade
+        arguments:
+          - '@pimcore.custom_report.adapter.factories.service_locator'
