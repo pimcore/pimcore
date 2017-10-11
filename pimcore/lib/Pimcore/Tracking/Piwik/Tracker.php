@@ -22,12 +22,14 @@ use Pimcore\Event\Tracking\Piwik\TrackingDataEvent;
 use Pimcore\Event\Tracking\PiwikEvents;
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Site;
+use Pimcore\Tracking\AbstractTracker;
 use Pimcore\Tracking\CodeBlock;
+use Pimcore\Tracking\CodeContainer;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
 
-class Tracker
+class Tracker extends AbstractTracker
 {
     const BLOCK_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
     const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
@@ -36,11 +38,6 @@ class Tracker
     const BLOCK_BEFORE_ASYNC = 'beforeAsync';
     const BLOCK_AFTER_ASYNC = 'afterAsync';
     const BLOCK_ACTIONS = 'actions';
-
-    const POSITION_PREPEND = 'prepend';
-    const POSITION_APPEND = 'append';
-
-    const CONFIG_KEY_MAIN_DOMAIN = 'default';
 
     /**
      * @var EventDispatcher
@@ -53,9 +50,9 @@ class Tracker
     private $templatingEngine;
 
     /**
-     * @var SiteResolver
+     * @var CodeContainer
      */
-    private $siteResolver;
+    private $codeContainer;
 
     /**
      * @var array
@@ -70,100 +67,25 @@ class Tracker
         self::BLOCK_AFTER_SCRIPT_TAG,
     ];
 
-    /**
-     * @var array
-     */
-    private $additionalCode = [];
-
     public function __construct(
+        SiteResolver $siteResolver,
         EventDispatcherInterface $eventDispatcher,
-        EngineInterface $templatingEngine,
-        SiteResolver $siteResolver
+        EngineInterface $templatingEngine
     )
     {
+        parent::__construct($siteResolver);
+
         $this->eventDispatcher  = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
-        $this->siteResolver     = $siteResolver;
+        $this->codeContainer    = new CodeContainer(self::BLOCK_ACTIONS, $this->blocks);
     }
 
-    /**
-     * Get code for the current site if any/fall back to main domain
-     *
-     * @param Site|null $site
-     *
-     * @return null|string Null if no tracking is configured
-     */
-    public function getCode(Site $site = null)
+    protected function getCodeContainer(): CodeContainer
     {
-        if (null !== $site) {
-            return $this->getSiteCode($site);
-        } elseif ($this->siteResolver->isSiteRequest()) {
-            $site = $this->siteResolver->getSite();
-
-            return $this->getSiteCode($site);
-        }
-
-        return $this->getMainCode();
+        return $this->codeContainer;
     }
 
-    /**
-     * Get code for main domain
-     *
-     * @return null|string
-     */
-    public function getMainCode()
-    {
-        return $this->generateCode(self::CONFIG_KEY_MAIN_DOMAIN);
-    }
-
-    /**
-     * Get code for a specific site
-     *
-     * @param Site $site
-     *
-     * @return null|string
-     */
-    public function getSiteCode(Site $site)
-    {
-        return $this->generateCode($this->getSiteConfigKey($site), $site);
-    }
-
-    /**
-     * Adds additional code to the tracker
-     *
-     * @param string $code  The code to add
-     * @param string $block The block where to add the code
-     * @param bool $prepend Whether to prepend the code to the code block
-     * @param Site|string|null $config
-     */
-    public function addAdditionalCode(string $code, string $block = self::BLOCK_ACTIONS, bool $prepend = false, $config = null)
-    {
-        if (!in_array($block, $this->blocks)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid block "%s". Valid values are %s',
-                $block,
-                implode(', ', $this->blocks)
-            ));
-        }
-
-        $configKey = $this->getConfigKey($config);
-        if (!isset($this->additionalCode[$configKey])) {
-            $this->additionalCode[$configKey] = [];
-        }
-
-        if (!isset($this->additionalCode[$configKey][$block])) {
-            $this->additionalCode[$configKey][$block] = [];
-        }
-
-        $position = $prepend ? self::POSITION_PREPEND : self::POSITION_APPEND;
-        if (!isset($this->additionalCode[$configKey][$block][$position])) {
-            $this->additionalCode[$configKey][$block][$position] = [];
-        }
-
-        $this->additionalCode[$configKey][$block][$position][] = $code;
-    }
-
-    private function generateCode(string $configKey = self::CONFIG_KEY_MAIN_DOMAIN, Site $site = null)
+    protected function generateCode(string $configKey = self::CONFIG_KEY_MAIN_DOMAIN, Site $site = null)
     {
         $reportConfig = \Pimcore\Config::getReportConfig();
         if (!$reportConfig->piwik) {
@@ -228,7 +150,7 @@ class Tracker
             }
 
             $codeBlock = new CodeBlock($calls);
-            $this->addAdditionalBlockCalls($configKey, $block, $codeBlock);
+            $this->codeContainer->addToCodeBlock($configKey, $block, $codeBlock);
 
             $blocks[$block] = $codeBlock;
         }
@@ -245,28 +167,6 @@ class Tracker
         }
 
         return $trackingData;
-    }
-
-    private function addAdditionalBlockCalls(string $configKey, string $block, CodeBlock $codeBlock)
-    {
-        if (!isset($this->additionalCode[$configKey])) {
-            return;
-        }
-
-        $blockCalls = $this->additionalCode[$configKey][$block] ?? [];
-        if (empty($blockCalls)) {
-            return;
-        }
-
-        foreach ([self::POSITION_PREPEND, self::POSITION_APPEND] as $position) {
-            if (isset($blockCalls[$position])) {
-                if (self::POSITION_PREPEND === $position) {
-                    $codeBlock->prepend($blockCalls[$position]);
-                } else {
-                    $codeBlock->append($blockCalls[$position]);
-                }
-            }
-        }
     }
 
     private function generateActionCalls(Config $siteConfig): array
@@ -294,37 +194,5 @@ class Tracker
             "_paq.push(['setTrackerUrl', u+'piwik.php']);",
             sprintf("_paq.push(['setSiteId', '%d']);", $siteId)
         ];
-    }
-
-    /**
-     * Get config key from an input which can either be a string key or a Site. If nothing is given
-     * the current site will be resolved.
-     *
-     * @param Site|string|null $config
-     *
-     * @return string
-     */
-    private function getConfigKey($config = null): string
-    {
-        $configKey = null;
-        if (null !== $config) {
-            if ($config instanceof Site) {
-                $configKey = $this->getSiteConfigKey($config);
-            } else {
-                $configKey = (string)$config;
-            }
-        } else {
-            $configKey = self::CONFIG_KEY_MAIN_DOMAIN;
-            if ($this->siteResolver->isSiteRequest()) {
-                $configKey = $this->getSiteConfigKey($this->siteResolver->getSite());
-            }
-        }
-
-        return $configKey;
-    }
-
-    private function getSiteConfigKey(Site $site): string
-    {
-        return sprintf('site_%s', $site->getId());
     }
 }
