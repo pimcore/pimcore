@@ -15,6 +15,17 @@ In order to set a checkbox value, a bool value needs to be passed to the accordi
 $object->setCheckbox(true);
 ```
 
+## Boolean Select
+
+A `Boolean Select` is kind of a tri-state checkbox which is rendered as a select datatype in the admin UI.
+The background is that a checkbox can only have two states. This is especially important when it comes to inheritance.
+A checkbox treats an empty (never set) value just like the unchecked value. The consequence is then as soon as a parent sets it `checked` you can not reset it to `unchecked` in the child nodes anymore.
+The boolean select takes care of this problem by introducing a third state. The storage values are -1 (for unchecked), 1 (for checked and
+null for empty.
+For the admin UI you can specify the display values according to your needs. Default values are `yes`, `no` and `empty`.
+
+![Link Field](../../../img/boolean_select.png)
+
 ## Link 
 
 ![Link Field](../../../img/classes-datatypes-link1.jpg)

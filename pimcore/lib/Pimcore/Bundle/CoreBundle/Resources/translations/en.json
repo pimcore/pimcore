@@ -1535,5 +1535,9 @@
   "unique_qtip": "Unique constraint will added. No needed to check 'index' as well",
   "temporarily_disabled": "Temporarily disabled",
   "enabled_in_editmode": "Enabled in Editmode",
-  "search_for": "Search for"
+  "search_for": "Search for",
+  "boolean_select": "Boolean Select",
+  "yes_label": "Yes Display Name",
+  "no_label": "No Display Name",
+  "empty_label": "Empty Display Name"
 }

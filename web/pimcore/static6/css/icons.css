@@ -952,6 +952,11 @@
     background: url(/pimcore/static6/img/flat-color-icons/expand.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_booleanSelect {
+    background: url(/pimcore/static6/img/flat-color-icons/more.svg) center center no-repeat !important;
+}
+
+
 .pimcore_icon_gender {
     background: url(/pimcore/static6/img/flat-color-icons/manager.svg) center center no-repeat !important;
 }
