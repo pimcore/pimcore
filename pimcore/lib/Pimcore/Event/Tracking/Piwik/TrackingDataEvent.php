@@ -19,6 +19,7 @@ namespace Pimcore\Event\Tracking\Piwik;
 
 use Pimcore\Config\Config;
 use Pimcore\Model\Site;
+use Pimcore\Tracking\CodeBlock;
 use Symfony\Component\EventDispatcher\Event;
 
 class TrackingDataEvent extends Event
@@ -27,6 +28,11 @@ class TrackingDataEvent extends Event
      * @var array
      */
     private $data;
+
+    /**
+     * @var CodeBlock[]
+     */
+    private $blocks;
 
     /**
      * @var Config
@@ -43,9 +49,10 @@ class TrackingDataEvent extends Event
      */
     private $site;
 
-    public function __construct(array $data, Config $config, Config $siteConfig, Site $site = null)
+    public function __construct(array $data, array $blocks, Config $config, Config $siteConfig, Site $site = null)
     {
         $this->data       = $data;
+        $this->blocks     = $blocks;
         $this->config     = $config;
         $this->siteConfig = $siteConfig;
         $this->site       = $site;
@@ -59,6 +66,23 @@ class TrackingDataEvent extends Event
     public function setData(array $data)
     {
         $this->data = $data;
+    }
+
+    /**
+     * @return CodeBlock[]
+     */
+    public function getBlocks(): array
+    {
+        return $this->blocks;
+    }
+
+    public function getBlock(string $block): CodeBlock
+    {
+        if (!isset($this->blocks[$block])) {
+            throw new \InvalidArgumentException(sprintf('Invalid block "%s"', $block));
+        }
+
+        return $this->blocks[$block];
     }
 
     public function getConfig(): Config

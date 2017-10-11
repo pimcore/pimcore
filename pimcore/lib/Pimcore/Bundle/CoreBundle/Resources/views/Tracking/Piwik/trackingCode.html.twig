@@ -1,28 +1,38 @@
-<!-- Piwik -->
+{% block beforeScriptTag %}
+    {{ blocks.beforeScriptTag|raw }}
+{% endblock %}
+
 <script type="text/javascript">
-    {%- block init %}
-        {{ beforeInit|raw }}
-    {% endblock -%}
+    {% block beforeScript %}
+        {{ blocks.beforeScript|raw }}
+    {% endblock %}
 
     var _paq = _paq || [];
 
-    {%- block track %}
-        {{ track|raw }}
-    {% endblock -%}
+    {% block actions %}
+        {{ blocks.actions|raw }}
+    {% endblock %}
 
     (function() {
-        var u="//{{ piwikUrl }}/";
+        {% block beforeAsync %}
+            {{ blocks.beforeAsync|raw }}
+        {% endblock %}
 
-        {%- block asyncInit %}
-            {{ asyncInit|raw }}
-        {% endblock -%}
-
+        {% block async %}
         var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
         g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+        {% endblock %}
 
-        {%- block afterAsync %}
-            {{ afterAsync|raw }}
-        {% endblock -%}
+        {% block afterAsync %}
+            {{ blocks.afterAsync|raw }}
+        {% endblock %}
     })();
+
+    {% block afterScript %}
+        {{ blocks.afterScript|raw }}
+    {% endblock %}
 </script>
-<!-- End Piwik Code -->
+
+{% block afterScriptTag %}
+    {{ blocks.afterScriptTag|raw }}
+{% endblock %}

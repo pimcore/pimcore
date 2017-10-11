@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -17,8 +14,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Tracking;
 
-final class PiwikReportEvents
+final class PiwikEvents
 {
+    /**
+     * Triggered before a tracking code block is rendered. Can be used to add additional code
+     * snippets to the tracking block.
+     *
+     * @Event("Pimcore\Event\Tracking\Piwik\TrackingDataEvent")
+     *
+     * @var string
+     */
+    const CODE_TRACKING_DATA = 'pimcore.tracking.piwik.code.tracking_data';
+
     /**
      * Triggered when the available Piwik reports are generated. Can be used to add additional reports (iframes) to the
      * report panel.
@@ -27,5 +34,5 @@ final class PiwikReportEvents
      *
      * @var string
      */
-    const GENERATE_REPORTS = 'pimcore.tracking.piwik.reports.generate_reports';
+    const GENERATE_REPORTS = 'pimcore.tracking.piwik.reports.generate';
 }

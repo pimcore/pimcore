@@ -21,7 +21,7 @@ use Pimcore\Config;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Tracking\Piwik\ReportConfigEvent;
-use Pimcore\Event\Tracking\PiwikReportEvents;
+use Pimcore\Event\Tracking\PiwikEvents;
 use Pimcore\Model\Site;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -71,7 +71,7 @@ class ReportBroker implements EventSubscriberInterface
      */
     public function addIndexSettings(IndexSettingsEvent $event)
     {
-        $reports  = $this->getReports();
+        $reports = $this->getReports();
         if (count($reports) > 0) {
             $piwikReports = [];
             foreach ($reports as $report) {
@@ -99,7 +99,7 @@ class ReportBroker implements EventSubscriberInterface
         $reports = $this->buildReports();
 
         $event = new ReportConfigEvent($reports);
-        $this->eventDispatcher->dispatch(PiwikReportEvents::GENERATE_REPORTS, $event);
+        $this->eventDispatcher->dispatch(PiwikEvents::GENERATE_REPORTS, $event);
 
         $this->reports = [];
         foreach ($event->getReports() as $report) {
