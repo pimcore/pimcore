@@ -1539,5 +1539,9 @@
   "boolean_select": "Boolean Select",
   "yes_label": "Yes Display Name",
   "no_label": "No Display Name",
-  "empty_label": "Empty Display Name"
+  "empty_label": "Empty Display Name",
+  "piwik_url": "Piwik URL",
+  "piwik_auth_token": "Auth Token",
+  "piwik_site_id": "Site ID",
+  "piwik_all_websites_dashboard": "All Websites"
 }

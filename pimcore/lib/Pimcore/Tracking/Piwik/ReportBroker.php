@@ -85,7 +85,7 @@ class ReportBroker
 
         $reports[] = new ReportConfig(
             'all_sites',
-            $this->translator->trans('all_sites', [], 'admin'),
+            $this->translator->trans('piwik_all_websites_dashboard', [], 'admin'),
             $this->generateAllWebsitesDashboardUrl($piwikUrl, $authToken)
         );
 
