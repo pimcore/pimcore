@@ -37,6 +37,7 @@ pimcore.report.piwik.dashboard.iframe = Class.create(pimcore.report.abstract, {
             id: this.panelId,
             layout: "fit",
             border: false,
+            bodyStyle: 'padding: 5px; 10px',
             items: [],
             tbar: Ext.create('Ext.Toolbar', {
                 id: this.toolbarId,
@@ -53,26 +54,30 @@ pimcore.report.piwik.dashboard.iframe = Class.create(pimcore.report.abstract, {
             })
         });
 
-        var loadMask = new Ext.LoadMask({
+        this.loadMask = new Ext.LoadMask({
             target: panel,
             msg: t("please_wait")
         });
 
         panel.on("afterrender", function (panel) {
-            loadMask.show();
+            that.loadMask.show();
         }.bind(this));
 
         this.getReportConfig().then(function(config) {
-            panel.add(new Ext.Component({
+            var iframe = new Ext.Component({
                 id: that.iframeId,
                 autoEl: {
                     tag: 'iframe',
                     src: config.url,
                     frameborder: 0
                 }
-            }));
+            });
 
-            loadMask.hide();
+            panel.add(iframe);
+
+            iframe.el.dom.onload = function() {
+                that.loadMask.hide();
+            };
         });
 
         return panel;
@@ -80,6 +85,8 @@ pimcore.report.piwik.dashboard.iframe = Class.create(pimcore.report.abstract, {
 
     reloadFrame: function() {
         var that = this;
+
+        this.loadMask.show();
 
         this.getReportConfig().then(function(config) {
             Ext.get(that.iframeId).dom.src = config.url;
