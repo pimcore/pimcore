@@ -22,6 +22,11 @@ final class ReportConfig
     /**
      * @var string
      */
+    private $id;
+
+    /**
+     * @var string
+     */
     private $title;
 
     /**
@@ -29,10 +34,16 @@ final class ReportConfig
      */
     private $url;
 
-    public function __construct(string $title, string $url)
+    public function __construct(string $id, string $title, string $url)
     {
+        $this->id    = $id;
         $this->title = $title;
         $this->url   = $url;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 
     public function getTitle(): string

@@ -155,7 +155,7 @@ pimcore.report.piwik.settings = Class.create({
                 site_id: Ext.getCmp("report_settings_piwik_site_id_" + id).getValue(),
                 code_before_init: Ext.getCmp("report_settings_piwik_code_before_init_" + id).getValue(),
                 code_before_track: Ext.getCmp("report_settings_piwik_code_before_track_" + id).getValue(),
-                code_after_track: Ext.getCmp("report_settings_piwik_code_after_track_" + id).getValue(),
+                code_after_track: Ext.getCmp("report_settings_piwik_code_after_track_" + id).getValue()
             };
         }, this);
 
@@ -164,8 +164,6 @@ pimcore.report.piwik.settings = Class.create({
             auth_token: Ext.getCmp("report_settings_piwik_auth_token").getValue(),
             sites: sitesData
         };
-
-        console.log('VALUES', values);
 
         return values;
     }
