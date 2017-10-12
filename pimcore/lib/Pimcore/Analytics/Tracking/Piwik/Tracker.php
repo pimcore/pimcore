@@ -111,6 +111,8 @@ class Tracker extends AbstractTracker
             'site'          => $siteConfig->getSite(),
             'config'        => $config,
             'trackerConfig' => $trackerConfig,
+            'site_id'       => $trackerConfig->site_id,
+            'piwik_url'     => $config->piwik_url
         ];
 
         $blocks = $this->buildCodeBlocks($siteConfig, $config, $trackerConfig);
@@ -165,7 +167,6 @@ class Tracker extends AbstractTracker
 
             if (self::BLOCK_BEFORE_ASYNC === $block) {
                 $codeBlock->append([
-                    "var u='//" . $config->piwik_url . "/';",
                     "_paq.push(['setTrackerUrl', u+'piwik.php']);",
                     sprintf("_paq.push(['setSiteId', '%d']);", $trackerConfig->site_id)
                 ]);
