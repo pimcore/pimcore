@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of thumanils for the specicifies parameters, returns an array of Schedule\Task elements
+     * Loads a list of versions for the specicified parameters, returns an array of Version elements
      *
      * @return array
      */
