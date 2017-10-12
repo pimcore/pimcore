@@ -15,9 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tracking;
+namespace Pimcore\Analytics\Tracking;
 
-use Pimcore\Tracking\SiteConfig\SiteConfig;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
 
 interface TrackerInterface
 {

@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tracking\SiteConfig;
+namespace Pimcore\Analytics\Tracking\SiteConfig;
 
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Symfony\Component\HttpFoundation\Request;

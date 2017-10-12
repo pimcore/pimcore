@@ -15,9 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tracking\Code;
+namespace Pimcore\Analytics\Tracking\Code;
 
-use Pimcore\Tracking\SiteConfig\SiteConfig;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
 
 /**
  * Collects additional code parts which should be added to specific blocks upon rendering. Code

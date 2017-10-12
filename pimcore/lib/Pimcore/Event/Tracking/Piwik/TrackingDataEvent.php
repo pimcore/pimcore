@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Tracking\Piwik;
 
+use Pimcore\Analytics\Tracking\Code\CodeBlock;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
 use Pimcore\Config\Config;
-use Pimcore\Tracking\Code\CodeBlock;
-use Pimcore\Tracking\SiteConfig\SiteConfig;
 use Symfony\Component\EventDispatcher\Event;
 
 class TrackingDataEvent extends Event

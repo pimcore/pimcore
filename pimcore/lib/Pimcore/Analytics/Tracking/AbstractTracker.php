@@ -15,11 +15,11 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tracking;
+namespace Pimcore\Analytics\Tracking;
 
-use Pimcore\Tracking\Code\CodeContainer;
-use Pimcore\Tracking\SiteConfig\SiteConfig;
-use Pimcore\Tracking\SiteConfig\SiteConfigResolver;
+use Pimcore\Analytics\Tracking\Code\CodeContainer;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigResolver;
 
 abstract class AbstractTracker implements TrackerInterface
 {

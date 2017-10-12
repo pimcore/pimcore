@@ -17,12 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Analytics\Tracking\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
-use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Tool;
-use Pimcore\Tracking\Piwik\Tracker;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;

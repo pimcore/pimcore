@@ -15,16 +15,16 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tracking\Piwik;
+namespace Pimcore\Analytics\Tracking\Piwik;
 
+use Pimcore\Analytics\Tracking\AbstractTracker;
+use Pimcore\Analytics\Tracking\Code\CodeBlock;
+use Pimcore\Analytics\Tracking\Code\CodeContainer;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigResolver;
 use Pimcore\Config\Config;
 use Pimcore\Event\Tracking\Piwik\TrackingDataEvent;
 use Pimcore\Event\Tracking\PiwikEvents;
-use Pimcore\Tracking\AbstractTracker;
-use Pimcore\Tracking\Code\CodeBlock;
-use Pimcore\Tracking\Code\CodeContainer;
-use Pimcore\Tracking\SiteConfig\SiteConfig;
-use Pimcore\Tracking\SiteConfig\SiteConfigResolver;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -115,7 +115,7 @@ class Tracker extends AbstractTracker
 
         $blocks = $this->buildCodeBlocks($siteConfig, $config, $trackerConfig);
 
-        $template = '@PimcoreCore/Tracking/Piwik/trackingCode.html.twig';
+        $template = '@PimcoreCore/Analytics/Tracking/Piwik/trackingCode.html.twig';
 
         $event = new TrackingDataEvent($siteConfig, $data, $blocks, $config, $trackerConfig, $template);
         $this->eventDispatcher->dispatch(PiwikEvents::CODE_TRACKING_DATA, $event);
@@ -171,7 +171,7 @@ class Tracker extends AbstractTracker
                 ]);
             }
 
-            $this->codeContainer->addToCodeBlock($siteConfig, $codeBlock, $block);
+            $this->getCodeContainer()->addToCodeBlock($siteConfig, $codeBlock, $block);
 
             $blocks[$block] = $codeBlock;
         }

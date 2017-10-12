@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
+use Pimcore\Analytics\Tracking\Piwik\ReportBroker;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Tracking\Piwik\ReportBroker;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
