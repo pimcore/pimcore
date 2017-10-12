@@ -165,7 +165,7 @@ pimcore:
     context:
         profiler:
             routes:
-                - { path: ^/_(_profiler|wdt) }
+                - { path: ^/_(profiler|wdt) }
         admin:
             routes:
                 - { path: ^/admin }
