@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Tracking\Piwik;
 
+use Pimcore\Analytics\Tracking\Piwik\Dto\ReportConfig;
 use Pimcore\Config;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;

@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Piwik;
+namespace Pimcore\Analytics\Tracking\Piwik\Dto;
 
 final class ReportConfig
 {
