@@ -17,10 +17,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 interface ITrackingManager extends
     IProductImpression,
     IProductView,
-    ICheckoutStep,
-    ICheckoutComplete,
-    ICheckout,
+    ICartProductActionAdd,
+    ICartProductActionRemove,
     IProductActionAdd,
-    IProductActionRemove
+    IProductActionRemove,
+    ICheckout,
+    ICheckoutStep,
+    ICheckoutComplete
 {
 }

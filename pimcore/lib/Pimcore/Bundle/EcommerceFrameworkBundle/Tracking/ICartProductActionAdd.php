@@ -14,20 +14,17 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
 
-/**
- * @deprecated Use ICartProductActionAdd instead
- */
-interface IProductActionAdd
+interface ICartProductActionAdd
 {
     /**
      * Track product add to cart
      *
-     * @deprecated Use ICartProductActionAdd::trackCartProductActionAdd instead
-     *
+     * @param ICart $cart
      * @param IProduct $product
      * @param int|float $quantity
      */
-    public function trackProductActionAdd(IProduct $product, $quantity = 1);
+    public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1);
 }

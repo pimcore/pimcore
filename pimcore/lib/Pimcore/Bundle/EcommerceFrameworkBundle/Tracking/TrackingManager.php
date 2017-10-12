@@ -91,7 +91,23 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product add to cart
      *
-     * @implements IProductImpression
+     * @param ICart $cart
+     * @param IProduct $product
+     * @param int|float $quantity
+     */
+    public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1)
+    {
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICartProductActionAdd) {
+                $tracker->trackCartProductActionAdd($cart, $product, $quantity);
+            }
+        }
+    }
+
+    /**
+     * Track product add to cart
+     *
+     * @deprecated Use ICartProductActionAdd::trackCartProductActionAdd instead
      *
      * @param IProduct $product
      * @param int|float $quantity
@@ -108,7 +124,23 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product remove from cart
      *
-     * @implements IProductImpression
+     * @param ICart $cart
+     * @param IProduct $product
+     * @param int|float $quantity
+     */
+    public function trackCartProductActionRemove(ICart $cart, IProduct $product, $quantity = 1)
+    {
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICartProductActionRemove) {
+                $tracker->trackCartProductActionRemove($cart, $product, $quantity);
+            }
+        }
+    }
+
+    /**
+     * Track product remove from cart
+     *
+     * @deprecated Use ICartProductActionRemove::trackCartProductActionRemove instead
      *
      * @param IProduct $product
      * @param int|float $quantity
