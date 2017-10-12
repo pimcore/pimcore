@@ -89,6 +89,20 @@ class TrackingManager implements ITrackingManager
     }
 
     /**
+     * Track a cart update
+     *
+     * @param ICart $cart
+     */
+    public function trackCartUpdate(ICart $cart)
+    {
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICartUpdate) {
+                $tracker->trackCartUpdate($cart);
+            }
+        }
+    }
+
+    /**
      * Track product add to cart
      *
      * @param ICart $cart

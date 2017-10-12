@@ -14,16 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-interface ITrackingManager extends
-    IProductImpression,
-    IProductView,
-    ICartUpdate,
-    ICartProductActionAdd,
-    ICartProductActionRemove,
-    IProductActionAdd,
-    IProductActionRemove,
-    ICheckout,
-    ICheckoutStep,
-    ICheckoutComplete
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+
+interface ICartUpdate
 {
+    /**
+     * Track a cart update
+     *
+     * @param ICart $cart
+     */
+    public function trackCartUpdate(ICart $cart);
 }
