@@ -85,9 +85,13 @@ services:
     # HTTP/REST clients
     #
 
+    Pimcore\Http\ClientFactory:
+        # keep this public until static method was removed
+        public: true
+
     pimcore.http_client:
         class: \GuzzleHttp\Client
-        factory: ['Pimcore\Http\ClientFactory', createHttpClient]
+        factory: ['@Pimcore\Http\ClientFactory', createClient]
 
     pimcore.rest_client:
         alias: Pimcore\Tool\RestClient
