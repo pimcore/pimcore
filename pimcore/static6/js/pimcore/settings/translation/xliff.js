@@ -258,6 +258,7 @@ pimcore.settings.translation.xliff = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/translation/content-export-jobs",
+            method: 'POST',
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
                 target: this.exportTargetLanguageSelector.getValue(),

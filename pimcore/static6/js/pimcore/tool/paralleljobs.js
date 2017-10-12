@@ -100,8 +100,9 @@ pimcore.tool.paralleljobs = Class.create({
 
             this.jobsRunning++;
 
-            Ext.Ajax.request({
+            var requestConfig = {
                 url: this.config.jobs[this.groupsFinished][this.jobsStarted].url,
+                params: this.config.jobs[this.groupsFinished][this.jobsStarted].params,
                 success: function (response) {
 
                     try {
@@ -129,9 +130,14 @@ pimcore.tool.paralleljobs = Class.create({
                     if(!this.config["stopOnError"]) {
                         this.continue();
                     }
-                }.bind(this),
-                params: this.config.jobs[this.groupsFinished][this.jobsStarted].params
-            });
+                }.bind(this)
+            };
+
+            if ('undefined' !== typeof this.config.jobs[this.groupsFinished][this.jobsStarted].method) {
+                requestConfig.method = this.config.jobs[this.groupsFinished][this.jobsStarted].method;
+            }
+
+            Ext.Ajax.request(requestConfig);
 
             this.jobsStarted++;
         }

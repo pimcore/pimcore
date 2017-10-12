@@ -604,6 +604,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         foreach ($elements as $chunk) {
             $jobs[] = [[
                 "url" => "/admin/translation/" . $type . "-export",
+                "method" => "POST",
                 "params" => [
                     "id" => $exportId,
                     "source" => $source,
