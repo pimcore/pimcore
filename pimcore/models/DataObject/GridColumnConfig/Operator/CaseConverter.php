@@ -27,7 +27,7 @@ class CaseConverter extends AbstractOperator
         $this->capitalization = $config->capitalization;
     }
 
-    public function getLabeledValue($object)
+    public function getLabeledValue($element)
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -41,7 +41,7 @@ class CaseConverter extends AbstractOperator
 
             $valueArray = [];
 
-            $childResult = $c->getLabeledValue($object);
+            $childResult = $c->getLabeledValue($element);
             $isArrayType = $childResult->isArrayType;
             $childValues = $childResult->value;
             if ($childValues && !$isArrayType) {

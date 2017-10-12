@@ -25,7 +25,7 @@ use Pimcore\Model\Object\AbstractObject;
 
 class DefaultValue extends AbstractConfigElement
 {
-    public function getLabeledValue($object)
+    public function getLabeledValue($element)
     {
         $attributeParts = explode('~', $this->attribute);
         $label = $this->label;
@@ -38,20 +38,20 @@ class DefaultValue extends AbstractConfigElement
             $brickType = $attributeParts[0];
             $brickKey = $attributeParts[1];
 
-            $getter = 'get' . Service::getFieldForBrickType($object->getClass(), $brickType);
+            $getter = 'get' . Service::getFieldForBrickType($element->getClass(), $brickType);
             $brickTypeGetter = 'get' . ucfirst($brickType);
             $brickGetter = 'get' . ucfirst($brickKey);
         }
-        if (method_exists($object, $getter)) {
-            $value = $object->$getter();
+        if (method_exists($element, $getter)) {
+            $value = $element->$getter();
 
-            if ($object instanceof AbstractObject) {
-                $def = $object->getClass()->getFieldDefinition($this->attribute);
+            if ($element instanceof AbstractObject) {
+                $def = $element->getClass()->getFieldDefinition($this->attribute);
                 if (!$def) {
                     /**
                      * @var Localizedfields $lf
                      */
-                    $lf = $object->getClass()->getFieldDefinition('localizedfields');
+                    $lf = $element->getClass()->getFieldDefinition('localizedfields');
                     if ($lf) {
                         $def = $lf->getFieldDefinition($this->attribute);
                     }

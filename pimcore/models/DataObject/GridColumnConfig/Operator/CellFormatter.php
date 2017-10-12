@@ -29,11 +29,11 @@ class CellFormatter extends AbstractOperator
         $this->maxLength = $config->maxLength;
     }
 
-    public function getLabeledValue($object)
+    public function getLabeledValue($element)
     {
         $childs = $this->getChilds();
         if ($childs[0]) {
-            $result = $childs[0]->getLabeledValue($object);
+            $result = $childs[0]->getLabeledValue($element);
             if ($this->getMaxLength() && isset($result->value) && strlen($result->value) > $this->getMaxLength()) {
                 $result->value = substr($result->value, 0, $this->getMaxLength() - 3) . '...';
             }

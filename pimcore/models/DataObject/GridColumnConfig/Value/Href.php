@@ -24,14 +24,14 @@ class Href extends DefaultValue
         parent::__construct($config, $context);
     }
 
-    public function getLabeledValue($object)
+    public function getLabeledValue($element)
     {
         $result = new \stdClass();
         $result->label = $this->label;
 
         $getter = 'get' . ucfirst($this->attribute);
-        if (method_exists($object, $getter)) {
-            $result->value = $object->$getter();
+        if (method_exists($element, $getter)) {
+            $result->value = $element->$getter();
 
             return $result;
         }

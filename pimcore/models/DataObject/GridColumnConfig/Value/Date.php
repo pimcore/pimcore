@@ -30,9 +30,9 @@ class Date extends DefaultValue
         $this->format = ($config->format ? $config->format : null);
     }
 
-    public function getLabeledValue($object)
+    public function getLabeledValue($element)
     {
-        $labeledValue = parent::getLabeledValue($object);
+        $labeledValue = parent::getLabeledValue($element);
         $theValue = $labeledValue->value;
 
         if ($this->format && $theValue) {

@@ -28,11 +28,11 @@ class LFExpander extends AbstractOperator
         $this->prefix = $config->prefix;
     }
 
-    public function getLabeledValue($object)
+    public function getLabeledValue($element)
     {
         $childs = $this->getChilds();
         if ($childs[0]) {
-            $value = $childs[0]->getLabeledValue($object);
+            $value = $childs[0]->getLabeledValue($element);
 
             return $value;
         }

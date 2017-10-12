@@ -33,7 +33,7 @@ class ObjectFieldGetter extends AbstractOperator
         $this->forwardAttribute = $config->forwardAttribute;
     }
 
-    public function getLabeledValue($object)
+    public function getLabeledValue($element)
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -43,8 +43,8 @@ class ObjectFieldGetter extends AbstractOperator
         $getter = 'get' . ucfirst($this->attribute);
 
         if (!$childs) {
-            if (method_exists($object, $getter)) {
-                $result->value = $object->$getter();
+            if (method_exists($element, $getter)) {
+                $result->value = $element->$getter();
                 if ($result->value instanceof ElementInterface) {
                     $result->value = $result->value->getFullPath();
                 }
@@ -53,12 +53,12 @@ class ObjectFieldGetter extends AbstractOperator
             }
         } else {
             $c = $childs[0];
-            $forwardObject = $object;
+            $forwardObject = $element;
 
             if ($this->forwardAttribute) {
                 $forwardGetter = 'get' . ucfirst($this->forwardAttribute);
-                if (method_exists($object, $forwardGetter)) {
-                    $forwardObject = $object->$forwardGetter();
+                if (method_exists($element, $forwardGetter)) {
+                    $forwardObject = $element->$forwardGetter();
                     if (!$forwardObject) {
                         return $result;
                     }

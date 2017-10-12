@@ -30,7 +30,7 @@ class Trimmer extends AbstractOperator
         $this->trim = $config->trim;
     }
 
-    public function getLabeledValue($object)
+    public function getLabeledValue($element)
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -44,7 +44,7 @@ class Trimmer extends AbstractOperator
 
             $valueArray = [];
 
-            $childResult = $c->getLabeledValue($object);
+            $childResult = $c->getLabeledValue($element);
             $isArrayType = $childResult->isArrayType;
             $childValues = $childResult->value;
             if ($childValues && !$isArrayType) {
