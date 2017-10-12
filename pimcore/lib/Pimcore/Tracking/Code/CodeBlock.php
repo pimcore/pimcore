@@ -15,16 +15,19 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tracking;
+namespace Pimcore\Tracking\Code;
 
-class CodeBlock
+/**
+ * Contains all parts which are rendered to a specific block
+ */
+final class CodeBlock
 {
     /**
      * @var array
      */
     private $parts = [];
 
-    public function __construct(array $parts)
+    public function __construct(array $parts = [])
     {
         $this->parts = $parts;
     }
@@ -48,7 +51,10 @@ class CodeBlock
 
     public function prepend($parts)
     {
-        foreach ((array) $parts as $part) {
+        $parts = (array)$parts;
+        $parts = array_reverse($parts); // prepend parts in the order they were given
+
+        foreach ($parts as $part) {
             array_unshift($this->parts, $part);
         }
     }

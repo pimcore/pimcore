@@ -17,113 +17,55 @@ declare(strict_types=1);
 
 namespace Pimcore\Tracking;
 
-use Pimcore\Http\Request\Resolver\SiteResolver;
-use Pimcore\Model\Site;
+use Pimcore\Tracking\Code\CodeContainer;
+use Pimcore\Tracking\SiteConfig\SiteConfig;
+use Pimcore\Tracking\SiteConfig\SiteConfigResolver;
 
 abstract class AbstractTracker implements TrackerInterface
 {
-    const CONFIG_KEY_MAIN_DOMAIN = 'default';
-
     /**
-     * @var SiteResolver
+     * @var SiteConfigResolver
      */
-    private $siteResolver;
+    private $siteConfigResolver;
 
-    public function __construct(SiteResolver $siteResolver)
+    public function __construct(SiteConfigResolver $siteConfigResolver)
     {
-        $this->siteResolver = $siteResolver;
+        $this->siteConfigResolver = $siteConfigResolver;
     }
 
     /**
-     * Get code for the current site if any/fall back to main domain
-     *
-     * @param Site|null $site
-     *
-     * @return null|string Null if no tracking is configured
+     * @inheritdoc
      */
-    public function getCode(Site $site = null)
+    public function getCode(SiteConfig $siteConfig = null)
     {
-        if (null !== $site) {
-            return $this->getSiteCode($site);
-        } elseif ($this->siteResolver->isSiteRequest()) {
-            $site = $this->siteResolver->getSite();
-
-            return $this->getSiteCode($site);
+        if (null === $siteConfig) {
+            $siteConfig = $this->siteConfigResolver->getSiteConfig();
         }
 
-        return $this->getMainCode();
+        return $this->generateCode($siteConfig);
     }
 
     /**
-     * Get code for main domain
+     * Generates code for a specific site config
      *
-     * @return null|string
+     * @param SiteConfig $siteConfig
+     *
+     * @return string|null
      */
-    public function getMainCode()
+    abstract protected function generateCode(SiteConfig $siteConfig);
+
+    /**
+     * @inheritdoc
+     */
+    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteConfig $siteConfig = null)
     {
-        return $this->generateCode(self::CONFIG_KEY_MAIN_DOMAIN);
+        $this->getCodeContainer()->addCodePart($code, $block, $prepend, $siteConfig);
     }
 
     /**
-     * Get code for a specific site
+     * Builds the code container which defines available blocks
      *
-     * @param Site $site
-     *
-     * @return null|string
+     * @return CodeContainer
      */
-    public function getSiteCode(Site $site)
-    {
-        return $this->generateCode($this->getSiteConfigKey($site), $site);
-    }
-
-    /**
-     * Adds additional code to the tracker
-     *
-     * @param string $code  The code to add
-     * @param string $block The block where to add the code
-     * @param bool $prepend Whether to prepend the code to the code block
-     * @param Site|string|null $config Restrict the part to a specific site (can be either a string like site_1 or
-     *                                 default or a Site instance). By default, it will be added to the current site.
-     */
-    public function addCodePart(string $code, string $block = null, bool $prepend = false, $config = null)
-    {
-        $configKey = $this->getConfigKey($config);
-
-        $this->getCodeContainer()->addCodePart($configKey, $code, $block, $prepend);
-    }
-
     abstract protected function getCodeContainer(): CodeContainer;
-    abstract protected function generateCode(string $configKey = self::CONFIG_KEY_MAIN_DOMAIN, Site $site = null);
-
-    /**
-     * Get config key from an input which can either be a string key or a Site. If nothing is given
-     * the current site will be resolved.
-     *
-     * @param Site|string|null $config
-     *
-     * @return string
-     */
-    private function getConfigKey($config = null): string
-    {
-        $configKey = null;
-        if (null !== $config) {
-            if ($config instanceof Site) {
-                $configKey = $this->getSiteConfigKey($config);
-            } else {
-                $configKey = (string)$config;
-            }
-        } else {
-            $configKey = self::CONFIG_KEY_MAIN_DOMAIN;
-            if ($this->siteResolver->isSiteRequest()) {
-                $configKey = $this->getSiteConfigKey($this->siteResolver->getSite());
-            }
-        }
-
-        return $configKey;
-    }
-
-    private function getSiteConfigKey(Site $site): string
-    {
-        return sprintf('site_%s', $site->getId());
-    }
 }

@@ -18,12 +18,17 @@ declare(strict_types=1);
 namespace Pimcore\Event\Tracking\Piwik;
 
 use Pimcore\Config\Config;
-use Pimcore\Model\Site;
-use Pimcore\Tracking\CodeBlock;
+use Pimcore\Tracking\Code\CodeBlock;
+use Pimcore\Tracking\SiteConfig\SiteConfig;
 use Symfony\Component\EventDispatcher\Event;
 
 class TrackingDataEvent extends Event
 {
+    /**
+     * @var SiteConfig
+     */
+    private $siteConfig;
+
     /**
      * @var array
      */
@@ -42,20 +47,33 @@ class TrackingDataEvent extends Event
     /**
      * @var Config
      */
-    private $siteConfig;
+    private $trackerConfig;
 
     /**
-     * @var Site|null
+     * @var string
      */
-    private $site;
+    private $template;
 
-    public function __construct(array $data, array $blocks, Config $config, Config $siteConfig, Site $site = null)
+    public function __construct(
+        SiteConfig $siteConfig,
+        array $data,
+        array $blocks,
+        Config $config,
+        Config $trackerConfig,
+        string $template
+    )
     {
-        $this->data       = $data;
-        $this->blocks     = $blocks;
-        $this->config     = $config;
-        $this->siteConfig = $siteConfig;
-        $this->site       = $site;
+        $this->siteConfig    = $siteConfig;
+        $this->data          = $data;
+        $this->blocks        = $blocks;
+        $this->config        = $config;
+        $this->trackerConfig = $trackerConfig;
+        $this->template      = $template;
+    }
+
+    public function getSiteConfig(): SiteConfig
+    {
+        return $this->siteConfig;
     }
 
     public function getData(): array
@@ -90,16 +108,18 @@ class TrackingDataEvent extends Event
         return $this->config;
     }
 
-    public function getSiteConfig(): Config
+    public function getTrackerConfig(): Config
     {
-        return $this->siteConfig;
+        return $this->trackerConfig;
     }
 
-    /**
-     * @return null|Site
-     */
-    public function getSite()
+    public function getTemplate(): string
     {
-        return $this->site;
+        return $this->template;
+    }
+
+    public function setTemplate(string $template)
+    {
+        $this->template = $template;
     }
 }

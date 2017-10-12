@@ -17,43 +17,28 @@ declare(strict_types=1);
 
 namespace Pimcore\Tracking;
 
-use Pimcore\Model\Site;
+use Pimcore\Tracking\SiteConfig\SiteConfig;
 
 interface TrackerInterface
 {
     /**
-     * Get code for the current site if any/fall back to main domain
+     * Get code for a specific site. If no site is passed the current site will be
+     * automatically resolved.
      *
-     * @param Site|null $site
+     * @param SiteConfig|null $siteConfig
      *
      * @return null|string Null if no tracking is configured
      */
-    public function getCode(Site $site = null);
+    public function getCode(SiteConfig $siteConfig = null);
 
     /**
-     * Get code for main domain
+     * Adds additional code to the tracker. Code can either be added to all trackers
+     * or be restricted to a specific site.
      *
-     * @return null|string
+     * @param string $code                The code to add
+     * @param string|null $block          The block where to add the code (will use default block if none given)
+     * @param bool $prepend               Whether to prepend the code to the code block
+     * @param SiteConfig|null $siteConfig Restrict code to a specific site
      */
-    public function getMainCode();
-
-    /**
-     * Get code for a specific site
-     *
-     * @param Site $site
-     *
-     * @return null|string
-     */
-    public function getSiteCode(Site $site);
-
-    /**
-     * Adds additional code to the tracker
-     *
-     * @param string $code             The code to add
-     * @param string $block            The block where to add the code
-     * @param bool $prepend            Whether to prepend the code to the code block
-     * @param Site|string|null $config Restrict the part to a specific site (can be either a string like site_1 or
-     *                                 default or a Site instance). By default, it will be added to the current site.
-     */
-    public function addCodePart(string $code, string $block = null, bool $prepend = false, $config = null);
+    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteConfig $siteConfig = null);
 }

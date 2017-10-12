@@ -4,6 +4,8 @@ services:
         autoconfigure: true
         public: false
 
+    Pimcore\Tracking\SiteConfig\SiteConfigResolver:
+
     #
     # PIWIK
     #

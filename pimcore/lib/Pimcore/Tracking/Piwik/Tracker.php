@@ -20,11 +20,11 @@ namespace Pimcore\Tracking\Piwik;
 use Pimcore\Config\Config;
 use Pimcore\Event\Tracking\Piwik\TrackingDataEvent;
 use Pimcore\Event\Tracking\PiwikEvents;
-use Pimcore\Http\Request\Resolver\SiteResolver;
-use Pimcore\Model\Site;
 use Pimcore\Tracking\AbstractTracker;
-use Pimcore\Tracking\CodeBlock;
-use Pimcore\Tracking\CodeContainer;
+use Pimcore\Tracking\Code\CodeBlock;
+use Pimcore\Tracking\Code\CodeContainer;
+use Pimcore\Tracking\SiteConfig\SiteConfig;
+use Pimcore\Tracking\SiteConfig\SiteConfigResolver;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -68,48 +68,68 @@ class Tracker extends AbstractTracker
     ];
 
     public function __construct(
-        SiteResolver $siteResolver,
+        SiteConfigResolver $siteConfigResolver,
         EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine
     )
     {
-        parent::__construct($siteResolver);
+        parent::__construct($siteConfigResolver);
 
         $this->eventDispatcher  = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
-        $this->codeContainer    = new CodeContainer(self::BLOCK_ACTIONS, $this->blocks);
     }
 
     protected function getCodeContainer(): CodeContainer
     {
+        if (null === $this->codeContainer) {
+            $this->codeContainer = new CodeContainer($this->blocks, self::BLOCK_ACTIONS);
+        }
+
         return $this->codeContainer;
     }
 
-    protected function generateCode(string $configKey = self::CONFIG_KEY_MAIN_DOMAIN, Site $site = null)
+    protected function generateCode(SiteConfig $siteConfig)
     {
         $reportConfig = \Pimcore\Config::getReportConfig();
         if (!$reportConfig->piwik) {
             return null;
         }
 
-        $config     = $reportConfig->piwik;
-        $siteConfig = $config->sites->$configKey;
-
-        if (!$siteConfig) {
-            return null;
-        }
+        $configKey     = $siteConfig->getConfigKey();
+        $config        = $reportConfig->piwik;
+        $trackerConfig = $config->sites->$configKey;
 
         if (empty($config->piwik_url)) {
             return null;
         }
 
-        if (empty($siteConfig->site_id)) {
+        if (!$trackerConfig || empty($trackerConfig->site_id)) {
             return null;
         }
 
-        $data = $this->buildTemplateData($configKey, $config, $siteConfig, $site);
+        $data = [
+            'site'          => $siteConfig->getSite(),
+            'config'        => $config,
+            'trackerConfig' => $trackerConfig,
+        ];
+
+        $blocks = $this->buildCodeBlocks($siteConfig, $config, $trackerConfig);
+
+        $template = '@PimcoreCore/Tracking/Piwik/trackingCode.html.twig';
+
+        $event = new TrackingDataEvent($siteConfig, $data, $blocks, $config, $trackerConfig, $template);
+        $this->eventDispatcher->dispatch(PiwikEvents::CODE_TRACKING_DATA, $event);
+
+        return $this->renderTemplate($event);
+    }
+
+    private function renderTemplate(TrackingDataEvent $event): string
+    {
+        $data           = $event->getData();
+        $data['blocks'] = $event->getBlocks();
+
         $code = $this->templatingEngine->render(
-            '@PimcoreCore/Tracking/Piwik/trackingCode.html.twig',
+            $event->getTemplate(),
             $data
         );
 
@@ -118,81 +138,44 @@ class Tracker extends AbstractTracker
         return $code;
     }
 
-    private function buildTemplateData(string $configKey, Config $config, Config $siteConfig, Site $site = null): array
+    private function buildCodeBlocks(SiteConfig $siteConfig, Config $config, Config $trackerConfig): array
     {
-        $siteId   = (int)$siteConfig->site_id;
-        $piwikUrl = (string)$config->piwik_url;
-
-        $data = [
-            'site'       => $site,
-            'config'     => $config,
-            'siteConfig' => $siteConfig,
-            'siteId'     => $siteId,
-            'piwikUrl'   => $piwikUrl,
-        ];
-
         $blocks = [];
         foreach ($this->blocks as $block) {
-            $calls = [];
+            $codeBlock = new CodeBlock();
 
-            if (self::BLOCK_BEFORE_SCRIPT === $block && !empty($siteConfig->code_before_init)) {
-                $calls = [
-                    $siteConfig->code_before_init
-                ];
+            if (self::BLOCK_BEFORE_SCRIPT === $block && !empty($trackerConfig->code_before_init)) {
+                $codeBlock->append($trackerConfig->code_before_init);
             }
 
             if (self::BLOCK_ACTIONS === $block) {
-                $calls = $this->generateActionCalls($siteConfig);
+                if (!empty($trackerConfig->code_before_track)) {
+                    $codeBlock->append($trackerConfig->code_before_track);
+                }
+
+                $codeBlock->append([
+                    "_paq.push(['trackPageView']);",
+                    "_paq.push(['enableLinkTracking']);",
+                ]);
+
+                if (!empty($trackerConfig->code_after_track)) {
+                    $codeBlock->append($trackerConfig->code_after_track);
+                }
             }
 
             if (self::BLOCK_BEFORE_ASYNC === $block) {
-                $calls = $this->generateBeforeAsyncCalls($piwikUrl, $siteId);
+                $codeBlock->append([
+                    "var u='//" . $config->piwik_url . "/';",
+                    "_paq.push(['setTrackerUrl', u+'piwik.php']);",
+                    sprintf("_paq.push(['setSiteId', '%d']);", $trackerConfig->site_id)
+                ]);
             }
 
-            $codeBlock = new CodeBlock($calls);
-            $this->codeContainer->addToCodeBlock($configKey, $block, $codeBlock);
+            $this->codeContainer->addToCodeBlock($siteConfig, $codeBlock, $block);
 
             $blocks[$block] = $codeBlock;
         }
 
-        $trackingDataEvent = new TrackingDataEvent($data, $blocks, $config, $siteConfig, $site);
-        $this->eventDispatcher->dispatch(PiwikEvents::CODE_TRACKING_DATA, $trackingDataEvent);
-
-        $trackingData = $trackingDataEvent->getData();
-        $trackingData['blocks'] = [];
-
-        /** @var CodeBlock $codeBlock */
-        foreach ($trackingDataEvent->getBlocks() as $block => $codeBlock) {
-            $trackingData['blocks'][$block] = $codeBlock->asString();
-        }
-
-        return $trackingData;
-    }
-
-    private function generateActionCalls(Config $siteConfig): array
-    {
-        $calls = [
-            "_paq.push(['trackPageView']);",
-            "_paq.push(['enableLinkTracking']);",
-        ];
-
-        if (!empty($siteConfig->code_before_track)) {
-            array_unshift($calls, $siteConfig->code_before_track);
-        }
-
-        if (!empty($siteConfig->code_after_track)) {
-            $calls[] = $siteConfig->code_after_track;
-        }
-
-        return $calls;
-    }
-
-    private function generateBeforeAsyncCalls(string $piwikUrl, int $siteId): array
-    {
-        return [
-            "var u='//" . $piwikUrl . "/';",
-            "_paq.push(['setTrackerUrl', u+'piwik.php']);",
-            sprintf("_paq.push(['setSiteId', '%d']);", $siteId)
-        ];
+        return $blocks;
     }
 }
