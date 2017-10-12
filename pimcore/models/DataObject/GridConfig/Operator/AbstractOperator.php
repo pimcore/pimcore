@@ -15,21 +15,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig\Operator;
 
 use Pimcore\Model\DataObject\GridConfig\AbstractConfigElement;
 use Pimcore\Model\DataObject\GridConfig\ConfigElementInterface;
 
-
 abstract class AbstractOperator extends AbstractConfigElement
 {
-
     /**
      * @var ConfigElementInterface
      */
     protected $childs;
-
 
     public function __construct($config, $context = null)
     {

@@ -15,11 +15,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig;
 
-interface ConfigElementInterface {
-
+interface ConfigElementInterface
+{
     public function getLabeledValue($object);
-    
 }

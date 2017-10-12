@@ -15,24 +15,26 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig\Operator;
- 
-class Text extends AbstractOperator {
 
+class Text extends AbstractOperator
+{
     protected $textValue;
 
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         $this->textValue = $config->textValue;
         $this->label = $config->label;
 
         $this->context = $context;
     }
 
-    public function getLabeledValue($object) {
+    public function getLabeledValue($object)
+    {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = $this->textValue;
+
         return $result;
     }
 }

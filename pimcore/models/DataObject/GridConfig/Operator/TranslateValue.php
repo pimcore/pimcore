@@ -15,31 +15,33 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig\Operator;
- 
-class TranslateValue extends AbstractOperator {
 
+class TranslateValue extends AbstractOperator
+{
     private $prefix;
 
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         parent::__construct($config, $context);
 
         $this->prefix = $config->prefix;
     }
 
-    public function getLabeledValue($object) {
+    public function getLabeledValue($object)
+    {
         $childs = $this->getChilds();
-        if($childs[0]) {
+        if ($childs[0]) {
             $translate = \Pimcore::getContainer()->get('translator');
 
             $value = $childs[0]->getLabeledValue($object);
-            if($value->value) {
+            if ($value->value) {
                 $value->value = $translate->trans($this->prefix . $value->value, []);
             }
 
             return $value;
         }
+
         return null;
     }
 
@@ -58,7 +60,4 @@ class TranslateValue extends AbstractOperator {
     {
         $this->prefix = $prefix;
     }
-
-
-
 }

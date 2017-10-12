@@ -15,9 +15,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig;
 
-interface ArrayTypeInterface {
-    
+interface ArrayTypeInterface
+{
 }

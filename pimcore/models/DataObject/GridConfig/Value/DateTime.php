@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\DataObject\GridConfig\Value;
 
-class DateTime extends Date {
-
-
+class DateTime extends Date
+{
 }
-

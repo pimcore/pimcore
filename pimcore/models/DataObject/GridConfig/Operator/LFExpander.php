@@ -15,26 +15,28 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig\Operator;
 
-class LFExpander extends AbstractOperator {
-
+class LFExpander extends AbstractOperator
+{
     private $prefix;
 
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         parent::__construct($config, $context);
 
         $this->prefix = $config->prefix;
     }
 
-    public function getLabeledValue($object) {
+    public function getLabeledValue($object)
+    {
         $childs = $this->getChilds();
-        if($childs[0]) {
+        if ($childs[0]) {
             $value = $childs[0]->getLabeledValue($object);
 
             return $value;
         }
+
         return null;
     }
 
@@ -57,8 +59,8 @@ class LFExpander extends AbstractOperator {
     /**
      * @return bool
      */
-    public function expandLocales() {
+    public function expandLocales()
+    {
         return true;
     }
-
 }
