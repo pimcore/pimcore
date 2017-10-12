@@ -15,10 +15,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig\Value;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Value;
 
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
-use Pimcore\Model\DataObject\GridConfig\AbstractConfigElement;
+use Pimcore\Model\DataObject\GridColumnConfig\AbstractConfigElement;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Object\AbstractObject;

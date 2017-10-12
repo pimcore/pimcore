@@ -15,19 +15,16 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig\Operator;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-class Trimmer extends AbstractOperator
+class CaseConverter extends AbstractOperator
 {
-    const LEFT = 1;
-    const RIGHT = 2;
-    const BOTH  = 3;
-    protected $trim;
+    protected $capitalization;
 
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
-        $this->trim = $config->trim;
+        $this->capitalization = $config->capitalization;
     }
 
     public function getLabeledValue($object)
@@ -53,12 +50,10 @@ class Trimmer extends AbstractOperator
 
             /** @var $childValue string */
             foreach ($childValues as $childValue) {
-                if ($this->trim == self::LEFT) {
-                    $childValue = ltrim($childValue);
-                } elseif ($this->trim == self::RIGHT) {
-                    $childValue = rtrim($childValue);
-                } elseif ($this->trim == self::BOTH) {
-                    $childValue = trim($childValue);
+                if ($this->capitalization == 1) {
+                    $childValue = strtoupper($childValue);
+                } elseif ($this->capitalization == -1) {
+                    $childValue = strtolower($childValue);
                 }
                 $valueArray[] = $childValue;
             }

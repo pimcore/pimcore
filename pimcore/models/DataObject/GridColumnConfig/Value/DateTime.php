@@ -15,8 +15,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Value;
 
-interface ArrayTypeInterface
+class DateTime extends Date
 {
 }

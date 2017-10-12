@@ -15,26 +15,25 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig\Value;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-class Href extends DefaultValue
+class Text extends AbstractOperator
 {
+    protected $textValue;
+
     public function __construct($config, $context = null)
     {
-        parent::__construct($config, $context);
+        $this->textValue = $config->textValue;
+        $this->label = $config->label;
+
+        $this->context = $context;
     }
 
     public function getLabeledValue($object)
     {
         $result = new \stdClass();
         $result->label = $this->label;
-
-        $getter = 'get' . ucfirst($this->attribute);
-        if (method_exists($object, $getter)) {
-            $result->value = $object->$getter();
-
-            return $result;
-        }
+        $result->value = $this->textValue;
 
         return $result;
     }

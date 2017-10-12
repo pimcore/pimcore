@@ -15,39 +15,25 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig\Operator;
+namespace Pimcore\Model\DataObject\GridColumnConfig;
 
-use Pimcore\Model\DataObject\GridConfig\AbstractConfigElement;
-use Pimcore\Model\DataObject\GridConfig\ConfigElementInterface;
-
-abstract class AbstractOperator extends AbstractConfigElement
+abstract class AbstractConfigElement implements ConfigElementInterface
 {
-    /**
-     * @var ConfigElementInterface
-     */
-    protected $childs;
+    protected $attribute;
+    protected $label;
+
+    protected $context;
 
     public function __construct($config, $context = null)
     {
+        $this->attribute = $config->attribute;
         $this->label = $config->label;
-        $this->childs = $config->childs;
 
         $this->context = $context;
     }
 
-    /**
-     * @return ConfigElementInterface
-     */
-    public function getChilds()
+    public function getLabel()
     {
-        return $this->childs;
-    }
-
-    /**
-     * @return bool
-     */
-    public function expandLocales()
-    {
-        return false;
+        return $this->label;
     }
 }

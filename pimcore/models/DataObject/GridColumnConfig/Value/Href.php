@@ -15,25 +15,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Value;
 
-abstract class AbstractConfigElement implements ConfigElementInterface
+class Href extends DefaultValue
 {
-    protected $attribute;
-    protected $label;
-
-    protected $context;
-
     public function __construct($config, $context = null)
     {
-        $this->attribute = $config->attribute;
-        $this->label = $config->label;
-
-        $this->context = $context;
+        parent::__construct($config, $context);
     }
 
-    public function getLabel()
+    public function getLabeledValue($object)
     {
-        return $this->label;
+        $result = new \stdClass();
+        $result->label = $this->label;
+
+        $getter = 'get' . ucfirst($this->attribute);
+        if (method_exists($object, $getter)) {
+            $result->value = $object->$getter();
+
+            return $result;
+        }
+
+        return $result;
     }
 }

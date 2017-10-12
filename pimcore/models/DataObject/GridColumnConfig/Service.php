@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig;
+namespace Pimcore\Model\DataObject\GridColumnConfig;
 
 class Service
 {
@@ -37,13 +37,13 @@ class Service
         if (!empty($jsonConfig)) {
             foreach ($jsonConfig as $configElement) {
                 if ($configElement->type == 'value') {
-                    $name = 'Pimcore\\Model\\DataObject\\GridConfig\\Value\\' . ucfirst($configElement->class);
+                    $name = 'Pimcore\\Model\\DataObject\\GridColumnConfig\\Value\\' . ucfirst($configElement->class);
 
                     if (class_exists($name)) {
                         $config[] = new $name($configElement, $context);
                     }
                 } elseif ($configElement->type == 'operator') {
-                    $name = 'Pimcore\\Model\\DataObject\\GridConfig\\Operator\\' . ucfirst($configElement->class);
+                    $name = 'Pimcore\\Model\\DataObject\\GridColumnConfig\\Operator\\' . ucfirst($configElement->class);
 
                     if (!empty($configElement->childs)) {
                         $configElement->childs = self::doBuildConfig($configElement->childs, [], $context);

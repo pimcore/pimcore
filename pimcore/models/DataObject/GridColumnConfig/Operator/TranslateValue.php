@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig\Operator;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
 class TranslateValue extends AbstractOperator
 {

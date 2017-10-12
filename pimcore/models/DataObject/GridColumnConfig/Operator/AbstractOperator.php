@@ -15,26 +15,39 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig\Operator;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-class Text extends AbstractOperator
+use Pimcore\Model\DataObject\GridColumnConfig\AbstractConfigElement;
+use Pimcore\Model\DataObject\GridColumnConfig\ConfigElementInterface;
+
+abstract class AbstractOperator extends AbstractConfigElement
 {
-    protected $textValue;
+    /**
+     * @var ConfigElementInterface
+     */
+    protected $childs;
 
     public function __construct($config, $context = null)
     {
-        $this->textValue = $config->textValue;
         $this->label = $config->label;
+        $this->childs = $config->childs;
 
         $this->context = $context;
     }
 
-    public function getLabeledValue($object)
+    /**
+     * @return ConfigElementInterface
+     */
+    public function getChilds()
     {
-        $result = new \stdClass();
-        $result->label = $this->label;
-        $result->value = $this->textValue;
+        return $this->childs;
+    }
 
-        return $result;
+    /**
+     * @return bool
+     */
+    public function expandLocales()
+    {
+        return false;
     }
 }

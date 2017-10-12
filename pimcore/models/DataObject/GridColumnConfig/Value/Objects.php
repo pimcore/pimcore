@@ -15,9 +15,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig\Value;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Value;
 
-use Pimcore\Model\DataObject\GridConfig\ArrayTypeInterface;
+use Pimcore\Model\DataObject\GridColumnConfig\ArrayTypeInterface;
 
 class Objects extends DefaultValue implements ArrayTypeInterface
 {

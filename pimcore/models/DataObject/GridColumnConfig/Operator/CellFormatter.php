@@ -15,26 +15,30 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\GridConfig\Operator;
+namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-class LFExpander extends AbstractOperator
+class CellFormatter extends AbstractOperator
 {
-    private $prefix;
+    private $maxLength;
 
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->prefix = $config->prefix;
+        $this->label = $config->cssClass;
+        $this->maxLength = $config->maxLength;
     }
 
     public function getLabeledValue($object)
     {
         $childs = $this->getChilds();
         if ($childs[0]) {
-            $value = $childs[0]->getLabeledValue($object);
+            $result = $childs[0]->getLabeledValue($object);
+            if ($this->getMaxLength() && isset($result->value) && strlen($result->value) > $this->getMaxLength()) {
+                $result->value = substr($result->value, 0, $this->getMaxLength() - 3) . '...';
+            }
 
-            return $value;
+            return $result;
         }
 
         return null;
@@ -43,24 +47,16 @@ class LFExpander extends AbstractOperator
     /**
      * @return mixed
      */
-    public function getPrefix()
+    public function getMaxLength()
     {
-        return $this->prefix;
+        return $this->maxLength;
     }
 
     /**
-     * @param mixed $prefix
+     * @param mixed $maxLength
      */
-    public function setPrefix($prefix)
+    public function setMaxLength($maxLength)
     {
-        $this->prefix = $prefix;
-    }
-
-    /**
-     * @return bool
-     */
-    public function expandLocales()
-    {
-        return true;
+        $this->maxLength = $maxLength;
     }
 }
