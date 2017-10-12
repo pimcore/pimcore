@@ -634,6 +634,7 @@ class TranslationController extends AdminController
         foreach ($elements as $chunk) {
             $jobs[] = [[
                 'url' => '/admin/translation/' . $type . '-export',
+                'method' => 'POST',
                 'params' => [
                     'id' => $exportId,
                     'source' => $source,
