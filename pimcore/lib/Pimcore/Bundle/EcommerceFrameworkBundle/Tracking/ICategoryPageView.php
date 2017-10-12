@@ -14,17 +14,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-interface ITrackingManager extends
-    ICategoryPageView,
-    IProductImpression,
-    IProductView,
-    ICartUpdate,
-    ICartProductActionAdd,
-    ICartProductActionRemove,
-    IProductActionAdd,
-    IProductActionRemove,
-    ICheckout,
-    ICheckoutStep,
-    ICheckoutComplete
+interface ICategoryPageView
 {
+    /**
+     * Tracks a category page view
+     *
+     * @param array|string $category One or more categories matching the page
+     * @param mixed $page            Any kind of page information you can use to track your page
+     */
+    public function trackCategoryPageView($category, $page = null);
 }
