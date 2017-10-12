@@ -15,12 +15,15 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\ElementInterface;
 
 /**
@@ -152,8 +155,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
                 continue;
             }
 
-            $item = $this->buildProductActionItem($product, $cartItem->getCount());
-            $items[] = $item;
+            $items[] = $this->buildCheckoutItemByCartItem($cartItem);
         }
 
         return $items;
@@ -187,13 +189,13 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     /**
      * Build a checkout item object by cart Item
      *
-     * @param AbstractCartItem $cartItem
+     * @param ICartItem $cartItem
      *
      * @return ProductAction
      */
-    public function buildCheckoutItemByCartItem(AbstractCartItem $cartItem)
+    public function buildCheckoutItemByCartItem(ICartItem $cartItem)
     {
-        /** @var IProduct $product */
+        /** @var IProduct|AbstractObject $product */
         $product = $cartItem->getProduct();
 
         $item = new ProductAction();
@@ -201,8 +203,8 @@ class TrackingItemBuilder implements ITrackingItemBuilder
             ->setId($product->getId())
             ->setName($this->normalizeName($product->getOSName()))
             ->setCategories($this->getProductCategories($product))
-            ->setPrice($cartItem->getTotalPrice() / $cartItem->getAmount())
-            ->setQuantity($cartItem->getAmount());
+            ->setPrice($cartItem->getTotalPrice() / $cartItem->getCount())
+            ->setQuantity($cartItem->getCount());
 
         return $item;
     }
