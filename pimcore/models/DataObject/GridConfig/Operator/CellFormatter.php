@@ -19,8 +19,6 @@ namespace Pimcore\Model\DataObject\GridConfig\Operator;
 
 class CellFormatter extends AbstractOperator
 {
-
-
     private $maxLength;
 
     public function __construct($config, $context = null)
@@ -37,10 +35,12 @@ class CellFormatter extends AbstractOperator
         if ($childs[0]) {
             $result = $childs[0]->getLabeledValue($object);
             if ($this->getMaxLength() && isset($result->value) && strlen($result->value) > $this->getMaxLength()) {
-                $result->value = substr($result->value, 0, $this->getMaxLength() - 3) . "...";
+                $result->value = substr($result->value, 0, $this->getMaxLength() - 3) . '...';
             }
+
             return $result;
         }
+
         return null;
     }
 
@@ -59,6 +59,4 @@ class CellFormatter extends AbstractOperator
     {
         $this->maxLength = $maxLength;
     }
-
-
 }

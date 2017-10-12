@@ -15,34 +15,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig\Operator;
 
-use Pimcore\Logger;
-use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\GridConfig\ArrayTypeInterface;
-use Pimcore\Model\Element\ElementInterface;
-
-class CaseConverter extends AbstractOperator {
-
+class CaseConverter extends AbstractOperator
+{
     protected $capitalization;
 
-
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         parent::__construct($config, $context);
         $this->capitalization = $config->capitalization;
     }
 
-    public function getLabeledValue($object) {
+    public function getLabeledValue($object)
+    {
         $result = new \stdClass();
         $result->label = $this->label;
-
 
         $childs = $this->getChilds();
 
         if (!$childs) {
             return $result;
-
         } else {
             $c = $childs[0];
 
@@ -52,14 +45,14 @@ class CaseConverter extends AbstractOperator {
             $isArrayType = $childResult->isArrayType;
             $childValues = $childResult->value;
             if ($childValues && !$isArrayType) {
-                $childValues = array($childValues);
+                $childValues = [$childValues];
             }
 
-            /** @var  $childValue string */
+            /** @var $childValue string */
             foreach ($childValues as $childValue) {
                 if ($this->capitalization == 1) {
                     $childValue = strtoupper($childValue);
-                } else if ($this->capitalization == -1) {
+                } elseif ($this->capitalization == -1) {
                     $childValue = strtolower($childValue);
                 }
                 $valueArray[] = $childValue;
@@ -72,9 +65,8 @@ class CaseConverter extends AbstractOperator {
                 $result->value = $valueArray[0];
             }
             $result->$valueArray;
-
-
         }
+
         return $result;
     }
 }

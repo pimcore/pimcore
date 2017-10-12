@@ -15,51 +15,47 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig;
 
-class Service {
-
+class Service
+{
     /**
      * @param $outputDataConfig
+     *
      * @return ConfigElementInterface[]
      */
-    public static function buildOutputDataConfig($outputDataConfig, $context = null) {
-        $config = array();
+    public static function buildOutputDataConfig($outputDataConfig, $context = null)
+    {
+        $config = [];
         $config = self::doBuildConfig($outputDataConfig, $config, $context);
+
         return $config;
     }
 
+    private static function doBuildConfig($jsonConfig, $config, $context = null)
+    {
+        if (!empty($jsonConfig)) {
+            foreach ($jsonConfig as $configElement) {
+                if ($configElement->type == 'value') {
+                    $name = 'Pimcore\\Model\\DataObject\\GridConfig\\Value\\' . ucfirst($configElement->class);
 
-    private static function doBuildConfig($jsonConfig, $config, $context = null) {
-
-        if(!empty($jsonConfig)) {
-            foreach($jsonConfig as $configElement) {
-                if($configElement->type == "value") {
-                    $name = "Pimcore\\Model\\DataObject\\GridConfig\\Value\\" . ucfirst($configElement->class);
-
-                    if(class_exists($name)) {
+                    if (class_exists($name)) {
                         $config[] = new $name($configElement, $context);
                     }
+                } elseif ($configElement->type == 'operator') {
+                    $name = 'Pimcore\\Model\\DataObject\\GridConfig\\Operator\\' . ucfirst($configElement->class);
 
-                } else if($configElement->type == "operator") {
-                    $name = "Pimcore\\Model\\DataObject\\GridConfig\\Operator\\" . ucfirst($configElement->class);
-
-                    if(!empty($configElement->childs)) {
-                        $configElement->childs = self::doBuildConfig($configElement->childs, array(), $context);
+                    if (!empty($configElement->childs)) {
+                        $configElement->childs = self::doBuildConfig($configElement->childs, [], $context);
                     }
 
-                    if(class_exists($name)) {
+                    if (class_exists($name)) {
                         $config[] = new $name($configElement, $context);
                     }
-
                 }
-
             }
         }
 
         return $config;
     }
-
-
 }

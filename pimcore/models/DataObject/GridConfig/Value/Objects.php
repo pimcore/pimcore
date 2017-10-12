@@ -17,32 +17,30 @@
 
 namespace Pimcore\Model\DataObject\GridConfig\Value;
 
-
 use Pimcore\Model\DataObject\GridConfig\ArrayTypeInterface;
 
-class Objects extends DefaultValue implements ArrayTypeInterface {
-
+class Objects extends DefaultValue implements ArrayTypeInterface
+{
     protected $format;
 
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         parent::__construct($config, $context);
-
     }
 
-    public function getLabeledValue($object) {
-
+    public function getLabeledValue($object)
+    {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->isArrayType = true;
 
-
-        $getter = "get" . ucfirst($this->attribute);
+        $getter = 'get' . ucfirst($this->attribute);
         if (method_exists($object, $getter)) {
             $result->value = $object->$getter();
+
             return $result;
         }
 
         return $result;
     }
 }
-

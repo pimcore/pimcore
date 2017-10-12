@@ -15,34 +15,32 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig\Operator;
 
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\GridConfig\ArrayTypeInterface;
 use Pimcore\Model\Element\ElementInterface;
 
-class ObjectFieldGetter extends AbstractOperator {
-
+class ObjectFieldGetter extends AbstractOperator
+{
     protected $attribute;
 
     protected $forwardAttribute;
 
-
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         parent::__construct($config, $context);
         $this->attribute = $config->attribute;
         $this->forwardAttribute = $config->forwardAttribute;
     }
 
-    public function getLabeledValue($object) {
+    public function getLabeledValue($object)
+    {
         $result = new \stdClass();
         $result->label = $this->label;
 
         $childs = $this->getChilds();
 
-        $getter = "get" . ucfirst($this->attribute);
+        $getter = 'get' . ucfirst($this->attribute);
 
         if (!$childs) {
             if (method_exists($object, $getter)) {
@@ -50,15 +48,15 @@ class ObjectFieldGetter extends AbstractOperator {
                 if ($result->value instanceof ElementInterface) {
                     $result->value = $result->value->getFullPath();
                 }
+
                 return $result;
             }
         } else {
-
             $c = $childs[0];
             $forwardObject = $object;
 
             if ($this->forwardAttribute) {
-                $forwardGetter = "get" . ucfirst($this->forwardAttribute);
+                $forwardGetter = 'get' . ucfirst($this->forwardAttribute);
                 if (method_exists($object, $forwardGetter)) {
                     $forwardObject = $object->$forwardGetter();
                     if (!$forwardObject) {
@@ -75,7 +73,7 @@ class ObjectFieldGetter extends AbstractOperator {
 
             if ($valueContainer->isArrayType) {
                 if (is_array($value)) {
-                    $newValues = array();
+                    $newValues = [];
                     foreach ($value as $o) {
                         if ($o instanceof Concrete) {
                             if (method_exists($o, $getter)) {
@@ -83,21 +81,19 @@ class ObjectFieldGetter extends AbstractOperator {
                                 $newValues[] = $targetValue;
                             }
                         }
-
                     }
                     $result->value = $newValues;
                     $result->isArrayType = true;
                 }
-
-            } else if ($value instanceof Concrete) {
+            } elseif ($value instanceof Concrete) {
                 $o = $value; // Concrete::getById($value->getId());
                 if (method_exists($o, $getter)) {
                     $value = $o->$getter();
                     $result->value = $value;
                 }
             }
-
         }
+
         return $result;
     }
 }

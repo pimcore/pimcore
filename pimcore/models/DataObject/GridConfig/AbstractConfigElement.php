@@ -17,22 +17,23 @@
 
 namespace Pimcore\Model\DataObject\GridConfig;
 
-abstract class AbstractConfigElement implements ConfigElementInterface {
-
+abstract class AbstractConfigElement implements ConfigElementInterface
+{
     protected $attribute;
     protected $label;
 
     protected $context;
 
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         $this->attribute = $config->attribute;
         $this->label = $config->label;
 
         $this->context = $context;
     }
 
-    public function getLabel() {
+    public function getLabel()
+    {
         return $this->label;
     }
-
 }

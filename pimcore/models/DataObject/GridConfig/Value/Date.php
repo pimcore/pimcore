@@ -19,24 +19,24 @@ namespace Pimcore\Model\DataObject\GridConfig\Value;
 
 use Carbon\Carbon;
 
-class Date extends DefaultValue {
-
+class Date extends DefaultValue
+{
     protected $format;
 
-    public function __construct($config, $context = null) {
+    public function __construct($config, $context = null)
+    {
         parent::__construct($config, $context);
 
         $this->format = ($config->format ? $config->format : null);
     }
 
-    public function getLabeledValue($object) {
-
+    public function getLabeledValue($object)
+    {
         $labeledValue = parent::getLabeledValue($object);
         $theValue = $labeledValue->value;
 
-        if($this->format && $theValue) {
+        if ($this->format && $theValue) {
             $timestamp = null;
-
 
             if ($theValue instanceof Carbon) {
                 $timestamp = $theValue->getTimestamp();
@@ -45,8 +45,7 @@ class Date extends DefaultValue {
 
                 $labeledValue->value = $formattedValue;
             }
-        } else if ($theValue instanceof Carbon) {
-
+        } elseif ($theValue instanceof Carbon) {
             if ($this instanceof DateTime) {
                 $theValue = $theValue->toDateTimeString();
             } else {
@@ -58,4 +57,3 @@ class Date extends DefaultValue {
         return $labeledValue;
     }
 }
-

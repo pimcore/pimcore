@@ -15,75 +15,71 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\DataObject\GridConfig\Value;
 
-use Elements\OutputDataConfigToolkit\ConfigElement as ConfigElement;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
 use Pimcore\Model\DataObject\GridConfig\AbstractConfigElement;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\Object\AbstractObject;
 
-class DefaultValue extends AbstractConfigElement {
-
-    public function getLabeledValue($object) {
-
-        $attributeParts = explode("~", $this->attribute);
+class DefaultValue extends AbstractConfigElement
+{
+    public function getLabeledValue($object)
+    {
+        $attributeParts = explode('~', $this->attribute);
         $label = $this->label;
 
-        $getter = "get" . ucfirst($this->attribute);
+        $getter = 'get' . ucfirst($this->attribute);
 
-        if (substr($this->attribute, 0, 1) == "~") {
+        if (substr($this->attribute, 0, 1) == '~') {
             // key value, ignore for now
-        } else if(count($attributeParts) > 1) {
+        } elseif (count($attributeParts) > 1) {
             $brickType = $attributeParts[0];
             $brickKey = $attributeParts[1];
 
-            $getter = "get" . Service::getFieldForBrickType($object->getClass(), $brickType);
-            $brickTypeGetter = "get" . ucfirst($brickType);
-            $brickGetter = "get" . ucfirst($brickKey);
+            $getter = 'get' . Service::getFieldForBrickType($object->getClass(), $brickType);
+            $brickTypeGetter = 'get' . ucfirst($brickType);
+            $brickGetter = 'get' . ucfirst($brickKey);
         }
-        if(method_exists($object, $getter)) {
+        if (method_exists($object, $getter)) {
             $value = $object->$getter();
 
-            if($object instanceof AbstractObject) {
+            if ($object instanceof AbstractObject) {
                 $def = $object->getClass()->getFieldDefinition($this->attribute);
-                if(!$def){
+                if (!$def) {
                     /**
                      * @var Localizedfields $lf
                      */
-                    $lf = $object->getClass()->getFieldDefinition("localizedfields");
-                    if($lf) {
+                    $lf = $object->getClass()->getFieldDefinition('localizedfields');
+                    if ($lf) {
                         $def = $lf->getFieldDefinition($this->attribute);
                     }
                 }
 
-                if(empty($label)) {
-                    if($def) {
+                if (empty($label)) {
+                    if ($def) {
                         $label =  $def->getTitle();
                     }
                 }
 
-                if(!empty($value) && !empty($brickGetter)) {
+                if (!empty($value) && !empty($brickGetter)) {
                     $def = Definition::getByKey($brickType);
                     $def = $def->getFieldDefinition($brickKey);
-                    if(empty($label) && !empty($value)) {
-                        if($def) {
+                    if (empty($label) && !empty($value)) {
+                        if ($def) {
                             $label = $def->getTitle();
                         }
                     }
 
-
-                    if(is_object($value) && method_exists($value, $brickTypeGetter)) {
+                    if (is_object($value) && method_exists($value, $brickTypeGetter)) {
                         $value = $value->$brickTypeGetter();
 
-                        if(is_object($value) && method_exists($value, $brickGetter)) {
+                        if (is_object($value) && method_exists($value, $brickGetter)) {
                             $value = $value->$brickGetter();
                         } else {
                             $value = null;
                         }
-
                     } else {
                         $value = null;
                     }
@@ -94,15 +90,15 @@ class DefaultValue extends AbstractConfigElement {
             $result->value = $value;
             $result->label = $label;
 
-            if(empty($value) || (is_object($value) && method_exists($value, "isEmpty") && $value->isEmpty())) {
+            if (empty($value) || (is_object($value) && method_exists($value, 'isEmpty') && $value->isEmpty())) {
                 $result->empty = true;
             } else {
                 $result->empty = false;
             }
 
             $result->def = $def;
-            return $result;
 
+            return $result;
         }
 
         return null;
