@@ -87,6 +87,26 @@ class Config
         return $this->config->sites->$configKey;
     }
 
+    public function getConfiguredSites(): array
+    {
+        $sites = $this->config->get('sites');
+        if ($sites && $sites instanceof ConfigObject) {
+            return array_keys($sites->toArray());
+        }
+
+        return [];
+    }
+
+    public function getPiwikUrlScheme(): string
+    {
+        $ssl = false;
+        if (null !== $this->config->use_ssl) {
+            $ssl = (bool)$this->config->use_ssl;
+        }
+
+        return $ssl ? 'https' : 'http';
+    }
+
     /**
      * @return string|null
      */

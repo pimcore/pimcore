@@ -17,13 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Tracking\Piwik;
 
+use Pimcore\Analytics\Tracking\Piwik\Api\ApiClient;
 use Pimcore\Analytics\Tracking\Piwik\Config\Config;
 use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Tracking\Piwik\Dto\WidgetConfig;
 use Pimcore\Analytics\Tracking\Piwik\Dto\WidgetReference;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Cache\Core\CoreHandler;
-use Pimcore\Http\ClientFactory;
 use Psr\Log\LoggerInterface;
 
 class WidgetBroker
@@ -34,14 +34,9 @@ class WidgetBroker
     private $configProvider;
 
     /**
-     * @var array
+     * @var ApiClient
      */
-    private $widgets = [];
-
-    /**
-     * @var ClientFactory
-     */
-    private $clientFactory;
+    private $apiClient;
 
     /**
      * @var CoreHandler
@@ -59,20 +54,25 @@ class WidgetBroker
     private $logger;
 
     /**
+     * @var array
+     */
+    private $widgets = [];
+
+    /**
      * @var string
      */
     private $cacheInterval = 'PT3H';
 
     public function __construct(
         ConfigProvider $configProvider,
-        ClientFactory $clientFactory,
+        ApiClient $apiClient,
         CoreHandler $cache,
         UserLoader $userLoader,
         LoggerInterface $logger
     )
     {
         $this->configProvider = $configProvider;
-        $this->clientFactory  = $clientFactory;
+        $this->apiClient      = $apiClient;
         $this->cache          = $cache;
         $this->userLoader     = $userLoader;
         $this->logger         = $logger;
@@ -209,8 +209,6 @@ class WidgetBroker
 
     private function loadFromApi(Config $config, int $siteId, string $locale = null): array
     {
-        $client = $this->clientFactory->createClient();
-
         $params = [
             'module'     => 'API',
             'method'     => 'API.getWidgetMetadata',
@@ -223,26 +221,7 @@ class WidgetBroker
             $params['language'] = $locale;
         }
 
-        $response = $client->get($this->getBaseUrl($config), [
-            'query' => $params
-        ]);
-
-        $errorPrefix = 'Failed to load Piwik widgets: ';
-        if (200 !== $response->getStatusCode()) {
-            throw new \RuntimeException($errorPrefix . $response->getReasonPhrase());
-        }
-
-        $json = json_decode($response->getBody()->getContents(), true);
-
-        if (!is_array($json)) {
-            throw new \RuntimeException($errorPrefix . 'unexpected format');
-        }
-
-        if (isset($json['result']) && 'error' === $json['result']) {
-            throw new \RuntimeException($errorPrefix . $json['message']);
-        }
-
-        return $json;
+        return $this->apiClient->get($params);
     }
 
     private function generateWidgetUrl(Config $config, array $widget, int $siteId, string $locale = null): string
@@ -254,8 +233,8 @@ class WidgetBroker
             'period'      => 'day',
             'date'        => 'yesterday',
             'disableLink' => 1,
-            'idSite'     => $siteId,
-            'token_auth' => $config->getReportToken()
+            'idSite'      => $siteId,
+            'token_auth'  => $config->getReportToken()
         ];
 
         $params['moduleToWidgetize'] = $widget['module'];
@@ -274,16 +253,7 @@ class WidgetBroker
             $params['language'] = $locale;
         }
 
-        $url = $this->getBaseUrl($config);
-        $url = $url . '?' . http_build_query($params);
-
-        return $url;
-    }
-
-    private function getBaseUrl(Config $config)
-    {
-        $scheme = 'http'; // TODO add a config for HTTP/HTTPS
-        $url    = sprintf('%s://%s', $scheme, $config->getPiwikUrl());
+        $url = $config->getPiwikUrl() . '?' . http_build_query($params);
 
         return $url;
     }

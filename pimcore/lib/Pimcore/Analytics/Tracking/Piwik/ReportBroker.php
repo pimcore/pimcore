@@ -137,6 +137,7 @@ class ReportBroker implements EventSubscriberInterface
     {
         $config = $this->configProvider->getConfig();
 
+        /** @var ReportConfig[] $reports */
         $reports = [];
         if (!$config->isConfigured()) {
             return $reports;
@@ -147,12 +148,6 @@ class ReportBroker implements EventSubscriberInterface
             return $reports;
         }
 
-        $reports[] = new ReportConfig(
-            'all_sites',
-            $this->translator->trans('piwik_all_websites_dashboard', [], 'admin'),
-            $this->generateAllWebsitesDashboardUrl($config)
-        );
-
         $profiles = [
             'default' => [
                 'title' => $this->translator->trans('main_site', [], 'admin')
@@ -161,6 +156,7 @@ class ReportBroker implements EventSubscriberInterface
 
         $profiles = $this->addSiteProfiles($profiles);
 
+        $firstConfigKey = null;
         foreach ($profiles as $configKey => $profile) {
             if (!$config->isSiteConfigured($configKey)) {
                 continue;
@@ -180,27 +176,59 @@ class ReportBroker implements EventSubscriberInterface
             $url = $this->generateSiteDashboardUrl($config, $configKey);
 
             $reports[] = new ReportConfig($configKey, $title, $url);
+
+            if (null === $firstConfigKey) {
+                $firstConfigKey = $configKey;
+            }
+        }
+
+        // add an "all websites report" if any reports were configured
+        if (null !== $firstConfigKey) {
+            array_unshift($reports, new ReportConfig(
+                'all_sites',
+                $this->translator->trans('piwik_all_websites_dashboard', [], 'admin'),
+                $this->generateAllWebsitesDashboardUrl($config, $firstConfigKey)
+            ));
         }
 
         return $reports;
     }
 
-    private function generateAllWebsitesDashboardUrl(Config $config): string
+    private function generateAllWebsitesDashboardUrl(Config $config, string $configKey): string
     {
-        return sprintf(
-            '//%s/index.php?module=Widgetize&action=iframe&moduleToWidgetize=MultiSites&actionToWidgetize=standalone&period=week&date=yesterday&idSite=1&token_auth=%s',
-            $config->getPiwikUrl(),
-            $config->getReportToken()
-        );
+        $params = [
+            'moduleToWidgetize' => 'MultiSites',
+            'actionToWidgetize' => 'standalone',
+        ];
+
+        return $this->generateDashboardUrl($config, $configKey, $params);
     }
 
     private function generateSiteDashboardUrl(Config $config, string $configKey): string
     {
+        $params = [
+            'moduleToWidgetize' => 'Dashboard',
+            'actionToWidgetize' => 'index',
+        ];
+
+        return $this->generateDashboardUrl($config, $configKey, $params);
+    }
+
+    private function generateDashboardUrl(Config $config, string $configKey, array $parameters)
+    {
+        $parameters = array_merge([
+            'module'            => 'Widgetize',
+            'action'            => 'iframe',
+            'period'            => 'week',
+            'date'              => 'yesterday',
+            'idSite'            => $config->getSiteId($configKey),
+            'token_auth'        => $config->getReportToken()
+        ], $parameters);
+
         return sprintf(
-            '//%s/index.php?module=Widgetize&action=iframe&moduleToWidgetize=Dashboard&actionToWidgetize=index&period=week&date=yesterday&idSite=%s&token_auth=%s',
-            $config->getPiwikUrl(),
-            $config->getSiteId($configKey),
-            $config->getReportToken()
+            '//%s/index.php?%s',
+            rtrim($config->getPiwikUrl(), '/'),
+            http_build_query($parameters)
         );
     }
 

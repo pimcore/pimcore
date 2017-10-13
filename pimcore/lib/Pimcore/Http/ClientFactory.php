@@ -21,7 +21,7 @@ use Pimcore\Config;
 
 class ClientFactory
 {
-    public function createClient()
+    public function createClient(array $config = [])
     {
         $systemConfig = Config::getSystemConfig();
 
@@ -40,6 +40,8 @@ class ClientFactory
 
             $guzzleConfig[RequestOptions::PROXY] = $proxyUri;
         }
+
+        $guzzleConfig = array_merge($guzzleConfig, $config);
 
         $client = new Client($guzzleConfig);
 
