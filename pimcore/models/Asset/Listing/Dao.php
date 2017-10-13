@@ -111,6 +111,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $select = $this->getQuery([new Expression('COUNT(*)')]);
         $select->reset(QueryBuilder::LIMIT_COUNT);
         $select->reset(QueryBuilder::LIMIT_OFFSET);
+        $select->reset(QueryBuilder::ORDER);
+
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;
