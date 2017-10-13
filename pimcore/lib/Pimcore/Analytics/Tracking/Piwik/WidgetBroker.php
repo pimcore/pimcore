@@ -103,42 +103,46 @@ class WidgetBroker
     }
 
     /**
-     * @param int $siteId
+     * @param string $configKey
      * @param string|null $locale
      *
-     * @return WidgetReference[]
+     * @return array
      */
-    public function getWidgetReferences(int $siteId, string $locale = null): array
+    public function getWidgetReferences(string $configKey, string $locale = null): array
     {
         $references = [];
-        foreach ($this->getWidgetData($siteId, $locale) as $widgetId => $widget) {
+        foreach ($this->getWidgetData($configKey, $locale) as $widgetId => $widget) {
             $references[] = new WidgetReference($widgetId, $this->generateTitle($widget));
         }
 
         return $references;
     }
 
-    public function getWidgetConfig(string $widgetId, int $siteId, string $locale = null): WidgetConfig
+    public function getWidgetConfig(string $widgetId, string $configKey, string $locale = null): WidgetConfig
     {
         $config  = $this->loadConfig();
         $locale  = $this->resolveLocale($locale);
-        $widgets = $this->getWidgetData($siteId, $locale);
+        $widgets = $this->getWidgetData($configKey, $locale);
 
         if (!isset($widgets[$widgetId])) {
             throw new \InvalidArgumentException(sprintf('Widget "%s" was not found', $widgetId));
         }
 
         $widget = $widgets[$widgetId];
-        $url    = $this->generateWidgetUrl($config, $widget, $siteId, $locale);
+        $url    = $this->generateWidgetUrl($config, $configKey, $widget, $locale);
 
         return new WidgetConfig($widgetId, $widget['name'], $this->generateTitle($widget), $url, $widget);
     }
 
-    public function getWidgetData(int $siteId, string $locale = null): array
+    public function getWidgetData(string $configKey, string $locale = null): array
     {
-        $config   = $this->loadConfig();
+        $config = $this->loadConfig();
+        if (!$config->isSiteConfigured($configKey)) {
+            throw new \InvalidArgumentException(sprintf('Site "%s" is not configured', $configKey));
+        }
+
         $locale   = $this->resolveLocale($locale);
-        $cacheKey = $this->generateCacheKey($siteId, $locale);
+        $cacheKey = $this->generateCacheKey($config->getSiteId($configKey), $locale);
 
         if (isset($this->widgets[$cacheKey])) {
             return $this->widgets[$cacheKey];
@@ -152,7 +156,7 @@ class WidgetBroker
             }
         }
 
-        $widgets = $this->loadWidgets($config, $siteId, $locale);
+        $widgets = $this->loadWidgets($config, $configKey, $locale);
 
         $this->widgets[$cacheKey] = $widgets;
 
@@ -204,10 +208,10 @@ class WidgetBroker
         return implode('_', $parts);
     }
 
-    private function loadWidgets(Config $config, int $siteId, string $locale = null)
+    private function loadWidgets(Config $config, string $configKey, string $locale = null)
     {
         try {
-            $data = $this->loadFromApi($config, $siteId, $locale);
+            $data = $this->loadFromApi($config, $configKey, $locale);
         } catch (\Throwable $e) {
             $this->logger->error($e);
 
@@ -289,13 +293,13 @@ class WidgetBroker
         return $widgets;
     }
 
-    private function loadFromApi(Config $config, int $siteId, string $locale = null): array
+    private function loadFromApi(Config $config, string $configKey, string $locale = null): array
     {
         $params = [
             'module'     => 'API',
             'method'     => 'API.getWidgetMetadata',
             'format'     => 'JSON',
-            'idSite'     => $siteId,
+            'idSite'     => $config->getSiteId($configKey),
             'token_auth' => $config->getReportToken()
         ];
 
@@ -306,7 +310,7 @@ class WidgetBroker
         return $this->apiClient->get($params);
     }
 
-    private function generateWidgetUrl(Config $config, array $widget, int $siteId, string $locale = null): string
+    private function generateWidgetUrl(Config $config, string $configKey, array $widget, string $locale = null): string
     {
         $params = [
             'module'      => 'Widgetize',
@@ -315,7 +319,7 @@ class WidgetBroker
             'period'      => 'day',
             'date'        => 'yesterday',
             'disableLink' => 1,
-            'idSite'      => $siteId,
+            'idSite'      => $config->getSiteId($configKey),
             'token_auth'  => $config->getReportToken()
         ];
 

@@ -23,7 +23,7 @@ use Pimcore\Analytics\Tracking\Code\CodeContainer;
 use Pimcore\Analytics\Tracking\Piwik\Config\Config;
 use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
-use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigResolver;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigProvider;
 use Pimcore\Event\Tracking\Piwik\TrackingDataEvent;
 use Pimcore\Event\Tracking\PiwikEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -74,13 +74,13 @@ class Tracker extends AbstractTracker
     ];
 
     public function __construct(
-        SiteConfigResolver $siteConfigResolver,
+        SiteConfigProvider $siteConfigProvider,
         ConfigProvider $configProvider,
         EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine
     )
     {
-        parent::__construct($siteConfigResolver);
+        parent::__construct($siteConfigProvider);
 
         $this->configProvider   = $configProvider;
         $this->eventDispatcher  = $eventDispatcher;

@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Analytics\Tracking\SiteConfig;
 
 use Pimcore\Model\Site;
+use Symfony\Component\Translation\TranslatorInterface;
 
 final class SiteConfig
 {
@@ -62,5 +63,36 @@ final class SiteConfig
     public function getSite()
     {
         return $this->site;
+    }
+
+    public function getTitle(TranslatorInterface $translator): string
+    {
+        $site = $this->site;
+
+        $name = null;
+
+        if (null === $site) {
+            return $translator->trans('main_site', [], 'admin');
+        }
+
+        if ($site->getMainDomain()) {
+            $name = $site->getMainDomain();
+        } elseif ($site->getRootDocument()) {
+            $name = $site->getRootDocument()->getKey();
+        }
+
+        $siteSuffix = sprintf(
+            '%s: %d',
+            $translator->trans('site', [], 'admin'),
+            $site->getId()
+        );
+
+        if (empty($name)) {
+            $name = $siteSuffix;
+        } else {
+            $name = sprintf('%s (%s)', $name, $siteSuffix);
+        }
+
+        return $name;
     }
 }

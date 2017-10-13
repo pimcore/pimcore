@@ -18,9 +18,10 @@ declare(strict_types=1);
 namespace Pimcore\Analytics\Tracking\SiteConfig;
 
 use Pimcore\Http\Request\Resolver\SiteResolver;
+use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
 
-class SiteConfigResolver
+class SiteConfigProvider
 {
     /**
      * @var SiteResolver
@@ -41,5 +42,29 @@ class SiteConfigResolver
         }
 
         return SiteConfig::forMainDomain();
+    }
+
+    /**
+     * @param bool $includeMainDomain
+     *
+     * @return SiteConfig[]
+     */
+    public function getSiteConfigs(bool $includeMainDomain = true): array
+    {
+        /** @var Site\Listing|Site\Listing\Dao $sites */
+        $sites = new Site\Listing();
+
+        $configs = [];
+
+        if ($includeMainDomain) {
+            $configs[] = SiteConfig::forMainDomain();
+        }
+
+        foreach ($sites->load() as $site) {
+            $configs[] = SiteConfig::forSite($site);
+
+        }
+
+        return $configs;
     }
 }

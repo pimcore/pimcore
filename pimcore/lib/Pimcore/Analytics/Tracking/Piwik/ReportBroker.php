@@ -21,6 +21,7 @@ use Pimcore\Analytics\Tracking\Piwik\Config\Config;
 use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Tracking\Piwik\Dto\ReportConfig;
 use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigProvider;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Tracking\Piwik\ReportConfigEvent;
@@ -42,6 +43,11 @@ class ReportBroker implements EventSubscriberInterface
     private $configProvider;
 
     /**
+     * @var SiteConfigProvider
+     */
+    private $siteConfigProvider;
+
+    /**
      * @var TranslatorInterface
      */
     private $translator;
@@ -58,13 +64,15 @@ class ReportBroker implements EventSubscriberInterface
 
     public function __construct(
         ConfigProvider $configProvider,
+        SiteConfigProvider $siteConfigProvider,
         TranslatorInterface $translator,
         EventDispatcherInterface $eventDispatcher
     )
     {
-        $this->configProvider  = $configProvider;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->translator      = $translator;
+        $this->configProvider     = $configProvider;
+        $this->siteConfigProvider = $siteConfigProvider;
+        $this->eventDispatcher    = $eventDispatcher;
+        $this->translator         = $translator;
     }
 
     /**
@@ -148,34 +156,21 @@ class ReportBroker implements EventSubscriberInterface
             return $reports;
         }
 
-        $profiles = [
-            'default' => [
-                'title' => $this->translator->trans('main_site', [], 'admin')
-            ]
-        ];
-
-        $profiles = $this->addSiteProfiles($profiles);
-
+        $siteConfigs    = $this->siteConfigProvider->getSiteConfigs();
         $firstConfigKey = null;
-        foreach ($profiles as $configKey => $profile) {
+
+        foreach ($siteConfigs as $siteConfig) {
+            $configKey = $siteConfig->getConfigKey();
+
             if (!$config->isSiteConfigured($configKey)) {
                 continue;
             }
 
-            $title = null;
-            if ($profile['title']) {
-                $title = $profile['title'];
-            } elseif ($profile['siteConfig']) {
-                $title = $this->getSiteTitle($profile['siteConfig']);
-            }
-
-            if (null === $title) {
-                continue;
-            }
-
-            $url = $this->generateSiteDashboardUrl($config, $configKey);
-
-            $reports[] = new ReportConfig($configKey, $title, $url);
+            $reports[] = new ReportConfig(
+                $configKey,
+                $siteConfig->getTitle($this->translator),
+                $this->generateSiteDashboardUrl($config, $configKey)
+            );
 
             if (null === $firstConfigKey) {
                 $firstConfigKey = $configKey;
@@ -230,47 +225,5 @@ class ReportBroker implements EventSubscriberInterface
             rtrim($config->getPiwikUrl(), '/'),
             http_build_query($parameters)
         );
-    }
-
-    private function addSiteProfiles(array $profiles): array
-    {
-        /** @var Site\Listing|Site\Listing\Dao $sites */
-        $sites = new Site\Listing();
-
-        foreach ($sites->load() as $site) {
-            $siteConfig = SiteConfig::forSite($site);
-
-            $profiles[$siteConfig->getConfigKey()] = [
-                'siteConfig' => $siteConfig
-            ];
-        }
-
-        return $profiles;
-    }
-
-    private function getSiteTitle(SiteConfig $siteConfig): string
-    {
-        $site = $siteConfig->getSite();
-
-        $name = null;
-        if ($site->getMainDomain()) {
-            $name = $site->getMainDomain();
-        } elseif ($site->getRootDocument()) {
-            $name = $site->getRootDocument()->getKey();
-        }
-
-        $siteSuffix = sprintf(
-            '%s: %d',
-            $this->translator->trans('site', [], 'admin'),
-            $site->getId()
-        );
-
-        if (empty($name)) {
-            $name = $siteSuffix;
-        } else {
-            $name = sprintf('%s (%s)', $name, $siteSuffix);
-        }
-
-        return $name;
     }
 }

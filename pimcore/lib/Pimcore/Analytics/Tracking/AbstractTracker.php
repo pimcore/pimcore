@@ -19,18 +19,18 @@ namespace Pimcore\Analytics\Tracking;
 
 use Pimcore\Analytics\Tracking\Code\CodeContainer;
 use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
-use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigResolver;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigProvider;
 
 abstract class AbstractTracker implements TrackerInterface
 {
     /**
-     * @var SiteConfigResolver
+     * @var SiteConfigProvider
      */
-    private $siteConfigResolver;
+    private $siteConfigProvider;
 
-    public function __construct(SiteConfigResolver $siteConfigResolver)
+    public function __construct(SiteConfigProvider $siteConfigProvider)
     {
-        $this->siteConfigResolver = $siteConfigResolver;
+        $this->siteConfigProvider = $siteConfigProvider;
     }
 
     /**
@@ -39,7 +39,7 @@ abstract class AbstractTracker implements TrackerInterface
     public function getCode(SiteConfig $siteConfig = null)
     {
         if (null === $siteConfig) {
-            $siteConfig = $this->siteConfigResolver->getSiteConfig();
+            $siteConfig = $this->siteConfigProvider->getSiteConfig();
         }
 
         return $this->generateCode($siteConfig);

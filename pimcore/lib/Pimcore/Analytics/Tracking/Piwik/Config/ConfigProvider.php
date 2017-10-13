@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Tracking\Piwik\Config;
 
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigProvider;
 use Pimcore\Config\Config as ConfigObject;
 
 class ConfigProvider
