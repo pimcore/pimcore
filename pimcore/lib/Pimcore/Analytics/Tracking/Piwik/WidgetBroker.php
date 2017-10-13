@@ -25,6 +25,7 @@ use Pimcore\Analytics\Tracking\Piwik\Dto\WidgetReference;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Cache\Core\CoreHandler;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WidgetBroker
 {
@@ -56,19 +57,20 @@ class WidgetBroker
     /**
      * @var array
      */
-    private $widgets = [];
+    private $options;
 
     /**
-     * @var string
+     * @var array
      */
-    private $cacheInterval = 'PT3H';
+    private $widgets = [];
 
     public function __construct(
         ConfigProvider $configProvider,
         ApiClient $apiClient,
         CoreHandler $cache,
         UserLoader $userLoader,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        array $options = []
     )
     {
         $this->configProvider = $configProvider;
@@ -76,22 +78,41 @@ class WidgetBroker
         $this->cache          = $cache;
         $this->userLoader     = $userLoader;
         $this->logger         = $logger;
+
+        $optionsResolver = new OptionsResolver();
+        $this->configureOptions($optionsResolver);
+
+        $this->options = $optionsResolver->resolve($options);
     }
 
-    public function getWidgets(int $siteId, string $locale = null): array
+    protected function configureOptions(OptionsResolver $resolver)
     {
-        $widgets = $this->getWidgetData($siteId, $locale);
+        $resolver->setDefaults([
+            'cache'                 => true,
+            'cache_interval'        => 'PT3H',
+            'exclude_categories'    => [
+                'About Piwik'
+            ],
+            'exclude_subcategories' => [],
+        ]);
 
-        return $widgets['widgets'] ?? [];
+        $resolver->setAllowedTypes('exclude_categories', 'array');
+        $resolver->setAllowedTypes('exclude_subcategories', 'array');
+        $resolver->setAllowedTypes('cache', 'bool');
+        $resolver->setAllowedTypes('cache_interval', ['string', 'null']);
     }
 
+    /**
+     * @param int $siteId
+     * @param string|null $locale
+     *
+     * @return WidgetReference[]
+     */
     public function getWidgetReferences(int $siteId, string $locale = null): array
     {
-        $widgets = $this->getWidgetData($siteId, $locale);
-
         $references = [];
-        foreach ($widgets['order'] as $widgetId) {
-            $references[] = new WidgetReference($widgetId, $this->generateTitle($widgets['widgets'][$widgetId]));
+        foreach ($this->getWidgetData($siteId, $locale) as $widgetId => $widget) {
+            $references[] = new WidgetReference($widgetId, $this->generateTitle($widget));
         }
 
         return $references;
@@ -101,7 +122,7 @@ class WidgetBroker
     {
         $config  = $this->loadConfig();
         $locale  = $this->resolveLocale($locale);
-        $widgets = $this->getWidgets($siteId, $locale);
+        $widgets = $this->getWidgetData($siteId, $locale);
 
         if (!isset($widgets[$widgetId])) {
             throw new \InvalidArgumentException(sprintf('Widget "%s" was not found', $widgetId));
@@ -113,7 +134,7 @@ class WidgetBroker
         return new WidgetConfig($widgetId, $widget['name'], $this->generateTitle($widget), $url, $widget);
     }
 
-    private function getWidgetData(int $siteId, string $locale = null)
+    public function getWidgetData(int $siteId, string $locale = null): array
     {
         $config   = $this->loadConfig();
         $locale   = $this->resolveLocale($locale);
@@ -123,18 +144,29 @@ class WidgetBroker
             return $this->widgets[$cacheKey];
         }
 
-        if ($widgets = $this->cache->load($cacheKey)) {
-            $this->widgets[$cacheKey] = $widgets;
+        if ($this->options['cache']) {
+            if ($widgets = $this->cache->load($cacheKey)) {
+                $this->widgets[$cacheKey] = $widgets;
 
-            return $widgets;
+                return $widgets;
+            }
         }
 
         $widgets = $this->loadWidgets($config, $siteId, $locale);
 
         $this->widgets[$cacheKey] = $widgets;
 
-        // cache for 3h
-        $this->cache->save($cacheKey, $widgets, ['piwik.widgets'], new \DateInterval($this->cacheInterval), 0, true);
+        if ($this->options['cache']) {
+            // cache for 3h
+            $this->cache->save(
+                $cacheKey,
+                $widgets,
+                ['piwik.widgets'],
+                new \DateInterval($this->options['cache_interval']),
+                0,
+                true
+            );
+        }
 
         return $widgets;
     }
@@ -174,33 +206,83 @@ class WidgetBroker
 
     private function loadWidgets(Config $config, int $siteId, string $locale = null)
     {
-        $widgets = [
-            'widgets' => [],
-            'order'   => [],
-        ];
-
         try {
             $data = $this->loadFromApi($config, $siteId, $locale);
         } catch (\Throwable $e) {
             $this->logger->error($e);
 
-            return $widgets;
+            return [];
         }
 
-        $order = [];
-        foreach ($data as $widget) {
-            $widgets['widgets'][$widget['uniqueId']] = $widget;
+        $categorizedTree = $this->categorizeWidgets($data);
+        $widgets         = $this->flattenCategorizedWidgetTree($categorizedTree);
 
-            if (!isset($order[$widget['order']])) {
-                $order[$widget['order']] = [];
+        return $widgets;
+    }
+
+    /**
+     * Categorizes widgets into a category/subcategory tree ordered by respective order
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    private function categorizeWidgets(array $data)
+    {
+        $excludeCategories    = $this->options['exclude_categories'] ?? [];
+        $excludeSubCategories = $this->options['exclude_subcategories'] ?? [];
+
+        $tree = [];
+        foreach ($data as $entry) {
+            $categoryId    = $entry['category'] ? $entry['category']['id'] : '_uncategorized';
+            $subcategoryId = $entry['subcategory'] ? $entry['subcategory']['id'] : '_uncategorized';
+
+            if (in_array($categoryId, $excludeCategories)) {
+                continue;
             }
 
-            $order[$widget['order']][] = $widget['uniqueId'];
+            if (in_array($subcategoryId, $excludeSubCategories)) {
+                continue;
+            }
+
+            $categoryOrder    = $entry['category'] ? ($entry['category']['order'] ?? 0) : 0;
+            $subcategoryOrder = $entry['subcategory'] ? ($entry['subcategory']['order'] ?? 0) : 0;
+
+            if (!isset($tree[$categoryOrder])) {
+                $tree[$categoryOrder] = [];
+            }
+
+            if (!isset($tree[$categoryOrder][$subcategoryOrder])) {
+                $tree[$categoryOrder][$subcategoryOrder] = [];
+            }
+
+            $tree[$categoryOrder][$subcategoryOrder][] = $entry;
         }
 
-        foreach ($order as $o => $ids) {
-            foreach ($ids as $id) {
-                $widgets['order'][] = $id;
+        return $tree;
+    }
+
+    /**
+     * Flattens category tree into a plain widget list indexed by widget ID
+     *
+     * @param array $tree
+     *
+     * @return array
+     */
+    private function flattenCategorizedWidgetTree(array $tree): array
+    {
+        $categoryOrder = array_keys($tree);
+        sort($categoryOrder);
+
+        $widgets = [];
+        foreach ($categoryOrder as $categoryIndex) {
+            $subcategoryOrder = array_keys($tree[$categoryIndex]);
+            sort($subcategoryOrder);
+
+            foreach ($subcategoryOrder as $subcategoryIndex) {
+                foreach ($tree[$categoryIndex][$subcategoryIndex] as $widget) {
+                    $widgets[$widget['uniqueId']] = $widget;
+                }
             }
         }
 
@@ -253,7 +335,11 @@ class WidgetBroker
             $params['language'] = $locale;
         }
 
-        $url = $config->getPiwikUrl() . '?' . http_build_query($params);
+        $url = sprintf(
+            '//%s?%s',
+            $config->getPiwikUrl(),
+            http_build_query($params)
+        );
 
         return $url;
     }
