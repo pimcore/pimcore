@@ -21,7 +21,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     onlyDirectChildren: false,
 
     sortinfo: {},
-    initialize: function(object, searchType) {
+    initialize: function (object, searchType) {
         this.object = object;
         this.element = object;
         this.searchType = searchType;
@@ -63,12 +63,12 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     name: "selectClass",
                     listWidth: 'auto',
                     store: classStore,
-                    queryMode:"local",
+                    queryMode: "local",
                     valueField: 'id',
                     displayField: 'translatedText',
                     triggerAction: 'all',
                     editable: true,
-                    typeAhead:true,
+                    typeAhead: true,
                     forceSelection: true,
                     value: this.object.data["selectedClass"],
                     listeners: {
@@ -79,7 +79,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 if (this.object.data.classes.length > 1) {
                     toolbarConfig = [new Ext.Toolbar.TextItem({
                         text: t("please_select_a_type")
-                    }),this.classSelector];
+                    }), this.classSelector];
                 }
                 else {
                     this.currentClass = this.object.data.classes[0].id;
@@ -113,21 +113,118 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     setClass: function (classId) {
         this.classId = classId;
-        this.getTableDescription(classId);
+        this.getTableDescription();
     },
 
-    getTableDescription: function (classId) {
+    getTableDescription: function () {
         Ext.Ajax.request({
             url: "/admin/object-helper/grid-get-column-config",
             params: {
-                id: classId,
+                id: this.classId,
                 objectId:
                 this.object.id,
                 gridtype: "grid",
+                gridConfigId: this.gridConfigId,
                 searchType: this.searchType
             },
             success: this.createGrid.bind(this, false)
         });
+    },
+
+
+    buildColumnConfigMenu: function () {
+        var menu = this.columnConfigButton.getMenu();
+        menu.removeAll();
+
+        menu.add({
+            text: t('save'),
+            iconCls: "pimcore_icon_save",
+            disabled: !this.gridConfigId,
+            handler: this.saveConfig.bind(this, false)
+        });
+
+        menu.add({
+            text: t('save_as'),
+            iconCls: "pimcore_icon_save",
+            handler: this.saveConfig.bind(this, true)
+        });
+
+        menu.add({
+            text: t('remove_config'),
+            iconCls: "pimcore_icon_delete",
+            disabled: !this.gridConfigId,
+            handler: this.deleteConfig.bind(this)
+        });
+
+        menu.add('-');
+
+        var text = t('predefined');
+        if (!this.gridConfigId) {
+            text = "<b>" + text + "</b>";
+        }
+
+        menu.add({
+            text: text,
+            iconCls: "pimcore_icon_gridcolumnconfig",
+            gridConfig: {
+                id: 0
+            },
+            handler: this.switchToConfig.bind(this)
+        });
+
+        if (this.availableConfigs) {
+
+            for (var i = 0; i < this.availableConfigs.length; i++) {
+                var config = this.availableConfigs[i];
+                var text = config["name"];
+                if (config.id == this.gridConfigId) {
+                    text = "<b>" + text + "</b>";
+                }
+                var menuConfig = {
+                    text: text,
+                    iconCls: 'pimcore_icon_gridcolumnconfig',
+                    gridConfig: config,
+                    handler: this.switchToConfig.bind(this)
+                }
+                menu.add(menuConfig);
+            }
+        }
+    },
+
+    deleteConfig: function () {
+        Ext.Ajax.request({
+            url: "/admin/object-helper/grid-delete-column-config",
+            params: {
+                id: this.classId,
+                objectId:
+                this.object.id,
+                gridtype: "grid",
+                gridConfigId: this.gridConfigId,
+                searchType: this.searchType
+            },
+            success: function(response) {
+
+                decodedResponse = Ext.decode(response.responseText);
+                if (decodedResponse.deleteSuccess) {
+                    pimcore.helpers.showNotification(t("success"), t("gridconfig_removed"), "success");
+                } else {
+                    pimcore.helpers.showNotification(t("error"), t("gridconfig_not_removed"), "error");
+                }
+                this.createGrid(false, response);
+            }.bind(this)
+        });
+    },
+
+    switchToConfig: function (menuItem) {
+        var gridConfig = menuItem.gridConfig;
+        this.gridConfigId = gridConfig.id;
+        this.getTableDescription();
+    },
+
+    columnConfigurationSavedHandler: function (rdata) {
+        this.gridConfigId = rdata.gridConfigId;
+        this.availableConfigs = rdata.availableConfigs;
+        this.buildColumnConfigMenu();
     },
 
     createGrid: function (fromConfig, response) {
@@ -144,6 +241,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             fields = response.availableFields;
             this.gridLanguage = response.language;
             this.sortinfo = response.sortinfo;
+            this.gridConfigId = response.gridConfigId;
+            this.availableConfigs = response.availableConfigs;
+
             if (response.onlyDirectChildren) {
                 this.onlyDirectChildren = response.onlyDirectChildren;
             }
@@ -159,11 +259,11 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1,
             listeners: {
-                beforeedit: function(editor, context, eOpts) {
+                beforeedit: function (editor, context, eOpts) {
                     //need to clear cached editors of cell-editing editor in order to
                     //enable different editors per row
                     var editors = editor.editors;
-                    editors.each(function(editor) {
+                    editors.each(function (editor) {
                         if (typeof editor.column.config.getEditor !== "undefined") {
                             Ext.destroy(editor);
                             editors.remove(editor);
@@ -214,7 +314,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
         });
 
-        this.toolbarFilterInfo =  new Ext.Button({
+        this.toolbarFilterInfo = new Ext.Button({
             iconCls: "pimcore_icon_filter_condition",
             hidden: true,
             text: '<b>' + t("filter_active") + '</b>',
@@ -224,7 +324,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }.bind(this)
         });
 
-        this.clearFilterButton =  new Ext.Button({
+        this.clearFilterButton = new Ext.Button({
             iconCls: "pimcore_icon_clear_filters",
             hidden: true,
             text: t("clear_filters"),
@@ -263,9 +363,19 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             iconCls: "pimcore_icon_publish",
             hidden: hideSaveColumnConfig,
             handler: function() {
-                pimcore.helpers.saveColumnConfig(this.object.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton);
+                var asCopy = !(this.gridConfigId > 0);
+                this.saveConfig(asCopy)
             }.bind(this)
         });
+
+        this.columnConfigButton = new Ext.SplitButton({
+            text: t('grid_column_config'),
+            iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
+            handler: this.openColumnConfig.bind(this),
+            menu: []
+        });
+
+        this.buildColumnConfigMenu();
 
         // grid
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -311,17 +421,18 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 
                 }.bind(this)
-            }, "-", {
-                text: t("grid_column_config"),
-                iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
-                handler: this.openColumnConfig.bind(this)
-            },
+            }, "-",
+                this.columnConfigButton,
                 this.saveColumnConfigButton
             ]
         });
 
-        this.grid.on("columnmove", function() { this.saveColumnConfigButton.show() }.bind(this));
-        this.grid.on("columnresize", function() { this.saveColumnConfigButton.show() }.bind(this));
+        this.grid.on("columnmove", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
+        this.grid.on("columnresize", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
@@ -329,7 +440,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.updateGridHeaderContextMenu(grid);
         }.bind(this));
 
-        this.grid.on("sortchange", function (ct, column, direction, eOpts ) {
+        this.grid.on("sortchange", function (ct, column, direction, eOpts) {
             this.sortinfo = {
                 field: column.dataIndex,
                 direction: direction
@@ -360,8 +471,69 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.layout.updateLayout();
     },
 
+    saveConfig: function (asCopy) {
+        if (asCopy) {
+            this.getSaveAsDialog();
+        } else {
+            pimcore.helpers.saveColumnConfig(this.gridConfigId, this.object.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton,
+                this.columnConfigurationSavedHandler.bind(this), {});
+        }
+    },
 
-    getGridConfig: function($super) {
+    getSaveAsDialog: function() {
+        var defaultName = new Date();
+
+        var nameField = new Ext.form.TextField({
+            fieldLabel: t('name'),
+            length: 50,
+            allowBlank: false,
+            value: defaultName
+        });
+
+        var descriptionField = new Ext.form.TextArea({
+            fieldLabel: t('description'),
+            height: 400
+        });
+
+
+        var configPanel = new Ext.Panel({
+            layout: "form",
+            bodyStyle: "padding: 10px;",
+            items: [nameField, descriptionField],
+            buttons: [{
+                text: t("save"),
+                iconCls: "pimcore_icon_apply",
+                handler: function () {
+                    var metadata = {
+                        name: nameField.getValue(),
+                        description: descriptionField.getValue()
+                    };
+                    pimcore.helpers.saveColumnConfig(0, this.object.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton,
+                        this.columnConfigurationSavedHandler.bind(this), metadata);
+                    this.saveWindow.close();
+                }.bind(this)
+            }]
+        });
+
+        this.saveWindow = new Ext.Window({
+            width: 600,
+            height: 300,
+            modal: true,
+            title: t('save_as'),
+            layout: "fit",
+            items: [configPanel]
+        });
+
+        this.saveWindow.show();
+        nameField.focus();
+        nameField.selectText();
+        return this.window;
+    },
+
+
+
+
+    getGridConfig: function ($super) {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;
         config.pageSize = this.pagingtoolbar.pageSize;
@@ -369,7 +541,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     },
 
 
-    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
@@ -410,7 +582,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 handler: function (data) {
                     var store = this.getStore();
                     var options = {
-                        "elementType" : "object",
+                        "elementType": "object",
                         "id": data.data.id,
                         "success": store.reload.bind(this.getStore())
                     };
@@ -441,9 +613,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     ids = ids.join(',');
 
                     var options = {
-                        "elementType" : "object",
+                        "elementType": "object",
                         "id": ids,
-                        "success": function() {
+                        "success": function () {
                             this.getStore().reload();
                             var tree = pimcore.globalmanager.get("layout_object_tree");
                             var treePanel = tree.tree;
@@ -456,12 +628,10 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         }
 
         pimcore.plugin.broker.fireEvent("prepareOnRowContextmenu", menu, this, selectedRows);
-		
+
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     }
-
-
 
 
 });

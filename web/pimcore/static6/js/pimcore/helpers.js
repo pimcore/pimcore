@@ -2767,7 +2767,7 @@ pimcore.helpers.showAbout = function () {
     win.show();
 };
 
-pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, searchType, button) {
+pimcore.helpers.saveColumnConfig = function(gridConfigId, objectId, classId, configuration, searchType, button, callback, metadata) {
 
 
     try {
@@ -2775,7 +2775,9 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
             id: objectId,
             class_id: classId,
             gridconfig: Ext.encode(configuration),
-            searchType: searchType
+            searchType: searchType,
+            gridConfigId: gridConfigId,
+            metadata: Ext.encode(metadata)
         };
 
         Ext.Ajax.request({
@@ -2788,6 +2790,9 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
                     if (rdata && rdata.success) {
                         if (button) {
                             button.hide();
+                        }
+                        if (typeof callback == "function") {
+                            callback(rdata);
                         }
                         pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
                     }

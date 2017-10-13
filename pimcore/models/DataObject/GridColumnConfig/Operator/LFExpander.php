@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Tool;
+
 class LFExpander extends AbstractOperator
 {
     private $prefix;
@@ -26,6 +28,7 @@ class LFExpander extends AbstractOperator
         parent::__construct($config, $context);
 
         $this->prefix = $config->prefix;
+        $this->locales = trim($config->locales);
     }
 
     public function getLabeledValue($element)
@@ -62,5 +65,19 @@ class LFExpander extends AbstractOperator
     public function expandLocales()
     {
         return true;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getValidLanguages()
+    {
+        if ($this->locales) {
+            $validLanguages = explode(',', $this->locales);
+        } else {
+            $validLanguages = Tool::getValidLanguages();
+        }
+
+        return $validLanguages;
     }
 }

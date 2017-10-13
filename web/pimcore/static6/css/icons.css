@@ -441,7 +441,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/multiple_devices.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_settings {
+.pimcore_icon_settings, .pimcore_icon_gridcolumnconfig {
     background: url(/pimcore/static6/img/flat-color-icons/settings.svg) center center no-repeat !important;
 }
 

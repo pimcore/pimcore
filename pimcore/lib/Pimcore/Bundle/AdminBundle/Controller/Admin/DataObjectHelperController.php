@@ -15,11 +15,13 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Localization\Locale;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
+use Pimcore\Model\GridConfig;
 use Pimcore\Tool;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -57,6 +59,54 @@ class DataObjectHelperController extends AdminController
         return $this->json($result);
     }
 
+    public function getGridColumnConfigs($userId, $classId, $searchType)
+    {
+        $db = Db::get();
+        $configListingConditionParts = [];
+        $configListingConditionParts[] = 'ownerId = ' . $userId;
+        $configListingConditionParts[] = 'classId = ' . $classId;
+
+        if ($searchType) {
+            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
+        }
+
+        $configCondition = implode(' AND ', $configListingConditionParts);
+
+        $configListing = new GridConfig\Listing();
+        $configListing->setOrderKey('name');
+        $configListing->setOrder('ASC');
+        $configListing->setCondition($configCondition);
+        $configListing = $configListing->load();
+
+        return $configListing;
+    }
+
+    /**
+     * @Route("/grid-delete-column-config")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function gridDeleteColumnConfigAction(Request $request)
+    {
+        $gridConfigId = $request->get('gridConfigId');
+        try {
+            $gridConfig = GridConfig::getById($gridConfigId);
+        } catch (\Exception $e) {
+        }
+        $success = false;
+        if ($gridConfig) {
+            $gridConfig->delete();
+            $success = true;
+        }
+
+        $newGridConfig = $this->doGetGridColumnConfig($request);
+        $newGridConfig['deleteSuccess'] = $success;
+
+        return $this->json($newGridConfig);
+    }
+
     /**
      * @Route("/grid-get-column-config")
      *
@@ -66,6 +116,19 @@ class DataObjectHelperController extends AdminController
      */
     public function gridGetColumnConfigAction(Request $request)
     {
+        $result =  $this->doGetGridColumnConfig($request);
+
+        return $this->json($result);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     */
+    public function doGetGridColumnConfig(Request $request)
+    {
+        /** @var $class DataObject\ClassDefinition */
         if ($request->get('id')) {
             $class = DataObject\ClassDefinition::getById($request->get('id'));
         } elseif ($request->get('name')) {
@@ -106,28 +169,50 @@ class DataObjectHelperController extends AdminController
             $types = explode(',', $request->get('types'));
         }
 
+        $userId = $this->getUser()->getId();
+
+        $requestedGridConfigId = $request->get('gridConfigId');
+        if (!$requestedGridConfigId) {
+            //TODO siwth to the configured default view
+        }
+
         // grid config
         $gridConfig = [];
-        if ($objectId) {
+        if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0 && $objectId) {
             $searchType = $request->get('searchType');
-            $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
 
-            $configFiles['configFileClassUser'] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $request->get('objectId') . '_' . $class->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-            $configFiles['configFileUser'] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $request->get('objectId') . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
+            $db = Db::get();
+            $configListingConditionParts = [];
+            $configListingConditionParts[] = 'ownerId = ' . $userId;
+            $configListingConditionParts[] = 'classId = ' . $class->getId();
 
-            foreach ($configFiles as $configFile) {
-                if (is_file($configFile)) {
-                    $gridConfig = Tool\Serialize::unserialize(file_get_contents($configFile));
-                    if (is_array($gridConfig) && array_key_exists('classId', $gridConfig)) {
-                        if ($gridConfig['classId'] == $class->getId()) {
-                            break;
-                        } else {
-                            $gridConfig = [];
-                        }
-                    } else {
-                        break;
-                    }
-                }
+            if ($searchType) {
+                $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
+            }
+
+            try {
+                $config = GridConfig::getById($requestedGridConfigId);
+            } catch (\Exception $e) {
+            }
+//            if (!$config) {
+//                // fallback, could be that in the meantime the config has been deleted
+//                $configCondition = implode(' AND ', $configListingConditionParts);
+//                $configListing = new GridConfig\Listing();
+//                $configListing->setOrderKey('id');
+//                $configListing->setOrder('ASC');
+//                $configListing->setCondition($configCondition);
+//                $configListing->setLimit(1);
+//                $configListing = $configListing->load();
+//                if ($configListing) {
+//                    /** @var $config GridConfig */
+//                    $config = $configListing[0];
+//                }
+//            }
+
+            if ($config) {
+                $gridConfigId = $config->getId();
+                $gridConfig = $config->getConfig();
+                $gridConfig = json_decode($gridConfig, true);
             }
         }
 
@@ -326,13 +411,17 @@ class DataObjectHelperController extends AdminController
             $language = $gridConfig['language'];
         }
 
-        return $this->json([
+        $availableConfigs = $this->getGridColumnConfigs($userId, $class->getId(), $searchType);
+
+        return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             'language' => $language,
             'availableFields' => $availableFields,
+            'gridConfigId' => (int)  $gridConfigId,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
-            'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false
-        ]);
+            'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
+            'availableConfigs' => $availableConfigs
+        ];
     }
 
     protected function getCalculatedColumnConfig($config)
@@ -419,38 +508,38 @@ class DataObjectHelperController extends AdminController
      *
      * @return JsonResponse
      */
-    public function gridDeleteColumnConfigAction(Request $request)
-    {
-        $object = DataObject::getById($request->get('id'));
-
-        if ($object->isAllowed('list')) {
-            try {
-                $classId = $request->get('class_id');
-
-                $searchType = $request->get('searchType');
-                $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
-
-                $configFiles = [];
-                $configFiles[]= PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '_' . $classId . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-                $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-
-                foreach ($configFiles as $configFile) {
-                    $configDir = dirname($configFile);
-                    if (is_dir($configDir)) {
-                        if (is_file($configFile)) {
-                            @unlink($configFile);
-                        }
-                    }
-                }
-
-                return $this->json(['success' => true]);
-            } catch (\Exception $e) {
-                return $this->json(['success' => false, 'message' => $e->getMessage()]);
-            }
-        }
-
-        return $this->json(['success' => false, 'message' => 'missing_permission']);
-    }
+//    public function gridDeleteColumnConfigAction(Request $request)
+//    {
+//        $object = DataObject::getById($request->get('id'));
+//
+//        if ($object->isAllowed('list')) {
+//            try {
+//                $classId = $request->get('class_id');
+//
+//                $searchType = $request->get('searchType');
+//                $postfix = $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
+//
+//                $configFiles = [];
+//                $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '_' . $classId . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
+//                $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
+//
+//                foreach ($configFiles as $configFile) {
+//                    $configDir = dirname($configFile);
+//                    if (is_dir($configDir)) {
+//                        if (is_file($configFile)) {
+//                            @unlink($configFile);
+//                        }
+//                    }
+//                }
+//
+//                return $this->json(['success' => true]);
+//            } catch (\Exception $e) {
+//                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+//            }
+//        }
+//
+//        return $this->json(['success' => false, 'message' => 'missing_permission']);
+//    }
 
     /**
      * @Route("/grid-save-column-config")
@@ -461,6 +550,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridSaveColumnConfigAction(Request $request)
     {
+//         return $this->gridSaveColumnConfigLegacy($request);
         $object = DataObject::getById($request->get('id'));
 
         if ($object->isAllowed('list')) {
@@ -468,7 +558,64 @@ class DataObjectHelperController extends AdminController
                 $classId = $request->get('class_id');
 
                 $searchType = $request->get('searchType');
-                $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
+
+                // grid config
+                $gridConfigData = $this->decodeJson($request->get('gridconfig'));
+                $gridConfigData['pimcore_version'] = Version::getVersion();
+                $gridConfigData['pimcore_revision'] = Version::getRevision();
+
+                $gridConfigId = $request->get('gridConfigId');
+                if ($gridConfigId) {
+                    try {
+                        $gridConfig = GridConfig::getById($gridConfigId);
+                    } catch (\Exception $e) {
+                    }
+                }
+
+                $metadata = $request->get('metadata');
+                $metadata = json_decode($metadata, true);
+
+                if (!$gridConfig) {
+                    $gridConfig = new GridConfig();
+                    $gridConfig->setName(date('c'));
+                    $gridConfig->setClassId($classId);
+                    $gridConfig->setSearchType($searchType);
+
+                    $gridConfig->setOwnerId($this->getUser()->getId());
+                }
+
+                if ($metadata) {
+                    $gridConfig->setName($metadata['name']);
+                    $gridConfig->setDescription($metadata['description']);
+                }
+
+                $gridConfigData = json_encode($gridConfigData);
+                $gridConfig->setConfig($gridConfigData);
+                $gridConfig->save();
+
+                $userId = $this->getUser()->getId();
+
+                $availableConfigs = $this->getGridColumnConfigs($userId, $classId, $searchType);
+
+                return $this->json(['success' => true, 'gridConfigId' => (int) $gridConfig->getId(), 'availableConfigs' => $availableConfigs]);
+            } catch (\Exception $e) {
+                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            }
+        }
+
+        return $this->json(['success' => false, 'message' => 'missing_permission']);
+    }
+
+    public function gridSaveColumnConfigLegacy(Request $request)
+    {
+        $object = DataObject::getById($request->get('id'));
+
+        if ($object->isAllowed('list')) {
+            try {
+                $classId = $request->get('class_id');
+
+                $searchType = $request->get('searchType');
+                $postfix = $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
 
                 // grid config
                 $gridConfig = $this->decodeJson($request->get('gridconfig'));
@@ -934,7 +1081,7 @@ class DataObjectHelperController extends AdminController
 
         //parameters specified in the objects grid
         $ids = $request->get('ids', []);
-        if (! empty($ids)) {
+        if (!empty($ids)) {
             //add a condition if id numbers are specified
             $list->addConditionParam("{$objectTableName}.o_id IN (" . implode(',', $ids) . ')');
         }
@@ -993,7 +1140,7 @@ class DataObjectHelperController extends AdminController
         $fileHandle = uniqid('export-');
         file_put_contents($this->getCsvFile($fileHandle), '');
 
-        return $this->json(['success'=>true, 'jobs'=> $jobs, 'fileHandle' => $fileHandle]);
+        return $this->json(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
 
     /**
@@ -1112,8 +1259,7 @@ class DataObjectHelperController extends AdminController
             if ($fields) {
                 $objectData = [];
                 foreach ($fields as $field) {
-                    if (DataObject\Service::isHelperGridColumnConfig($field) && DataObject\Service::expandGridColumnForExport($helperDefinitions, $field)) {
-                        $validLanguages = Tool::getValidLanguages();
+                    if (DataObject\Service::isHelperGridColumnConfig($field) && $validLanguages = DataObject\Service::expandGridColumnForExport($helperDefinitions, $field)) {
                         $currentLocale = $localeService->getLocale();
                         $mappedFieldnameBase = $this->mapFieldname($field, $helperDefinitions);
 
@@ -1243,9 +1389,9 @@ class DataObjectHelperController extends AdminController
                     $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
 
                     if ($fieldDefinition) {
-                        $brickContainer = $object->{'get'.ucfirst($key)}();
+                        $brickContainer = $object->{'get' . ucfirst($key)}();
                         if ($brickContainer && !empty($brickKey)) {
-                            $brick = $brickContainer->{'get'.ucfirst($brickType)}();
+                            $brick = $brickContainer->{'get' . ucfirst($brickType)}();
                             if ($brick) {
                                 return $fieldDefinition->getForCsvExport($brick);
                             }
@@ -1334,7 +1480,7 @@ class DataObjectHelperController extends AdminController
 
         $jobs = $list->loadIdList();
 
-        return $this->json(['success'=>true, 'jobs'=>$jobs]);
+        return $this->json(['success' => true, 'jobs' => $jobs]);
     }
 
     /**
@@ -1382,7 +1528,7 @@ class DataObjectHelperController extends AdminController
                         $groupId = $groupKeyId[0];
                         $keyid = $groupKeyId[1];
 
-                        $getter = 'get'.ucfirst($field);
+                        $getter = 'get' . ucfirst($field);
                         if (method_exists($object, $getter)) {
                             /** @var $classificationStoreData DataObject\Classificationstore */
                             $classificationStoreData = $object->$getter();
@@ -1394,8 +1540,8 @@ class DataObjectHelperController extends AdminController
                             );
                         }
                     } else {
-                        $getter = 'get'.ucfirst($field);
-                        $setter = 'set'.ucfirst($field);
+                        $getter = 'get' . ucfirst($field);
+                        $setter = 'set' . ucfirst($field);
                         $keyValuePairs = $object->$getter();
 
                         if (!$keyValuePairs) {

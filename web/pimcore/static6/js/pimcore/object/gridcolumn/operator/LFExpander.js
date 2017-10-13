@@ -87,11 +87,18 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
             value: this.node.data.configAttributes.label
         });
 
+        this.localesField = new Ext.form.TextField({
+            fieldLabel: t('restrict_to_locales'),
+            length: 255,
+            width: 200,
+            value: this.node.data.configAttributes.locales
+        });
+
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textfield],
+            items: [this.textfield, this.localesField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -116,6 +123,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
 
     commitData: function() {
         this.node.data.configAttributes.label = this.textfield.getValue();
+        this.node.data.configAttributes.locales = this.localesField.getValue();
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
         this.window.close();
