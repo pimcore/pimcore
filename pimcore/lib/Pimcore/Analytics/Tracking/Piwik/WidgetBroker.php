@@ -17,16 +17,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Tracking\Piwik;
 
+use Pimcore\Analytics\Tracking\Piwik\Config\Config;
+use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Tracking\Piwik\Dto\WidgetConfig;
 use Pimcore\Analytics\Tracking\Piwik\Dto\WidgetReference;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Cache\Core\CoreHandler;
-use Pimcore\Config;
 use Pimcore\Http\ClientFactory;
 use Psr\Log\LoggerInterface;
 
 class WidgetBroker
 {
+    /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
+
     /**
      * @var array
      */
@@ -58,16 +64,18 @@ class WidgetBroker
     private $cacheInterval = 'PT3H';
 
     public function __construct(
+        ConfigProvider $configProvider,
         ClientFactory $clientFactory,
         CoreHandler $cache,
         UserLoader $userLoader,
         LoggerInterface $logger
     )
     {
-        $this->clientFactory = $clientFactory;
-        $this->cache         = $cache;
-        $this->userLoader    = $userLoader;
-        $this->logger        = $logger;
+        $this->configProvider = $configProvider;
+        $this->clientFactory  = $clientFactory;
+        $this->cache          = $cache;
+        $this->userLoader     = $userLoader;
+        $this->logger         = $logger;
     }
 
     public function getWidgets(int $siteId, string $locale = null): array
@@ -91,11 +99,7 @@ class WidgetBroker
 
     public function getWidgetConfig(string $widgetId, int $siteId, string $locale = null): WidgetConfig
     {
-        $config = $this->getConfig();
-        if (null === $config) {
-            throw new \RuntimeException('Piwik is not configured');
-        }
-
+        $config  = $this->loadConfig();
         $locale  = $this->resolveLocale($locale);
         $widgets = $this->getWidgets($siteId, $locale);
 
@@ -111,16 +115,7 @@ class WidgetBroker
 
     private function getWidgetData(int $siteId, string $locale = null)
     {
-        $widgets = [
-            'widgets' => [],
-            'order'   => [],
-        ];
-
-        $config = $this->getConfig();
-        if (null === $config) {
-            return $widgets;
-        }
-
+        $config   = $this->loadConfig();
         $locale   = $this->resolveLocale($locale);
         $cacheKey = $this->generateCacheKey($siteId, $locale);
 
@@ -144,20 +139,15 @@ class WidgetBroker
         return $widgets;
     }
 
-    /**
-     * @return Config\Config|null
-     */
-    private function getConfig()
+    private function loadConfig(): Config
     {
-        $reportConfig = Config::getReportConfig();
-        $config       = $reportConfig->piwik;
-
-        if (!$config) {
-            return null;
+        $config = $this->configProvider->getConfig();
+        if (!$config->isConfigured()) {
+            throw new \RuntimeException('Piwik is not configured');
         }
 
-        if (!$config->piwik_url || !$config->auth_token) {
-            return null;
+        if (null === $config->getReportToken()) {
+            throw new \RuntimeException('The report token is not configured');
         }
 
         return $config;
@@ -182,7 +172,7 @@ class WidgetBroker
         return implode('_', $parts);
     }
 
-    private function loadWidgets(Config\Config $config, int $siteId, string $locale = null)
+    private function loadWidgets(Config $config, int $siteId, string $locale = null)
     {
         $widgets = [
             'widgets' => [],
@@ -217,7 +207,7 @@ class WidgetBroker
         return $widgets;
     }
 
-    private function loadFromApi(Config\Config $config, int $siteId, string $locale = null): array
+    private function loadFromApi(Config $config, int $siteId, string $locale = null): array
     {
         $client = $this->clientFactory->createClient();
 
@@ -226,7 +216,7 @@ class WidgetBroker
             'method'     => 'API.getWidgetMetadata',
             'format'     => 'JSON',
             'idSite'     => $siteId,
-            'token_auth' => $config->auth_token
+            'token_auth' => $config->getReportToken()
         ];
 
         if (null !== $locale) {
@@ -255,7 +245,7 @@ class WidgetBroker
         return $json;
     }
 
-    private function generateWidgetUrl(Config\Config $config, array $widget, int $siteId, string $locale = null): string
+    private function generateWidgetUrl(Config $config, array $widget, int $siteId, string $locale = null): string
     {
         $params = [
             'module'      => 'Widgetize',
@@ -265,7 +255,7 @@ class WidgetBroker
             'date'        => 'yesterday',
             'disableLink' => 1,
             'idSite'     => $siteId,
-            'token_auth' => $config->auth_token
+            'token_auth' => $config->getReportToken()
         ];
 
         $params['moduleToWidgetize'] = $widget['module'];
@@ -290,28 +280,33 @@ class WidgetBroker
         return $url;
     }
 
-    private function getBaseUrl(Config\Config $config)
+    private function getBaseUrl(Config $config)
     {
-        $scheme = 'http'; // TODO
-        $url    = sprintf('%s://%s', $scheme, $config->piwik_url);
+        $scheme = 'http'; // TODO add a config for HTTP/HTTPS
+        $url    = sprintf('%s://%s', $scheme, $config->getPiwikUrl());
 
         return $url;
     }
 
     private function generateTitle(array $widget)
     {
-        $title = [];
+        $title    = [];
+        $category = [];
 
         if ($widget['category'] && !empty($widget['category']['name'])) {
-            $title[] = $widget['category']['name'];
+            $category[] = $widget['category']['name'];
         }
 
         if ($widget['subcategory'] && !empty($widget['subcategory']['name'])) {
-            $title[] = $widget['subcategory']['name'];
+            $category[] = $widget['subcategory']['name'];
+        }
+
+        if (!empty($category)) {
+            $title[] = implode(' - ', $category);
         }
 
         $title[] = $widget['name'];
 
-        return implode(' - ', $title);
+        return implode(' / ', $title);
     }
 }

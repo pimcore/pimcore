@@ -28,7 +28,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class PiwikController extends ReportsControllerBase
 {
     /**
-     * @Route("/report/{report}")
+     * @Route("/reports")
+     *
+     * @param ReportBroker $reportBroker
+     *
+     * @return JsonResponse
+     */
+    public function reportsAction(ReportBroker $reportBroker)
+    {
+        $reports = $reportBroker->getReports();
+
+        return $this->jsonResponse($reports);
+    }
+
+    /**
+     * @Route("/reports/{report}")
      *
      * @param ReportBroker $reportBroker
      *

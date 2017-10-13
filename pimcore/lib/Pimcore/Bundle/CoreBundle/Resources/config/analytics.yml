@@ -10,6 +10,8 @@ services:
     # PIWIK
     #
 
+    Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider:
     Pimcore\Analytics\Tracking\Piwik\Tracker: ~
     Pimcore\Analytics\Tracking\Piwik\ReportBroker: ~
+    Pimcore\Analytics\Tracking\Piwik\WidgetBroker:
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\PiwikTrackingCodeListener: ~

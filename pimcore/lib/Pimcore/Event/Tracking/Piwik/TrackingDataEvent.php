@@ -18,12 +18,17 @@ declare(strict_types=1);
 namespace Pimcore\Event\Tracking\Piwik;
 
 use Pimcore\Analytics\Tracking\Code\CodeBlock;
+use Pimcore\Analytics\Tracking\Piwik\Config\Config;
 use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
-use Pimcore\Config\Config;
 use Symfony\Component\EventDispatcher\Event;
 
 class TrackingDataEvent extends Event
 {
+    /**
+     * @var Config
+     */
+    private $config;
+
     /**
      * @var SiteConfig
      */
@@ -40,35 +45,28 @@ class TrackingDataEvent extends Event
     private $blocks;
 
     /**
-     * @var Config
-     */
-    private $config;
-
-    /**
-     * @var Config
-     */
-    private $trackerConfig;
-
-    /**
      * @var string
      */
     private $template;
 
     public function __construct(
+        Config $config,
         SiteConfig $siteConfig,
         array $data,
         array $blocks,
-        Config $config,
-        Config $trackerConfig,
         string $template
     )
     {
-        $this->siteConfig    = $siteConfig;
-        $this->data          = $data;
-        $this->blocks        = $blocks;
-        $this->config        = $config;
-        $this->trackerConfig = $trackerConfig;
-        $this->template      = $template;
+        $this->config     = $config;
+        $this->siteConfig = $siteConfig;
+        $this->data       = $data;
+        $this->blocks     = $blocks;
+        $this->template   = $template;
+    }
+
+    public function getConfig(): Config
+    {
+        return $this->config;
     }
 
     public function getSiteConfig(): SiteConfig
@@ -101,16 +99,6 @@ class TrackingDataEvent extends Event
         }
 
         return $this->blocks[$block];
-    }
-
-    public function getConfig(): Config
-    {
-        return $this->config;
-    }
-
-    public function getTrackerConfig(): Config
-    {
-        return $this->trackerConfig;
     }
 
     public function getTemplate(): string

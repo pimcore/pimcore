@@ -17,8 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Tracking\Piwik;
 
+use Pimcore\Analytics\Tracking\Piwik\Config\Config;
+use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Tracking\Piwik\Dto\ReportConfig;
-use Pimcore\Config;
+use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Tracking\Piwik\ReportConfigEvent;
@@ -35,6 +37,11 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ReportBroker implements EventSubscriberInterface
 {
     /**
+     * @var ConfigProvider
+     */
+    private $configProvider;
+
+    /**
      * @var TranslatorInterface
      */
     private $translator;
@@ -49,8 +56,13 @@ class ReportBroker implements EventSubscriberInterface
      */
     private $reports;
 
-    public function __construct(TranslatorInterface $translator, EventDispatcherInterface $eventDispatcher)
+    public function __construct(
+        ConfigProvider $configProvider,
+        TranslatorInterface $translator,
+        EventDispatcherInterface $eventDispatcher
+    )
     {
+        $this->configProvider  = $configProvider;
         $this->eventDispatcher = $eventDispatcher;
         $this->translator      = $translator;
     }
@@ -123,32 +135,22 @@ class ReportBroker implements EventSubscriberInterface
 
     private function buildReports(): array
     {
-        $reports      = [];
-        $reportConfig = Config::getReportConfig();
-        $config       = $reportConfig->piwik;
+        $config = $this->configProvider->getConfig();
 
-        if (!$config) {
+        $reports = [];
+        if (!$config->isConfigured()) {
             return $reports;
         }
 
-        if (!$config->auth_token || !$config->piwik_url) {
-            return $reports;
-        }
-
-        $authToken = trim((string)$config->auth_token);
-        if (empty($authToken)) {
-            return $reports;
-        }
-
-        $piwikUrl = trim((string)$config->piwik_url);
-        if (empty($piwikUrl)) {
+        $reportToken = $config->getReportToken();
+        if (empty($reportToken)) {
             return $reports;
         }
 
         $reports[] = new ReportConfig(
             'all_sites',
             $this->translator->trans('piwik_all_websites_dashboard', [], 'admin'),
-            $this->generateAllWebsitesDashboardUrl($piwikUrl, $authToken)
+            $this->generateAllWebsitesDashboardUrl($config)
         );
 
         $profiles = [
@@ -157,36 +159,25 @@ class ReportBroker implements EventSubscriberInterface
             ]
         ];
 
-        foreach ($this->getSites() as $site) {
-            $configKey = sprintf('site_%d', $site->getId());
-
-            $profiles[$configKey] = [
-                'site' => $site
-            ];
-        }
+        $profiles = $this->addSiteProfiles($profiles);
 
         foreach ($profiles as $configKey => $profile) {
-            if (!$config->sites->$configKey || !$config->sites->$configKey->site_id) {
-                continue;
-            }
-
-            $siteId = (int)((string)$config->sites->$configKey->site_id);
-            if ($siteId < 1) {
+            if (!$config->isSiteConfigured($configKey)) {
                 continue;
             }
 
             $title = null;
             if ($profile['title']) {
                 $title = $profile['title'];
-            } elseif ($profile['site']) {
-                $title = $this->getSiteTitle($profile['site']);
+            } elseif ($profile['siteConfig']) {
+                $title = $this->getSiteTitle($profile['siteConfig']);
             }
 
             if (null === $title) {
                 continue;
             }
 
-            $url = $this->generateSiteDashboardUrl($piwikUrl, $authToken, $siteId);
+            $url = $this->generateSiteDashboardUrl($config, $configKey);
 
             $reports[] = new ReportConfig($configKey, $title, $url);
         }
@@ -194,38 +185,45 @@ class ReportBroker implements EventSubscriberInterface
         return $reports;
     }
 
-    private function generateAllWebsitesDashboardUrl(string $piwikUrl, string $authToken): string
+    private function generateAllWebsitesDashboardUrl(Config $config): string
     {
         return sprintf(
             '//%s/index.php?module=Widgetize&action=iframe&moduleToWidgetize=MultiSites&actionToWidgetize=standalone&period=week&date=yesterday&idSite=1&token_auth=%s',
-            $piwikUrl,
-            $authToken
+            $config->getPiwikUrl(),
+            $config->getReportToken()
         );
     }
 
-    private function generateSiteDashboardUrl(string $piwikUrl, string $authToken, int $siteId): string
+    private function generateSiteDashboardUrl(Config $config, string $configKey): string
     {
         return sprintf(
             '//%s/index.php?module=Widgetize&action=iframe&moduleToWidgetize=Dashboard&actionToWidgetize=index&period=week&date=yesterday&idSite=%s&token_auth=%s',
-            $piwikUrl,
-            $siteId,
-            $authToken
+            $config->getPiwikUrl(),
+            $config->getSiteId($configKey),
+            $config->getReportToken()
         );
     }
 
-    /**
-     * @return Site[]
-     */
-    private function getSites(): array
+    private function addSiteProfiles(array $profiles): array
     {
         /** @var Site\Listing|Site\Listing\Dao $sites */
         $sites = new Site\Listing();
 
-        return $sites->load();
+        foreach ($sites->load() as $site) {
+            $siteConfig = SiteConfig::forSite($site);
+
+            $profiles[$siteConfig->getConfigKey()] = [
+                'siteConfig' => $siteConfig
+            ];
+        }
+
+        return $profiles;
     }
 
-    private function getSiteTitle(Site $site): string
+    private function getSiteTitle(SiteConfig $siteConfig): string
     {
+        $site = $siteConfig->getSite();
+
         $name = null;
         if ($site->getMainDomain()) {
             $name = $site->getMainDomain();
