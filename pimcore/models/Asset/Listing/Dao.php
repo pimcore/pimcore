@@ -23,7 +23,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    
+
     /** @var  Callback function */
     protected $onCreateQueryCallback;
 
@@ -108,6 +108,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
         $select->reset(\Zend_Db_Select::LIMIT_COUNT);
         $select->reset(\Zend_Db_Select::LIMIT_OFFSET);
+        $select->reset(\Zend_Db_Select::ORDER);
         $select = (string) $select;
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
