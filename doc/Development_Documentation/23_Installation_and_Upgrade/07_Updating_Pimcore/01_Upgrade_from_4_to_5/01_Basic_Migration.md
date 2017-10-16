@@ -68,3 +68,4 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 - Run `composer update` once again to update the autoloaded and class maps
 - The admin interface of your system should now work again and you can proceed to [migrate your application code](./README.md). 
 - Use the web updater to update to the latest stable build
+- Update your [.gitignore](https://github.com/pimcore/pimcore/blob/master/.gitignore) 
