@@ -661,17 +661,17 @@ abstract class Data
      *
      * @param  $value
      * @param  $operator
-     *
+     * @param  $params
      * @return string
      *
      */
-    public function getFilterCondition($value, $operator)
+    public function getFilterCondition($value, $operator, $params = [])
     {
+        $params['name']= $this->name;
         return $this->getFilterConditionExt(
             $value,
             $operator,
-            [
-            'name' => $this->name]
+            $params
         );
     }
 
