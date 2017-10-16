@@ -2767,6 +2767,42 @@ pimcore.helpers.showAbout = function () {
     win.show();
 };
 
+pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridConfigId) {
+
+    try {
+
+        Ext.Ajax.request({
+            url: '/admin/object-helper/grid-mark-favourite-column-config',
+            method: "post",
+            params: {
+                objectId: objectId,
+                classId: classId,
+                gridConfigId: gridConfigId
+            },
+            success: function (response) {
+                try{
+                    var rdata = Ext.decode(response.responseText);
+                    if (rdata && rdata.success) {
+                        pimcore.helpers.showNotification(t("success"), t("your_favourite_has_been_saved"), "success");
+                    }
+                    else {
+                        pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"),
+                            "error",t(rdata.message));
+                    }
+                } catch(e){
+                    pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+                }
+            }.bind(this),
+            failure: function () {
+                pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+            }
+        });
+
+    } catch (e3) {
+        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+    }
+};
+
 pimcore.helpers.saveColumnConfig = function(gridConfigId, objectId, classId, configuration, searchType, button, callback, metadata) {
 
 

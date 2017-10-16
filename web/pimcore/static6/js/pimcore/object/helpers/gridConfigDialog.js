@@ -29,8 +29,19 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         this.configPanel = new Ext.Panel({
             layout: "border",
+            iconCls: "pimcore_icon_table",
+            title: t("grid_configuration"),
             items: [this.getLanguageSelection(), this.getSelectionPanel(), this.getLeftPanel()]
 
+        });
+
+        this.savePanel = this.getSavePanel();
+
+        //
+        this.tabPanel = new Ext.TabPanel({
+            activeTab: 0,
+            forceLayout: true,
+            items: [this.configPanel, this.savePanel]
         });
 
         this.window = new Ext.Window({
@@ -39,10 +50,21 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             modal: true,
             title: t('grid_column_config'),
             layout: "fit",
-            items: [this.configPanel]
+            items: [this.tabPanel]
         });
 
         this.window.show();
+    },
+
+    getSavePanel: function() {
+
+        var savePanel = new Ext.Panel({
+            layout: "fit",
+            iconCls: "pimcore_icon_save_and_share",
+            title: t("save_and_share"),
+            items: []
+        });
+        return savePanel;
     },
 
     doBuildChannelConfigTree: function(configuration) {

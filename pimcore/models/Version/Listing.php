@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Schedule\Task
+     * Contains the results of the list. They are all an instance of Version
      *
      * @var array
      */

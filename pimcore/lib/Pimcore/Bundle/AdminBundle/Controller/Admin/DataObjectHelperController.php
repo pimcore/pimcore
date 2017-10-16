@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
+use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Tool;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -59,6 +60,13 @@ class DataObjectHelperController extends AdminController
         return $this->json($result);
     }
 
+    /**
+     * @param $userId
+     * @param $classId
+     * @param $searchType
+     *
+     * @return GridConfig\Listing
+     */
     public function getGridColumnConfigs($userId, $classId, $searchType)
     {
         $db = Db::get();
@@ -172,12 +180,22 @@ class DataObjectHelperController extends AdminController
         $userId = $this->getUser()->getId();
 
         $requestedGridConfigId = $request->get('gridConfigId');
-        if (!$requestedGridConfigId) {
-            //TODO siwth to the configured default view
-        }
 
         // grid config
         $gridConfig = [];
+
+        if (strlen($requestedGridConfigId) == 0 && $class) {
+            // check if there is a favourite view
+            $favourite = null;
+            try {
+                $favourite = GridConfigFavourite::getByOwnerAndClassId($userId, $class->getId());
+                if ($favourite) {
+                    $requestedGridConfigId = $favourite->getGridConfigId();
+                }
+            } catch (\Exception $e) {
+            }
+        }
+
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0 && $objectId) {
             $searchType = $request->get('searchType');
 
@@ -194,20 +212,6 @@ class DataObjectHelperController extends AdminController
                 $config = GridConfig::getById($requestedGridConfigId);
             } catch (\Exception $e) {
             }
-//            if (!$config) {
-//                // fallback, could be that in the meantime the config has been deleted
-//                $configCondition = implode(' AND ', $configListingConditionParts);
-//                $configListing = new GridConfig\Listing();
-//                $configListing->setOrderKey('id');
-//                $configListing->setOrder('ASC');
-//                $configListing->setCondition($configCondition);
-//                $configListing->setLimit(1);
-//                $configListing = $configListing->load();
-//                if ($configListing) {
-//                    /** @var $config GridConfig */
-//                    $config = $configListing[0];
-//                }
-//            }
 
             if ($config) {
                 $gridConfigId = $config->getId();
@@ -502,44 +506,38 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-delete-column-config")
+     * @Route("/grid-mark-favourite-column-config")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-//    public function gridDeleteColumnConfigAction(Request $request)
-//    {
-//        $object = DataObject::getById($request->get('id'));
-//
-//        if ($object->isAllowed('list')) {
-//            try {
-//                $classId = $request->get('class_id');
-//
-//                $searchType = $request->get('searchType');
-//                $postfix = $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
-//
-//                $configFiles = [];
-//                $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '_' . $classId . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-//                $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-//
-//                foreach ($configFiles as $configFile) {
-//                    $configDir = dirname($configFile);
-//                    if (is_dir($configDir)) {
-//                        if (is_file($configFile)) {
-//                            @unlink($configFile);
-//                        }
-//                    }
-//                }
-//
-//                return $this->json(['success' => true]);
-//            } catch (\Exception $e) {
-//                return $this->json(['success' => false, 'message' => $e->getMessage()]);
-//            }
-//        }
-//
-//        return $this->json(['success' => false, 'message' => 'missing_permission']);
-//    }
+    public function gridMarkFavouriteColumnConfigAction(Request $request)
+    {
+        $objectId = $request->get('objectId');
+        $object = DataObject\AbstractObject::getById($objectId);
+        if ($object->isAllowed('list')) {
+            $classId = $request->get('classId');
+            $gridConfigId = $request->get('gridConfigId');
+            $user = $this->getUser();
+
+            $favourite = new GridConfigFavourite();
+            $favourite->setOwnerId($user->getId());
+            $class = DataObject\ClassDefinition::getById($classId);
+            if (!$class) {
+                throw new \Exception('class ' . $classId . ' does not exist anymore');
+            }
+            $favourite->setClassId($classId);
+
+            $gridConfig = GridConfig::getById($gridConfigId);
+            $favourite->setGridConfigId($gridConfig->getId());
+            $favourite->save();
+
+            return $this->json(['success' => true]);
+        } else {
+            return $this->json(['success' => false, 'message' => 'missing_permission']);
+        }
+    }
 
     /**
      * @Route("/grid-save-column-config")

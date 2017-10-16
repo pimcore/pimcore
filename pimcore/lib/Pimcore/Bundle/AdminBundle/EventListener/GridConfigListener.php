@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -24,10 +22,8 @@ use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\UserRoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-
 class GridConfigListener implements EventSubscriberInterface
 {
-
     /**
      * @inheritDoc
      */
@@ -35,31 +31,41 @@ class GridConfigListener implements EventSubscriberInterface
     {
         return [
             DataObjectClassDefinitionEvents::POST_DELETE => 'onClassDelete',
-            UserRoleEvents::POST_DELETE => "onUserDelete"
+            UserRoleEvents::POST_DELETE => 'onUserDelete'
         ];
     }
 
     /**
      * @param $event ClassDefinitionEvent
      */
-    public function onClassDelete($event) {
+    public function onClassDelete($event)
+    {
         $class = $event->getClassDefinition();
         $classId = $class->getId();
-        $this->cleanupGridConfigs("classId = " . $classId);
+        $this->cleanupGridConfigs('classId = ' . $classId);
+        $this->cleanupGridConfigFafourites('classId = ' . $classId);
     }
 
     /**
      * @param $event UserRoleEvent
      */
-    public function onUserDelete($event) {
+    public function onUserDelete($event)
+    {
         $user = $event->getUserRole();
         $userId = $user->getId();
-        $this->cleanupGridConfigs("ownerId = " . $userId);
+        $this->cleanupGridConfigs('ownerId = ' . $userId);
+        $this->cleanupGridConfigFafourites('ownerId = ' . $userId);
     }
 
-    protected function cleanupGridConfigs($condition) {
+    protected function cleanupGridConfigs($condition)
+    {
         $db = Db::get();
-        $db->query("DELETE FROM gridconfigs where " . $condition);
+        $db->query('DELETE FROM gridconfigs where ' . $condition);
     }
 
+    protected function cleanupGridConfigFafourites($condition)
+    {
+        $db = Db::get();
+        $db->query('DELETE FROM gridconfig_favourites where ' . $condition);
+    }
 }

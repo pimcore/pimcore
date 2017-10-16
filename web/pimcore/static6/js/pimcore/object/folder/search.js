@@ -150,10 +150,19 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         });
 
         menu.add({
+            text: t('set_as_favourite'),
+            iconCls: "pimcore_icon_favourite",
+            disabled: !this.gridConfigId,
+            handler: function () {
+                pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.gridConfigId);
+            }.bind(this)
+        });
+
+        menu.add({
             text: t('remove_config'),
             iconCls: "pimcore_icon_delete",
             disabled: !this.gridConfigId,
-            handler: this.deleteConfig.bind(this)
+            handler: this.deleteGridConfig.bind(this)
         });
 
         menu.add('-');
@@ -169,7 +178,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             gridConfig: {
                 id: 0
             },
-            handler: this.switchToConfig.bind(this)
+            handler: this.switchToGridConfig.bind(this)
         });
 
         if (this.availableConfigs) {
@@ -184,38 +193,51 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     text: text,
                     iconCls: 'pimcore_icon_gridcolumnconfig',
                     gridConfig: config,
-                    handler: this.switchToConfig.bind(this)
+                    handler: this.switchToGridConfig.bind(this)
                 }
                 menu.add(menuConfig);
             }
         }
     },
 
-    deleteConfig: function () {
-        Ext.Ajax.request({
-            url: "/admin/object-helper/grid-delete-column-config",
-            params: {
-                id: this.classId,
-                objectId:
-                this.object.id,
-                gridtype: "grid",
-                gridConfigId: this.gridConfigId,
-                searchType: this.searchType
-            },
-            success: function(response) {
+    deleteGridConfig: function () {
 
-                decodedResponse = Ext.decode(response.responseText);
-                if (decodedResponse.deleteSuccess) {
-                    pimcore.helpers.showNotification(t("success"), t("gridconfig_removed"), "success");
-                } else {
-                    pimcore.helpers.showNotification(t("error"), t("gridconfig_not_removed"), "error");
-                }
-                this.createGrid(false, response);
-            }.bind(this)
+        Ext.MessageBox.show({
+            title: t('delete'),
+            msg: t('delete_gridconfig_dblcheck'),
+            buttons: Ext.Msg.OKCANCEL,
+            icon: Ext.MessageBox.INFO,
+            fn: this.deleteGridConfigConfirmed.bind(this)
         });
     },
 
-    switchToConfig: function (menuItem) {
+    deleteGridConfigConfirmed: function (btn) {
+        if (btn == 'ok') {
+            Ext.Ajax.request({
+                url: "/admin/object-helper/grid-delete-column-config",
+                params: {
+                    id: this.classId,
+                    objectId:
+                    this.object.id,
+                    gridtype: "grid",
+                    gridConfigId: this.gridConfigId,
+                    searchType: this.searchType
+                },
+                success: function (response) {
+
+                    decodedResponse = Ext.decode(response.responseText);
+                    if (decodedResponse.deleteSuccess) {
+                        pimcore.helpers.showNotification(t("success"), t("gridconfig_removed"), "success");
+                    } else {
+                        pimcore.helpers.showNotification(t("error"), t("gridconfig_not_removed"), "error");
+                    }
+                    this.createGrid(false, response);
+                }.bind(this)
+            });
+        }
+    },
+
+    switchToGridConfig: function (menuItem) {
         var gridConfig = menuItem.gridConfig;
         this.gridConfigId = gridConfig.id;
         this.getTableDescription();
@@ -272,7 +294,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
             }
         });
-
 
         var plugins = [this.cellEditing, 'pimcore.gridfilters'];
 
@@ -362,7 +383,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             tooltip: t('save_column_configuration'),
             iconCls: "pimcore_icon_publish",
             hidden: hideSaveColumnConfig,
-            handler: function() {
+            handler: function () {
                 var asCopy = !(this.gridConfigId > 0);
                 this.saveConfig(asCopy)
             }.bind(this)
@@ -480,7 +501,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         }
     },
 
-    getSaveAsDialog: function() {
+    getSaveAsDialog: function () {
         var defaultName = new Date();
 
         var nameField = new Ext.form.TextField({
@@ -529,8 +550,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         nameField.selectText();
         return this.window;
     },
-
-
 
 
     getGridConfig: function ($super) {

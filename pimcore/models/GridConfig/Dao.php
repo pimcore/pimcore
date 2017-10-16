@@ -15,26 +15,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\GridConfig;
+namespace Pimcore\Model\GridConfigFavourite;
 
 use Pimcore\Model;
 
 /**
- * @property \Pimcore\Model\GridConfig $model
+ * @property \Pimcore\Model\GridConfigFavourite $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $id
+     * @param $ownerId
+     * @param $classId
      *
      * @throws \Exception
      */
-    public function getById($id)
+    public function getByOwnerAndClassId($ownerId, $classId)
     {
-        $data = $this->db->fetchRow('SELECT * FROM gridconfigs WHERE id = ?', $id);
+        $data = $this->db->fetchRow('SELECT * FROM gridconfig_favourites WHERE ownerId = ? AND classId = ?', [$ownerId, $classId]);
 
-        if (!$data['id']) {
-            throw new \Exception('gridconfig with id ' . $id . ' not found');
+        if (!$data) {
+            throw new \Exception('gridconfig favourite with ownerId ' . $ownerId . ' and class id ' . $classId . ' not found');
         }
 
         $this->assignVariablesToModel($data);
@@ -47,10 +48,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        $gridconfigs = get_object_vars($this->model);
+        $gridConfigFavourite = get_object_vars($this->model);
 
-        foreach ($gridconfigs as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns('gridconfigs'))) {
+        foreach ($gridConfigFavourite as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('gridconfig_favourites'))) {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }
@@ -59,14 +60,9 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('gridconfigs', $data);
+        $this->db->insertOrUpdate('gridconfig_favourites', $data);
 
-        $lastInsertId = $this->db->lastInsertId();
-        if (!$this->model->getId() && $lastInsertId) {
-            $this->model->setId($lastInsertId);
-        }
-
-        return $this->model->getId();
+        return $this->model;
     }
 
     /**
@@ -74,6 +70,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete('gridconfigs', ['id' => $this->model->getId()]);
+        $this->db->delete('gridconfig_favourites', ['ownerId' => $this->model->getOwnerId(), 'classId' => $this->model->getClassId()]);
     }
 }

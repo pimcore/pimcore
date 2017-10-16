@@ -883,3 +883,15 @@ CREATE TABLE `gridconfigs` (
 )
 DEFAULT CHARSET=utf8mb4;
 ;
+
+DROP TABLE IF EXISTS `gridconfig_favourites`;
+CREATE TABLE `gridconfig_favourites` (
+	`ownerId` INT(11) NOT NULL,
+	`classId` INT(11) NOT NULL,
+	`gridConfigId` INT(11) NULL,
+	PRIMARY KEY (`ownerId`, `classId`),
+	INDEX `ownerId` (`ownerId`),
+	INDEX `classId` (`classId`)
+)
+DEFAULT CHARSET=utf8mb4;
+;

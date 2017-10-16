@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Db;
+
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
  */
@@ -73,10 +75,10 @@ class GridConfig extends AbstractModel
      */
     public static function getById($id)
     {
-        $version = new self();
-        $version->getDao()->getById($id);
+        $config = new self();
+        $config->getDao()->getById($id);
 
-        return $version;
+        return $config;
     }
 
     /**
@@ -94,12 +96,15 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * Delete this Version
+     * Delete this GridConfig
      */
     public function delete()
     {
-        //TODO cleanup favourites + shares once that part is done
         $this->getDao()->delete();
+
+        // also delete the favourite
+        $db = Db::get();
+        $db->query('DELETE from gridconfig_favourites where gridConfigId = ' . $db->quote($this->getId()));
     }
 
     /**
