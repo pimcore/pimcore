@@ -120,7 +120,7 @@ class Config
      */
     public function getApiToken()
     {
-        return $this->normalizeStringValue($this->config->auth_token);
+        return $this->normalizeStringValue($this->config->api_token);
     }
 
     /**
@@ -128,9 +128,6 @@ class Config
      */
     public function getReportToken()
     {
-        // TODO split up tokens into API and report tokens
-        return $this->getApiToken();
-
         return $this->normalizeStringValue($this->config->report_token);
     }
 

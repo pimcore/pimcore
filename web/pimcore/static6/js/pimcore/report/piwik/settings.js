@@ -31,9 +31,9 @@ pimcore.report.piwik.settings = Class.create({
                 {
                     xtype: "fieldset",
                     defaults: {
-                        labelWidth: 300
+                        labelWidth: 200
                     },
-                    title: "General Settings",
+                    title: t("general_settings"),
                     items: [
                         {
                             xtype: "textfield",
@@ -43,12 +43,50 @@ pimcore.report.piwik.settings = Class.create({
                             id: "report_settings_piwik_url",
                             value: this.parent.getValue("piwik.piwik_url")
                         }, {
+                            xtype: "checkbox",
+                            fieldLabel: t("piwik_use_ssl"),
+                            name: "piwik_use_ssl",
+                            id: "report_settings_piwik_use_ssl",
+                            checked: this.parent.getValue("piwik.piwik_use_ssl")
+                        }
+                    ]
+                },
+                {
+                    xtype: "fieldset",
+                    defaults: {
+                        labelWidth: 200
+                    },
+                    title: t("piwik_tokens"),
+                    collapsible: true,
+                    items: [
+                        {
                             xtype: "textfield",
-                            fieldLabel: t("piwik_auth_token"),
-                            name: "auth_token",
+                            inputType: "password",
+                            fieldLabel: t("piwik_api_token"),
+                            name: "api_token",
                             width: 670,
-                            id: "report_settings_piwik_auth_token",
-                            value: this.parent.getValue("piwik.auth_token")
+                            id: "report_settings_piwik_api_token",
+                            value: this.parent.getValue("piwik.api_token")
+                        }, {
+                            xtype: "displayfield",
+                            width: 670,
+                            hideLabel: true,
+                            value: t("piwik_api_token_info"),
+                            cls: "pimcore_extra_label"
+                        }, {
+                            xtype: "textfield",
+                            inputType: "password",
+                            fieldLabel: t("piwik_report_token"),
+                            name: "report_token",
+                            width: 670,
+                            id: "report_settings_piwik_report_token",
+                            value: this.parent.getValue("piwik.report_token")
+                        }, {
+                            xtype: "displayfield",
+                            width: 670,
+                            hideLabel: true,
+                            value: t("piwik_report_token_info"),
+                            cls: "pimcore_extra_label"
                         }
                     ]
                 },
@@ -86,7 +124,7 @@ pimcore.report.piwik.settings = Class.create({
         return {
             xtype: "fieldset",
             defaults: {
-                labelWidth: 300
+                labelWidth: 200
             },
             title: name,
             items: [
@@ -103,7 +141,7 @@ pimcore.report.piwik.settings = Class.create({
                     collapsed: true,
                     title: t("code_settings"),
                     defaults: {
-                        labelWidth: 300
+                        labelWidth: 200
                     },
                     items: [{
                         xtype: "textarea",
@@ -159,13 +197,13 @@ pimcore.report.piwik.settings = Class.create({
             };
         }, this);
 
-        var values = {
+        return {
             piwik_url: Ext.getCmp("report_settings_piwik_url").getValue(),
-            auth_token: Ext.getCmp("report_settings_piwik_auth_token").getValue(),
+            use_ssl: Ext.getCmp("report_settings_piwik_use_ssl").getValue(),
+            api_token: Ext.getCmp("report_settings_piwik_api_token").getValue(),
+            report_token: Ext.getCmp("report_settings_piwik_report_token").getValue(),
             sites: sitesData
         };
-
-        return values;
     }
 });
 
