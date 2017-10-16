@@ -15,20 +15,14 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Piwik;
+namespace Pimcore\Analytics\Piwik;
 
-use Pimcore\Analytics\Tracking\Piwik\Config\Config;
-use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
-use Pimcore\Analytics\Tracking\Piwik\Dto\ReportConfig;
-use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
-use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigProvider;
-use Pimcore\Event\Admin\IndexSettingsEvent;
-use Pimcore\Event\AdminEvents;
-use Pimcore\Event\Tracking\Piwik\ReportConfigEvent;
-use Pimcore\Event\Tracking\PiwikEvents;
-use Pimcore\Model\Site;
+use Pimcore\Analytics\Piwik\Config\Config;
+use Pimcore\Analytics\Piwik\Config\ConfigProvider;
+use Pimcore\Analytics\Piwik\Dto\ReportConfig;
+use Pimcore\Analytics\SiteConfig\SiteConfigProvider;
+use Pimcore\Event\Analytics\PiwikEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -86,7 +80,7 @@ class ReportBroker
 
         $reports = $this->buildReports();
 
-        $event = new ReportConfigEvent($reports);
+        $event = new Event\ReportConfigEvent($reports);
         $this->eventDispatcher->dispatch(PiwikEvents::GENERATE_REPORTS, $event);
 
         $this->reports = [];

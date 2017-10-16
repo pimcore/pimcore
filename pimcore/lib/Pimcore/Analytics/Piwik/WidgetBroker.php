@@ -15,13 +15,13 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Piwik;
+namespace Pimcore\Analytics\Piwik;
 
-use Pimcore\Analytics\Tracking\Piwik\Api\ApiClient;
-use Pimcore\Analytics\Tracking\Piwik\Config\Config;
-use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
-use Pimcore\Analytics\Tracking\Piwik\Dto\WidgetConfig;
-use Pimcore\Analytics\Tracking\Piwik\Dto\WidgetReference;
+use Pimcore\Analytics\Piwik\Api\ApiClient;
+use Pimcore\Analytics\Piwik\Config\Config;
+use Pimcore\Analytics\Piwik\Config\ConfigProvider;
+use Pimcore\Analytics\Piwik\Dto\WidgetConfig;
+use Pimcore\Analytics\Piwik\Dto\WidgetReference;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Cache\Core\CoreHandler;
 use Psr\Log\LoggerInterface;

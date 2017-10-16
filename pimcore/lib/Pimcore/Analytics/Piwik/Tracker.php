@@ -15,17 +15,17 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Piwik;
+namespace Pimcore\Analytics\Piwik;
 
-use Pimcore\Analytics\Tracking\AbstractTracker;
-use Pimcore\Analytics\Tracking\Code\CodeBlock;
-use Pimcore\Analytics\Tracking\Code\CodeContainer;
-use Pimcore\Analytics\Tracking\Piwik\Config\Config;
-use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
-use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
-use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigProvider;
-use Pimcore\Event\Tracking\Piwik\TrackingDataEvent;
-use Pimcore\Event\Tracking\PiwikEvents;
+use Pimcore\Analytics\AbstractTracker;
+use Pimcore\Analytics\Code\CodeBlock;
+use Pimcore\Analytics\Code\CodeContainer;
+use Pimcore\Analytics\Piwik\Config\Config;
+use Pimcore\Analytics\Piwik\Config\ConfigProvider;
+use Pimcore\Analytics\Piwik\Event\TrackingDataEvent;
+use Pimcore\Analytics\SiteConfig\SiteConfig;
+use Pimcore\Analytics\SiteConfig\SiteConfigProvider;
+use Pimcore\Event\Analytics\PiwikEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;

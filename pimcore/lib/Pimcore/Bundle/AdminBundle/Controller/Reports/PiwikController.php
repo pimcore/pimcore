@@ -17,10 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
-use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
-use Pimcore\Analytics\Tracking\Piwik\ReportBroker;
-use Pimcore\Analytics\Tracking\Piwik\WidgetBroker;
-use Pimcore\Analytics\Tracking\SiteConfig\SiteConfigProvider;
+use Pimcore\Analytics\Piwik\Config\ConfigProvider;
+use Pimcore\Analytics\Piwik\ReportBroker;
+use Pimcore\Analytics\Piwik\WidgetBroker;
+use Pimcore\Analytics\SiteConfig\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Translation\TranslatorInterface;

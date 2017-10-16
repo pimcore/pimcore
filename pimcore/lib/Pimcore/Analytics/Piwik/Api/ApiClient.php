@@ -15,10 +15,10 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Piwik\Api;
+namespace Pimcore\Analytics\Piwik\Api;
 
 use GuzzleHttp\Client;
-use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
+use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Http\ClientFactory;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;

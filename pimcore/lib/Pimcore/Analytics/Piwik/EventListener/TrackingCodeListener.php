@@ -15,9 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
+namespace Pimcore\Analytics\Piwik\EventListener;
 
-use Pimcore\Analytics\Tracking\Piwik\Tracker;
+use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -26,7 +26,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class PiwikTrackingCodeListener implements EventSubscriberInterface
+class TrackingCodeListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
@@ -45,7 +45,6 @@ class PiwikTrackingCodeListener implements EventSubscriberInterface
     {
         $this->tracker = $tracker;
     }
-
 
     public static function getSubscribedEvents()
     {

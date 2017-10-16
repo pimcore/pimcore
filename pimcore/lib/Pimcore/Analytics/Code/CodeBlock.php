@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Code;
+namespace Pimcore\Analytics\Code;
 
 /**
  * Contains all parts which are rendered to a specific block

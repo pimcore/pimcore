@@ -15,19 +15,14 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Piwik\Dto;
+namespace Pimcore\Analytics\Piwik\Dto;
 
-final class WidgetConfig
+final class ReportConfig
 {
     /**
      * @var string
      */
     private $id;
-
-    /**
-     * @var string
-     */
-    private $name;
 
     /**
      * @var string
@@ -39,28 +34,16 @@ final class WidgetConfig
      */
     private $url;
 
-    /**
-     * @var array
-     */
-    private $data;
-
-    public function __construct(string $id, string $name, string $title, string $url, array $data)
+    public function __construct(string $id, string $title, string $url)
     {
         $this->id    = $id;
-        $this->name  = $name;
         $this->title = $title;
         $this->url   = $url;
-        $this->data  = $data;
     }
 
     public function getId(): string
     {
         return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     public function getTitle(): string
@@ -71,10 +54,5 @@ final class WidgetConfig
     public function getUrl(): string
     {
         return $this->url;
-    }
-
-    public function getData(): array
-    {
-        return $this->data;
     }
 }

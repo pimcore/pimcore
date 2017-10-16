@@ -15,10 +15,10 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Piwik\EventListener;
+namespace Pimcore\Analytics\Piwik\EventListener;
 
-use Pimcore\Analytics\Tracking\Piwik\Config\ConfigProvider;
-use Pimcore\Analytics\Tracking\Piwik\ReportBroker;
+use Pimcore\Analytics\Piwik\Config\ConfigProvider;
+use Pimcore\Analytics\Piwik\ReportBroker;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

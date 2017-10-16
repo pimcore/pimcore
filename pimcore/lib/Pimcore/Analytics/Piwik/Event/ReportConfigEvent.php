@@ -15,9 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Event\Tracking\Piwik;
+namespace Pimcore\Analytics\Piwik\Event;
 
-use Pimcore\Analytics\Tracking\Piwik\Dto\ReportConfig;
+use Pimcore\Analytics\Piwik\Dto\ReportConfig;
 use Symfony\Component\EventDispatcher\Event;
 
 class ReportConfigEvent extends Event

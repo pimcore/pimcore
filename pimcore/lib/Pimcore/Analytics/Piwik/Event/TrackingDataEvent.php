@@ -15,11 +15,11 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Event\Tracking\Piwik;
+namespace Pimcore\Analytics\Piwik\Event;
 
-use Pimcore\Analytics\Tracking\Code\CodeBlock;
-use Pimcore\Analytics\Tracking\Piwik\Config\Config;
-use Pimcore\Analytics\Tracking\SiteConfig\SiteConfig;
+use Pimcore\Analytics\Code\CodeBlock;
+use Pimcore\Analytics\Piwik\Config\Config;
+use Pimcore\Analytics\SiteConfig\SiteConfig;
 use Symfony\Component\EventDispatcher\Event;
 
 class TrackingDataEvent extends Event

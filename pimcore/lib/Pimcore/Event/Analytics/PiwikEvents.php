@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Event\Tracking;
+namespace Pimcore\Event\Analytics;
 
 final class PiwikEvents
 {
@@ -20,7 +20,7 @@ final class PiwikEvents
      * Triggered before a tracking code block is rendered. Can be used to add additional code
      * snippets to the tracking block.
      *
-     * @Event("Pimcore\Event\Tracking\Piwik\TrackingDataEvent")
+     * @Event("Pimcore\Analytics\Piwik\Event\TrackingDataEvent")
      *
      * @var string
      */
@@ -30,7 +30,7 @@ final class PiwikEvents
      * Triggered when the available Piwik reports are generated. Can be used to add additional reports (iframes) to the
      * report panel.
      *
-     * @Event("Pimcore\Event\Tracking\Piwik\ReportConfigEvent")
+     * @Event("Pimcore\Analytics\Piwik\Event\ReportConfigEvent")
      *
      * @var string
      */

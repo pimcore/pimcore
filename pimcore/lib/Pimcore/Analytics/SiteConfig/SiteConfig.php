@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\SiteConfig;
+namespace Pimcore\Analytics\SiteConfig;
 
 use Pimcore\Model\Site;
 use Symfony\Component\Translation\TranslatorInterface;

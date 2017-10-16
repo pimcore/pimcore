@@ -15,9 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\Tracking\Piwik\Dto;
+namespace Pimcore\Analytics\Piwik\Dto;
 
-final class WidgetReference
+final class WidgetConfig
 {
     /**
      * @var string
@@ -27,12 +27,30 @@ final class WidgetReference
     /**
      * @var string
      */
+    private $name;
+
+    /**
+     * @var string
+     */
     private $title;
 
-    public function __construct(string $id, string $title)
+    /**
+     * @var string
+     */
+    private $url;
+
+    /**
+     * @var array
+     */
+    private $data;
+
+    public function __construct(string $id, string $name, string $title, string $url, array $data)
     {
         $this->id    = $id;
+        $this->name  = $name;
         $this->title = $title;
+        $this->url   = $url;
+        $this->data  = $data;
     }
 
     public function getId(): string
@@ -40,8 +58,23 @@ final class WidgetReference
         return $this->id;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function getTitle(): string
     {
         return $this->title;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
     }
 }
