@@ -30,7 +30,16 @@ pimcore.object.tags.password = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            componentCls: "object_field"
+            componentCls: "object_field",
+            inputType: "password",
+            maxLength: 30,
+            listeners: {
+                afterrender: function (cmp) {
+                    cmp.inputEl.set({
+                        autocomplete: 'new-password'
+                    });
+                }
+            }
         };
 
         input.value = "********";
