@@ -86,7 +86,10 @@ class PiwikController extends ReportsControllerBase
                 continue;
             }
 
-            $sites[$siteConfig->getConfigKey()] = $siteConfig->getTitle($translator);
+            $sites[] = [
+                'id'    => $siteConfig->getConfigKey(),
+                'title' => $siteConfig->getTitle($translator)
+            ];
         }
 
         return $this->jsonResponse(['data' => $sites]);

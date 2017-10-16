@@ -1543,5 +1543,10 @@
   "piwik_url": "Piwik URL",
   "piwik_auth_token": "Auth Token",
   "piwik_site_id": "Site ID",
-  "piwik_all_websites_dashboard": "All Websites"
+  "piwik_all_websites_dashboard": "All Websites",
+  "piwik_widget_widget": "Widget",
+  "piwik_widget_site": "Site",
+  "portlet_piwik_widget": "Piwik Widget",
+  "portlet_piwik_unconfigured": "Please use the gear icon to configure the widget.",
+  "portlet_piwik_error": "Failed to load widget."
 }

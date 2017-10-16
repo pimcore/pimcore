@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PortalController extends AdminController implements EventedControllerInterface
 {
     /**
-     * @var \\Pimcore\\Helper\\Dashboard
+     * @var \Pimcore\Helper\Dashboard
      */
     protected $dashboardHelper = null;
 
