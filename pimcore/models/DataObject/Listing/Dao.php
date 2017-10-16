@@ -105,6 +105,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $query = $this->getQuery();
+
+        if ($this->model->addDistinct()) {
+            $query->distinct(true);
+        }
+
         $query->reset(QueryBuilder::LIMIT_COUNT);
         $query->reset(QueryBuilder::LIMIT_OFFSET);
         $query->reset(QueryBuilder::ORDER);
