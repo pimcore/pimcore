@@ -63,6 +63,31 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
+     * @Route("/iframe-integration")
+     *
+     * @param ConfigProvider $configProvider
+     *
+     * @return JsonResponse
+     */
+    public function iframeIntegrationAction(ConfigProvider $configProvider)
+    {
+        $config = $configProvider->getConfig();
+
+        $data = [
+            'configured' => false
+        ];
+
+        if ($config->isIframeIntegrationConfigured()) {
+            $data = [
+                'configured' => true,
+                'url'        => $config->generateIframeUrl()
+            ];
+        }
+
+        return $this->jsonResponse($data);
+    }
+
+    /**
      * @Route("/config/configured-sites")
      *
      * @param SiteConfigProvider $siteConfigProvider

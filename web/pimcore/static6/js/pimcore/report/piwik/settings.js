@@ -29,6 +29,16 @@ pimcore.report.piwik.settings = Class.create({
             autoScroll: true,
             items: [
                 {
+                    xtype: "displayfield",
+                    width: 670,
+                    hideLabel: true,
+                    value: t("piwik_config_notice"),
+                    cls: "pimcore_extra_label",
+                    fieldStyle: {
+                        color: "#ff0000"
+                    }
+                },
+                {
                     xtype: "fieldset",
                     defaults: {
                         labelWidth: 200
@@ -58,6 +68,7 @@ pimcore.report.piwik.settings = Class.create({
                     },
                     title: t("piwik_tokens"),
                     collapsible: true,
+                    collapsed: true,
                     items: [
                         {
                             xtype: "textfield",
@@ -86,6 +97,45 @@ pimcore.report.piwik.settings = Class.create({
                             width: 670,
                             hideLabel: true,
                             value: t("piwik_report_token_info"),
+                            cls: "pimcore_extra_label"
+                        }
+                    ]
+                },
+                {
+                    xtype: "fieldset",
+                    defaults: {
+                        labelWidth: 200
+                    },
+                    title: t("piwik_iframe_integration"),
+                    collapsible: true,
+                    collapsed: true,
+                    items: [
+                        {
+                            xtype: "displayfield",
+                            width: 670,
+                            hideLabel: true,
+                            value: t("piwik_iframe_integration_info"),
+                            cls: "pimcore_extra_label"
+                        }, {
+                            xtype: "textfield",
+                            fieldLabel: t("piwik_iframe_username"),
+                            name: "iframe_username",
+                            width: 670,
+                            id: "report_settings_piwik_iframe_username",
+                            value: this.parent.getValue("piwik.iframe_username")
+                        }, {
+                            xtype: "textfield",
+                            inputType: "password",
+                            fieldLabel: t("piwik_iframe_password"),
+                            name: "iframe_password",
+                            width: 670,
+                            id: "report_settings_piwik_iframe_password",
+                            value: this.parent.getValue("piwik.iframe_password")
+                        }, {
+                            xtype: "displayfield",
+                            width: 670,
+                            hideLabel: true,
+                            value: t("piwik_iframe_password_info"),
                             cls: "pimcore_extra_label"
                         }
                     ]
@@ -202,6 +252,8 @@ pimcore.report.piwik.settings = Class.create({
             use_ssl: Ext.getCmp("report_settings_piwik_use_ssl").getValue(),
             api_token: Ext.getCmp("report_settings_piwik_api_token").getValue(),
             report_token: Ext.getCmp("report_settings_piwik_report_token").getValue(),
+            iframe_username: Ext.getCmp("report_settings_piwik_iframe_username").getValue(),
+            iframe_password: Ext.getCmp("report_settings_piwik_iframe_password").getValue(),
             sites: sitesData
         };
     }

@@ -15,4 +15,5 @@ services:
     Pimcore\Analytics\Tracking\Piwik\Tracker: ~
     Pimcore\Analytics\Tracking\Piwik\ReportBroker: ~
     Pimcore\Analytics\Tracking\Piwik\WidgetBroker: ~
+    Pimcore\Analytics\Tracking\Piwik\EventListener\IndexSettingsListener: ~
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\PiwikTrackingCodeListener: ~

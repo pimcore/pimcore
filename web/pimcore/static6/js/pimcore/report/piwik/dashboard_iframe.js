@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.report.piwik.dashboard.iframe");
-pimcore.report.piwik.dashboard.iframe = Class.create(pimcore.report.abstract, {
+pimcore.registerNS("pimcore.report.piwik.dashboard_iframe");
+pimcore.report.piwik.dashboard_iframe = Class.create(pimcore.report.abstract, {
     matchType: function (type) {
         return !!pimcore.report.abstract.prototype.matchTypeValidate(type, ["global"]);
     },
@@ -128,6 +128,6 @@ if ('undefined' !== typeof pimcore.settings.piwik && 'undefined' !== typeof pimc
 
         // add to report broker
         pimcore.report.broker.addGroup("piwik", "Piwik", "pimcore_icon_analytics");
-        pimcore.report.broker.addReport(pimcore.report.piwik.dashboard.iframe, "piwik", reportConfig);
+        pimcore.report.broker.addReport(pimcore.report.piwik.dashboard_iframe, "piwik", reportConfig);
     });
 }

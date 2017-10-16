@@ -144,6 +144,47 @@ class Config
         }
     }
 
+    public function isIframeIntegrationConfigured(): bool
+    {
+        return !empty($this->getIframeUsername()) && !empty($this->getIframePassword());
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getIframeUsername()
+    {
+        return $this->normalizeStringValue($this->config->iframe_username);
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getIframePassword()
+    {
+        return $this->normalizeStringValue($this->config->iframe_password);
+    }
+
+    public function generateIframeUrl(): string
+    {
+        if (!$this->isIframeIntegrationConfigured()) {
+            throw new \RuntimeException('Iframe integration is not configured');
+        }
+
+        $parameters = [
+            'module'   => 'Login',
+            'action'   => 'logme',
+            'login'    => $this->getIframeUsername(),
+            'password' => $this->getIframePassword(),
+        ];
+
+        return sprintf(
+            '//%s/index.php?%s',
+            rtrim($this->getPiwikUrl(), '/'),
+            http_build_query($parameters)
+        );
+    }
+
     /**
      * @param string|null $value
      *

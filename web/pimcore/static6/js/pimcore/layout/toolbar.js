@@ -596,6 +596,44 @@ pimcore.layout.toolbar = Class.create({
                     cls: "pimcore_navigation_flyout"
                 });
             }
+
+            if (pimcore.settings.piwik.iframe_configured) {
+                Ext.Ajax.request({
+                    url: "/admin/reports/piwik/iframe-integration",
+                    success: function (response) {
+                        if (!this.marketingMenu) {
+                            return;
+                        }
+
+                        var data = Ext.decode(response.responseText);
+                        if (!data.configured) {
+                            return;
+                        }
+
+                        var piwikPanelId = "piwik_iframe_integration";
+
+                        this.marketingMenu.add({
+                            text: "Piwik",
+                            iconCls: "pimcore_icon_analytics",
+                            handler: function () {
+                                if (pimcore.globalmanager.exists(piwikPanelId)) {
+                                    pimcore.globalmanager.get(piwikPanelId).activate();
+                                } else {
+                                    pimcore.globalmanager.add(
+                                        piwikPanelId,
+                                        new pimcore.tool.genericiframewindow(
+                                            piwikPanelId + "_iframe",
+                                            data.url,
+                                            "pimcore_icon_analytics",
+                                            "Piwik"
+                                        )
+                                    );
+                                }
+                            }
+                        });
+                    }.bind(this)
+                });
+            }
         }
 
 

@@ -35,7 +35,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Builds a list of all available Piwik reports which should be shown in reports panel. A ReportConfig references an
  * iframe URL with a title. Additional reports can be added by adding them in the GENERATE_REPORTS event.
  */
-class ReportBroker implements EventSubscriberInterface
+class ReportBroker
 {
     /**
      * @var ConfigProvider
@@ -73,39 +73,6 @@ class ReportBroker implements EventSubscriberInterface
         $this->siteConfigProvider = $siteConfigProvider;
         $this->eventDispatcher    = $eventDispatcher;
         $this->translator         = $translator;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            AdminEvents::INDEX_SETTINGS => 'addIndexSettings'
-        ];
-    }
-
-    /**
-     * Handles INDEX_SETTINGS event and adds piwik reports to settings
-     *
-     * @param IndexSettingsEvent $event
-     */
-    public function addIndexSettings(IndexSettingsEvent $event)
-    {
-        $reports = $this->getReports();
-        if (count($reports) > 0) {
-            $piwikReports = [];
-            foreach ($reports as $report) {
-                $piwikReports[$report->getId()] = [
-                    'id'    => $report->getId(),
-                    'title' => $report->getTitle()
-                ];
-            }
-
-            $event->getSettings()->piwik = [
-                'reports' => $piwikReports
-            ];
-        }
     }
 
     /**
