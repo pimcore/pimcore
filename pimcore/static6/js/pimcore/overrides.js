@@ -13,7 +13,7 @@
 
 if(typeof window['t'] !== 'function') {
     // for compatibility reasons
-    function t(v) {return v;};
+    window.t = function(v) { return v; };
 }
 
 Ext.override(Ext.dd.DragDropMgr, {
