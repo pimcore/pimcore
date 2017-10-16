@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Pimcore\Analytics\Tracking\Piwik\ReportBroker;
+use Pimcore\Analytics\Tracking\Piwik\WidgetBroker;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -38,9 +39,38 @@ class PiwikController extends ReportsControllerBase
         try {
             $report = $reportBroker->getReport((string)$report);
 
-            return $this->json($report, JsonResponse::HTTP_OK, [], [], false);
+            return $this->jsonResponse($report);
         } catch (\InvalidArgumentException $e) {
             throw $this->createNotFoundException($e->getMessage());
         }
+    }
+
+    /**
+     * @Route("/portal-widgets/{siteId}")
+     *
+     * @return JsonResponse
+     */
+    public function portalWidgetsAction(WidgetBroker $widgetBroker, $siteId)
+    {
+        $widgetReferences = $widgetBroker->getWidgetReferences((int)$siteId);
+
+        return $this->jsonResponse($widgetReferences);
+    }
+
+    /**
+     * @Route("/portal-widgets/{siteId}/{widgetId}")
+     *
+     * @return JsonResponse
+     */
+    public function portalWidgetAction(WidgetBroker $widgetBroker, $widgetId, $siteId)
+    {
+        $widgetConfig = $widgetBroker->getWidgetConfig($widgetId, (int)$siteId);
+
+        return $this->jsonResponse($widgetConfig);
+    }
+
+    private function jsonResponse($data): JsonResponse
+    {
+        return $this->json($data, JsonResponse::HTTP_OK, [], [], false);
     }
 }
