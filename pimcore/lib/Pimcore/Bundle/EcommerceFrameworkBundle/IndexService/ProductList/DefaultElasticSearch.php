@@ -626,23 +626,23 @@ class DefaultElasticSearch implements IProductList
         $params['body']['size'] = 10000;    // won't work with more than 10000 items in the result (elasticsearch limit)
         $params['body']['from'] = 0;
         $params['body']['fields'] = ['system.priceSystemName'];
-        $result = $this->sendRequest( $params );
+        $result = $this->sendRequest($params);
         $objectRaws = [];
-        if($result['hits']) {
+        if ($result['hits']) {
             $this->totalCount = $result['hits']['total'];
-            foreach($result['hits']['hits'] as $hit) {
+            foreach ($result['hits']['hits'] as $hit) {
                 $objectRaws[] = ['id' => $hit['_id'], 'priceSystemName' => reset($hit['fields']['system.priceSystemName'])];
             }
         }
         $priceSystemArrays = [];
-        foreach($objectRaws as $raw) {
+        foreach ($objectRaws as $raw) {
             $priceSystemArrays[$raw['priceSystemName']][] = $raw['id'];
         }
-        if(count($priceSystemArrays) == 1) {
+        if (count($priceSystemArrays) == 1) {
             $priceSystemName = key($priceSystemArrays);
             $priceSystem = Factory::getInstance()->getPriceSystem($priceSystemName);
             $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$priceSystemName], null, null, $this->order, $this->getOffset(), $this->getLimit());
-        } else if(count($priceSystemArrays) == 0) {
+        } elseif (count($priceSystemArrays) == 0) {
             //nothing to do
         } else {
             throw new \Exception('Not implemented yet - multiple pricing systems are not supported yet');
@@ -651,6 +651,7 @@ class DefaultElasticSearch implements IProductList
         foreach ($objectRaws as $raw) {
             $raws[] = $raw['o_id'];
         }
+
         return $raws;
     }
 

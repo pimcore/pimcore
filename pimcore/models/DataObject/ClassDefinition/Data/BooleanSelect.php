@@ -36,16 +36,16 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
      */
     const DEFAULT_OPTIONS = [
         [
-            "key" => "empty",
-            "value" => self::EMPTY_VALUE_EDITMODE
+            'key' => 'empty',
+            'value' => self::EMPTY_VALUE_EDITMODE
         ],
         [
-            "key" => "yes",
-            "value" => self::YES_VALUE
+            'key' => 'yes',
+            'value' => self::YES_VALUE
         ],
         [
-            "key" => "no",
-            "value" => self::NO_VALUE
+            'key' => 'no',
+            'value' => self::NO_VALUE
         ]
     ];
     /**
@@ -72,14 +72,14 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "tinyint(1) null";
+    public $queryColumnType = 'tinyint(1) null';
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "tinyint(1) null";
+    public $columnType = 'tinyint(1) null';
 
     /**
      * Type for the generated phpdoc
@@ -144,9 +144,10 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
 
         if ($data === self::YES_VALUE) {
             return true;
-        } else if ($data === self::NO_VALUE) {
+        } elseif ($data === self::NO_VALUE) {
             return false;
         }
+
         return null;
     }
 
@@ -176,13 +177,14 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
     public function getDataForResource($data, $object = null, $params = [])
     {
         if (is_numeric($data)) {
-            $data = (boolean) $data;
+            $data = (bool) $data;
         }
         if ($data === true) {
             return self::YES_VALUE;
-        } else if ($data === false) {
-           return self::NO_VALUE;
+        } elseif ($data === false) {
+            return self::NO_VALUE;
         }
+
         return null;
     }
 
@@ -290,12 +292,14 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
 
     /**
      * @param $yesLabel
+     *
      * @return $this
      */
     public function setYesLabel($yesLabel)
     {
         $this->yesLabel = $yesLabel;
         $this->setOptionsEntry(self::YES_VALUE, $yesLabel);
+
         return $this;
     }
 
@@ -303,15 +307,15 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
     {
         if (!is_array($this->options)) {
             $this->options = [
-                ["key" => $label,
-                "value" => $value
+                ['key' => $label,
+                'value' => $value
                 ]
 
             ];
         } else {
             foreach ($this->options as $idx => $option) {
-                if ($option["value"] == $value) {
-                    $option["key"] = $label;
+                if ($option['value'] == $value) {
+                    $option['key'] = $label;
                     $this->options[$idx] = $option;
                     break;
                 }
@@ -331,6 +335,7 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
     {
         $this->noLabel = $noLabel;
         $this->setOptionsEntry(self::NO_VALUE, $noLabel);
+
         return $this;
     }
 
@@ -346,6 +351,7 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
     {
         $this->emptyLabel = $emptyLabel;
         $this->setOptionsEntry(self::EMPTY_VALUE_EDITMODE, $emptyLabel);
+
         return $this;
     }
 
@@ -374,9 +380,10 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
     {
         if ($data === true) {
             return self::YES_VALUE;
-        } else if ($data === false) {
+        } elseif ($data === false) {
             return self::NO_VALUE;
         }
+
         return self::EMPTY_VALUE_EDITMODE;
     }
 
@@ -384,6 +391,7 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param array $params
+     *
      * @return string
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
@@ -404,12 +412,10 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
     {
         if ($data === 1) {
             return true;
-        } else if ($data === -1) {
+        } elseif ($data === -1) {
             return false;
         }
+
         return null;
     }
-
-
-
 }
