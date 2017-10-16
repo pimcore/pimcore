@@ -244,4 +244,14 @@ abstract class Concrete extends Model\Object\Listing
     {
         return $this->objectBrickConfigs;
     }
+
+    /**
+     * @return bool
+     */
+    public function addDistinct() {
+        $fieldCollections = $this->getFieldCollections();
+        if (!empty($fieldCollections)) {
+            return true;
+        }
+    }
 }

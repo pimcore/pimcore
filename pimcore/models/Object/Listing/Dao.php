@@ -105,6 +105,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $query = $this->getQuery();
+        if ($this->model->addDistinct()) {
+            $query->distinct(true);
+        }
+
         $query->reset(\Zend_Db_Select::LIMIT_COUNT);
         $query->reset(\Zend_Db_Select::LIMIT_OFFSET);
         $query->reset(\Zend_Db_Select::ORDER);

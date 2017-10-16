@@ -181,10 +181,6 @@ class Dao extends Model\Object\Listing\Dao
     protected function getSelectPart($defaultString = "", $column = "oo_id")
     {
         $selectPart = $defaultString;
-        $fieldCollections = $this->model->getFieldCollections();
-        if (!empty($fieldCollections)) {
-            $selectPart = "DISTINCT " . $column;
-        }
 
         return $selectPart;
     }
