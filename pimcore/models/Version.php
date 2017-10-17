@@ -264,6 +264,16 @@ class Version extends AbstractModel
             $data = Serialize::unserialize($data);
         }
 
+        /** @var  $class ClassDefinition */
+        $class = $data->getClass();
+        $fds = $class->getFieldDefinitions();
+        foreach ($fds as $fd) {
+            if (method_exists($fd, "getLazyLoading") && $fd->getLazyLoading()) {
+                $data->addLazyLoadedField($fd->getName());
+                $data->addO__loadedLazyField($fd->getName());
+            }
+        }
+
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
             $binaryHandle = fopen($this->getBinaryFilePath(), 'r+', false, File::getContext());
             $data->setStream($binaryHandle);
