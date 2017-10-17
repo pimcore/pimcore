@@ -531,22 +531,29 @@ class Mail extends \Swift_Message
     /**
      * resets all from headers before setting the new one.
      *
-     * @param string $email
+     * @param string|array $addresses
      * @param null $name
      *
      * @return \Pimcore\Mail
      */
-    public function setFrom($email, $name = null)
+    public function setFrom($addresses, $name = null)
     {
         // mitigate "pwnscriptum" attack
         // see https://framework.zend.com/security/advisory/ZF2016-04 for ZF2+ fix
-        if (preg_match('/\\\"/', $email)) {
-            throw new \RuntimeException('Potential code injection in From header');
+
+        if(!is_array($addresses)){
+            $addresses = [$addresses];
+        }
+
+        foreach ($addresses as $email) {
+            if (preg_match('/\\\"/', $email)) {
+                throw new \RuntimeException('Potential code injection in From header');
+            }
         }
 
         $this->getHeaders()->removeAll('from');
 
-        return parent::setFrom($email, $name);
+        return parent::setFrom($addresses, $name);
     }
 
     /**
