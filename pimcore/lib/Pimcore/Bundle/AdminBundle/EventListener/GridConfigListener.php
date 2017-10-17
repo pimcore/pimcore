@@ -42,6 +42,14 @@ class GridConfigListener implements EventSubscriberInterface
     {
         $class = $event->getClassDefinition();
         $classId = $class->getId();
+
+        // collect gridConfigs for that class id
+        $db = Db::get();
+        $gridConfigIds = $db->fetchCol('select id from gridconfigs where classId = ' . $classId);
+        if ($gridConfigIds) {
+            $db->query('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
+        }
+
         $this->cleanupGridConfigs('classId = ' . $classId);
         $this->cleanupGridConfigFafourites('classId = ' . $classId);
     }
@@ -53,6 +61,14 @@ class GridConfigListener implements EventSubscriberInterface
     {
         $user = $event->getUserRole();
         $userId = $user->getId();
+
+        $db = Db::get();
+
+        $gridConfigIds = $db->fetchCol('select id from gridconfigs where ownerId = ' . $userId);
+        if ($gridConfigIds) {
+            $db->query('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
+        }
+
         $this->cleanupGridConfigs('ownerId = ' . $userId);
         $this->cleanupGridConfigFafourites('ownerId = ' . $userId);
     }

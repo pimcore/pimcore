@@ -895,3 +895,14 @@ CREATE TABLE `gridconfig_favourites` (
 )
 DEFAULT CHARSET=utf8mb4;
 ;
+
+DROP TABLE IF EXISTS `gridconfig_shares`;
+CREATE TABLE `gridconfig_shares` (
+	`gridConfigId` INT(11) NOT NULL,
+	`sharedWithUserId` INT(11) NOT NULL,
+	PRIMARY KEY (`gridConfigId`, `sharedWithUserId`),
+	INDEX `gridConfigId` (`gridConfigId`),
+	INDEX `sharedWithUserId` (`sharedWithUserId`)
+)
+DEFAULT CHARSET=utf8mb4;
+;

@@ -2794,16 +2794,16 @@ pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridCo
                 }
             }.bind(this),
             failure: function () {
-                pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
             }
         });
 
     } catch (e3) {
-        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+        pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
     }
 };
 
-pimcore.helpers.saveColumnConfig = function(gridConfigId, objectId, classId, configuration, searchType, button, callback, metadata) {
+pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, searchType, button, callback, settings) {
 
 
     try {
@@ -2812,8 +2812,7 @@ pimcore.helpers.saveColumnConfig = function(gridConfigId, objectId, classId, con
             class_id: classId,
             gridconfig: Ext.encode(configuration),
             searchType: searchType,
-            gridConfigId: gridConfigId,
-            metadata: Ext.encode(metadata)
+            settings: Ext.encode(settings)
         };
 
         Ext.Ajax.request({

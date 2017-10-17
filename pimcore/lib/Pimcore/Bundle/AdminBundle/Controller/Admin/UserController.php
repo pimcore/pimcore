@@ -857,4 +857,52 @@ class UserController extends AdminController implements EventedControllerInterfa
     {
         // nothing to do
     }
+
+    /**
+     * @param Request $request
+     * @Route("/user/get-users")
+     */
+    public function getUsersAction(Request $request)
+    {
+        $users = [];
+
+        // get available user
+        $list = new \Pimcore\Model\User\Listing();
+        $list->setCondition('type = "user" and id != ' . $this->getUser()->getId());
+
+        $list->load();
+        $userList = $list->getUsers();
+
+        foreach ($userList as $user) {
+            $users[] = [
+                'id' => $user->getId(),
+                'label' => $user->getUsername()
+            ];
+        }
+
+        return $this->json(['success' => true, 'total' => count($users), 'data' => $users]);
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/user/get-roles")
+     */
+    public function getRolesAction(Request $request)
+    {
+        $roles = [];
+        $list = new \Pimcore\Model\User\Role\Listing();
+        $list->setCondition('type = "role"');
+        $list->load();
+        $roleList = $list->getRoles();
+
+        /** @var $role User\Role */
+        foreach ($roleList as $role) {
+            $roles[] = [
+                'id' => $role->getId(),
+                'label' => $role->getName()
+            ];
+        }
+
+        return $this->json(['success' => true, 'total' => count($roles), 'data' => $roles]);
+    }
 }

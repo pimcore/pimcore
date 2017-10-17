@@ -364,9 +364,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             objectId: objectId,
             selectedGridColumns: visibleColumns
         };
-        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
+        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data, settings, save) {
                 this.gridLanguage = data.language;
-                this.createGrid(true, data.columns);
+                this.createGrid(true, data.columns, settings, save);
             }.bind(this),
             function() {
                 Ext.Ajax.request({
@@ -381,7 +381,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                             url: "/admin/object-helper/grid-get-column-config",
                             params: {
                                 id: this.classId,
-                                objectId: this.object.id,
+                                objectId: objectId,
                                 gridtype: "grid",
                                 searchType: this.searchType
                             },
@@ -404,7 +404,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                         });
                     }.bind(this)
                 });
-            }.bind(this)
+            }.bind(this),
+            this.objecttype != "variant",
+            this.settings
         )
 
     },
@@ -426,13 +428,14 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         for (var i=0; i < cm.length; i++) {
             if(cm[i].dataIndex) {
-                config.columns[cm[i].dataIndex] = {
-                    name: cm[i].dataIndex,
+                var name = cm[i].dataIndex;
+                config.columns[name] = {
+                    name: name,
                     position: i,
                     hidden: cm[i].hidden,
                     width: cm[i].width,
-                    fieldConfig: this.fieldObject[cm[i].dataIndex],
-                    isOperator: this.fieldObject[cm[i].dataIndex].isOperator
+                    fieldConfig: this.fieldObject[name],
+                    isOperator: this.fieldObject[name].isOperator
                 };
             }
         }

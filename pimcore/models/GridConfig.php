@@ -75,6 +75,9 @@ class GridConfig extends AbstractModel
      */
     public static function getById($id)
     {
+        if (!$id) {
+            throw new \Exception('config not found');
+        }
         $config = new self();
         $config->getDao()->getById($id);
 
@@ -105,6 +108,7 @@ class GridConfig extends AbstractModel
         // also delete the favourite
         $db = Db::get();
         $db->query('DELETE from gridconfig_favourites where gridConfigId = ' . $db->quote($this->getId()));
+        $db->query('DELETE from gridconfig_shares where gridConfigId = ' . $db->quote($this->getId()));
     }
 
     /**

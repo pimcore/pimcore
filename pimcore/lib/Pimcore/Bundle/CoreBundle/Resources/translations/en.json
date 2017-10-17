@@ -1605,7 +1605,7 @@
   "portlet_piwik_error": "Failed to load widget."
   "restrict_to_locales": "Restrict to locales (csv list)",
   "predefined": "Predefined",
-  "save_as": "Save as",
+  "save_as": "Save as copy",
   "remove_config": "Remove Config",
   "gridconfig_removed": "Grid Config has been removed",
   "gridconfig_not_removed": "Grid Config could not be removed",
@@ -1614,5 +1614,10 @@
   "error_saving_favourite": "Error saving favourite",
   "delete_gridconfig_dblcheck": "Are you sure? Also note that this could be a shared config.",
   "grid_configuration": "Grid Configuration",
-  "save_and_share": "Save and Share"
+  "save_and_share": "Save and Share",
+  "shared_users": "Shared Users",
+  "shared_roles": "Shared Roles",
+  "name_must_not_be_empty": "Name must not be empty",
+  "save_and_share": "Save & Share",
+  "save_copy_and_share": "Save Copy & Share"
 }
