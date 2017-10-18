@@ -33,7 +33,7 @@ class SiteConfigProvider
         $this->siteResolver = $siteResolver;
     }
 
-    public function getSiteConfig(Request $request = null): SiteConfig
+    public function getForRequest(Request $request = null): SiteConfig
     {
         if ($this->siteResolver->isSiteRequest($request)) {
             $site = $this->siteResolver->getSite();
@@ -42,6 +42,17 @@ class SiteConfigProvider
         }
 
         return SiteConfig::forMainDomain();
+    }
+
+    public function getSiteConfig(string $configKey): SiteConfig
+    {
+        foreach ($this->getSiteConfigs() as $siteConfig) {
+            if ($siteConfig->getConfigKey() === $configKey) {
+                return $siteConfig;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('Site config for key "%s" was not found'));
     }
 
     /**

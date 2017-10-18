@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Analytics\Piwik\Api;
 
 use GuzzleHttp\Client;
+use Pimcore\Analytics\Piwik\Api\Exception\ApiException;
 use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Http\ClientFactory;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
@@ -95,19 +96,18 @@ class ApiClient
         $client   = $this->getClient();
         $response = $client->request($method, '', $options);
 
-        $errorPrefix = 'Piwik API request failed: ';
         if (200 !== $response->getStatusCode()) {
-            throw new \RuntimeException($errorPrefix . $response->getReasonPhrase());
+            throw new ApiException($response->getReasonPhrase());
         }
 
         $json = $this->serializer->decode($response->getBody()->getContents(), 'json');
 
         if (!is_array($json)) {
-            throw new \RuntimeException($errorPrefix . 'unexpected response format');
+            throw new ApiException('Unexpected response format');
         }
 
         if (isset($json['result']) && 'error' === $json['result']) {
-            throw new \RuntimeException($errorPrefix . $json['message']);
+            throw ApiException::fromResponse($json['message'], $json);
         }
 
         return $json;

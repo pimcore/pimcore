@@ -59,22 +59,25 @@ class IndexSettingsListener implements EventSubscriberInterface
 
         $settings = [
             'iframe_configured' => $config->isIframeIntegrationConfigured(),
-            'reports'           => []
         ];
 
-        $reports = $this->reportBroker->getReports();
-        if (count($reports) > 0) {
-            $piwikReports = [];
-            foreach ($reports as $report) {
-                $piwikReports[$report->getId()] = [
-                    'id'    => $report->getId(),
-                    'title' => $report->getTitle()
-                ];
-            }
-
-            $settings['reports'] = $piwikReports;
-        }
+        $settings = $this->addReportSettings($settings);
 
         $event->getSettings()->piwik = $settings;
+    }
+
+    private function addReportSettings(array $settings): array
+    {
+        $reports = [];
+        foreach ($this->reportBroker->getReports() as $report) {
+            $reports[$report->getId()] = [
+                'id'    => $report->getId(),
+                'title' => $report->getTitle()
+            ];
+        }
+
+        $settings['reports'] = $reports;
+
+        return $settings;
     }
 }

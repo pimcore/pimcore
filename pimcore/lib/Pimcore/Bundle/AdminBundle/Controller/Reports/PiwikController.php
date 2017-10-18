@@ -17,11 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
+use Pimcore\Analytics\Piwik\Api\SitesManager;
 use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\ReportBroker;
 use Pimcore\Analytics\Piwik\WidgetBroker;
 use Pimcore\Analytics\SiteConfig\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -151,8 +153,81 @@ class PiwikController extends ReportsControllerBase
         return $this->jsonResponse($widgetConfig);
     }
 
-    private function jsonResponse($data): JsonResponse
+    /**
+     * @Route("/api/site/{configKey}")
+     * @Method("POST")
+     *
+     * @param string $configKey
+     * @param SiteConfigProvider $siteConfigProvider
+     * @param SitesManager $sitesManager
+     *
+     * @return JsonResponse
+     */
+    public function apiSiteCreateAction(
+        string $configKey,
+        SiteConfigProvider $siteConfigProvider,
+        SitesManager $sitesManager
+    )
     {
-        return $this->json($data, JsonResponse::HTTP_OK, [], [], false);
+        try {
+            $siteConfig = $siteConfigProvider->getSiteConfig($configKey);
+            $siteId     = $sitesManager->addSite($siteConfig);
+
+            return $this->json([
+                'site_id' => $siteId
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * @Route("/api/site/{configKey}")
+     * @Method("PUT")
+     *
+     * @param string $configKey
+     * @param SiteConfigProvider $siteConfigProvider
+     * @param SitesManager $sitesManager
+     *
+     * @return JsonResponse
+     */
+    public function apiSiteUpdateAction(
+        string $configKey,
+        SiteConfigProvider $siteConfigProvider,
+        SitesManager $sitesManager
+    )
+    {
+        try {
+            $siteConfig = $siteConfigProvider->getSiteConfig($configKey);
+            $siteId     = $sitesManager->updateSite($siteConfig);
+
+            return $this->json([
+                'site_id' => $siteId
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Serializes JSON data through Symfony's serializer, not the Pimcore admin one
+     * to make use of all serializer features.
+     *
+     * @param $data
+     * @param int $status
+     * @param array $headers
+     * @param array $context
+     *
+     * @return JsonResponse
+     */
+    private function jsonResponse($data, int $status = JsonResponse::HTTP_OK, array $headers = [], array $context = []): JsonResponse
+    {
+        return $this->json($data, $status, $headers, $context, false);
     }
 }

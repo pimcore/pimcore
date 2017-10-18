@@ -142,12 +142,18 @@ pimcore.report.piwik.settings = Class.create({
                 },
                 {
                     xtype: "panel",
-                    style: "padding: 30px 0 0 0;",
                     border: false,
                     items: this.getConfigurations()
                 }
             ]
         });
+
+        this.loadMask = new Ext.LoadMask({
+            target: this.panel,
+            msg: t("please_wait")
+        });
+
+        this.loadMask.hide();
 
         return this.panel;
     },
@@ -171,6 +177,8 @@ pimcore.report.piwik.settings = Class.create({
     },
 
     getConfiguration: function (key, name, id) {
+        var that = this;
+
         return {
             xtype: "fieldset",
             defaults: {
@@ -178,14 +186,8 @@ pimcore.report.piwik.settings = Class.create({
             },
             title: name,
             items: [
+                this.buildSiteIdContainer(key, name, id),
                 {
-                    xtype: "textfield",
-                    fieldLabel: t("piwik_site_id"),
-                    name: "site_id_" + id,
-                    width: 670,
-                    id: "report_settings_piwik_site_id_" + id,
-                    value: this.parent.getValue("piwik.sites." + key + ".site_id")
-                }, {
                     xtype: "fieldset",
                     collapsible: true,
                     collapsed: true,
@@ -226,8 +228,133 @@ pimcore.report.piwik.settings = Class.create({
         };
     },
 
+    buildSiteIdContainer: function(key, name, id) {
+        var that = this;
+
+        // initial site id state when loading the panel
+        var siteId = this.parent.getValue("piwik.sites." + key + ".site_id");
+
+        var siteIdInput = new Ext.form.field.Number({
+            fieldLabel: t("piwik_site_id"),
+            name: "site_id_" + id,
+            width: 300,
+            id: "report_settings_piwik_site_id_" + id,
+            value: siteId
+        });
+
+        var container = new Ext.form.FieldContainer({
+            layout: 'hbox',
+            items: [
+                siteIdInput
+            ]
+        });
+
+        // do not show create/update buttons if api token is not configured
+        if (!this.parent.getValue("piwik.api_token")) {
+            return container;
+        }
+
+        var createHandler = function(url, method, successMessage, errorMessage) {
+            return function () {
+                that.loadMask.show();
+
+                Ext.Ajax.request({
+                    url: url,
+                    method: method,
+                    callback: function () {
+                        that.loadMask.hide();
+                    },
+
+                    success: function (response) {
+                        var json = Ext.decode(response.responseText);
+
+                        var message = successMessage;
+                        if (json.message) {
+                            message += ': ' + json.message;
+                        }
+
+                        if (json.site_id) {
+                            siteIdInput.setValue(json.site_id);
+                        }
+
+                        pimcore.helpers.showNotification(t("success"), message, "success");
+                    },
+
+                    failure: function (response) {
+                        var message = errorMessage;
+
+                        try {
+                            var json = Ext.decode(response.responseText);
+                            if (json.message) {
+                                message += ': ' + json.message;
+                            }
+                        } catch (e) {}
+
+                        pimcore.helpers.showNotification(t("error"), message, "error");
+                    }
+                });
+            };
+        };
+
+        var createButton = new Ext.button.Button({
+            text: t('piwik_api_create_site'),
+            tooltip: t('piwik_api_create_site_tooltip'),
+            iconCls: "pimcore_icon_piwik_api_create",
+            hidden: true,
+            style: "margin-left: 5px"
+        });
+
+        var updateButton = new Ext.button.Button({
+            text: t('piwik_api_update_site'),
+            tooltip: t('piwik_api_update_site_tooltip'),
+            iconCls: "pimcore_icon_piwik_api_update",
+            hidden: true,
+            style: "margin-left: 5px"
+        });
+
+        var buttonStateHandler = function() {
+            var val = siteIdInput.getValue();
+
+            if (val && val > 0) {
+                createButton.hide();
+                updateButton.show();
+            } else {
+                // only show create button if there was no site ID configured
+                // when the panel was loaded to avoid having the create button
+                // showing up as soon as the value is cleared while the backend
+                // config still holds the site id
+                if (!siteId) {
+                    createButton.show();
+                }
+
+                updateButton.hide();
+            }
+        };
+
+        siteIdInput.on('change', buttonStateHandler);
+        buttonStateHandler(); // trigger initial state
+
+        createButton.setHandler(createHandler(
+            '/admin/reports/piwik/api/site/' + key,
+            'POST',
+            t("piwik_api_create_site_success"),
+            t("piwik_api_create_site_failure")
+        ));
+
+        updateButton.setHandler(createHandler(
+            '/admin/reports/piwik/api/site/' + key,
+            'PUT',
+            t("piwik_api_update_site_success"),
+            t("piwik_api_update_site_failure")
+        ));
+
+        container.add(createButton);
+        container.add(updateButton);
+
+        return container;
+    },
+
     getValues: function () {
-        var formData = this.panel.getForm().getFieldValues();
         var sites = pimcore.globalmanager.get("sites");
         var sitesData = {};
 

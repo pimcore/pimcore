@@ -39,7 +39,7 @@ abstract class AbstractTracker implements TrackerInterface
     public function getCode(SiteConfig $siteConfig = null)
     {
         if (null === $siteConfig) {
-            $siteConfig = $this->siteConfigProvider->getSiteConfig();
+            $siteConfig = $this->siteConfigProvider->getForRequest();
         }
 
         return $this->generateCode($siteConfig);
