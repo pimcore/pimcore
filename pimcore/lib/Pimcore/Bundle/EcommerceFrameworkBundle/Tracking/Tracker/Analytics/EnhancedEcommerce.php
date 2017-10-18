@@ -257,6 +257,7 @@ class EnhancedEcommerce extends Tracker implements
             'affilation' => $transaction->getAffiliation() ?: '',            // affiliation or store name
             'revenue'    => round($transaction->getTotal(), 2),     // total - required
             'tax'        => round($transaction->getTax(), 2),       // tax
+            'coupon'     => $transaction->getCoupon(), // voucher code - optional
             'shipping'   => round($transaction->getShipping(), 2),  // shipping
         ];
     }
