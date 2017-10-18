@@ -61,6 +61,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             response = Ext.decode(response.responseText);
             fields = response.availableFields;
             this.gridLanguage = response.language;
+            this.settings = response.settings;
             this.sortinfo = response.sortinfo;
         } else {
             fields = response;

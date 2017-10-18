@@ -113,6 +113,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     setClass: function (classId) {
         this.classId = classId;
+        this.settings = {};
         this.getTableDescription();
     },
 
@@ -139,7 +140,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         menu.add({
             text: t('save'),
             iconCls: "pimcore_icon_save",
-            disabled: !this.settings.gridConfigId,
+            disabled: !this.settings.gridConfigId || this.settings.isShared,
             handler: this.saveConfig.bind(this, false)
         });
 
@@ -152,9 +153,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         menu.add({
             text: t('set_as_favourite'),
             iconCls: "pimcore_icon_favourite",
-            disabled: !this.settings.gridConfigId,
+            // disabled: !this.settings.gridConfigId,
             handler: function () {
-                pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId);
+                pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType);
             }.bind(this)
         });
 
@@ -167,38 +168,55 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         menu.add('-');
 
+        var disabled = false;
         var text = t('predefined');
         if (!this.settings.gridConfigId) {
             text = "<b>" + text + "</b>";
+            disabled = true;
+
         }
 
         menu.add({
             text: text,
             iconCls: "pimcore_icon_gridcolumnconfig",
+            disabled: disabled,
             gridConfig: {
                 id: 0
             },
             handler: this.switchToGridConfig.bind(this)
         });
 
-        if (this.availableConfigs) {
-
-            for (var i = 0; i < this.availableConfigs.length; i++) {
-                var config = this.availableConfigs[i];
-                var text = config["name"];
-                if (config.id == this.settings.gridConfigId) {
-                    text = this.settings.gridConfigName,
-                        text = "<b>" + text + "</b>";
-                }
-                var menuConfig = {
-                    text: text,
-                    iconCls: 'pimcore_icon_gridcolumnconfig',
-                    gridConfig: config,
-                    handler: this.switchToGridConfig.bind(this)
-                }
-                menu.add(menuConfig);
-            }
+        if (this.availableConfigs && this.availableConfigs.length > 0) {
+            this.addGridConfigMenuItems(menu, this.availableConfigs);
         }
+
+        if (this.sharedConfigs && this.sharedConfigs.length > 0) {
+            menu.add('-');
+            this.addGridConfigMenuItems(menu, this.sharedConfigs);
+        }
+    },
+
+    addGridConfigMenuItems: function(menu, list) {
+        for (var i = 0; i < list.length; i++) {
+            var disabled = false;
+            var config = list[i];
+            var text = config["name"];
+            if (config.id == this.settings.gridConfigId) {
+                text = this.settings.gridConfigName,
+                    text = "<b>" + text + "</b>";
+                disabled = true;
+            }
+            var menuConfig = {
+                text: text,
+                disabled: disabled,
+                iconCls: 'pimcore_icon_gridcolumnconfig',
+                gridConfig: config,
+                handler: this.switchToGridConfig.bind(this)
+            }
+            menu.add(menuConfig);
+        }
+
+
     },
 
     deleteGridConfig: function () {
@@ -246,6 +264,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     columnConfigurationSavedHandler: function (rdata) {
         this.settings = rdata.settings;
+        this.availableConfigs = rdata.availableConfigs;
         this.buildColumnConfigMenu();
     },
 
@@ -264,8 +283,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.gridLanguage = response.language;
             this.sortinfo = response.sortinfo;
 
-            this.settings = response.settings || {},
-                this.availableConfigs = response.availableConfigs;
+            this.settings = response.settings || {};
+            this.availableConfigs = response.availableConfigs;
+            this.sharedConfigs = response.sharedConfigs;
 
             if (response.onlyDirectChildren) {
                 this.onlyDirectChildren = response.onlyDirectChildren;
@@ -498,6 +518,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         this.layout.updateLayout();
 
         if (save) {
+            if (this.settings.isShared) {
+                this.settings.gridConfigId = null;
+            }
             this.saveConfig(false);
         }
     },
@@ -535,6 +558,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 text: t("save"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
+                    this.settings.gridConfigId = null;
                     this.settings.gridConfigName = nameField.getValue();
                     this.settings.gridConfigDescription = descriptionField.getValue();
 

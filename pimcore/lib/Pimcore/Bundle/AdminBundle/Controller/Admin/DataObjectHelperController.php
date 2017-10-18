@@ -24,6 +24,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
+use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -68,7 +69,7 @@ class DataObjectHelperController extends AdminController
      *
      * @return GridConfig\Listing
      */
-    public function getGridColumnConfigs($userId, $classId, $searchType)
+    public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
         $db = Db::get();
         $configListingConditionParts = [];
@@ -80,12 +81,51 @@ class DataObjectHelperController extends AdminController
         }
 
         $configCondition = implode(' AND ', $configListingConditionParts);
-
         $configListing = new GridConfig\Listing();
         $configListing->setOrderKey('name');
         $configListing->setOrder('ASC');
         $configListing->setCondition($configCondition);
         $configListing = $configListing->load();
+
+        return $configListing;
+    }
+
+    /**
+     * @param $user User
+     * @param $classId
+     * @param $searchType
+     *
+     * @return GridConfig\Listing
+     */
+    public function getSharedGridColumnConfigs($user, $classId, $searchType)
+    {
+        $db = Db::get();
+        $configListingConditionParts = [];
+        $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
+        $configListingConditionParts[] = 'classId = ' . $classId;
+
+        if ($searchType) {
+            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
+        }
+
+        $configListing = [];
+
+        $userIds = [$user->getId()];
+        // collect all roles
+        $userIds = array_merge($userIds, $user->getRoles());
+        $userIds = implode(',', $userIds);
+
+        $query = 'select distinct c.id from gridconfigs c, gridconfig_shares s where c.searchType = ' . $db->quote($searchType)
+                    .  ' and c.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId;
+        $ids = $db->fetchCol($query);
+        if ($ids) {
+            $ids = implode(',', $ids);
+            $configListing = new GridConfig\Listing();
+            $configListing->setOrderKey('name');
+            $configListing->setOrder('ASC');
+            $configListing->setCondition('id in (' . $ids .')');
+            $configListing = $configListing->load();
+        }
 
         return $configListing;
     }
@@ -145,6 +185,7 @@ class DataObjectHelperController extends AdminController
             $class = DataObject\ClassDefinition::getByName($request->get('name'));
         }
 
+        $gridConfigId = null;
         $gridType = 'search';
         if ($request->get('gridtype')) {
             $gridType = $request->get('gridtype');
@@ -168,10 +209,6 @@ class DataObjectHelperController extends AdminController
 
         if (!$fields && $class) {
             $fields = $class->getFieldDefinitions();
-        } elseif (!$class) {
-            return $this->json([
-                'availableFields' => []
-            ]);
         }
 
         $types = [];
@@ -185,12 +222,13 @@ class DataObjectHelperController extends AdminController
 
         // grid config
         $gridConfig = [];
+        $searchType = $request->get('searchType');
 
         if (strlen($requestedGridConfigId) == 0 && $class) {
             // check if there is a favourite view
             $favourite = null;
             try {
-                $favourite = GridConfigFavourite::getByOwnerAndClassId($userId, $class->getId());
+                $favourite = GridConfigFavourite::getByOwnerAndClassId($userId, $class->getId(), $searchType);
                 if ($favourite) {
                     $requestedGridConfigId = $favourite->getGridConfigId();
                 }
@@ -199,8 +237,6 @@ class DataObjectHelperController extends AdminController
         }
 
         if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0 && $objectId) {
-            $searchType = $request->get('searchType');
-
             $db = Db::get();
             $configListingConditionParts = [];
             $configListingConditionParts[] = 'ownerId = ' . $userId;
@@ -216,8 +252,20 @@ class DataObjectHelperController extends AdminController
             }
 
             if ($savedGridConfig) {
-                if ($savedGridConfig->getOwnerId() != $this->getUser()->getId()) {
-                    throw new \Exception('you are not the onwner of this config');
+                try {
+                    $userIds = [$this->getUser()->getId()];
+                    if ($this->getUser()->getRoles()) {
+                        $userIds = array_merge($userIds, $this->getUser()->getRoles());
+                    }
+                    $userIds = implode(',', $userIds);
+                    $shared = $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
+
+                    $shared = GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
+                } catch (\Exception $e) {
+                }
+
+                if (!$shared && $savedGridConfig->getOwnerId() != $this->getUser()->getId()) {
+                    throw new \Exception('you are neither the onwner of this config nor it is shared with you');
                 }
                 $gridConfigId = $savedGridConfig->getId();
                 $gridConfig = $savedGridConfig->getConfig();
@@ -422,11 +470,13 @@ class DataObjectHelperController extends AdminController
             $language = $gridConfig['language'];
         }
 
-        $availableConfigs = $this->getGridColumnConfigs($userId, $class->getId(), $searchType);
-        $settings = $this->getShareSettings($gridConfigId);
+        $availableConfigs = $this->getMyOwnGridColumnConfigs($userId, $class->getId(), $searchType);
+        $sharedConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $class->getId(), $searchType);
+        $settings = $this->getShareSettings((int) $gridConfigId);
         $settings['gridConfigId'] = (int)  $gridConfigId;
         $settings['gridConfigName'] = $gridConfigName;
         $settings['gridConfigDescription'] = $gridConfigDescription;
+        $settings['isShared'] = (!$gridConfigId || $shared) ? true : false;
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
@@ -435,7 +485,9 @@ class DataObjectHelperController extends AdminController
             'settings' => $settings,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
             'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
-            'availableConfigs' => $availableConfigs
+            'availableConfigs' => $availableConfigs,
+            'sharedConfigs' => $sharedConfigs
+
         ];
     }
 
@@ -530,6 +582,7 @@ class DataObjectHelperController extends AdminController
         if ($object->isAllowed('list')) {
             $classId = $request->get('classId');
             $gridConfigId = $request->get('gridConfigId');
+            $searchType = $request->get('searchType');
             $user = $this->getUser();
 
             $favourite = new GridConfigFavourite();
@@ -539,10 +592,15 @@ class DataObjectHelperController extends AdminController
                 throw new \Exception('class ' . $classId . ' does not exist anymore');
             }
             $favourite->setClassId($classId);
+            $favourite->setSearchType($searchType);
 
-            $gridConfig = GridConfig::getById($gridConfigId);
-            $favourite->setGridConfigId($gridConfig->getId());
-            $favourite->save();
+            try {
+                $gridConfig = GridConfig::getById($gridConfigId);
+                $favourite->setGridConfigId($gridConfig->getId());
+                $favourite->save();
+            } catch (\Exception $e) {
+                $favourite->delete();
+            }
 
             return $this->json(['success' => true]);
         } else {
@@ -603,6 +661,7 @@ class DataObjectHelperController extends AdminController
                 $gridConfigData = $this->decodeJson($request->get('gridconfig'));
                 $gridConfigData['pimcore_version'] = Version::getVersion();
                 $gridConfigData['pimcore_revision'] = Version::getRevision();
+                unset($gridConfigData['settings']['isShared']);
 
                 $metadata = $request->get('settings');
                 $metadata = json_decode($metadata, true);
@@ -618,7 +677,7 @@ class DataObjectHelperController extends AdminController
                     throw new \Exception("don't mess around with somebody elses configuration");
                 }
 
-                $this->updateGridConfigShares($metadata);
+                $this->updateGridConfigShares($gridConfig, $metadata);
 
                 if (!$gridConfig) {
                     $gridConfig = new GridConfig();
@@ -640,16 +699,21 @@ class DataObjectHelperController extends AdminController
 
                 $userId = $this->getUser()->getId();
 
-                $availableConfigs = $this->getGridColumnConfigs($userId, $classId, $searchType);
+                $availableConfigs = $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType);
+                $sharedConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $classId, $searchType);
 
-                $settings= $this->getShareSettings($gridConfigId);
+                $settings= $this->getShareSettings($gridConfig->getId());
                 $settings['gridConfigId'] = (int) $gridConfig->getId();
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
+                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getUser()->getId());
 
                 return $this->json(['success' => true,
                     'settings' => $settings,
-                    'availableConfigs' => $availableConfigs]);
+                    'availableConfigs' => $availableConfigs,
+                    'sharedConfigs' => $sharedConfigs,
+                    ]
+                    );
             } catch (\Exception $e) {
                 return $this->json(['success' => false, 'message' => $e->getMessage()]);
             }
@@ -658,12 +722,17 @@ class DataObjectHelperController extends AdminController
         return $this->json(['success' => false, 'message' => 'missing_permission']);
     }
 
-    protected function updateGridConfigShares($metadata)
+    /**
+     * @param $gridConfig GridConfig
+     * @param $metadata
+     *
+     * @throws \Exception
+     */
+    protected function updateGridConfigShares($gridConfig, $metadata)
     {
-        $gridConfigId = $metadata['gridConfigId'];
-        $gridConfig = GridConfig::getById($gridConfigId);
         if (!$gridConfig) {
-            throw new \Exception("don't have grid config");
+            // nothing to do
+            return;
         }
 
         if ($gridConfig->getOwnerId() != $this->getUser()->getId()) {
@@ -683,11 +752,11 @@ class DataObjectHelperController extends AdminController
         }
 
         $db = Db::get();
-        $db->delete('gridconfig_shares', ['gridConfigId' => $gridConfigId ]);
+        $db->delete('gridconfig_shares', ['gridConfigId' => $gridConfig->getId() ]);
 
         foreach ($combinedShares as $id) {
             $share = new GridConfigShare();
-            $share->setGridConfigId($gridConfigId);
+            $share->setGridConfigId($gridConfig->getId());
             $share->setSharedWithUserId($id);
             $share->save();
         }

@@ -1339,7 +1339,7 @@
   "save_column_configuration": "Save column configuration",
   "error_saving_configuration": "Error saving configuration",
   "your_configuration_has_been_saved": "Your configuration has been saved",
-  "reset_config": "Reset to default",
+  "reset_config": "Reset changes",
   "reset_config_tooltip": "This will reset (and save) the grid column configuration for this element to its default",
   "error_resetting_config": "Error resetting configuration",
   "marketing_settings": "Marketing Settings",

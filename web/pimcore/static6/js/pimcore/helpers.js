@@ -2767,7 +2767,7 @@ pimcore.helpers.showAbout = function () {
     win.show();
 };
 
-pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridConfigId) {
+pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridConfigId, searchType) {
 
     try {
 
@@ -2777,7 +2777,8 @@ pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridCo
             params: {
                 objectId: objectId,
                 classId: classId,
-                gridConfigId: gridConfigId
+                gridConfigId: gridConfigId,
+                searchType: searchType
             },
             success: function (response) {
                 try{

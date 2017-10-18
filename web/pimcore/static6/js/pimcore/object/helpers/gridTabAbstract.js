@@ -370,39 +370,29 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }.bind(this),
             function() {
                 Ext.Ajax.request({
-                    url: "/admin/object-helper/grid-delete-column-config",
+                    url: "/admin/object-helper/grid-get-column-config",
                     params: {
-                        id: objectId,
-                        class_id: this.classId,
+                        id: this.classId,
+                        objectId: objectId,
+                        gridtype: "grid",
                         searchType: this.searchType
                     },
-                    success: function() {
-                        Ext.Ajax.request({
-                            url: "/admin/object-helper/grid-get-column-config",
-                            params: {
-                                id: this.classId,
-                                objectId: objectId,
-                                gridtype: "grid",
-                                searchType: this.searchType
-                            },
-                            success: function(response) {
-                                response = Ext.decode(response.responseText);
-                                if (response) {
-                                    fields = response.availableFields;
-                                    this.createGrid(false, fields);
-                                    if (typeof this.saveColumnConfigButton !== "undefined") {
-                                        this.saveColumnConfigButton.hide();
-                                    }
-                                } else {
-                                    pimcore.helpers.showNotification(t("error"), t("error_resetting_config"),
-                                        "error",t(rdata.message));
-                                }
-                            }.bind(this),
-                            failure: function () {
-                                pimcore.helpers.showNotification(t("error"), t("error_resetting_config"), "error");
+                    success: function(response) {
+                        response = Ext.decode(response.responseText);
+                        if (response) {
+                            fields = response.availableFields;
+                            this.createGrid(false, fields, response.settings, false);
+                            if (typeof this.saveColumnConfigButton !== "undefined") {
+                                this.saveColumnConfigButton.hide();
                             }
-                        });
-                    }.bind(this)
+                        } else {
+                            pimcore.helpers.showNotification(t("error"), t("error_resetting_config"),
+                                "error",t(rdata.message));
+                        }
+                    }.bind(this),
+                    failure: function () {
+                        pimcore.helpers.showNotification(t("error"), t("error_resetting_config"), "error");
+                    }
                 });
             }.bind(this),
             this.objecttype != "variant",

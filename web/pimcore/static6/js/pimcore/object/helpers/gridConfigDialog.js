@@ -17,12 +17,14 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     data: {},
     brickKeys: [],
 
-    initialize: function (columnConfig, callback, resetCallback, allowSaveAndShare, settings) {
+    initialize: function (columnConfig, callback, resetCallback, showSaveAndShareTab, settings) {
 
         this.config = columnConfig;
         this.callback = callback;
         this.resetCallback = resetCallback;
-        this.allowSaveAndShare = allowSaveAndShare;
+        this.showSaveAndShareTab = showSaveAndShareTab;
+        this.isShared = settings && settings.isShared;
+
         this.settings = settings;
 
         if (!this.callback) {
@@ -38,25 +40,28 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         });
 
-        this.savePanel = this.getSaveAndSharePanel();
+
+        var tabs = [this.configPanel];
+
+        if (this.showSaveAndShareTab) {
+            this.savePanel = this.getSaveAndSharePanel();
+            tabs.push(this.savePanel);
+        }
 
         this.tabPanel = new Ext.TabPanel({
             activeTab: 0,
             forceLayout: true,
-            items: [this.configPanel, this.savePanel]
+            items: tabs
         });
 
-        this.window = new Ext.Window({
-            width: 850,
-            height: 700,
-            modal: true,
-            title: t('grid_column_config'),
-            layout: "fit",
-            items: [this.tabPanel],
-            buttons: [
+        buttons = [];
+
+        if (this.resetCallback) {
+            buttons.push(
                 {
                     xtype: "button",
                     text: t("reset_config"),
+                    // hidden: this.isShared,
                     iconCls: "pimcore_icon_cancel",
                     tooltip: t('reset_config_tooltip'),
                     style: {
@@ -65,32 +70,46 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     handler: function () {
                         this.resetToDefault();
                     }.bind(this)
-                },
-                {
-                    text: t("apply"),
-                    iconCls: "pimcore_icon_apply",
-                    handler: function () {
-                        this.commitData();
-                    }.bind(this)
-                },
-                {
-                    text: this.settings.gridConfigId ? t("save_and_share") : t("save_copy_and_share"),
-                    iconCls: "pimcore_icon_save",
-                    hidden: !this.allowSaveAndShare,
-                    handler: function () {
-                        if (!this.nameField.getValue()) {
-                            Ext.Msg.show({
-                                title: t("error"),
-                                msg: t('name_must_not_be_empty'),
-                                buttons: Ext.Msg.OK,
-                                icon: Ext.MessageBox.ERROR
-                            });
-                            return;
-                        }
-                        this.commitData(true);
-                    }.bind(this)
                 }
-                ]
+            );
+        }
+
+        buttons.push({
+                text: t("apply"),
+                iconCls: "pimcore_icon_apply",
+                handler: function () {
+                    this.commitData();
+                }.bind(this)
+            }
+        );
+
+        if (this.showSaveAndShareTab) {
+            buttons.push({
+                text: this.isShared ? t("save_copy_and_share") : t("save_and_share"),
+                    iconCls: "pimcore_icon_save",
+                handler: function () {
+                if (!this.nameField.getValue()) {
+                    Ext.Msg.show({
+                        title: t("error"),
+                        msg: t('name_must_not_be_empty'),
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.MessageBox.ERROR
+                    });
+                    return;
+                }
+                this.commitData(true);
+            }.bind(this)
+        });
+        }
+
+        this.window = new Ext.Window({
+            width: 850,
+            height: 700,
+            modal: true,
+            title: t('grid_column_config'),
+            layout: "fit",
+            items: [this.tabPanel],
+            buttons: buttons
         });
 
         this.window.show();
@@ -183,7 +202,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             defaults: {
                 labelWidth: 200
             },
-            hidden: !this.allowSaveAndShare,
+            hidden: !this.showSaveAndShareTab,
             bodyStyle: "padding:10px;",
             autoScroll: true,
             border: false,
@@ -296,7 +315,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             }.bind(this));
         }
 
-        if (this.allowSaveAndShare) {
+        if (this.showSaveAndShareTab) {
             this.settings = Ext.apply(this.settings, this.settingsForm.getForm().getFieldValues());
             if (this.settings.sharedUserIds != null) {
                 this.settings.sharedUserIds = this.settings.sharedUserIds.join();

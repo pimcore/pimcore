@@ -27,9 +27,11 @@ CREATE TABLE `gridconfig_favourites` (
 	`ownerId` INT(11) NOT NULL,
 	`classId` INT(11) NOT NULL,
     `gridConfigId` INT(11) NULL,
-	PRIMARY KEY (`ownerId`, `classId`),
+	`searchType` VARCHAR(50) NOT NULL DEFAULT \'\',
+	PRIMARY KEY (`ownerId`, `classId`, `searchType`),
 	INDEX `ownerId` (`ownerId`),
-	INDEX `classId` (`classId`)
+	INDEX `classId` (`classId`),
+	INDEX `searchType` (`searchType`)
 )
 DEFAULT CHARSET=utf8mb4;
 ;
