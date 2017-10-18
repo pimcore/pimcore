@@ -1095,6 +1095,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_operator_localeswitcher {
+    background: url("/pimcore/static6/img/flat-color-icons/assistant.svg") center center no-repeat !important;
+}
+
 .pimcore_icon_favourite {
     background: url(/pimcore/static6/img/flat-color-icons/star.svg) center center no-repeat !important;
 }

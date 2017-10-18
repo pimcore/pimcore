@@ -1549,6 +1549,7 @@
   "text_operator_settings": "Operator Text Settings",
   "concatenator_operator_settings": "Operator Concatenator Settings",
   "lfexpander_operator_settings": "Operator Localized Fields Expander Settings",
+  "localeswitcher_operator_settings": "Operator Locale Switcher Settings",
   "glue": "Glue",
   "config_title":  "Title",
   "config_title_original": "Original Title",
@@ -1566,6 +1567,7 @@
   "operator_objectfieldgetter": "Operator Object Field Getter",
   "operator_lfexpander": "Operator LF Expander",
   "operator_caseconverter": "Operator Case Converter",
+  "operator_localeswitcher": "Operator Locale Switcher",
   "attribute": "Attribute",
   "forward_attribute": "Forward Attribute",
   "upper": "Upper",
@@ -1619,5 +1621,6 @@
   "shared_roles": "Shared Roles",
   "name_must_not_be_empty": "Name must not be empty",
   "save_and_share": "Save & Share",
-  "save_copy_and_share": "Save Copy & Share"
+  "save_copy_and_share": "Save Copy & Share",
+  "locale": "Locale"
 }

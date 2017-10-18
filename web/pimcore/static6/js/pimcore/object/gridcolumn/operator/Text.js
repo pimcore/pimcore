@@ -108,6 +108,7 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
 
     commitData: function() {
         this.node.data.configAttributes.textValue = this.textfield.getValue();
+        this.node.data.configAttributes.label = this.textField.getValue();
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
         this.window.close();
