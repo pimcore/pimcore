@@ -138,7 +138,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_link {
+.pimcore_icon_link, .pimcore_icon_operator_requiredby {
     background: url(/pimcore/static6/img/flat-color-icons/link.svg)  center center no-repeat !important;
 }
 
@@ -1098,8 +1098,6 @@
 .pimcore_icon_operator_isequal {
     background: url("/pimcore/static6/img/flat-color-icons/multiple_smartphones.svg") center center no-repeat !important;
 }
-
-
 
 .pimcore_icon_operator_charcounter, .pimcore_icon_operator_elementcounter {
     background: url(/pimcore/static6/img/flat-color-icons/calculator.svg) center center no-repeat !important;

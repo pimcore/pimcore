@@ -402,13 +402,15 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     getSelectionPanel: function () {
         if (!this.selectionPanel) {
 
-
             var childs = [];
             for (var i = 0; i < this.config.selectedGridColumns.length; i++) {
                 var nodeConf = this.config.selectedGridColumns[i];
 
                 if (nodeConf.isOperator) {
                     var child = this.doBuildChannelConfigTree([nodeConf.attributes]);
+                    if (!child || !child[0]) {
+                        continue;
+                    }
                     child = child[0];
                 } else {
                     var child = {
