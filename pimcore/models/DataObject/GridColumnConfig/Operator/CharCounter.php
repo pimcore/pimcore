@@ -17,16 +17,12 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-class Concatenator extends AbstractOperator
+class CharCounter extends AbstractOperator
 {
-    protected $glue;
-    protected $forceValue;
 
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
-        $this->glue = $config->glue;
-        $this->forceValue = $config->forceValue;
     }
 
     public function getLabeledValue($element)
@@ -34,13 +30,9 @@ class Concatenator extends AbstractOperator
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $hasValue = true;
-        if (!$this->forceValue) {
-            $hasValue = false;
-        }
 
         $childs = $this->getChilds();
-        $valueArray = [];
+        $count = 0;
 
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
@@ -52,27 +44,20 @@ class Concatenator extends AbstractOperator
 
             if (is_array($childValues)) {
                 foreach ($childValues as $value) {
-                    if (!$hasValue) {
-                        if (!empty($value) || ((method_exists($value, 'isEmpty') && !$value->isEmpty()))) {
-                            $hasValue = true;
+                    if (is_array($value)) {
+                        foreach ($value as $subValue) {
+                            $count += strlen($subValue);
                         }
-                    }
 
-                    if ($value !== null) {
-                        $valueArray[] = $value;
+                    } else {
+                        $count += strlen($value);
                     }
                 }
             }
         }
 
-        if ($hasValue) {
-            $result->value = implode($this->glue, $valueArray);
+        $result->value = $count;
 
-            return $result;
-        } else {
-            $result->empty = true;
-
-            return $result;
-        }
+        return $result;
     }
 }

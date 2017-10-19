@@ -1099,6 +1099,10 @@
     background: url("/pimcore/static6/img/flat-color-icons/multiple_smartphones.svg") center center no-repeat !important;
 }
 
+.pimcore_icon_operator_charcounter {
+    background: url(/pimcore/static6/img/flat-color-icons/calculator.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_favourite {
     background: url(/pimcore/static6/img/flat-color-icons/star.svg) center center no-repeat !important;
 }

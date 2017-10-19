@@ -1626,5 +1626,6 @@
   "save_and_share": "Save & Share",
   "save_copy_and_share": "Save Copy & Share",
   "locale": "Locale",
-  "ellipses": "Ellipses"
+  "ellipses": "Ellipses",
+  "operator_charcounter": "Operator CharCounter"
 }

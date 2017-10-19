@@ -15,13 +15,13 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.concatenator");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.charcounter");
 
-pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
     type: "operator",
-    class: "Concatenator",
-    iconCls: "pimcore_icon_operator_concatenator",
-    defaultText: "operator_concatenator",
+    class: "CharCounter",
+    iconCls: "pimcore_icon_operator_charcounter",
+    defaultText: "operator_charcounter",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {
@@ -77,30 +77,18 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
     getConfigDialog: function(node) {
         this.node = node;
 
-        this.textfield = new Ext.form.TextField({
+        this.textField = new Ext.form.TextField({
             fieldLabel: t('label'),
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.label
         });
 
-        this.glue = new Ext.form.TextField({
-            fieldLabel: t('glue'),
-            length: 255,
-            width: 200,
-            value: this.node.data.configAttributes.glue
-        });
-        this.forceValue = new Ext.form.Checkbox({
-            fieldLabel: t('force_value'),
-            length: 255,
-            width: 200,
-            checked: this.node.data.configAttributes.forceValue
-        });
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textfield, this.glue, this.forceValue],
+            items: [this.textField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -124,12 +112,9 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
     },
 
     commitData: function() {
-        this.node.data.configAttributes.label = this.textfield.getValue();
-        this.node.set('text', this.textfield.getValue());
+        this.node.data.configAttributes.label = this.textField.getValue();
+        this.node.set('text', this.textField.getValue());
         this.node.set('isOperator', true);
-        this.node.data.configAttributes.glue = this.glue.getValue();
-        this.node.data.configAttributes.forceValue = this.forceValue.getValue();
-        this.node.data.configAttributes.formatNumbers = this.formatNumbers.getValue();
         this.window.close();
     }
 });
