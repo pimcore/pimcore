@@ -57,7 +57,7 @@ pimcore.report.piwik.settings = Class.create({
                             fieldLabel: t("piwik_use_ssl"),
                             name: "piwik_use_ssl",
                             id: "report_settings_piwik_use_ssl",
-                            checked: this.parent.getValue("piwik.piwik_use_ssl")
+                            checked: this.parent.getValue("piwik.use_ssl")
                         }
                     ]
                 },
