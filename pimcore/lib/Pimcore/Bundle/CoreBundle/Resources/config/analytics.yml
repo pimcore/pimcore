@@ -4,22 +4,21 @@ services:
         autoconfigure: true
         public: false
 
-    Pimcore\Analytics\SiteConfig\SiteConfigProvider: ~
+    Pimcore\Analytics\SiteId\SiteIdProvider: ~
 
     #
     # PIWIK
     #
 
     Pimcore\Analytics\Piwik\Api\ApiClient: ~
+    Pimcore\Analytics\Piwik\Api\SitesManager: ~
 
     Pimcore\Analytics\Piwik\Config\ConfigProvider: ~
 
     Pimcore\Analytics\Piwik\ReportBroker: ~
-
     Pimcore\Analytics\Piwik\WidgetBroker: ~
 
     Pimcore\Analytics\Piwik\Tracker: ~
 
     Pimcore\Analytics\Piwik\EventListener\IndexSettingsListener: ~
-
     Pimcore\Analytics\Piwik\EventListener\TrackingCodeListener: ~

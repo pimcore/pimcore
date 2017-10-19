@@ -24,9 +24,15 @@ use Pimcore\Analytics\Piwik\Dto\WidgetConfig;
 use Pimcore\Analytics\Piwik\Dto\WidgetReference;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Cache\Core\CoreHandler;
+use Pimcore\Cache\Core\CoreHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Fetches and caches available widget data (stored by site ID and language) from the
+ * Piwik API. This is used to show a list of widgets inside the Pimcore admin and to
+ * generate iframe URLs to single widgets.
+ */
 class WidgetBroker
 {
     /**
@@ -40,7 +46,7 @@ class WidgetBroker
     private $apiClient;
 
     /**
-     * @var CoreHandler
+     * @var CoreHandlerInterface
      */
     private $cache;
 
@@ -67,7 +73,7 @@ class WidgetBroker
     public function __construct(
         ConfigProvider $configProvider,
         ApiClient $apiClient,
-        CoreHandler $cache,
+        CoreHandlerInterface $cache,
         UserLoader $userLoader,
         LoggerInterface $logger,
         array $options = []
