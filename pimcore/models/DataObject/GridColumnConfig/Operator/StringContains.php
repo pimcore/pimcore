@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-class StringReplace extends AbstractOperator
+class StringContains extends AbstractOperator
 {
     private $search;
 
@@ -33,7 +33,6 @@ class StringReplace extends AbstractOperator
         parent::__construct($config, $context);
 
         $this->search = $config->search;
-        $this->replace = $config->replace;
         $this->insensitive = $config->insensitive;
     }
 
@@ -50,7 +49,6 @@ class StringReplace extends AbstractOperator
 
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
-
                 $childValues = $childResult->value;
                 if ($childValues && !is_array($childValues)) {
                     $childValues = [$childValues];
@@ -61,12 +59,12 @@ class StringReplace extends AbstractOperator
                         if (is_array($value)) {
                             $newSubValues = [];
                             foreach ($value as $subValue) {
-                                $subValue = $this->replace($subValue);
+                                $subValue = $this->contains($subValue);
                                 $newSubValues[] = $subValue;
                             }
                             $newValue = $newSubValues;
                         } else {
-                            $newValue = $this->replace($value);
+                            $newValue = $this->contains($value);
                         }
                     }
                 } else {
@@ -91,12 +89,12 @@ class StringReplace extends AbstractOperator
      *
      * @return mixed
      */
-    public function replace($value)
+    public function contains($value)
     {
         if ($this->getInsensitive()) {
-            return str_ireplace($this->getSearch(), $this->getReplace(), $value);
+            return stripos($value, $this->getSearch()) !== false;
         } else {
-            return str_replace($this->getSearch(), $this->getReplace(), $value);
+            return strpos($value, $this->getSearch()) !== false;
         }
     }
 
@@ -147,4 +145,6 @@ class StringReplace extends AbstractOperator
     {
         $this->insensitive = $insensitive;
     }
+
+
 }

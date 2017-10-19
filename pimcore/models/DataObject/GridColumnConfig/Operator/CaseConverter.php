@@ -42,23 +42,28 @@ class CaseConverter extends AbstractOperator
             $valueArray = [];
 
             $childResult = $c->getLabeledValue($element);
-            $isArrayType = $childResult->isArrayType;
+
             $childValues = $childResult->value;
-            if ($childValues && !$isArrayType) {
+            $isArrayType = is_array($childValues);
+
+            if ($childValues && !is_array($childValues)) {
                 $childValues = [$childValues];
             }
 
             /** @var $childValue string */
-            foreach ($childValues as $childValue) {
-                if ($this->capitalization == 1) {
-                    $childValue = strtoupper($childValue);
-                } elseif ($this->capitalization == -1) {
-                    $childValue = strtolower($childValue);
+            if (is_array($childValues)) {
+                foreach ($childValues as $childValue) {
+                    if ($this->capitalization == 1) {
+                        $childValue = strtoupper($childValue);
+                    } elseif ($this->capitalization == -1) {
+                        $childValue = strtolower($childValue);
+                    }
+                    $valueArray[] = $childValue;
                 }
-                $valueArray[] = $childValue;
+            } else {
+                $valueArray[] = null;
             }
 
-            $result->isArrayType = $isArrayType;
             if ($isArrayType) {
                 $result->value = $valueArray;
             } else {

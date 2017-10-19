@@ -1074,7 +1074,7 @@
     background: url("/pimcore/static6/img/flat-color-icons/inspection.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_operator_caseconverter, .pimcore_icon_operator_substring, .pimcore_icon_operator_trimmer, .pimcore_icon_operator_stringreplace {
+.pimcore_icon_operator_caseconverter, .pimcore_icon_operator_substring, .pimcore_icon_operator_trimmer, .pimcore_icon_operator_stringreplace, .pimcore_icon_operator_stringcontains {
     background: url("/pimcore/static6/img/flat-color-icons/word.svg") center center no-repeat !important;
 }
 

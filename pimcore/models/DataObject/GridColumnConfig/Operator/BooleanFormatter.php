@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-
 class BooleanFormatter extends AbstractOperator
 {
     private $yesValue;
@@ -50,7 +49,7 @@ class BooleanFormatter extends AbstractOperator
 
             if (is_array($childValues)) {
                 foreach ($childValues as $value) {
-                    $value = (boolean) $value;
+                    $value = (bool) $value;
                     $booleanResult = is_null($booleanResult) ? $value : $booleanResult && $value;
                 }
             } else {
@@ -62,7 +61,6 @@ class BooleanFormatter extends AbstractOperator
         $result->value = $booleanResult;
 
         return $result;
-
     }
 
     /**
@@ -96,8 +94,4 @@ class BooleanFormatter extends AbstractOperator
     {
         $this->noValue = $noValue;
     }
-
-
-
-
 }

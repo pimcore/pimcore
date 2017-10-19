@@ -1630,6 +1630,8 @@
   "ellipses": "Ellipses",
   "operator_charcounter": "Operator CharCounter",
   "operator_stringreplace": "Operator StringReplace",
+  "operator_stringcontains": "Operator StringContains",
+  "operator_stringcontains_settings": "Operator StringContains Settings",
   "operator_stringreplace_settings": "Operatore StringReplace Settings",
   "operator_booleanformatter": "Operator Boolean Formatter",
   "operator_booleanformatter_settings": "Operator Boolean Formatter Settings",
