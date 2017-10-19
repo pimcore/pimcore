@@ -837,7 +837,7 @@ class Service extends Model\Element\Service
                 if ($field instanceof ClassDefinition\Data\Objectbricks) {
                     // custom field
                     $db = \Pimcore\Db::get();
-                    $brickPrefix = "";
+                    $brickPrefix = '';
                     if (!$brickField instanceof  Model\DataObject\ClassDefinition\Data\Checkbox) {
                         $brickPrefix =  $db->quoteIdentifier($brickType) . '.';
                     }
@@ -845,13 +845,13 @@ class Service extends Model\Element\Service
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
                             $fieldConditions[] =  $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
-                                    ["brickType" => $brickType]
+                                    ['brickType' => $brickType]
                                 );
                         }
                         $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                     } else {
                         $conditionPartsFilters[] = $brickPrefix . $brickField->getFilterCondition($filter['value'], $operator,
-                                ["brickType" => $brickType]);
+                                ['brickType' => $brickType]);
                     }
                 } elseif ($field instanceof ClassDefinition\Data) {
                     // custom field

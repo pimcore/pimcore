@@ -189,6 +189,7 @@ class Dao extends Model\DataObject\Listing\Dao
     protected function getSelectPart($defaultString = '', $column = 'oo_id')
     {
         $selectPart = $defaultString;
+
         return $selectPart;
     }
 

@@ -40,7 +40,8 @@ class CustomerObject implements IOrderListFilter
      */
     public function apply(IOrderList $orderList)
     {
-        $orderList->addCondition("order.customer__id = ?", $this->customer->getId());
+        $orderList->addCondition('order.customer__id = ?', $this->customer->getId());
+
         return $this;
     }
 }

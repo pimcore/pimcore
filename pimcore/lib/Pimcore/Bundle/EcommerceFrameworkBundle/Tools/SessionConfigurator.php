@@ -28,7 +28,8 @@ class SessionConfigurator implements SessionConfiguratorInterface
     /**
      * @return string[]
      */
-    protected function getBagNames() {
+    protected function getBagNames()
+    {
         return [
             self::ATTRIBUTE_BAG_CART,
             self::ATTRIBUTE_BAG_ENVIRONMENT,
@@ -57,12 +58,13 @@ class SessionConfigurator implements SessionConfiguratorInterface
      *
      * @param SessionInterface $session
      */
-    public function clearSession(SessionInterface $session) {
+    public function clearSession(SessionInterface $session)
+    {
         $bagNames = $this->getBagNames();
 
         foreach ($bagNames as $bagName) {
             $sessionBag = $session->getBag($bagName);
-            if($sessionBag) {
+            if ($sessionBag) {
                 $sessionBag->clear();
             }
         }

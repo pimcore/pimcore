@@ -264,11 +264,11 @@ class Version extends AbstractModel
             $data = Serialize::unserialize($data);
         }
 
-        /** @var  $class ClassDefinition */
+        /** @var $class ClassDefinition */
         $class = $data->getClass();
         $fds = $class->getFieldDefinitions();
         foreach ($fds as $fd) {
-            if (method_exists($fd, "getLazyLoading") && $fd->getLazyLoading()) {
+            if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
                 $data->addLazyLoadedField($fd->getName());
                 $data->addO__loadedLazyField($fd->getName());
             }

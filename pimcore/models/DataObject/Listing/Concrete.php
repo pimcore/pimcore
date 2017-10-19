@@ -259,7 +259,8 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * @return bool
      */
-    public function addDistinct() {
+    public function addDistinct()
+    {
         $fieldCollections = $this->getFieldCollections();
         if (!empty($fieldCollections)) {
             return true;
