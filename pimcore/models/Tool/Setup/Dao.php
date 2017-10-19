@@ -158,7 +158,10 @@ class Dao extends Model\Dao\AbstractDao
             ['key' => 'website_settings'],
             ['key' => 'dashboards'],
             ['key' => 'users'],
+            ['key' => 'piwik_settings'],
+            ['key' => 'piwik_reports'],
         ];
+
         foreach ($userPermissions as $up) {
             $this->db->insert('users_permission_definitions', $up);
         }

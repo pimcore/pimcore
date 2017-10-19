@@ -13,6 +13,11 @@
 
 pimcore.registerNS("pimcore.layout.portlets.piwik");
 pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
+
+    isAvailable: function() {
+        return pimcore.globalmanager.get("user").isAllowed("piwik_reports");
+    },
+
     setConfig: function (config) {
         var parsed = {
             site: null,

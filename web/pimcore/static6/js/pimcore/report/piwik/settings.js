@@ -387,4 +387,11 @@ pimcore.report.piwik.settings = Class.create({
     }
 });
 
-pimcore.report.settings.broker.push("pimcore.report.piwik.settings");
+pimcore.layout.treepanelmanager.addOnReadyCallback(function() {
+    'use strict';
+
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("piwik_settings")) {
+        pimcore.report.settings.broker.push("pimcore.report.piwik.settings");
+    }
+});

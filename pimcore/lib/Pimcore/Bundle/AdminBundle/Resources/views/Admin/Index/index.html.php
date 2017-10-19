@@ -535,8 +535,6 @@ $scripts = array(
     "pimcore/report/analytics/elementexplorer.js",
     "pimcore/report/webmastertools/settings.js",
     "pimcore/report/tagmanager/settings.js",
-    "pimcore/report/piwik/settings.js",
-    "pimcore/report/piwik/dashboard_iframe.js",
     "pimcore/report/custom/item.js",
     "pimcore/report/custom/panel.js",
     "pimcore/report/custom/settings.js",
@@ -557,9 +555,6 @@ $scripts = array(
     // application logging
     "pimcore/log/admin.js",
     "pimcore/log/detailwindow.js",
-
-    // analytics
-    "pimcore/analytics/piwik/widget_store_provider.js",
 
     // layout
     "pimcore/layout/portal.js",
@@ -591,6 +586,11 @@ $scripts = array(
     //workflow
     "pimcore/workflowmanagement/actionPanel.js",
 
+    // Piwik - this needs to be loaded after treepanel manager as
+    // it adds panels in pimcore ready
+    "pimcore/analytics/piwik/widget_store_provider.js",
+    "pimcore/report/piwik/settings.js",
+    "pimcore/report/piwik/dashboard_iframe.js",
 );
 
 // google maps API key

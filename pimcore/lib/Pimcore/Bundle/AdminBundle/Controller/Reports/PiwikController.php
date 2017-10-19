@@ -41,6 +41,8 @@ class PiwikController extends ReportsControllerBase
      */
     public function reportsAction(ReportBroker $reportBroker)
     {
+        $this->checkPermission('piwik_reports');
+
         $reports = $reportBroker->getReports();
 
         return $this->jsonResponse($reports);
@@ -55,6 +57,8 @@ class PiwikController extends ReportsControllerBase
      */
     public function reportAction(ReportBroker $reportBroker, $report)
     {
+        $this->checkPermission('piwik_reports');
+
         try {
             $report = $reportBroker->getReport((string)$report);
 
@@ -73,6 +77,8 @@ class PiwikController extends ReportsControllerBase
      */
     public function iframeIntegrationAction(ConfigProvider $configProvider)
     {
+        $this->checkPermission('piwik_reports');
+
         $config = $configProvider->getConfig();
 
         $data = [
@@ -104,6 +110,8 @@ class PiwikController extends ReportsControllerBase
         TranslatorInterface $translator
     )
     {
+        $this->checkPermission('piwik_reports');
+
         $siteConfigs = $siteConfigProvider->getSiteIds();
         $config      = $configProvider->getConfig();
 
@@ -132,6 +140,8 @@ class PiwikController extends ReportsControllerBase
      */
     public function portalWidgetsAction(WidgetBroker $widgetBroker, string $configKey)
     {
+        $this->checkPermission('piwik_reports');
+
         $widgetReferences = $widgetBroker->getWidgetReferences($configKey);
 
         return $this->jsonResponse(['data' => $widgetReferences]);
@@ -148,6 +158,8 @@ class PiwikController extends ReportsControllerBase
      */
     public function portalWidgetAction(WidgetBroker $widgetBroker, string $configKey, string $widgetId)
     {
+        $this->checkPermission('piwik_reports');
+
         try {
             $widgetConfig = $widgetBroker->getWidgetConfig($widgetId, $configKey);
         } catch (\InvalidArgumentException $e) {
@@ -176,6 +188,8 @@ class PiwikController extends ReportsControllerBase
         SitesManager $sitesManager
     )
     {
+        $this->checkPermission('piwik_settings');
+
         $siteConfig = $siteConfigProvider->getSiteId($configKey);
         $siteId     = $sitesManager->addSite($siteConfig);
 
@@ -200,6 +214,8 @@ class PiwikController extends ReportsControllerBase
         SitesManager $sitesManager
     )
     {
+        $this->checkPermission('piwik_settings');
+
         $siteConfig = $siteConfigProvider->getSiteId($configKey);
         $siteId     = $sitesManager->updateSite($siteConfig);
 

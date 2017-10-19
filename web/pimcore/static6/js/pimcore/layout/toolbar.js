@@ -589,6 +589,70 @@ pimcore.layout.toolbar = Class.create({
                 }
             }
 
+            if (user.isAllowed("piwik_reports") && 'undefined' !== typeof pimcore.settings.piwik && pimcore.settings.piwik.iframe_configured) {
+                marketingItems.push({
+                    text: "Piwik",
+                    iconCls: "pimcore_icon_piwik",
+                    handler: (function() {
+                        // create a promise which is resolved if the request succeeds
+                        var promise = new Ext.Promise(function (resolve, reject) {
+                            Ext.Ajax.request({
+                                url: "/admin/reports/piwik/iframe-integration",
+                                ignoreErrors: true, // do not pop up error window on failure
+                                success: function (response) {
+                                    var data = {};
+
+                                    try {
+                                        data = Ext.decode(response.responseText);
+                                    } catch (e) {
+                                        reject(e);
+                                        return;
+                                    }
+
+                                    if (data && data.configured && data.url) {
+                                        resolve(data.url);
+                                    }
+
+                                    reject('Piwik iframe integration is not configured.');
+                                },
+
+                                failure: function(response) {
+                                    try {
+                                        var data = Ext.decode(response.responseText);
+                                        if (data && data.message) {
+                                            reject(data.message);
+                                            return;
+                                        }
+                                    } catch (e) {}
+
+                                    reject(response.responseText);
+                                }
+                            });
+                        });
+
+                        // the actual handler
+                        return function () {
+                            promise.then(
+                                function (url) {
+                                    // only open window after promise was resolved
+                                    pimcore.helpers.openGenericIframeWindow(
+                                        "piwik_iframe_integration",
+                                        url,
+                                        "pimcore_icon_piwik",
+                                        "Piwik"
+                                    );
+                                },
+                                function (message) {
+                                    if (message) {
+                                        console.error(message);
+                                    }
+                                }
+                            );
+                        };
+                    }())
+                });
+            }
+
             if (marketingItems.length > 0) {
                 this.marketingMenu = new Ext.menu.Menu({
                     items: marketingItems,
@@ -596,46 +660,7 @@ pimcore.layout.toolbar = Class.create({
                     cls: "pimcore_navigation_flyout"
                 });
             }
-
-            if (pimcore.settings.piwik.iframe_configured) {
-                Ext.Ajax.request({
-                    url: "/admin/reports/piwik/iframe-integration",
-                    success: function (response) {
-                        if (!this.marketingMenu) {
-                            return;
-                        }
-
-                        var data = Ext.decode(response.responseText);
-                        if (!data.configured) {
-                            return;
-                        }
-
-                        var piwikPanelId = "piwik_iframe_integration";
-
-                        this.marketingMenu.add({
-                            text: "Piwik",
-                            iconCls: "pimcore_icon_piwik",
-                            handler: function () {
-                                if (pimcore.globalmanager.exists(piwikPanelId)) {
-                                    pimcore.globalmanager.get(piwikPanelId).activate();
-                                } else {
-                                    pimcore.globalmanager.add(
-                                        piwikPanelId,
-                                        new pimcore.tool.genericiframewindow(
-                                            piwikPanelId + "_iframe",
-                                            data.url,
-                                            "pimcore_icon_piwik",
-                                            "Piwik"
-                                        )
-                                    );
-                                }
-                            }
-                        });
-                    }.bind(this)
-                });
-            }
         }
-
 
         if (perspectiveCfg.inToolbar("settings")) {
             // settings menu

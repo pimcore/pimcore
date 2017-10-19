@@ -122,7 +122,18 @@ pimcore.report.piwik.dashboard_iframe = Class.create(pimcore.report.abstract, {
     }
 });
 
-if ('undefined' !== typeof pimcore.settings.piwik && 'undefined' !== typeof pimcore.settings.piwik.reports) {
+pimcore.layout.treepanelmanager.addOnReadyCallback(function() {
+    'use strict';
+
+    var user = pimcore.globalmanager.get("user");
+    if (!user || !user.isAllowed("piwik_reports")) {
+        return;
+    }
+
+    if ('undefined' === typeof pimcore.settings.piwik || 'undefined' === typeof pimcore.settings.piwik.reports) {
+        return;
+    }
+
     Ext.Object.each(pimcore.settings.piwik.reports, function (reportId, reportConfig) {
         reportConfig.text = reportConfig.title;
 
@@ -130,4 +141,4 @@ if ('undefined' !== typeof pimcore.settings.piwik && 'undefined' !== typeof pimc
         pimcore.report.broker.addGroup("piwik", "Piwik", "pimcore_icon_piwik");
         pimcore.report.broker.addReport(pimcore.report.piwik.dashboard_iframe, "piwik", reportConfig);
     });
-}
+});

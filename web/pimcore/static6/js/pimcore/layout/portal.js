@@ -63,6 +63,10 @@ pimcore.layout.portal = Class.create({
 
                         dynClass = eval(type);
                         if (dynClass) {
+                            if (!dynClass.prototype.isAvailable()) {
+                                continue;
+                            }
+
                             portletInstance = new dynClass();
                             portletInstance.setPortal(this);
                             portletInstance.setConfig(userConf.positions[i][c].config);
@@ -97,6 +101,10 @@ pimcore.layout.portal = Class.create({
             var portletType = portlets[i];
 
             if (pimcore.settings.disabledPortlets["pimcore.layout.portlets." + portletType]) {
+                continue;
+            }
+
+            if (!pimcore.layout.portlets[portletType].prototype.isAvailable()) {
                 continue;
             }
 
