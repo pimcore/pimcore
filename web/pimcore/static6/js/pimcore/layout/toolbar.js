@@ -614,7 +614,7 @@ pimcore.layout.toolbar = Class.create({
 
                         this.marketingMenu.add({
                             text: "Piwik",
-                            iconCls: "pimcore_icon_analytics",
+                            iconCls: "pimcore_icon_piwik",
                             handler: function () {
                                 if (pimcore.globalmanager.exists(piwikPanelId)) {
                                     pimcore.globalmanager.get(piwikPanelId).activate();
@@ -624,7 +624,7 @@ pimcore.layout.toolbar = Class.create({
                                         new pimcore.tool.genericiframewindow(
                                             piwikPanelId + "_iframe",
                                             data.url,
-                                            "pimcore_icon_analytics",
+                                            "pimcore_icon_piwik",
                                             "Piwik"
                                         )
                                     );

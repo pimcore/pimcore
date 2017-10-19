@@ -22,7 +22,7 @@ pimcore.report.piwik.dashboard_iframe = Class.create(pimcore.report.abstract, {
     },
 
     getIconCls: function () {
-        return "pimcore_icon_analytics";
+        return "pimcore_icon_analytics_explorer";
     },
 
     getPanel: function () {
@@ -127,7 +127,7 @@ if ('undefined' !== typeof pimcore.settings.piwik && 'undefined' !== typeof pimc
         reportConfig.text = reportConfig.title;
 
         // add to report broker
-        pimcore.report.broker.addGroup("piwik", "Piwik", "pimcore_icon_analytics");
+        pimcore.report.broker.addGroup("piwik", "Piwik", "pimcore_icon_piwik");
         pimcore.report.broker.addReport(pimcore.report.piwik.dashboard_iframe, "piwik", reportConfig);
     });
 }

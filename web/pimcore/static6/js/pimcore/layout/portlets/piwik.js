@@ -39,7 +39,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
     },
 
     getIcon: function () {
-        return "pimcore_icon_analytics";
+        return "pimcore_icon_piwik";
     },
 
     getLayout: function (portletId) {
