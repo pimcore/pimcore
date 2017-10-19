@@ -530,20 +530,28 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                             overModel.set('expandable', true);
 
                         }.bind(this),
-                        nodedragover: function (targetNode, position, dragData, e, eOpts) {
+                        nodedragover: function (targetNode, dropPosition, dragData, e, eOpts) {
                             var sourceNode = dragData.records[0];
 
                             if (sourceNode.data.isOperator) {
+                                var realOverModel = targetNode;
+                                if (dropPosition == "before" || dropPosition == "after") {
+                                    realOverModel = realOverModel.parentNode;
+                                }
+
                                 var sourceType = this.getNodeTypeAndClass(sourceNode);
-                                var targetType = this.getNodeTypeAndClass(targetNode);
+                                var targetType = this.getNodeTypeAndClass(realOverModel);
                                 var allowed = true;
 
-                                if (typeof targetNode.data.isChildAllowed == "function") {
-                                    allowed = allowed && targetNode.data.isChildAllowed(targetNode, sourceNode);
+
+                                if (typeof realOverModel.data.isChildAllowed == "function") {
+                                    console.log("no child allowed");
+                                    allowed = allowed && realOverModel.data.isChildAllowed(realOverModel, sourceNode);
                                 }
 
                                 if (typeof sourceNode.data.isParentAllowed == "function") {
-                                    allowed = allowed && sourceNode.data.isParentAllowed(targetNode, sourceNode);
+                                    console.log("parent not allowed");
+                                    allowed = allowed && sourceNode.data.isParentAllowed(realOverModel, sourceNode);
                                 }
 
 
