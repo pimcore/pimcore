@@ -3,14 +3,16 @@
 {% endblock %}
 
 <script type="text/javascript">
+    {% autoescape 'js' %}
+    {% spaceless %}
     {% block beforeScript %}
-        {{ blocks.beforeScript|raw }}
+        {{ blocks.beforeScript|raw -}}
     {% endblock %}
 
     var _paq = _paq || [];
 
     {% block actions %}
-        {{ blocks.actions|raw }}
+        {{- blocks.actions|raw -}}
     {% endblock %}
 
     (function() {
@@ -19,7 +21,7 @@
         {% endblock %}
 
         {% block beforeAsync %}
-            {{ blocks.beforeAsync|raw }}
+            {{- blocks.beforeAsync|raw -}}
         {% endblock %}
 
         {% block async %}
@@ -28,15 +30,18 @@
         {% endblock %}
 
         {% block afterAsync %}
-            {{ blocks.afterAsync|raw }}
+            {{- blocks.afterAsync|raw -}}
         {% endblock %}
     })();
 
     {% block afterScript %}
-        {{ blocks.afterScript|raw }}
+        {{- blocks.afterScript|raw }}
     {% endblock %}
+    {% endspaceless %}
+    {% endautoescape %}
+
 </script>
 
 {% block afterScriptTag %}
-    {{ blocks.afterScriptTag|raw }}
+    {{- blocks.afterScriptTag|raw -}}
 {% endblock %}
