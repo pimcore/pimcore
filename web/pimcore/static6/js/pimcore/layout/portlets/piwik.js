@@ -72,83 +72,54 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
 
         this.layout.on("afterrender", function () {
             that.loadMask.show();
+            that.renderIframe();
         });
 
-        this.renderIframe();
+        this.layout.on("destroy", function() {
+            that.loadMask.destroy();
+        });
+
         this.layout.portletId = portletId;
 
         return this.layout;
     },
 
     editSettings: function () {
-        var config = this.config;
+        var config = this.config || {};
 
         var siteCombo = new Ext.form.ComboBox({
             xtype: "combo",
             width: 500,
-            id: "pimcore_portlet_selected_piwik_site",
             autoSelect: true,
             valueField: "id",
             displayField: "title",
             value: config.site,
             fieldLabel: t("piwik_widget_site"),
             fields: ['id', 'title'],
+            mode: "local",
             triggerAction: "all",
-            store: new Ext.data.Store({
-                autoDestroy: true,
-                autoLoad: true,
-                proxy: {
-                    type: 'ajax',
-                    url: '/admin/reports/piwik/config/configured-sites',
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'data'
-                    }
-                }
-            })
+            store: pimcore.analytics.piwik.WidgetStoreProvider.getConfiguredSitesStore()
         });
 
         var widgetCombo = new Ext.form.ComboBox({
             xtype: "combo",
             width: 500,
-            id: "pimcore_portlet_selected_piwik_widget",
             autoSelect: true,
             valueField: "id",
             displayField: "title",
             value: config.widget,
             fieldLabel: t("piwik_widget_widget"),
             fields: ['id', 'title'],
+            mode: "local",
             triggerAction: "all",
             disabled: true
         });
 
-        siteCombo.getStore().on('load', function() {
-            siteCombo.setValue(config.site);
-        });
-
         var siteValueListener = function () {
-            var value = this.getValue();
+            var value = siteCombo.getValue();
 
             if (value) {
-                var widgetStore = new Ext.data.Store({
-                    autoDestroy: true,
-                    autoLoad: true,
-                    proxy: {
-                        type: 'ajax',
-                        url: '/admin/reports/piwik/portal-widgets/' + value,
-                        reader: {
-                            type: 'json',
-                            rootProperty: 'data'
-                        }
-                    },
-                    listeners: {
-                        load: function () {
-                            widgetCombo.setValue(config.widget);
-                        }
-                    }
-                });
-
-                widgetCombo.setStore(widgetStore);
+                widgetCombo.setStore(pimcore.analytics.piwik.WidgetStoreProvider.getPortalWidgetsStore(value));
                 widgetCombo.enable();
             } else {
                 widgetCombo.setValue(null);
@@ -159,6 +130,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
 
         siteCombo.on('select', siteValueListener);
         siteCombo.on('change', siteValueListener);
+        siteValueListener();
 
         var win = new Ext.Window({
             width: 550,

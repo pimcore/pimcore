@@ -558,6 +558,9 @@ $scripts = array(
     "pimcore/log/admin.js",
     "pimcore/log/detailwindow.js",
 
+    // analytics
+    "pimcore/analytics/piwik/widget_store_provider.js",
+
     // layout
     "pimcore/layout/portal.js",
     "pimcore/layout/portlets/abstract.js",
