@@ -59,7 +59,6 @@ class Substring extends AbstractOperator
             /** @var $childValue string */
             if (is_array($childValues)) {
                 foreach ($childValues as $childValue) {
-
                     $showEllipses = false;
                     if ($childValue && $this->getEllipses()) {
                         $start = $this->getStart() ? $this->getStart() : 0;
@@ -71,7 +70,7 @@ class Substring extends AbstractOperator
 
                     $childValue = substr($childValue, $this->getStart(), $this->getLength());
                     if ($showEllipses) {
-                        $childValue .= "...";
+                        $childValue .= '...';
                     }
 
                     $valueArray[] = $childValue;
@@ -139,7 +138,4 @@ class Substring extends AbstractOperator
     {
         $this->ellipses = $ellipses;
     }
-
-
-
 }

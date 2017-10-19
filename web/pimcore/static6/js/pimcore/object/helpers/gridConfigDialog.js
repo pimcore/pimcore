@@ -702,6 +702,13 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 childs.push(pimcore.object.gridcolumn.operator[operators[i]].prototype.getConfigTreeNode());
             }
         }
+        
+        childs.sort(
+            function(x, y) {
+                return x.text < y.text ? -1 : 1;
+            }
+        );
+        
 
         var tree = new Ext.tree.TreePanel({
             title: t('operators'),

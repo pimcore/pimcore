@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
 class CharCounter extends AbstractOperator
 {
-
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
@@ -29,7 +28,6 @@ class CharCounter extends AbstractOperator
     {
         $result = new \stdClass();
         $result->label = $this->label;
-
 
         $childs = $this->getChilds();
         $count = 0;
@@ -48,7 +46,6 @@ class CharCounter extends AbstractOperator
                         foreach ($value as $subValue) {
                             $count += strlen($subValue);
                         }
-
                     } else {
                         $count += strlen($value);
                     }
