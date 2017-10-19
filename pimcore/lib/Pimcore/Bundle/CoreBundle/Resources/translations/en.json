@@ -1562,7 +1562,7 @@
   "operator_translate_value_prefix": "Prefix",
   "custom_title": "Custom Title",
   "substring_operator_settings": "Operator Substring Settings",
-  "caseconverter_operator_settings": "Case Converter Settings",
+  "caseconverter_operator_settings": "CaseConverter Settings",
   "trim_operator_settings": "Trim Operator Settings",
   "max_length": "Max Length",
   "date_format": "Date Format",
@@ -1627,5 +1627,8 @@
   "save_copy_and_share": "Save Copy & Share",
   "locale": "Locale",
   "ellipses": "Ellipses",
-  "operator_charcounter": "Operator CharCounter"
+  "operator_charcounter": "Operator CharCounter",
+  "operator_stringreplace": "Operator StringReplace",
+  "operator_stringreplace_settings": "Operatore StringReplace Settings",
+  "insensitive": "Insensitive"
 }

@@ -15,31 +15,33 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.concatenator");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.stringreplace");
 
-pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
-    class: "Concatenator",
-    iconCls: "pimcore_icon_operator_concatenator",
-    defaultText: "operator_concatenator",
+    class: "StringReplace",
+    iconCls: "pimcore_icon_operator_stringreplace",
+    defaultText: "operator_stringreplace",
+
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label,
+                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
                 configAttributes: configAttributes,
                 isTarget: true,
-                allowChildren: true,
                 expanded: true,
                 leaf: false,
-                expandable: false
+                expandable: false,
+                allowChildren: true,
+                isChildAllowed: this.allowChild
             };
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class};
+            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
 
             var node = {
                 draggable: true,
@@ -47,7 +49,8 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
                 text: t(this.defaultText),
                 configAttributes: configAttributes,
                 isTarget: true,
-                leaf: true
+                leaf: true,
+                isChildAllowed: this.allowChild
             };
         }
         node.isOperator = true;
@@ -58,18 +61,18 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
     getCopyNode: function(source) {
         var copy = source.createNode({
             iconCls: this.iconCls,
-            text: source.data.text,
+            text: source.data.cssClass,
             isTarget: true,
             leaf: false,
-            expandable: false,
+            expanded: true,
             isOperator: true,
+            isChildAllowed: this.allowChild,
             configAttributes: {
-                label: source.data.text,
+                label: source.data.configAttributes.label,
                 type: this.type,
                 class: this.class
             }
         });
-
         return copy;
     },
 
@@ -77,25 +80,40 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
     getConfigDialog: function(node) {
         this.node = node;
 
-        this.textfield = new Ext.form.TextField({
+        this.textField = new Ext.form.TextField({
             fieldLabel: t('label'),
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.label
         });
 
-        this.glue = new Ext.form.TextField({
-            fieldLabel: t('glue'),
+        this.searchField = new Ext.form.TextField({
+            fieldLabel: t('search'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.glue
+            value: this.node.data.configAttributes.search
+        });
+
+        this.replaceField = new Ext.form.TextField({
+            fieldLabel: t('replace'),
+            length: 255,
+            width: 200,
+            value: this.node.data.configAttributes.replace
+        });
+
+
+        this.insensitiveField = new Ext.form.Checkbox({
+            fieldLabel: t('insensitive'),
+            length: 255,
+            width: 200,
+            value: this.node.data.configAttributes.insensitive
         });
 
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textfield, this.glue],
+            items: [this.textField, this.searchField, this.replaceField, this.insensitiveField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -107,9 +125,9 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
 
         this.window = new Ext.Window({
             width: 400,
-            height: 200,
+            height: 350,
             modal: true,
-            title: t('concatenator_operator_settings'),
+            title: t('operator_stringreplace_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -119,10 +137,11 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
     },
 
     commitData: function() {
-        this.node.data.configAttributes.label = this.textfield.getValue();
-        this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
-        this.node.data.configAttributes.glue = this.glue.getValue();
+        this.node.data.configAttributes.search = this.searchField.getValue();
+        this.node.data.configAttributes.replace = this.replaceField.getValue();
+        this.node.data.configAttributes.insensitive = this.insensitiveField.getValue();
+        this.node.set('text', this.textField.getValue());
         this.window.close();
     }
 });

@@ -44,9 +44,8 @@ class Concatenator extends AbstractOperator
 
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
-            $isArrayType = $childResult->isArrayType;
             $childValues = $childResult->value;
-            if ($childValues && !$isArrayType) {
+            if ($childValues && !is_array($childValues)) {
                 $childValues = [$childValues];
             }
 
@@ -62,6 +61,8 @@ class Concatenator extends AbstractOperator
                         $valueArray[] = $value;
                     }
                 }
+            } else {
+                $valueArray[] = $value;
             }
         }
 

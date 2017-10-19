@@ -708,7 +708,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 return x.text < y.text ? -1 : 1;
             }
         );
-        
 
         var tree = new Ext.tree.TreePanel({
             title: t('operators'),
@@ -719,6 +718,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             autoScroll: true,
             height: 200,
             rootVisible: false,
+            resizeable: true,
+            split: true,
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
