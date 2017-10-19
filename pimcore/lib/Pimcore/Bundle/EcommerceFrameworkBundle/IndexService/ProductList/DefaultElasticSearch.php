@@ -571,7 +571,7 @@ class DefaultElasticSearch implements IProductList
         if ($this->orderKey) {
             if (is_array($this->orderKey)) {
                 foreach ($this->orderKey as $orderKey) {
-                    $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => ($orderKey[1] ?: 'asc')];
+                    $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => (strtolower($orderKey[1]) ?: 'asc')];
                 }
             } else {
                 $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($this->orderKey) => ($this->order ?: 'asc')];
