@@ -176,19 +176,12 @@ class PiwikController extends ReportsControllerBase
         SitesManager $sitesManager
     )
     {
-        try {
-            $siteConfig = $siteConfigProvider->getSiteId($configKey);
-            $siteId     = $sitesManager->addSite($siteConfig);
+        $siteConfig = $siteConfigProvider->getSiteId($configKey);
+        $siteId     = $sitesManager->addSite($siteConfig);
 
-            return $this->json([
-                'site_id' => $siteId
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
+        return $this->json([
+            'site_id' => $siteId
+        ]);
     }
 
     /**
@@ -207,19 +200,12 @@ class PiwikController extends ReportsControllerBase
         SitesManager $sitesManager
     )
     {
-        try {
-            $siteConfig = $siteConfigProvider->getSiteId($configKey);
-            $siteId     = $sitesManager->updateSite($siteConfig);
+        $siteConfig = $siteConfigProvider->getSiteId($configKey);
+        $siteId     = $sitesManager->updateSite($siteConfig);
 
-            return $this->json([
-                'site_id' => $siteId
-            ]);
-        } catch (\Exception $e) {
-            return $this->jsonResponse([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
+        return $this->json([
+            'site_id' => $siteId
+        ]);
     }
 
     /**
