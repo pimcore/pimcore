@@ -561,7 +561,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                                 var allowed = true;
                                 if (this.parentIsOperator(targetNode)) {
-                                    if (position == "before" || position == "after") {
+                                    if (dropPosition == "before" || dropPosition == "after") {
                                         targetNode = targetNode.parentNode;
                                     }
 
