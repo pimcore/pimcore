@@ -558,7 +558,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     }
 
     /**
-     * first run processUpdateIndexQueue of trait and then commit updated entries if there are some
+     * first run processUpdateIndexQueue of trait and then commit updated entries
      *
      * @param int $limit
      *
@@ -568,9 +568,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     {
         $entriesUpdated = parent::processUpdateIndexQueue($limit);
         Logger::info('Entries updated:' . $entriesUpdated);
-        if ($entriesUpdated) {
-            $this->commitUpdateIndex();
-        }
+        $this->commitUpdateIndex();
 
         return $entriesUpdated;
     }
