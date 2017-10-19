@@ -131,7 +131,7 @@ class WidgetBroker
         $widgets = $this->getWidgetData($configKey, $locale);
 
         if (!isset($widgets[$widgetId])) {
-            throw new \InvalidArgumentException(sprintf('Widget "%s" was not found', $widgetId));
+            throw new \InvalidArgumentException(sprintf('Widget "%s" was not found.', $widgetId));
         }
 
         $widget = $widgets[$widgetId];
@@ -216,13 +216,7 @@ class WidgetBroker
 
     private function loadWidgets(Config $config, string $configKey, string $locale = null)
     {
-        try {
-            $data = $this->loadFromApi($config, $configKey, $locale);
-        } catch (\Throwable $e) {
-            $this->logger->error($e);
-
-            return [];
-        }
+        $data = $this->loadFromApi($config, $configKey, $locale);
 
         $categorizedTree = $this->categorizeWidgets($data);
         $widgets         = $this->flattenCategorizedWidgetTree($categorizedTree);

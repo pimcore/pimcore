@@ -239,6 +239,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
         Ext.Ajax.request({
             url: "/admin/reports/piwik/portal-widgets/" + config.site + "/" + config.widget,
             method: "GET",
+            ignoreErrors: true, // do not pop up error window on failure
             success: function (response) {
                 var widget = Ext.decode(response.responseText);
                 var iframe = new Ext.Component({
@@ -258,11 +259,21 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
                     that.loadMask.hide();
                 };
             },
-            error: function () {
+            failure: function (response) {
+                var message = t('portlet_piwik_error');
+
+                try {
+                    var json = Ext.decode(response.responseText);
+                    if (json && json.message) {
+                        message += ' ' + json.message;
+                    }
+                } catch (e) {}
+
                 layout.removeAll();
                 layout.add(new Ext.Component({
-                    html: t('portlet_piwik_error'),
-                    padding: 20
+                    html: message,
+                    padding: 20,
+                    style: "color: #ff0000"
                 }));
 
                 that.loadMask.hide();

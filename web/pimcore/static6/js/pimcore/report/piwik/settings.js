@@ -261,6 +261,7 @@ pimcore.report.piwik.settings = Class.create({
                 Ext.Ajax.request({
                     url: url,
                     method: method,
+                    ignoreErrors: true, // do not pop up error window on failure
                     callback: function () {
                         that.loadMask.hide();
                     },

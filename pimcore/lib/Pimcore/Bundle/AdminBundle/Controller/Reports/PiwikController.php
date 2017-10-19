@@ -148,7 +148,14 @@ class PiwikController extends ReportsControllerBase
      */
     public function portalWidgetAction(WidgetBroker $widgetBroker, string $configKey, string $widgetId)
     {
-        $widgetConfig = $widgetBroker->getWidgetConfig($widgetId, $configKey);
+        try {
+            $widgetConfig = $widgetBroker->getWidgetConfig($widgetId, $configKey);
+        } catch (\InvalidArgumentException $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], JsonResponse::HTTP_NOT_FOUND);
+        }
 
         return $this->jsonResponse($widgetConfig);
     }
