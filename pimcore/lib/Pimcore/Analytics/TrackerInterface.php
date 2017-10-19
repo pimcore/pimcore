@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics;
 
-use Pimcore\Analytics\SiteConfig\SiteConfig;
+use Pimcore\Analytics\SiteId\SiteId;
 
 interface TrackerInterface
 {
@@ -25,20 +25,20 @@ interface TrackerInterface
      * Get code for a specific site. If no site is passed the current site will be
      * automatically resolved.
      *
-     * @param SiteConfig|null $siteConfig
+     * @param SiteId|null $siteId
      *
      * @return null|string Null if no tracking is configured
      */
-    public function getCode(SiteConfig $siteConfig = null);
+    public function getCode(SiteId $siteId = null);
 
     /**
      * Adds additional code to the tracker. Code can either be added to all trackers
      * or be restricted to a specific site.
      *
-     * @param string $code                The code to add
-     * @param string|null $block          The block where to add the code (will use default block if none given)
-     * @param bool $prepend               Whether to prepend the code to the code block
-     * @param SiteConfig|null $siteConfig Restrict code to a specific site
+     * @param string $code        The code to add
+     * @param string|null $block  The block where to add the code (will use default block if none given)
+     * @param bool $prepend       Whether to prepend the code to the code block
+     * @param SiteId|null $siteId Restrict code to a specific site
      */
-    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteConfig $siteConfig = null);
+    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteId $siteId = null);
 }

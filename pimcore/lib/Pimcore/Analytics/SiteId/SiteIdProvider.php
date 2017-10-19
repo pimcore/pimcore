@@ -15,13 +15,13 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\SiteConfig;
+namespace Pimcore\Analytics\SiteId;
 
 use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Site;
 use Symfony\Component\HttpFoundation\Request;
 
-class SiteConfigProvider
+class SiteIdProvider
 {
     /**
      * @var SiteResolver
@@ -33,22 +33,36 @@ class SiteConfigProvider
         $this->siteResolver = $siteResolver;
     }
 
-    public function getForRequest(Request $request = null): SiteConfig
+    /**
+     * Resolve the site identifier for the given request
+     *
+     * @param Request|null $request
+     *
+     * @return SiteId
+     */
+    public function getForRequest(Request $request = null): SiteId
     {
         if ($this->siteResolver->isSiteRequest($request)) {
             $site = $this->siteResolver->getSite();
 
-            return SiteConfig::forSite($site);
+            return SiteId::forSite($site);
         }
 
-        return SiteConfig::forMainDomain();
+        return SiteId::forMainDomain();
     }
 
-    public function getSiteConfig(string $configKey): SiteConfig
+    /**
+     * Get a site id for a config key
+     *
+     * @param string $configKey
+     *
+     * @return SiteId
+     */
+    public function getSiteId(string $configKey): SiteId
     {
-        foreach ($this->getSiteConfigs() as $siteConfig) {
-            if ($siteConfig->getConfigKey() === $configKey) {
-                return $siteConfig;
+        foreach ($this->getSiteIds() as $siteId) {
+            if ($siteId->getConfigKey() === $configKey) {
+                return $siteId;
             }
         }
 
@@ -56,26 +70,28 @@ class SiteConfigProvider
     }
 
     /**
+     * Get all available site ids
+     *
      * @param bool $includeMainDomain
      *
-     * @return SiteConfig[]
+     * @return SiteId[]
      */
-    public function getSiteConfigs(bool $includeMainDomain = true): array
+    public function getSiteIds(bool $includeMainDomain = true): array
     {
         /** @var Site\Listing|Site\Listing\Dao $sites */
         $sites = new Site\Listing();
 
-        $configs = [];
+        $ids = [];
 
         if ($includeMainDomain) {
-            $configs[] = SiteConfig::forMainDomain();
+            $ids[] = SiteId::forMainDomain();
         }
 
         foreach ($sites->load() as $site) {
-            $configs[] = SiteConfig::forSite($site);
+            $ids[] = SiteId::forSite($site);
 
         }
 
-        return $configs;
+        return $ids;
     }
 }

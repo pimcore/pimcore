@@ -18,48 +18,48 @@ declare(strict_types=1);
 namespace Pimcore\Analytics;
 
 use Pimcore\Analytics\Code\CodeContainer;
-use Pimcore\Analytics\SiteConfig\SiteConfig;
-use Pimcore\Analytics\SiteConfig\SiteConfigProvider;
+use Pimcore\Analytics\SiteId\SiteId;
+use Pimcore\Analytics\SiteId\SiteIdProvider;
 
 abstract class AbstractTracker implements TrackerInterface
 {
     /**
-     * @var SiteConfigProvider
+     * @var SiteIdProvider
      */
-    private $siteConfigProvider;
+    private $siteIdProvider;
 
-    public function __construct(SiteConfigProvider $siteConfigProvider)
+    public function __construct(SiteIdProvider $siteIdProvider)
     {
-        $this->siteConfigProvider = $siteConfigProvider;
+        $this->siteIdProvider = $siteIdProvider;
     }
 
     /**
      * @inheritdoc
      */
-    public function getCode(SiteConfig $siteConfig = null)
+    public function getCode(SiteId $siteId = null)
     {
-        if (null === $siteConfig) {
-            $siteConfig = $this->siteConfigProvider->getForRequest();
+        if (null === $siteId) {
+            $siteId = $this->siteIdProvider->getForRequest();
         }
 
-        return $this->generateCode($siteConfig);
+        return $this->generateCode($siteId);
     }
 
     /**
      * Generates code for a specific site config
      *
-     * @param SiteConfig $siteConfig
+     * @param SiteId $siteId
      *
      * @return string|null
      */
-    abstract protected function generateCode(SiteConfig $siteConfig);
+    abstract protected function generateCode(SiteId $siteId);
 
     /**
      * @inheritdoc
      */
-    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteConfig $siteConfig = null)
+    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteId $siteId = null)
     {
-        $this->getCodeContainer()->addCodePart($code, $block, $prepend, $siteConfig);
+        $this->getCodeContainer()->addCodePart($code, $block, $prepend, $siteId);
     }
 
     /**

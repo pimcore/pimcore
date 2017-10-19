@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Code;
 
-use Pimcore\Analytics\SiteConfig\SiteConfig;
+use Pimcore\Analytics\SiteId\SiteId;
 
 /**
  * Collects additional code parts which should be added to specific blocks upon rendering. Code
@@ -63,13 +63,13 @@ class CodeContainer
      * @param string $code
      * @param string|null $block
      * @param bool $prepend
-     * @param SiteConfig|null $siteConfig Restrict code part to a specific site
+     * @param SiteId|null $siteId Restrict code part to a specific site
      */
-    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteConfig $siteConfig = null)
+    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteId $siteId = null)
     {
         $configKey = self::CONFIG_KEY_GLOBAL;
-        if (null !== $siteConfig) {
-            $configKey = $siteConfig->getConfigKey();
+        if (null !== $siteId) {
+            $configKey = $siteId->getConfigKey();
         }
 
         if (null === $block) {
@@ -103,17 +103,17 @@ class CodeContainer
     /**
      * Adds registered parts to a code block
      *
-     * @param SiteConfig $siteConfig
+     * @param SiteId $siteId
      * @param CodeBlock $codeBlock
      * @param string $block
      */
-    public function addToCodeBlock(SiteConfig $siteConfig, CodeBlock $codeBlock, string $block)
+    public function addToCodeBlock(SiteId $siteId, CodeBlock $codeBlock, string $block)
     {
         // global parts not restricted to a config key
         $this->enrichBlock(self::CONFIG_KEY_GLOBAL, $codeBlock, $block);
 
         // config key specific parts
-        $this->enrichBlock($siteConfig->getConfigKey(), $codeBlock, $block);
+        $this->enrichBlock($siteId->getConfigKey(), $codeBlock, $block);
     }
 
     private function enrichBlock(string $configKey, CodeBlock $codeBlock, string $block)

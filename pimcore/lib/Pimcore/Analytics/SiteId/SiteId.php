@@ -15,12 +15,16 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Analytics\SiteConfig;
+namespace Pimcore\Analytics\SiteId;
 
 use Pimcore\Model\Site;
 use Symfony\Component\Translation\TranslatorInterface;
 
-final class SiteConfig
+/**
+ * Represents an analytics site config key which is either just "default" without
+ * an associated site or a combination of a site with its config key "site_<siteId>".
+ */
+final class SiteId
 {
     const CONFIG_KEY_MAIN_DOMAIN = 'default';
 
@@ -40,12 +44,12 @@ final class SiteConfig
         $this->site      = $site;
     }
 
-    public static function forMainDomain(): SiteConfig
+    public static function forMainDomain(): SiteId
     {
         return new self(self::CONFIG_KEY_MAIN_DOMAIN);
     }
 
-    public static function forSite(Site $site): SiteConfig
+    public static function forSite(Site $site): SiteId
     {
         $configKey = sprintf('site_%s', $site->getId());
 

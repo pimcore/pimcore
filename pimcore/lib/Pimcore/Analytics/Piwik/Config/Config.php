@@ -65,8 +65,8 @@ class Config
             return false;
         }
 
-        $siteId = $this->normalizeSiteId($config);
-        if (null === $siteId) {
+        $piwikSiteId = $this->normalizePiwikSiteId($config);
+        if (null === $piwikSiteId) {
             return false;
         }
 
@@ -136,11 +136,11 @@ class Config
      *
      * @return int|null
      */
-    public function getSiteId(string $configKey)
+    public function getPiwikSiteId(string $configKey)
     {
         $config = $this->getConfigForSite($configKey);
         if (null !== $config) {
-            return $this->normalizeSiteId($config);
+            return $this->normalizePiwikSiteId($config);
         }
     }
 
@@ -209,15 +209,15 @@ class Config
      *
      * @return int|null
      */
-    private function normalizeSiteId(ConfigObject $config)
+    private function normalizePiwikSiteId(ConfigObject $config)
     {
         if (!$config->site_id) {
             return null;
         }
 
-        $siteId = (int)$config->site_id;
-        if ($siteId > 0) {
-            return $siteId;
+        $piwikSiteId = (int)$config->site_id;
+        if ($piwikSiteId > 0) {
+            return $piwikSiteId;
         }
     }
 }

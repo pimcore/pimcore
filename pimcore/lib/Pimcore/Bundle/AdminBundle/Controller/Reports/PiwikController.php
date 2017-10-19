@@ -21,7 +21,7 @@ use Pimcore\Analytics\Piwik\Api\SitesManager;
 use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\ReportBroker;
 use Pimcore\Analytics\Piwik\WidgetBroker;
-use Pimcore\Analytics\SiteConfig\SiteConfigProvider;
+use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -92,19 +92,19 @@ class PiwikController extends ReportsControllerBase
     /**
      * @Route("/config/configured-sites")
      *
-     * @param SiteConfigProvider $siteConfigProvider
+     * @param SiteIdProvider $siteConfigProvider
      * @param ConfigProvider $configProvider
      * @param TranslatorInterface $translator
      *
      * @return JsonResponse
      */
     public function sitesAction(
-        SiteConfigProvider $siteConfigProvider,
+        SiteIdProvider $siteConfigProvider,
         ConfigProvider $configProvider,
         TranslatorInterface $translator
     )
     {
-        $siteConfigs = $siteConfigProvider->getSiteConfigs();
+        $siteConfigs = $siteConfigProvider->getSiteIds();
         $config      = $configProvider->getConfig();
 
         $sites = [];
@@ -158,19 +158,19 @@ class PiwikController extends ReportsControllerBase
      * @Method("POST")
      *
      * @param string $configKey
-     * @param SiteConfigProvider $siteConfigProvider
+     * @param SiteIdProvider $siteConfigProvider
      * @param SitesManager $sitesManager
      *
      * @return JsonResponse
      */
     public function apiSiteCreateAction(
         string $configKey,
-        SiteConfigProvider $siteConfigProvider,
+        SiteIdProvider $siteConfigProvider,
         SitesManager $sitesManager
     )
     {
         try {
-            $siteConfig = $siteConfigProvider->getSiteConfig($configKey);
+            $siteConfig = $siteConfigProvider->getSiteId($configKey);
             $siteId     = $sitesManager->addSite($siteConfig);
 
             return $this->json([
@@ -189,19 +189,19 @@ class PiwikController extends ReportsControllerBase
      * @Method("PUT")
      *
      * @param string $configKey
-     * @param SiteConfigProvider $siteConfigProvider
+     * @param SiteIdProvider $siteConfigProvider
      * @param SitesManager $sitesManager
      *
      * @return JsonResponse
      */
     public function apiSiteUpdateAction(
         string $configKey,
-        SiteConfigProvider $siteConfigProvider,
+        SiteIdProvider $siteConfigProvider,
         SitesManager $sitesManager
     )
     {
         try {
-            $siteConfig = $siteConfigProvider->getSiteConfig($configKey);
+            $siteConfig = $siteConfigProvider->getSiteId($configKey);
             $siteId     = $sitesManager->updateSite($siteConfig);
 
             return $this->json([

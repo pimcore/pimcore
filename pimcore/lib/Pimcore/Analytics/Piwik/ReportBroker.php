@@ -20,7 +20,7 @@ namespace Pimcore\Analytics\Piwik;
 use Pimcore\Analytics\Piwik\Config\Config;
 use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\Dto\ReportConfig;
-use Pimcore\Analytics\SiteConfig\SiteConfigProvider;
+use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Event\Analytics\PiwikEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -37,9 +37,9 @@ class ReportBroker
     private $configProvider;
 
     /**
-     * @var SiteConfigProvider
+     * @var SiteIdProvider
      */
-    private $siteConfigProvider;
+    private $siteIdProvider;
 
     /**
      * @var TranslatorInterface
@@ -58,15 +58,15 @@ class ReportBroker
 
     public function __construct(
         ConfigProvider $configProvider,
-        SiteConfigProvider $siteConfigProvider,
+        SiteIdProvider $siteIdProvider,
         TranslatorInterface $translator,
         EventDispatcherInterface $eventDispatcher
     )
     {
-        $this->configProvider     = $configProvider;
-        $this->siteConfigProvider = $siteConfigProvider;
-        $this->eventDispatcher    = $eventDispatcher;
-        $this->translator         = $translator;
+        $this->configProvider  = $configProvider;
+        $this->siteIdProvider  = $siteIdProvider;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->translator      = $translator;
     }
 
     /**
@@ -117,11 +117,11 @@ class ReportBroker
             return $reports;
         }
 
-        $siteConfigs    = $this->siteConfigProvider->getSiteConfigs();
+        $siteIds        = $this->siteIdProvider->getSiteIds();
         $firstConfigKey = null;
 
-        foreach ($siteConfigs as $siteConfig) {
-            $configKey = $siteConfig->getConfigKey();
+        foreach ($siteIds as $siteId) {
+            $configKey = $siteId->getConfigKey();
 
             if (!$config->isSiteConfigured($configKey)) {
                 continue;
@@ -129,7 +129,7 @@ class ReportBroker
 
             $reports[] = new ReportConfig(
                 $configKey,
-                $siteConfig->getTitle($this->translator),
+                $siteId->getTitle($this->translator),
                 $this->generateSiteDashboardUrl($config, $configKey)
             );
 
@@ -177,7 +177,7 @@ class ReportBroker
             'action'            => 'iframe',
             'period'            => 'week',
             'date'              => 'yesterday',
-            'idSite'            => $config->getSiteId($configKey),
+            'idSite'            => $config->getPiwikSiteId($configKey),
             'token_auth'        => $config->getReportToken()
         ], $parameters);
 

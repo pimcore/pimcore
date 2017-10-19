@@ -142,7 +142,7 @@ class WidgetBroker
         }
 
         $locale   = $this->resolveLocale($locale);
-        $cacheKey = $this->generateCacheKey($config->getSiteId($configKey), $locale);
+        $cacheKey = $this->generateCacheKey($config->getPiwikSiteId($configKey), $locale);
 
         if (isset($this->widgets[$cacheKey])) {
             return $this->widgets[$cacheKey];
@@ -299,7 +299,7 @@ class WidgetBroker
             'module'     => 'API',
             'method'     => 'API.getWidgetMetadata',
             'format'     => 'JSON',
-            'idSite'     => $config->getSiteId($configKey),
+            'idSite'     => $config->getPiwikSiteId($configKey),
             'token_auth' => $config->getReportToken()
         ];
 
@@ -319,7 +319,7 @@ class WidgetBroker
             'period'      => 'day',
             'date'        => 'yesterday',
             'disableLink' => 1,
-            'idSite'      => $config->getSiteId($configKey),
+            'idSite'      => $config->getPiwikSiteId($configKey),
             'token_auth'  => $config->getReportToken()
         ];
 

@@ -19,7 +19,7 @@ namespace Pimcore\Analytics\Piwik\Event;
 
 use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Analytics\Piwik\Config\Config;
-use Pimcore\Analytics\SiteConfig\SiteConfig;
+use Pimcore\Analytics\SiteId\SiteId;
 use Symfony\Component\EventDispatcher\Event;
 
 class TrackingDataEvent extends Event
@@ -30,9 +30,9 @@ class TrackingDataEvent extends Event
     private $config;
 
     /**
-     * @var SiteConfig
+     * @var SiteId
      */
-    private $siteConfig;
+    private $siteId;
 
     /**
      * @var array
@@ -51,17 +51,17 @@ class TrackingDataEvent extends Event
 
     public function __construct(
         Config $config,
-        SiteConfig $siteConfig,
+        SiteId $siteId,
         array $data,
         array $blocks,
         string $template
     )
     {
-        $this->config     = $config;
-        $this->siteConfig = $siteConfig;
-        $this->data       = $data;
-        $this->blocks     = $blocks;
-        $this->template   = $template;
+        $this->config   = $config;
+        $this->siteId   = $siteId;
+        $this->data     = $data;
+        $this->blocks   = $blocks;
+        $this->template = $template;
     }
 
     public function getConfig(): Config
@@ -69,9 +69,9 @@ class TrackingDataEvent extends Event
         return $this->config;
     }
 
-    public function getSiteConfig(): SiteConfig
+    public function getSiteId(): SiteId
     {
-        return $this->siteConfig;
+        return $this->siteId;
     }
 
     public function getData(): array
