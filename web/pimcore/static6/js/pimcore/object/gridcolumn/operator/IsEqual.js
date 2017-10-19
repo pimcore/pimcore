@@ -15,32 +15,32 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.cellformatter");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.isequal");
 
-pimcore.object.gridcolumn.operator.cellformatter = Class.create(pimcore.object.gridcolumn.Abstract, {
+pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
     type: "operator",
-    class: "CellFormatter",
-    iconCls: "pimcore_icon_operator_cell_formatter",
-    defaultText: "operator_cell_formatter",
-
+    class: "IsEqual",
+    iconCls: "pimcore_icon_operator_isequal",
+    defaultText: "operator_isequal",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
+                text: configAttributes.label,
                 configAttributes: configAttributes,
                 isTarget: true,
-                maxChildCount: 1,
+                allowChildren: true,
                 expanded: true,
                 leaf: false,
-                expandable: false
+                expandable: false,
+                isChildAllowed: this.allowChild
             };
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class};
 
             var node = {
                 draggable: true,
@@ -48,8 +48,8 @@ pimcore.object.gridcolumn.operator.cellformatter = Class.create(pimcore.object.g
                 text: t(this.defaultText),
                 configAttributes: configAttributes,
                 isTarget: true,
-                maxChildCount: 1,
-                leaf: true
+                leaf: true,
+                isChildAllowed: this.allowChild
             };
         }
         node.isOperator = true;
@@ -60,18 +60,19 @@ pimcore.object.gridcolumn.operator.cellformatter = Class.create(pimcore.object.g
     getCopyNode: function(source) {
         var copy = source.createNode({
             iconCls: this.iconCls,
-            text: source.data.cssClass,
+            text: source.data.text,
             isTarget: true,
             leaf: false,
-            maxChildCount: 1,
-            expanded: true,
+            expandable: false,
             isOperator: true,
+            isChildAllowed: this.allowChild,
             configAttributes: {
-                label: source.data.configAttributes.label,
+                label: source.data.text,
                 type: this.type,
                 class: this.class
             }
         });
+
         return copy;
     },
 
@@ -86,17 +87,10 @@ pimcore.object.gridcolumn.operator.cellformatter = Class.create(pimcore.object.g
             value: this.node.data.configAttributes.label
         });
 
-        this.maxLength = new Ext.form.NumberField({
-            fieldLabel: t('max_length'),
-            length: 255,
-            width: 200,
-            value: this.node.data.configAttributes.maxLength
-        });
-
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textfield, this.maxLength],
+            items: [this.textfield],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -108,9 +102,9 @@ pimcore.object.gridcolumn.operator.cellformatter = Class.create(pimcore.object.g
 
         this.window = new Ext.Window({
             width: 400,
-            height: 350,
+            height: 200,
             modal: true,
-            title: t('operator_cell_formatter_settings'),
+            title: t('isequal_operator_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -120,10 +114,17 @@ pimcore.object.gridcolumn.operator.cellformatter = Class.create(pimcore.object.g
     },
 
     commitData: function() {
-        this.node.set('isOperator', true);
-        this.node.data.configAttributes.maxLength = this.maxLength.getValue();
         this.node.data.configAttributes.label = this.textfield.getValue();
         this.node.set('text', this.textfield.getValue());
+        this.node.set('isOperator', true);
         this.window.close();
+    },
+
+    allowChild: function(targetNode, dropNode) {
+        // if (targetNode.childNodes.length > 0) {
+        //     return false;
+        // }
+        return true;
     }
+
 });

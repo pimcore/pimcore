@@ -1062,10 +1062,6 @@
     background: url("/pimcore/static6/img/flat-color-icons/text.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_operator_cell_formatter {
-    background: url("/pimcore/static6/img/icon/style_edit.png") no-repeat scroll left center transparent !important;
-}
-
 .pimcore_icon_operator_object_field_getter {
     background: url("/pimcore/static6/img/flat-color-icons/reuse.svg") center center no-repeat !important;
 }
@@ -1074,7 +1070,7 @@
     background: url("/pimcore/static6/img/flat-color-icons/globe.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_operator_caseconverter {
+.pimcore_icon_operator_caseconverter, .pimcore_icon_operator_substring {
     background: url("/pimcore/static6/img/flat-color-icons/word.svg") center center no-repeat !important;
 }
 
@@ -1097,6 +1093,10 @@
 
 .pimcore_icon_operator_localeswitcher {
     background: url("/pimcore/static6/img/flat-color-icons/assistant.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_isequal {
+    background: url("/pimcore/static6/img/flat-color-icons/multiple_smartphones.svg") center center no-repeat !important;
 }
 
 .pimcore_icon_favourite {

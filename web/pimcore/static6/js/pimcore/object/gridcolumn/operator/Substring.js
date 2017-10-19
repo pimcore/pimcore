@@ -14,13 +14,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.text");
 
-pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn.Abstract, {
+pimcore.registerNS("pimcore.object.gridcolumn.operator.substring");
+
+pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
-    class: "Text",
-    iconCls: "pimcore_icon_operator_text",
-    defaultText: "operator_text",
+    class: "Substring",
+    iconCls: "pimcore_icon_operator_substring",
+    defaultText: "operator_substring",
 
 
     getConfigTreeNode: function(configAttributes) {
@@ -28,15 +29,19 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.textValue,
+                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
                 configAttributes: configAttributes,
                 isTarget: true,
-                leaf: true
+                expanded: true,
+                leaf: false,
+                expandable: false,
+                allowChildren: true,
+                isChildAllowed: this.allowChild
             };
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class};
+            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
 
             var node = {
                 draggable: true,
@@ -44,7 +49,8 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
                 text: t(this.defaultText),
                 configAttributes: configAttributes,
                 isTarget: true,
-                leaf: true
+                leaf: true,
+                isChildAllowed: this.allowChild
             };
         }
         node.isOperator = true;
@@ -55,17 +61,18 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
     getCopyNode: function(source) {
         var copy = source.createNode({
             iconCls: this.iconCls,
-            text: source.data.text,
+            text: source.data.cssClass,
             isTarget: true,
-            leaf: true,
+            leaf: false,
+            expanded: true,
             isOperator: true,
+            isChildAllowed: this.allowChild,
             configAttributes: {
-                label: null,
+                label: source.data.configAttributes.label,
                 type: this.type,
                 class: this.class
             }
         });
-
         return copy;
     },
 
@@ -74,16 +81,40 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
         this.node = node;
 
         this.textField = new Ext.form.TextField({
-            fieldLabel: t('text'),
+            fieldLabel: t('label'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.textValue
+            value: this.node.data.configAttributes.label
         });
+
+        this.startField = new Ext.form.NumberField({
+            fieldLabel: t('start'),
+            length: 255,
+            width: 200,
+            value: this.node.data.configAttributes.start,
+            minValue: 0
+        });
+
+        this.lengthField = new Ext.form.NumberField({
+            fieldLabel: t('length'),
+            length: 255,
+            width: 200,
+            value: this.node.data.configAttributes.length
+        });
+
+
+        this.ellipsesField = new Ext.form.Checkbox({
+            fieldLabel: t('ellipses'),
+            length: 255,
+            width: 200,
+            value: this.node.data.configAttributes.ellipses
+        });
+
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textField],
+            items: [this.textField, this.startField, this.lengthField, this.ellipsesField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -95,9 +126,9 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
 
         this.window = new Ext.Window({
             width: 400,
-            height: 160,
+            height: 350,
             modal: true,
-            title: t('text_operator_settings'),
+            title: t('operator_substring_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -107,10 +138,19 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
     },
 
     commitData: function() {
-        this.node.data.configAttributes.textValue = this.textField.getValue();
+        this.node.set('isOperator', true);
+        this.node.data.configAttributes.start = this.startField.getValue();
+        this.node.data.configAttributes.length = this.lengthField.getValue();
+        this.node.data.configAttributes.ellipses = this.ellipsesField.getValue();
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.set('text', this.textField.getValue());
-        this.node.set('isOperator', true);
         this.window.close();
+    },
+
+    allowChild: function (targetNode, dropNode) {
+        if (targetNode.childNodes.length > 0) {
+            return false;
+        }
+        return true;
     }
 });
