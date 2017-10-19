@@ -1637,11 +1637,14 @@
   "operator_booleanformatter_settings": "Operator Boolean Formatter Settings",
   "operator_elementcounter": "Operator ElementCounter",
   "operator_elementcounter_settings": "Operator ElementCounter Settings",
+  "operator_assetmetadatagetter": "Operator Asset Metadata Getter",
+  "operator_assetmetadatagetter_settings": "Operator Asset Metadata Getter Settings",
   "insensitive": "Insensitive",
   "yes_value": "Yes Value",
   "no_value": "No Value",
   "count_empty": "Count Empty",
-  "as_array": "As array"
+  "as_array": "As array",
+  "metadata_field": "Metadata field"
 
 
 }

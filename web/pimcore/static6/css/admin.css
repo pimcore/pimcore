@@ -1520,3 +1520,8 @@ span.warning {
 .pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right > .x-btn-button:after {
     border-color: #53b373;
 }
+
+.pimcore_gridnode_hint {
+    font-size: x-small;
+    color: blue;
+}

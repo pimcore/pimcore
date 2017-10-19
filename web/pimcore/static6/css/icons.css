@@ -287,7 +287,7 @@
 
 
 
-.pimcore_icon_help {
+.pimcore_icon_help, .pimcore_icon_operator_assetmetadatagetter {
     background: url(/pimcore/static6/img/flat-color-icons/info.svg) center center no-repeat !important;
 }
 
@@ -1098,6 +1098,8 @@
 .pimcore_icon_operator_isequal {
     background: url("/pimcore/static6/img/flat-color-icons/multiple_smartphones.svg") center center no-repeat !important;
 }
+
+
 
 .pimcore_icon_operator_charcounter, .pimcore_icon_operator_elementcounter {
     background: url(/pimcore/static6/img/flat-color-icons/calculator.svg) center center no-repeat !important;

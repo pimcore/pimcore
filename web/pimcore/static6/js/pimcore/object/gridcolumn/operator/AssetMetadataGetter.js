@@ -15,13 +15,13 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.localeswitcher");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.assetmetadatagetter");
 
-pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
     type: "operator",
-    class: "LocaleSwitcher",
-    iconCls: "pimcore_icon_operator_localeswitcher",
-    defaultText: "operator_localeswitcher",
+    class: "AssetMetadataGetter",
+    iconCls: "pimcore_icon_operator_assetmetadatagetter",
+    defaultText: "operator_assetmetadatagetter",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -32,7 +32,6 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
                 text: nodeLabel,
                 configAttributes: configAttributes,
                 isTarget: true,
-                isChildAllowed: this.allowChild,
                 expanded: true,
                 leaf: false,
                 expandable: false
@@ -48,8 +47,7 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
                 text: t(this.defaultText),
                 configAttributes: configAttributes,
                 isTarget: true,
-                leaf: true,
-                isChildAllowed: this.allowChild
+                leaf: true
             };
         }
         node.isOperator = true;
@@ -65,7 +63,6 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
             leaf: false,
             expandable: false,
             isOperator: true,
-            isChildAllowed: this.allowChild,
             configAttributes: {
                 label: source.data.text,
                 type: this.type,
@@ -99,6 +96,13 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
             }
         );
 
+        this.metaField = new Ext.form.TextField({
+            fieldLabel: t('metadata_field'),
+            length: 255,
+            width: 200,
+            value: this.node.data.configAttributes.metaField
+        });
+
         var options = {
             fieldLabel: t('locale'),
             triggerAction: "all",
@@ -106,7 +110,7 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
             selectOnFocus: true,
             queryMode: 'local',
             typeAhead: true,
-            forceSelection: true,
+            forceSelection: false,
             store: store,
             componentCls: "object_field",
             mode: "local",
@@ -123,7 +127,7 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textField, this.localeField],
+            items: [this.textField, this.metaField, this.localeField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -135,7 +139,7 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
 
         this.window = new Ext.Window({
             width: 400,
-            height: 200,
+            height: 400,
             modal: true,
             title: t('localeswitcher_operator_settings'),
             layout: "fit",
@@ -149,26 +153,19 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
     commitData: function () {
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.locale = this.localeField.getValue();
+        this.node.data.configAttributes.metaField = this.metaField.getValue();
 
         var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
+
         this.node.set('text', nodeLabel);
         this.node.set('isOperator', true);
 
         this.window.close();
     },
 
-    allowChild: function (targetNode, dropNode) {
-        if (targetNode.childNodes.length > 0) {
-            return false;
-        }
-        return true;
-    },
-
     getNodeLabel: function(configAttributes) {
         var nodeLabel = configAttributes.label;
-        if (configAttributes.locale) {
-            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.locale + ')</span>';
-        }
+        nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.metaField  + (configAttributes.locale ? "-" + configAttributes.locale : "") + ')</span>';
 
         return nodeLabel;
     }
