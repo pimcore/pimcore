@@ -15,13 +15,13 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.lfexpander");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.elementcounter");
 
-pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
     type: "operator",
-    class: "LFExpander",
-    iconCls: "pimcore_icon_operator_lfexpander",
-    defaultText: "operator_lfexpander",
+    class: "ElementCounter",
+    iconCls: "pimcore_icon_operator_elementcounter",
+    defaultText: "operator_elementcounter",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {
@@ -34,8 +34,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
                 allowChildren: true,
                 expanded: true,
                 leaf: false,
-                expandable: false,
-                isChildAllowed: this.allowChild
+                expandable: false
             };
         } else {
 
@@ -48,8 +47,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
                 text: t(this.defaultText),
                 configAttributes: configAttributes,
                 isTarget: true,
-                leaf: true,
-                isChildAllowed: this.allowChild
+                leaf: true
             };
         }
         node.isOperator = true;
@@ -65,7 +63,6 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
             leaf: false,
             expandable: false,
             isOperator: true,
-            isChildAllowed: this.allowChild,
             configAttributes: {
                 label: source.data.text,
                 type: this.type,
@@ -80,52 +77,25 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
     getConfigDialog: function(node) {
         this.node = node;
 
-        this.textfield = new Ext.form.TextField({
+        this.textField = new Ext.form.TextField({
             fieldLabel: t('label'),
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.label
         });
 
-        var data = [];
-        for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
-            var language = pimcore.settings.websiteLanguages[i];
-            data.push([language, ts(pimcore.available_languages[language])]);
-        }
-
-        var localeStore = new Ext.data.ArrayStore({
-                fields: ["key", "value"],
-                data: data
-            }
-        );
-
-        this.asArrayField = new Ext.form.Checkbox({
-            fieldLabel: t('as_array'),
+        this.countEmptyField = new Ext.form.Checkbox({
+            fieldLabel: t('count_empty'),
             length: 255,
             width: 200,
-            value: this.node.data.configAttributes.asArray
+            value: this.node.data.configAttributes.countEmpty
         });
-
-
-        var options = {
-            triggerAction: "all",
-            editable: false,
-            fieldLabel: t('restrict_to_locales'),
-            store: localeStore,
-            componentCls: "object_field",
-            height: 300,
-            displayField: 'value',
-            valueField: 'key',
-            value: this.node.data.configAttributes.locales
-        };
-
-        this.localesField = Ext.create('Ext.ux.form.MultiSelect', options);
 
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textfield, this.localesField, this.asArrayField],
+            items: [this.textField, this.countEmptyField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -137,9 +107,9 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
 
         this.window = new Ext.Window({
             width: 400,
-            height: 500,
+            height: 200,
             modal: true,
-            title: t('lfexpander_operator_settings'),
+            title: t('concatenator_operator_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -149,19 +119,10 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
     },
 
     commitData: function() {
-        this.node.data.configAttributes.label = this.textfield.getValue();
-        this.node.data.configAttributes.locales = this.localesField.getValue();
-        this.node.data.configAttributes.asArray = this.asArrayField.getValue();
-        this.node.set('text', this.textfield.getValue());
+        this.node.data.configAttributes.label = this.textField.getValue();
+        this.node.data.configAttributes.countEmpty = this.countEmptyField.getValue();
+        this.node.set('text', this.textField.getValue());
         this.node.set('isOperator', true);
         this.window.close();
-    },
-
-    allowChild: function(targetNode, dropNode) {
-        if (targetNode.childNodes.length > 0) {
-            return false;
-        }
-        return true;
     }
-
 });

@@ -25,10 +25,14 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
+            var nodeLabel = configAttributes.label;
+            if (configAttributes.locale) {
+                nodeLabel += ' (' + configAttributes.locale + ')';
+            }
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label,
+                text: nodeLabel,
                 configAttributes: configAttributes,
                 isTarget: true,
                 isChildAllowed: this.allowChild,
@@ -147,9 +151,17 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
 
     commitData: function () {
         this.node.data.configAttributes.label = this.textField.getValue();
-        this.node.set('text', this.textField.getValue());
+        var locale = this.localeField.getValue();
+        this.node.data.configAttributes.locale = locale;
+
+        var nodeLabel = this.textField.getValue();
+        if (locale) {
+            nodeLabel += ' (' + locale + ')';
+        }
+
+        this.node.set('text', nodeLabel);
         this.node.set('isOperator', true);
-        this.node.data.configAttributes.locale = this.localeField.getValue();
+
         this.window.close();
     },
 

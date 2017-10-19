@@ -458,6 +458,7 @@ $scripts = array(
     "pimcore/object/gridcolumn/operator/Text.js",
     "pimcore/object/gridcolumn/operator/BooleanFormatter.js",
     "pimcore/object/gridcolumn/operator/CharCounter.js",
+    "pimcore/object/gridcolumn/operator/ElementCounter.js",
     "pimcore/object/gridcolumn/operator/Concatenator.js",
     "pimcore/object/gridcolumn/operator/LocaleSwitcher.js",
     "pimcore/object/gridcolumn/operator/ObjectFieldGetter.js",

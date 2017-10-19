@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Localization\Locale;
+use Pimcore\Model\DataObject\GridColumnConfig\ResultContainer;
 use Pimcore\Tool;
 
 class LFExpander extends AbstractOperator
@@ -29,13 +31,40 @@ class LFExpander extends AbstractOperator
 
         $this->prefix = $config->prefix;
         $this->locales = $config->locales;
+        $this->asArray = $config->asArray;
     }
 
     public function getLabeledValue($element)
     {
         $childs = $this->getChilds();
         if ($childs[0]) {
-            $value = $childs[0]->getLabeledValue($element);
+            if ($this->getAsArray()) {
+                $result = new ResultContainer();
+                $result->label = $this->label;
+                $resultValues = array();
+
+                $container = \Pimcore::getContainer();
+                $localeService = $container->get(Locale::class);
+                $currentLocale = $localeService->getLocale();
+
+                $validLanguages = $this->getValidLanguages();
+                foreach ($validLanguages as $validLanguage) {
+                    $localeService->setLocale($validLanguage);
+                    $childValue = $childs[0]->getLabeledValue($element);
+                    if ($childValue && $childValue->value) {
+                        $resultValues[]= $childValue;
+                    } else {
+                        $resultValues[]= null;
+                    }
+                }
+
+                $localeService->setLocale($currentLocale);
+
+                $result->value = $resultValues;
+                return $result;
+            } else {
+                $value = $childs[0]->getLabeledValue($element);
+            }
 
             return $value;
         }
@@ -80,4 +109,22 @@ class LFExpander extends AbstractOperator
 
         return $validLanguages;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAsArray()
+    {
+        return $this->asArray;
+    }
+
+    /**
+     * @param mixed $asArray
+     */
+    public function setAsArray($asArray)
+    {
+        $this->asArray = $asArray;
+    }
+
+
 }

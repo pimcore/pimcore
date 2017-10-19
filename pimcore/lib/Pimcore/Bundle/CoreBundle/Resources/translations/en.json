@@ -1635,8 +1635,13 @@
   "operator_stringreplace_settings": "Operatore StringReplace Settings",
   "operator_booleanformatter": "Operator Boolean Formatter",
   "operator_booleanformatter_settings": "Operator Boolean Formatter Settings",
+  "operator_elementcounter": "Operator ElementCounter",
+  "operator_elementcounter_settings": "Operator ElementCounter Settings",
   "insensitive": "Insensitive",
   "yes_value": "Yes Value",
-  "no_value": "No Value"
+  "no_value": "No Value",
+  "count_empty": "Count Empty",
+  "as_array": "As array"
+
 
 }
