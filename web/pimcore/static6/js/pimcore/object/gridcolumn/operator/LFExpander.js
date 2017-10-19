@@ -87,12 +87,31 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
             value: this.node.data.configAttributes.label
         });
 
-        this.localesField = new Ext.form.TextField({
+        var data = [];
+        for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
+            var language = pimcore.settings.websiteLanguages[i];
+            data.push([language, ts(pimcore.available_languages[language])]);
+        }
+
+        var localeStore = new Ext.data.ArrayStore({
+                fields: ["key", "value"],
+                data: data
+            }
+        );
+
+        var options = {
+            triggerAction: "all",
+            editable: false,
             fieldLabel: t('restrict_to_locales'),
-            length: 255,
-            width: 200,
+            store: localeStore,
+            componentCls: "object_field",
+            height: 300,
+            displayField: 'value',
+            valueField: 'key',
             value: this.node.data.configAttributes.locales
-        });
+        };
+
+        this.localesField = Ext.create('Ext.ux.form.MultiSelect', options);
 
 
         this.configPanel = new Ext.Panel({
@@ -110,7 +129,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
 
         this.window = new Ext.Window({
             width: 400,
-            height: 200,
+            height: 500,
             modal: true,
             title: t('lfexpander_operator_settings'),
             layout: "fit",

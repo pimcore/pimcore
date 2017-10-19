@@ -1609,6 +1609,7 @@
   "portlet_piwik_unconfigured": "Please use the gear icon to configure the widget.",
   "portlet_piwik_error": "Failed to load widget."
   "restrict_to_locales": "Restrict to locales (csv list)",
+  "restrict_to_locales": "Restrict to locales",
   "predefined": "Predefined",
   "save_as": "Save as copy",
   "remove_config": "Remove Config",

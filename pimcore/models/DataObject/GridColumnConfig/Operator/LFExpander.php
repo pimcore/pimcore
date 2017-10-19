@@ -28,7 +28,7 @@ class LFExpander extends AbstractOperator
         parent::__construct($config, $context);
 
         $this->prefix = $config->prefix;
-        $this->locales = trim($config->locales);
+        $this->locales = $config->locales;
     }
 
     public function getLabeledValue($element)
@@ -73,7 +73,7 @@ class LFExpander extends AbstractOperator
     public function getValidLanguages()
     {
         if ($this->locales) {
-            $validLanguages = explode(',', $this->locales);
+            $validLanguages = $this->locales;
         } else {
             $validLanguages = Tool::getValidLanguages();
         }
