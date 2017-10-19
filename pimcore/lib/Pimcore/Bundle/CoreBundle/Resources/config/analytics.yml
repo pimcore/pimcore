@@ -20,5 +20,6 @@ services:
 
     Pimcore\Analytics\Piwik\Tracker: ~
 
+    Pimcore\Analytics\Piwik\EventListener\CacheListener: ~
     Pimcore\Analytics\Piwik\EventListener\IndexSettingsListener: ~
     Pimcore\Analytics\Piwik\EventListener\TrackingCodeListener: ~

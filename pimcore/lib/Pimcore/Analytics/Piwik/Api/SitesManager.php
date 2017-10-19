@@ -22,7 +22,7 @@ use Pimcore\Analytics\Piwik\Config\Config;
 use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Config as PimcoreConfig;
-use Pimcore\File;
+use Pimcore\Config\ReportConfigWriter;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -41,6 +41,11 @@ class SitesManager
     private $apiClient;
 
     /**
+     * @var ReportConfigWriter
+     */
+    private $configWriter;
+
+    /**
      * @var TranslatorInterface
      */
     private $translator;
@@ -48,12 +53,14 @@ class SitesManager
     public function __construct(
         ConfigProvider $configProvider,
         ApiClient $apiClient,
+        ReportConfigWriter $configWriter,
         TranslatorInterface $translator
     )
     {
-        $this->config     = $configProvider->getConfig();
-        $this->apiClient  = $apiClient;
-        $this->translator = $translator;
+        $this->config       = $configProvider->getConfig();
+        $this->apiClient    = $apiClient;
+        $this->configWriter = $configWriter;
+        $this->translator   = $translator;
     }
 
     public function addSite(SiteId $siteId, array $params = []): int
@@ -212,27 +219,21 @@ class SitesManager
     /**
      * Save returned site ID back to the config
      *
-     * TODO do we really need to do this here?
-     *
      * @param SiteId $siteId
      * @param int $piwikSiteId
      */
     private function savePiwikSiteId(SiteId $siteId, int $piwikSiteId)
     {
-        $configKey  = $siteId->getConfigKey();
-        $configFile = PimcoreConfig::locateConfigFile('reports.php');
+        $configKey = $siteId->getConfigKey();
 
-        if (file_exists($configFile)) {
-            $config = new PimcoreConfig\Config(include($configFile), true);
-        } else {
-            $config = new PimcoreConfig\Config([]);
-        }
-
-        $config->piwik->sites->$configKey->site_id = $piwikSiteId;
-
-        File::putPhpFile(
-            $configFile,
-            to_php_data_file_format($config->toArray())
-        );
+        $this->configWriter->mergeArray([
+            'piwik' => [
+                'sites' => [
+                    $configKey => [
+                        'site_id' => $piwikSiteId
+                    ]
+                ]
+            ]
+        ]);
     }
 }

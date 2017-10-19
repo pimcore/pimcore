@@ -64,6 +64,13 @@ services:
 
 
     #
+    # CONFIG
+    #
+
+    Pimcore\Config\ReportConfigWriter: ~
+
+
+    #
     # CONTROLLERS
     #
 

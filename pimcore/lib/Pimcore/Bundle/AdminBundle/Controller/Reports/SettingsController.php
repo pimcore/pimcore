@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
-use Pimcore\File;
+use Pimcore\Config\ReportConfigWriter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,17 +49,20 @@ class SettingsController extends ReportsControllerBase
      * @Route("/save")
      *
      * @param Request $request
+     * @param ReportConfigWriter $configWriter
      *
      * @return JsonResponse
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request, ReportConfigWriter $configWriter)
     {
         $this->checkPermission('system_settings');
 
         $values = $this->decodeJson($request->get('data'));
+        if (!is_array($values)) {
+            $values = [];
+        }
 
-        $configFile = \Pimcore\Config::locateConfigFile('reports.php');
-        File::putPhpFile($configFile, to_php_data_file_format($values));
+        $configWriter->write($values);
 
         return $this->json(['success' => true]);
     }
