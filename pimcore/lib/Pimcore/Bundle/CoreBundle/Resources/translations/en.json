@@ -1630,5 +1630,10 @@
   "operator_charcounter": "Operator CharCounter",
   "operator_stringreplace": "Operator StringReplace",
   "operator_stringreplace_settings": "Operatore StringReplace Settings",
-  "insensitive": "Insensitive"
+  "operator_booleanformatter": "Operator Boolean Formatter",
+  "operator_booleanformatter_settings": "Operator Boolean Formatter Settings",
+  "insensitive": "Insensitive",
+  "yes_value": "Yes Value",
+  "no_value": "No Value"
+
 }
