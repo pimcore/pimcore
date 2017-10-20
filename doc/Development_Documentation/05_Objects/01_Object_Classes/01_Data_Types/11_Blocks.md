@@ -54,7 +54,16 @@ Create a Block:
  * 
  * BlockElement( name, type, data )
  */
-$blockElement = new BlockElement( 'date', 'date', Carbon::now() );
+ $object = DataObject::getById(4);
+ 
+ $data = [
+    "input1" => new BlockElement('input1', 'input', 'NewValue1'),
+    "input2" => new BlockElement('input2, 'input', 'NewValue2'),
+    "myhref" => new BlockElement('myhref', 'multihref', [$object])
+    ];
+ 
+ $blockElement = new BlockClass();
+ $blockElement->setBlockElement1([$data]);
 ```
 
 
