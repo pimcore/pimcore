@@ -18,7 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Analytics\Code;
 
 /**
- * Contains all parts which are rendered to a specific block
+ * Represents a single template block. Parts are represented as array and concatenated
+ * with newlines on render.
  */
 final class CodeBlock
 {
@@ -44,7 +45,9 @@ final class CodeBlock
 
     public function append($parts)
     {
-        foreach ((array)$parts as $part) {
+        $parts = (array)$parts;
+
+        foreach ($parts as $part) {
             $this->parts[] = $part;
         }
     }
@@ -52,7 +55,7 @@ final class CodeBlock
     public function prepend($parts)
     {
         $parts = (array)$parts;
-        $parts = array_reverse($parts); // prepend parts in the order they were given
+        $parts = array_reverse($parts); // prepend parts in the order they were passed
 
         foreach ($parts as $part) {
             array_unshift($this->parts, $part);

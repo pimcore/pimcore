@@ -100,7 +100,7 @@ class TrackingCodeListener implements EventSubscriberInterface
             return;
         }
 
-        $code = $this->tracker->getCode();
+        $code = $this->tracker->generateCode();
         if (empty($code)) {
             return;
         }

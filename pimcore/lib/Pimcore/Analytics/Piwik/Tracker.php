@@ -19,7 +19,7 @@ namespace Pimcore\Analytics\Piwik;
 
 use Pimcore\Analytics\AbstractTracker;
 use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Analytics\Code\CodeContainer;
+use Pimcore\Analytics\Code\CodeCollector;
 use Pimcore\Analytics\Piwik\Config\Config;
 use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\Event\TrackingDataEvent;
@@ -58,11 +58,6 @@ class Tracker extends AbstractTracker
     private $templatingEngine;
 
     /**
-     * @var CodeContainer
-     */
-    private $codeContainer;
-
-    /**
      * @var array
      */
     private $blocks = [
@@ -91,16 +86,12 @@ class Tracker extends AbstractTracker
         $this->templatingEngine = $templatingEngine;
     }
 
-    protected function getCodeContainer(): CodeContainer
+    protected function buildCodeCollector(): CodeCollector
     {
-        if (null === $this->codeContainer) {
-            $this->codeContainer = new CodeContainer($this->blocks, self::BLOCK_TRACK);
-        }
-
-        return $this->codeContainer;
+        return new CodeCollector($this->blocks, self::BLOCK_TRACK);
     }
 
-    protected function generateCode(SiteId $siteId)
+    protected function buildCode(SiteId $siteId)
     {
         $config = $this->configProvider->getConfig();
         if (!$config->isConfigured()) {
@@ -158,7 +149,7 @@ class Tracker extends AbstractTracker
                 $codeBlock->append($blockData[$block]);
             }
 
-            $this->getCodeContainer()->addToCodeBlock($siteId, $codeBlock, $block);
+            $this->getCodeCollector()->enrichCodeBlock($siteId, $codeBlock, $block);
 
             $blocks[$block] = $codeBlock;
         }

@@ -23,11 +23,12 @@ use Pimcore\Analytics\SiteId\SiteId;
  * Collects additional code parts which should be added to specific blocks upon rendering. Code
  * parts can be added on a global level or restricted to a specific site.
  */
-class CodeContainer
+class CodeCollector
 {
     const CONFIG_KEY_GLOBAL = '__global';
-    const POSITION_PREPEND = 'prepend';
-    const POSITION_APPEND = 'append';
+
+    const ACTION_PREPEND = 'prepend';
+    const ACTION_APPEND = 'append';
 
     /**
      * @var string
@@ -43,6 +44,14 @@ class CodeContainer
      * @var array
      */
     private $codeParts = [];
+
+    /**
+     * @var array
+     */
+    private $validActions = [
+        self::ACTION_PREPEND,
+        self::ACTION_APPEND
+    ];
 
     public function __construct(array $validBlocks, string $defaultBlock)
     {
@@ -62,11 +71,19 @@ class CodeContainer
      *
      * @param string $code
      * @param string|null $block
-     * @param bool $prepend
+     * @param string $action
      * @param SiteId|null $siteId Restrict code part to a specific site
      */
-    public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteId $siteId = null)
+    public function addCodePart(string $code, string $block = null, string $action = self::ACTION_APPEND, SiteId $siteId = null)
     {
+        if (!in_array($action, $this->validActions)) {
+            throw new \InvalidArgumentException(
+                'Invalid action "%s". Valid actions are: %s',
+                $action,
+                implode(', ', $this->validActions)
+            );
+        }
+
         $configKey = self::CONFIG_KEY_GLOBAL;
         if (null !== $siteId) {
             $configKey = $siteId->getConfigKey();
@@ -92,12 +109,11 @@ class CodeContainer
             $this->codeParts[$configKey][$block] = [];
         }
 
-        $position = $prepend ? self::POSITION_PREPEND : self::POSITION_APPEND;
-        if (!isset($this->codeParts[$configKey][$block][$position])) {
-            $this->codeParts[$configKey][$block][$position] = [];
+        if (!isset($this->codeParts[$configKey][$block][$action])) {
+            $this->codeParts[$configKey][$block][$action] = [];
         }
 
-        $this->codeParts[$configKey][$block][$position][] = $code;
+        $this->codeParts[$configKey][$block][$action][] = $code;
     }
 
     /**
@@ -107,7 +123,7 @@ class CodeContainer
      * @param CodeBlock $codeBlock
      * @param string $block
      */
-    public function addToCodeBlock(SiteId $siteId, CodeBlock $codeBlock, string $block)
+    public function enrichCodeBlock(SiteId $siteId, CodeBlock $codeBlock, string $block)
     {
         // global parts not restricted to a config key
         $this->enrichBlock(self::CONFIG_KEY_GLOBAL, $codeBlock, $block);
@@ -122,17 +138,17 @@ class CodeContainer
             return;
         }
 
-        $blockCalls = $this->codeParts[$configKey][$block] ?? [];
-        if (empty($blockCalls)) {
+        $blockParts = $this->codeParts[$configKey][$block] ?? [];
+        if (empty($blockParts)) {
             return;
         }
 
-        foreach ([self::POSITION_PREPEND, self::POSITION_APPEND] as $position) {
-            if (isset($blockCalls[$position])) {
-                if (self::POSITION_PREPEND === $position) {
-                    $codeBlock->prepend($blockCalls[$position]);
+        foreach ([self::ACTION_PREPEND, self::ACTION_APPEND] as $position) {
+            if (isset($blockParts[$position])) {
+                if (self::ACTION_PREPEND === $position) {
+                    $codeBlock->prepend($blockParts[$position]);
                 } else {
-                    $codeBlock->append($blockCalls[$position]);
+                    $codeBlock->append($blockParts[$position]);
                 }
             }
         }

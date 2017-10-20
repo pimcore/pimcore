@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics;
 
-use Pimcore\Analytics\Code\CodeContainer;
+use Pimcore\Analytics\Code\CodeCollector;
 use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 
@@ -28,6 +28,11 @@ abstract class AbstractTracker implements TrackerInterface
      */
     private $siteIdProvider;
 
+    /**
+     * @var CodeCollector
+     */
+    private $codeCollector;
+
     public function __construct(SiteIdProvider $siteIdProvider)
     {
         $this->siteIdProvider = $siteIdProvider;
@@ -36,13 +41,13 @@ abstract class AbstractTracker implements TrackerInterface
     /**
      * @inheritdoc
      */
-    public function getCode(SiteId $siteId = null)
+    public function generateCode(SiteId $siteId = null)
     {
         if (null === $siteId) {
             $siteId = $this->siteIdProvider->getForRequest();
         }
 
-        return $this->generateCode($siteId);
+        return $this->buildCode($siteId);
     }
 
     /**
@@ -52,20 +57,37 @@ abstract class AbstractTracker implements TrackerInterface
      *
      * @return string|null
      */
-    abstract protected function generateCode(SiteId $siteId);
+    abstract protected function buildCode(SiteId $siteId);
 
     /**
      * @inheritdoc
      */
     public function addCodePart(string $code, string $block = null, bool $prepend = false, SiteId $siteId = null)
     {
-        $this->getCodeContainer()->addCodePart($code, $block, $prepend, $siteId);
+        $action = $prepend ? CodeCollector::ACTION_PREPEND : CodeCollector::ACTION_APPEND;
+
+        $this->getCodeCollector()->addCodePart($code, $block, $action, $siteId);
     }
 
     /**
-     * Builds the code container which defines available blocks
+     * Lazy initialize the code collector
      *
-     * @return CodeContainer
+     * @return CodeCollector
      */
-    abstract protected function getCodeContainer(): CodeContainer;
+    protected function getCodeCollector(): CodeCollector
+    {
+        if (null === $this->codeCollector) {
+            $this->codeCollector = $this->buildCodeCollector();
+        }
+
+        return $this->codeCollector;
+    }
+
+    /**
+     * Builds the code collector which allows to add additional content to
+     * specific blocks.
+     *
+     * @return CodeCollector
+     */
+    abstract protected function buildCodeCollector(): CodeCollector;
 }

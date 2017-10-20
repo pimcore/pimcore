@@ -22,14 +22,14 @@ use Pimcore\Analytics\SiteId\SiteId;
 interface TrackerInterface
 {
     /**
-     * Get code for a specific site. If no site is passed the current site will be
+     * Generates code for a specific site. If no site is passed the current site will be
      * automatically resolved.
      *
      * @param SiteId|null $siteId
      *
      * @return null|string Null if no tracking is configured
      */
-    public function getCode(SiteId $siteId = null);
+    public function generateCode(SiteId $siteId = null);
 
     /**
      * Adds additional code to the tracker. Code can either be added to all trackers
