@@ -101,6 +101,14 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                 value: this.node.data.configAttributes.param1
             });
 
+            this.returnLastResultField = new Ext.form.Checkbox({
+                fieldLabel: t('return_last_result'),
+                length: 255,
+                width: 200,
+                value: this.node.data.configAttributes.returnLastResult
+            });
+
+
             this.isArrayField = new Ext.form.Checkbox({
                 fieldLabel: t('is_array'),
                 length: 255,
@@ -126,7 +134,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
             this.configPanel = new Ext.Panel({
                 layout: "form",
                 bodyStyle: "padding: 10px;",
-                items: [this.textfield, this.attributeField, this.param1Field, this.isArrayField, this.forwardAttributeField, this.forwardParam1Field],
+                items: [this.textfield, this.attributeField, this.param1Field, this.isArrayField, this.returnLastResultField, this.forwardAttributeField, this.forwardParam1Field],
                 buttons: [{
                     text: t("apply"),
                     iconCls: "pimcore_icon_apply",
@@ -138,7 +146,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
 
             this.window = new Ext.Window({
                 width: 400,
-                height: 400,
+                height: 450,
                 modal: true,
                 title: t('operator_anygetter_settings'),
                 layout: "fit",
@@ -157,6 +165,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
             this.node.data.configAttributes.isArrayType = this.isArrayField.getValue();
             this.node.data.configAttributes.forwardAttribute = this.forwardAttributeField.getValue()
             this.node.data.configAttributes.forwardParam1 = this.forwardParam1Field.getValue();
+            this.node.data.configAttributes.returnLastResult = this.returnLastResultField.getValue();
 
             var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
             this.node.set('text', nodeLabel);
@@ -166,7 +175,11 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
         getNodeLabel: function (configAttributes) {
             var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
             if (configAttributes.attribute) {
-                nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.attribute + ')</span>';
+                var attr = configAttributes.attribute;
+                if (configAttributes.param1) {
+                    attr += " " + configAttributes.param1;
+                }
+                nodeLabel += '<span class="pimcore_gridnode_hint"> (' + attr + ')</span>';
             }
 
             return nodeLabel;

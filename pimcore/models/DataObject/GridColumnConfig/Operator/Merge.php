@@ -30,6 +30,7 @@ class Merge extends AbstractOperator
     {
         $result = new \stdClass();
         $result->label = $this->label;
+        $result->isArrayType = true;
 
         $childs = $this->getChilds();
         $resultItems = [];

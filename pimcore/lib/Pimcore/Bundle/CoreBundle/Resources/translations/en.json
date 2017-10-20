@@ -1659,5 +1659,7 @@
   "is_array": "Array Type",
   "php_class": "PHP Class",
   "additional_data": "Additional Data",
-  "flatten": "Flatten"
+  "flatten": "Flatten",
+  "return_last_result": "Return last result",
+  "skip_null": "Skip Null"
 }

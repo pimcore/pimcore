@@ -17,12 +17,16 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-use Pimcore\Model\DataObject\Concrete;
-
 class AnyGetter extends AbstractOperator
 {
+    /**
+     * @var
+     */
     protected $attribute;
 
+    /**
+     * @var
+     */
     protected $param1;
 
     protected $isArrayType;
@@ -30,6 +34,8 @@ class AnyGetter extends AbstractOperator
     protected $forwardAttribute;
 
     protected $forwardParam1;
+
+    protected $returnLastResult;
 
     public function __construct($config, $context = null)
     {
@@ -40,6 +46,8 @@ class AnyGetter extends AbstractOperator
 
         $this->forwardAttribute = $config->forwardAttribute;
         $this->forwardParam1 = $config->forwardParam1;
+
+        $this->returnLastResult = $config->returnLastResult;
     }
 
     public function getLabeledValue($element)
@@ -86,14 +94,18 @@ class AnyGetter extends AbstractOperator
                 $valueContainer = $c->getLabeledValue($forwardObject);
 
                 $value = $valueContainer->value;
-                $resultElementValue = $value;
+                if ($this->getReturnLastResult()) {
+                    $resultElementValue = $value;
+                } else {
+                    $resultElementValue = null;
+                }
 
                 if ($this->getisArrayType()) {
                     if (is_array($value)) {
                         $newValues = [];
                         foreach ($value as $o) {
                             if (method_exists($o, $getter)) {
-                                $targetValue = $o->$getter();
+                                $targetValue = $o->$getter($this->getParam1());
                                 $newValues[] = $targetValue;
                             }
                         }
@@ -102,7 +114,7 @@ class AnyGetter extends AbstractOperator
                 } else {
                     $o = $value; // Concrete::getById($value->getId());
                     if (method_exists($o, $getter)) {
-                        $value = $o->$getter();
+                        $value = $o->$getter($this->getParam1());
                         $resultElementValue = $value;
                     }
                 }
@@ -197,4 +209,22 @@ class AnyGetter extends AbstractOperator
     {
         $this->isArrayType = $isArrayType;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getReturnLastResult()
+    {
+        return $this->returnLastResult;
+    }
+
+    /**
+     * @param mixed $returnLastResult
+     */
+    public function setReturnLastResult($returnLastResult)
+    {
+        $this->returnLastResult = $returnLastResult;
+    }
+
+
 }

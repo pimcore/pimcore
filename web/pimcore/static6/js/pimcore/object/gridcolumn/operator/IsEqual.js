@@ -87,10 +87,18 @@ pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcol
             value: this.node.data.configAttributes.label
         });
 
+        this.skipNullField = new Ext.form.Checkbox({
+            fieldLabel: t('skip_null'),
+            length: 255,
+            width: 200,
+            value: this.node.data.configAttributes.skipNull
+        });
+
+
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textfield],
+            items: [this.textfield, this.skipNullField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -115,6 +123,7 @@ pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcol
 
     commitData: function() {
         this.node.data.configAttributes.label = this.textfield.getValue();
+        this.node.data.configAttributes.skipNull = this.skipNullField.getValue();
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
         this.window.close();

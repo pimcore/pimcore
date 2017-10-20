@@ -453,7 +453,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $object
+     * @param $object Concrete
      * @param $definition
      *
      * @return null
@@ -465,6 +465,10 @@ class Service extends Model\Element\Service
             return null;
         }
 
+        if ($object->getId() == 80) {
+            Logger::debug("");
+
+        }
         $result = $config->getLabeledValue($object);
         if (isset($result->value)) {
             return $result->value;

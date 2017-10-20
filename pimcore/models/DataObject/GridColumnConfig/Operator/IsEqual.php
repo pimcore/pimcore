@@ -25,6 +25,7 @@ class IsEqual extends AbstractOperator
     {
         parent::__construct($config, $context);
         $this->capitalization = $config->capitalization;
+        $this->skipNull = $config->skipNull;
     }
 
     public function getLabeledValue($element)
@@ -49,9 +50,15 @@ class IsEqual extends AbstractOperator
 
                 if (is_array($childValues)) {
                     foreach ($childValues as $value) {
-                        if ($value !== null) {
-                            $valueArray[] = $value;
+                        if (is_null($value) && $this->skipNull) {
+                            continue;
                         }
+                        $valueArray[] = $value;
+
+                    }
+                } else {
+                    if (!$this->skipNull) {
+                        $valueArray[] = null;
                     }
                 }
             }
@@ -68,4 +75,22 @@ class IsEqual extends AbstractOperator
 
         return $result;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSkipNull()
+    {
+        return $this->skipNull;
+    }
+
+    /**
+     * @param mixed $skipNull
+     */
+    public function setSkipNull($skipNull)
+    {
+        $this->skipNull = $skipNull;
+    }
+
+
 }
