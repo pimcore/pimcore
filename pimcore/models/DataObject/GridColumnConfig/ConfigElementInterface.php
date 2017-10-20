@@ -17,7 +17,14 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig;
 
+use Pimcore\Model\Element\ElementInterface;
+
 interface ConfigElementInterface
 {
+    /**
+     * @param $element ElementInterface
+     *
+     * @return mixed
+     */
     public function getLabeledValue($element);
 }

@@ -19,11 +19,26 @@ namespace Pimcore\Model\DataObject\GridColumnConfig;
 
 abstract class AbstractConfigElement implements ConfigElementInterface
 {
+    /**
+     * @var
+     */
     protected $attribute;
+    /**
+     * @var
+     */
     protected $label;
 
+    /**
+     * @var null
+     */
     protected $context;
 
+    /**
+     * AbstractConfigElement constructor.
+     *
+     * @param $config
+     * @param null $context
+     */
     public function __construct($config, $context = null)
     {
         $this->attribute = $config->attribute;
@@ -32,6 +47,9 @@ abstract class AbstractConfigElement implements ConfigElementInterface
         $this->context = $context;
     }
 
+    /**
+     * @return mixed
+     */
     public function getLabel()
     {
         return $this->label;

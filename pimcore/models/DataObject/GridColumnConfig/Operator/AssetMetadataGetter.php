@@ -99,6 +99,7 @@ class AssetMetadataGetter extends AbstractOperator
 
         if ($asset instanceof Asset) {
             $metaValue = $asset->getMetadata($this->getMetaField(), $this->getLocale());
+
             return $metaValue;
         }
     }

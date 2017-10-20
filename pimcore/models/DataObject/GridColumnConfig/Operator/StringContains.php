@@ -145,6 +145,4 @@ class StringContains extends AbstractOperator
     {
         $this->insensitive = $insensitive;
     }
-
-
 }

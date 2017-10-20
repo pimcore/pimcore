@@ -17,17 +17,29 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Value;
 
-use Pimcore\Model\DataObject\GridColumnConfig\ArrayTypeInterface;
-
-class Objects extends DefaultValue implements ArrayTypeInterface
+class Objects extends DefaultValue
 {
+    /**
+     * @var
+     */
     protected $format;
 
+    /**
+     * Objects constructor.
+     *
+     * @param $config
+     * @param null $context
+     */
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
     }
 
+    /**
+     * @param \Pimcore\Model\Element\ElementInterface $element
+     *
+     * @return \stdClass
+     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

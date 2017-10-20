@@ -31,7 +31,6 @@ abstract class AbstractOperator extends AbstractConfigElement
     {
         $this->label = $config->label;
         $this->childs = $config->childs;
-
         $this->context = $context;
     }
 
@@ -49,5 +48,37 @@ abstract class AbstractOperator extends AbstractConfigElement
     public function expandLocales()
     {
         return false;
+    }
+
+    /**
+     * @return null
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param null $context
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    /**
+     * @param mixed $label
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
     }
 }

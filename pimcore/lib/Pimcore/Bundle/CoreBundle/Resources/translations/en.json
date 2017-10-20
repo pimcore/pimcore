@@ -1641,6 +1641,8 @@
   "operator_assetmetadatagetter_settings": "Operator Asset Metadata Getter Settings",
   "operator_anygetter": "Operator AnyGetter",
   "operator_anygetter_settings": "Operator AnyGetter Settings",
+  "operator_phpcode": "Operator PHPCode",
+  "operator_phpcode_settings": "Operator PHPCode Settings",
   "operator_requiredby": "Operator RequiredBy",
   "operator_requiredby_settings": "Operator RequiredBy Settings",
   "insensitive": "Insensitive",
@@ -1651,8 +1653,7 @@
   "metadata_field": "Metadata field",
   "only_count": "Only as count",
   "parameter": "Paramater",
-  "forward_parameter": "Paramater",
-  "is_array": "Array Type"
-
-
+  "forward_parameter": "Forward Paramater",
+  "is_array": "Array Type",
+  "php_class": "PHP Class"
 }

@@ -18,7 +18,6 @@
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\Element\ElementInterface;
 
 class AnyGetter extends AbstractOperator
 {
@@ -31,7 +30,6 @@ class AnyGetter extends AbstractOperator
     protected $forwardAttribute;
 
     protected $forwardParam1;
-
 
     public function __construct($config, $context = null)
     {
@@ -70,9 +68,6 @@ class AnyGetter extends AbstractOperator
             }
 
             foreach ($childs as $c) {
-
-
-
                 $forwardObject = $element;
 
                 if ($this->forwardAttribute) {
@@ -110,7 +105,6 @@ class AnyGetter extends AbstractOperator
                         $value = $o->$getter();
                         $resultElementValue = $value;
                     }
-
                 }
                 $resultElements[] = $resultElementValue;
             }
@@ -120,7 +114,6 @@ class AnyGetter extends AbstractOperator
                 $result->value = $resultElements;
             }
         }
-
 
         return $result;
     }
@@ -204,8 +197,4 @@ class AnyGetter extends AbstractOperator
     {
         $this->isArrayType = $isArrayType;
     }
-
-
-
-
 }

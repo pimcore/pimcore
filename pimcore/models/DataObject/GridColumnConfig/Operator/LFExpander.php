@@ -41,7 +41,7 @@ class LFExpander extends AbstractOperator
             if ($this->getAsArray()) {
                 $result = new ResultContainer();
                 $result->label = $this->label;
-                $resultValues = array();
+                $resultValues = [];
 
                 $container = \Pimcore::getContainer();
                 $localeService = $container->get(Locale::class);
@@ -61,6 +61,7 @@ class LFExpander extends AbstractOperator
                 $localeService->setLocale($currentLocale);
 
                 $result->value = $resultValues;
+
                 return $result;
             } else {
                 $value = $childs[0]->getLabeledValue($element);
@@ -125,6 +126,4 @@ class LFExpander extends AbstractOperator
     {
         $this->asArray = $asArray;
     }
-
-
 }

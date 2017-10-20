@@ -76,7 +76,4 @@ class ElementCounter extends AbstractOperator
     {
         $this->countEmpty = $countEmpty;
     }
-
-
-
 }

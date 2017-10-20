@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig;
 
+use Pimcore\Model\DataObject\GridColumnConfig\Operator\PHPCode;
+
 class Service
 {
     /**
@@ -36,6 +38,7 @@ class Service
      * @param $jsonConfig
      * @param $config
      * @param null $context
+     *
      * @return array
      */
     private function doBuildConfig($jsonConfig, $config, $context = null)
@@ -56,7 +59,13 @@ class Service
                     }
 
                     if (class_exists($name)) {
-                        $config[] = new $name($configElement, $context);
+                        $operatorInstance = new $name($configElement, $context);
+                        if ($operatorInstance instanceof PHPCode) {
+                            $operatorInstance = $operatorInstance->getRealInstance();
+                        }
+                        if ($operatorInstance) {
+                            $config[] = $operatorInstance;
+                        }
                     }
                 }
             }

@@ -55,18 +55,16 @@ class RequiredBy extends AbstractOperator
             $count = $db->fetchOne($query);
             $result->value = $count;
         } else {
-            $resultList = array();
+            $resultList = [];
             $query = 'select * from dependencies where targetid = ' . $element->getId() . $typeCondition;
             $dependencies = $db->fetchAll($query);
             foreach ($dependencies as $dependency) {
-                $sourceType = $dependency["sourcetype"];
-                $sourceId = $dependency["sourceid"];
+                $sourceType = $dependency['sourcetype'];
+                $sourceId = $dependency['sourceid'];
                 $element = Service::getElementById($sourceType, $sourceId);
                 $resultList[] = $element;
-
             }
             $result->value = $resultList;
-
         }
 
         return $result;

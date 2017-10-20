@@ -138,7 +138,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
 
             this.window = new Ext.Window({
                 width: 400,
-                height: 350,
+                height: 400,
                 modal: true,
                 title: t('operator_anygetter_settings'),
                 layout: "fit",

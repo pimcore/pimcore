@@ -15,23 +15,23 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.elementcounter");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.phpcode");
 
-pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
     type: "operator",
-    class: "ElementCounter",
-    iconCls: "pimcore_icon_operator_elementcounter",
-    defaultText: "operator_elementcounter",
+    class: "PHPCode",
+    iconCls: "pimcore_icon_operator_phpcode",
+    defaultText: "operator_phpcode",
 
-    getConfigTreeNode: function(configAttributes) {
-        if(configAttributes) {
+    getConfigTreeNode: function (configAttributes) {
+        if (configAttributes) {
+            var nodeLabel = this.getNodeLabel(configAttributes);
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label,
+                text: nodeLabel,
                 configAttributes: configAttributes,
                 isTarget: true,
-                allowChildren: true,
                 expanded: true,
                 leaf: false,
                 expandable: false
@@ -39,7 +39,7 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class};
+            var configAttributes = {type: this.type, class: this.class};
 
             var node = {
                 draggable: true,
@@ -47,7 +47,8 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
                 text: t(this.defaultText),
                 configAttributes: configAttributes,
                 isTarget: true,
-                leaf: true
+                leaf: true,
+                isChildAllowed: this.allowChild
             };
         }
         node.isOperator = true;
@@ -55,7 +56,7 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
     },
 
 
-    getCopyNode: function(source) {
+    getCopyNode: function (source) {
         var copy = source.createNode({
             iconCls: this.iconCls,
             text: source.data.text,
@@ -63,6 +64,7 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
             leaf: false,
             expandable: false,
             isOperator: true,
+            isChildAllowed: this.allowChild,
             configAttributes: {
                 label: source.data.text,
                 type: this.type,
@@ -74,28 +76,27 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function (node) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
             fieldLabel: t('label'),
             length: 255,
-            width: 200,
+            width: 400,
             value: this.node.data.configAttributes.label
         });
 
-        this.countEmptyField = new Ext.form.Checkbox({
-            fieldLabel: t('count_empty'),
-            length: 255,
-            width: 200,
-            value: this.node.data.configAttributes.countEmpty
+        this.phpClassField = new Ext.form.TextField({
+            fieldLabel: t('php_class'),
+            width: 400,
+            value: this.node.data.configAttributes.phpClass
         });
 
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textField, this.countEmptyField],
+            items: [this.textField, this.phpClassField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -106,10 +107,10 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
         });
 
         this.window = new Ext.Window({
-            width: 400,
+            width: 600,
             height: 200,
             modal: true,
-            title: t('operator_elementcounter_settings'),
+            title: t('operator_phpcode_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -118,11 +119,23 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function () {
         this.node.data.configAttributes.label = this.textField.getValue();
-        this.node.data.configAttributes.countEmpty = this.countEmptyField.getValue();
-        this.node.set('text', this.textField.getValue());
+        this.node.data.configAttributes.phpClass = this.phpClassField.getValue();
+
+        var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
+        this.node.set('text', nodeLabel);
         this.node.set('isOperator', true);
+
         this.window.close();
+    },
+
+    getNodeLabel: function(configAttributes) {
+        var nodeLabel = configAttributes.label;
+        if (configAttributes.locale) {
+            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.locale + ')</span>';
+        }
+
+        return nodeLabel;
     }
 });
