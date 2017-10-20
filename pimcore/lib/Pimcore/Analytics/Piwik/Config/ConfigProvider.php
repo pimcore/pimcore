@@ -27,7 +27,7 @@ class ConfigProvider
     private $config;
 
     /**
-     * @var ConfigObject
+     * @var ConfigObject|null
      */
     private $configObject;
 

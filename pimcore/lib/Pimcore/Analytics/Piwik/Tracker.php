@@ -46,7 +46,7 @@ class Tracker extends AbstractTracker
     private $configProvider;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     private $eventDispatcher;
 

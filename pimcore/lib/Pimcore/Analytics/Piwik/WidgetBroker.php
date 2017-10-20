@@ -214,7 +214,7 @@ class WidgetBroker
         return implode('_', $parts);
     }
 
-    private function loadWidgets(Config $config, string $configKey, string $locale = null)
+    private function loadWidgets(Config $config, string $configKey, string $locale = null): array
     {
         $data = $this->loadFromApi($config, $configKey, $locale);
 
@@ -231,7 +231,7 @@ class WidgetBroker
      *
      * @return array
      */
-    private function categorizeWidgets(array $data)
+    private function categorizeWidgets(array $data): array
     {
         $excludeCategories    = $this->options['exclude_categories'] ?? [];
         $excludeSubCategories = $this->options['exclude_subcategories'] ?? [];

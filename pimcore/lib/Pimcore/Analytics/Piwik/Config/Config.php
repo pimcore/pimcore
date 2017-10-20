@@ -186,7 +186,7 @@ class Config
     }
 
     /**
-     * @param string|null $value
+     * @param mixed $value
      *
      * @return string|null
      */

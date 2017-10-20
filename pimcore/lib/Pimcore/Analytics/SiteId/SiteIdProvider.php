@@ -44,6 +44,9 @@ class SiteIdProvider
     {
         if ($this->siteResolver->isSiteRequest($request)) {
             $site = $this->siteResolver->getSite();
+            if (!$site) {
+                throw new \RuntimeException('Failed to fetch site for site request');
+            }
 
             return SiteId::forSite($site);
         }
@@ -66,7 +69,7 @@ class SiteIdProvider
             }
         }
 
-        throw new \InvalidArgumentException(sprintf('Site config for key "%s" was not found'));
+        throw new \InvalidArgumentException(sprintf('Site config for key "%s" was not found', $configKey));
     }
 
     /**
