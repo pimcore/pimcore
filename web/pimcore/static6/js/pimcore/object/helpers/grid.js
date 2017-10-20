@@ -216,6 +216,7 @@ pimcore.object.helpers.grid = Class.create({
                     header: t("published"),
                     width: 40,
                     sortable: true,
+                    filter: 'boolean',
                     dataIndex: "published"
                 }));
             } else if(field.key == "fullpath") {
