@@ -24,7 +24,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Represents an analytics site config key which is either just "default" without
  * an associated site or a combination of a site with its config key "site_<siteId>".
  */
-final class SiteId
+class SiteId
 {
     const CONFIG_KEY_MAIN_DOMAIN = 'default';
 

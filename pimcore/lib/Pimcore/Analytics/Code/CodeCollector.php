@@ -77,11 +77,11 @@ class CodeCollector
     public function addCodePart(string $code, string $block = null, string $action = self::ACTION_APPEND, SiteId $siteId = null)
     {
         if (!in_array($action, $this->validActions)) {
-            throw new \InvalidArgumentException(
+            throw new \InvalidArgumentException(sprintf(
                 'Invalid action "%s". Valid actions are: %s',
                 $action,
                 implode(', ', $this->validActions)
-            );
+            ));
         }
 
         $configKey = self::CONFIG_KEY_GLOBAL;
@@ -95,7 +95,7 @@ class CodeCollector
 
         if (!in_array($block, $this->validBlocks)) {
             throw new \InvalidArgumentException(sprintf(
-                'Invalid block "%s". Valid values are %s',
+                'Invalid block "%s". Valid values are: %s',
                 $block,
                 implode(', ', $this->validBlocks)
             ));
