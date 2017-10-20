@@ -152,7 +152,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     protected function checkCartIsReadOnly()
     {
-        if (!$this->ignoreReadonly) {
+        if (!$this->getIgnoreReadonly()) {
             if ($this->isCartReadOnly()) {
                 throw new \Exception('Cart ' . $this->getId() . ' is readonly.');
             }
