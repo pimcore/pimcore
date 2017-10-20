@@ -323,7 +323,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 containerName: this.fieldConfig.name,
                 containerKey: type,
                 index: index,
-            }).items;
+            }, false, false, this, true).items;
 
 
         var blockElement = new Ext.Panel({
