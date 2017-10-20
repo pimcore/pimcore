@@ -25,20 +25,22 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\Event\TrackingDataEvent;
 use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
+use Pimcore\Config\Config as ConfigObject;
 use Pimcore\Event\Analytics\PiwikEvents;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 class Tracker extends AbstractTracker
 {
     const BLOCK_BEFORE_SCRIPT_TAG = 'beforeScriptTag';
-    const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
     const BLOCK_BEFORE_SCRIPT = 'beforeScript';
-    const BLOCK_AFTER_SCRIPT = 'afterScript';
+    const BLOCK_BEFORE_TRACK = 'beforeTrack';
+    const BLOCK_TRACK = 'track';
+    const BLOCK_AFTER_TRACK = 'afterTrack';
     const BLOCK_BEFORE_ASYNC = 'beforeAsync';
     const BLOCK_AFTER_ASYNC = 'afterAsync';
-    const BLOCK_ACTIONS = 'actions';
+    const BLOCK_AFTER_SCRIPT = 'afterScript';
+    const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
     /**
      * @var ConfigProvider
@@ -66,7 +68,9 @@ class Tracker extends AbstractTracker
     private $blocks = [
         self::BLOCK_BEFORE_SCRIPT_TAG,
         self::BLOCK_BEFORE_SCRIPT,
-        self::BLOCK_ACTIONS,
+        self::BLOCK_BEFORE_TRACK,
+        self::BLOCK_TRACK,
+        self::BLOCK_AFTER_TRACK,
         self::BLOCK_BEFORE_ASYNC,
         self::BLOCK_AFTER_ASYNC,
         self::BLOCK_AFTER_SCRIPT,
@@ -90,7 +94,7 @@ class Tracker extends AbstractTracker
     protected function getCodeContainer(): CodeContainer
     {
         if (null === $this->codeContainer) {
-            $this->codeContainer = new CodeContainer($this->blocks, self::BLOCK_ACTIONS);
+            $this->codeContainer = new CodeContainer($this->blocks, self::BLOCK_TRACK);
         }
 
         return $this->codeContainer;
@@ -144,35 +148,14 @@ class Tracker extends AbstractTracker
     {
         $configKey     = $siteId->getConfigKey();
         $trackerConfig = $config->getConfigForSite($configKey);
+        $blockData     = $this->buildBlockData($trackerConfig, $config, $siteId);
 
         $blocks = [];
         foreach ($this->blocks as $block) {
             $codeBlock = new CodeBlock();
 
-            if (self::BLOCK_BEFORE_SCRIPT === $block && !empty($trackerConfig->code_before_init)) {
-                $codeBlock->append($trackerConfig->code_before_init);
-            }
-
-            if (self::BLOCK_ACTIONS === $block) {
-                if (!empty($trackerConfig->code_before_track)) {
-                    $codeBlock->append($trackerConfig->code_before_track);
-                }
-
-                $codeBlock->append([
-                    "_paq.push(['trackPageView']);",
-                    "_paq.push(['enableLinkTracking']);",
-                ]);
-
-                if (!empty($trackerConfig->code_after_track)) {
-                    $codeBlock->append($trackerConfig->code_after_track);
-                }
-            }
-
-            if (self::BLOCK_BEFORE_ASYNC === $block) {
-                $codeBlock->append([
-                    "_paq.push(['setTrackerUrl', u+'piwik.php']);",
-                    sprintf("_paq.push(['setSiteId', '%d']);", $config->getPiwikSiteId($configKey))
-                ]);
+            if (isset($blockData[$block])) {
+                $codeBlock->append($blockData[$block]);
             }
 
             $this->getCodeContainer()->addToCodeBlock($siteId, $codeBlock, $block);
@@ -181,5 +164,34 @@ class Tracker extends AbstractTracker
         }
 
         return $blocks;
+    }
+
+    private function buildBlockData(ConfigObject $trackerConfig, Config $config, SiteId $siteId): array
+    {
+        $blockData = [];
+
+        if (!empty($trackerConfig->code_before_init)) {
+            $blockData[self::BLOCK_BEFORE_SCRIPT] = $trackerConfig->code_before_init;
+        }
+
+        if (!empty($trackerConfig->code_before_track)) {
+            $blockData[self::BLOCK_BEFORE_TRACK] = $trackerConfig->code_before_track;
+        }
+
+        $blockData[self::BLOCK_TRACK] = [
+            "_paq.push(['trackPageView']);",
+            "_paq.push(['enableLinkTracking']);",
+        ];
+
+        if (!empty($trackerConfig->code_after_track)) {
+            $blockData[self::BLOCK_AFTER_TRACK] = $trackerConfig->code_after_track;
+        }
+
+        $blockData[self::BLOCK_BEFORE_ASYNC] = [
+            "_paq.push(['setTrackerUrl', u+'piwik.php']);",
+            sprintf("_paq.push(['setSiteId', '%d']);", $config->getPiwikSiteId($siteId->getConfigKey()))
+        ];
+
+        return $blockData;
     }
 }
