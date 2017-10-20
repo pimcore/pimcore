@@ -92,11 +92,17 @@ pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcol
             value: this.node.data.configAttributes.phpClass
         });
 
+        this.additionalDataField = new Ext.form.TextArea({
+            fieldLabel: t('additional_data'),
+            width: 400,
+            value: this.node.data.configAttributes.additionalData
+        });
+
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textField, this.phpClassField],
+            items: [this.textField, this.phpClassField, this.additionalDataField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -108,7 +114,7 @@ pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcol
 
         this.window = new Ext.Window({
             width: 600,
-            height: 200,
+            height: 300,
             modal: true,
             title: t('operator_phpcode_settings'),
             layout: "fit",
@@ -122,6 +128,7 @@ pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcol
     commitData: function () {
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.phpClass = this.phpClassField.getValue();
+        this.node.data.configAttributes.additionalData = this.additionalDataField.getValue();
 
         var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
         this.node.set('text', nodeLabel);
