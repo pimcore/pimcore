@@ -149,8 +149,8 @@ pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcol
 
     getNodeLabel: function(configAttributes) {
         var nodeLabel = configAttributes.label;
-        if (configAttributes.locale) {
-            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.locale + ')</span>';
+        if (configAttributes.operator) {
+            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.operator + ')</span>';
         }
 
         return nodeLabel;
