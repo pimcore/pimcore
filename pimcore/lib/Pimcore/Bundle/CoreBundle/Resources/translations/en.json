@@ -1547,7 +1547,9 @@
   "operator_translate_value": "Operator Translate Value",
   "operator_substring": "Operator Substring",
   "operator_substring_settings": "Operator Substring Settings",
-  "operators": "Operators (experimental)",
+  "operator_merge": "Operator Merge",
+  "operator_merge_settings": "Operator Merge Settings",
+  "operators": "Operators",
   "text_operator_settings": "Operator Text Settings",
   "concatenator_operator_settings": "Operator Concatenator Settings",
   "lfexpander_operator_settings": "Operator Localized Fields Expander Settings",
@@ -1655,5 +1657,6 @@
   "parameter": "Paramater",
   "forward_parameter": "Forward Paramater",
   "is_array": "Array Type",
-  "php_class": "PHP Class"
+  "php_class": "PHP Class",
+  "flatten": "Flatten"
 }

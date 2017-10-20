@@ -721,7 +721,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         var tree = new Ext.tree.TreePanel({
             title: t('operators'),
-            // collapsible: true,
+            collapsible: true,
             // collapsed: true,
             xtype: "treepanel",
             region: "south",
