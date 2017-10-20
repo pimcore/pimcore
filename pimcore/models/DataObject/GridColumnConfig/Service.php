@@ -24,15 +24,21 @@ class Service
      *
      * @return ConfigElementInterface[]
      */
-    public static function buildOutputDataConfig($outputDataConfig, $context = null)
+    public function buildOutputDataConfig($outputDataConfig, $context = null)
     {
         $config = [];
-        $config = self::doBuildConfig($outputDataConfig, $config, $context);
+        $config = $this->doBuildConfig($outputDataConfig, $config, $context);
 
         return $config;
     }
 
-    private static function doBuildConfig($jsonConfig, $config, $context = null)
+    /**
+     * @param $jsonConfig
+     * @param $config
+     * @param null $context
+     * @return array
+     */
+    private function doBuildConfig($jsonConfig, $config, $context = null)
     {
         if (!empty($jsonConfig)) {
             foreach ($jsonConfig as $configElement) {
@@ -46,7 +52,7 @@ class Service
                     $name = 'Pimcore\\Model\\DataObject\\GridColumnConfig\\Operator\\' . ucfirst($configElement->class);
 
                     if (!empty($configElement->childs)) {
-                        $configElement->childs = self::doBuildConfig($configElement->childs, [], $context);
+                        $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
                     }
 
                     if (class_exists($name)) {
