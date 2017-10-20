@@ -466,8 +466,7 @@ class Service extends Model\Element\Service
         }
 
         if ($object->getId() == 80) {
-            Logger::debug("");
-
+            Logger::debug('');
         }
         $result = $config->getLabeledValue($object);
         if (isset($result->value)) {

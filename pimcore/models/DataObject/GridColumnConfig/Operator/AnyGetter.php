@@ -225,6 +225,4 @@ class AnyGetter extends AbstractOperator
     {
         $this->returnLastResult = $returnLastResult;
     }
-
-
 }

@@ -38,14 +38,13 @@ class Boolean extends AbstractOperator
 
         $childs = $this->getChilds();
 
-        if ($this->getOperator() != "and" && $this->getOperator() != "or") {
+        if ($this->getOperator() != 'and' && $this->getOperator() != 'or') {
             return $result;
         }
 
         if (!$childs) {
             return $result;
         } else {
-
             $valueArray = [];
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
@@ -61,7 +60,6 @@ class Boolean extends AbstractOperator
                             continue;
                         }
                         $valueArray[] = $value;
-
                     }
                 } else {
                     if (!$this->skipNull) {
@@ -72,12 +70,11 @@ class Boolean extends AbstractOperator
 
             $resultValue = current($valueArray);
             foreach ($valueArray as $val) {
-                if ($this->getOperator() == "and") {
+                if ($this->getOperator() == 'and') {
                     $resultValue = $val && $resultValue;
-                } else if ($this->getOperator() == "or") {
+                } elseif ($this->getOperator() == 'or') {
                     $resultValue = $val || $resultValue;
                 }
-
             }
             $result->value = $resultValue;
         }
@@ -116,6 +113,4 @@ class Boolean extends AbstractOperator
     {
         $this->operator = $operator;
     }
-
-
 }

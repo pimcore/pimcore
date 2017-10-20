@@ -25,6 +25,11 @@ use Pimcore\Model\Object\AbstractObject;
 
 class DefaultValue extends AbstractConfigElement
 {
+    /**
+     * @param \Pimcore\Model\Element\ElementInterface $element
+     *
+     * @return null|\stdClass
+     */
     public function getLabeledValue($element)
     {
         $attributeParts = explode('~', $this->attribute);

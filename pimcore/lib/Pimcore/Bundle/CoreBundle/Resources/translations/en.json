@@ -1647,6 +1647,8 @@
   "operator_phpcode_settings": "Operator PHPCode Settings",
   "operator_boolean": "Operator Boolean",
   "operator_boolean_settings": "Operator Boolean Settings",
+  "operator_arithmetic": "Operator Arithmetic",
+  "operator_arithmetic_settings": "Operator Arithmetic Settings",
   "operator_requiredby": "Operator RequiredBy",
   "operator_requiredby_settings": "Operator RequiredBy Settings",
   "insensitive": "Insensitive",
@@ -1665,5 +1667,8 @@
   "return_last_result": "Return last result",
   "skip_null": "Skip Null",
   "expand_children": "Expand children",
-  "collapse_children": "Collapse children"
+  "collapse_children": "Collapse children",
+  "substract": "Substract",
+  "multiply": "Multiply",
+  "divide": "Divide"
 }

@@ -17,28 +17,35 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-class IsEqual extends AbstractOperator
+class Arithmetic extends AbstractOperator
 {
-    protected $capitalization;
+    private $skipNull;
+
+    private $operator;
 
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
-        $this->capitalization = $config->capitalization;
+
         $this->skipNull = $config->skipNull;
+        $this->operator = $config->operator;
     }
 
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
         $result->label = $this->label;
+        $result->value = 0;
 
         $childs = $this->getChilds();
+
+        if (!in_array($this->getOperator(), ['+', '-', '*', '/'])) {
+            return $result;
+        }
 
         if (!$childs) {
             return $result;
         } else {
-            $isEqual = true;
             $valueArray = [];
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
@@ -62,14 +69,31 @@ class IsEqual extends AbstractOperator
                 }
             }
 
-            $firstValue = current($valueArray);
-            foreach ($valueArray as $val) {
-                if ($firstValue !== $val) {
-                    $isEqual = false;
-                    break;
+            $resultValue = null;
+            for ($i = 0; $i < count($valueArray); $i++) {
+                $val = $valueArray[$i];
+
+                if ($i == 0) {
+                    $resultValue = $val;
+                    continue;
+                }
+
+                if ($this->getOperator() == '+') {
+                    $resultValue = $resultValue + $val;
+                } elseif ($this->getOperator() == '-') {
+                    $resultValue = $resultValue - $val;
+                } elseif ($this->getOperator() == '*') {
+                    $resultValue = $resultValue * $val;
+                } elseif ($this->getOperator() == '/') {
+                    if ($resultValue == 0) {
+                        $result->value = 'NaN';
+
+                        return $result;
+                    }
+                    $resultValue = $resultValue / $val;
                 }
             }
-            $result->value = $isEqual;
+            $result->value = $resultValue;
         }
 
         return $result;
@@ -89,5 +113,21 @@ class IsEqual extends AbstractOperator
     public function setSkipNull($skipNull)
     {
         $this->skipNull = $skipNull;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOperator()
+    {
+        return $this->operator;
+    }
+
+    /**
+     * @param mixed $operator
+     */
+    public function setOperator($operator)
+    {
+        $this->operator = $operator;
     }
 }

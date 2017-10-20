@@ -1115,7 +1115,7 @@
     background: url("/pimcore/static6/img/flat-color-icons/sim_card_chip.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_operator_charcounter, .pimcore_icon_operator_elementcounter {
+.pimcore_icon_operator_charcounter, .pimcore_icon_operator_elementcounter, .pimcore_icon_operator_arithmetic {
     background: url(/pimcore/static6/img/flat-color-icons/calculator.svg) center center no-repeat !important;
 }
 
