@@ -26,10 +26,11 @@ pimcore.object.gridcolumn.operator.objectfieldgetter = Class.create(pimcore.obje
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {
+            var nodeLabel = this.getNodeLabel(configAttributes);
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
+                text: nodeLabel,
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,
@@ -132,7 +133,17 @@ pimcore.object.gridcolumn.operator.objectfieldgetter = Class.create(pimcore.obje
         this.node.data.configAttributes.label = this.textfield.getValue();
         this.node.data.configAttributes.attribute = this.attributeField.getValue();
         this.node.data.configAttributes.forwardAttribute = this.forwardAttributeField.getValue();
-        this.node.set('text', this.textfield.getValue());
+        this.node.set('text', this.getNodeLabel(this.node.data.configAttributes));
         this.window.close();
+    },
+
+    getNodeLabel: function (configAttributes) {
+        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        if (configAttributes.attribute) {
+            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.attribute + ')</span>';
+        }
+
+        return nodeLabel;
+
     }
 });

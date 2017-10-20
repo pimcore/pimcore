@@ -1095,6 +1095,10 @@
     background: url("/pimcore/static6/img/flat-color-icons/assistant.svg") center center no-repeat !important;
 }
 
+.pimcore_icon_operator_anygetter {
+    background: url("/pimcore/static6/img/flat-color-icons/electro_devices.svg") center center no-repeat !important;
+}
+
 .pimcore_icon_operator_isequal {
     background: url("/pimcore/static6/img/flat-color-icons/multiple_smartphones.svg") center center no-repeat !important;
 }

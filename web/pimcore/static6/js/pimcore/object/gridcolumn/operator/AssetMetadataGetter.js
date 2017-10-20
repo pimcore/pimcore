@@ -141,7 +141,7 @@ pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.ob
             width: 400,
             height: 400,
             modal: true,
-            title: t('localeswitcher_operator_settings'),
+            title: t('operator_assetmetadatagetter_settings'),
             layout: "fit",
             items: [this.configPanel]
         });

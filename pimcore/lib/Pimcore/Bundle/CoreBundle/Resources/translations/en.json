@@ -1639,6 +1639,8 @@
   "operator_elementcounter_settings": "Operator ElementCounter Settings",
   "operator_assetmetadatagetter": "Operator Asset Metadata Getter",
   "operator_assetmetadatagetter_settings": "Operator Asset Metadata Getter Settings",
+  "operator_anygetter": "Operator AnyGetter",
+  "operator_anygetter_settings": "Operator AnyGetter Settings",
   "operator_requiredby": "Operator RequiredBy",
   "operator_requiredby_settings": "Operator RequiredBy Settings",
   "insensitive": "Insensitive",
@@ -1647,7 +1649,10 @@
   "count_empty": "Count Empty",
   "as_array": "As array",
   "metadata_field": "Metadata field",
-  "only_count": "Only as count"
+  "only_count": "Only as count",
+  "parameter": "Paramater",
+  "forward_parameter": "Paramater",
+  "is_array": "Array Type"
 
 
 }
