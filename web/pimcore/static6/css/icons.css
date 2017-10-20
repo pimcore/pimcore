@@ -1062,6 +1062,10 @@
     background: url("/pimcore/static6/img/flat-color-icons/text.svg") center center no-repeat !important;
 }
 
+.pimcore_icon_operator_boolean {
+    background: url("/pimcore/static6/img/flat-color-icons/electronics.svg") center center no-repeat !important;
+}
+
 .pimcore_icon_operator_object_field_getter {
     background: url("/pimcore/static6/img/flat-color-icons/reuse.svg") center center no-repeat !important;
 }
@@ -1117,4 +1121,18 @@
 
 .pimcore_icon_favourite {
     background: url(/pimcore/static6/img/flat-color-icons/star.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_collapse_children {
+    background: url(/pimcore/static6/img/flat-color-icons/genealogy.svg) center center no-repeat !important;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: "FlipH";
+    -ms-filter: "FlipH";
+}
+
+.pimcore_icon_expand_children {
+    background: url(/pimcore/static6/img/flat-color-icons/genealogy.svg) center center no-repeat !important;
 }

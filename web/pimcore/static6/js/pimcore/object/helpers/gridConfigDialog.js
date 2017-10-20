@@ -649,6 +649,24 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 }.bind(this, record)
             }));
 
+            if (record.data.children && record.data.children.length > 0) {
+                menu.add(new Ext.menu.Item({
+                    text: t('collapse_children'),
+                    iconCls: "pimcore_icon_collapse_children",
+                    handler: function (node) {
+                        record.collapseChildren();
+                    }.bind(this, record)
+                }));
+
+                menu.add(new Ext.menu.Item({
+                    text: t('expand_children'),
+                    iconCls: "pimcore_icon_expand_children",
+                    handler: function (node) {
+                        record.expandChildren();
+                    }.bind(this, record)
+                }));
+            }
+
             if (record.data.isOperator) {
                 menu.add(new Ext.menu.Item({
                     text: t('edit'),
