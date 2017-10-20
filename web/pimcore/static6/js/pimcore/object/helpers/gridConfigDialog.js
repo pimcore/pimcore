@@ -734,8 +734,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 plugins: {
                     ptype: 'treeviewdragdrop',
                     ddGroup: "columnconfigelement",
-                    allowDrop: false,
-                    allowDrag: true
+                    enableDrag: true,
+                    enableDrop: false
                 }
             },
             root: {
