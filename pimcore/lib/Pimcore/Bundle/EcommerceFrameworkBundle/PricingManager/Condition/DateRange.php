@@ -36,7 +36,7 @@ class DateRange implements IDateRange
     public function check(IEnvironment $environment)
     {
         if ($this->getStarting() && $this->getEnding()) {
-            return $this->getStarting()->isEarlier(time()) && $this->getEnding()->isLater(time());
+            return $this->getStarting()->getTimestamp() < time() && $this->getEnding()->getTimestamp() > time();
         }
 
         return false;
@@ -89,8 +89,8 @@ class DateRange implements IDateRange
     {
         return json_encode([
             'type' => 'DateRange',
-            'starting' => $this->getStarting()->toValue(),
-            'ending' => $this->getEnding()->toValue()
+            'starting' => $this->getStarting()->getTimestamp(),
+            'ending' => $this->getEnding()->getTimestamp()
         ]);
     }
 
@@ -103,10 +103,10 @@ class DateRange implements IDateRange
     {
         $json = json_decode($string);
 
-        $starting = new \DateTime(strtotime($json->starting));
+        $starting = \DateTime::createFromFormat('Y-m-d\TH:i:s', $json->starting);
         $starting->setTime(0, 0, 0);
 
-        $ending = new \DateTime(strtotime($json->ending));
+        $ending = \DateTime::createFromFormat('Y-m-d\TH:i:s', $json->ending);
         $ending->setTime(23, 59, 59);
 
         $this->setStarting($starting);
