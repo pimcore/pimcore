@@ -210,7 +210,7 @@ pimcore.object.helpers.grid = Class.create({
                     }});
             } else if(field.key == "id") {
                 gridColumns.push({header: 'ID', width: this.getColumnWidth(field, this.getColumnWidth(field, 40)), sortable: true,
-                    dataIndex: 'id'/*, hidden: !propertyVisibility.id*/});
+                    dataIndex: 'id', filter: 'numeric'});
             } else if(field.key == "published") {
                 gridColumns.push(new Ext.grid.column.Check({
                     header: t("published"),

@@ -69,7 +69,7 @@ pimcore.asset.listfolder = Class.create({
         this.selectionColumn = new Ext.selection.CheckboxModel();
 
         var typesColumns = [
-            {header: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40},
+            {header: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40, filter: 'numeric'},
             {header: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string'},
             {header: t("type"), sortable: true, dataIndex: 'type', editable: false, flex: 50, filter: 'string'}
         ];
