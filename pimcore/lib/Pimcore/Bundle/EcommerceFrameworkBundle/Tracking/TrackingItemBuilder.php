@@ -48,7 +48,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
 
         // set price if product is ready to check out
         if ($product instanceof ICheckoutable) {
-            $item->setPrice($product->getOSPrice()->getAmount()->asString());
+            $item->setPrice($product->getOSPrice()->getAmount()->asNumeric());
         }
 
         return $item;
@@ -69,7 +69,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     /**
      * Build a product action item
      *
-     * @param IProduct $product
+     * @param IProduct|ElementInterface $product
      * @param int $quantity
      *
      * @return ProductAction
@@ -85,7 +85,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
 
         // set price if product is ready to check out
         if ($product instanceof ICheckoutable) {
-            $item->setPrice($product->getOSPrice()->getAmount()->asString());
+            $item->setPrice($product->getOSPrice()->getAmount()->asNumeric());
         }
 
         return $item;
@@ -103,7 +103,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
         $transaction = new Transaction();
         $transaction
             ->setId($order->getOrdernumber())
-            ->setTotal($order->getTotalPrice())
+            ->setTotal(Decimal::create($order->getTotalPrice())->asNumeric())
             ->setShipping($this->getOrderShipping($order))
             ->setTax($this->getOrderTax($order));
 
@@ -179,7 +179,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
             ->setTransactionId($order->getOrdernumber())
             ->setName($this->normalizeName($orderItem->getProductName()))
             ->setCategories($this->getProductCategories($product))
-            ->setPrice($orderItem->getTotalPrice() / $orderItem->getAmount())
+            ->setPrice(Decimal::create($orderItem->getTotalPrice())->div($orderItem->getAmount())->asNumeric())
             ->setQuantity($orderItem->getAmount());
 
         return $item;
@@ -202,7 +202,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
             ->setId($product->getId())
             ->setName($this->normalizeName($product->getOSName()))
             ->setCategories($this->getProductCategories($product))
-            ->setPrice($cartItem->getTotalPrice() / $cartItem->getCount())
+            ->setPrice($cartItem->getTotalPrice()->getAmount()->div($cartItem->getCount())->asNumeric())
             ->setQuantity($cartItem->getCount());
 
         return $item;
