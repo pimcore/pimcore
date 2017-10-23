@@ -14,7 +14,7 @@
 
     (function() {
         {% block asyncInit %}
-        var u='//{{ piwikUrl }}/';
+        var u='//{{ piwikUrl|raw }}/';
         {% endblock %}
 
         {% block beforeAsync %}{{ blocks.beforeAsync|raw }}{% endblock %}
