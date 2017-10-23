@@ -104,6 +104,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
         $transaction
             ->setId($order->getOrdernumber())
             ->setTotal(Decimal::create($order->getTotalPrice())->asNumeric())
+            ->setSubTotal(Decimal::create($order->getSubTotalPrice())->asNumeric())
             ->setShipping($this->getOrderShipping($order))
             ->setTax($this->getOrderTax($order));
 
