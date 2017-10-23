@@ -28,8 +28,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICategoryPageView;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductView;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingItemBuilder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -61,8 +61,7 @@ class Piwik extends Tracker implements
         ITrackingItemBuilder $trackingItemBuilder,
         EngineInterface $templatingEngine,
         array $options = []
-    )
-    {
+    ) {
         $this->tracker = $tracker;
 
         parent::__construct($trackingItemBuilder, $templatingEngine, $options);
