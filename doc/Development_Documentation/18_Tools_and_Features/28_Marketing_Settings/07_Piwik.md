@@ -116,7 +116,7 @@ class PiwikTrackingCodeListener implements EventSubscriberInterface
             'console.log("foo");'
         ]);
 
-        // completely empty the track section
+        // completely empty the track block
         $event->getBlock(Tracker::BLOCK_TRACK)->setParts([]);
 
         // the data array is the data which will be passed to the template
