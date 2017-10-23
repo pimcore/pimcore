@@ -23,6 +23,14 @@ pimcore.report.piwik.settings = Class.create({
     },
 
     getLayout: function () {
+        var useSsl = this.parent.getValue("piwik.use_ssl");
+
+        // default to true - only set to false if it actually
+        // is a boolean
+        if ('boolean' !== typeof useSsl && !useSsl) {
+            useSsl = true;
+        }
+
         this.panel = new Ext.FormPanel({
             title: "Piwik",
             bodyStyle: "padding: 10px;",
@@ -57,7 +65,7 @@ pimcore.report.piwik.settings = Class.create({
                             fieldLabel: t("piwik_use_ssl"),
                             name: "piwik_use_ssl",
                             id: "report_settings_piwik_use_ssl",
-                            checked: this.parent.getValue("piwik.use_ssl")
+                            checked: useSsl
                         }
                     ]
                 },

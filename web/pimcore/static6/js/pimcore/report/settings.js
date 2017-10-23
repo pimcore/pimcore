@@ -37,7 +37,7 @@ pimcore.report.settings = Class.create({
         var current = this.data.values;
 
         for (var i = 0; i < nk.length; i++) {
-            if (current[nk[i]]) {
+            if (current[nk[i]] || 'boolean' === typeof current[nk[i]]) {
                 current = current[nk[i]];
             }
         }

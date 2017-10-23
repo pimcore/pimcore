@@ -6,6 +6,16 @@ integration you need to know the following:
 * The URL to the Piwik installation you want to use
 * The Piwik Site ID where you want to track your site
 
+The Piwik URL needs to be the hostname with an optional path to your Piwik installation without scheme as iframes and
+tracking calls will be included with a `//` scheme for automatic HTTP/HTTPS resolution. Valid examples:
+
+* `piwik.example.com`
+* `services.example.com/piwik`
+
+Wrong:
+
+* `https://piwik.example.com`
+
 Similar to Google Analytics, you can configure the Site ID and optional code snippets which should be added to the tracking
 code on a per-site level. All settings can be configured in the Piwik tab of the Marketing Settings panel.
 
