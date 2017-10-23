@@ -11,20 +11,8 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+?>
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
-
-interface ITrackingManager extends
-    ICategoryPageView,
-    IProductImpression,
-    IProductView,
-    ICartUpdate,
-    ICartProductActionAdd,
-    ICartProductActionRemove,
-    IProductActionAdd,
-    IProductActionRemove,
-    ICheckout,
-    ICheckoutStep,
-    ICheckoutComplete
-{
-}
+<?php foreach ($this->calls as $call): ?>
+_paq.push(<?= json_encode($call) ?>);
+<?php endforeach; ?>

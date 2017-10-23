@@ -14,13 +14,15 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\ElementInterface;
 
 /**
@@ -46,7 +48,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
 
         // set price if product is ready to check out
         if ($product instanceof ICheckoutable) {
-            $item->setPrice($product->getOSPrice()->getAmount()->asString());
+            $item->setPrice($product->getOSPrice()->getAmount()->asNumeric());
         }
 
         return $item;
@@ -67,7 +69,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     /**
      * Build a product action item
      *
-     * @param IProduct $product
+     * @param IProduct|ElementInterface $product
      * @param int $quantity
      *
      * @return ProductAction
@@ -83,7 +85,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
 
         // set price if product is ready to check out
         if ($product instanceof ICheckoutable) {
-            $item->setPrice($product->getOSPrice()->getAmount()->asString());
+            $item->setPrice($product->getOSPrice()->getAmount()->asNumeric());
         }
 
         return $item;
@@ -101,7 +103,8 @@ class TrackingItemBuilder implements ITrackingItemBuilder
         $transaction = new Transaction();
         $transaction
             ->setId($order->getOrdernumber())
-            ->setTotal($order->getTotalPrice())
+            ->setTotal(Decimal::create($order->getTotalPrice())->asNumeric())
+            ->setSubTotal(Decimal::create($order->getSubTotalPrice())->asNumeric())
             ->setShipping($this->getOrderShipping($order))
             ->setTax($this->getOrderTax($order));
 
@@ -152,8 +155,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
                 continue;
             }
 
-            $item = $this->buildProductActionItem($product, $cartItem->getCount());
-            $items[] = $item;
+            $items[] = $this->buildCheckoutItemByCartItem($cartItem);
         }
 
         return $items;
@@ -178,7 +180,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
             ->setTransactionId($order->getOrdernumber())
             ->setName($this->normalizeName($orderItem->getProductName()))
             ->setCategories($this->getProductCategories($product))
-            ->setPrice($orderItem->getTotalPrice() / $orderItem->getAmount())
+            ->setPrice(Decimal::create($orderItem->getTotalPrice())->div($orderItem->getAmount())->asNumeric())
             ->setQuantity($orderItem->getAmount());
 
         return $item;
@@ -187,13 +189,13 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     /**
      * Build a checkout item object by cart Item
      *
-     * @param AbstractCartItem $cartItem
+     * @param ICartItem $cartItem
      *
      * @return ProductAction
      */
-    public function buildCheckoutItemByCartItem(AbstractCartItem $cartItem)
+    public function buildCheckoutItemByCartItem(ICartItem $cartItem)
     {
-        /** @var IProduct $product */
+        /** @var IProduct|AbstractObject $product */
         $product = $cartItem->getProduct();
 
         $item = new ProductAction();
@@ -201,8 +203,8 @@ class TrackingItemBuilder implements ITrackingItemBuilder
             ->setId($product->getId())
             ->setName($this->normalizeName($product->getOSName()))
             ->setCategories($this->getProductCategories($product))
-            ->setPrice($cartItem->getTotalPrice() / $cartItem->getAmount())
-            ->setQuantity($cartItem->getAmount());
+            ->setPrice($cartItem->getTotalPrice()->getAmount()->div($cartItem->getCount())->asNumeric())
+            ->setQuantity($cartItem->getCount());
 
         return $item;
     }
@@ -244,19 +246,19 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      */
     protected function getOrderShipping(AbstractOrder $order)
     {
-        $shipping = 0;
+        $shipping = Decimal::zero();
 
         // calculate shipping
         $modifications = $order->getPriceModifications();
         if ($modifications) {
             foreach ($modifications as $modification) {
                 if ($modification instanceof IShipping) {
-                    $shipping += $modification->getAmount();
+                    $shipping = $shipping->add($modification->getCharge());
                 }
             }
         }
 
-        return $shipping;
+        return $shipping->asNumeric();
     }
 
     /**
@@ -268,7 +270,12 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      */
     protected function getOrderTax(AbstractOrder $order)
     {
-        return 0;
+        $tax = Decimal::zero();
+        foreach ($order->getTaxInfo() as $taxInfo) {
+            $tax = $tax->add(Decimal::create($taxInfo[2]));
+        }
+
+        return $tax->asNumeric();
     }
 
     /**

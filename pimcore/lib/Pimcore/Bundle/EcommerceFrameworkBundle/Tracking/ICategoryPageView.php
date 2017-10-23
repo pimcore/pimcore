@@ -14,20 +14,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
-
-/**
- * @deprecated Use ICartProductActionAdd instead
- */
-interface IProductActionAdd
+interface ICategoryPageView
 {
     /**
-     * Track product add to cart
+     * Tracks a category page view
      *
-     * @deprecated Use ICartProductActionAdd::trackCartProductActionAdd instead
-     *
-     * @param IProduct $product
-     * @param int|float $quantity
+     * @param array|string $category One or more categories matching the page
+     * @param mixed $page            Any kind of page information you can use to track your page
      */
-    public function trackProductActionAdd(IProduct $product, $quantity = 1);
+    public function trackCategoryPageView($category, $page = null);
 }

@@ -75,3 +75,6 @@ pimcore_ecommerce_framework:
             ecommerce:
                 id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce
                 enabled: false
+            piwik:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik
+                enabled: false

@@ -27,3 +27,9 @@ services:
         arguments:
             - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
             - '@templating.engine.delegating'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik:
+        arguments:
+            - '@Pimcore\Analytics\Piwik\Tracker'
+            - '@Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder'
+            - '@templating.engine.delegating'

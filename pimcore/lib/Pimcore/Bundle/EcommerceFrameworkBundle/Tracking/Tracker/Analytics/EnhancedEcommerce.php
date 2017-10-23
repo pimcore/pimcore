@@ -18,6 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionAdd;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionRemove;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckout;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutStep;
@@ -37,6 +39,8 @@ class EnhancedEcommerce extends Tracker implements
     IProductImpression,
     IProductActionAdd,
     IProductActionRemove,
+    ICartProductActionAdd,
+    ICartProductActionRemove,
     ICheckout,
     ICheckoutStep,
     ICheckoutComplete
@@ -105,6 +109,14 @@ class EnhancedEcommerce extends Tracker implements
     }
 
     /**
+     * @inheritDoc
+     */
+    public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1)
+    {
+        return $this->trackProductActionAdd($product, $quantity);
+    }
+
+    /**
      * Track product action add
      *
      * @param IProduct $product
@@ -115,6 +127,14 @@ class EnhancedEcommerce extends Tracker implements
         $this->ensureDependencies();
 
         $this->trackProductAction($product, 'add', $quantity);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function trackCartProductActionRemove(ICart $cart, IProduct $product, $quantity = 1)
+    {
+        $this->trackProductActionRemove($product, $quantity);
     }
 
     /**

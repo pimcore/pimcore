@@ -4,12 +4,14 @@ The Tracking Manager enables e-commerce transaction tracking for e-commerce webs
 different tracker implementations, it supports different tracking services.
 
 Current implementations of trackers are
+
 * **Google Analytics Classic**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce`
 * **Google Analytics Universal**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce`
 * **Google Analytics Enhanced E-Commerce**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce`
-
+* **Piwik**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik`
 
 ## Supported Tracking Actions
+
 The Tracking Manager supports several tracking actions that can be used. These tracking actions are delegated to the 
 trackers. 
 
@@ -19,12 +21,20 @@ trackers.
 * Product View
     * Tracks product view (of detail page)
     * `$trackingManager->trackProductView($product)`
-* Product Action Add
+* Category View
+    * Tracks a category page view
+    * `$trackingManager->trackCategoryPageView($category)`
+* Cart Product Action Add
     * Tracks action for adding product to cart
-    * `$trackingManager->trackProductActionAdd($product, $quantity)`
-* Product Action Remove
+    * `$trackingManager->trackCartProductActionAdd($cart, $product, $quantity)`
+* Cart Product Action Remove
     * Tracks action for removing product from cart
-    * `$trackingManager->trackProductActionRemove($product, $quantity)`
+    * `$trackingManager->trackProductActionRemove($cart, $product, $quantity)`
+* Cart Update
+    * Tracks a generic cart update for trackers not supporting add/remove. This can be sent on every cart list or cart
+      change (see [Piwik Docs](https://piwik.org/docs/ecommerce-analytics/#tracking-add-to-cart-items-added-to-the-cart-optional)
+      for an example)
+    * `$trackingManager->trackProductActionRemove($cart, $product, $quantity)`
 * Checkout
     * Tracks start of checkout with first step
     * `$trackingManager->trackCheckout($cart)`
@@ -34,6 +44,15 @@ trackers.
 * Checkout Complete
     * Tracks checkout complete
     * `$trackingManager->trackCheckoutComplete($order)`
+    
+There are 2 deprecated actions which are still supported by should be replaced with their new counterparts:
+
+* Product Action Add (use `trackCartProductActionAdd` instead)
+    * Tracks action for adding product to cart
+    * `$trackingManager->trackProductActionAdd($product, $quantity)`
+* Product Action Remove (use `trackCartProductActionRemove` instead)
+    * Tracks action for removing product from cart
+    * `$trackingManager->trackProductActionRemove($product, $quantity)` 
 
 > Be aware: Depending on the used tracking service some of these actions might not be available.
 > If so, the tracking action is ignored for this tracker.
@@ -84,20 +103,19 @@ See the following examples
 
 namespace AppBundle\Controller;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
 class ShopController extends FrontendController
 {
-    public function listAction(Request $request)
+    public function listAction(Request $request, TrackingManager $trackingManager)
     {       
         // ...
         $paginator = new Paginator($products);
         $paginator->setCurrentPageNumber( $request->get('page') );
 
-        $trackingManager = Factory::getInstance()->getTrackingManager();
         foreach ($paginator as $product) {
             $trackingManager->trackProductImpression($product);
         }
@@ -110,10 +128,13 @@ class ShopController extends FrontendController
 ### Checkout
 ```php
 <?php
-class CheckoutController extends AbstractCartAware {
-    public function startCheckoutAction() {
+
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
+
+class CheckoutController extends AbstractCartAware
+{
+    public function startCheckoutAction(TrackingManager $trackingManager) {
         ...
-        $trackingManager = Factory::getInstance()->getTrackingManager();
         $trackingManager->trackCheckout($this->getCart());
         ...
     }
@@ -131,8 +152,12 @@ be defined as service and configured on the tracker configuration (see above).
 Define a custom item builder:
 
 ```php
-class TrackingItemBuilder extends \OnlineShop\Framework\Tracking\TrackingItemBuilder {
+<?php
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+
+class TrackingItemBuilder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder
+{
     private static $impressionPosition = 0;
     
     public function buildProductImpressionItem(IProduct $product)
