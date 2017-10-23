@@ -13,6 +13,15 @@
 
 pimcore.registerNS("pimcore.layout.portlets.abstract");
 pimcore.layout.portlets.abstract = Class.create({
+    /**
+     * Determines if the portlet is available for the current context. This
+     * can be used to hide certain portlets depending on user permissions.
+     *
+     * @returns {boolean}
+     */
+    isAvailable: function() {
+        return true;
+    },
 
     getDefaultConfig: function () {
 
@@ -43,7 +52,7 @@ pimcore.layout.portlets.abstract = Class.create({
             }
         });
 
-        // remove from portal        
+        // remove from portal
         for (var i = 0; i < this.portal.activePortlets.length; i++) {
             if (this.portal.activePortlets[i] == this.layout.portletId) {
                 delete this.portal.activePortlets[i];

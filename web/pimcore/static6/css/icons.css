@@ -1053,3 +1053,16 @@
 .pimcore_icon_hotspotmarker_template {
     background: url(/pimcore/static6/img/flat-color-icons/data_configuration.svg) center center no-repeat !important;
 }
+
+.pimcore_icon_piwik {
+    background: url(/pimcore/static6/img/piwik.svg) center center no-repeat !important;
+    color: #d4291f;
+}
+
+.pimcore_icon_piwik_api_create {
+    background: url(/pimcore/static6/img/flat-color-icons/external.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_piwik_api_update {
+    background: url(/pimcore/static6/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
+}

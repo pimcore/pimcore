@@ -91,6 +91,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
         $loader->load('migrations.yml');
+        $loader->load('analytics.yml');
         $loader->load('aliases.yml');
 
         $this->configureImplementationLoaders($container, $config);

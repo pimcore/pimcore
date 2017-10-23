@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
+use Pimcore\Event\Admin\IndexSettingsEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Google;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Manager\Procedural;
@@ -27,11 +29,25 @@ use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;
 use Pimcore\Version;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class IndexController extends AdminController
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     /**
      * @Route("/", name="pimcore_admin_index")
      * @TemplatePhp()
@@ -51,6 +67,10 @@ class IndexController extends AdminController
             ->addPluginAssets($view);
 
         $settings = $this->buildPimcoreSettings($request, $view, $user);
+
+        // allow to alter settings via an event
+        $this->eventDispatcher->dispatch(AdminEvents::INDEX_SETTINGS, new IndexSettingsEvent($settings));
+
         $view->settings = $settings;
 
         return $view;
