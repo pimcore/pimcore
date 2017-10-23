@@ -29,7 +29,8 @@ integration of the whole Piwik app. To make those features available, you need t
 *Authentication Tokens* Section of the settings tab. This report token will be used for authentication when integrating
 report iframes.
 
-Please see the [Piwik FAQ](https://piwik.org/faq/general/faq_114/) on how to retrieve your API token.
+The API token for a user can be found in Piwik's API settings panel (please see the [Piwik FAQ](https://piwik.org/faq/general/faq_114/)
+for details).
 
 As soon as this token is configured, you can use Piwik's wigets in the Dashboard and the Reports panel:
 
@@ -51,6 +52,20 @@ permissions here.
 After the iframe integration is configured, you'll find a new menu entry in the marketing menu:
 
 ![Piwik Iframe integration](../../img/piwik_iframe_integration.png)
+
+
+### Updating site settings from the Pimcore Admin
+
+Certain site settings (currently only the list of valid domains) can be automatically exported from Pimcore to the Piwik
+site configuration. To activate this feature, you need to configure an API token which will be used for API requests.
+
+> As you'll use this token to update Piwik's settings, this token (its user) needs to be configured with write access.
+
+For API requests, the checkbox "Use SSL for API requests" will be used to determine the used scheme.
+
+With a configured API token, each site will show a button to either create a site or update a site's settings:
+
+![Piwik API Update Buttons](../../img/piwik_api_update_buttons.png)
 
 
 ## Customizing the tracking code
