@@ -14,8 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCartItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
@@ -23,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\ElementInterface;
 
@@ -246,19 +245,19 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      */
     protected function getOrderShipping(AbstractOrder $order)
     {
-        $shipping = 0;
+        $shipping = Decimal::zero();
 
         // calculate shipping
         $modifications = $order->getPriceModifications();
         if ($modifications) {
             foreach ($modifications as $modification) {
                 if ($modification instanceof IShipping) {
-                    $shipping += $modification->getAmount();
+                    $shipping = $shipping->add($modification->getCharge());
                 }
             }
         }
 
-        return $shipping;
+        return $shipping->asNumeric();
     }
 
     /**
@@ -270,7 +269,12 @@ class TrackingItemBuilder implements ITrackingItemBuilder
      */
     protected function getOrderTax(AbstractOrder $order)
     {
-        return 0;
+        $tax = Decimal::zero();
+        foreach ($order->getTaxInfo() as $taxInfo) {
+            $tax = $tax->add(Decimal::create($taxInfo[2]));
+        }
+
+        return $tax->asNumeric();
     }
 
     /**
