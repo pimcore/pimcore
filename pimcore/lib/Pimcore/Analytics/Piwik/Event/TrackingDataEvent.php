@@ -55,8 +55,7 @@ class TrackingDataEvent extends Event
         array $data,
         array $blocks,
         string $template
-    )
-    {
+    ) {
         $this->config   = $config;
         $this->siteId   = $siteId;
         $this->data     = $data;

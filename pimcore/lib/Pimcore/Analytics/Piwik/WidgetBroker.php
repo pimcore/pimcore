@@ -23,7 +23,6 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\Dto\WidgetConfig;
 use Pimcore\Analytics\Piwik\Dto\WidgetReference;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
-use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -77,8 +76,7 @@ class WidgetBroker
         UserLoader $userLoader,
         LoggerInterface $logger,
         array $options = []
-    )
-    {
+    ) {
         $this->configProvider = $configProvider;
         $this->apiClient      = $apiClient;
         $this->cache          = $cache;

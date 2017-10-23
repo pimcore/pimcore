@@ -72,7 +72,7 @@ EOL;
 
         $this->assertEquals($expected, $block->asString());
 
-        $block->append(["123", "456"]);
+        $block->append(['123', '456']);
 
         $expected = $expected. "\n123\n456";
 
@@ -89,7 +89,7 @@ EOL;
 
         $this->assertEquals($expected, $block->asString());
 
-        $block->prepend(["654", "321"]);
+        $block->prepend(['654', '321']);
 
         $expected = "654\n321\n" . $expected;
 

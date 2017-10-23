@@ -23,7 +23,6 @@ use Pimcore\Logger;
 
 abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICart
 {
-
     /**
      * @var bool
      */
@@ -114,7 +113,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * @return bool
      */
-    public function getIgnoreReadonly(){
+    public function getIgnoreReadonly()
+    {
         return $this->ignoreReadonly;
     }
 

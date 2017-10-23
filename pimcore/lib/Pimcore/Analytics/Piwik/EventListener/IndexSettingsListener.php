@@ -45,8 +45,7 @@ class IndexSettingsListener implements EventSubscriberInterface
         ConfigProvider $configProvider,
         ReportBroker $reportBroker,
         TokenStorageUserResolver $tokenStorageUserResolver
-    )
-    {
+    ) {
         $this->configProvider = $configProvider;
         $this->reportBroker   = $reportBroker;
         $this->userResolver   = $tokenStorageUserResolver;

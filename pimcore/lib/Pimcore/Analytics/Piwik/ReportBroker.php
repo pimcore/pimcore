@@ -61,8 +61,7 @@ class ReportBroker
         SiteIdProvider $siteIdProvider,
         TranslatorInterface $translator,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->configProvider  = $configProvider;
         $this->siteIdProvider  = $siteIdProvider;
         $this->eventDispatcher = $eventDispatcher;

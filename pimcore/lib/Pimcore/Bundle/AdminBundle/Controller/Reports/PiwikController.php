@@ -108,8 +108,7 @@ class PiwikController extends ReportsControllerBase
         SiteIdProvider $siteConfigProvider,
         ConfigProvider $configProvider,
         TranslatorInterface $translator
-    )
-    {
+    ) {
         $this->checkPermission('piwik_reports');
 
         $siteConfigs = $siteConfigProvider->getSiteIds();
@@ -186,8 +185,7 @@ class PiwikController extends ReportsControllerBase
         string $configKey,
         SiteIdProvider $siteConfigProvider,
         SitesManager $sitesManager
-    )
-    {
+    ) {
         $this->checkPermission('piwik_settings');
 
         $siteConfig = $siteConfigProvider->getSiteId($configKey);
@@ -212,8 +210,7 @@ class PiwikController extends ReportsControllerBase
         string $configKey,
         SiteIdProvider $siteConfigProvider,
         SitesManager $sitesManager
-    )
-    {
+    ) {
         $this->checkPermission('piwik_settings');
 
         $siteConfig = $siteConfigProvider->getSiteId($configKey);

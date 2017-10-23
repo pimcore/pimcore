@@ -92,7 +92,6 @@ class SiteIdProvider
 
         foreach ($sites->load() as $site) {
             $ids[] = SiteId::forSite($site);
-
         }
 
         return $ids;

@@ -50,8 +50,7 @@ class ApiClient
         ConfigProvider $configProvider,
         ClientFactory $clientFactory,
         SerializerInterface $serializer
-    )
-    {
+    ) {
         $this->configProvider = $configProvider;
         $this->clientFactory  = $clientFactory;
         $this->serializer     = $serializer;

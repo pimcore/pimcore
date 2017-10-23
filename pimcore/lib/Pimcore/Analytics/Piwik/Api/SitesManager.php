@@ -55,8 +55,7 @@ class SitesManager
         ApiClient $apiClient,
         ReportConfigWriter $configWriter,
         TranslatorInterface $translator
-    )
-    {
+    ) {
         $this->config       = $configProvider->getConfig();
         $this->apiClient    = $apiClient;
         $this->configWriter = $configWriter;

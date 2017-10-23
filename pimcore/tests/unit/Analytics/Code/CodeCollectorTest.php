@@ -172,7 +172,6 @@ class CodeCollectorTest extends TestCase
         $this->collector->enrichCodeBlock($siteIdA, $codeBlockA, 'A');
         $this->assertEquals("GLOBAL:\ncodeA\n:SITE A SPECIFIC", $codeBlockA->asString());
 
-
         $codeBlockB = new CodeBlock(['codeB']);
         $this->assertEquals('codeB', $codeBlockB->asString());
 
