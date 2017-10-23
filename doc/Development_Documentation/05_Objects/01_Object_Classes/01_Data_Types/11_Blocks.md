@@ -58,7 +58,7 @@ Create a Block:
  
  $data = [
     "input1" => new BlockElement('input1', 'input', 'NewValue1'),
-    "input2" => new BlockElement('input2, 'input', 'NewValue2'),
+    "input2" => new BlockElement('input2', 'input', 'NewValue2'),
     "myhref" => new BlockElement('myhref', 'multihref', [$object])
     ];
  
