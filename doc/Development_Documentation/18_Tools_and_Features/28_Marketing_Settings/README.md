@@ -21,4 +21,5 @@ $gaListener->disable();
 
 ## Piwik
 
-Similar to Google Analytics, Piwik tracking code can be automatically injected into each response. 
+Similar to Google Analytics, a Piwik tracking code can be automatically injected into each response. Please see [Piwik](./07_Piwik.md)
+for details. 
