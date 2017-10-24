@@ -100,6 +100,7 @@ class ApplicationLoggerProcessor
         $extra = $record['extra'];
         if (!isset($extra['file']) || !isset($extra['line'])) {
             $record['context']['source'] = null;
+
             return $record;
         }
 

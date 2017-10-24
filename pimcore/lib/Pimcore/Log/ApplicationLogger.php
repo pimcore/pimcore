@@ -417,7 +417,6 @@ class ApplicationLogger implements LoggerInterface
         $relatedObject = null,
         array $context = []
     ) {
-
         $message .= ' : ' . $exception->getMessage();
 
         $fileObject = self::createExceptionFileObject($exception);

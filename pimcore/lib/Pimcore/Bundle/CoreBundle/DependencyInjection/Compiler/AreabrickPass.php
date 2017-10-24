@@ -101,8 +101,7 @@ class AreabrickPass implements CompilerPassInterface
         Definition $areaManagerDefinition,
         array $locatorMapping,
         array $excludedClasses
-    )
-    {
+    ) {
         $bundles = $container->getParameter('kernel.bundles_metadata');
         foreach ($bundles as $bundleName => $bundleMetadata) {
             $bundleAreas = $this->findBundleBricks($container, $bundleName, $bundleMetadata, $excludedClasses);
