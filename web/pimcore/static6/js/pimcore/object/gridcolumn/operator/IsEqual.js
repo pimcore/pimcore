@@ -130,9 +130,6 @@ pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcol
     },
 
     allowChild: function(targetNode, dropNode) {
-        // if (targetNode.childNodes.length > 0) {
-        //     return false;
-        // }
         return true;
     }
 

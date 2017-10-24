@@ -575,7 +575,6 @@ class DataObjectHelperController extends AdminController
         return $this->json(['success' => true, 'columns' => $newData]);
     }
 
-
     /**
      * @Route("/grid-config-apply-to-all")
      *

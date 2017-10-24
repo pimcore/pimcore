@@ -15,20 +15,21 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.trimmer");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.json");
 
-pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn.operator.Text, {
     type: "operator",
-    class: "Trimmer",
-    iconCls: "pimcore_icon_operator_trimmer",
-    defaultText: "operator_trimmer",
+    class: "JSON",
+    iconCls: "pimcore_icon_operator_json",
+    defaultText: "operator_json",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
+            var nodeLabel = this.getNodeLabel(configAttributes);
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label,
+                text: nodeLabel,
                 configAttributes: configAttributes,
                 isTarget: true,
                 allowChildren: true,
@@ -65,13 +66,13 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
             leaf: false,
             expandable: false,
             isOperator: true,
+            isChildAllowed: this.allowChild,
             configAttributes: {
                 label: source.data.text,
                 type: this.type,
                 class: this.class
 
-            },
-            isChildAllowed: this.allowChild
+            }
         });
 
         return copy;
@@ -81,33 +82,32 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
     getConfigDialog: function (node) {
         this.node = node;
 
-        this.textfield = new Ext.form.TextField({
+        this.textField = new Ext.form.TextField({
             fieldLabel: t('label'),
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.label
         });
 
-        var trim = this.node.data.configAttributes.trim;
+        var mode = this.node.data.configAttributes.mode;
 
-        this.trimField = new Ext.form.RadioGroup({
+        this.modeField = new Ext.form.RadioGroup({
             xtype: 'radiogroup',
-            fieldLabel: t('trim'),
+            fieldLabel: t('mode'),
             border: true,
             columns: 1,
             vertical: true,
             items: [
-                {boxLabel: t('left'), name: 'rb', inputValue: '1', checked: trim == 1},
-                {boxLabel: t('right'), name: 'rb', inputValue: '2', checked: trim == 2},
-                {boxLabel: t('both'), name: 'rb', inputValue: '2', checked: trim == 3},
-                {boxLabel: t('disabled'), name: 'rb', inputValue: '0', checked: isNaN(trim) || trim == 0}
+                {boxLabel: t('encode'), name: 'rb', inputValue: 'e', checked: mode == "e"},
+                {boxLabel: t('decode'), name: 'rb', inputValue: 'd', checked: mode == "d"},
+                {boxLabel: t('disabled'), name: 'rb', inputValue: '0', checked: mode != "e" && mode != "d"}
             ]
         });
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textfield, this.trimField],
+            items: [this.textField, this.modeField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -121,7 +121,7 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_trim_settings'),
+            title: t('operator_json_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -131,12 +131,25 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
     },
 
     commitData: function () {
-        this.node.data.configAttributes.label = this.textfield.getValue();
-        this.node.set('text', this.textfield.getValue());
+        this.node.data.configAttributes.label = this.textField.getValue();
+        this.node.data.configAttributes.mode = this.modeField.getValue().rb;
+        var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
+        this.node.set('text', nodeLabel);
+
         this.node.set('isOperator', true);
 
-        this.node.data.configAttributes.trim = parseInt(this.trimField.getValue().rb);
         this.window.close();
+    },
+
+    getNodeLabel: function (configAttributes) {
+        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        if (configAttributes.mode == "d" || configAttributes.mode == "e") {
+            var mode = configAttributes.mode == "d" ? t("decode") : t("encode");
+
+            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + mode + ')</span>';
+        }
+
+        return nodeLabel;
     },
 
     allowChild: function (targetNode, dropNode) {

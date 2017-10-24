@@ -1549,6 +1549,8 @@
   "operator_substring_settings": "Operator Substring Settings",
   "operator_merge": "Operator Merge",
   "operator_merge_settings": "Operator Merge Settings",
+  "operator_json": "Operator JSON En&Decode",
+  "operator_json_settings": "Operator JSON En&Decode Settings",
   "operators": "Operators",
   "text_operator_settings": "Operator Text Settings",
   "concatenator_operator_settings": "Operator Concatenator Settings",
@@ -1565,7 +1567,7 @@
   "custom_title": "Custom Title",
   "substring_operator_settings": "Operator Substring Settings",
   "caseconverter_operator_settings": "CaseConverter Settings",
-  "trim_operator_settings": "Trim Operator Settings",
+  "operator_trim_settings": "Trim Operator Settings",
   "max_length": "Max Length",
   "date_format": "Date Format",
   "click_for_help": "Click for help",
@@ -1672,5 +1674,8 @@
   "multiply": "Multiply",
   "divide": "Divide",
   "apply_to_all_objects": "Apply to all",
-  "apply_to_all_objects_msg": "There are other objects which already have their own favourite settings. Do you want to apply this config to those as well?"
+  "apply_to_all_objects_msg": "There are other objects which already have their own favourite settings. Do you want to apply this config to those as well?",
+  "encode": "Encode",
+  "decode": "Decode"
+
 }
