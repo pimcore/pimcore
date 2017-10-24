@@ -1549,8 +1549,10 @@
   "operator_substring_settings": "Operator Substring Settings",
   "operator_merge": "Operator Merge",
   "operator_merge_settings": "Operator Merge Settings",
-  "operator_json": "Operator JSON En&Decode",
-  "operator_json_settings": "Operator JSON En&Decode Settings",
+  "operator_json": "Operator JSON De&Encode",
+  "operator_json_settings": "Operator JSON De&Encode Settings",
+  "operator_php": "Operator PHP Un&Serialize",
+  "operator_php_settings": "Operator PHP Un&Serialize",
   "operators": "Operators",
   "text_operator_settings": "Operator Text Settings",
   "concatenator_operator_settings": "Operator Concatenator Settings",
@@ -1676,6 +1678,8 @@
   "apply_to_all_objects": "Apply to all",
   "apply_to_all_objects_msg": "There are other objects which already have their own favourite settings. Do you want to apply this config to those as well?",
   "encode": "Encode",
-  "decode": "Decode"
+  "decode": "Decode",
+  "serialize": "Serialize",
+  "unserialize": "Unserialize"
 
 }

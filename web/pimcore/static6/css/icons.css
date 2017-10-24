@@ -1054,38 +1054,12 @@
     background: url(/pimcore/static6/img/flat-color-icons/data_configuration.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_piwik {
-    background: url(/pimcore/static6/img/piwik.svg) center center no-repeat !important;
-    color: #d4291f;
+.pimcore_icon_operator_concatenator {
+    background: url("/pimcore/static6/img/flat-color-icons/capacitor.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_operator_boolean {
-    background: url("/pimcore/static6/img/flat-color-icons/electronics.svg") center center no-repeat !important;
-}
-
-.pimcore_icon_operator_object_field_getter {
-    background: url("/pimcore/static6/img/flat-color-icons/reuse.svg") center center no-repeat !important;
-}
-
-.pimcore_icon_operator_lfexpander {
-    background: url("/pimcore/static6/img/flat-color-icons/globe.svg") center center no-repeat !important;
-}
-
-.pimcore_icon_operator_booleanformatter {
-    background: url("/pimcore/static6/img/flat-color-icons/inspection.svg") center center no-repeat !important;
-}
-
-.pimcore_icon_operator_caseconverter, .pimcore_icon_operator_substring, .pimcore_icon_operator_trimmer, .pimcore_icon_operator_stringreplace, .pimcore_icon_operator_stringcontains {
-    background: url("/pimcore/static6/img/flat-color-icons/word.svg") center center no-repeat !important;
-}
-
-.pimcore_icon_piwik {
-    background: url(/pimcore/static6/img/piwik.svg) center center no-repeat !important;
-    color: #d4291f;
-}
-
-.pimcore_icon_piwik_api_create {
-    background: url(/pimcore/static6/img/flat-color-icons/external.svg) center center no-repeat !important;
+.pimcore_icon_operator_json {
+    background: url("/pimcore/static6/img/flat-color-icons/biotech.svg") center center no-repeat !important;
 }
 
 .pimcore_icon_operator_text {
@@ -1154,10 +1128,12 @@
     background: url(/pimcore/static6/img/flat-color-icons/genealogy.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_operator_localeswitcher {
-    background: url("/pimcore/static6/img/flat-color-icons/assistant.svg") center center no-repeat !important;
+
+.pimcore_icon_piwik {
+    background: url(/pimcore/static6/img/piwik.svg) center center no-repeat !important;
+    color: #d4291f;
 }
 
-.pimcore_icon_piwik_api_update {
-    background: url(/pimcore/static6/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
+.pimcore_icon_piwik_api_create {
+    background: url(/pimcore/static6/img/flat-color-icons/external.svg) center center no-repeat !important;
 }
