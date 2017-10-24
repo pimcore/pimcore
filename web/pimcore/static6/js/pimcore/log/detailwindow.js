@@ -103,14 +103,7 @@ pimcore.log.detailwindow = Class.create({
                     xtype: "button",
                     iconCls: "pimcore_icon_edit",
                     handler: function () {
-                        if ('document' === this.data.relatedobjecttype) {
-                            pimcore.helpers.openDocument(this.data.relatedobject);
-                        } else if ('asset' === this.data.relatedobjecttype) {
-                            pimcore.helpers.openAsset(this.data.relatedobject);
-                        } else {
-                            pimcore.helpers.openObject(this.data.relatedobject);
-                        }
-
+                        pimcore.helpers.openElement(this.data.relatedobject, this.data.relatedobjecttype);
                         this.detailWindow.destroy();
                     }.bind(this)
                 }]
