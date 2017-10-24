@@ -440,8 +440,7 @@ class Service extends Model\Element\Service
             $attributes = json_decode(json_encode($definition->attributes));
 
             /** @var $operator Model\DataObject\GridColumnConfig\Operator\AbstractOperator */
-            $service = \Pimcore::getContainer()->get('pimcore.object.gridcolumconfig');
-            $config = $service->buildOutputDataConfig([$attributes]);
+            $config = Model\DataObject\GridColumnConfig\Service::buildOutputDataConfig([$attributes]);
             if (!$config) {
                 return null;
             }
@@ -453,7 +452,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $object Concrete
+     * @param $object
      * @param $definition
      *
      * @return null
@@ -465,9 +464,6 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        if ($object->getId() == 80) {
-            Logger::debug('');
-        }
         $result = $config->getLabeledValue($object);
         if (isset($result->value)) {
             return $result->value;

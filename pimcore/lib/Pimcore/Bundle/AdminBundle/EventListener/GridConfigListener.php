@@ -17,7 +17,9 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\Model\UserRoleEvent;
 use Pimcore\Event\UserRoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,8 +33,20 @@ class GridConfigListener implements EventSubscriberInterface
     {
         return [
             DataObjectClassDefinitionEvents::POST_DELETE => 'onClassDelete',
-            UserRoleEvents::POST_DELETE => 'onUserDelete'
+            UserRoleEvents::POST_DELETE => 'onUserDelete',
+            DataObjectEvents::POST_DELETE => 'onObjectDelete'
         ];
+    }
+
+    /**
+     * @param $event DataObjectEvent
+     */
+    public function onObjectDelete($event)
+    {
+        $object = $event->getObject();
+        $objectId = $object->getId();
+
+        $this->cleanupGridConfigFavourites('objectId = ' . $objectId);
     }
 
     /**
@@ -51,7 +65,7 @@ class GridConfigListener implements EventSubscriberInterface
         }
 
         $this->cleanupGridConfigs('classId = ' . $classId);
-        $this->cleanupGridConfigFafourites('classId = ' . $classId);
+        $this->cleanupGridConfigFavourites('classId = ' . $classId);
     }
 
     /**
@@ -70,7 +84,7 @@ class GridConfigListener implements EventSubscriberInterface
         }
 
         $this->cleanupGridConfigs('ownerId = ' . $userId);
-        $this->cleanupGridConfigFafourites('ownerId = ' . $userId);
+        $this->cleanupGridConfigFavourites('ownerId = ' . $userId);
     }
 
     protected function cleanupGridConfigs($condition)
@@ -79,7 +93,7 @@ class GridConfigListener implements EventSubscriberInterface
         $db->query('DELETE FROM gridconfigs where ' . $condition);
     }
 
-    protected function cleanupGridConfigFafourites($condition)
+    protected function cleanupGridConfigFavourites($condition)
     {
         $db = Db::get();
         $db->query('DELETE FROM gridconfig_favourites where ' . $condition);

@@ -228,7 +228,14 @@ class DataObjectHelperController extends AdminController
             // check if there is a favourite view
             $favourite = null;
             try {
-                $favourite = GridConfigFavourite::getByOwnerAndClassId($userId, $class->getId(), $searchType);
+                try {
+                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ? $objectId : 0, $searchType);
+                } catch (\Exception $e) {
+                }
+                if (!$favourite && $objectId) {
+                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), 0, $searchType);
+                }
+
                 if ($favourite) {
                     $requestedGridConfigId = $favourite->getGridConfigId();
                 }
@@ -568,6 +575,37 @@ class DataObjectHelperController extends AdminController
         return $this->json(['success' => true, 'columns' => $newData]);
     }
 
+
+    /**
+     * @Route("/grid-config-apply-to-all")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function gridConfigApplyToAllAction(Request $request)
+    {
+        $objectId = $request->get('objectId');
+        $object = DataObject\AbstractObject::getById($objectId);
+
+        if ($object->isAllowed('list')) {
+            $classId = $request->get('classId');
+            $gridConfigId = $request->get('gridConfigId');
+            $searchType = $request->get('searchType');
+            $user = $this->getUser();
+            $db = Db::get();
+            $db->query('delete from gridconfig_favourites where '
+                . 'ownerId = ' . $user->getId()
+                . ' and classId = ' . $classId .
+                ' and searchType = ' . $db->quote($searchType)
+                . ' and objectId != ' . $objectId . ' and objectId != 0');
+
+            return $this->json(['success' => true]);
+        } else {
+            return $this->json(['success' => false, 'message' => 'missing_permission']);
+        }
+    }
+
     /**
      * @Route("/grid-mark-favourite-column-config")
      *
@@ -579,10 +617,12 @@ class DataObjectHelperController extends AdminController
     {
         $objectId = $request->get('objectId');
         $object = DataObject\AbstractObject::getById($objectId);
+
         if ($object->isAllowed('list')) {
             $classId = $request->get('classId');
             $gridConfigId = $request->get('gridConfigId');
             $searchType = $request->get('searchType');
+            $global = $request->get('global');
             $user = $this->getUser();
 
             $favourite = new GridConfigFavourite();
@@ -597,12 +637,27 @@ class DataObjectHelperController extends AdminController
             try {
                 $gridConfig = GridConfig::getById($gridConfigId);
                 $favourite->setGridConfigId($gridConfig->getId());
+                $favourite->setObjectId($objectId);
                 $favourite->save();
+
+                $specializedConfigs = false;
+
+                if ($global) {
+                    $favourite->setObjectId(0);
+                    $favourite->save();
+                }
+                $db = Db::get();
+                $count  = $db->fetchOne('select * from gridconfig_favourites where '
+                    . 'ownerId = ' . $user->getId()
+                    . ' and classId = ' . $classId .
+                    ' and searchType = ' . $db->quote($searchType)
+                    . ' and objectId != ' . $objectId . ' and objectId != 0');
+                $specializedConfigs = $count > 0;
             } catch (\Exception $e) {
                 $favourite->delete();
             }
 
-            return $this->json(['success' => true]);
+            return $this->json(['success' => true, 'spezializedConfigs' => $specializedConfigs]);
         } else {
             return $this->json(['success' => false, 'message' => 'missing_permission']);
         }

@@ -1054,12 +1054,9 @@
     background: url(/pimcore/static6/img/flat-color-icons/data_configuration.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_operator_concatenator {
-    background: url("/pimcore/static6/img/flat-color-icons/capacitor.svg") center center no-repeat !important;
-}
-
-.pimcore_icon_operator_text {
-    background: url("/pimcore/static6/img/flat-color-icons/text.svg") center center no-repeat !important;
+.pimcore_icon_piwik {
+    background: url(/pimcore/static6/img/piwik.svg) center center no-repeat !important;
+    color: #d4291f;
 }
 
 .pimcore_icon_operator_boolean {
@@ -1135,4 +1132,6 @@
 
 .pimcore_icon_expand_children {
     background: url(/pimcore/static6/img/flat-color-icons/genealogy.svg) center center no-repeat !important;
+.pimcore_icon_piwik_api_update {
+    background: url(/pimcore/static6/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
 }

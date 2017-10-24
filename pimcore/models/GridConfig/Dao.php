@@ -27,14 +27,20 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param $ownerId
      * @param $classId
+     * @param null $objectId
      * @param null $searchType
      *
      * @throws \Exception
      */
-    public function getByOwnerAndClassId($ownerId, $classId, $searchType = null)
+    public function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = null)
     {
         $query = 'SELECT * FROM gridconfig_favourites WHERE ownerId = ? AND classId = ? AND searchType = ?';
         $params = [$ownerId, $classId, $searchType];
+        if (!is_null($objectId)) {
+            $query .= ' AND objectId = ?';
+            $params[]= $objectId;
+        }
+
         $data = $this->db->fetchRow($query, $params);
 
         if (!$data) {
@@ -77,6 +83,11 @@ class Dao extends Model\Dao\AbstractDao
         if ($this->model->getSearchType()) {
             $params['searchType'] = $this->model->getSearchType();
         }
+
+        if ($this->model->getObjectId()) {
+            $params['objectId'] = $this->model->getSearchType();
+        }
+
         $this->db->delete('gridconfig_favourites', $params);
     }
 }

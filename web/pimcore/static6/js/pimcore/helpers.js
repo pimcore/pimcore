@@ -2767,7 +2767,7 @@ pimcore.helpers.showAbout = function () {
     win.show();
 };
 
-pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridConfigId, searchType) {
+pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridConfigId, searchType, global) {
 
     try {
 
@@ -2778,13 +2778,19 @@ pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridCo
                 objectId: objectId,
                 classId: classId,
                 gridConfigId: gridConfigId,
-                searchType: searchType
+                searchType: searchType,
+                global: global ? 1 : 0
             },
             success: function (response) {
                 try{
                     var rdata = Ext.decode(response.responseText);
+
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("success"), t("your_favourite_has_been_saved"), "success");
+
+                        if (rdata.spezializedConfigs) {
+                            pimcore.helpers.removeOtherConfigs(objectId, classId, gridConfigId, searchType);
+                        }
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"),
@@ -2802,6 +2808,32 @@ pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridCo
     } catch (e3) {
         pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
     }
+};
+
+
+pimcore.helpers.removeOtherConfigs = function(objectId, classId, gridConfigId, searchType) {
+    Ext.MessageBox.show({
+        title:t('apply_to_all_objects'),
+        msg: t('apply_to_all_objects_msg'),
+        buttons: Ext.Msg.OKCANCEL ,
+        icon: Ext.MessageBox.INFO ,
+        fn: function(btn) {
+            if  (btn == "ok") {
+                Ext.Ajax.request({
+                        url: '/admin/object-helper/grid-config-apply-to-all',
+                        method: "post",
+                        params: {
+                            objectId: objectId,
+                            classId: classId,
+                            gridConfigId: gridConfigId,
+                            searchType: searchType,
+                        }
+                    }
+                );
+            }
+
+        }.bind(this)
+    });
 };
 
 pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, searchType, button, callback, settings) {

@@ -155,9 +155,18 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             iconCls: "pimcore_icon_favourite",
             // disabled: !this.settings.gridConfigId,
             handler: function () {
-                pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType);
+                pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true);
             }.bind(this)
         });
+        //
+        // menu.add({
+        //     text: t('set_as_global_favourite'),
+        //     iconCls: "pimcore_icon_favourite",
+        //     // disabled: !this.settings.gridConfigId,
+        //     handler: function () {
+        //         pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true);
+        //     }.bind(this)
+        // });
 
         menu.add({
             text: t('remove_config'),

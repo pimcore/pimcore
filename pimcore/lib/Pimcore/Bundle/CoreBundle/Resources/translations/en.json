@@ -1670,5 +1670,7 @@
   "collapse_children": "Collapse children",
   "substract": "Substract",
   "multiply": "Multiply",
-  "divide": "Divide"
+  "divide": "Divide",
+  "apply_to_all_objects": "Apply to all",
+  "apply_to_all_objects_msg": "There are other objects which already have their own favourite settings. Do you want to apply this config to those as well?"
 }

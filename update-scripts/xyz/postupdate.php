@@ -26,9 +26,10 @@ $db->query('
 CREATE TABLE `gridconfig_favourites` (
 	`ownerId` INT(11) NOT NULL,
 	`classId` INT(11) NOT NULL,
-    `gridConfigId` INT(11) NULL,
+	`objectId` INT(11) NOT NULL DEFAULT \'0\',
+	`gridConfigId` INT(11) NULL,
 	`searchType` VARCHAR(50) NOT NULL DEFAULT \'\',
-	PRIMARY KEY (`ownerId`, `classId`, `searchType`),
+  PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
 	INDEX `ownerId` (`ownerId`),
 	INDEX `classId` (`classId`),
 	INDEX `searchType` (`searchType`)
