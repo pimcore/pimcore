@@ -1653,6 +1653,8 @@
   "operator_boolean_settings": "Operator Boolean Settings",
   "operator_arithmetic": "Operator Arithmetic",
   "operator_arithmetic_settings": "Operator Arithmetic Settings",
+  "operator_anonymizer": "Operator Anonymizer",
+  "operator_anonymizer_settings": "Operator Anonymizer Settings",
   "operator_requiredby": "Operator RequiredBy",
   "operator_requiredby_settings": "Operator RequiredBy Settings",
   "insensitive": "Insensitive",

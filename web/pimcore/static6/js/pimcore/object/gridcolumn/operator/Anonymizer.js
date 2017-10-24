@@ -15,13 +15,13 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.php");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.anonymizer");
 
-pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.gridcolumn.operator.Text, {
     type: "operator",
-    class: "PHP",
-    iconCls: "pimcore_icon_operator_php",
-    defaultText: "operator_php",
+    class: "Anonymizer",
+    iconCls: "pimcore_icon_operator_anonymizer",
+    defaultText: "operator_anonymizer",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -98,9 +98,9 @@ pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.
             columns: 1,
             vertical: true,
             items: [
-                {boxLabel: t('serialize'), name: 'rb', inputValue: 's', checked: mode == "s"},
-                {boxLabel: t('unserialize'), name: 'rb', inputValue: 'u', checked: mode == "u"},
-                {boxLabel: t('disabled'), name: 'rb', inputValue: '0', checked: mode != "s" && mode != "u"}
+                {boxLabel: t('md5'), name: 'rb', inputValue: 'md5', checked: mode == "md5"},
+                {boxLabel: t('bcrypt'), name: 'rb', inputValue: 'bcrypt', checked: mode == "bcrypt"},
+                {boxLabel: t('disabled'), name: 'rb', inputValue: '0', checked: mode != "md5" && mode != "bcrypt"}
             ]
         });
 
@@ -121,7 +121,7 @@ pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_php_settings'),
+            title: t('operator_anonymizer_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -143,8 +143,8 @@ pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.
 
     getNodeLabel: function (configAttributes) {
         var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
-        if (configAttributes.mode == "u" || configAttributes.mode == "s") {
-            var mode = configAttributes.mode == "u" ? t("unserialize") : t("serialize");
+        if (configAttributes.mode == "md5" || configAttributes.mode == "bcrypt") {
+            var mode = configAttributes.mode == "md5" ? t("md5") : t("bcrypt");
 
             nodeLabel += '<span class="pimcore_gridnode_hint"> (' + mode + ')</span>';
         }
