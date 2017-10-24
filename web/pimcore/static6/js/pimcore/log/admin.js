@@ -144,7 +144,7 @@ pimcore.log.admin = Class.create({
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 '/admin/log/show?',
                 [
-                    'id', 'pid', 'message', 'priority', 'timestamp', 'fileobject', 'filename', 'component', 'relatedobject', 'source'
+                    'id', 'pid', 'message', 'priority', 'timestamp', 'fileobject', 'component', 'relatedobject', 'source'
                 ],
                 itemsPerPage, {
                     autoLoad: false
@@ -198,7 +198,11 @@ pimcore.log.admin = Class.create({
                     dataIndex: 'fileobject',
                     flex: 70,
                     renderer: function(value, p, record){
-                        return Ext.String.format('<a href="/admin/log/show-file-object?filePath={0}" target="_blank">{1}</a>', record.data.fileobject, t("open"));
+                        if (value) {
+                            return Ext.String.format('<a href="/admin/log/show-file-object?filePath={0}" target="_blank">{1}</a>', record.data.fileobject, t("open"));
+                        }
+
+                        return '';
                     },
                     sortable: true
                 },{

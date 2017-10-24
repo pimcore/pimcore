@@ -14,7 +14,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Doctrine\DBAL\Types\Type;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
@@ -52,92 +54,126 @@ class LogController extends AdminController implements EventedControllerInterfac
      *
      * @return JsonResponse
      */
-    public function showAction(Request $request)
+    public function showAction(Request $request, Db\Connection $db)
     {
-        $offset = $request->get('start');
-        $limit = $request->get('limit');
+        $qb = $db->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(ApplicationLoggerDb::TABLE_NAME)
+            ->setFirstResult($request->get('start', 0))
+            ->setMaxResults($request->get('limit', 50));
 
-        $orderby = 'ORDER BY id DESC';
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        $sortingSettings = QueryParams::extractSortingSettings(array_merge(
+            $request->request->all(),
+            $request->query->all()
+        ));
+
         if ($sortingSettings['orderKey']) {
-            $orderby = 'ORDER BY ' . $sortingSettings['orderKey'] . ' ' . $sortingSettings['order'];
+            $qb->orderBy($sortingSettings['orderKey'], $sortingSettings['order']);
+        } else {
+            $qb->orderBy('id', 'DESC');
         }
 
-        $queryString = ' WHERE 1=1';
-
-        if ($request->get('priority') != '-1' && ($request->get('priority') == '0' || $request->get('priority'))) {
+        $priority = $request->get('priority');
+        if ($priority !== '-1' && ($priority == '0' || $priority)) {
             $levels = [];
-            foreach (['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'] as $level) {
-                $levels[] = "priority = '" . $level . "'";
 
-                if ($request->get('priority') == $level) {
+            // add every level until the filtered one
+            foreach (['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'] as $level) {
+                $levels[] = $level;
+
+                if ($priority === $level) {
                     break;
                 }
             }
 
-            $queryString .= ' AND (' . implode(' OR ', $levels) . ')';
+            $qb->andWhere($qb->expr()->in('priority', ':priority'));
+            $qb->setParameter('priority', $levels, Db\Connection::PARAM_STR_ARRAY);
         }
 
-        if ($request->get('fromDate')) {
-            $datetime = $request->get('fromDate');
-            if ($request->get('fromTime')) {
-                $datetime =  substr($datetime, 0, 11) . substr($request->get('fromTime'), strpos($request->get('fromTime'), 'T') + 1, strlen($request->get('fromTime')));
+        if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
+            $qb->andWhere('timestamp > :fromDate');
+            $qb->setParameter('fromDate', $fromDate, Type::DATETIME);
+        }
+
+        if ($toDate = $this->parseDateObject($request->get('toDate'), $request->get('toTime'))) {
+            $qb->andWhere('timestamp <= :toDate');
+            $qb->setParameter('toDate', $toDate, Type::DATETIME);
+        }
+
+        if (!empty($component = $request->get('component'))) {
+            $qb->andWhere('component = ' . $qb->createNamedParameter($component));
+        }
+
+        if (!empty($relatedObject = $request->get('relatedobject'))) {
+            $qb->andWhere('relatedobject = ' . $qb->createNamedParameter($relatedObject));
+        }
+
+        if (!empty($message = $request->get('message'))) {
+            $qb->andWhere('message LIKE ' . $qb->createNamedParameter('%' . $message . '%'));
+        }
+
+        if (!empty($pid = $request->get('pid'))) {
+            $qb->andWhere('pid LIKE ' . $qb->createNamedParameter('%' . $pid . '%'));
+        }
+
+        $stmt   = $qb->execute();
+        $total  = $stmt->rowCount();
+        $result = $stmt->fetchAll();
+
+        $logEntries = [];
+        foreach ($result as $row) {
+            $fileobject = null;
+            if ($row['fileobject']) {
+                $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $row['fileobject']);
             }
-            $queryString .= " AND timestamp >= '" . $datetime . "'";
+
+            $logEntry = [
+                'id'                => $row['id'],
+                'pid'               => $row['pid'],
+                'message'           => $row['message'],
+                'timestamp'         => $row['timestamp'],
+                'priority'          => $this->getPriorityName($row['priority']),
+                'fileobject'        => $fileobject,
+                'relatedobject'     => $row['relatedobject'],
+                'relatedobjecttype' => $row['relatedobjecttype'],
+                'component'         => $row['component'],
+                'source'            => $row['source']
+            ];
+
+            $logEntries[] = $logEntry;
         }
 
-        if ($request->get('toDate')) {
-            $datetime = $request->get('toDate');
-            if ($request->get('toTime')) {
-                $datetime =  substr($datetime, 0, 11) . substr($request->get('toTime'), strpos($request->get('toTime'), 'T') + 1, strlen($request->get('toTime')));
-            }
-            $queryString .= " AND timestamp <= '" . $datetime . "'";
+        return $this->json([
+            'p_totalCount' => $total,
+            'p_results'    => $logEntries
+        ]);
+    }
+
+    /**
+     * @param string|null $date
+     * @param string|null $time
+     *
+     * @return \DateTime|null
+     */
+    private function parseDateObject($date = null, $time = null)
+    {
+        if (empty($date)) {
+            return null;
         }
 
-        if ($request->get('component')) {
-            $queryString .= " AND component =  '" . addslashes($request->get('component')) . "'";
-        }
+        $pattern = '/^(?P<date>\d{4}\-\d{2}\-\d{2})T(?P<time>\d{2}:\d{2}:\d{2})$/';
 
-        if ($request->get('relatedobject')) {
-            $queryString .= ' AND relatedobject = ' . $request->get('relatedobject');
-        }
-
-        if ($request->get('message')) {
-            $queryString .= " AND message like '%" . $request->get('message') ."%'";
-        }
-
-        if ($request->get('pid')) {
-            $queryString .= " AND pid like '%" . $request->get('pid') ."%'";
-        }
-
-        $db = Db::get();
-        $count = $db->fetchCol('SELECT count(*) FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . $queryString);
-        $total = $count[0];
-
-        $result = $db->fetchAll('SELECT * FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . $queryString . " $orderby LIMIT $offset, $limit");
-
-        $errorDataList = [];
-        if (!empty($result)) {
-            foreach ($result as $r) {
-                $parts = explode('/', $r['filelink']);
-                $filename = $parts[count($parts) - 1];
-                $fileobject = str_replace(PIMCORE_PROJECT_ROOT, '', $r['fileobject']);
-
-                $errorData =  ['id'=>$r['id'],
-                                    'pid' => $r['pid'],
-                                    'message'=>$r['message'],
-                                    'timestamp'=>$r['timestamp'],
-                                    'priority'=>$this->getPriorityName($r['priority']),
-                                    'filename' => $filename,
-                                    'fileobject' => $fileobject,
-                                    'relatedobject' => $r['relatedobject'],
-                                    'component' => $r['component'],
-                                    'source' => $r['source']];
-                $errorDataList[] = $errorData;
+        $dateTime = null;
+        if (preg_match($pattern, $date, $dateMatches)) {
+            if (!empty($time) && preg_match($pattern, $time, $timeMatches)) {
+                $dateTime = new \DateTime(sprintf('%sT%s', $dateMatches['date'], $timeMatches['time']));
+            } else {
+                $dateTime = new \DateTime($date);
             }
         }
 
-        return $this->json(['p_totalCount'=>$total, 'p_results'=>$errorDataList]);
+        return $dateTime;
     }
 
     /**
