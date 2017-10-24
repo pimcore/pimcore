@@ -20,7 +20,7 @@ namespace Pimcore\Extension\Document\Areabrick;
 use Pimcore\Extension;
 use Pimcore\Extension\Document\Areabrick\Exception\BrickNotFoundException;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class AreabrickManager implements AreabrickManagerInterface
 {
@@ -166,7 +166,7 @@ class AreabrickManager implements AreabrickManagerInterface
         }
 
         $serviceId = $this->brickServiceIds[$id];
-        if (!$this->container->has($serviceId)) {
+        if (!$this->container->has($id)) {
             throw new ConfigurationException(sprintf(
                 'Definition for areabrick %s (defined as service %s) does not exist',
                 $id,
@@ -174,7 +174,7 @@ class AreabrickManager implements AreabrickManagerInterface
             ));
         }
 
-        $brick = $this->container->get($serviceId);
+        $brick = $this->container->get($id);
         if (!($brick instanceof AreabrickInterface)) {
             throw new ConfigurationException(sprintf(
                 'Definition for areabrick %s (defined as service %s) does not implement AreabrickInterface (got %s)',

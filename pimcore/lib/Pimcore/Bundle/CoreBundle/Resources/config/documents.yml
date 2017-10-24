@@ -44,8 +44,18 @@ services:
     #
 
     pimcore.area.brick_manager: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+
+    # scoped container containing only the registered area bricks
+    # will be configured in areabrick pass
+    pimcore.document.areabrick.brick_locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        public: false
+        tags: ['container.service_locator']
+
     Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
-    Pimcore\Extension\Document\Areabrick\AreabrickManager: ~
+    Pimcore\Extension\Document\Areabrick\AreabrickManager:
+        arguments:
+            $container: '@pimcore.document.areabrick.brick_locator'
 
 
     #
