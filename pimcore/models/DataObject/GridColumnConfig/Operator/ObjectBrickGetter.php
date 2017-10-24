@@ -18,12 +18,13 @@
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Element\ElementInterface;
 
-class FieldCollectionGetter extends AbstractOperator
+class ObjectBrickGetter extends AbstractOperator
 {
     /**
-     * FieldCollectionGetter constructor.
+     * ObjectBrickGetter constructor.
      *
      * @param $config
      * @param null $context
@@ -32,8 +33,8 @@ class FieldCollectionGetter extends AbstractOperator
     {
         parent::__construct($config, $context);
         $this->attr = $config->attr;
-        $this->idx = $config->idx;
-        $this->colAttr = $config->colAttr;
+        $this->brickType = $config->brickType;
+        $this->brickAttr = $config->brickAttr;
     }
 
     /**
@@ -47,15 +48,20 @@ class FieldCollectionGetter extends AbstractOperator
         $result->label = $this->label;
         $result->isEmpty = true;
 
-        $getter = 'get' . ucfirst($this->attr);
-        /** @var $fc Fieldcollection */
-        $fc = $element->$getter();
+        if (!$this->attr) {
+            return;
+        }
 
-        if ($fc) {
-            $item = $fc->get($this->idx);
-            if ($item) {
-                $itemGetter = 'get' . ucfirst($this->colAttr);
-                $value = $item->$itemGetter();
+        $bricksGetter = 'get' . ucfirst($this->attr);
+
+        $bricks = $element->$bricksGetter();
+
+        if ($bricks instanceof Objectbrick && $this->brickType) {
+            $brickGetter = 'get' . ucfirst($this->brickType);
+            $brick = $bricks->$brickGetter();
+            if ($brick) {
+                $brickAttrGetter = 'get' . ucfirst($this->brickAttr);
+                $value = $brick->$brickAttrGetter();
                 $result->value = $value;
                 $result->isEmpty = false;
             }

@@ -502,6 +502,7 @@ $scripts = array(
     "pimcore/object/tags/objects.js",
     "pimcore/object/tags/multihrefMetadata.js",
     "pimcore/object/gridcolumn/operator/FieldCollectionGetter.js",
+    "pimcore/object/gridcolumn/operator/ObjectBrickGetter.js",
     "pimcore/object/tags/objectsMetadata.js",
     "pimcore/object/tags/nonownerobjects.js",
     "pimcore/object/tags/booleanSelect.js",

@@ -1573,10 +1573,10 @@
   "max_length": "Max Length",
   "date_format": "Date Format",
   "click_for_help": "Click for help",
-  "operator_objectfieldgetter": "Operator Object Field Getter",
+  "operator_objectfieldgetter": "Operator ObjectFieldGetter",
   "operator_lfexpander": "Operator LF Expander",
   "operator_caseconverter": "Operator CaseConverter",
-  "operator_localeswitcher": "Operator Locale Switcher",
+  "operator_localeswitcher": "Operator LocaleSwitcher",
   "attribute": "Attribute",
   "forward_attribute": "Forward Attribute",
   "upper": "Upper",
@@ -1659,6 +1659,8 @@
   "operator_requiredby_settings": "Operator RequiredBy Settings",
   "operator_fieldcollectiongetter": "Operator FieldCollectionGetter",
   "operator_fieldcollectiongetter_settings": "Operator FieldCollectionGetter Settings",
+  "operator_objectbrickgetter": "Operator ObjectBrickGetter",
+  "operator_objectbrickgetter_settings": "Operator ObjectBrickGetter Settings",
   "insensitive": "Insensitive",
   "yes_value": "Yes Value",
   "no_value": "No Value",
@@ -1686,5 +1688,7 @@
   "serialize": "Serialize",
   "unserialize": "Unserialize",
   "offset": "Offset (0-...)",
-  "col_attribute": "Collection Attribute"
+  "col_attribute": "Collection Attribute",
+  "brick_attribute": "Brick Attribute",
+  "brick_type": "Brick Type"
 }
