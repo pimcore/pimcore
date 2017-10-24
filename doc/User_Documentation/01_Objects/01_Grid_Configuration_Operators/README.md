@@ -20,7 +20,7 @@ Please note that the portfolio of available operators (and how they work in deta
 * [ElementCounter](./Operators/10_ElementCounter.md)
 * [FieldCollectionGetter](./Operators/11_FieldCollectionGetter.md)
 * [IsEqual](./Operators/12_IsEqual.md)
-* [JSON](./Operators/13_JSON.md)
+* [JSON Encode/Decode](./Operators/13_JSON.md)
 * [LFExpander](./Operators/14_LFExpander.md)
 * [LocaleSwitcher](./Operators/15_LocaleSwitcher.md)
 * [Merge](./Operators/16_Merge.md)
