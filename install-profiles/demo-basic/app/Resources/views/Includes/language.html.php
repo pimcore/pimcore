@@ -7,8 +7,8 @@
 ?>
 
 <?php
-/** @var \AppBundle\Templating\LanguageSwitcher $languageSwitcher */
-$languageSwitcher = $this->app->getContainer()->get('website_demo.language_switcher');
+/** @var \AppBundle\Templating\Helper\LanguageSwitcher $languageSwitcher */
+$languageSwitcher = $this->languageSwitcher();
 ?>
 
 <li class="dropdown">

@@ -2,16 +2,25 @@
 
 namespace AppBundle\EventListener;
 
+use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class TestListener
+class TestListener implements EventSubscriberInterface
 {
     /**
-     * @param DataObjectEvent $event
+     * @inheritDoc
      */
+    public static function getSubscribedEvents()
+    {
+        return [
+            DataObjectEvents::PRE_UPDATE => 'onObjectPreUpdate'
+        ];
+    }
+
     public function onObjectPreUpdate(DataObjectEvent $event)
     {
-        $object = $event->getObject();
         // do with the object whatever you want ;-)
+        $object = $event->getObject();
     }
 }
