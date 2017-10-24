@@ -1,32 +1,48 @@
 <?php
 
-namespace AppBundle\Templating;
+declare(strict_types=1);
+
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+namespace AppBundle\Templating\Helper;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Service;
 use Pimcore\Tool;
+use Symfony\Component\Templating\Helper\Helper;
 
-class LanguageSwitcher
+class LanguageSwitcher extends Helper
 {
     /**
-     * @var Service
+     * @var Service|Service\Dao
      */
-    protected $documentService;
+    private $documentService;
 
-    /**
-     * @param Service $documentService
-     */
     public function __construct(Service $documentService)
     {
         $this->documentService = $documentService;
     }
 
     /**
-     * @param Document $document
-     *
-     * @return array
+     * @inheritDoc
      */
-    public function getLocalizedLinks(Document $document)
+    public function getName()
+    {
+        return 'languageSwitcher';
+    }
+
+    public function getLocalizedLinks(Document $document): array
     {
         $translations = $this->documentService->getTranslations($document);
 

@@ -9,13 +9,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecureController extends FrontendController
 {
-    public function loginAction(Request $request)
+    public function loginAction(
+        Request $request,
+        AuthenticationUtils $authenticationUtils
+    )
     {
-        $authenticationUtils = $this->get('security.authentication_utils');
-
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 

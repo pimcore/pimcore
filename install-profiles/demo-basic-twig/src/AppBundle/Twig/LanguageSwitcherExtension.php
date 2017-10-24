@@ -1,32 +1,26 @@
 <?php
 
-namespace AppBundle\Templating;
+declare(strict_types=1);
+
+namespace AppBundle\Twig;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Service;
 use Pimcore\Tool;
 
-class LanguageSwitcher
+class LanguageSwitcherExtension extends \Twig_Extension
 {
     /**
-     * @var Service
+     * @var Service|Service\Dao
      */
-    protected $documentService;
+    private $documentService;
 
-    /**
-     * @param Service $documentService
-     */
     public function __construct(Service $documentService)
     {
         $this->documentService = $documentService;
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return array
-     */
-    public function getLocalizedLinks(Document $document)
+    public function getLocalizedLinks(Document $document): array
     {
         $translations = $this->documentService->getTranslations($document);
 
@@ -45,5 +39,15 @@ class LanguageSwitcher
         }
 
         return $links;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFunctions(): array
+    {
+        return [
+            new \Twig_Function('get_localized_links', [$this, 'getLocalizedLinks'])
+        ];
     }
 }
