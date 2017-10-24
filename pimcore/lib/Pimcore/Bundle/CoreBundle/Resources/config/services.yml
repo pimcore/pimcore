@@ -30,21 +30,6 @@ services:
         arguments: ['@pimcore.security.encoder_factory.inner', '@?']
         public: false
 
-
-    #
-    # APPLICATION LOGGER
-    #
-
-    pimcore.app_logger: '@pimcore.app_logger.default'
-    pimcore.app_logger.default: '@Pimcore\Log\ApplicationLogger'
-
-    Pimcore\Log\ApplicationLogger:
-        calls:
-            - [addWriter, ['@Pimcore\Log\Handler\ApplicationLoggerDb']]
-
-    Pimcore\Log\Handler\ApplicationLoggerDb: ~
-
-
     #
     # INFRASTRUCTURE
     #

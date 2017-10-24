@@ -14,6 +14,7 @@
 
 namespace Pimcore\Log;
 
+use Monolog\Logger;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -239,9 +240,8 @@ class ApplicationLogger implements LoggerInterface
                 // called from a class method
                 // ClassName->methodName():line
                 $source = sprintf(
-                    '%s%s%s():%d',
+                    '%s::%s:%d',
                     $previousCall['class'],
-                    $previousCall['type'],
                     $previousCall['function'],
                     $logCall['line']
                 );
@@ -249,7 +249,7 @@ class ApplicationLogger implements LoggerInterface
                 // called from a function
                 // filename.php::functionName():line
                 $source = sprintf(
-                    '%s::%s():%d',
+                    '%s::%s:%d',
                     $normalizeFile($previousCall['file']),
                     $previousCall['function'],
                     $logCall['line']
@@ -360,7 +360,7 @@ class ApplicationLogger implements LoggerInterface
         }
 
         if (isset($params[2])) {
-            if ($params[2] instanceof \Pimcore\Log\FileObject) {
+            if ($params[2] instanceof FileObject) {
                 $context['fileObject'] = $params[2];
             }
         }
@@ -376,7 +376,7 @@ class ApplicationLogger implements LoggerInterface
 
     /**
      * @param $message
-     * @param $exceptionObject
+     * @param \Throwable $exceptionObject
      * @param string $priority
      * @param null $relatedObject
      * @param null $component
@@ -389,6 +389,47 @@ class ApplicationLogger implements LoggerInterface
 
         $message .= ' : '.$exceptionObject->getMessage();
 
+        $fileObject = self::createExceptionFileObject($exceptionObject);
+
+        $this->log($priority, $message, [
+            'relatedObject' => $relatedObject,
+            'fileObject'    => $fileObject,
+            'component'     => $component
+         ]);
+    }
+
+    /**
+     * Logs a throwable to a given logger. This can be used to format an exception in the same format
+     * as the logException method to any PSR/monolog logger (e.g. when consumed via DI)
+     *
+     * @param LoggerInterface $logger
+     * @param string $message
+     * @param \Throwable $exception
+     * @param mixed $level
+     * @param null $relatedObject
+     * @param array $context
+     */
+    public static function logExceptionObject(
+        LoggerInterface $logger,
+        string $message,
+        \Throwable $exception,
+        $level = Logger::ALERT,
+        $relatedObject = null,
+        array $context = []
+    ) {
+
+        $message .= ' : ' . $exception->getMessage();
+
+        $fileObject = self::createExceptionFileObject($exception);
+
+        $logger->log($level, $message, array_merge([
+            'relatedObject' => $relatedObject,
+            'fileObject'    => $fileObject,
+        ], $context));
+    }
+
+    private static function createExceptionFileObject(\Throwable $exceptionObject)
+    {
         //workaround to prevent "nesting level to deep" errors when used var_export()
         ob_start();
         var_dump($exceptionObject);
@@ -398,13 +439,7 @@ class ApplicationLogger implements LoggerInterface
             $dataDump = $exceptionObject->getMessage();
         }
 
-        $fileObject = new \Pimcore\Log\FileObject($dataDump);
-
-        $this->log($priority, $message, [
-             'relatedObject' => $relatedObject,
-             'fileObject' => $fileObject,
-             'component' => $component
-         ]);
+        return new FileObject($dataDump);
     }
 
     /**

@@ -15,25 +15,25 @@
 namespace Pimcore\Log\Handler;
 
 use Monolog\Handler\AbstractProcessingHandler;
-use Pimcore\Db as Database;
+use Pimcore\Db;
+use Pimcore\Log\ApplicationLogger;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
     const TABLE_NAME = 'application_logs';
-
     const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**
-     * ApplicationLoggerDb constructor.
-     *
-     * @param string $level
-     * @param bool|true $bubble
+     * @var Db\Connection
      */
-    public function __construct($level = 'debug', $bubble = true)
+    private $db;
+
+    public function __construct(Db\Connection $db, $level = 'debug', $bubble = true)
     {
+        $this->db = $db;
 
         // Zend_Log compatibility
-        $zendLoggerPsr3Mapping = \Pimcore\Log\ApplicationLogger::getZendLoggerPsr3Mapping();
+        $zendLoggerPsr3Mapping = ApplicationLogger::getZendLoggerPsr3Mapping();
         if (isset($zendLoggerPsr3Mapping[$level])) {
             $level = $zendLoggerPsr3Mapping[$level];
         }
@@ -46,22 +46,19 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      */
     public function write(array $record)
     {
-        // put into db
-        $db = Database::get();
-
         $data = [
-            'pid' => getmypid(),
-            'priority' => strtolower($record['level_name']),
-            'message' => $record['message'],
-            'timestamp' => $record['datetime']->format('Y-m-d H:i:s'),
-            'fileobject' => (array_key_exists('context', $record) && array_key_exists('fileObject', $record['context'])) ? $record['context']['fileObject'] : null,
-            'relatedobject' => isset($record['context']['relatedObject']) ? $record['context']['relatedObject'] : null,
-            'relatedobjecttype' => isset($record['context']['relatedObjectType']) ? $record['context']['relatedObjectType'] : null,
-            'component' => $record['context']['component'],
-            'source' => $record['context']['source']
+            'pid'               => getmypid(),
+            'priority'          => strtolower($record['level_name']),
+            'message'           => $record['message'],
+            'timestamp'         => $record['datetime']->format('Y-m-d H:i:s'),
+            'component'         => $record['context']['component'] ?? $record['channel'],
+            'fileobject'        => $record['context']['fileObject'] ?? null,
+            'relatedobject'     => $record['context']['relatedObject'] ?? null,
+            'relatedobjecttype' => $record['context']['relatedObjectType'] ?? null,
+            'source'            => $record['context']['source'] ?? null
         ];
 
-        $db->insert(self::TABLE_NAME, $data);
+        $this->db->insert(self::TABLE_NAME, $data);
     }
 
     /**
@@ -72,7 +69,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     public function setFilterPriority($level)
     {
         // legacy ZF method
-        $zendLoggerPsr3Mapping = \Pimcore\Log\ApplicationLogger::getZendLoggerPsr3Mapping();
+        $zendLoggerPsr3Mapping = ApplicationLogger::getZendLoggerPsr3Mapping();
         if (isset($zendLoggerPsr3Mapping[$level])) {
             $level = $zendLoggerPsr3Mapping[$level];
             $this->setLevel($level);
@@ -86,7 +83,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      */
     public static function getComponents()
     {
-        $db = Database::get();
+        $db = Db::get();
 
         $components = $db->fetchCol('SELECT component FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
 
@@ -112,7 +109,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
             'emergency' => 'EMERG'
         ];
 
-        $db = Database::get();
+        $db = Db::get();
 
         $priorityNumbers = $db->fetchCol('SELECT priority FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
         foreach ($priorityNumbers as $priorityNumber) {
