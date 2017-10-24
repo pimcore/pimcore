@@ -50,10 +50,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
                 var classStore = new Ext.data.ArrayStore({
                     data: data,
-                    sortInfo: {
-                        field: 'translatedText',
-                        direction: 'ASC'
-                    },
+                    sorters: 'translatedText',
                     fields: [
                         {name: 'id', type: 'number'},
                         {name: 'name', type: 'string'},
