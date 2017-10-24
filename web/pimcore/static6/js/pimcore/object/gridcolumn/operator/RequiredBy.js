@@ -144,7 +144,7 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
             width: 400,
             height: 400,
             modal: true,
-            title: t('localeswitcher_operator_settings'),
+            title: t('operator_requiredby_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
