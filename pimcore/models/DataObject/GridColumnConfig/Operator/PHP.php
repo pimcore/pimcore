@@ -70,7 +70,7 @@ class PHP extends AbstractOperator
         if ($this->mode == 's') {
             $result->value = \Pimcore\Tool\Serialize::serialize($result->value);
         } elseif ($this->mode == 'u') {
-            $result->value = \Pimcore\Tool\Serialize::serialize($result->value);
+            $result->value = \Pimcore\Tool\Serialize::unserialize($result->value);
         }
 
         return $result;

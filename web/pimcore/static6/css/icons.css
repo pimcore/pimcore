@@ -1058,7 +1058,7 @@
     background: url("/pimcore/static6/img/flat-color-icons/capacitor.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_operator_json {
+.pimcore_icon_operator_json, .pimcore_icon_operator_php {
     background: url("/pimcore/static6/img/flat-color-icons/biotech.svg") center center no-repeat !important;
 }
 
