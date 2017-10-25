@@ -1,4 +1,4 @@
-# Translate Value
+# Trimmer
 
 ![Setting](../../../img/gridconfig/operator_trimmer_symbol.png)
 
