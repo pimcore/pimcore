@@ -75,7 +75,7 @@ class AssetMetadataGetter extends AbstractOperator
                 $newChildsResult[] = $newValue;
             }
 
-            if (count($childs) > 0) {
+            if (count($childs) > 1) {
                 $result->value = $newChildsResult;
             } else {
                 $result->value = $newChildsResult[0];

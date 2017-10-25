@@ -1,6 +1,6 @@
 # Locale Switcher
 
-Switches the default locale for all childs to the selected locale.
+Switches the default locale for all child elements to the selected locale.
 
 ![Setting](../../../img/gridconfig/operator_localewitcher_setting.png)
 

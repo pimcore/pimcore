@@ -2,7 +2,7 @@
 
 ![Setting](../../../img/gridconfig/operator_anygetter_symbol.png)
 
-The AnyGetter aims to allow to get virtually everyting.
+The AnyGetter aims to allow you to get virtually everyting.
 
 Let us assume that you want to first get the related href (in this case an object). 
 

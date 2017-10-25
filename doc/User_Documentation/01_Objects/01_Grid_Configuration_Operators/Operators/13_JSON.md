@@ -9,6 +9,10 @@ Sample:
 
 ![Setting](../../../img/gridconfig/operator_json_sample.png)
 
+The result would be something like 
+
+`[234, 12]`
+
 
 
 

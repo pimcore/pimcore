@@ -45,10 +45,16 @@ class Anonymizer extends AbstractOperator
                     $childValues = password_hash($childValues, PASSWORD_BCRYPT);
                 }
                 $resultItems[] = $childValues;
+            } else {
+                $resultItems[] = null;
             }
         }
 
-        $result->value = $resultItems;
+        if (count($childs) == 1) {
+            $result->value = $resultItems[0];
+        } else {
+            $result->value = $resultItems;
+        }
 
         return $result;
     }

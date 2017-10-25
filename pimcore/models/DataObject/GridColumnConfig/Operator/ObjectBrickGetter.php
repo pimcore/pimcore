@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\GridColumnConfig\Operator;
 
-use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Element\ElementInterface;
 
