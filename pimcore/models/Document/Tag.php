@@ -436,20 +436,20 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function __toString()
     {
-        $return = '';
+        $result = '';
 
         try {
             if ($this->editmode) {
-                $return = $this->admin();
+                $result = $this->admin();
             } else {
-                $return = $this->frontend();
+                $result = $this->frontend();
             }
         } catch (\Throwable $e) {
             if (\Pimcore::inDebugMode()) {
                 // the __toString method isn't allowed to throw exceptions
-                $return = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
+                $result = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
 
-                return $return;
+                return $result;
             }
 
             Logger::error('toString() returned an exception: {exception}', [
@@ -459,9 +459,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             return '';
         }
 
-        if (is_string($return) || is_numeric($return)) {
+        if (is_string($result) || is_numeric($result)) {
             // we have to cast to string, because int/float is not auto-converted and throws an exception
-            return (string) $return;
+            return (string) $result;
         }
 
         return '';
