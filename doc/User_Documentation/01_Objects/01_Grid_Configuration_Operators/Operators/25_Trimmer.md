@@ -1,6 +1,6 @@
 # Translate Value
 
-![Setting](../../../img/gridconfig/operator_translatevalue_symbol.png)
+![Setting](../../../img/gridconfig/operator_trimmer_symbol.png)
 
 Trim the given string on the left, right or both sides.
 
