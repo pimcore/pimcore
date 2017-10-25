@@ -440,7 +440,8 @@ class Service extends Model\Element\Service
             $attributes = json_decode(json_encode($definition->attributes));
 
             /** @var $operator Model\DataObject\GridColumnConfig\Operator\AbstractOperator */
-            $config = Model\DataObject\GridColumnConfig\Service::buildOutputDataConfig([$attributes]);
+            $service = \Pimcore::getContainer()->get('pimcore.object.gridcolumconfig');
+            $config = $service->buildOutputDataConfig([$attributes]);
             if (!$config) {
                 return null;
             }
