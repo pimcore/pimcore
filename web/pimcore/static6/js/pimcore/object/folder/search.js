@@ -137,12 +137,12 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var menu = this.columnConfigButton.getMenu();
         menu.removeAll();
 
-        menu.add({
-            text: t('save'),
-            iconCls: "pimcore_icon_save",
-            disabled: !this.settings.gridConfigId || this.settings.isShared,
-            handler: this.saveConfig.bind(this, false)
-        });
+        // menu.add({
+        //     text: t('save'),
+        //     iconCls: "pimcore_icon_save",
+        //     disabled: !this.settings.gridConfigId || this.settings.isShared,
+        //     handler: this.saveConfig.bind(this, false)
+        // });
 
         menu.add({
             text: t('save_as'),
