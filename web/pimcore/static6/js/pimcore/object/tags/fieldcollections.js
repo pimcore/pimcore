@@ -273,6 +273,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             this.component.updateLayout();
             this.currentElements = [];
         }
+
+        this.updateBlockIndices();
     },
 
     moveBlockUp: function (blockElement) {
@@ -281,6 +283,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         this.component.moveBefore(blockElement, blockElement.previousSibling());
         this.dirty = true;
+
+        this.updateBlockIndices();
     },
 
     moveBlockDown: function (blockElement) {
@@ -289,6 +293,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         this.component.moveAfter(blockElement, blockElement.nextSibling());
         this.dirty = true;
+
+        this.updateBlockIndices();
     },
 
     addBlockElement: function (index, config, blockData, ignoreChange) {
@@ -355,6 +361,25 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         this.dataFields = {};
         this.currentData = {};
+
+        this.updateBlockIndices();
+    },
+
+    updateBlockIndices: function() {
+        for (var itemIndex = 0; itemIndex < this.component.items.items.length; itemIndex++) {
+            var item = this.component.items.items[itemIndex];
+
+            for (j = 0; j < this.currentElements.length; j++) {
+                if (item !== this.currentElements[j].container) continue;
+
+                var fields = this.currentElements[j].fields;
+                for (fieldName in fields) {
+                    if (this.currentElements[j].fields.hasOwnProperty(fieldName)) {
+                        fields[fieldName].context.index = itemIndex;
+                    }
+                }
+            }
+        }
     },
 
     getDataForField: function (fieldConfig) {
