@@ -1,4 +1,4 @@
-# String Replace
+# Substring
 
 ![Setting](../../../img/gridconfig/operator_substring_symbol.png)
 
