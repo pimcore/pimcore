@@ -2815,10 +2815,10 @@ pimcore.helpers.removeOtherConfigs = function(objectId, classId, gridConfigId, s
     Ext.MessageBox.show({
         title:t('apply_to_all_objects'),
         msg: t('apply_to_all_objects_msg'),
-        buttons: Ext.Msg.OKCANCEL ,
+        buttons: Ext.Msg.YESNO ,
         icon: Ext.MessageBox.INFO ,
         fn: function(btn) {
-            if  (btn == "ok") {
+            if  (btn == "yes") {
                 Ext.Ajax.request({
                         url: '/admin/object-helper/grid-config-apply-to-all',
                         method: "post",
