@@ -15,36 +15,26 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\GridConfigFavourite;
+namespace Pimcore\Model\GridConfig;
 
 use Pimcore\Model;
 
 /**
- * @property \Pimcore\Model\GridConfigFavourite $model
+ * @property \Pimcore\Model\GridConfig $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $ownerId
-     * @param $classId
-     * @param null $objectId
-     * @param null $searchType
+     * @param $id
      *
      * @throws \Exception
      */
-    public function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = null)
+    public function getById($id)
     {
-        $query = 'SELECT * FROM gridconfig_favourites WHERE ownerId = ? AND classId = ? AND searchType = ?';
-        $params = [$ownerId, $classId, $searchType];
-        if (!is_null($objectId)) {
-            $query .= ' AND objectId = ?';
-            $params[]= $objectId;
-        }
+        $data = $this->db->fetchRow('SELECT * FROM gridconfigs WHERE id = ?', $id);
 
-        $data = $this->db->fetchRow($query, $params);
-
-        if (!$data) {
-            throw new \Exception('gridconfig favourite with ownerId ' . $ownerId . ' and class id ' . $classId . ' not found');
+        if (!$data['id']) {
+            throw new \Exception('gridconfig with id ' . $id . ' not found');
         }
 
         $this->assignVariablesToModel($data);
@@ -57,10 +47,10 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        $gridConfigFavourite = get_object_vars($this->model);
+        $gridconfigs = get_object_vars($this->model);
 
-        foreach ($gridConfigFavourite as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns('gridconfig_favourites'))) {
+        foreach ($gridconfigs as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('gridconfigs'))) {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }
@@ -69,9 +59,14 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('gridconfig_favourites', $data);
+        $this->db->insertOrUpdate('gridconfigs', $data);
 
-        return $this->model;
+        $lastInsertId = $this->db->lastInsertId();
+        if (!$this->model->getId() && $lastInsertId) {
+            $this->model->setId($lastInsertId);
+        }
+
+        return $this->model->getId();
     }
 
     /**
@@ -79,15 +74,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $params = ['ownerId' => $this->model->getOwnerId(), 'classId' => $this->model->getClassId()];
-        if ($this->model->getSearchType()) {
-            $params['searchType'] = $this->model->getSearchType();
-        }
-
-        if ($this->model->getObjectId()) {
-            $params['objectId'] = $this->model->getSearchType();
-        }
-
-        $this->db->delete('gridconfig_favourites', $params);
+        $this->db->delete('gridconfigs', ['id' => $this->model->getId()]);
     }
 }

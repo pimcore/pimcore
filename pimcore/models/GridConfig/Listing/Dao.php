@@ -15,24 +15,24 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\GridConfigFavourite\Listing;
+namespace Pimcore\Model\GridConfig\Listing;
 
 use Pimcore\Model;
 
 /**
- * @property \Pimcore\Model\GridConfigFavourite\Listing $model
+ * @property \Pimcore\Model\GridConfig\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of gridconfigs for the specicified parameters, returns an array of GridConfigFavourite elements
+     * Loads a list of gridconfigs for the specicified parameters, returns an array of GridConfig elements
      *
      * @return array
      */
     public function load()
     {
-        $gridConfigsFavourites = [];
-        $data = $this->db->fetchAll('SELECT * FROM gridconfig_favourites' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $gridConfigs = [];
+        $data = $this->db->fetchAll('SELECT * FROM gridconfigs' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($data as $configData) {
             $gridConfig = new Model\GridConfig();
@@ -40,7 +40,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $gridConfigs[] = $gridConfig;
         }
 
-        $this->model->setGridconfigFavourites($gridConfigsFavourites);
+        $this->model->setGridConfigs($gridConfigs);
 
         return $gridConfigs;
     }
@@ -51,7 +51,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM gridconfig_favourites ' . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM gridconfigs ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 

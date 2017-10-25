@@ -1613,8 +1613,7 @@
   "piwik_reports": "Piwik Reports",
   "portlet_piwik_widget": "Piwik Widget",
   "portlet_piwik_unconfigured": "Please use the gear icon to configure the widget.",
-  "portlet_piwik_error": "Failed to load widget."
-  "restrict_to_locales": "Restrict to locales (csv list)",
+  "portlet_piwik_error": "Failed to load widget.",
   "restrict_to_locales": "Restrict to locales",
   "predefined": "Predefined",
   "save_as": "Save as copy",
@@ -1626,7 +1625,6 @@
   "error_saving_favourite": "Error saving favourite",
   "delete_gridconfig_dblcheck": "Are you sure? Also note that this could be a shared config.",
   "grid_configuration": "Grid Configuration",
-  "save_and_share": "Save and Share",
   "shared_users": "Shared Users",
   "shared_roles": "Shared Roles",
   "name_must_not_be_empty": "Name must not be empty",
