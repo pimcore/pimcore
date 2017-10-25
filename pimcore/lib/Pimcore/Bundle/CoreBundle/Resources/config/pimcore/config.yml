@@ -196,7 +196,8 @@ pimcore:
             - { route: pimcore_admin_webdav }
 
         translations:
-            path: "@PimcoreCoreBundle/Resources/translations"
+            paths:
+                - "@PimcoreCoreBundle/Resources/translations"
 
     # Pimcore migration sets
     # Bundles can define their own migration sets - the sets defined here act as global sets

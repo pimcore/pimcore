@@ -49,4 +49,16 @@ English is maintained by the core team. In addition to that, everybody can join 
  [Pimcore translation project](http://www.pimcore.org/en/community/translations) to add system translations in additional
  languages. With every Pimcore release, newly added translations are added to the Pimcore installation package.
 
-System translations can be overwritten by [Admin Translations](./07_Admin_Translations.md). 
+System translations can be overwritten by [Admin Translations](./07_Admin_Translations.md).
+
+Another option to override existing system translations is to provide custom `%locale%.json` file(s) from your bundle(s).
+Register additional resource paths by setting:
+
+```yaml
+pimcore:
+    translations:
+        paths:
+            - "@AppBundle/Resources/translations/pimcore"
+```
+
+Pimcore will automatically load your translations which will override [original ones](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/translations).

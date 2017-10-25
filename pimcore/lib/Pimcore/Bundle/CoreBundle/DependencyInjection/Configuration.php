@@ -257,7 +257,9 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('translations')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('path')->defaultNull()->end()
+                        ->arrayNode('paths')
+                            ->prototype('scalar')->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end();

@@ -33,7 +33,7 @@ class Admin
      */
     public static function getLanguageFile($language)
     {
-        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
+        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.paths');
         $languageFile = \Pimcore::getKernel()->locateResource($baseResource . '/' . $language . '.json');
 
         return $languageFile;
@@ -48,11 +48,13 @@ class Admin
      */
     public static function getLanguages()
     {
-        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
-        $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
+        $baseResources = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.paths');
+        $languageDirs = [];
+        foreach ($baseResources as $baseResource) {
+            $languageDirs[] = \Pimcore::getKernel()->locateResource($baseResource);
+        }
 
         $languages = [];
-        $languageDirs = [$languageDir];
         foreach ($languageDirs as $filesDir) {
             if (is_dir($filesDir)) {
                 $files = scandir($filesDir);
@@ -81,14 +83,14 @@ class Admin
      */
     public static function getMinimizedScriptPath($scriptContent)
     {
-        $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_javascript_core_'.md5($scriptContent).'.js';
+        $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_javascript_core_' . md5($scriptContent) . '.js';
 
         if (!is_file($scriptPath)) {
             File::put($scriptPath, $scriptContent);
         }
 
         $params = [
-            'scripts' =>  basename($scriptPath),
+            'scripts' => basename($scriptPath),
             '_dc' => \Pimcore\Version::getRevision()
         ];
 
@@ -105,7 +107,7 @@ class Admin
 
         // minimum 10 lines, to be sure take more
         $sample = '';
-        for ($i=0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $sample .= implode('', array_slice(file($file), 0, 11)); // grab 20 lines
         }
 

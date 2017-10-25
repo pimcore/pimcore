@@ -61,7 +61,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
         $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
-        $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
+        $container->setParameter('pimcore.admin.translations.paths', $config['admin']['translations']['paths']);
 
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
