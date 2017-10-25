@@ -2,7 +2,7 @@
 
     {% set selectStore = [] %}
     {% for i in 2..29 %}
-        {% set selectStore = selectStore|merge([i , i]) %}
+        {% set selectStore = selectStore|merge([i]) %}
     {% endfor %}
 
     {% set slidesSelect = pimcore_select('slides', {
