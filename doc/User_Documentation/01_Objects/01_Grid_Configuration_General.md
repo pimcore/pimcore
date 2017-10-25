@@ -1,4 +1,4 @@
-# Grid Configation
+# Grid Configuration
 
 You can use the object grid configurator button to adapt the grid to your needs,
 i.e. add additional columns, change the column order or column width.
