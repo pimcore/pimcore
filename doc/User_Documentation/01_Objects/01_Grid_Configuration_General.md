@@ -26,4 +26,4 @@ Sharing can be accomplished via the `Save & Share' tab in the configurator windo
 You can define a preferred config on folder level. If there is another object with a different setting you will have the option
 to apply the setting to all folders or just leave it as it is.
 
-![Confirm overwrite all](../.img/gridconfig/apply_overwrite_all.png)
+![Confirm overwrite all](../img/gridconfig/apply_overwrite_all.png)
