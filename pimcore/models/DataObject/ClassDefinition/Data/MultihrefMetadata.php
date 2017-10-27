@@ -181,7 +181,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             return null;
         }
 
-        $ids = [];
+        $d = [];
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
@@ -192,8 +192,8 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 }
             }
 
-            return ','.implode(',', $ids).',';
-        } elseif (is_array($data) && count($data) === 0) {
+            return ','.implode(',', $d).',';
+        } elseif (is_array($d) && count($data) === 0) {
             return '';
         } else {
             throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
