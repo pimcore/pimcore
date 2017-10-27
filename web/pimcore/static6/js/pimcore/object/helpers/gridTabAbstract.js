@@ -395,7 +395,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     }
                 });
             }.bind(this),
-            this.objecttype != "variant",
+            true,
             this.settings
         )
 

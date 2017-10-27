@@ -325,6 +325,7 @@ $scripts = array(
     "pimcore/element/replace_assignments.js",
     "pimcore/element/permissionchecker.js",
     "pimcore/object/helpers/grid.js",
+    "pimcore/object/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
