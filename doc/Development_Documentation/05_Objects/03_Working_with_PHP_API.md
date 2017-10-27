@@ -248,6 +248,17 @@ $list->load();
 
 ```
 
+Sometimes, by default all unpublished objects are returned event if `setUnpublished` is set to `false`. It is the case when working on the admin side (plug-in for instance).
+You can switch globally the behaviour (it will bypass `setUnpublished` setting), using the following static method:
+
+```php
+// revert to the default API behaviour, and setUnpublished can be used as usually
+\Pimcore\Model\Object\AbstractObject::setHideUnpublished(true);
+
+// force to return all objects including unpublished ones, even if setUnpublished is set to false
+\Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
+```
+
 ### Filter Objects by attributes from Field Collections
 To filter objects by attributes from field collections, you can use following syntax 
 (Both code snippets result in the same object listing).
