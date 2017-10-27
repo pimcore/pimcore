@@ -506,8 +506,8 @@ class Multiselect extends Model\DataObject\ClassDefinition\Data
 
             $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
             $this->dynamicOptions = !$hasStaticOptions;
-
-            return $this;
         }
+
+        return $this;
     }
 }
