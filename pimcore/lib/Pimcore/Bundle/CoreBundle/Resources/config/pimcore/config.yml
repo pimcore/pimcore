@@ -187,6 +187,7 @@ pimcore:
                 - pimcore_documents
                 - pimcore_objects
                 - pimcore_copy
+                - pimcore_gridconfig
                 - pimcore_backup
 
         # the following routes won't be double checked for authentication

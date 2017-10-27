@@ -410,7 +410,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             function(data) {
                 this.gridLanguage = data.language;
                 this.initClassStore(selectedClass, data.columns);
-            }.bind(this), null
+            }.bind(this), null, false
         );
     },
 

@@ -2767,7 +2767,76 @@ pimcore.helpers.showAbout = function () {
     win.show();
 };
 
-pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, searchType, button) {
+pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridConfigId, searchType, global) {
+
+    try {
+
+        Ext.Ajax.request({
+            url: '/admin/object-helper/grid-mark-favourite-column-config',
+            method: "post",
+            params: {
+                objectId: objectId,
+                classId: classId,
+                gridConfigId: gridConfigId,
+                searchType: searchType,
+                global: global ? 1 : 0
+            },
+            success: function (response) {
+                try{
+                    var rdata = Ext.decode(response.responseText);
+
+                    if (rdata && rdata.success) {
+                        pimcore.helpers.showNotification(t("success"), t("your_favourite_has_been_saved"), "success");
+
+                        if (rdata.spezializedConfigs) {
+                            pimcore.helpers.removeOtherConfigs(objectId, classId, gridConfigId, searchType);
+                        }
+                    }
+                    else {
+                        pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"),
+                            "error",t(rdata.message));
+                    }
+                } catch(e){
+                    pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+                }
+            }.bind(this),
+            failure: function () {
+                pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+            }
+        });
+
+    } catch (e3) {
+        pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+    }
+};
+
+
+pimcore.helpers.removeOtherConfigs = function(objectId, classId, gridConfigId, searchType) {
+    Ext.MessageBox.show({
+        title:t('apply_to_all_objects'),
+        msg: t('apply_to_all_objects_msg'),
+        buttons: Ext.Msg.YESNO ,
+        icon: Ext.MessageBox.INFO ,
+        fn: function(btn) {
+            if  (btn == "yes") {
+                Ext.Ajax.request({
+                        url: '/admin/object-helper/grid-config-apply-to-all',
+                        method: "post",
+                        params: {
+                            objectId: objectId,
+                            classId: classId,
+                            gridConfigId: gridConfigId,
+                            searchType: searchType,
+                        }
+                    }
+                );
+            }
+
+        }.bind(this)
+    });
+};
+
+pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, searchType, button, callback, settings) {
 
 
     try {
@@ -2775,7 +2844,8 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
             id: objectId,
             class_id: classId,
             gridconfig: Ext.encode(configuration),
-            searchType: searchType
+            searchType: searchType,
+            settings: Ext.encode(settings)
         };
 
         Ext.Ajax.request({
@@ -2788,6 +2858,9 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
                     if (rdata && rdata.success) {
                         if (button) {
                             button.hide();
+                        }
+                        if (typeof callback == "function") {
+                            callback(rdata);
                         }
                         pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
                     }

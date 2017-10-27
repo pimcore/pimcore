@@ -138,7 +138,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_link {
+.pimcore_icon_link, .pimcore_icon_operator_requiredby {
     background: url(/pimcore/static6/img/flat-color-icons/link.svg)  center center no-repeat !important;
 }
 
@@ -287,7 +287,7 @@
 
 
 
-.pimcore_icon_help {
+.pimcore_icon_help, .pimcore_icon_operator_assetmetadatagetter {
     background: url(/pimcore/static6/img/flat-color-icons/info.svg) center center no-repeat !important;
 }
 
@@ -295,7 +295,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/businesswoman.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_usergroup{
+.pimcore_icon_usergroup, .pimcore_icon_save_and_share{
     background: url(/pimcore/static6/img/flat-color-icons/collaboration.svg) center center no-repeat !important;
 }
 
@@ -441,7 +441,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/multiple_devices.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_settings {
+.pimcore_icon_settings, .pimcore_icon_gridcolumnconfig {
     background: url(/pimcore/static6/img/flat-color-icons/settings.svg) center center no-repeat !important;
 }
 
@@ -1052,6 +1052,85 @@
 
 .pimcore_icon_hotspotmarker_template {
     background: url(/pimcore/static6/img/flat-color-icons/data_configuration.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_operator_concatenator {
+    background: url("/pimcore/static6/img/flat-color-icons/capacitor.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_json, .pimcore_icon_operator_php {
+    background: url("/pimcore/static6/img/flat-color-icons/biotech.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_text {
+    background: url("/pimcore/static6/img/flat-color-icons/text.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_boolean {
+    background: url("/pimcore/static6/img/flat-color-icons/electronics.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_object_field_getter {
+    background: url("/pimcore/static6/img/flat-color-icons/reuse.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_lfexpander {
+    background: url("/pimcore/static6/img/flat-color-icons/globe.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_booleanformatter {
+    background: url("/pimcore/static6/img/flat-color-icons/inspection.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_caseconverter, .pimcore_icon_operator_substring, .pimcore_icon_operator_trimmer, .pimcore_icon_operator_stringreplace, .pimcore_icon_operator_stringcontains {
+    background: url("/pimcore/static6/img/flat-color-icons/word.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_localeswitcher {
+    background: url("/pimcore/static6/img/flat-color-icons/assistant.svg") center center no-repeat !important;
+}
+
+
+.pimcore_icon_operator_anonymizer {
+    background: url("/pimcore/static6/img/flat-color-icons/disapprove.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_anygetter {
+    background: url("/pimcore/static6/img/flat-color-icons/electro_devices.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_isequal {
+    background: url("/pimcore/static6/img/flat-color-icons/multiple_smartphones.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_merge {
+    background: url("/pimcore/static6/img/flat-color-icons/multiple_inputs.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_phpcode {
+    background: url("/pimcore/static6/img/flat-color-icons/sim_card_chip.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_operator_charcounter, .pimcore_icon_operator_elementcounter, .pimcore_icon_operator_arithmetic {
+    background: url(/pimcore/static6/img/flat-color-icons/calculator.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_favourite {
+    background: url(/pimcore/static6/img/flat-color-icons/star.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_collapse_children {
+    background: url(/pimcore/static6/img/flat-color-icons/genealogy.svg) center center no-repeat !important;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: "FlipH";
+    -ms-filter: "FlipH";
+}
+
+.pimcore_icon_expand_children {
+    background: url(/pimcore/static6/img/flat-color-icons/genealogy.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_piwik {
