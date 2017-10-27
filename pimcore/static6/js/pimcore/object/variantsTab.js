@@ -17,8 +17,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     objecttype: "variant",
 
     fieldObject: {},
-    initialize: function(element) {
+    initialize: function (element) {
         this.element = element;
+        this.searchType = "variants";
     },
 
     getLayout: function () {
@@ -33,7 +34,12 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
             Ext.Ajax.request({
                 url: "/admin/object-helper/grid-get-column-config",
-                params: {name: this.selectedClass, gridtype: "grid"},
+                params: {
+                    name: this.selectedClass,
+                    gridtype: "grid",
+                    objectId: this.element.id,
+                    searchType: this.searchType
+                },
                 success: this.createGrid.bind(this, false)
             });
 
@@ -54,9 +60,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         return this.layout;
     },
 
-    createGrid: function(fromConfig, response) {
+    createGrid: function (fromConfig, response) {
         var fields = [];
-        if(response.responseText) {
+        if (response.responseText) {
             response = Ext.decode(response.responseText);
             fields = response.availableFields;
             this.gridLanguage = response.language;
@@ -66,7 +72,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         }
 
         this.fieldObject = {};
-        for(var i = 0; i < fields.length; i++) {
+        for (var i = 0; i < fields.length; i++) {
             this.fieldObject[fields[i].key] = fields[i];
         }
 
@@ -120,7 +126,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         Ext.MessageBox.confirm(t('remove_variant'), t('remove_variant_text'),
-                                                    this.doDeleteVariant.bind(this, data.id), this);
+                            this.doDeleteVariant.bind(this, data.id), this);
                     }.bind(this)
                 }
             ]
@@ -135,7 +141,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]
         });
 
-        this.toolbarFilterInfo =  new Ext.Button({
+        this.toolbarFilterInfo = new Ext.Button({
             iconCls: "pimcore_icon_filter_condition",
             hidden: true,
             text: '<b>' + t("filter_active") + '</b>',
@@ -145,7 +151,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             }.bind(this)
         });
 
-        this.clearFilterButton =  new Ext.Button({
+        this.clearFilterButton = new Ext.Button({
             iconCls: "pimcore_icon_clear_filters",
             hidden: true,
             text: t("clear_filters"),
@@ -165,6 +171,17 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         });
 
         var plugins = [this.cellEditing, 'gridfilters'];
+
+        var hideSaveColumnConfig = !fromConfig;
+
+        this.saveColumnConfigButton = new Ext.Button({
+            tooltip: t('save_column_configuration'),
+            iconCls: "pimcore_icon_publish",
+            hidden: hideSaveColumnConfig,
+            handler: function () {
+                pimcore.helpers.saveColumnConfig(this.element.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton);
+            }.bind(this)
+        });
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
@@ -190,18 +207,18 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     iconCls: "pimcore_icon_add"
                 },
                 '-', this.languageInfo, '-', this.toolbarFilterInfo, this.clearFilterButton, '->'
-                ,"-",this.sqlEditor
-                ,this.sqlButton,"-",{
+                , "-", this.sqlEditor
+                , this.sqlButton, "-", {
                     text: t("export_csv"),
                     iconCls: "pimcore_icon_export",
-                    handler: function(){
+                    handler: function () {
 
                         Ext.MessageBox.show({
-                            title:t('warning'),
+                            title: t('warning'),
                             msg: t('csv_object_export_warning'),
-                            buttons: Ext.Msg.OKCANCEL ,
-                            fn: function(btn){
-                                if (btn == 'ok'){
+                            buttons: Ext.Msg.OKCANCEL,
+                            fn: function (btn) {
+                                if (btn == 'ok') {
                                     this.exportPrepare();
                                 }
                             }.bind(this),
@@ -209,27 +226,35 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                         });
 
 
-
                     }.bind(this)
-                },"-",{
+                }, "-", {
                     text: t("grid_column_config"),
                     iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
                     handler: this.openColumnConfig.bind(this)
-                } 
+                },
+                this.saveColumnConfigButton
             ],
             listeners: {
-                rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
+                rowdblclick: function (grid, record, tr, rowIndex, e, eOpts) {
 
                 }.bind(this)
             }
         });
+
+        this.grid.on("columnmove", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
+        this.grid.on("columnresize", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
+
         this.grid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
 
         this.grid.on("afterrender", function (grid) {
             this.updateGridHeaderContextMenu(grid);
         }.bind(this));
 
-        this.grid.on("sortchange", function(grid, sortinfo) {
+        this.grid.on("sortchange", function (grid, sortinfo) {
             this.sortinfo = sortinfo;
         }.bind(this));
 
@@ -247,7 +272,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         this.layout.updateLayout();
     },
 
-    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
         //$(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
         //                                                .animate( { backgroundColor: '#fff' }, 400);
 
@@ -259,7 +284,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
             handler: function (data) {
                 Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-                                                this.editKey.bind(this, data.id), null, null, data.data.filename);
+                    this.editKey.bind(this, data.id), null, null, data.data.filename);
             }.bind(this, data)
         }));
 
@@ -272,12 +297,12 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             Ext.Ajax.request({
                 url: "/admin/variants/update-key",
                 params: {id: id, key: value},
-                success: function(response) {
+                success: function (response) {
                     this.store.reload();
                     var responseJson = Ext.decode(response.responseText);
-                    if(!responseJson.success) {
+                    if (!responseJson.success) {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_variant"), "error",
-                                                         t(responseJson.message));
+                            t(responseJson.message));
                     }
                 }.bind(this)
             });
@@ -289,7 +314,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'), this.doAdd.bind(this));
     },
 
-    doAdd: function(button, value) {
+    doAdd: function (button, value) {
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/object/add",
@@ -300,16 +325,16 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     objecttype: "variant",
                     key: pimcore.helpers.getValidFilename(value, "object")
                 },
-                success: function(response) {
+                success: function (response) {
                     var responseJson = Ext.decode(response.responseText);
-                    if(responseJson.success) {
+                    if (responseJson.success) {
                         this.store.reload();
                         pimcore.helpers.openObject(responseJson.id, responseJson.type);
 
                         pimcore.elementservice.refreshNodeAllTrees("object", this.element.id);
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error",
-                                                         t(responseJson.message));
+                            t(responseJson.message));
                     }
                 }.bind(this)
             });
@@ -317,8 +342,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     },
 
 
-    doDeleteVariant: function(id, answer) {
-        if(answer == "yes") {
+    doDeleteVariant: function (id, answer) {
+        if (answer == "yes") {
             if (pimcore.globalmanager.exists("object_" + id)) {
                 var tabPanel = Ext.getCmp("pimcore_panel_tabs");
                 tabPanel.remove("object_" + id);
@@ -335,9 +360,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                         var rdata = Ext.decode(response.responseText);
                         if (rdata && !rdata.success) {
                             pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error",
-                                                             t(rdata.message));
+                                t(rdata.message));
                         }
-                    } catch(e) {
+                    } catch (e) {
                         pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error");
                     }
                     this.store.reload();
