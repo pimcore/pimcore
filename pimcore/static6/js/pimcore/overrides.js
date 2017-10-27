@@ -890,10 +890,6 @@ Ext.define('pimcore.Ext.form.field.Date', {
         this.rawDateText = this.formatDate(value);
     },
 
-    createInitialDate: function(value) {
-        this.callParent();
-    },
-
     onSelect: function(m, d) {
         this.setValue(d);
         this.rawDate = d;
@@ -908,6 +904,6 @@ Ext.define('pimcore.Ext.form.field.Date', {
 
     onExpand: function() {
         var value = this.rawDate;
-        this.picker.setValue(Ext.isDate(value) ? value : this.createInitialDate());
+        this.picker.setValue(Ext.isDate(value) ? value : null);
     }
 });
