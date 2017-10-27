@@ -146,7 +146,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             return null;
         }
 
-        $ids = [];
+        $d = [];
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
@@ -157,7 +157,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 }
             }
 
-            return "," . implode(",", $ids) . ",";
+            return "," . implode(",", $d) . ",";
         } elseif (is_array($data) && count($data) === 0) {
             return "";
         } else {
