@@ -259,7 +259,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                                         for (var i = 0; i < l.childs.length; i++) {
                                             var childConfig = l.childs[i];
 
-                                            var children = this.getRecursiveLayout(childConfig, !editable, runtimeContext, false, true, dataProvider);
+                                            var children = this.getRecursiveLayout(childConfig, !editable, runtimeContext, false, false, dataProvider, true);
                                             if (children) {
                                                 panel.add(children);
                                             }
