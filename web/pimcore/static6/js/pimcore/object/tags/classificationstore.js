@@ -228,9 +228,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         this.component.updateLayout();
         return this.component;
-
-
-        return this.component;
     },
 
 
