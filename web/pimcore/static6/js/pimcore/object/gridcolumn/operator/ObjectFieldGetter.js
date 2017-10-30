@@ -119,7 +119,7 @@ pimcore.object.gridcolumn.operator.objectfieldgetter = Class.create(pimcore.obje
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_cell_formatter_settings'),
+            title: t('operator_objectfieldgetter_settings'),
             layout: "fit",
             items: [this.configPanel]
         });

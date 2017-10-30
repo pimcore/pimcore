@@ -1574,6 +1574,7 @@
   "date_format": "Date Format",
   "click_for_help": "Click for help",
   "operator_objectfieldgetter": "Operator ObjectFieldGetter",
+  "operator_objectfieldgetter_settings": "Operator ObjectFieldGetter Settings",
   "operator_lfexpander": "Operator LF Expander",
   "operator_caseconverter": "Operator CaseConverter",
   "operator_localeswitcher": "Operator LocaleSwitcher",
