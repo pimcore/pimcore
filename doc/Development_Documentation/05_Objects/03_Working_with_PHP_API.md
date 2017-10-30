@@ -248,7 +248,7 @@ $list->load();
 
 ```
 
-Sometimes, by default all unpublished objects are returned event if `setUnpublished` is set to `false`. It is the case when working on the admin side (plug-in for instance).
+Sometimes, by default all unpublished objects are returned even if `setUnpublished` is set to `false`. It is the case when working on the admin side (plug-in for instance).
 You can switch globally the behaviour (it will bypass `setUnpublished` setting), using the following static method:
 
 ```php
