@@ -14,15 +14,33 @@ addons:
   hosts:
     - pimcore-test.dev
 
+env:
+  global:
+    - TASK_TESTS=1
+    - TASK_DOCS=0
+
+matrix:
+  include:
+    - os: linux
+      sudo: false
+      php: 7.1
+      services: ~
+      addons: ~
+      env:
+        - TASK_TESTS=0
+        - TASK_DOCS=1
+
 install:
-  - chmod +x .travis/setup-sudo.sh && .travis/setup-sudo.sh
-  - composer install
+  - if [ $TASK_TESTS == 1 ]; then chmod +x .travis/setup-sudo.sh && .travis/setup-sudo.sh; fi
+  - if [ $TASK_TESTS == 1 ]; then composer install; fi
+  - if [ $TASK_DOCS == 1 ]; then .travis/setup-docs.sh; fi
 
 script:
-  - (cd tests && chmod +x alltests.sh && ./alltests.sh)
+  - if [ $TASK_TESTS == 1 ]; then (cd tests && chmod +x alltests.sh && ./alltests.sh); fi
+  - if [ $TASK_DOCS == 1 ]; then .travis/run-docs.sh; fi
 
 after_script:
-  - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log
-  - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/php.log
-  - cat $TRAVIS_BUILD_DIR/apache-error.log
-  - cat $TRAVIS_BUILD_DIR/apache-access.log
+  - if [ $TASK_TESTS == 1 ]; then cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log; fi
+  - if [ $TASK_TESTS == 1 ]; then cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/php.log; fi
+  - if [ $TASK_TESTS == 1 ]; then cat $TRAVIS_BUILD_DIR/apache-error.log; fi
+  - if [ $TASK_TESTS == 1 ]; then cat $TRAVIS_BUILD_DIR/apache-access.log; fi
