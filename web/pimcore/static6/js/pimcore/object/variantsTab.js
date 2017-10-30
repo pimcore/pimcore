@@ -19,7 +19,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     fieldObject: {},
     initialize: function (object) {
         this.object = object;
-        this.searchType = "variants";
+        this.searchType = "folder";
     },
 
     getLayout: function () {
