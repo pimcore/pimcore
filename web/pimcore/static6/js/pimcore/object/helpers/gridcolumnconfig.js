@@ -125,8 +125,8 @@ pimcore.object.helpers.gridcolumnconfig = {
             var config = list[i];
             var text = config["name"];
             if (config.id == this.settings.gridConfigId) {
-                text = this.settings.gridConfigName,
-                    text = "<b>" + text + "</b>";
+                text = this.settings.gridConfigName;
+                text = "<b>" + text + "</b>";
                 disabled = true;
             }
             var menuConfig = {
