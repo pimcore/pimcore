@@ -8,6 +8,10 @@ with these objects via a comfortable PHP API and take full advantage of a IDE (e
 The following code snippet indicates how to access, create and modify an object programmatically:
 
 ```php 
+<?php
+
+use \Pimcore\Model\DataObject;
+
 // Create a new object
 $newObject = new DataObject\Myclassname(); 
 $newObject->setKey(\Pimcore\File::getValidFilename('New Name'));
@@ -41,9 +45,7 @@ $myObject->save();
  
 //deleting objects
 $city->delete();
-
 ```
-
 
 > When using your generated classes in the code, the classname always starts with a capital letter.  
 > Example-Classname: `product`  
@@ -68,6 +70,10 @@ An object listing class is created automatically for each class defined in Pimco
 are retrieved through a listing as in the following example:
 
 ```php
+<?php
+
+use \Pimcore\Model\DataObject;
+
 $entries = new DataObject\Myclassname\Listing();
 $entries->setOffset($offset);
 $entries->setLimit($perPage);
@@ -127,6 +133,10 @@ The syntax is similar to that from the Zend Framework described
 [here](http://framework.zend.com/manual/en/zend.db.adapter.html#zend.db.adapter.select.fetchall).
 
 ```php
+<?php
+
+use \Pimcore\Model\DataObject;
+
 $entries = new DataObject\Myclassname\Listing();
 $entries->setCondition("name LIKE ?", "%bernie%");
 $entries->load();
@@ -150,7 +160,9 @@ $entries->load();
 ### Conditions on localized fields
 Following code will only search the EN value of the field `name`.
 ```php
-$entries = new DataObject\Myclassname\Listing();
+<?php
+
+$entries = new \Pimcore\Model\DataObject\Myclassname\Listing();
 $entries->setLocale("en"); // string or instance of Zend_Locale
 $entries->setCondition("name LIKE :name", ["name" => "%term%"]); // name is a field inside a localized field container
 ```
@@ -161,7 +173,9 @@ can disable localized fields on your listing (the objects in the list will still
 Conditions and order by statements on localized fields are then not possible anymore. 
 
 ```php
-$entries = new DataObject\Myclassname\Listing();
+<?php
+
+$entries = new \Pimcore\Model\DataObject\Myclassname\Listing();
 $entries->setIgnoreLocalizedFields(true);
 $entries->load();
 ```
@@ -182,7 +196,11 @@ $result = DataObject\ClassName::getByMyfieldname($value, ['limit' => 1,'unpublis
 ```
 
 ##### Examples
+
 ```php
+<?php
+
+use \Pimcore\Model\DataObject;
 
 // get a list of cities in Austria
 $list = DataObject\City::getByCountry("AT");
@@ -215,7 +233,12 @@ $list = DataObject\News::getByLocalizedfields($fieldName, $value, $locale, $limi
 
 
 ##### Examples
+
 ```php
+<?php
+
+use \Pimcore\Model\DataObject;
+
 // get a list of cities in Austria by localized field using default locale
 $list = DataObject\City::getByLocalizedfields("country", "Österreich");
  
@@ -238,25 +261,28 @@ Normally object lists only give published objects. This can be changed by settin
 `true`.
 
 ```php
-$list = DataObject\News::getList(["unpublished" => true]);
+<?php
+
+$list = \Pimcore\Model\DataObject\News::getList(["unpublished" => true]);
 
 //or 
 
-$list = new DataObject\News\Listing();
+$list = new \Pimcore\Model\DataObject\News\Listing();
 $list->setUnpublished(true);
 $list->load();
-
 ```
 
 Sometimes, by default all unpublished objects are returned even if `setUnpublished` is set to `false`. It is the case when working on the admin side (plug-in for instance).
 You can switch globally the behaviour (it will bypass `setUnpublished` setting), using the following static method:
 
 ```php
+<?php
+
 // revert to the default API behaviour, and setUnpublished can be used as usually
-\Pimcore\Model\Object\AbstractObject::setHideUnpublished(true);
+\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(true);
 
 // force to return all objects including unpublished ones, even if setUnpublished is set to false
-\Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
+\Pimcore\Model\DataObject\AbstractObject::setHideUnpublished(false);
 ```
 
 ### Filter Objects by attributes from Field Collections
@@ -271,8 +297,9 @@ $list->setCondition("`MyCollection~collection`.myinput = 'hugo' AND `MyCollectio
 ```
 
 ```php
+<?php
 
-$list = DataObject\Collectiontest::getList([
+$list = \Pimcore\Model\DataObject\Collectiontest::getList([
    "fieldCollections" => [
       ["type" => "MyCollection", "fieldname" => "collection"],
       ["type" => "MyCollection"]
