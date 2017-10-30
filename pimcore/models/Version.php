@@ -22,6 +22,7 @@ use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
 
@@ -264,13 +265,15 @@ class Version extends AbstractModel
             $data = Serialize::unserialize($data);
         }
 
-        /** @var $class ClassDefinition */
-        $class = $data->getClass();
-        $fds = $class->getFieldDefinitions();
-        foreach ($fds as $fd) {
-            if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
-                $data->addLazyLoadedField($fd->getName());
-                $data->addO__loadedLazyField($fd->getName());
+        if ($data instanceof Concrete) {
+            /** @var $class ClassDefinition */
+            $class = $data->getClass();
+            $fds = $class->getFieldDefinitions();
+            foreach ($fds as $fd) {
+                if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
+                    $data->addLazyLoadedField($fd->getName());
+                    $data->addO__loadedLazyField($fd->getName());
+                }
             }
         }
 
