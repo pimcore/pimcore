@@ -44,6 +44,13 @@ matrix:
           - PIMCORE_TEST_SUITE=cache
           - PIMCORE_TEST_GROUP=cache.core.redis
           - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
+    - os: linux
+      php: 7.1
+      services: ~
+      addons: ~
+      env:
+        - TASK_TESTS=0
+        - TASK_DOCS=1
 
 cache:
   directories:
@@ -51,6 +58,8 @@ cache:
 
 env:
   global:
+    - TASK_TESTS=1
+    - TASK_DOCS=0
     - PIMCORE_ENVIRONMENT=test
     - PIMCORE_TEST=1
     - PIMCORE_TEST_URL=http://pimcore-test.dev
@@ -62,16 +71,13 @@ before_install:
   - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
 
 install:
-  # add config templates
-  - mkdir -p var/config
-  - cp .travis/system.template.php var/config/system.php
-  - cp .travis/extensions.template.php var/config/extensions.php
-  - cp app/config/parameters.example.yml app/config/parameters.yml
-  - composer install
+  - if [ $TASK_TESTS == 1 ]; then .travis/setup-tests.sh; fi
+  - if [ $TASK_DOCS == 1 ]; then .travis/setup-docs.sh; fi
 
 before_script:
-  - .travis/setup-php.sh
-  - .travis/setup-functional-tests.sh
+  - if [ $TASK_TESTS == 1 ]; then .travis/setup-php.sh; fi
+  - if [ $TASK_TESTS == 1 ]; then .travis/setup-functional-tests.sh; fi
 
 script:
-  - .travis/run-tests.sh
+  - if [ $TASK_TESTS == 1 ]; then .travis/run-tests.sh; fi
+  - if [ $TASK_DOCS == 1 ]; then .travis/run-docs.sh; fi
