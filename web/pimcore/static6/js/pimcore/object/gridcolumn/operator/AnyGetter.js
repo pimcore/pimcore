@@ -163,7 +163,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
             this.node.data.configAttributes.attribute = this.attributeField.getValue();
             this.node.data.configAttributes.param1 = this.param1Field.getValue();
             this.node.data.configAttributes.isArrayType = this.isArrayField.getValue();
-            this.node.data.configAttributes.forwardAttribute = this.forwardAttributeField.getValue()
+            this.node.data.configAttributes.forwardAttribute = this.forwardAttributeField.getValue();
             this.node.data.configAttributes.forwardParam1 = this.forwardParam1Field.getValue();
             this.node.data.configAttributes.returnLastResult = this.returnLastResultField.getValue();
 

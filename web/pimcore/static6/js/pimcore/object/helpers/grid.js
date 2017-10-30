@@ -92,7 +92,7 @@ pimcore.object.helpers.grid = Class.create({
                                 return v.value;
                             }
                             return v;
-                        }.bind(this, key)
+                        }.bind(this, key);
                         var readerFieldConfigOptions = {name: key + "%options", allowBlank: true, persist: false};
                     }
 

@@ -135,7 +135,7 @@ pimcore.object.helpers.gridcolumnconfig = {
                 iconCls: 'pimcore_icon_gridcolumnconfig',
                 gridConfig: config,
                 handler: this.switchToGridConfig.bind(this)
-            }
+            };
             menu.add(menuConfig);
         }
     },

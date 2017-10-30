@@ -479,7 +479,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                     if (this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
                                         dropHandlers.cancelDrop();
                                     } else {
-                                        var copy = Ext.apply({}, record.data)
+                                        var copy = Ext.apply({}, record.data);
                                         delete copy.id;
                                         copy = record.createNode(copy);
 
