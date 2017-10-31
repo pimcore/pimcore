@@ -529,69 +529,6 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * resets all from headers before setting the new one.
-     *
-     * @param string $email
-     * @param null $name
-     *
-     * @return \Pimcore\Mail
-     */
-    public function setFrom($email, $name = null)
-    {
-        // mitigate "pwnscriptum" attack
-        // see https://framework.zend.com/security/advisory/ZF2016-04 for ZF2+ fix
-        if (preg_match('/\\\"/', $email)) {
-            throw new \RuntimeException('Potential code injection in From header');
-        }
-
-        $this->getHeaders()->removeAll('from');
-
-        return parent::setFrom($email, $name);
-    }
-
-    /**
-     * resets all to headers before setting the new one.
-     *
-     * @param $email
-     * @param string $name
-     */
-    public function setTo($email, $name = '')
-    {
-        $this->getHeaders()->removeAll('to');
-        if ($email) {
-            parent::setTo($email, $name);
-        }
-    }
-
-    /**
-     * resets all to headers before setting the new one.
-     *
-     * @param $email
-     * @param string $name
-     */
-    public function setCc($email, $name = '')
-    {
-        $this->getHeaders()->removeAll('cc');
-        if ($email) {
-            parent::setCc($email, $name);
-        }
-    }
-
-    /**
-     * resets all to headers before setting the new one.
-     *
-     * @param $email
-     * @param string $name
-     */
-    public function setBcc($email, $name = '')
-    {
-        $this->getHeaders()->removeAll('bcc');
-        if ($email) {
-            parent::setBcc($email, $name);
-        }
-    }
-
-    /**
      * Sends this email using the given transport or with the settings from "Settings" -> "System" -> "Email Settings"
      *
      * IMPORTANT: If the debug mode is enabled in "Settings" -> "System" -> "Debug" all emails will be sent to the
