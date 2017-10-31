@@ -10,7 +10,7 @@ For experienced users there is an option to assemble custom columns using specia
 
 ## Savind & Sharing
 
-You can define define a favourite config for each object folder and share it with your friends.
+You can define a favourite config for each object folder and share it with your friends.
 
 ![Configurator Button Expanded](../img/gridconfig/configurator_button_expanded.png)
 
