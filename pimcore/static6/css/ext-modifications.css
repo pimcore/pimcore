@@ -259,3 +259,7 @@ body > .x-mask {
     background-image: none;
 }
 
+/* Bugfix #2178 for Safari 11 that the legend disappear on a fieldset. */
+.x-fieldset {
+    overflow: visible;
+}
