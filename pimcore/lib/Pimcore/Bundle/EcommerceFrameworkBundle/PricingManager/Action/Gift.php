@@ -120,9 +120,9 @@ class Gift implements IGift
     public function __wakeup()
     {
         if ($this->productPath != '') {
-            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath($this->productPath);
+            $this->product = AbstractProduct::getByPath($this->productPath);
         } elseif (is_string($this->product)) {
-            $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath($this->product);
+            $this->product = AbstractProduct::getByPath($this->product);
         }
     }
 }
