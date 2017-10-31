@@ -76,6 +76,10 @@ pimcore.document.seopanel = Class.create({
             dataIndex: 'text',
             width: 300
         },{
+            header: t("pretty_url"),
+            dataIndex: 'prettyUrl',
+            width: 180
+        },{
             header: t("title"),
             dataIndex: 'title',
             width: 230
@@ -206,6 +210,12 @@ pimcore.document.seopanel = Class.create({
                     }
                 }
             }, {
+                xtype: "textfield",
+                fieldLabel: t("pretty_url"),
+                name: "prettyUrl",
+                value: record.data.prettyUrl,
+                width: 450
+            }, {
                 xtype: "textarea",
                 fieldLabel: t("description") + " (" + record.data.description.length + ")",
                 name: "description",
@@ -217,7 +227,7 @@ pimcore.document.seopanel = Class.create({
                         el.setFieldLabel(t("description") + " (" + el.getValue().length + "):");
                     }
                 }
-            },{
+            }, {
                 xtype: "hidden",
                 name: "id",
                 value: record.data.id
@@ -227,7 +237,7 @@ pimcore.document.seopanel = Class.create({
         this.editWindow = new Ext.Window({
             modal: true,
             width: 500,
-            height: 250,
+            height: 290,
             closable: true,
             items: [this.formPanel],
             buttons: [{
