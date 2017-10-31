@@ -25,7 +25,7 @@ Please note that the portfolio of available operators (and how they work in deta
 * [LocaleSwitcher](./Operators/15_LocaleSwitcher.md)
 * [Merge](./Operators/16_Merge.md)
 * [PHP Serialize/Unserialize](./Operators/17_PHP.md)
-* [PHPCode](./Operators/18_PHP.md)
+* [PHPCode](./Operators/18_PHPCode.md)
 * [RequiredBy](./Operators/19_RequiredBy.md)
 * [StringContains](./Operators/20_StringContains.md)
 * [StringReplace](./Operators/21_StringReplace.md)
