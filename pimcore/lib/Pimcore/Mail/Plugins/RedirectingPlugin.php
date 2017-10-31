@@ -45,7 +45,6 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
         $message = $evt->getMessage();
 
         if ($message instanceof Mail) {
-
             // additional checks if message is Pimcore\Mail
             if ($message->doRedirectMailsToDebugMailAddresses()) {
                 if (empty($this->getRecipient())) {
@@ -56,11 +55,17 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
                 parent::beforeSendPerformed($evt);
             }
         } else {
-
             // default symfony behavior - only redirect when recipients are set and pimcore debug mode is active
             if (\Pimcore::inDebugMode() && $this->getRecipient()) {
                 parent::beforeSendPerformed($evt);
             }
+        }
+
+        $headers = $message->getHeaders();
+        if (\Pimcore::inDebugMode()) {
+            $headers->addMailboxHeader('X-Pimcore-Debug-To', $message->getTo());
+            $headers->addMailboxHeader('X-Pimcore-Debug-Cc', $message->getCc());
+            $headers->addMailboxHeader('X-Pimcore-Debug-Bcc', $message->getBcc());
         }
     }
 

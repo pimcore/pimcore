@@ -652,13 +652,7 @@ class Mail extends \Swift_Message
             $addresses = $this->$getterName();
 
             if ($addresses) {
-                foreach (array_keys($addresses) as $address) {
-
-                    //remove address if blacklisted
-                    if (Model\Tool\Email\Blacklist::getByAddress($address)) {
-                        unset($addresses[$address]);
-                    }
-                }
+                $addresses = $this->filterLogAddresses($addresses);
             }
 
             $this->$setterName($addresses);
@@ -675,6 +669,10 @@ class Mail extends \Swift_Message
         $result = $mailer->send($this);
 
         if ($this->loggingIsEnabled()) {
+            if (\Pimcore::inDebugMode()) {
+                $recipients = $this->getDebugMailRecipients($recipients);
+            }
+
             try {
                 $this->lastLogEntry = MailHelper::logEmail($this, $recipients);
             } catch (\Exception $e) {
@@ -683,6 +681,42 @@ class Mail extends \Swift_Message
         }
 
         return $this;
+    }
+
+    private function filterLogAddresses(array $addresses): array
+    {
+        foreach (array_keys($addresses) as $address) {
+            // remove address if blacklisted
+            if (Model\Tool\Email\Blacklist::getByAddress($address)) {
+                unset($addresses[$address]);
+            }
+        }
+
+        return $addresses;
+    }
+
+    private function getDebugMailRecipients(array $recipients): array
+    {
+        $headers = $this->getHeaders();
+
+        foreach (['To', 'Cc', 'Bcc'] as $key) {
+            $recipients[$key] = null;
+
+            $headerName = 'X-Pimcore-Debug-' . $key;
+            if ($headers->has($headerName)) {
+                /** @var \Swift_Mime_Headers_MailboxHeader $header */
+                $header = $headers->get($headerName);
+                $recipients[$key] = $header->getNameAddresses();
+
+                $headers->remove($headerName);
+            }
+
+            if ($recipients[$key]) {
+                $recipients[$key] = $this->filterLogAddresses($recipients[$key]);
+            }
+        }
+
+        return $recipients;
     }
 
     /**
