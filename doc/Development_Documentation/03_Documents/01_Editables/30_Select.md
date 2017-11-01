@@ -27,6 +27,9 @@ The select editable generates select-box component in Editmode.
 The code below shows a select box in editmode,
 in the frontend preview you will see simply the value of the chosen option.
 
+<div class="code-section">
+
+
 ```php
 <?php
 if($this->editmode):
@@ -46,6 +49,23 @@ else:
 </p>
 <?php endif; ?>
 ```
+
+```twig
+{% if editmode %}
+    {{ pimcore_select("valid_for", {
+            "store": [
+                ["one-month", "One month"],
+                ["three-months", "Three months"],
+                ["unlimited", "Unlimited"]
+            ]
+        }) }}
+{% else %}
+    <p>
+        {{ "Something is valid for" | trans }}:{{ pimcore_select("valid_for").getData() | trans  }}
+    </p>
+{% endif %}
+```
+</div>
 
 Editmode:
 ![Select editable in editmode](../../img/editables_select_editmode_preview.png)
