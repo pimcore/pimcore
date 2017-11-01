@@ -35,7 +35,6 @@ You have to create them the same way as other documents (pages).
 ```
 
 ```twig
-{{ pimcore_snippet("mySnippet", ["width": 250, "height": 100]) }}
+{{ pimcore_snippet("mySnippet", {"width": 250, "height": 100}) }}
 ```
 </div>
-
