@@ -54,7 +54,8 @@ class SessionEnvironment extends Environment implements IEnvironment
             return;
         }
 
-        if ('cli' === php_sapi_name()) {
+        //if the session was not explicitly started in cli environment, do nothing
+        if ('cli' === php_sapi_name() && !$this->session->isStarted()) {
             return;
         }
 
@@ -77,7 +78,8 @@ class SessionEnvironment extends Environment implements IEnvironment
 
     public function save()
     {
-        if ('cli' === php_sapi_name()) {
+        //if the session was not explicitly started in cli environment, do nothing
+        if ('cli' === php_sapi_name() && !$this->session->isStarted()) {
             return;
         }
 
@@ -96,7 +98,8 @@ class SessionEnvironment extends Environment implements IEnvironment
     {
         parent::clearEnvironment();
 
-        if ('cli' === php_sapi_name()) {
+        //if the session was not explicitly started in cli environment, do nothing
+        if ('cli' === php_sapi_name() && !$this->session->isStarted()) {
             return;
         }
 
