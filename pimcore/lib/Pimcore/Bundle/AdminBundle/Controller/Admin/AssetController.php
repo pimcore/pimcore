@@ -354,7 +354,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         while (true) {
             if (Asset\Service::pathExists($targetPath . '/' . $filename)) {
-                $filename = str_replace('.' . File::getFileExtension($originalFilename), '_' . $count . '.' . File::getFileExtension($originalFilename), $originalFilename);
+                $filename = str_ireplace('.' . File::getFileExtension($originalFilename), '_' . $count . '.' . File::getFileExtension($originalFilename), $originalFilename);
                 $count++;
             } else {
                 return $filename;
