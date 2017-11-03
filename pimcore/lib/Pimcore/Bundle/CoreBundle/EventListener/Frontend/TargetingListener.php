@@ -14,16 +14,23 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Analytics\Piwik\Event\TrackingDataEvent;
+use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Event\Analytics\PiwikEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class TargetingListener
+class TargetingListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
     use ResponseInjectionTrait;
@@ -49,13 +56,29 @@ class TargetingListener
     protected $documentResolver;
 
     /**
-     * Targeting constructor.
-     *
-     * @param DocumentResolver $documentResolver
+     * @var TargetGroupResolver
      */
-    public function __construct(DocumentResolver $documentResolver)
+    private $targetGroupResolver;
+
+    public function __construct(
+        DocumentResolver $documentResolver,
+        TargetGroupResolver $targetGroupResolver
+    )
     {
-        $this->documentResolver = $documentResolver;
+        $this->documentResolver    = $documentResolver;
+        $this->targetGroupResolver = $targetGroupResolver;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            PiwikEvents::CODE_TRACKING_DATA => 'onPiwikTrackingData',
+            KernelEvents::REQUEST           => 'onKernelRequest',
+            KernelEvents::RESPONSE          => ['onKernelResponse', -106]
+        ];
     }
 
     /**
@@ -101,6 +124,33 @@ class TargetingListener
     public function isEnabled()
     {
         return $this->enabled;
+    }
+
+    public function onPiwikTrackingData(TrackingDataEvent $event)
+    {
+        $event->getBlock(Tracker::BLOCK_BEFORE_SCRIPT_TAG)->append(
+            '<script type="text/javascript" src="/pimcore/static6/js/frontend/targeting_id.js"></script>'
+        );
+
+        $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
+            '_paq.push([ function() { pimcore.Targeting.setVisitorId(this.getVisitorId()); } ]);'
+        );
+    }
+
+    public function onKernelRequest(GetResponseEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
+        // TODO store visitorInfo somewhere
+        $visitorInfo = $this->targetGroupResolver->resolve($request);
     }
 
     /**
