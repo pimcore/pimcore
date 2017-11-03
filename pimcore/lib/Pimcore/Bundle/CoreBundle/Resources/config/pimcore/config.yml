@@ -161,6 +161,14 @@ pimcore:
             sql: pimcore.custom_report.adapter.factory.sql
             analytics: pimcore.custom_report.adapter.factory.analytics
 
+    targeting:
+        data_providers:
+            geoip: Pimcore\Targeting\DataProvider\GeoIp
+            device: Pimcore\Targeting\DataProvider\Device
+        conditions:
+            browser: Pimcore\Targeting\Condition\Browser
+            country: Pimcore\Targeting\Condition\Country
+
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:
         profiler:

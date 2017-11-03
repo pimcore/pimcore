@@ -15,24 +15,27 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\DataProvider;
+namespace Pimcore\Targeting\Condition;
 
 use Pimcore\Targeting\Model\VisitorInfo;
 
-interface DataProviderInterface
+interface ConditionInterface
 {
     /**
-     * The provider key used to identify a provider. This key will
-     * be used from conditions to specify which providers to use.
+     * Determines if the condition is able to match. E.g. if a country condition
+     * does not define a value (= all countries), it does not need to query the
+     * data provider for the country name as it would match everything.
      *
-     * @return string
+     * @return bool
      */
-    public function getKey(): string;
+    public function canMatch(): bool;
 
     /**
-     * Loads data into the visitor info
+     * Tests condition against visitor info
      *
      * @param VisitorInfo $visitorInfo
+     *
+     * @return bool
      */
-    public function load(VisitorInfo $visitorInfo);
+    public function match(VisitorInfo $visitorInfo): bool;
 }

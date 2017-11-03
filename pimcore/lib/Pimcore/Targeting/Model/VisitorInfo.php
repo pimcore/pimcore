@@ -17,14 +17,42 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Model;
 
-class VisitorInfo implements \IteratorAggregate, \Countable, \ArrayAccess
+use Symfony\Component\HttpFoundation\Request;
+
+class VisitorInfo implements \IteratorAggregate
 {
+    /**
+     * @var Request
+     */
+    private $request;
+
     /**
      * @var array
      */
     private $data = [];
 
-    public function __construct(array $data = [])
+    public function __construct(Request $request, array $data = [])
+    {
+        $this->request = $request;
+        $this->data    = $data;
+    }
+
+    public static function fromRequest(Request $request): self
+    {
+        return new static($request);
+    }
+
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
+    public function setData(array $data)
     {
         $this->data = $data;
     }
@@ -36,61 +64,16 @@ class VisitorInfo implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function has($key): bool
     {
-        return $this->offsetExists($key);
+        return isset($this->data[$key]);
     }
 
     public function get($key, $default = null)
     {
-        return $this->offsetGet($key) ?? $default;
+        return $this->data[$key] ?? $default;
     }
 
     public function set($key, $value)
     {
-        $this->offsetSet($key, $value);
-    }
-
-    public function __get($name)
-    {
-        return $this->offsetGet($name);
-    }
-
-    public function __set($name, $value)
-    {
-        $this->offsetSet($name, $value);
-    }
-
-    public function __isset($name): bool
-    {
-        return $this->offsetExists($name);
-    }
-
-    public function __unset($name)
-    {
-        $this->offsetUnset($name);
-    }
-
-    public function offsetExists($offset): bool
-    {
-        return isset($this->data[$offset]);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->data[$offset] ?? null;
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $this->data[$offset] = $value;
-    }
-
-    public function offsetUnset($offset)
-    {
-        unset($this->data[$offset]);
-    }
-
-    public function count()
-    {
-        return count($this->data);
+        $this->data[$key] = $value;
     }
 }

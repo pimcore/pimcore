@@ -17,15 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\DataProvider;
 
-use GeoIp2\Database\Reader;
 use GeoIp2\ProviderInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Ip;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class GeoIp implements DataProviderInterface
 {
+    const PROVIDER_KEY = 'geoip';
+
     /**
      * @var ProviderInterface
      */
@@ -55,22 +55,28 @@ class GeoIp implements DataProviderInterface
      */
     public function getKey(): string
     {
-        return 'geoip';
+        return self::PROVIDER_KEY;
     }
 
     /**
      * @inheritDoc
      */
-    public function load(Request $request, VisitorInfo $visitorInfo)
+    public function load(VisitorInfo $visitorInfo)
     {
-        $ip = $request->getClientIp();
-        if (!$this->isPublicIp($ip)) {
+        if ($visitorInfo->has($this->getKey())) {
             return;
+        }
+
+        $result = null;
+
+        $ip = $visitorInfo->getRequest()->getClientIp();
+        if ($this->isPublicIp($ip)) {
+            $result = $this->geoIpProvider->city($ip);
         }
 
         $visitorInfo->set(
             $this->getKey(),
-            $this->geoIpProvider->city($ip)
+            $result
         );
     }
 

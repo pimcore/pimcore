@@ -15,24 +15,15 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\DataProvider;
+namespace Pimcore\Targeting\Condition;
 
-use Pimcore\Targeting\Model\VisitorInfo;
-
-interface DataProviderInterface
+interface ProviderDependentConditionInterface extends ConditionInterface
 {
     /**
-     * The provider key used to identify a provider. This key will
-     * be used from conditions to specify which providers to use.
+     * Returns keys of data provider which this condition
+     * depends on.
      *
-     * @return string
+     * @return array
      */
-    public function getKey(): string;
-
-    /**
-     * Loads data into the visitor info
-     *
-     * @param VisitorInfo $visitorInfo
-     */
-    public function load(VisitorInfo $visitorInfo);
+    public function getDataProviderKeys(): array;
 }

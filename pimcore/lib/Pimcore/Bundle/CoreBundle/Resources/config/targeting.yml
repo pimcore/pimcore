@@ -1,0 +1,18 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    GeoIp2\ProviderInterface: '@GeoIp2\Database\Reader'
+    GeoIp2\Database\Reader:
+        arguments:
+            $filename: '%pimcore.geoip.db_file%'
+
+    Pimcore\Targeting\DataProvider\GeoIp: ~
+    Pimcore\Targeting\DataProvider\Device: ~
+
+    pimcore.targeting.data_provider_locator:
+        public: true
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']

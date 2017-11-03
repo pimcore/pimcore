@@ -22,6 +22,7 @@ use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Targeting\DataProvider\DataProviderInterface;
 use Pimcore\Tool\ArrayUtils;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
@@ -67,6 +68,9 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
 
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
 
+        // geoip db file
+        $container->setParameter('pimcore.geoip.db_file', PIMCORE_CONFIGURATION_DIRECTORY . '/GeoLite2-City.mmdb');
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
@@ -93,6 +97,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $loader->load('profiler.yml');
         $loader->load('migrations.yml');
         $loader->load('analytics.yml');
+        $loader->load('targeting.yml');
         $loader->load('aliases.yml');
 
         $this->configureImplementationLoaders($container, $config);
@@ -101,6 +106,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureRouting($container, $config['routing']);
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
+        $this->configureTargeting($container, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories', 'Newsletter Address Source Adapter Factory');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories', 'Custom Report Adapter Factory');
@@ -294,6 +300,17 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
             $definition = $container->getDefinition(TranslationDebugListener::class);
             $definition->setArgument('$parameterName', $parameter);
         }
+    }
+
+    private function configureTargeting(ContainerBuilder $container, array $config)
+    {
+        $dataProviders = [];
+        foreach ($config['data_providers'] as $key => $serviceId) {
+            $dataProviders[$key] = new Reference($serviceId);
+        }
+
+        $locator = $container->getDefinition('pimcore.targeting.data_provider_locator');
+        $locator->setArgument(0, $dataProviders);
     }
 
     /**
