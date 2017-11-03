@@ -22,7 +22,7 @@ use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
-use Pimcore\Targeting\DataProvider\DataProviderInterface;
+use Pimcore\Targeting\DataProviderLocator;
 use Pimcore\Tool\ArrayUtils;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
@@ -34,6 +34,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class PimcoreCoreExtension extends Extension implements PrependExtensionInterface
 {
@@ -312,8 +313,13 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
             $dataProviders[$key] = new Reference($serviceId);
         }
 
-        $locator = $container->getDefinition('pimcore.targeting.data_provider_locator');
-        $locator->setArgument(0, $dataProviders);
+        $providerLocator = new Definition(ServiceLocator::class, [$dataProviders]);
+        $providerLocator
+            ->setPublic(false)
+            ->addTag('container.service_locator');
+
+        $locator = $container->getDefinition(DataProviderLocator::class);
+        $locator->setArgument('$locator', $providerLocator);
     }
 
     /**

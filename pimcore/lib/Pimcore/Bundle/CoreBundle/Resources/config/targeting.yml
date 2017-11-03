@@ -12,10 +12,8 @@ services:
     Pimcore\Targeting\DataProvider\GeoIp: ~
     Pimcore\Targeting\DataProvider\Device: ~
 
-    pimcore.targeting.data_provider_locator:
-        public: true
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        tags: ['container.service_locator']
+    Pimcore\Targeting\DataProviderLocatorInterface: '@Pimcore\Targeting\DataProviderLocator'
+    Pimcore\Targeting\DataProviderLocator: ~
 
     Pimcore\Targeting\ConditionFactoryInterface: '@Pimcore\Targeting\ConditionFactory'
     Pimcore\Targeting\ConditionFactory:
