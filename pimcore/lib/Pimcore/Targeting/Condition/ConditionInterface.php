@@ -22,6 +22,15 @@ use Pimcore\Targeting\Model\VisitorInfo;
 interface ConditionInterface
 {
     /**
+     * Create an instance from a config array
+     *
+     * @param array $config
+     *
+     * @return ConditionInterface
+     */
+    public static function fromConfig(array $config);
+
+    /**
      * Determines if the condition is able to match. E.g. if a country condition
      * does not define a value (= all countries), it does not need to query the
      * data provider for the country name as it would match everything.

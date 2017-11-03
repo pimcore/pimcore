@@ -21,16 +21,16 @@ use DeviceDetector\DeviceDetector;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Browser implements DataProviderDependentConditionInterface
+class HardwarePlatform implements DataProviderDependentConditionInterface
 {
     /**
      * @var null|string
      */
-    private $browser;
+    private $platform;
 
-    public function __construct(string $browser = null)
+    public function __construct(string $platform = null)
     {
-        $this->browser = $browser;
+        $this->platform = $platform;
     }
 
     /**
@@ -38,7 +38,7 @@ class Browser implements DataProviderDependentConditionInterface
      */
     public static function fromConfig(array $config)
     {
-        return new static($config['browser'] ?? null);
+        return new static($config['platform'] ?? null);
     }
 
     /**
@@ -54,7 +54,7 @@ class Browser implements DataProviderDependentConditionInterface
      */
     public function canMatch(): bool
     {
-        return !empty($this->browser);
+        return !empty($this->platform);
     }
 
     /**
@@ -69,14 +69,6 @@ class Browser implements DataProviderDependentConditionInterface
             return false;
         }
 
-        $clientInfo = $dd->getClient();
-        if (!$clientInfo) {
-            return false;
-        }
-
-        $type = $clientInfo['type'] ?? null;
-        $name = $clientInfo['name'] ?? null;
-
-        return 'browser' === $type && strtolower($name) === strtolower($this->browser);
+        return $dd->getDeviceName() === $this->platform;
     }
 }

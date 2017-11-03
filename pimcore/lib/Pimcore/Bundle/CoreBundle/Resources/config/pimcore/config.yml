@@ -166,8 +166,15 @@ pimcore:
             geoip: Pimcore\Targeting\DataProvider\GeoIp
             device: Pimcore\Targeting\DataProvider\Device
         conditions:
+            url: Pimcore\Targeting\Condition\Url
+            language: Pimcore\Targeting\Condition\Language
+            referringsite: Pimcore\Targeting\Condition\ReferringSite
+            searchengine: Pimcore\Targeting\Condition\SearchEngine
             browser: Pimcore\Targeting\Condition\Browser
             country: Pimcore\Targeting\Condition\Country
+            geopoint: Pimcore\Targeting\Condition\GeoPoint
+            hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
+            operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

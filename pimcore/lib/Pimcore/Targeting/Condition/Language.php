@@ -17,23 +17,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use GeoIp2\Model\City;
-use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Country implements DataProviderDependentConditionInterface
+class Language implements ConditionInterface
 {
     /**
-     * @var string
+     * @var string|null
      */
-    private $country;
+    private $language;
 
     /**
-     * @param string $country
+     * @param null|string $language
      */
-    public function __construct(string $country = null)
+    public function __construct(string $language = null)
     {
-        $this->country = $country;
+        $this->language = $language;
     }
 
     /**
@@ -41,15 +39,7 @@ class Country implements DataProviderDependentConditionInterface
      */
     public static function fromConfig(array $config)
     {
-        return new static($config['country'] ?? null);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDataProviderKeys(): array
-    {
-        return [GeoIp::PROVIDER_KEY];
+        return new static($config['language'] ?? null);
     }
 
     /**
@@ -57,7 +47,7 @@ class Country implements DataProviderDependentConditionInterface
      */
     public function canMatch(): bool
     {
-        return !empty($this->country);
+        return !empty($this->language);
     }
 
     /**
@@ -65,13 +55,26 @@ class Country implements DataProviderDependentConditionInterface
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var City $city */
-        $city = $visitorInfo->get(GeoIp::PROVIDER_KEY);
+        $request  = $visitorInfo->getRequest();
 
-        if (!$city) {
+        $language = $request->getPreferredLanguage();
+        if (empty($language)) {
             return false;
         }
 
-        return $city->country->isoCode === $this->country;
+        if ($language === $this->language) {
+            return true;
+        }
+
+        // only check the language without territory if configured
+        if (false === strpos($this->language, '_') && false !== strpos($language, '_')) {
+            $normalizedLanguage = explode('_', $language)[0];
+
+            if ($normalizedLanguage === $this->language) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

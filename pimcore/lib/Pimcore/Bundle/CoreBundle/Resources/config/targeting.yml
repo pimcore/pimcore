@@ -16,3 +16,8 @@ services:
         public: true
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
+
+    Pimcore\Targeting\ConditionFactoryInterface: '@Pimcore\Targeting\ConditionFactory'
+    Pimcore\Targeting\ConditionFactory:
+        arguments:
+            $conditions: '%pimcore.targeting.conditions%'

@@ -17,23 +17,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use GeoIp2\Model\City;
-use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Country implements DataProviderDependentConditionInterface
+class ReferringSite implements ConditionInterface
 {
     /**
-     * @var string
+     * @var string|null
      */
-    private $country;
+    private $pattern;
 
     /**
-     * @param string $country
+     * @param null|string $pattern
      */
-    public function __construct(string $country = null)
+    public function __construct(string $pattern = null)
     {
-        $this->country = $country;
+        $this->pattern = $pattern;
     }
 
     /**
@@ -41,15 +39,7 @@ class Country implements DataProviderDependentConditionInterface
      */
     public static function fromConfig(array $config)
     {
-        return new static($config['country'] ?? null);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDataProviderKeys(): array
-    {
-        return [GeoIp::PROVIDER_KEY];
+        return new static($config['referrer'] ?? null);
     }
 
     /**
@@ -57,7 +47,7 @@ class Country implements DataProviderDependentConditionInterface
      */
     public function canMatch(): bool
     {
-        return !empty($this->country);
+        return !empty($this->pattern);
     }
 
     /**
@@ -65,13 +55,14 @@ class Country implements DataProviderDependentConditionInterface
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var City $city */
-        $city = $visitorInfo->get(GeoIp::PROVIDER_KEY);
+        $request  = $visitorInfo->getRequest();
+        $referrer = $request->headers->get('Referrer', 'direct');
 
-        if (!$city) {
-            return false;
+        $result = preg_match($this->pattern, $referrer);
+        if ($result) {
+            return true;
         }
 
-        return $city->country->isoCode === $this->country;
+        return false;
     }
 }

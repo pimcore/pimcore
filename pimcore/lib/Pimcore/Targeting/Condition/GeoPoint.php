@@ -17,20 +17,32 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use DeviceDetector\DeviceDetector;
-use Pimcore\Targeting\DataProvider\Device;
+use GeoIp2\Model\City;
+use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Browser implements DataProviderDependentConditionInterface
+class GeoPoint implements DataProviderDependentConditionInterface
 {
     /**
-     * @var null|string
+     * @var float
      */
-    private $browser;
+    private $longitude;
 
-    public function __construct(string $browser = null)
+    /**
+     * @var float
+     */
+    private $latitude;
+
+    /**
+     * @var int
+     */
+    private $radius;
+
+    public function __construct(float $longitude = null, float $latitude = null, int $radius = null)
     {
-        $this->browser = $browser;
+        $this->longitude = $longitude;
+        $this->latitude  = $latitude;
+        $this->radius    = $radius;
     }
 
     /**
@@ -38,7 +50,11 @@ class Browser implements DataProviderDependentConditionInterface
      */
     public static function fromConfig(array $config)
     {
-        return new static($config['browser'] ?? null);
+        return new static(
+            $config['longitude'] ?? null,
+            $config['latitude'] ?? null,
+            $config['radius'] ?? null
+        );
     }
 
     /**
@@ -46,7 +62,7 @@ class Browser implements DataProviderDependentConditionInterface
      */
     public function getDataProviderKeys(): array
     {
-        return [Device::PROVIDER_KEY];
+        return [GeoIp::PROVIDER_KEY];
     }
 
     /**
@@ -54,7 +70,7 @@ class Browser implements DataProviderDependentConditionInterface
      */
     public function canMatch(): bool
     {
-        return !empty($this->browser);
+        return !empty($this->longitude) && !empty($this->latitude) && !empty($this->radius);
     }
 
     /**
@@ -62,21 +78,14 @@ class Browser implements DataProviderDependentConditionInterface
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var DeviceDetector $dd */
-        $dd = $visitorInfo->get(Device::PROVIDER_KEY);
+        /** @var City $city */
+        $city = $visitorInfo->get(GeoIp::PROVIDER_KEY);
 
-        if (!$dd || $dd->isBot()) {
+        if (!$city) {
             return false;
         }
 
-        $clientInfo = $dd->getClient();
-        if (!$clientInfo) {
-            return false;
-        }
-
-        $type = $clientInfo['type'] ?? null;
-        $name = $clientInfo['name'] ?? null;
-
-        return 'browser' === $type && strtolower($name) === strtolower($this->browser);
+        // TODO calculate distance
+        return false;
     }
 }

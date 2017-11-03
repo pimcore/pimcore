@@ -15,15 +15,19 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\Condition;
+namespace Pimcore\Targeting;
 
-interface ProviderDependentConditionInterface extends ConditionInterface
+use Pimcore\Targeting\Condition\ConditionInterface;
+
+interface ConditionFactoryInterface
 {
     /**
-     * Returns keys of data provider which this condition
-     * depends on.
+     * Builds a condition instance from a config array as configured
+     * in the admin UI and stored to DB.
      *
-     * @return array
+     * @param array $config
+     *
+     * @return ConditionInterface
      */
-    public function getDataProviderKeys(): array;
+    public function build(array $config): ConditionInterface;
 }

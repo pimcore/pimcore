@@ -71,6 +71,9 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         // geoip db file
         $container->setParameter('pimcore.geoip.db_file', PIMCORE_CONFIGURATION_DIRECTORY . '/GeoLite2-City.mmdb');
 
+        // targeting conditions
+        $container->setParameter('pimcore.targeting.conditions', $config['targeting']['conditions']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?

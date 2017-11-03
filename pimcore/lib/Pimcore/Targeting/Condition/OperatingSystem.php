@@ -21,16 +21,33 @@ use DeviceDetector\DeviceDetector;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Browser implements DataProviderDependentConditionInterface
+class OperatingSystem implements DataProviderDependentConditionInterface
 {
     /**
      * @var null|string
      */
-    private $browser;
+    private $system;
 
-    public function __construct(string $browser = null)
+    /**
+     * Mapping from admin UI values to DeviceDetector results
+     *
+     * @var array
+     */
+    protected static $osMapping = [
+        'macos'   => 'MAC',
+        'windows' => 'WIN',
+        'linux'   => 'LIN',
+        'android' => 'AND',
+        'ios'     => 'IOS'
+    ];
+
+    public function __construct(string $system = null)
     {
-        $this->browser = $browser;
+        if (!empty($system) && isset(static::$osMapping[$system])) {
+            $system = static::$osMapping[$system];
+        }
+
+        $this->system = $system;
     }
 
     /**
@@ -38,7 +55,7 @@ class Browser implements DataProviderDependentConditionInterface
      */
     public static function fromConfig(array $config)
     {
-        return new static($config['browser'] ?? null);
+        return new static($config['system'] ?? null);
     }
 
     /**
@@ -54,7 +71,7 @@ class Browser implements DataProviderDependentConditionInterface
      */
     public function canMatch(): bool
     {
-        return !empty($this->browser);
+        return !empty($this->system);
     }
 
     /**
@@ -69,14 +86,6 @@ class Browser implements DataProviderDependentConditionInterface
             return false;
         }
 
-        $clientInfo = $dd->getClient();
-        if (!$clientInfo) {
-            return false;
-        }
-
-        $type = $clientInfo['type'] ?? null;
-        $name = $clientInfo['name'] ?? null;
-
-        return 'browser' === $type && strtolower($name) === strtolower($this->browser);
+        return $dd->getOs('short_name') === $this->system;
     }
 }
