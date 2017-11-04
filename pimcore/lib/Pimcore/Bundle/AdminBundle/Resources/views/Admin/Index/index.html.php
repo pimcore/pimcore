@@ -116,7 +116,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
 <div id="pimcore_navigation" style="display:none;">
     <ul>
         <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "file")) { ?>
-            <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item">
+            <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
                 <svg id="icon-file" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.4 23"><path d="M14.5,1H5.3A2.31,2.31,0,0,0,3,3.3V21.7A2.31,2.31,0,0,0,5.3,24H19.1a2.31,2.31,0,0,0,2.3-2.3V7.9Zm0,3.28L18.12,7.9H14.5ZM5.3,21.7V3.3h6.9v6.9h6.9V21.7Z" transform="translate(-3 -1)"/></svg>
             </li>
         <?php } ?>

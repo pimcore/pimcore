@@ -1071,10 +1071,10 @@ pimcore.layout.toolbar = Class.create({
         return;
     },
 
-    showSubMenu: function (e, el) {
+    showSubMenu: function (e) {
         if(this.hidden) {
             e.stopEvent();
-            el = Ext.get(el);
+            var el = Ext.get(e.currentTarget);
             var offsets = el.getOffsetsTo(Ext.getBody());
             offsets[0] = 60;
             this.showAt(offsets);
