@@ -47,7 +47,7 @@ The following code specifies tje height for the rendered WYSIWYG editable (has n
     }}
 </section>
 ```
-</div
+</div>
 
 If you have a look at the editmode, you will see that our WYSIWYG is rendered with the full toolbar.
 
