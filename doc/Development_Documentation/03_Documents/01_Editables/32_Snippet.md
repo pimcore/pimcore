@@ -27,9 +27,14 @@ You have to create them the same way as other documents (pages).
 | `isEmpty()`    | bool    | Whether the editable is empty or not. |
 
 ## Examples
+<div class="code-section">
 
 ```php  
  // Define a place for a snippet to be dragged onto, advanced usage
  <?= $this->snippet("mySnippet", ["width" => 250, "height" => 100]) ?>
 ```
 
+```twig
+{{ pimcore_snippet("mySnippet", {"width": 250, "height": 100}) }}
+```
+</div>
