@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Model;
 
-use Pimcore\Model\Tool\Targeting\Persona;
+use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,11 +44,11 @@ class VisitorInfo implements \IteratorAggregate
     private $targetingRules = [];
 
     /**
-     * Applied personas
+     * Applied target groups
      *
-     * @var Persona[]
+     * @var TargetGroup[]
      */
-    private $personas = [];
+    private $targetGroups = [];
 
     /**
      * @var array
@@ -117,27 +117,27 @@ class VisitorInfo implements \IteratorAggregate
     }
 
     /**
-     * @return Persona[]
+     * @return TargetGroup[]
      */
-    public function getPersonas(): array
+    public function getTargetGroups(): array
     {
-        return $this->personas;
+        return $this->targetGroups;
     }
 
     /**
-     * @param Persona[] $personas
+     * @param TargetGroup[] $targetGroups
      */
-    public function setPersonas(array $personas = [])
+    public function setTargetGroups(array $targetGroups = [])
     {
-        $this->personas = [];
-        foreach ($personas as $persona) {
-            $this->addPersona($persona);
+        $this->targetGroups = [];
+        foreach ($targetGroups as $targetGroup) {
+            $this->addTargetGroup($targetGroup);
         }
     }
 
-    public function addPersona(Persona $persona)
+    public function addTargetGroup(TargetGroup $targetGroup)
     {
-        $this->personas[] = $persona;
+        $this->targetGroups[] = $targetGroup;
     }
 
     public function hasResponse(): bool

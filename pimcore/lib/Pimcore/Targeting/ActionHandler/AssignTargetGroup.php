@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\ActionHandler;
 
-use Pimcore\Model\Tool\Targeting\Persona;
+use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Session\SessionConfigurator;
@@ -31,26 +31,26 @@ class AssignTargetGroup implements ActionHandlerInterface
             return;
         }
 
-        $persona = Persona::getById($actions->getPersonaId());
+        $targetGroup = TargetGroup::getById($actions->getPersonaId());
 
-        if (!$persona || !$persona->getActive()) {
+        if (!$targetGroup || !$targetGroup->getActive()) {
             return;
         }
 
         $assign    = true;
-        $threshold = (int)$persona->getThreshold();
+        $threshold = (int)$targetGroup->getThreshold();
 
         if ($threshold > 1) {
             // only check session entries if threshold was configured
-            $assign = $this->checkThresholdAssigment($visitorInfo, $persona, $threshold);
+            $assign = $this->checkThresholdAssigment($visitorInfo, $targetGroup, $threshold);
         }
 
         if ($assign) {
-            $visitorInfo->addPersona($persona);
+            $visitorInfo->addTargetGroup($targetGroup);
         }
     }
 
-    private function checkThresholdAssigment(VisitorInfo $visitorInfo, Persona $persona, int $threshold): bool
+    private function checkThresholdAssigment(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $threshold): bool
     {
         $request = $visitorInfo->getRequest();
         if (!$request->getSession()) {
@@ -64,10 +64,10 @@ class AssignTargetGroup implements ActionHandlerInterface
 
         $data = $bag->get('assign_target_group', []);
 
-        $assignments = $data[$persona->getId()] ?? 0;
+        $assignments = $data[$targetGroup->getId()] ?? 0;
         $assignments++;
 
-        $data[$persona->getId()] = $assignments;
+        $data[$targetGroup->getId()] = $assignments;
         $bag->set('assign_target_group', $data);
 
         $session->save();

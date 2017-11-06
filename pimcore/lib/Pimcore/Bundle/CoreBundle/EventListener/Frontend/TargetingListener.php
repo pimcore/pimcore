@@ -171,7 +171,7 @@ class TargetingListener implements EventSubscriberInterface
 
     private function redirectToPersonaVariant(GetResponseEvent $event, VisitorInfo $visitorInfo)
     {
-        if (0 === count($visitorInfo->getPersonas())) {
+        if (0 === count($visitorInfo->getTargetGroups())) {
             return;
         }
 
@@ -188,7 +188,7 @@ class TargetingListener implements EventSubscriberInterface
         /** @var Model\Tool\Targeting\Persona $redirectPersona */
         $redirectPersona = null;
 
-        foreach ($visitorInfo->getPersonas() as $persona) {
+        foreach ($visitorInfo->getTargetGroups() as $persona) {
             if (in_array($persona->getId(), $personaIds)) {
                 $redirectPersona = $persona;
                 break;
