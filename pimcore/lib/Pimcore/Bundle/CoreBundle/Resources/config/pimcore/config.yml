@@ -185,6 +185,8 @@ pimcore:
             # the following are kept for compatibility but are deprecated (typo in condition name)
             vistitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
             vistitedpagesbefore: Pimcore\Targeting\Condition\Piwik\VisitedPagesBefore
+        action_handlers:
+            assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

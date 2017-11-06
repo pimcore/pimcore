@@ -656,6 +656,11 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('scalar')
                             ->end()
                         ->end()
+                        ->arrayNode('action_handlers')
+                            ->useAttributeAsKey('name')
+                                ->prototype('scalar')
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end();

@@ -9,6 +9,8 @@ services:
         arguments:
             $filename: '%pimcore.geoip.db_file%'
 
+    Pimcore\Targeting\TargetGroupResolver: ~
+
     Pimcore\Targeting\DataProvider\GeoIp: ~
     Pimcore\Targeting\DataProvider\Device: ~
     Pimcore\Targeting\DataProvider\Piwik: ~
@@ -20,3 +22,6 @@ services:
     Pimcore\Targeting\ConditionFactory:
         arguments:
             $conditions: '%pimcore.targeting.conditions%'
+
+    Pimcore\Targeting\ActionHandler\AssignTargetGroup:
+        lazy: true

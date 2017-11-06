@@ -23,6 +23,7 @@ use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
 use Pimcore\Targeting\DataProviderLocator;
+use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Tool\ArrayUtils;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
@@ -309,8 +310,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
     private function configureTargeting(ContainerBuilder $container, array $config)
     {
         $dataProviders = [];
-        foreach ($config['data_providers'] as $key => $serviceId) {
-            $dataProviders[$key] = new Reference($serviceId);
+        foreach ($config['data_providers'] as $dataProviderKey => $dataProviderServiceId) {
+            $dataProviders[$dataProviderKey] = new Reference($dataProviderServiceId);
         }
 
         $providerLocator = new Definition(ServiceLocator::class, [$dataProviders]);
@@ -320,6 +321,17 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
 
         $locator = $container->getDefinition(DataProviderLocator::class);
         $locator->setArgument('$locator', $providerLocator);
+
+        $actionHandlers = [];
+        foreach ($config['action_handlers'] as $actionHandlerKey => $actionHandlerServiceId) {
+            $actionHandlers[] = new Reference($actionHandlerServiceId);
+        }
+
+        $targetGroupResolver = $container->getDefinition(TargetGroupResolver::class);
+        $targetGroupResolver->setArgument(
+            '$actionHandlers',
+            $actionHandlers
+        );
     }
 
     /**

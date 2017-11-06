@@ -18,8 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Targeting;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Model\Tool\Targeting\Persona;
 use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\Condition\DataProviderDependentConditionInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,19 +42,40 @@ class TargetGroupResolver
     private $conditionFactory;
 
     /**
+     * @var ActionHandlerInterface[]
+     */
+    private $actionHandlers = [];
+
+    /**
      * @var Rule[]
      */
     private $targetingRules;
 
+    /**
+     * @param DataProviderLocatorInterface $dataProviders
+     * @param ConditionFactoryInterface $conditionFactory
+     * @param ActionHandlerInterface[] $actionHandlers
+     * @param Connection $db
+     */
     public function __construct(
         DataProviderLocatorInterface $dataProviders,
         ConditionFactoryInterface $conditionFactory,
+        array $actionHandlers = [],
         Connection $db
     )
     {
         $this->dataProviders    = $dataProviders;
         $this->conditionFactory = $conditionFactory;
         $this->db               = $db;
+
+        foreach ($actionHandlers as $actionHandler) {
+            $this->addActionHandler($actionHandler);
+        }
+    }
+
+    private function addActionHandler(ActionHandlerInterface $action)
+    {
+        $this->actionHandlers[] = $action;
     }
 
     public function resolve(Request $request): VisitorInfo
@@ -94,12 +115,8 @@ class TargetGroupResolver
             return;
         }
 
-        if ($actions->getPersonaEnabled() && $actions->getPersonaId()) {
-            $persona = Persona::getById($actions->getPersonaId());
-
-            if ($persona) {
-                $visitorInfo->addPersona($persona);
-            }
+        foreach ($this->actionHandlers as $actionHandler) {
+            $actionHandler->apply($visitorInfo, $actions, $rule);
         }
     }
 
