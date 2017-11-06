@@ -49,9 +49,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     private $selector;
 
     /**
-     * @var string
+     * @var string[]
      */
-    protected $adminPath = '';
+    protected $adminPaths = '';
 
     /**
      * If true, the translator will just return the translation key instead of actually translating
@@ -229,17 +229,25 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ['__pimcore_dummy' => 'only_a_dummy'];
 
-                if ($domain == 'admin') {
+                if ($domain === 'admin') {
                     // add json catalogue
-                    try {
-                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/' . $locale . '.json');
-                    } catch (\Exception $e) {
-                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/en.json');
+                    $adminPaths = $this->getAdminPaths();
+                    $jsonPaths = [];
+                    foreach ($adminPaths as $adminPath) {
+                        try {
+                            $jsonPaths[] = $this->getKernel()->locateResource($adminPath . '/' . $locale . '.json');
+                        } catch (\Exception $e) {
+                        }
+                    }
+                    if (empty($jsonPaths)) {
+                        $jsonPaths[] = $this->getKernel()->locateResource(array_shift($adminPaths) . '/en.json');
                     }
 
-                    $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
-                    if (is_array($jsonTranslations)) {
-                        $data = array_merge($data, $jsonTranslations);
+                    foreach ($jsonPaths as $jsonPath) {
+                        $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
+                        if (is_array($jsonTranslations)) {
+                            $data = array_merge($data, $jsonTranslations);
+                        }
                     }
                 }
 
@@ -381,19 +389,19 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     }
 
     /**
-     * @return string
+     * @return string[]
      */
-    public function getAdminPath()
+    public function getAdminPaths()
     {
-        return $this->adminPath;
+        return $this->adminPaths;
     }
 
     /**
-     * @param string $adminPath
+     * @param string[] $adminPaths
      */
-    public function setAdminPath($adminPath)
+    public function setAdminPaths($adminPaths)
     {
-        $this->adminPath = $adminPath;
+        $this->adminPaths = $adminPaths;
     }
 
     /**

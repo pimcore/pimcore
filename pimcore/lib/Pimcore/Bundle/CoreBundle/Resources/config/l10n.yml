@@ -13,7 +13,7 @@ services:
             - '@Pimcore\Translation\Translator.inner'
         calls:
             - [setKernel, ['@kernel']]
-            - [setAdminPath, ['%pimcore.admin.translations.path%']]
+            - [setAdminPaths, ['%pimcore.admin.translations.paths%']]
 
     #
     # LOCALE
