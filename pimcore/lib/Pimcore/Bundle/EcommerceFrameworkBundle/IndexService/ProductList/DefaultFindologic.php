@@ -647,7 +647,7 @@ class DefaultFindologic implements IProductList
                 $groups[] = [
                     'value' => null, 'label' => null, 'count' => null, 'parameter' => $field->attributes->totalRange
                 ];
-            } elseif ($fieldname === \OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
+            } elseif ($fieldname === SelectCategory::FIELDNAME) {
                 $rec = function (array $items) use (&$rec, &$groups) {
                     foreach ($items as $item) {
                         $groups[$item->name] = [

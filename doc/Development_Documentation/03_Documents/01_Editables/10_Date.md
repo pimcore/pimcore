@@ -28,9 +28,18 @@ In frontend it will format the date as defined in `format`.
 Localization (output-format, ...) is automatically used from the globally registered locale.
 Please read the topic [Localization](../../06_Multi_Language_i18n/README.md).
 
+<div class="code-section">
+
 ```php
 <?= $this->date("myDate", [
      "format" => "%d.%m.%Y"
 ]); ?>
 ```
 
+```twig
+{{ pimcore_date("myDate", {
+    "format": "%d.%m.%Y"
+    })
+}}
+```
+</div>

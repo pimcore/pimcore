@@ -5,18 +5,13 @@ services:
         autowire: true
         # automatically registers your services as commands, event subscribers, etc.
         autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
 
-    # Example custom templating helper
-    # app.templating.helper.foobar:
-    #    class: AppBundle\Templating\Helper\Example
-    #    tags:
-    #        - { name: templating.helper, alias: fooBar }
-
-    # Example event listener for objects
-    # app.event_listener.test:
-    #    class: AppBundle\EventListener\TestListener
-    #    tags:
-    #        - { name: kernel.event_listener, event: pimcore.object.preUpdate, method: onObjectPreUpdate }
+    #
+    # CONTROLLERS
+    #
 
     # auto-register all controllers as services
     AppBundle\Controller\:
@@ -24,23 +19,21 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
+
     #
     # TEMPLATING
     #
 
-    website_demo.area.brick.blockquote:
-        class: AppBundle\Document\Areabrick\Blockquote
+    # a sample areabrick which is manually registered
+    AppBundle\Document\Areabrick\Blockquote:
         tags:
             - { name: pimcore.area.brick, id: blockquote }
 
-    website_demo.language_switcher:
-        class: AppBundle\Templating\LanguageSwitcher
-        arguments: ['@Pimcore\Model\Document\Service']
+    AppBundle\Twig\LanguageSwitcherExtension:
+        tags:
+            - { name: twig.extension }
 
-    # adds uniqid function to twig
-    website_demo.twig.uniqid_extension:
-        class: AppBundle\Twig\UniqidExtension
-        public: false
+    AppBundle\Twig\UniqidExtension:
         tags:
             - { name: twig.extension }
 
@@ -50,19 +43,34 @@ services:
     #
     # The services defined below are referenced from pimcore/security.yml.
     #
+
     # The user provider loads users by Username.
     # Pimcore provides a simple ObjectUserProvider which is able to load users from a specified class by a configured
-    # field. The website_demo.security.user_provider will load users from the AppBundle\Model\DataObject\User by looking at
+    # field. The app.security.user_provider will load users from the AppBundle\Model\DataObject\User by looking at
     # their username field.
-    website_demo.security.user_provider:
+    app.security.user_provider:
         class: Pimcore\Security\User\ObjectUserProvider
-        arguments: ['AppBundle\Model\DataObject\User', 'username']
+        arguments:
+            - 'AppBundle\Model\DataObject\User'
+            - 'username'
 
     # The encoder factory is responsible for verifying the password hash for a given user. As we need some special
     # handling to be able to work with the password field, we use the UserAwareEncoderFactory to buiild a dedicated
     # encoder per user. This service is configured in pimcore.security.encoder_factories to handle our user model.
-    website_demo.security.password_encoder_factory:
+    app.security.password_encoder_factory:
         class: Pimcore\Security\Encoder\Factory\UserAwareEncoderFactory
         arguments:
             - Pimcore\Security\Encoder\PasswordFieldEncoder
             - ['password']
+
+
+    #
+    # EXAMPLES
+    #
+
+    # Example event listener for objects
+    # the tag isn't necessary as autoconfigure is turned on for this
+    # file but it is added here for demonstration purposes
+    AppBundle\EventListener\TestListener:
+        tags:
+            - { name: kernel.event_subscriber }

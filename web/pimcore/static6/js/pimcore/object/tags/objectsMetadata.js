@@ -329,7 +329,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             tbar: {
                 items: toolbarItems,
                 ctCls: "pimcore_force_auto_width",
-                cls: "pimcore_force_auto_width"
+                cls: "pimcore_force_auto_width",
+                minHeight: 32
             },
             autoHeight: autoHeight,
             bodyCls: "pimcore_object_tag_objects pimcore_editable_grid",

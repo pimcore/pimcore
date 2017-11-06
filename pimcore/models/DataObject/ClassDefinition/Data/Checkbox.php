@@ -275,17 +275,19 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
      *
      * @param  $value
      * @param  $operator
+     * @param  $params
      *
      * @return string
      *
      */
-    public function getFilterCondition($value, $operator)
+    public function getFilterCondition($value, $operator, $params = [])
     {
+        $params['name']= $this->name;
+
         return $this->getFilterConditionExt(
             $value,
             $operator,
-            [
-                'name' => $this->name]
+            $params
         );
     }
 
@@ -305,7 +307,9 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
         $value = $db->quote($value);
         $key = $db->quoteIdentifier($this->name, $name);
 
-        return 'IFNULL(' . $key . ', 0) = ' . $value . ' ';
+        $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
+
+        return 'IFNULL(' . $brickPrefix . $key . ', 0) = ' . $value . ' ';
     }
 
     /**

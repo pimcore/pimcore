@@ -529,69 +529,6 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * resets all from headers before setting the new one.
-     *
-     * @param string $email
-     * @param null $name
-     *
-     * @return \Pimcore\Mail
-     */
-    public function setFrom($email, $name = null)
-    {
-        // mitigate "pwnscriptum" attack
-        // see https://framework.zend.com/security/advisory/ZF2016-04 for ZF2+ fix
-        if (preg_match('/\\\"/', $email)) {
-            throw new \RuntimeException('Potential code injection in From header');
-        }
-
-        $this->getHeaders()->removeAll('from');
-
-        return parent::setFrom($email, $name);
-    }
-
-    /**
-     * resets all to headers before setting the new one.
-     *
-     * @param $email
-     * @param string $name
-     */
-    public function setTo($email, $name = '')
-    {
-        $this->getHeaders()->removeAll('to');
-        if ($email) {
-            parent::setTo($email, $name);
-        }
-    }
-
-    /**
-     * resets all to headers before setting the new one.
-     *
-     * @param $email
-     * @param string $name
-     */
-    public function setCc($email, $name = '')
-    {
-        $this->getHeaders()->removeAll('cc');
-        if ($email) {
-            parent::setCc($email, $name);
-        }
-    }
-
-    /**
-     * resets all to headers before setting the new one.
-     *
-     * @param $email
-     * @param string $name
-     */
-    public function setBcc($email, $name = '')
-    {
-        $this->getHeaders()->removeAll('bcc');
-        if ($email) {
-            parent::setBcc($email, $name);
-        }
-    }
-
-    /**
      * Sends this email using the given transport or with the settings from "Settings" -> "System" -> "Email Settings"
      *
      * IMPORTANT: If the debug mode is enabled in "Settings" -> "System" -> "Debug" all emails will be sent to the
@@ -652,13 +589,7 @@ class Mail extends \Swift_Message
             $addresses = $this->$getterName();
 
             if ($addresses) {
-                foreach (array_keys($addresses) as $address) {
-
-                    //remove address if blacklisted
-                    if (Model\Tool\Email\Blacklist::getByAddress($address)) {
-                        unset($addresses[$address]);
-                    }
-                }
+                $addresses = $this->filterLogAddresses($addresses);
             }
 
             $this->$setterName($addresses);
@@ -675,6 +606,10 @@ class Mail extends \Swift_Message
         $result = $mailer->send($this);
 
         if ($this->loggingIsEnabled()) {
+            if (\Pimcore::inDebugMode()) {
+                $recipients = $this->getDebugMailRecipients($recipients);
+            }
+
             try {
                 $this->lastLogEntry = MailHelper::logEmail($this, $recipients);
             } catch (\Exception $e) {
@@ -683,6 +618,42 @@ class Mail extends \Swift_Message
         }
 
         return $this;
+    }
+
+    private function filterLogAddresses(array $addresses): array
+    {
+        foreach (array_keys($addresses) as $address) {
+            // remove address if blacklisted
+            if (Model\Tool\Email\Blacklist::getByAddress($address)) {
+                unset($addresses[$address]);
+            }
+        }
+
+        return $addresses;
+    }
+
+    private function getDebugMailRecipients(array $recipients): array
+    {
+        $headers = $this->getHeaders();
+
+        foreach (['To', 'Cc', 'Bcc'] as $key) {
+            $recipients[$key] = null;
+
+            $headerName = 'X-Pimcore-Debug-' . $key;
+            if ($headers->has($headerName)) {
+                /** @var \Swift_Mime_Headers_MailboxHeader $header */
+                $header = $headers->get($headerName);
+                $recipients[$key] = $header->getNameAddresses();
+
+                $headers->remove($headerName);
+            }
+
+            if ($recipients[$key]) {
+                $recipients[$key] = $this->filterLogAddresses($recipients[$key]);
+            }
+        }
+
+        return $recipients;
     }
 
     /**

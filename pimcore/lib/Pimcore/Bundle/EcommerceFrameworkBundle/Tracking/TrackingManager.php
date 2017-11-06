@@ -57,6 +57,21 @@ class TrackingManager implements ITrackingManager
     }
 
     /**
+     * Tracks a category page view
+     *
+     * @param array|string $category One or more categories matching the page
+     * @param mixed $page            Any kind of page information you can use to track your page
+     */
+    public function trackCategoryPageView($category, $page = null)
+    {
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICategoryPageView) {
+                $tracker->trackCategoryPageView($category, $page);
+            }
+        }
+    }
+
+    /**
      * Track product impression
      *
      * @implements IProductImpression
@@ -89,9 +104,39 @@ class TrackingManager implements ITrackingManager
     }
 
     /**
+     * Track a cart update
+     *
+     * @param ICart $cart
+     */
+    public function trackCartUpdate(ICart $cart)
+    {
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICartUpdate) {
+                $tracker->trackCartUpdate($cart);
+            }
+        }
+    }
+
+    /**
      * Track product add to cart
      *
-     * @implements IProductImpression
+     * @param ICart $cart
+     * @param IProduct $product
+     * @param int|float $quantity
+     */
+    public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1)
+    {
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICartProductActionAdd) {
+                $tracker->trackCartProductActionAdd($cart, $product, $quantity);
+            }
+        }
+    }
+
+    /**
+     * Track product add to cart
+     *
+     * @deprecated Use ICartProductActionAdd::trackCartProductActionAdd instead
      *
      * @param IProduct $product
      * @param int|float $quantity
@@ -108,7 +153,23 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product remove from cart
      *
-     * @implements IProductImpression
+     * @param ICart $cart
+     * @param IProduct $product
+     * @param int|float $quantity
+     */
+    public function trackCartProductActionRemove(ICart $cart, IProduct $product, $quantity = 1)
+    {
+        foreach ($this->trackers as $tracker) {
+            if ($tracker instanceof ICartProductActionRemove) {
+                $tracker->trackCartProductActionRemove($cart, $product, $quantity);
+            }
+        }
+    }
+
+    /**
+     * Track product remove from cart
+     *
+     * @deprecated Use ICartProductActionRemove::trackCartProductActionRemove instead
      *
      * @param IProduct $product
      * @param int|float $quantity

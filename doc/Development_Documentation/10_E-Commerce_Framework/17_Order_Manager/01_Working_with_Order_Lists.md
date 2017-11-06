@@ -142,6 +142,7 @@ $orderList->getQuery()->where('product.productNumber = ?', 'CMD1191');
 | Payment         | Filter by payment state (ok or fail) |
 | Product         | Filter by product and its variants |
 | ProductType     | Filter ordered products for the given class names   |
+| CustomerObject  | Filter orders by given Customer Object  |
 | Search          | Generic search filter for searches against a given DB column |
 | Search\Customer | Search for customer name |
 | Search\CustomerEmail | Search for customer email |

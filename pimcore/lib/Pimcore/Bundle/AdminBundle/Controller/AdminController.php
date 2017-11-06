@@ -24,6 +24,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Serializer\Encoder\DecoderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
@@ -108,15 +110,23 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * Encodes data into JSON string
      *
-     * @param mixed $data       The data to be encoded
-     * @param array $context    Context to pass to serializer when using serializer component
-     * @param int $options      Options passed to json_encode
+     * @param mixed $data    The data to be encoded
+     * @param array $context Context to pass to serializer when using serializer component
+     * @param int $options   Options passed to json_encode
+     * @param bool $useAdminSerializer
      *
      * @return string
      */
-    protected function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS)
+    protected function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $useAdminSerializer = true)
     {
-        $serializer = $this->container->get('pimcore_admin.serializer');
+        /** @var SerializerInterface $serializer */
+        $serializer = null;
+
+        if ($useAdminSerializer) {
+            $serializer = $this->container->get('pimcore_admin.serializer');
+        } else {
+            $serializer = $this->container->get('serializer');
+        }
 
         return $serializer->serialize($data, 'json', array_merge([
             'json_encode_options' => $options
@@ -126,15 +136,23 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * Decodes a JSON string into an array/object
      *
-     * @param mixed $json           The data to be decoded
-     * @param bool  $associative    Whether to decode into associative array or object
-     * @param array $context        Context to pass to serializer when using serializer component
+     * @param mixed $json       The data to be decoded
+     * @param bool $associative Whether to decode into associative array or object
+     * @param array $context    Context to pass to serializer when using serializer component
+     * @param bool $useAdminSerializer
      *
      * @return array|\stdClass
      */
-    protected function decodeJson($json, $associative = true, array $context = [])
+    protected function decodeJson($json, $associative = true, array $context = [], bool $useAdminSerializer = true)
     {
-        $serializer = $this->container->get('pimcore_admin.serializer');
+        /** @var SerializerInterface|DecoderInterface $serializer */
+        $serializer = null;
+
+        if ($useAdminSerializer) {
+            $serializer = $this->container->get('pimcore_admin.serializer');
+        } else {
+            $serializer = $this->container->get('serializer');
+        }
 
         if ($associative) {
             $context['json_decode_associative'] = true;
@@ -147,15 +165,16 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * Returns a JsonResponse that uses the admin serializer
      *
      * @param mixed $data    The response data
-     * @param int   $status  The status code to use for the Response
+     * @param int $status    The status code to use for the Response
      * @param array $headers Array of extra headers to add
      * @param array $context Context to pass to serializer when using serializer component
+     * @param bool $useAdminSerializer
      *
      * @return JsonResponse
      */
-    protected function json($data, $status = 200, $headers = [], $context = [])
+    protected function json($data, $status = 200, $headers = [], $context = [], bool $useAdminSerializer = true)
     {
-        $json = $this->encodeJson($data, $context);
+        $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $useAdminSerializer);
 
         return new JsonResponse($json, $status, $headers, true);
     }

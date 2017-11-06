@@ -21,13 +21,13 @@ use Pimcore\Config;
 
 class ClientFactory
 {
-    public static function createHttpClient()
+    public function createClient(array $config = [])
     {
         $systemConfig = Config::getSystemConfig();
 
         $guzzleConfig = [
             RequestOptions::TIMEOUT => 3600,
-            RequestOptions::VERIFY => CaBundle::getSystemCaRootBundlePath()
+            RequestOptions::VERIFY  => CaBundle::getSystemCaRootBundlePath()
         ];
 
         if ($systemConfig['httpclient']['adapter'] == 'Proxy') {
@@ -35,13 +35,24 @@ class ClientFactory
             if ($systemConfig['httpclient']['proxy_user']) {
                 $authorization = $systemConfig['httpclient']['proxy_user'] . ':' . $systemConfig['httpclient']['proxy_pass'] . '@';
             }
+
             $proxyUri = 'tcp://' . $authorization . $systemConfig['httpclient']['proxy_host'] . ':' . $systemConfig['httpclient']['proxy_port'];
 
             $guzzleConfig[RequestOptions::PROXY] = $proxyUri;
         }
 
+        $guzzleConfig = array_merge($guzzleConfig, $config);
+
         $client = new Client($guzzleConfig);
 
         return $client;
+    }
+
+    /**
+     * @deprecated Use the ClientFactory service instead of the static method
+     */
+    public static function createHttpClient()
+    {
+        return \Pimcore::getContainer()->get(ClientFactory::class)->createClient();
     }
 }

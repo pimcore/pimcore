@@ -250,7 +250,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     hideMode: "offsets",
                     items: [],
                     listeners: {
-                        afterrender: function (l, runtimeContext, dataProvider, panel) {
+                        afterrender: function (l, editable, runtimeContext, dataProvider, panel) {
                             if (!panel.__tabpanel_initialized) {
                                 panel.__tabpanel_initialized = true;
                                 if (l.childs && typeof l.childs == "object") {
@@ -259,7 +259,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                                         for (var i = 0; i < l.childs.length; i++) {
                                             var childConfig = l.childs[i];
 
-                                            var children = this.getRecursiveLayout(childConfig, !editable, runtimeContext, false, true, dataProvider);
+                                            var children = this.getRecursiveLayout(childConfig, !editable, runtimeContext, false, false, dataProvider, true);
                                             if (children) {
                                                 panel.add(children);
                                             }
@@ -277,7 +277,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                                 }
 
                             }
-                        }.bind(this, panelConfig, runtimeContext, dataProvider)
+                        }.bind(this, panelConfig, editable, runtimeContext, dataProvider)
                     }
 
                 };

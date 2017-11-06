@@ -12,7 +12,7 @@ class {{ bundle }} extends AbstractPimcoreBundle
     public function getJsPaths()
     {
         return [
-            '/bundles/{{ bundle_basename }}/js/pimcore/startup.js'
+            '/bundles/{{ bundle_basename|lower }}/js/pimcore/startup.js'
         ];
     }
 {% endblock class_body %}

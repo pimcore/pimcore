@@ -67,6 +67,15 @@ final class AdminEvents
     const LOGIN_LOGOUT = 'pimcore.admin.login.logout';
 
     /**
+     * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
+     *
+     * @Event("Pimcore\Event\Admin\IndexSettingsEvent")
+     *
+     * @var string
+     */
+    const INDEX_SETTINGS = 'pimcore.admin.index.settings';
+
+    /**
      * Fired before the request params are parsed.
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController

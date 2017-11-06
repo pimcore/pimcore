@@ -105,7 +105,7 @@ pimcore_ecommerce_framework:
                     # options passed to cart factory, e.g. the cart class (available options vary by factory implementation)
                     factory_options:
                         cart_class_name: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart
-                        guest_cart_class_name: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart            
+                        guest_cart_class_name: Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart            
         
             default:   
                 price_calculator:
@@ -136,6 +136,9 @@ Following elements are configured:
   See [Shipping](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php)
   or [Discount](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php)
   for examples. This should be self speaking. 
+
+> Note: if you are using the database cart, don't forget to set the currently logged in user to the environment like 
+> follows: `Factory::getInstance()->getEnvironment()->setCurrentUserId(YOUR_USER_ID)` 
 
 ## Checkout Tenants for Carts
 The E-Commerce Framework has the concept of so called Checkout Tenants which allow different cart manager and 

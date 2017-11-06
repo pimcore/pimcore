@@ -16,16 +16,16 @@ pimcore.log.detailwindow = Class.create({
     getClassName: function (){
         return "pimcore.plugin.eventscheduler.detailwindow";
     },
-    
+
 	initialize: function (data) {
 		this.data = data;
 		this.getInputWindow();
         this.detailWindow.show();
-	},    
+	},
 
 
     getInputWindow: function () {
-        
+
         if(!this.detailWindow) {
             this.detailWindow = new Ext.Window({
 				width: 600,
@@ -44,15 +44,14 @@ pimcore.log.detailwindow = Class.create({
                             this.detailWindow.hide();
                             this.detailWindow.destroy();
                         }.bind(this)
-                    }					
+                    }
                 ]
 			});
-			
+
 			this.createPanel();
         }
         return this.detailWindow;
     },
-	
 
 	createPanel: function() {
 		var items = [];
@@ -89,40 +88,44 @@ pimcore.log.detailwindow = Class.create({
             value: this.data.component,
             width: 540
         });
-        items.push(new Ext.form.FieldContainer({
-            layout: 'hbox',
-            items: [{
-                        xtype: "textfield",
-                        fieldLabel: t('log_relatedobject'),
-                        name: "relatedobject",
-                        readOnly: true,
-                        value: this.data.relatedobject,
-                        width: 370
-                    },{
-                        xtype: "button",
-                        iconCls: "pimcore_icon_edit",
-                        handler: function() {
-                            pimcore.helpers.openObject(this.data.relatedobject);
-                            this.detailWindow.destroy();
-                        }.bind(this)
-                    }]
-        }));
 
-        var text = this.data.fileobject;
-        if(text.length > 60) {
-            text = text.substr(0, 60) + "...";
+        if (this.data.relatedobject) {
+            items.push(new Ext.form.FieldContainer({
+                layout: 'hbox',
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t('log_relatedobject'),
+                    name: "relatedobject",
+                    readOnly: true,
+                    value: this.data.relatedobject,
+                    width: 370
+                }, {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_edit",
+                    handler: function () {
+                        pimcore.helpers.openElement(this.data.relatedobject, this.data.relatedobjecttype);
+                        this.detailWindow.destroy();
+                    }.bind(this)
+                }]
+            }));
         }
 
-        var html = Ext.String.format('<a href="{0}" target="_blank">{1}</a>', this.data.fileobject, text);
-        items.push({
-            xtype: "displayfield",
-            fieldLabel: t('log_fileobject'),
-            name: "fileobject",
-            readOnly: true,
-            value: html,
-            width: 540
-        });
+        if (this.data.fileobject) {
+            var fileObjectText = this.data.fileobject;
+            if (fileObjectText.length > 60) {
+                fileObjectText = fileObjectText.substr(0, 60) + "...";
+            }
 
+            var html = Ext.String.format('<a href="/admin/log/show-file-object?filePath={0}" target="_blank">{1}</a>', this.data.fileobject, fileObjectText);
+            items.push({
+                xtype: "displayfield",
+                fieldLabel: t('log_fileobject'),
+                name: "fileobject",
+                readOnly: true,
+                value: html,
+                width: 540
+            });
+        }
 
         var panel = new Ext.form.FormPanel({
             border: false,
@@ -133,8 +136,7 @@ pimcore.log.detailwindow = Class.create({
 			collapsible: false,
             autoScroll: true
         });
-		
+
 		this.detailWindow.add(panel);
 	}
-
 });

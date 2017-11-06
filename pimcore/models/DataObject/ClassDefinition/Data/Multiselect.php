@@ -343,16 +343,18 @@ class Multiselect extends Model\DataObject\ClassDefinition\Data
      *
      * @param  $value
      * @param  $operator
+     * @param  $params
      *
      * @return string
      */
-    public function getFilterCondition($value, $operator)
+    public function getFilterCondition($value, $operator, $params = [])
     {
+        $params['name']= $this->name;
+
         return $this->getFilterConditionExt(
             $value,
             $operator,
-            [
-                'name' => $this->name]
+            $params
         );
     }
 
@@ -504,8 +506,8 @@ class Multiselect extends Model\DataObject\ClassDefinition\Data
 
             $hasStaticOptions = $optionsProvider->{'hasStaticOptions'}($context, $this);
             $this->dynamicOptions = !$hasStaticOptions;
-
-            return $this;
         }
+
+        return $this;
     }
 }

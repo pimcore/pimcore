@@ -1317,7 +1317,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @param Request $request
-     * @param $document
+     * @param Document\PageSnippet|Document\Page $document
      *
      * @return array
      */
@@ -1328,6 +1328,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if (method_exists($document, 'getTitle') && method_exists($document, 'getDescription')) {
 
             // anaylze content
+            $nodeConfig['prettyUrl']     = $document->getPrettyUrl();
             $nodeConfig['links']         = 0;
             $nodeConfig['externallinks'] = 0;
             $nodeConfig['h1']            = 0;

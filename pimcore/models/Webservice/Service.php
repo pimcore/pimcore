@@ -1182,11 +1182,20 @@ class Service
                 $list->addConditionParam(' `key` LIKE ' . \Pimcore\Db::get()->quote('%' . $key . '%'), '');
             }
 
-            $list->addConditionParam(' `creationDate` >= ? ', $params['creationDateFrom']);
-            $list->addConditionParam(' `creationDate` <= ? ', $params['creationDateTill']);
+            if (isset($params['creationDateFrom'])) {
+                $list->addConditionParam(' `creationDate` >= ? ', $params['creationDateFrom']);
+            }
+            if (isset($params['creationDateTill'])) {
+                $list->addConditionParam(' `creationDate` <= ? ', $params['creationDateTill']);
+            }
 
-            $list->addConditionParam(' `modificationDate` >= ? ', $params['modificationDateFrom']);
-            $list->addConditionParam(' `modificationDate` <= ? ', $params['modificationDateTill']);
+            if (isset($params['modificationDateFrom'])) {
+                $list->addConditionParam(' `modificationDate` >= ? ', $params['modificationDateFrom']);
+            }
+
+            if (isset($params['modificationDateTill'])) {
+                $list->addConditionParam(' `modificationDate` <= ? ', $params['modificationDateTill']);
+            }
             $data = $list->load();
 
             $result = [];

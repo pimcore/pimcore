@@ -55,9 +55,17 @@ You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w
 
 ### Basic usage
 
+<div class="code-section">
+
 ```php
 <?= $this->image("myImage"); ?>
 ```
+
+```twig
+{{ pimcore_image("myImage") }}
+```
+</div>
+
 
 The code above generates an image area in the backend and displays the image at the frontend.
 
@@ -74,6 +82,8 @@ Note that if you use the thumbnail argument, the rendered image on the frontend 
 
 Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
 
+<div class="code-section">
+
 ```php
 <?= $this->image("myImage", [
     "title" => "Drag your image here",
@@ -83,6 +93,16 @@ Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_
 ]); ?>
 ```
 
+```twig
+{{ pimcore_image("myImage", {
+    "title": "Drag your image here",
+    "width": 200,
+    "height": 200,
+    "thumbnail": "contentimages"
+}) }}
+```
+</div>
+
 ###### Backend Preview
 
 ![Image with title and specified size - the backend preview](../../img/image_preview_backend3.png)
@@ -90,6 +110,8 @@ Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_
 ### An Example with a Direct Thumbnail Configuration
 
 You can also change the thumbnail configuration:
+
+<div class="code-section">
 
 ```php
 <?= $this->image("myImage", [
@@ -105,7 +127,24 @@ You can also change the thumbnail configuration:
 ]); ?>
 ```
 
+```twig
+{{ pimcore_image("myImage", {
+    "title": "Drag your image here",
+    "width": 200,
+    "height": 200,
+    "thumbnail": {
+        "width": 200,
+        "height": 200,
+        "interlace": true,
+        "quality": 90
+    }
+}) }}
+```
+</div>
+
 ### An Example Using Custom Attributes
+
+<div class="code-section">
 
 ```php
 <?= $this->image("myImage", [
@@ -117,9 +156,21 @@ You can also change the thumbnail configuration:
 ]) ?>
 ```
 
+```twig
+{{ pimcore_image("myImage", {
+    "thumbnail": "content",
+    "attributes": {
+        "custom-attr": "value",
+        "data-role": "image"
+    }
+}) }}
+```
+</div>
+
 And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
 ### Other Advanced Examples
+<div class="code-section">
 
 ```php
 
@@ -159,6 +210,46 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 <div class="myCustomImageDropTarget someClass">My second alternative drop target</div>
 ```
 
+```twig
+{# Get retina image #}
+{{ pimcore_image("myImage", {
+    "thumbnail": {
+        "width": 200,
+        "height": 200
+    },
+    "highResolution": 2
+}) }}
+
+{# Will output<img src="/var/thumb_9999__auto_xxxxxxxx@2x.png" width="200" height="200" /> <!-- but the real image size is 400x400 pixel --> #}
+
+
+{# Custom image tag (thumbnail objects) #}
+{% if editmode %}
+    {{ pimcore_image("myImage",{"thumbnail": "myThumbnail"}) }}
+{% else %}
+    {% set thumbnail = pimcore_image("myImage").getThumbnail("myThumbnail") %}
+    <img src="{{ thumbnail }}" width="{{ thumbnail.width }}" height="{{ thumbnail.height }}" />
+{% endif %}
+
+
+{# Disable automatic width and height attributes #}
+{{ pimcore_image("myImage", {
+    "thumbnail": "exampleScaleWidth",
+    "disableWidthHeightAttributes": true
+}) }}
+
+
+{# Custom drop targets #}
+<div class="myCustomImageDropTarget anotherClass">My first alternative drop target</div>
+{{ pimcore_image("image",{
+    "thumbnail": "contentfullimage",
+    "dropClass": "myCustomImageDropTarget"
+}) }}
+<div class="myCustomImageDropTarget someClass">My second alternative drop target</div>
+
+```
+</div>
+
 ## Field-specific Image Cropping for Documents
 
 ### Backend Usage
@@ -186,6 +277,7 @@ You can get the data with the methods `getMarker()` and `getHotspots()`.
 All dimensions are in percent and therefore independent from the image size, you have to change them back to pixels according to your image size.
  
 ### Code Usage Example
+<div class="code-section">
  
 ```php
 <div>
@@ -211,6 +303,30 @@ All dimensions are in percent and therefore independent from the image size, you
  </p>
 </div>
 ```
+
+```twig
+<div>
+    <p>
+        {{ pimcore_image("myImage",{
+            "title": "Drag your image here",
+            "width": 400,
+            "height": 400,
+            "thumbnail": "content"
+        }) }}
+
+        {% if not editmode %}
+            {% set image = pimcore_image("myImage") %}
+            {% if image.getHotspots() %}
+                {{ dump(image.getHotspots()) }}
+            {% endif %}
+            {% if image.getMarker() %}
+                {{ dump(image.getMarker()) }}
+            {% endif %}
+        {% endif %}
+    </p>
+</div>
+```
+</div>
 
 `getHotspots` output:
 

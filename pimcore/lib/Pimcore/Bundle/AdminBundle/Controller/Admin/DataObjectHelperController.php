@@ -15,16 +15,24 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Db;
 use Pimcore\File;
+use Pimcore\Localization\Locale;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
+use Pimcore\Model\GridConfig;
+use Pimcore\Model\GridConfigFavourite;
+use Pimcore\Model\GridConfigShare;
+use Pimcore\Model\User;
 use Pimcore\Tool;
+use Pimcore\Version;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -55,6 +63,100 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
+     * @param $userId
+     * @param $classId
+     * @param $searchType
+     *
+     * @return GridConfig\Listing
+     */
+    public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
+    {
+        $db = Db::get();
+        $configListingConditionParts = [];
+        $configListingConditionParts[] = 'ownerId = ' . $userId;
+        $configListingConditionParts[] = 'classId = ' . $classId;
+
+        if ($searchType) {
+            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
+        }
+
+        $configCondition = implode(' AND ', $configListingConditionParts);
+        $configListing = new GridConfig\Listing();
+        $configListing->setOrderKey('name');
+        $configListing->setOrder('ASC');
+        $configListing->setCondition($configCondition);
+        $configListing = $configListing->load();
+
+        return $configListing;
+    }
+
+    /**
+     * @param $user User
+     * @param $classId
+     * @param $searchType
+     *
+     * @return GridConfig\Listing
+     */
+    public function getSharedGridColumnConfigs($user, $classId, $searchType)
+    {
+        $db = Db::get();
+        $configListingConditionParts = [];
+        $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
+        $configListingConditionParts[] = 'classId = ' . $classId;
+
+        if ($searchType) {
+            $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
+        }
+
+        $configListing = [];
+
+        $userIds = [$user->getId()];
+        // collect all roles
+        $userIds = array_merge($userIds, $user->getRoles());
+        $userIds = implode(',', $userIds);
+
+        $query = 'select distinct c.id from gridconfigs c, gridconfig_shares s where c.searchType = ' . $db->quote($searchType)
+                    .  ' and c.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId;
+        $ids = $db->fetchCol($query);
+        if ($ids) {
+            $ids = implode(',', $ids);
+            $configListing = new GridConfig\Listing();
+            $configListing->setOrderKey('name');
+            $configListing->setOrder('ASC');
+            $configListing->setCondition('id in (' . $ids .')');
+            $configListing = $configListing->load();
+        }
+
+        return $configListing;
+    }
+
+    /**
+     * @Route("/grid-delete-column-config")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function gridDeleteColumnConfigAction(Request $request)
+    {
+        $gridConfigId = $request->get('gridConfigId');
+        try {
+            $gridConfig = GridConfig::getById($gridConfigId);
+        } catch (\Exception $e) {
+        }
+        $success = false;
+        if ($gridConfig) {
+            $gridConfig->delete();
+            $success = true;
+        }
+
+        $newGridConfig = $this->doGetGridColumnConfig($request, true);
+        $newGridConfig['deleteSuccess'] = $success;
+
+        return $this->json($newGridConfig);
+    }
+
+    /**
      * @Route("/grid-get-column-config")
      *
      * @param Request $request
@@ -63,12 +165,27 @@ class DataObjectHelperController extends AdminController
      */
     public function gridGetColumnConfigAction(Request $request)
     {
+        $result =  $this->doGetGridColumnConfig($request);
+
+        return $this->json($result);
+    }
+
+    /**
+     * @param Request $request
+     * @param bool $isDelete
+     *
+     * @return array
+     */
+    public function doGetGridColumnConfig(Request $request, $isDelete = false)
+    {
+        /** @var $class DataObject\ClassDefinition */
         if ($request->get('id')) {
             $class = DataObject\ClassDefinition::getById($request->get('id'));
         } elseif ($request->get('name')) {
             $class = DataObject\ClassDefinition::getByName($request->get('name'));
         }
 
+        $gridConfigId = null;
         $gridType = 'search';
         if ($request->get('gridtype')) {
             $gridType = $request->get('gridtype');
@@ -92,10 +209,6 @@ class DataObjectHelperController extends AdminController
 
         if (!$fields && $class) {
             $fields = $class->getFieldDefinitions();
-        } elseif (!$class) {
-            return $this->json([
-                'availableFields' => []
-            ]);
         }
 
         $types = [];
@@ -103,28 +216,69 @@ class DataObjectHelperController extends AdminController
             $types = explode(',', $request->get('types'));
         }
 
+        $userId = $this->getUser()->getId();
+
+        $requestedGridConfigId = $isDelete ? null : $request->get('gridConfigId');
+
         // grid config
         $gridConfig = [];
-        if ($objectId) {
-            $searchType = $request->get('searchType');
-            $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
+        $searchType = $request->get('searchType');
 
-            $configFiles['configFileClassUser'] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $request->get('objectId') . '_' . $class->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-            $configFiles['configFileUser'] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $request->get('objectId') . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-
-            foreach ($configFiles as $configFile) {
-                if (is_file($configFile)) {
-                    $gridConfig = Tool\Serialize::unserialize(file_get_contents($configFile));
-                    if (is_array($gridConfig) && array_key_exists('classId', $gridConfig)) {
-                        if ($gridConfig['classId'] == $class->getId()) {
-                            break;
-                        } else {
-                            $gridConfig = [];
-                        }
-                    } else {
-                        break;
-                    }
+        if (strlen($requestedGridConfigId) == 0 && $class) {
+            // check if there is a favourite view
+            $favourite = null;
+            try {
+                try {
+                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ? $objectId : 0, $searchType);
+                } catch (\Exception $e) {
                 }
+                if (!$favourite && $objectId) {
+                    $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), 0, $searchType);
+                }
+
+                if ($favourite) {
+                    $requestedGridConfigId = $favourite->getGridConfigId();
+                }
+            } catch (\Exception $e) {
+            }
+        }
+
+        if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0 && $objectId) {
+            $db = Db::get();
+            $configListingConditionParts = [];
+            $configListingConditionParts[] = 'ownerId = ' . $userId;
+            $configListingConditionParts[] = 'classId = ' . $class->getId();
+
+            if ($searchType) {
+                $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
+            }
+
+            try {
+                $savedGridConfig = GridConfig::getById($requestedGridConfigId);
+            } catch (\Exception $e) {
+            }
+
+            if ($savedGridConfig) {
+                try {
+                    $userIds = [$this->getUser()->getId()];
+                    if ($this->getUser()->getRoles()) {
+                        $userIds = array_merge($userIds, $this->getUser()->getRoles());
+                    }
+                    $userIds = implode(',', $userIds);
+                    $shared = $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
+
+                    $shared = GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
+                } catch (\Exception $e) {
+                }
+
+                if (!$shared && $savedGridConfig->getOwnerId() != $this->getUser()->getId()) {
+                    throw new \Exception('you are neither the onwner of this config nor it is shared with you');
+                }
+                $gridConfigId = $savedGridConfig->getId();
+                $gridConfig = $savedGridConfig->getConfig();
+                $gridConfig = json_decode($gridConfig, true);
+                $gridConfigName = $savedGridConfig->getName();
+                $gridConfigDescription = $savedGridConfig->getDescription();
             }
         }
 
@@ -265,25 +419,32 @@ class DataObjectHelperController extends AdminController
                                 }
                             }
                         } else {
-                            $fd = $class->getFieldDefinition($key);
-                            //if not found, look for localized fields
-                            if (empty($fd)) {
-                                foreach ($localizedFields as $lf) {
-                                    $fd = $lf->getFieldDefinition($key);
-                                    if (!empty($fd)) {
-                                        break;
+                            if (DataObject\Service::isHelperGridColumnConfig($key)) {
+                                $calculatedColumnConfig = $this->getCalculatedColumnConfig($savedColumns[$key]);
+                                if ($calculatedColumnConfig) {
+                                    $availableFields[] = $calculatedColumnConfig;
+                                }
+                            } else {
+                                $fd = $class->getFieldDefinition($key);
+                                //if not found, look for localized fields
+                                if (empty($fd)) {
+                                    foreach ($localizedFields as $lf) {
+                                        $fd = $lf->getFieldDefinition($key);
+                                        if (!empty($fd)) {
+                                            break;
+                                        }
                                     }
                                 }
-                            }
 
-                            if (!empty($fd)) {
-                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, null, $class, $objectId);
-                                if (!empty($fieldConfig)) {
-                                    if (isset($sc['width'])) {
-                                        $fieldConfig['width'] = $sc['width'];
+                                if (!empty($fd)) {
+                                    $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, null, $class, $objectId);
+                                    if (!empty($fieldConfig)) {
+                                        if (isset($sc['width'])) {
+                                            $fieldConfig['width'] = $sc['width'];
+                                        }
+
+                                        $availableFields[] = $fieldConfig;
                                     }
-
-                                    $availableFields[] = $fieldConfig;
                                 }
                             }
                         }
@@ -316,53 +477,223 @@ class DataObjectHelperController extends AdminController
             $language = $gridConfig['language'];
         }
 
-        return $this->json([
+        $availableConfigs = $this->getMyOwnGridColumnConfigs($userId, $class->getId(), $searchType);
+        $sharedConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $class->getId(), $searchType);
+        $settings = $this->getShareSettings((int) $gridConfigId);
+        $settings['gridConfigId'] = (int)  $gridConfigId;
+        $settings['gridConfigName'] = $gridConfigName;
+        $settings['gridConfigDescription'] = $gridConfigDescription;
+        $settings['isShared'] = (!$gridConfigId || $shared) ? true : false;
+
+        return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             'language' => $language,
             'availableFields' => $availableFields,
+            'settings' => $settings,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
-            'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false
-        ]);
+            'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
+            'availableConfigs' => $availableConfigs,
+            'sharedConfigs' => $sharedConfigs
+
+        ];
+    }
+
+    protected function getCalculatedColumnConfig($config)
+    {
+        try {
+            $calculatedColumnConfig = Tool\Session::useSession(function (AttributeBagInterface $session) use ($config) {
+
+                //otherwise create a new one
+
+                $calculatedColumn = [];
+                // note that we have to generate a new key!
+
+                $existingKey = $config['fieldConfig']['key'];
+                $calculatedColumnConfig['key'] = $existingKey;
+                $calculatedColumnConfig['position'] = $config['position'];
+                $calculatedColumnConfig['isOperator'] = true;
+                $calculatedColumnConfig['attributes'] = $config['fieldConfig']['attributes'];
+
+                $existingColumns = $session->get('helpercolumns', []);
+
+                if (isset($existingColumns[$existingKey])) {
+                    // if the configuration is still in the session, then reuse it
+                    return $calculatedColumnConfig;
+                }
+
+                $newKey = '#' . uniqid();
+                $calculatedColumnConfig['key'] = $newKey;
+
+                // prepare a column config on the fly
+                $phpConfig = json_encode($config['fieldConfig']);
+                $phpConfig = json_decode($phpConfig);
+                $helperColumns = [];
+                $helperColumns[$newKey] = $phpConfig;
+
+                $helperColumns = array_merge($helperColumns, $existingColumns);
+                $session->set('helpercolumns', $helperColumns);
+
+                return $calculatedColumnConfig;
+            }, 'pimcore_gridconfig');
+
+            return $calculatedColumnConfig;
+        } catch (\Exception $e) {
+            Logger::error($e);
+        }
     }
 
     /**
-     * @Route("/grid-delete-column-config")
+     * @Route("/prepare-helper-column-configs")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function gridDeleteColumnConfigAction(Request $request)
+    public function prepareHelperColumnConfigs(Request $request)
     {
-        $object = DataObject::getById($request->get('id'));
+        $helperColumns = [];
+        $newData = [];
+        $data = json_decode($request->get('columns'));
+        foreach ($data as $item) {
+            if ($item->isOperator) {
+                $itemKey = '#' . uniqid();
 
-        if ($object->isAllowed('list')) {
-            try {
-                $classId = $request->get('class_id');
-
-                $searchType = $request->get('searchType');
-                $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
-
-                $configFiles = [];
-                $configFiles[]= PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '_' . $classId . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-                $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-
-                foreach ($configFiles as $configFile) {
-                    $configDir = dirname($configFile);
-                    if (is_dir($configDir)) {
-                        if (is_file($configFile)) {
-                            @unlink($configFile);
-                        }
-                    }
-                }
-
-                return $this->json(['success' => true]);
-            } catch (\Exception $e) {
-                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                $item->key = $itemKey;
+                $newData[] = $item;
+                $helperColumns[$itemKey] = $item;
+            } else {
+                $newData[] = $item;
             }
         }
 
-        return $this->json(['success' => false, 'message' => 'missing_permission']);
+        Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+            $existingColumns = $session->get('helpercolumns', []);
+            $helperColumns = array_merge($helperColumns, $existingColumns);
+            $session->set('helpercolumns', $helperColumns);
+        }, 'pimcore_gridconfig');
+
+        return $this->json(['success' => true, 'columns' => $newData]);
+    }
+
+    /**
+     * @Route("/grid-config-apply-to-all")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function gridConfigApplyToAllAction(Request $request)
+    {
+        $objectId = $request->get('objectId');
+        $object = DataObject\AbstractObject::getById($objectId);
+
+        if ($object->isAllowed('list')) {
+            $classId = $request->get('classId');
+            $gridConfigId = $request->get('gridConfigId');
+            $searchType = $request->get('searchType');
+            $user = $this->getUser();
+            $db = Db::get();
+            $db->query('delete from gridconfig_favourites where '
+                . 'ownerId = ' . $user->getId()
+                . ' and classId = ' . $classId .
+                ' and searchType = ' . $db->quote($searchType)
+                . ' and objectId != ' . $objectId . ' and objectId != 0');
+
+            return $this->json(['success' => true]);
+        } else {
+            return $this->json(['success' => false, 'message' => 'missing_permission']);
+        }
+    }
+
+    /**
+     * @Route("/grid-mark-favourite-column-config")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function gridMarkFavouriteColumnConfigAction(Request $request)
+    {
+        $objectId = $request->get('objectId');
+        $object = DataObject\AbstractObject::getById($objectId);
+
+        if ($object->isAllowed('list')) {
+            $classId = $request->get('classId');
+            $gridConfigId = $request->get('gridConfigId');
+            $searchType = $request->get('searchType');
+            $global = $request->get('global');
+            $user = $this->getUser();
+
+            $favourite = new GridConfigFavourite();
+            $favourite->setOwnerId($user->getId());
+            $class = DataObject\ClassDefinition::getById($classId);
+            if (!$class) {
+                throw new \Exception('class ' . $classId . ' does not exist anymore');
+            }
+            $favourite->setClassId($classId);
+            $favourite->setSearchType($searchType);
+
+            try {
+                if ($gridConfigId != 0) {
+                    $gridConfig = GridConfig::getById($gridConfigId);
+                    $favourite->setGridConfigId($gridConfig->getId());
+                }
+                $favourite->setObjectId($objectId);
+                $favourite->save();
+
+                $specializedConfigs = false;
+
+                if ($global) {
+                    $favourite->setObjectId(0);
+                    $favourite->save();
+                }
+                $db = Db::get();
+                $count  = $db->fetchOne('select * from gridconfig_favourites where '
+                    . 'ownerId = ' . $user->getId()
+                    . ' and classId = ' . $classId .
+                    ' and searchType = ' . $db->quote($searchType)
+                    . ' and objectId != ' . $objectId . ' and objectId != 0');
+                $specializedConfigs = $count > 0;
+            } catch (\Exception $e) {
+                $favourite->delete();
+            }
+
+            return $this->json(['success' => true, 'spezializedConfigs' => $specializedConfigs]);
+        } else {
+            return $this->json(['success' => false, 'message' => 'missing_permission']);
+        }
+    }
+
+    /**
+     * @param $gridConfigId
+     *
+     * @return array
+     */
+    protected function getShareSettings($gridConfigId)
+    {
+        $result = [
+            'sharedUserIds' => [],
+            'sharedRoleIds' => []
+        ];
+
+        $db = Db::get();
+        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u 
+                      where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
+
+        if ($allShares) {
+            foreach ($allShares as $share) {
+                $type = $share['type'];
+                $key = 'shared' . ucfirst($type) . 'Ids';
+                $result[$key][] = $share['sharedWithUserId'];
+            }
+        }
+
+        foreach ($result as $idx => $value) {
+            $value = $value ? implode(',', $value) : '';
+            $result[$idx] = $value;
+        }
+
+        return $result;
     }
 
     /**
@@ -381,29 +712,110 @@ class DataObjectHelperController extends AdminController
                 $classId = $request->get('class_id');
 
                 $searchType = $request->get('searchType');
-                $postfix =  $searchType && $searchType != 'folder' ? '_' . $request->get('searchType') : '';
 
                 // grid config
-                $gridConfig = $this->decodeJson($request->get('gridconfig'));
-                if ($classId) {
-                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '_' . $classId . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
-                } else {
-                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . $postfix . '-user_' . $this->getUser()->getId() . '.psf';
+                $gridConfigData = $this->decodeJson($request->get('gridconfig'));
+                $gridConfigData['pimcore_version'] = Version::getVersion();
+                $gridConfigData['pimcore_revision'] = Version::getRevision();
+                unset($gridConfigData['settings']['isShared']);
+
+                $metadata = $request->get('settings');
+                $metadata = json_decode($metadata, true);
+
+                $gridConfigId = $metadata['gridConfigId'];
+                if ($gridConfigId) {
+                    try {
+                        $gridConfig = GridConfig::getById($gridConfigId);
+                    } catch (\Exception $e) {
+                    }
+                }
+                if ($gridConfig && $gridConfig->getOwnerId() != $this->getUser()->getId()) {
+                    throw new \Exception("don't mess around with somebody elses configuration");
                 }
 
-                $configDir = dirname($configFile);
-                if (!is_dir($configDir)) {
-                    File::mkdir($configDir);
-                }
-                File::put($configFile, Tool\Serialize::serialize($gridConfig));
+                $this->updateGridConfigShares($gridConfig, $metadata);
 
-                return $this->json(['success' => true]);
+                if (!$gridConfig) {
+                    $gridConfig = new GridConfig();
+                    $gridConfig->setName(date('c'));
+                    $gridConfig->setClassId($classId);
+                    $gridConfig->setSearchType($searchType);
+
+                    $gridConfig->setOwnerId($this->getUser()->getId());
+                }
+
+                if ($metadata) {
+                    $gridConfig->setName($metadata['gridConfigName']);
+                    $gridConfig->setDescription($metadata['gridConfigDescription']);
+                }
+
+                $gridConfigData = json_encode($gridConfigData);
+                $gridConfig->setConfig($gridConfigData);
+                $gridConfig->save();
+
+                $userId = $this->getUser()->getId();
+
+                $availableConfigs = $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType);
+                $sharedConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $classId, $searchType);
+
+                $settings= $this->getShareSettings($gridConfig->getId());
+                $settings['gridConfigId'] = (int) $gridConfig->getId();
+                $settings['gridConfigName'] = $gridConfig->getName();
+                $settings['gridConfigDescription'] = $gridConfig->getDescription();
+                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getUser()->getId());
+
+                return $this->json(['success' => true,
+                    'settings' => $settings,
+                    'availableConfigs' => $availableConfigs,
+                    'sharedConfigs' => $sharedConfigs,
+                    ]
+                    );
             } catch (\Exception $e) {
                 return $this->json(['success' => false, 'message' => $e->getMessage()]);
             }
         }
 
         return $this->json(['success' => false, 'message' => 'missing_permission']);
+    }
+
+    /**
+     * @param $gridConfig GridConfig
+     * @param $metadata
+     *
+     * @throws \Exception
+     */
+    protected function updateGridConfigShares($gridConfig, $metadata)
+    {
+        if (!$gridConfig) {
+            // nothing to do
+            return;
+        }
+
+        if ($gridConfig->getOwnerId() != $this->getUser()->getId()) {
+            throw new \Exception("don't mess with someone elses grid config");
+        }
+        $combinedShares = [];
+        $sharedUserIds = $metadata['sharedUserIds'];
+        $sharedRoleIds = $metadata['sharedRoleIds'];
+
+        if ($sharedUserIds) {
+            $combinedShares = explode(',', $sharedUserIds);
+        }
+
+        if ($sharedRoleIds) {
+            $sharedRoleIds = explode(',', $sharedRoleIds);
+            $combinedShares = array_merge($combinedShares, $sharedRoleIds);
+        }
+
+        $db = Db::get();
+        $db->delete('gridconfig_shares', ['gridConfigId' => $gridConfig->getId() ]);
+
+        foreach ($combinedShares as $id) {
+            $share = new GridConfigShare();
+            $share->setGridConfigId($gridConfig->getId());
+            $share->setSharedWithUserId($id);
+            $share->save();
+        }
     }
 
     /**
@@ -845,7 +1257,7 @@ class DataObjectHelperController extends AdminController
 
         //parameters specified in the objects grid
         $ids = $request->get('ids', []);
-        if (! empty($ids)) {
+        if (!empty($ids)) {
             //add a condition if id numbers are specified
             $list->addConditionParam("{$objectTableName}.o_id IN (" . implode(',', $ids) . ')');
         }
@@ -904,7 +1316,7 @@ class DataObjectHelperController extends AdminController
         $fileHandle = uniqid('export-');
         file_put_contents($this->getCsvFile($fileHandle), '');
 
-        return $this->json(['success'=>true, 'jobs'=> $jobs, 'fileHandle' => $fileHandle]);
+        return $this->json(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
 
     /**
@@ -966,9 +1378,17 @@ class DataObjectHelperController extends AdminController
      *
      * @return string
      */
-    protected function mapFieldname($field)
+    protected function mapFieldname($field, $helperDefinitions)
     {
-        if (substr($field, 0, 1) == '~') {
+        if (strpos($field, '#') === 0) {
+            if (isset($helperDefinitions[$field])) {
+                if ($helperDefinitions[$field]->attributes) {
+                    return $helperDefinitions[$field]->attributes->label ? $helperDefinitions[$field]->attributes->label : $field;
+                }
+
+                return $field;
+            }
+        } elseif (substr($field, 0, 1) == '~') {
             $fieldParts = explode('~', $field);
             $type = $fieldParts[1];
 
@@ -1005,26 +1425,40 @@ class DataObjectHelperController extends AdminController
         Logger::debug('objects in list:' . count($list->getObjects()));
         //add inherited values to objects
         DataObject\AbstractObject::setGetInheritedValues(true);
+
+        $helperDefinitions = DataObject\Service::getHelperDefinitions();
+
+        $container = \Pimcore::getContainer();
+        $localeService = $container->get(Locale::class);
+
         foreach ($list->getObjects() as $object) {
             if ($fields) {
                 $objectData = [];
                 foreach ($fields as $field) {
-                    $fieldData = $this->getCsvFieldData($request, $field, $object, $requestedLanguage);
-                    if (!$mappedFieldnames[$field]) {
-                        $mappedFieldnames[$field] = $this->mapFieldname($field);
-                    }
+                    if (DataObject\Service::isHelperGridColumnConfig($field) && $validLanguages = DataObject\Service::expandGridColumnForExport($helperDefinitions, $field)) {
+                        $currentLocale = $localeService->getLocale();
+                        $mappedFieldnameBase = $this->mapFieldname($field, $helperDefinitions);
 
-                    $objectData[$mappedFieldnames[$field]] = $fieldData;
+                        foreach ($validLanguages as $validLanguage) {
+                            $localeService->setLocale($validLanguage);
+                            $fieldData = $this->getCsvFieldData($request, $field, $object, $validLanguage, $helperDefinitions);
+                            $localizedFieldKey = $field . '-' . $validLanguage;
+                            if (!isset($mappedFieldnames[$localizedFieldKey])) {
+                                $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                            }
+                            $objectData[$localizedFieldKey] = $fieldData;
+                        }
+
+                        $localeService->setLocale($currentLocale);
+                    } else {
+                        $fieldData = $this->getCsvFieldData($request, $field, $object, $requestedLanguage, $helperDefinitions);
+                        if (!isset($mappedFieldnames[$field])) {
+                            $mappedFieldnames[$field] = $this->mapFieldname($field, $helperDefinitions);
+                        }
+                        $objectData[$field] = $fieldData;
+                    }
                 }
                 $objects[] = $objectData;
-            } else {
-                /**
-                 * @extjs - TODO remove this, when old ext support is removed
-                 */
-                if ($object instanceof DataObject\Concrete) {
-                    $o = $this->csvObjectData($object);
-                    $objects[] = $o;
-                }
             }
         }
         //create csv
@@ -1032,8 +1466,9 @@ class DataObjectHelperController extends AdminController
         if (!empty($objects)) {
             if ($addTitles) {
                 $columns = array_keys($objects[0]);
-                foreach ($columns as $key => $value) {
-                    $columns[$key] = '"' . $value . '"';
+                foreach ($columns as $columnIdx => $columnKey) {
+                    $columnName = $mappedFieldnames[$columnKey];
+                    $columns[$columnIdx] = '"' . $columnName . '"';
                 }
                 $csv = implode(';', $columns) . "\r\n";
             }
@@ -1065,9 +1500,8 @@ class DataObjectHelperController extends AdminController
      *
      * @return mixed
      */
-    protected function getCsvFieldData(Request $request, $field, $object, $requestedLanguage)
+    protected function getCsvFieldData(Request $request, $field, $object, $requestedLanguage, $helperDefinitions)
     {
-
         //check if field is systemfield
         $systemFieldMap = [
             'id' => 'getId',
@@ -1089,7 +1523,11 @@ class DataObjectHelperController extends AdminController
                 $fieldParts = explode('~', $field);
 
                 // check for objects bricks and localized fields
-                if (substr($field, 0, 1) == '~') {
+                if (DataObject\Service::isHelperGridColumnConfig($field)) {
+                    if ($helperDefinitions[$field]) {
+                        return DataObject\Service::calculateCellValue($object, $helperDefinitions, $field);
+                    }
+                } elseif (substr($field, 0, 1) == '~') {
                     $type = $fieldParts[1];
 
                     if ($type == 'classificationstore') {
@@ -1127,9 +1565,9 @@ class DataObjectHelperController extends AdminController
                     $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
 
                     if ($fieldDefinition) {
-                        $brickContainer = $object->{'get'.ucfirst($key)}();
+                        $brickContainer = $object->{'get' . ucfirst($key)}();
                         if ($brickContainer && !empty($brickKey)) {
-                            $brick = $brickContainer->{'get'.ucfirst($brickType)}();
+                            $brick = $brickContainer->{'get' . ucfirst($brickType)}();
                             if ($brick) {
                                 return $fieldDefinition->getForCsvExport($brick);
                             }
@@ -1218,7 +1656,7 @@ class DataObjectHelperController extends AdminController
 
         $jobs = $list->loadIdList();
 
-        return $this->json(['success'=>true, 'jobs'=>$jobs]);
+        return $this->json(['success' => true, 'jobs' => $jobs]);
     }
 
     /**
@@ -1266,7 +1704,7 @@ class DataObjectHelperController extends AdminController
                         $groupId = $groupKeyId[0];
                         $keyid = $groupKeyId[1];
 
-                        $getter = 'get'.ucfirst($field);
+                        $getter = 'get' . ucfirst($field);
                         if (method_exists($object, $getter)) {
                             /** @var $classificationStoreData DataObject\Classificationstore */
                             $classificationStoreData = $object->$getter();
@@ -1278,8 +1716,8 @@ class DataObjectHelperController extends AdminController
                             );
                         }
                     } else {
-                        $getter = 'get'.ucfirst($field);
-                        $setter = 'set'.ucfirst($field);
+                        $getter = 'get' . ucfirst($field);
+                        $setter = 'set' . ucfirst($field);
                         $keyValuePairs = $object->$getter();
 
                         if (!$keyValuePairs) {

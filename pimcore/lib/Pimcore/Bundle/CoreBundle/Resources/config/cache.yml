@@ -16,9 +16,12 @@ services:
     # PIMCORE CACHE
     #
 
+    Pimcore\Cache\Core\CoreHandlerInterface: '@pimcore.cache.core.handler'
+
     # the actual core handler which is used from Pimcore\Cache
     # the pimcore.cache.core.pool service is defined by config
     # and set in PimcoreExtension
+
     pimcore.cache.core.handler:
         class: Pimcore\Cache\Core\EventDispatchingCoreHandler
         arguments:

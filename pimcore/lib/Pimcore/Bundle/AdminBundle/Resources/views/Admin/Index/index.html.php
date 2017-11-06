@@ -116,7 +116,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
 <div id="pimcore_navigation" style="display:none;">
     <ul>
         <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "file")) { ?>
-            <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item">
+            <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
                 <svg id="icon-file" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.4 23"><path d="M14.5,1H5.3A2.31,2.31,0,0,0,3,3.3V21.7A2.31,2.31,0,0,0,5.3,24H19.1a2.31,2.31,0,0,0,2.3-2.3V7.9Zm0,3.28L18.12,7.9H14.5ZM5.3,21.7V3.3h6.9v6.9h6.9V21.7Z" transform="translate(-3 -1)"/></svg>
             </li>
         <?php } ?>
@@ -325,6 +325,7 @@ $scripts = array(
     "pimcore/element/replace_assignments.js",
     "pimcore/element/permissionchecker.js",
     "pimcore/object/helpers/grid.js",
+    "pimcore/object/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/gridConfigDialog.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
@@ -407,6 +408,7 @@ $scripts = array(
     "pimcore/object/classes/data/multihrefMetadata.js",
     "pimcore/object/classes/data/objectsMetadata.js",
     "pimcore/object/classes/data/nonownerobjects.js",
+    "pimcore/object/classes/data/booleanSelect.js",
     "pimcore/object/classes/data/select.js",
     "pimcore/object/classes/data/user.js",
     "pimcore/object/classes/data/textarea.js",
@@ -452,6 +454,37 @@ $scripts = array(
     "pimcore/object/classes/layout/text.js",
     "pimcore/object/fieldcollection.js",
     "pimcore/object/fieldcollections/field.js",
+    "pimcore/object/gridcolumn/Abstract.js",
+    "pimcore/object/gridcolumn/operator/IsEqual.js",
+    "pimcore/object/gridcolumn/operator/Text.js",
+    "pimcore/object/gridcolumn/operator/Anonymizer.js",
+    "pimcore/object/gridcolumn/operator/AnyGetter.js",
+    "pimcore/object/gridcolumn/operator/AssetMetadataGetter.js",
+    "pimcore/object/gridcolumn/operator/Arithmetic.js",
+    "pimcore/object/gridcolumn/operator/Boolean.js",
+    "pimcore/object/gridcolumn/operator/BooleanFormatter.js",
+    "pimcore/object/gridcolumn/operator/CaseConverter.js",
+    "pimcore/object/gridcolumn/operator/CharCounter.js",
+    "pimcore/object/gridcolumn/operator/Concatenator.js",
+    "pimcore/object/gridcolumn/operator/ElementCounter.js",
+    "pimcore/object/gridcolumn/operator/JSON.js",
+    "pimcore/object/gridcolumn/operator/LocaleSwitcher.js",
+    "pimcore/object/gridcolumn/operator/Merge.js",
+    "pimcore/object/gridcolumn/operator/ObjectFieldGetter.js",
+    "pimcore/object/gridcolumn/operator/PHP.js",
+    "pimcore/object/gridcolumn/operator/PHPCode.js",
+    "pimcore/object/gridcolumn/operator/TranslateValue.js",
+    "pimcore/object/gridcolumn/operator/RequiredBy.js",
+    "pimcore/object/gridcolumn/operator/StringContains.js",
+    "pimcore/object/gridcolumn/operator/StringReplace.js",
+    "pimcore/object/gridcolumn/operator/Substring.js",
+    "pimcore/object/gridcolumn/operator/LFExpander.js",
+    "pimcore/object/gridcolumn/operator/Trimmer.js",
+    "pimcore/object/gridcolumn/value/Date.js",
+    "pimcore/object/gridcolumn/value/DateTime.js",
+    "pimcore/object/gridcolumn/value/Href.js",
+    "pimcore/object/gridcolumn/value/Objects.js",
+    "pimcore/object/gridcolumn/value/DefaultValue.js",
     "pimcore/object/objectbrick.js",
     "pimcore/object/objectbricks/field.js",
     "pimcore/object/tags/abstract.js",
@@ -469,8 +502,11 @@ $scripts = array(
     "pimcore/object/tags/numeric.js",
     "pimcore/object/tags/objects.js",
     "pimcore/object/tags/multihrefMetadata.js",
+    "pimcore/object/gridcolumn/operator/FieldCollectionGetter.js",
+    "pimcore/object/gridcolumn/operator/ObjectBrickGetter.js",
     "pimcore/object/tags/objectsMetadata.js",
     "pimcore/object/tags/nonownerobjects.js",
+    "pimcore/object/tags/booleanSelect.js",
     "pimcore/object/tags/select.js",
     "pimcore/object/tags/user.js",
     "pimcore/object/tags/checkbox.js",
@@ -563,6 +599,7 @@ $scripts = array(
     "pimcore/layout/portlets/modificationStatistic.js",
     "pimcore/layout/portlets/feed.js",
     "pimcore/layout/portlets/analytics.js",
+    "pimcore/layout/portlets/piwik.js",
     "pimcore/layout/portlets/customreports.js",
 
     "pimcore/layout/toolbar.js",
@@ -583,6 +620,11 @@ $scripts = array(
     //workflow
     "pimcore/workflowmanagement/actionPanel.js",
 
+    // Piwik - this needs to be loaded after treepanel manager as
+    // it adds panels in pimcore ready
+    "pimcore/analytics/piwik/widget_store_provider.js",
+    "pimcore/report/piwik/settings.js",
+    "pimcore/report/piwik/dashboard_iframe.js",
 );
 
 // google maps API key

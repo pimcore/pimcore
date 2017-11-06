@@ -28,12 +28,20 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 ## Examples
 
 ### Basic usage
+<div class="code-section">
 
 ```php
 <div class="pdf">
     <?= $this->pdf("myPdf", ["width" => 640]); ?>
 </div>
 ```
+
+```twig
+<div class="pdf">
+    {{ pimcore_pdf("myPdf", {"width": 640}) }}
+</div>
+```
+</div>
 
 This looks like the following in editmode: 
 

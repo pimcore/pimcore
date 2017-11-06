@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
@@ -570,7 +571,7 @@ class DefaultElasticSearch implements IProductList
         if ($this->orderKey) {
             if (is_array($this->orderKey)) {
                 foreach ($this->orderKey as $orderKey) {
-                    $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => ($orderKey[1] ?: 'asc')];
+                    $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => (strtolower($orderKey[1]) ?: 'asc')];
                 }
             } else {
                 $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($this->orderKey) => ($this->order ?: 'asc')];
@@ -620,7 +621,38 @@ class DefaultElasticSearch implements IProductList
      */
     protected function loadWithoutPriceFilterWithPriceSorting()
     {
-        throw new \Exception('Not implemented yet');
+        $params = $this->getQuery();
+        unset($params['body']['sort']);     // don't send the sort parameter, because it doesn't exist with offline sorting
+        $params['body']['size'] = 10000;    // won't work with more than 10000 items in the result (elasticsearch limit)
+        $params['body']['from'] = 0;
+        $params['body']['fields'] = ['system.priceSystemName'];
+        $result = $this->sendRequest($params);
+        $objectRaws = [];
+        if ($result['hits']) {
+            $this->totalCount = $result['hits']['total'];
+            foreach ($result['hits']['hits'] as $hit) {
+                $objectRaws[] = ['id' => $hit['_id'], 'priceSystemName' => reset($hit['fields']['system.priceSystemName'])];
+            }
+        }
+        $priceSystemArrays = [];
+        foreach ($objectRaws as $raw) {
+            $priceSystemArrays[$raw['priceSystemName']][] = $raw['id'];
+        }
+        if (count($priceSystemArrays) == 1) {
+            $priceSystemName = key($priceSystemArrays);
+            $priceSystem = Factory::getInstance()->getPriceSystem($priceSystemName);
+            $objectRaws = $priceSystem->filterProductIds($priceSystemArrays[$priceSystemName], null, null, $this->order, $this->getOffset(), $this->getLimit());
+        } elseif (count($priceSystemArrays) == 0) {
+            //nothing to do
+        } else {
+            throw new \Exception('Not implemented yet - multiple pricing systems are not supported yet');
+        }
+        $raws = [];
+        foreach ($objectRaws as $raw) {
+            $raws[] = $raw['o_id'];
+        }
+
+        return $raws;
     }
 
     /**

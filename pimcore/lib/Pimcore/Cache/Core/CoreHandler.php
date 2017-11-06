@@ -295,7 +295,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Save data to cache
      *
      * @param string $key
-     * @param string $data
+     * @param mixed $data
      * @param array $tags
      * @param int|\DateInterval|null $lifetime
      * @param int|null $priority

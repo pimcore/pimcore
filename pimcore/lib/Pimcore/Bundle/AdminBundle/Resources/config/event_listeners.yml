@@ -21,6 +21,12 @@ services:
     Pimcore\Bundle\AdminBundle\EventListener\AdminExceptionListener: ~
 
     #
+    # GRID CONFIG CLEANUP
+    #
+    Pimcore\Bundle\AdminBundle\EventListener\GridConfigListener: ~
+
+
+    #
     # MISC
     #
 

@@ -83,18 +83,7 @@ class GoogleAnalyticsCodeListener
         if (\Pimcore\Tool::useFrontendOutputFilters()) {
             if ($this->isHtmlResponse($response)) {
                 if ($this->enabled && $code = AnalyticsHelper::getCode()) {
-
-                    // analytics
-                    $content = $response->getContent();
-
-                    // search for the end <head> tag, and insert the google analytics code before
-                    // this method is much faster than using simple_html_dom and uses less memory
-                    $headEndPosition = strripos($content, '</head>');
-                    if ($headEndPosition !== false) {
-                        $content = substr_replace($content, $code . '</head>', $headEndPosition, 7);
-                    }
-
-                    $response->setContent($content);
+                    $this->injectBeforeHeadEnd($response, $code);
                 }
             }
         }

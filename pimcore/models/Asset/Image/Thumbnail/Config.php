@@ -66,7 +66,7 @@ class Config extends Model\AbstractModel
     /**
      * @var mixed
      */
-    public $quality = 90;
+    public $quality = 85;
 
     /**
      * @var float

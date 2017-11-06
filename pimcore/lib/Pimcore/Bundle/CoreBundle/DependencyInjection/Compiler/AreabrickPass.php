@@ -36,11 +36,16 @@ class AreabrickPass implements CompilerPassInterface
     {
         $config = $container->getParameter('pimcore.config');
 
-        $areaManagerDefinition = $container->getDefinition(AreabrickManager::class);
-        $taggedServices        = $container->findTaggedServiceIds('pimcore.area.brick');
+        $areabrickManager = $container->getDefinition(AreabrickManager::class);
+        $areabrickLocator = $container->getDefinition('pimcore.document.areabrick.brick_locator');
+
+        $taggedServices = $container->findTaggedServiceIds('pimcore.area.brick');
 
         // keep a list of areas loaded via tags - those classes won't be autoloaded
         $taggedAreas = [];
+
+        // the service mapping for the service locator
+        $locatorMapping = [];
 
         foreach ($taggedServices as $id => $tags) {
             $definition    = $container->getDefinition($id);
@@ -53,16 +58,23 @@ class AreabrickPass implements CompilerPassInterface
                     throw new ConfigurationException(sprintf('Missing "id" attribute on areabrick DI tag for service %s', $id));
                 }
 
-                $areaManagerDefinition->addMethodCall('registerService', [$tag['id'], $id]);
+                // add the service to the locator
+                $locatorMapping[$tag['id']] = new Reference($id);
+
+                // register the brick with its ID on the areabrick manager
+                $areabrickManager->addMethodCall('registerService', [$tag['id'], $id]);
             }
 
+            // handle bricks implementing ContainerAwareInterface
             $this->handleContainerAwareDefinition($container, $definition);
         }
 
         // autoload areas from bundles if not yet defined via service config
         if ($config['documents']['areas']['autoload']) {
-            $this->autoloadAreabricks($container, $areaManagerDefinition, $taggedAreas);
+            $locatorMapping = $this->autoloadAreabricks($container, $areabrickManager, $locatorMapping, $taggedAreas);
         }
+
+        $areabrickLocator->setArgument(0, $locatorMapping);
     }
 
     /**
@@ -79,10 +91,17 @@ class AreabrickPass implements CompilerPassInterface
      *
      * @param ContainerBuilder $container
      * @param Definition $areaManagerDefinition
+     * @param array $locatorMapping
      * @param array $excludedClasses
+     *
+     * @return array
      */
-    protected function autoloadAreabricks(ContainerBuilder $container, Definition $areaManagerDefinition, array $excludedClasses = [])
-    {
+    protected function autoloadAreabricks(
+        ContainerBuilder $container,
+        Definition $areaManagerDefinition,
+        array $locatorMapping,
+        array $excludedClasses
+    ) {
         $bundles = $container->getParameter('kernel.bundles_metadata');
         foreach ($bundles as $bundleName => $bundleMetadata) {
             $bundleAreas = $this->findBundleBricks($container, $bundleName, $bundleMetadata, $excludedClasses);
@@ -92,20 +111,26 @@ class AreabrickPass implements CompilerPassInterface
                 $reflector = $bundleArea['reflector'];
 
                 $definition = new Definition($reflector->getName());
+                $definition->setPublic(false);
 
                 // add brick definition to container
                 $container->setDefinition($bundleArea['serviceId'], $definition);
 
-                // handle bricks implementing ContainerAwareInterface
-                $this->handleContainerAwareDefinition($container, $definition, $reflector);
+                // add the service to the locator
+                $locatorMapping[$bundleArea['brickId']] = new Reference($bundleArea['serviceId']);
 
                 // register brick on the areabrick manager
                 $areaManagerDefinition->addMethodCall('registerService', [
                     $bundleArea['brickId'],
                     $bundleArea['serviceId']
                 ]);
+
+                // handle bricks implementing ContainerAwareInterface
+                $this->handleContainerAwareDefinition($container, $definition, $reflector);
             }
         }
+
+        return $locatorMapping;
     }
 
     /**

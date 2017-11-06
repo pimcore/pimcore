@@ -20,7 +20,7 @@
 pimcore.registerNS("pimcore.object.helpers.edit");
 pimcore.object.helpers.edit = {
 
-    getRecursiveLayout: function (l, noteditable, context, skipLayoutChildren, onlyLayoutChildren, dataProvider) {
+    getRecursiveLayout: function (l, noteditable, context, skipLayoutChildren, onlyLayoutChildren, dataProvider, disableLazyRendering) {
         if (typeof context === "undefined") {
             context = {};
         }
@@ -152,15 +152,15 @@ pimcore.object.helpers.edit = {
                         }
 
 
-                        if(l.fieldtype =='tabpanel') {
-                            tmpItems = this.getRecursiveLayout(childConfig, noteditable, context, true, false, dataProvider);
+                        if(l.fieldtype =='tabpanel' && !disableLazyRendering) {
+                            tmpItems = this.getRecursiveLayout(childConfig, noteditable, context, true, false, dataProvider, disableLazyRendering);
                             if (tmpItems) {
                                 if (!tmpItems['listeners']) {
                                     tmpItems['listeners'] = {};
                                 }
                                 tmpItems['listeners']['afterrender'] = function (childConfig, panel) {
                                     if (!panel.__tabpanel_initialized) {
-                                        var children = this.getRecursiveLayout(childConfig, noteditable, context, false, true, dataProvider);
+                                        var children = this.getRecursiveLayout(childConfig, noteditable, context, false, true, dataProvider, disableLazyRendering);
                                         panel.add(children);
                                         panel.updateLayout();
 
@@ -179,7 +179,7 @@ pimcore.object.helpers.edit = {
                                 }.bind(this, childConfig);
                             }
                         } else {
-                            tmpItems = this.getRecursiveLayout(childConfig, noteditable, context, false, false, dataProvider);
+                            tmpItems = this.getRecursiveLayout(childConfig, noteditable, context, false, false, dataProvider, disableLazyRendering);
                         }
 
                         if (tmpItems) {

@@ -19,6 +19,8 @@ Additionally you can use any configuration option of https://github.com/mpratt/E
 
 ## Example
 
+<div class="code-section">
+
 ```php
 // Basic usage
 <?= $this->embed("socialWidgets"); ?>
@@ -27,3 +29,11 @@ Additionally you can use any configuration option of https://github.com/mpratt/E
 <?= $this->embed("socialWidgets", ["width" => 540]); ?>
 ```
 
+```twig
+{# Basic usage #}
+{{ pimcore_embed("socialWidgets") }}
+
+{# Advanced usage #}
+{{ pimcore_embed("socialWidgets", { "width": 540 }) }}
+```
+</div>

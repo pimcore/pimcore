@@ -31,9 +31,16 @@ In frontend-mode the href returns the path of the linked element.
 
 You can just create the code line like, below:
 
+<div class="code-section">
+
 ```php 
 <?= $this->href("myHref"); ?>
 ```
+
+```twig
+{{ pimcore_href("myHref") }}
+```
+</div>
 
 After, the view in the administration panel changes like in the picture:
 
@@ -45,7 +52,9 @@ If you want specify elements which could be assigned to the href editable, use `
 options in the editable configuration.
 
 ##### Example
- 
+
+<div class="code-section">
+
 ```php
 <?= $this->href("myHref", [
     "types" => ["asset","object"],
@@ -56,6 +65,22 @@ options in the editable configuration.
     "classes" => ["person"],
 ]); ?>
 ```
+
+```twig
+{{ pimcore_href("myHref",{
+    "types": ["asset","object"],
+    "subtypes": {
+        "assets": ["video", "image"],
+        "object": ["object"],
+    },
+    "classes": ["person"]
+}) }}
+```
+</div>
+
+
+
+
 
 We restricted the `myHref` editable to the following entities: 
 * Video / Image (Assets) 
@@ -69,6 +94,8 @@ As you see in the picture below, it's impossible to drop any other type to that 
 
 Another useful use-case for the href editable is a download link. 
 
+<div class="code-section">
+
 ```php
 <?php if ($this->editmode): ?>
     <?= $this->href("myHref"); ?>
@@ -78,3 +105,14 @@ Another useful use-case for the href editable is a download link.
     <?php endif; ?>
 <?php endif; ?>
 ```
+
+```twig
+{% if editmode %}
+    {{ pimcore_href("myHref") }}
+{% else %}
+    {% if pimcore_href("myHref").getElement() is instanceof('\\Pimcore\\Model\\Asset')  %}
+        <a href="{{ pimcore_href("myHref").getFullPath() }}">{{ "Download" | trans }}</a>
+    {% endif %}
+{% endif %}
+```
+</div>

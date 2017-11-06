@@ -20,11 +20,6 @@ use Pimcore\Config;
 class ReportsControllerBase extends AdminController
 {
     /**
-     * @var
-     */
-    public $conf;
-
-    /**
      * @return \Pimcore\Config\Config
      */
     public function getConfig()

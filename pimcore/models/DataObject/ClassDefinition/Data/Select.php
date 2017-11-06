@@ -321,6 +321,9 @@ class Select extends Model\DataObject\ClassDefinition\Data
     {
         $this->options = $masterDefinition->options;
         $this->columnLength = $masterDefinition->columnLength;
+        $this->defaultValue = $masterDefinition->defaultValue;
+        $this->optionsProviderClass = $masterDefinition->optionsProviderClass;
+        $this->optionsProviderData = $masterDefinition->optionsProviderData;
     }
 
     /**

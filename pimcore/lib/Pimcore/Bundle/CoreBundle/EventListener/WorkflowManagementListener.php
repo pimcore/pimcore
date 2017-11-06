@@ -146,7 +146,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
                         if ($validLayouts && $validLayouts[$workflowLayoutId]) {
                             $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
                             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                            DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getParam('object'));
+                            DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getArgument('object'));
                             $data['layout'] = $customLayoutDefinition;
                         }
                     }

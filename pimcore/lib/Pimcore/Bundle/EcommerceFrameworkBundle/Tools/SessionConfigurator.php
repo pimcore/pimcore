@@ -26,22 +26,47 @@ class SessionConfigurator implements SessionConfiguratorInterface
     const ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT = 'ecommerceframework_payment_environment';
 
     /**
-     * @inheritDoc
+     * @return string[]
      */
-    public function configure(SessionInterface $session)
+    protected function getBagNames()
     {
-        $bagNames = [
+        return [
             self::ATTRIBUTE_BAG_CART,
             self::ATTRIBUTE_BAG_ENVIRONMENT,
             self::ATTRIBUTE_BAG_PRICING_ENVIRONMENT,
             self::ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT
         ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function configure(SessionInterface $session)
+    {
+        $bagNames = $this->getBagNames();
 
         foreach ($bagNames as $bagName) {
             $bag = new NamespacedAttributeBag('_' . $bagName);
             $bag->setName($bagName);
 
             $session->registerBag($bag);
+        }
+    }
+
+    /**
+     * Clears all session bags filled from the e-commerce framework
+     *
+     * @param SessionInterface $session
+     */
+    public function clearSession(SessionInterface $session)
+    {
+        $bagNames = $this->getBagNames();
+
+        foreach ($bagNames as $bagName) {
+            $sessionBag = $session->getBag($bagName);
+            if ($sessionBag) {
+                $sessionBag->clear();
+            }
         }
     }
 }
