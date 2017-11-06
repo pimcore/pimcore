@@ -20,7 +20,6 @@ namespace Pimcore\Targeting;
 use Doctrine\DBAL\Connection;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
-use Pimcore\Targeting\Condition\DataProviderDependentConditionInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -29,19 +28,9 @@ class TargetGroupResolver
     const ATTRIBUTE_VISITOR_INFO = '_visitor_info';
 
     /**
-     * @var Connection
+     * @var ConditionMatcherInterface
      */
-    private $db;
-
-    /**
-     * @var DataProviderLocatorInterface
-     */
-    private $dataProviders;
-
-    /**
-     * @var ConditionFactoryInterface
-     */
-    private $conditionFactory;
+    private $conditionMatcher;
 
     /**
      * @var ActionHandlerInterface[]
@@ -49,25 +38,27 @@ class TargetGroupResolver
     private $actionHandlers = [];
 
     /**
+     * @var Connection
+     */
+    private $db;
+
+    /**
      * @var Rule[]
      */
     private $targetingRules;
 
     /**
-     * @param DataProviderLocatorInterface $dataProviders
-     * @param ConditionFactoryInterface $conditionFactory
+     * @param ConditionMatcherInterface $conditionMatcher
      * @param ActionHandlerInterface[] $actionHandlers
      * @param Connection $db
      */
     public function __construct(
-        DataProviderLocatorInterface $dataProviders,
-        ConditionFactoryInterface $conditionFactory,
+        ConditionMatcherInterface $conditionMatcher,
         array $actionHandlers = [],
         Connection $db
     )
     {
-        $this->dataProviders    = $dataProviders;
-        $this->conditionFactory = $conditionFactory;
+        $this->conditionMatcher = $conditionMatcher;
         $this->db               = $db;
 
         foreach ($actionHandlers as $actionHandler) {
@@ -120,39 +111,14 @@ class TargetGroupResolver
 
     private function matchTargetingRuleCondition(VisitorInfo $visitorInfo, Rule $rule)
     {
-        // TODO handle brackets and logical operations
-        // for now everything is just AND-combined
-
-        $match = true;
-        foreach ($rule->getConditions() as $conditionConfig) {
-            $matchesCondition = $this->matchCondition($visitorInfo, $conditionConfig);
-            $match            = $match && $matchesCondition;
-        }
+        $match = $this->conditionMatcher->match(
+            $visitorInfo,
+            $rule->getConditions()
+        );
 
         if ($match) {
             $visitorInfo->addTargetingRule($rule);
         }
-    }
-
-    private function matchCondition(VisitorInfo $visitorInfo, array $config): bool
-    {
-        $condition = $this->conditionFactory->build($config);
-
-        // check prerequisites - e.g. a condition without a value
-        // (= all values match) does not need to fetch provider data
-        // as location or browser
-        if (!$condition->canMatch()) {
-            return true;
-        }
-
-        if ($condition instanceof DataProviderDependentConditionInterface) {
-            foreach ($condition->getDataProviderKeys() as $dataProviderKey) {
-                $dataProvider = $this->dataProviders->get($dataProviderKey);
-                $dataProvider->load($visitorInfo);
-            }
-        }
-
-        return $condition->match($visitorInfo);
     }
 
     private function applyTargetingRuleActions(VisitorInfo $visitorInfo)

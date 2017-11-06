@@ -24,6 +24,9 @@ services:
         arguments:
             $conditions: '%pimcore.targeting.conditions%'
 
+    Pimcore\Targeting\ConditionMatcherInterface: '@Pimcore\Targeting\ConditionMatcher'
+    Pimcore\Targeting\ConditionMatcher: ~
+
     Pimcore\Targeting\ActionHandler\AssignTargetGroup:
         lazy: true
 

@@ -19,12 +19,23 @@ namespace Pimcore\Targeting\ActionHandler;
 
 use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Targeting\ConditionMatcherInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Session\SessionConfigurator;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 
 class AssignTargetGroup implements ActionHandlerInterface
 {
+    /**
+     * @var ConditionMatcherInterface
+     */
+    private $conditionMatcher;
+
+    public function __construct(ConditionMatcherInterface $conditionMatcher)
+    {
+        $this->conditionMatcher = $conditionMatcher;
+    }
+
     public function apply(VisitorInfo $visitorInfo, Rule\Actions $actions, Rule $rule)
     {
         if (!$actions->getPersonaEnabled() || empty($actions->getPersonaId())) {
@@ -37,9 +48,18 @@ class AssignTargetGroup implements ActionHandlerInterface
             return;
         }
 
-        $assign    = true;
-        $threshold = (int)$targetGroup->getThreshold();
+        $assign = true;
 
+        // TODO is this appropriate to check for first visit?
+        if (!$visitorInfo->hasVisitorId()) {
+            $assign = $this->checkEntryConditions($visitorInfo, $targetGroup);
+        }
+
+        if (!$assign) {
+            return;
+        }
+
+        $threshold = (int)$targetGroup->getThreshold();
         if ($threshold > 1) {
             // only check session entries if threshold was configured
             $assign = $this->checkThresholdAssigment($visitorInfo, $targetGroup, $threshold);
@@ -48,6 +68,15 @@ class AssignTargetGroup implements ActionHandlerInterface
         if ($assign) {
             $visitorInfo->addTargetGroup($targetGroup);
         }
+    }
+
+    private function checkEntryConditions(VisitorInfo $visitorInfo, TargetGroup $targetGroup): bool
+    {
+        if (empty($conditions = $targetGroup->getConditions())) {
+            return true;
+        }
+
+        return $this->conditionMatcher->match($visitorInfo, $conditions);
     }
 
     private function checkThresholdAssigment(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $threshold): bool
