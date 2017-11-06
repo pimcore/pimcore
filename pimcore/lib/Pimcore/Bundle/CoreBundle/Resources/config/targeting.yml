@@ -14,6 +14,7 @@ services:
     Pimcore\Targeting\DataProvider\GeoIp: ~
     Pimcore\Targeting\DataProvider\Device: ~
     Pimcore\Targeting\DataProvider\Piwik: ~
+    Pimcore\Targeting\DataProvider\Session: ~
 
     Pimcore\Targeting\DataProviderLocatorInterface: '@Pimcore\Targeting\DataProviderLocator'
     Pimcore\Targeting\DataProviderLocator: ~
@@ -25,3 +26,10 @@ services:
 
     Pimcore\Targeting\ActionHandler\AssignTargetGroup:
         lazy: true
+
+    Pimcore\Targeting\ActionHandler\Event:
+        lazy: true
+
+    Pimcore\Targeting\Session\SessionConfigurator:
+        tags:
+            - { name: pimcore.session.configurator }
