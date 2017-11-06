@@ -24,8 +24,15 @@ services:
         arguments:
             $conditions: '%pimcore.targeting.conditions%'
 
+    pimcore.targeting.condition_matcher.expression_language:
+        class: Symfony\Component\ExpressionLanguage\ExpressionLanguage
+        arguments:
+            $cache: '@pimcore.cache.core.pool'
+
     Pimcore\Targeting\ConditionMatcherInterface: '@Pimcore\Targeting\ConditionMatcher'
-    Pimcore\Targeting\ConditionMatcher: ~
+    Pimcore\Targeting\ConditionMatcher:
+        arguments:
+            $expressionLanguage: '@pimcore.targeting.condition_matcher.expression_language'
 
     Pimcore\Targeting\ActionHandler\AssignTargetGroup:
         lazy: true

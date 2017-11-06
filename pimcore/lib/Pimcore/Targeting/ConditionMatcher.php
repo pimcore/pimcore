@@ -18,10 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Targeting;
 
 use Pimcore\Targeting\Condition\DataProviderDependentConditionInterface;
-use Pimcore\Targeting\ConditionMatcher\Expression\Closure;
-use Pimcore\Targeting\ConditionMatcher\Operator\Boolean;
-use Pimcore\Targeting\ConditionMatcher\RuleBuilder;
+use Pimcore\Targeting\ConditionMatcher\ExpressionBuilder;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ConditionMatcher implements ConditionMatcherInterface
 {
@@ -35,13 +34,20 @@ class ConditionMatcher implements ConditionMatcherInterface
      */
     private $conditionFactory;
 
+    /**
+     * @var ExpressionLanguage
+     */
+    private $expressionLanguage;
+
     public function __construct(
         DataProviderLocatorInterface $dataProviders,
-        ConditionFactoryInterface $conditionFactory
+        ConditionFactoryInterface $conditionFactory,
+        ExpressionLanguage $expressionLanguage
     )
     {
-        $this->dataProviders    = $dataProviders;
-        $this->conditionFactory = $conditionFactory;
+        $this->dataProviders      = $dataProviders;
+        $this->conditionFactory   = $conditionFactory;
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     /**
@@ -49,24 +55,19 @@ class ConditionMatcher implements ConditionMatcherInterface
      */
     public function match(VisitorInfo $visitorInfo, array $conditions): bool
     {
-        $ruleBuilder = new RuleBuilder();
+        $expressionBuilder = new ExpressionBuilder();
 
         foreach ($conditions as $conditionConfig) {
-            $closure = new Closure(function() use ($visitorInfo, $conditionConfig) {
-                return $this->matchCondition($visitorInfo, $conditionConfig);
-            });
+            $conditionResult = $this->matchCondition($visitorInfo, $conditionConfig);
 
-            $ruleBuilder->add(
-                $closure,
-                Boolean::fromString($conditionConfig['operator']),
-                $conditionConfig['bracketLeft'],
-                $conditionConfig['bracketRight']
-            );
+            $expressionBuilder->addCondition($conditionConfig, $conditionResult);
         }
 
-        $rule = $ruleBuilder->getResult();
+        $expression = $expressionBuilder->getExpression();
+        $values     = $expressionBuilder->getValues();
+        $result     = $this->expressionLanguage->evaluate($expression, $values);
 
-        return $rule->evaluate();
+        return (bool)$result;
     }
 
     private function matchCondition(VisitorInfo $visitorInfo, array $config): bool
