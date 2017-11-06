@@ -20,6 +20,8 @@ namespace Pimcore\Targeting\ActionHandler;
 use Pimcore\Model\Tool\Targeting\Persona;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\Session\SessionConfigurator;
+use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 
 class AssignTargetGroup implements ActionHandlerInterface
 {
@@ -31,8 +33,48 @@ class AssignTargetGroup implements ActionHandlerInterface
 
         $persona = Persona::getById($actions->getPersonaId());
 
-        if ($persona) {
+        if (!$persona || !$persona->getActive()) {
+            return;
+        }
+
+        $assign    = true;
+        $threshold = (int)$persona->getThreshold();
+
+        if ($threshold > 1) {
+            // only check session entries if threshold was configured
+            $assign = $this->checkThresholdAssigment($visitorInfo, $persona, $threshold);
+        }
+
+        if ($assign) {
             $visitorInfo->addPersona($persona);
         }
+    }
+
+    private function checkThresholdAssigment(VisitorInfo $visitorInfo, Persona $persona, int $threshold): bool
+    {
+        $request = $visitorInfo->getRequest();
+        if (!$request->getSession()) {
+            return false;
+        }
+
+        $session = $request->getSession();
+
+        /** @var NamespacedAttributeBag $bag */
+        $bag = $session->getBag(SessionConfigurator::TARGETING_BAG);
+
+        $data = $bag->get('assign_target_group', []);
+
+        $assignments = $data[$persona->getId()] ?? 0;
+        $assignments++;
+
+        $data[$persona->getId()] = $assignments;
+        $bag->set('assign_target_group', $data);
+
+        $session->save();
+
+        // check amount after assigning - this means that with
+        // a threshold of 3 the target group will be assigned on and
+        // after the third matching request
+        return $assignments >= $threshold;
     }
 }
