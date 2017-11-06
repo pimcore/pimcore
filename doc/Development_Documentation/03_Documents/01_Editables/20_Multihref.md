@@ -32,6 +32,8 @@ Multihref editable provides one to many relation to other Pimcore elements (docu
 
 The code below is responsible for showing the list of elements types related to the multihref. 
 
+<div class="code-section">
+
 ```php
 <p><?= $this->translate("Types of elements"); ?>:</p>
 <?php if($this->editmode): ?>
@@ -46,6 +48,20 @@ The code below is responsible for showing the list of elements types related to 
     </ul>
 <?php endif; ?>
 ```
+
+```twig
+<p>{{ "Types of elements" | trans }}:</p>
+{% if editmode %}
+    {{ pimcore_multihref("objectPaths") }}
+{% else %}
+<ul>
+    {% for element in pimcore_multihref("objectPaths") %}
+        <li>{{ element.getType() }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+```
+</div>
 
 Picture below, presents the editmode preview:
 
@@ -73,6 +89,8 @@ array(6) {
 ### Example with allowed types and subtypes
 Similar to the Href editable, Multihref also could specify allowed `types`, `subtypes` and `classes`. 
 For example:
+<div class="code-section">
+
 ```php
 <?= $this->multihref("objectPaths", [
     "types" => ["asset","object"],
@@ -83,6 +101,16 @@ For example:
         "classes" => ["person"]
 ]); ?>
 ```
-
+```twig
+{{ pimcore_multihref("objectPaths", {
+    "types": ["asset","object"],
+    "subtypes": {
+        "asset": ["video","image"],
+        "object": ["object"]
+    },
+    "classes": ["person"]
+}) }}
+```
+</div>
 Now, a user is not able to add elements other elements then specified in the types configuration part.
 

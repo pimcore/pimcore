@@ -5,9 +5,19 @@ They are the essential part of managing content in documents.
 
 ## Example Usage 
 The following code makes the `<h1>` headline editable in a document: 
+
+<div class="code-section">
+
 ```php 
 <h1><?= $this->input("headline") ?></h1>
 ```
+
+```twig 
+<h1>{{ pimcore_input("headline") }}</h1>
+```
+
+</div>
+
 Pimcore automatically displays an input widget in the edit mode and renders the content when accessing the document via the frontend. 
 
 ## List of Editables 
