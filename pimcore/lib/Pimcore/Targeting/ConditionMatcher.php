@@ -18,6 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Targeting;
 
 use Pimcore\Targeting\Condition\DataProviderDependentConditionInterface;
+use Pimcore\Targeting\ConditionMatcher\Expression\Closure;
+use Pimcore\Targeting\ConditionMatcher\Operator\Boolean;
+use Pimcore\Targeting\ConditionMatcher\RuleBuilder;
 use Pimcore\Targeting\Model\VisitorInfo;
 
 class ConditionMatcher implements ConditionMatcherInterface
@@ -46,16 +49,24 @@ class ConditionMatcher implements ConditionMatcherInterface
      */
     public function match(VisitorInfo $visitorInfo, array $conditions): bool
     {
-        // TODO handle brackets and logical operations
-        // for now everything is just AND-combined
+        $ruleBuilder = new RuleBuilder();
 
-        $match = true;
         foreach ($conditions as $conditionConfig) {
-            $matchesCondition = $this->matchCondition($visitorInfo, $conditionConfig);
-            $match            = $match && $matchesCondition;
+            $closure = new Closure(function() use ($visitorInfo, $conditionConfig) {
+                return $this->matchCondition($visitorInfo, $conditionConfig);
+            });
+
+            $ruleBuilder->add(
+                $closure,
+                Boolean::fromString($conditionConfig['operator']),
+                $conditionConfig['bracketLeft'],
+                $conditionConfig['bracketRight']
+            );
         }
 
-        return $match;
+        $rule = $ruleBuilder->getResult();
+
+        return $rule->evaluate();
     }
 
     private function matchCondition(VisitorInfo $visitorInfo, array $config): bool
