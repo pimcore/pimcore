@@ -183,9 +183,11 @@ pimcore:
             timeonsite: Pimcore\Targeting\Condition\Piwik\TimeOnSite
             visitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
             visitedpagesbefore: Pimcore\Targeting\Condition\Piwik\VisitedPagesBefore
+            targetgroup: Pimcore\Targeting\Condition\TargetGroup
             # the following are kept for compatibility but are deprecated (typo in condition name)
             vistitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
             vistitedpagesbefore: Pimcore\Targeting\Condition\Piwik\VisitedPagesBefore
+            persona: Pimcore\Targeting\Condition\TargetGroup
         action_handlers:
             assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
             event: Pimcore\Targeting\ActionHandler\Event
