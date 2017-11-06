@@ -22,14 +22,6 @@ use Pimcore\Targeting\Model\VisitorInfo;
 interface DataProviderInterface
 {
     /**
-     * The provider key used to identify a provider. This key will
-     * be used from conditions to specify which providers to use.
-     *
-     * @return string
-     */
-    public function getKey(): string;
-
-    /**
      * Loads data into the visitor info
      *
      * @param VisitorInfo $visitorInfo

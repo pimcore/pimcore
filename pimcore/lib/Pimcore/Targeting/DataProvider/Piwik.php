@@ -63,17 +63,9 @@ class Piwik implements DataProviderInterface
     /**
      * @inheritDoc
      */
-    public function getKey(): string
-    {
-        return self::PROVIDER_KEY;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function load(VisitorInfo $visitorInfo)
     {
-        if ($visitorInfo->has($this->getKey())) {
+        if ($visitorInfo->has(self::PROVIDER_KEY)) {
             return;
         }
 
@@ -86,7 +78,7 @@ class Piwik implements DataProviderInterface
         }
 
         $visitorInfo->set(
-            $this->getKey(),
+            self::PROVIDER_KEY,
             $result
         );
     }
