@@ -12,8 +12,11 @@ services:
 
     Pimcore\Analytics\Piwik\Api\ApiClient: ~
     Pimcore\Analytics\Piwik\Api\SitesManager: ~
+    Pimcore\Analytics\Piwik\Api\VisitorClient: ~
 
     Pimcore\Analytics\Piwik\Config\ConfigProvider: ~
+    Pimcore\Analytics\Piwik\Config\Config:
+        factory: 'Pimcore\Analytics\Piwik\Config\ConfigProvider:getConfig'
 
     Pimcore\Analytics\Piwik\ReportBroker: ~
     Pimcore\Analytics\Piwik\WidgetBroker: ~

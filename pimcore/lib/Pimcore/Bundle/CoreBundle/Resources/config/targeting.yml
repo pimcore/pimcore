@@ -11,6 +11,7 @@ services:
 
     Pimcore\Targeting\DataProvider\GeoIp: ~
     Pimcore\Targeting\DataProvider\Device: ~
+    Pimcore\Targeting\DataProvider\Piwik: ~
 
     Pimcore\Targeting\DataProviderLocatorInterface: '@Pimcore\Targeting\DataProviderLocator'
     Pimcore\Targeting\DataProviderLocator: ~

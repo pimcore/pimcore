@@ -165,16 +165,26 @@ pimcore:
         data_providers:
             geoip: Pimcore\Targeting\DataProvider\GeoIp
             device: Pimcore\Targeting\DataProvider\Device
+            piwik: Pimcore\Targeting\DataProvider\Piwik
         conditions:
+            # TODO event
             url: Pimcore\Targeting\Condition\Url
+            browser: Pimcore\Targeting\Condition\Browser
+            country: Pimcore\Targeting\Condition\Country
             language: Pimcore\Targeting\Condition\Language
             referringsite: Pimcore\Targeting\Condition\ReferringSite
             searchengine: Pimcore\Targeting\Condition\SearchEngine
-            browser: Pimcore\Targeting\Condition\Browser
-            country: Pimcore\Targeting\Condition\Country
-            geopoint: Pimcore\Targeting\Condition\GeoPoint
             hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
             operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
+            geopoint: Pimcore\Targeting\Condition\GeoPoint
+            linkclicked: Pimcore\Targeting\Condition\Piwik\LinkClicked
+            linksclicked: Pimcore\Targeting\Condition\Piwik\LinksClicked
+            timeonsite: Pimcore\Targeting\Condition\Piwik\TimeOnSite
+            visitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
+            visitedpagesbefore: Pimcore\Targeting\Condition\Piwik\VisitedPagesBefore
+            # the following are kept for compatibility but are deprecated (typo in condition name)
+            vistitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
+            vistitedpagesbefore: Pimcore\Targeting\Condition\Piwik\VisitedPagesBefore
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:
