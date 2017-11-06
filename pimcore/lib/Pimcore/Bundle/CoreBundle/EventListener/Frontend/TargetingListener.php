@@ -23,9 +23,12 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -149,13 +152,94 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
+        if (!$this->targetGroupResolver->isTargetingConfigured()) {
+            return;
+        }
+
         // TODO store visitorInfo somewhere
         $visitorInfo = $this->targetGroupResolver->resolve($request);
 
         // propagate response (e.g. redirect) to request handling
         if ($visitorInfo->hasResponse()) {
             $event->setResponse($visitorInfo->getResponse());
+
+            return;
         }
+
+        $this->redirectToPersonaVariant($event, $visitorInfo);
+    }
+
+    private function redirectToPersonaVariant(GetResponseEvent $event, VisitorInfo $visitorInfo)
+    {
+        if (0 === count($visitorInfo->getPersonas())) {
+            return;
+        }
+
+        $request = $event->getRequest();
+
+        // do not redirect multiple times
+        if (!empty($request->get('_ptp'))) {
+            return;
+        }
+
+        // load available persona IDs from document
+        $personaIds = $this->getDocumentPersonaIds($request);
+
+        /** @var Model\Tool\Targeting\Persona $redirectPersona */
+        $redirectPersona = null;
+
+        foreach ($visitorInfo->getPersonas() as $persona) {
+            if (in_array($persona->getId(), $personaIds)) {
+                $redirectPersona = $persona;
+                break;
+            }
+        }
+
+        if (null === $redirectPersona) {
+            return;
+        }
+
+        $redirectUrl = $this->addUrlParam($request->getRequestUri(), '_ptp', $redirectPersona->getId());
+
+        $event->setResponse(new RedirectResponse($redirectUrl, 302));
+    }
+
+    private function getDocumentPersonaIds(Request $request): array
+    {
+        // TODO cache this
+        $document = $this->documentResolver->getDocument($request);
+        if (!$document || !($document instanceof Document\Page) || null !== Model\Staticroute::getCurrentRoute()) {
+            return [];
+        }
+
+        $personas = [];
+        foreach ($document->getElements() as $key => $tag) {
+            $pattern = '/^' . Document\Page::PERSONA_ELEMENT_PREFIX_PREFIXPART . '([0-9]+)' . Document\Page::PERSONA_ELEMENT_PREFIX_SUFFIXPART . '/';
+            if (preg_match($pattern, $key, $matches)) {
+                $personas[] = (int)$matches[1];
+            }
+        }
+
+        $personas = array_unique($personas);
+        $personas = array_filter($personas, function ($id) {
+            return Model\Tool\Targeting\Persona::isIdActive($id);
+        });
+
+        return $personas;
+    }
+
+    private function addUrlParam(string $url, string $param, $value): string
+    {
+        // add _ptr parameter
+        if (false !== strpos($url, '?')) {
+            $url .= '&';
+        } else {
+            $url .= '?';
+        }
+
+        $url .= sprintf('%s=%d', $param, $value);
+
+        return $url;
     }
 
     /**

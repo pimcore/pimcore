@@ -92,7 +92,7 @@ class TargetGroupResolver
         return $visitorInfo;
     }
 
-    private function isTargetingConfigured(): bool
+    public function isTargetingConfigured(): bool
     {
         $configuredRules = $this->db->fetchColumn(
             'SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1'
