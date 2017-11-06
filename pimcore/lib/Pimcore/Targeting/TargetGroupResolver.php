@@ -92,8 +92,8 @@ class TargetGroupResolver
             return $visitorInfo;
         }
 
-        $this->applyTargetingRules($visitorInfo);
-        $this->processTargetingRules($visitorInfo);
+        $this->matchTargetingRuleConditions($visitorInfo);
+        $this->applyTargetingRuleActions($visitorInfo);
 
         $request->attributes->set(self::ATTRIBUTE_VISITOR_INFO, $visitorInfo);
 
@@ -109,35 +109,16 @@ class TargetGroupResolver
         return $configuredRules && (int)$configuredRules > 0;
     }
 
-    private function processTargetingRules(VisitorInfo $visitorInfo)
-    {
-        foreach ($visitorInfo->getTargetingRules() as $rule) {
-            $this->processTargetingRule($visitorInfo, $rule);
-        }
-    }
-
-    private function processTargetingRule(VisitorInfo $visitorInfo, Rule $rule)
-    {
-        $actions = $rule->getActions();
-        if (!$actions) {
-            return;
-        }
-
-        foreach ($this->actionHandlers as $actionHandler) {
-            $actionHandler->apply($visitorInfo, $actions, $rule);
-        }
-    }
-
-    private function applyTargetingRules(VisitorInfo $visitorInfo)
+    private function matchTargetingRuleConditions(VisitorInfo $visitorInfo)
     {
         $rules = $this->getTargetingRules();
 
         foreach ($rules as $rule) {
-            $this->applyTargetingRule($visitorInfo, $rule);
+            $this->matchTargetingRuleCondition($visitorInfo, $rule);
         }
     }
 
-    private function applyTargetingRule(VisitorInfo $visitorInfo, Rule $rule)
+    private function matchTargetingRuleCondition(VisitorInfo $visitorInfo, Rule $rule)
     {
         // TODO handle brackets and logical operations
         // for now everything is just AND-combined
@@ -172,6 +153,20 @@ class TargetGroupResolver
         }
 
         return $condition->match($visitorInfo);
+    }
+
+    private function applyTargetingRuleActions(VisitorInfo $visitorInfo)
+    {
+        foreach ($visitorInfo->getTargetingRules() as $rule) {
+            $actions = $rule->getActions();
+            if (!$actions) {
+                continue;
+            }
+
+            foreach ($this->actionHandlers as $actionHandler) {
+                $actionHandler->apply($visitorInfo, $actions, $rule);
+            }
+        }
     }
 
     /**
