@@ -20,6 +20,7 @@ namespace Pimcore\Targeting\Model;
 use Pimcore\Model\Tool\Targeting\Persona;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class VisitorInfo implements \IteratorAggregate
 {
@@ -53,6 +54,11 @@ class VisitorInfo implements \IteratorAggregate
      * @var array
      */
     private $data = [];
+
+    /**
+     * @var Response
+     */
+    private $response;
 
     public function __construct(Request $request, string $visitorId = null, array $data = [])
     {
@@ -132,6 +138,27 @@ class VisitorInfo implements \IteratorAggregate
     public function addPersona(Persona $persona)
     {
         $this->personas[] = $persona;
+    }
+
+    public function hasResponse(): bool
+    {
+        return null !== $this->response;
+    }
+
+    /**
+     * @return Response|null
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * @param Response $response
+     */
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
     }
 
     public function getData(): array

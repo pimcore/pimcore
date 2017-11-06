@@ -30,6 +30,9 @@ services:
     Pimcore\Targeting\ActionHandler\Event:
         lazy: true
 
+    Pimcore\Targeting\ActionHandler\Redirect:
+        lazy: true
+
     Pimcore\Targeting\Session\SessionConfigurator:
         tags:
             - { name: pimcore.session.configurator }
