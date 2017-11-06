@@ -26,6 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class TargetGroupResolver
 {
+    const ATTRIBUTE_VISITOR_INFO = '_visitor_info';
+
     /**
      * @var Connection
      */
@@ -80,6 +82,10 @@ class TargetGroupResolver
 
     public function resolve(Request $request): VisitorInfo
     {
+        if ($request->attributes->has(self::ATTRIBUTE_VISITOR_INFO)) {
+            return $request->attributes->get(self::ATTRIBUTE_VISITOR_INFO);
+        }
+
         $visitorInfo = VisitorInfo::fromRequest($request);
 
         if (!$this->isTargetingConfigured()) {
@@ -88,6 +94,8 @@ class TargetGroupResolver
 
         $this->applyTargetingRules($visitorInfo);
         $this->processTargetingRules($visitorInfo);
+
+        $request->attributes->set(self::ATTRIBUTE_VISITOR_INFO, $visitorInfo);
 
         return $visitorInfo;
     }

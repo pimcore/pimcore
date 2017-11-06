@@ -156,7 +156,6 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        // TODO store visitorInfo somewhere
         $visitorInfo = $this->targetGroupResolver->resolve($request);
 
         // propagate response (e.g. redirect) to request handling
