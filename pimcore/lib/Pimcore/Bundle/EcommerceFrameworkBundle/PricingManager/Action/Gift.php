@@ -30,6 +30,14 @@ class Gift implements IGift
     protected $productPath;
 
     /**
+     * If true, the gift action will check if an item is available
+     * before adding it to the cart.
+     *
+     * @var bool
+     */
+    protected $checkAvailability = false;
+
+    /**
      * @param IEnvironment $environment
      *
      * @return IGift
@@ -47,9 +55,14 @@ class Gift implements IGift
     public function executeOnCart(IEnvironment $environment)
     {
         $comment = $environment->getRule()->getDescription();
-        $isAvailable = $this->getProduct()->getOSAvailabilityInfo()->getAvailable();
-        if ( $isAvailable) {
-            $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, array(), array(), $comment);
+
+        $add = true;
+        if ($this->checkAvailability) {
+            $add = $this->getProduct()->getOSAvailabilityInfo()->getAvailable();
+        }
+
+        if ($add) {
+           $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, array(), array(), $comment);
         }
     }
 
@@ -76,13 +89,30 @@ class Gift implements IGift
     }
 
     /**
+     * @return bool
+     */
+    public function getCheckAvailability(): bool
+    {
+        return $this->checkAvailability;
+    }
+
+    /**
+     * @param bool $checkAvailability
+     */
+    public function setCheckAvailability($checkAvailability)
+    {
+        $this->checkAvailability = (bool)$checkAvailability;
+    }
+
+    /**
      * @return string
      */
     public function toJSON()
     {
         return json_encode([
-            'type'    => 'Gift',
-            'product' => $this->getProduct() ? $this->getProduct()->getFullPath() : null,
+            'type'               => 'Gift',
+            'product'            => $this->getProduct() ? $this->getProduct()->getFullPath() : null,
+            'check_availability' => $this->checkAvailability
         ]);
     }
 
@@ -100,6 +130,10 @@ class Gift implements IGift
             $this->setProduct($product);
         }
 
+        if (isset($json->check_availability)) {
+            $this->setCheckAvailability($json->check_availability);
+        }
+
         return $this;
     }
 
@@ -114,7 +148,7 @@ class Gift implements IGift
             $this->productPath = $this->product->getFullPath();
         }
 
-        return ['productPath'];
+        return ['productPath', 'checkAvailability'];
     }
 
     /**
