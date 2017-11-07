@@ -12,7 +12,10 @@ services:
     Pimcore\Targeting\TargetGroupResolver: ~
 
     Pimcore\Targeting\DataProvider\GeoIp: ~
-    Pimcore\Targeting\DataProvider\Device: ~
+    Pimcore\Targeting\DataProvider\Device:
+        arguments:
+            $cache: '@pimcore.cache.core.pool'
+
     Pimcore\Targeting\DataProvider\Piwik: ~
     Pimcore\Targeting\DataProvider\Session: ~
 

@@ -17,12 +17,24 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\DataProvider;
 
+use DeviceDetector\Cache\PSR6Bridge;
 use DeviceDetector\DeviceDetector;
+use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
 class Device implements DataProviderInterface
 {
     const PROVIDER_KEY = 'device';
+
+    /**
+     * @var PimcoreCacheItemPoolInterface
+     */
+    private $cache;
+
+    public function __construct(PimcoreCacheItemPoolInterface $cache)
+    {
+        $this->cache = $cache;
+    }
 
     /**
      * @inheritDoc
@@ -45,8 +57,7 @@ class Device implements DataProviderInterface
     protected function createDeviceDetector(string $userAgent): DeviceDetector
     {
         $dd = new DeviceDetector($userAgent);
-
-        // TODO cache
+        $dd->setCache(new PSR6Bridge($this->cache));
 
         return $dd;
     }
