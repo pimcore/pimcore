@@ -22,6 +22,7 @@ services:
         class: Pimcore\Model\DataObject\ClassDefinition\Loader\LayoutLoader
 
     # model factory
+    Pimcore\Model\FactoryInterface: '@Pimcore\Model\Factory'
     Pimcore\Model\Factory:
         calls:
             - [addLoader, ['@Pimcore\Model\Factory\FallbackBuilder']]

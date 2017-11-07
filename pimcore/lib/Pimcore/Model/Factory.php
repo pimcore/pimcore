@@ -20,10 +20,10 @@ namespace Pimcore\Model;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
 
-class Factory extends ImplementationLoader
+class Factory extends ImplementationLoader implements FactoryInterface
 {
     /**
-     * Get class map from all classmap loaders
+     * @inheritdoc
      */
     public function getClassMap(): array
     {

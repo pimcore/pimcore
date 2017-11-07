@@ -32,7 +32,9 @@ class ClassMapLoader extends AbstractClassNameLoader
      */
     public function __construct(array $classMap = [])
     {
-        $this->classMap = $classMap;
+        foreach ($classMap as $source => $target) {
+            $this->classMap[$this->normalizeName($source)] = $this->normalizeName($target);
+        }
     }
 
     /**
@@ -40,7 +42,7 @@ class ClassMapLoader extends AbstractClassNameLoader
      */
     public function supports(string $name): bool
     {
-        return isset($this->classMap[$name]);
+        return isset($this->classMap[$this->normalizeName($name)]);
     }
 
     public function getClassMap(): array
@@ -53,6 +55,18 @@ class ClassMapLoader extends AbstractClassNameLoader
      */
     protected function getClassName(string $name)
     {
-        return $this->classMap[$name];
+        return $this->classMap[$this->normalizeName($name)];
+    }
+
+    /**
+     * Strip leading slashes from class names
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    private function normalizeName(string $name): string
+    {
+        return ltrim($name, '\\');
     }
 }
