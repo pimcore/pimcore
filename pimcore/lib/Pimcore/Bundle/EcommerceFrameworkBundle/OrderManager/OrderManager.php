@@ -29,6 +29,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\File;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Service;
+use Pimcore\Model\FactoryInterface;
 use Pimcore\Tool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -48,6 +49,11 @@ class OrderManager implements IOrderManager
      * @var IVoucherService
      */
     protected $voucherService;
+
+    /**
+     * @var FactoryInterface
+     */
+    protected $modelFactory;
 
     /**
      * @var array
@@ -109,6 +115,30 @@ class OrderManager implements IOrderManager
         foreach ($classProperties as $classProperty) {
             $resolver->setAllowedTypes($classProperty, 'string');
         }
+    }
+
+    /**
+     * Sets the model factory. For BC, this is currently added as extra method call. The required annotation
+     * makes sure this is called via autowiring.
+     *
+     * TODO Pimcore 6 set modelFactory as constructor dependency
+     *
+     * @required
+     *
+     * @param FactoryInterface $modelFactory
+     */
+    public function setModelFactory(FactoryInterface $modelFactory)
+    {
+        $this->modelFactory = $modelFactory;
+    }
+
+    protected function buildModelClass($className, array $params = [])
+    {
+        if (null === $this->modelFactory) {
+            throw new \RuntimeException('Model factory is not set. Please either configure the order manager service to be autowired or add a call to setModelFactory');
+        }
+
+        return $this->modelFactory->build($className, $params);
     }
 
     /**
@@ -438,7 +468,7 @@ class OrderManager implements IOrderManager
             throw new \Exception('Order Class' . $orderClassName . ' does not exist.');
         }
 
-        return new $orderClassName();
+        return $this->buildModelClass($orderClassName);
     }
 
     /**
@@ -453,7 +483,7 @@ class OrderManager implements IOrderManager
             throw new \Exception('OrderItem Class' . $orderItemClassName . ' does not exist.');
         }
 
-        return new $orderItemClassName();
+        return $this->buildModelClass($orderItemClassName);
     }
 
     /**
@@ -627,7 +657,7 @@ class OrderManager implements IOrderManager
     public function buildOrderList()
     {
         $orderListClass = $this->buildOrderListClassName();
-        $orderList      = new $orderListClass;
+        $orderList      = $this->buildModelClass($orderListClass);
 
         return $orderList;
     }
@@ -642,7 +672,7 @@ class OrderManager implements IOrderManager
     public function buildOrderItemList()
     {
         $orderItemListClass = $this->buildOrderItemListClassName();
-        $orderItemList      = new $orderItemListClass;
+        $orderItemList      = $this->buildModelClass($orderItemListClass);
 
         return $orderItemList;
     }
