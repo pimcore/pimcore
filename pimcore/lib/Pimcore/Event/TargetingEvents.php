@@ -20,6 +20,16 @@ namespace Pimcore\Event;
 final class TargetingEvents
 {
     /**
+     * Fired when the VisitorInfo object was built for a request before
+     * any matching and action handling is applied.
+     *
+     * @Event("Pimcore\Event\Targeting\BuildVisitorInfoEvent")
+     *
+     * @var string
+     */
+    const BUILD_VISITOR_INFO = 'pimcore.targeting.build_visitor_info';
+
+    /**
      * Fired when a targeting condition is about to be built. Allows to
      * build the condition in a custom manner instead of relying on the
      * default factory.
@@ -28,5 +38,5 @@ final class TargetingEvents
      *
      * @var string
      */
-    const BUILD_CONDITION = 'pimcore.targeting.build_conditionTargeting';
+    const BUILD_CONDITION = 'pimcore.targeting.build_condition';
 }

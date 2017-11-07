@@ -18,9 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Targeting;
 
 use Doctrine\DBAL\Connection;
+use Pimcore\Event\Targeting\BuildVisitorInfoEvent;
+use Pimcore\Event\TargetingEvents;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class TargetGroupResolver
@@ -43,6 +46,11 @@ class TargetGroupResolver
     private $db;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @var Rule[]
      */
     private $targetingRules;
@@ -55,11 +63,13 @@ class TargetGroupResolver
     public function __construct(
         ConditionMatcherInterface $conditionMatcher,
         array $actionHandlers = [],
-        Connection $db
+        Connection $db,
+        EventDispatcherInterface $eventDispatcher
     )
     {
         $this->conditionMatcher = $conditionMatcher;
         $this->db               = $db;
+        $this->eventDispatcher  = $eventDispatcher;
 
         foreach ($actionHandlers as $actionHandler) {
             $this->addActionHandler($actionHandler);
@@ -77,7 +87,7 @@ class TargetGroupResolver
             return $request->attributes->get(self::ATTRIBUTE_VISITOR_INFO);
         }
 
-        $visitorInfo = VisitorInfo::fromRequest($request);
+        $visitorInfo = $this->createVisitorInfo($request);
 
         if (!$this->isTargetingConfigured()) {
             return $visitorInfo;
@@ -87,6 +97,18 @@ class TargetGroupResolver
         $this->applyTargetingRuleActions($visitorInfo);
 
         $request->attributes->set(self::ATTRIBUTE_VISITOR_INFO, $visitorInfo);
+
+        return $visitorInfo;
+    }
+
+    private function createVisitorInfo(Request $request)
+    {
+        $visitorInfo = VisitorInfo::fromRequest($request);
+
+        $this->eventDispatcher->dispatch(
+            TargetingEvents::BUILD_VISITOR_INFO,
+            new BuildVisitorInfoEvent($visitorInfo)
+        );
 
         return $visitorInfo;
     }
