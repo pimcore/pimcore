@@ -1210,12 +1210,6 @@ pimcore.bundle.EcommerceFramework.pricing.actions = {
                             });
                         }
                     }
-                },
-                {
-                    xtype: "checkbox",
-                    name: "check_availability",
-                    fieldLabel: t("bundle_ecommerce_pricing_config_action_gift_check_availability"),
-                    checked: data.check_availability == "1"
                 }
             ]
         });
