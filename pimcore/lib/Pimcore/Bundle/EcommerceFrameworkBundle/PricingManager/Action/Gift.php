@@ -47,7 +47,10 @@ class Gift implements IGift
     public function executeOnCart(IEnvironment $environment)
     {
         $comment = $environment->getRule()->getDescription();
-        $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, [], [], $comment);
+        $isAvailable = $this->getProduct()->getOSAvailabilityInfo()->getAvailable();
+        if ( $isAvailable) {
+            $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, array(), array(), $comment);
+        }
     }
 
     /**
