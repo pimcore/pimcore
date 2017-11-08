@@ -644,7 +644,7 @@ class DefaultFindologic implements IProductList
                         foreach($field->items->item as $entry){
                             if($entry->name == $cat)
                             {
-                                $field = $entry->items->item;
+                                $field = $entry;
                                 break;
                             }
                         }
