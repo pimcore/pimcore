@@ -750,21 +750,18 @@ pimcore.settings.targeting.conditions = (function () {
             return Object.keys(conditions);
         },
 
-        detectBlockIndex: function (blockElement, container) {
-            // detect index
-            var index;
-
-            for (var s = 0; s < container.items.items.length; s++) {
-                if (container.items.items[s].getId() === blockElement.getId()) {
-                    index = s;
-                    break;
-                }
-            }
-            return index;
-        },
-
         getTopBar: function (condition, index, parent, data) {
-            var that = this;
+            var detectBlockIndex = function(blockElement, container) {
+                var index;
+                for (var s = 0; s < container.items.items.length; s++) {
+                    if (container.items.items[s].getId() === blockElement.getId()) {
+                        index = s;
+                        break;
+                    }
+                }
+
+                return index;
+            };
 
             var toggleGroup = "g_" + index + parent.data.id;
             if (!data["operator"]) {
@@ -787,7 +784,7 @@ pimcore.settings.targeting.conditions = (function () {
 
                         var container = parent.conditionsContainer;
                         var blockElement = Ext.getCmp(blockId);
-                        var index = that.detectBlockIndex(blockElement, container);
+                        var index = detectBlockIndex(blockElement, container);
 
                         var newIndex = index - 1;
                         if (newIndex < 0) {
@@ -808,7 +805,7 @@ pimcore.settings.targeting.conditions = (function () {
                     handler: function (blockId, parent) {
                         var container = parent.conditionsContainer;
                         var blockElement = Ext.getCmp(blockId);
-                        var index = that.detectBlockIndex(blockElement, container);
+                        var index = detectBlockIndex(blockElement, container);
 
                         container.remove(blockElement, false);
                         container.insert(index + 1, blockElement);

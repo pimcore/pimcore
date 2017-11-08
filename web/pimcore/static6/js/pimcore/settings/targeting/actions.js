@@ -235,6 +235,18 @@ pimcore.settings.targeting.actions = (function () {
         },
 
         getTopBar: function (action, index, parent) {
+            var detectBlockIndex = function(blockElement, container) {
+                var index;
+                for (var s = 0; s < container.items.items.length; s++) {
+                    if (container.items.items[s].getId() === blockElement.getId()) {
+                        index = s;
+                        break;
+                    }
+                }
+
+                return index;
+            };
+
             return [
                 {
                     iconCls: action.getIconCls(),
@@ -243,6 +255,38 @@ pimcore.settings.targeting.actions = (function () {
                 {
                     xtype: "tbtext",
                     text: "<b>" + action.getName() + "</b>"
+                },
+                "-",
+                {
+                    iconCls: "pimcore_icon_up",
+                    handler: function (blockId, parent) {
+                        var container = parent.actionsContainer;
+                        var blockElement = Ext.getCmp(blockId);
+                        var index = detectBlockIndex(blockElement, container);
+
+                        var newIndex = index - 1;
+                        if (newIndex < 0) {
+                            newIndex = 0;
+                        }
+
+                        container.remove(blockElement, false);
+                        container.insert(newIndex, blockElement);
+
+                        pimcore.layout.refresh();
+                    }.bind(window, index, parent)
+                },
+                {
+                    iconCls: "pimcore_icon_down",
+                    handler: function (blockId, parent) {
+                        var container = parent.actionsContainer;
+                        var blockElement = Ext.getCmp(blockId);
+                        var index = detectBlockIndex(blockElement, container);
+
+                        container.remove(blockElement, false);
+                        container.insert(index + 1, blockElement);
+
+                        pimcore.layout.refresh();
+                    }.bind(window, index, parent)
                 },
                 "->",
                 {
