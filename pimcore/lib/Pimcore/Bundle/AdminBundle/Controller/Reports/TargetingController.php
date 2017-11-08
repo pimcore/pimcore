@@ -100,13 +100,6 @@ class TargetingController extends AdminController implements EventedControllerIn
     public function ruleGetAction(Request $request)
     {
         $target = Targeting\Rule::getById($request->get('id'));
-        $redirectUrl = $target->getActions()->getRedirectUrl();
-        if (is_numeric($redirectUrl)) {
-            $doc = Document::getById($redirectUrl);
-            if ($doc instanceof Document) {
-                $target->getActions()->redirectUrl = $doc->getFullPath();
-            }
-        }
 
         return $this->adminJson($target);
     }
@@ -122,27 +115,11 @@ class TargetingController extends AdminController implements EventedControllerIn
     {
         $data = $this->decodeJson($request->get('data'));
 
+        /** @var Targeting\Rule|Targeting\Rule\Dao $target */
         $target = Targeting\Rule::getById($request->get('id'));
         $target->setValues($data['settings']);
-
         $target->setConditions($data['conditions']);
-
-        $actions = new Targeting\Rule\Actions();
-        $actions->setRedirectEnabled($data['actions']['redirect.enabled']);
-        $actions->setRedirectUrl($data['actions']['redirect.url']);
-        $actions->setRedirectCode($data['actions']['redirect.code']);
-        $actions->setEventEnabled($data['actions']['event.enabled']);
-        $actions->setEventKey($data['actions']['event.key']);
-        $actions->setEventValue($data['actions']['event.value']);
-        $actions->setProgrammaticallyEnabled($data['actions']['programmatically.enabled']);
-        $actions->setCodesnippetEnabled($data['actions']['codesnippet.enabled']);
-        $actions->setCodesnippetCode($data['actions']['codesnippet.code']);
-        $actions->setCodesnippetSelector($data['actions']['codesnippet.selector']);
-        $actions->setCodesnippetPosition($data['actions']['codesnippet.position']);
-        $actions->setPersonaId($data['actions']['persona.id']);
-        $actions->setPersonaEnabled($data['actions']['persona.enabled']);
-        $target->setActions($actions);
-
+        $target->setActions($data['actions']);
         $target->save();
 
         return $this->adminJson(['success' => true]);

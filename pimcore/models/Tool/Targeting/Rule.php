@@ -56,9 +56,9 @@ class Rule extends Model\AbstractModel
     public $conditions = [];
 
     /**
-     * @var Model\Tool\Targeting\Rule\Actions
+     * @var array
      */
-    public $actions;
+    public $actions = [];
 
     /**
      * @param $target
@@ -200,31 +200,27 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param $actions
+     * @param array $actions
      *
      * @return $this
      */
     public function setActions($actions)
     {
         if (!$actions) {
-            $actions = new Tool\Targeting\Rule\Actions();
+            $actions = [];
         }
+
         $this->actions = $actions;
 
         return $this;
     }
 
     /**
-     * @return Tool\Targeting\Rule\Actions
+     * @return array
      */
-    public function getActions()
+    public function getActions(): array
     {
-        // this is to be backward compatible (was Tool\Targeting\Actions)
-        if ($this->actions instanceof Tool\Targeting\Rule\Actions) {
-            return $this->actions;
-        }
-
-        return new Tool\Targeting\Rule\Actions();
+        return $this->actions;
     }
 
     /**
@@ -237,6 +233,7 @@ class Rule extends Model\AbstractModel
         if (!$conditions) {
             $conditions = [];
         }
+
         $this->conditions = $conditions;
 
         return $this;

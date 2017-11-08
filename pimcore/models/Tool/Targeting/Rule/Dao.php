@@ -21,7 +21,7 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**
- * @property \Pimcore\Model\Tool\Targeting\Rule $model
+ * @property Model\Tool\Targeting\Rule|Model\Tool\Targeting\Rule\Dao $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchRow('SELECT * FROM targeting_rules WHERE id = ?', $this->model->getId());
 
         if ($data['id']) {
-            $data['conditions'] = Serialize::unserialize($data['conditions']);
+            $data['conditions'] = (isset($data['conditions']) ? Serialize::unserialize($data['conditions']) : []);
             $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
 
             $this->assignVariablesToModel($data);
@@ -72,8 +72,6 @@ class Dao extends Model\Dao\AbstractDao
      * Save object to database
      *
      * @return bool
-     *
-     * @todo: update and delete don't return anything
      */
     public function save()
     {
@@ -81,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
             return $this->model->update();
         }
 
-        return $this->create();
+        $this->create();
     }
 
     /**

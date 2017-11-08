@@ -30,7 +30,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "textfield",
                         fieldLabel: "URL (RegExp)",
@@ -59,7 +59,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "combo",
                         fieldLabel: t("browser"),
@@ -98,7 +98,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('country'),
@@ -148,7 +148,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('language'),
@@ -198,7 +198,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'textfield',
                         fieldLabel: t('key'),
@@ -257,7 +257,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [
                         longitude,
                         latitude,
@@ -412,7 +412,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'textfield',
                         fieldLabel: t('referrer'),
@@ -441,7 +441,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('searchengine'),
@@ -474,7 +474,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'textfield',
                         fieldLabel: "URL",
@@ -503,7 +503,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'numberfield',
                         fieldLabel: t("number"),
@@ -532,7 +532,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'numberfield',
                         fieldLabel: t("hours"),
@@ -573,7 +573,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'textfield',
                         fieldLabel: "URL",
@@ -602,7 +602,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'numberfield',
                         fieldLabel: t("number"),
@@ -631,7 +631,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('hardware_platform'),
@@ -664,7 +664,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: 'combo',
                         fieldLabel: t('operating_system'),
@@ -698,7 +698,7 @@ pimcore.settings.targeting.conditions = (function () {
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this.getName(), id, panel, data),
+                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "combo",
                         name: "persona",
@@ -728,13 +728,13 @@ pimcore.settings.targeting.conditions = (function () {
             conditions[name] = condition;
         },
 
-        createCondition: function (name) {
-            var conditionClass = this.getCondition(name);
+        create: function (name) {
+            var conditionClass = this.get(name);
 
             return new conditionClass();
         },
 
-        getCondition: function (name) {
+        get: function (name) {
             if ('undefined' === typeof conditions[name]) {
                 throw new Error('Condition ' + name + ' is not defined', name);
             }
@@ -744,6 +744,10 @@ pimcore.settings.targeting.conditions = (function () {
 
         getConditions: function () {
             return conditions;
+        },
+
+        getKeys: function() {
+            return Object.keys(conditions);
         },
 
         detectBlockIndex: function (blockElement, container) {
@@ -759,7 +763,7 @@ pimcore.settings.targeting.conditions = (function () {
             return index;
         },
 
-        getTopBar: function (name, index, parent, data) {
+        getTopBar: function (condition, index, parent, data) {
             var that = this;
 
             var toggleGroup = "g_" + index + parent.data.id;
@@ -767,71 +771,85 @@ pimcore.settings.targeting.conditions = (function () {
                 data.operator = "and";
             }
 
-            return [{
-                xtype: "tbtext",
-                text: "<b>" + name + "</b>"
-            }, "-", {
-                iconCls: "pimcore_icon_up",
-                handler: function (blockId, parent) {
+            return [
+                {
+                    iconCls: condition.getIconCls(),
+                    disabled: true
+                },
+                {
+                    xtype: "tbtext",
+                    text: "<b>" + condition.getName() + "</b>"
+                },
+                "-",
+                {
+                    iconCls: "pimcore_icon_up",
+                    handler: function (blockId, parent) {
 
-                    var container = parent.conditionsContainer;
-                    var blockElement = Ext.getCmp(blockId);
-                    var index = that.detectBlockIndex(blockElement, container);
+                        var container = parent.conditionsContainer;
+                        var blockElement = Ext.getCmp(blockId);
+                        var index = that.detectBlockIndex(blockElement, container);
 
-                    var newIndex = index - 1;
-                    if (newIndex < 0) {
-                        newIndex = 0;
-                    }
+                        var newIndex = index - 1;
+                        if (newIndex < 0) {
+                            newIndex = 0;
+                        }
 
-                    container.remove(blockElement, false);
-                    container.insert(newIndex, blockElement);
+                        container.remove(blockElement, false);
+                        container.insert(newIndex, blockElement);
 
-                    parent.recalculateButtonStatus();
-                    parent.recalculateBracketIdent(parent.conditionsContainer.items);
+                        parent.recalculateButtonStatus();
+                        parent.recalculateBracketIdent(parent.conditionsContainer.items);
 
-                    pimcore.layout.refresh();
-                }.bind(window, index, parent)
-            }, {
-                iconCls: "pimcore_icon_down",
-                handler: function (blockId, parent) {
-                    var container = parent.conditionsContainer;
-                    var blockElement = Ext.getCmp(blockId);
-                    var index = that.detectBlockIndex(blockElement, container);
+                        pimcore.layout.refresh();
+                    }.bind(window, index, parent)
+                },
+                {
+                    iconCls: "pimcore_icon_down",
+                    handler: function (blockId, parent) {
+                        var container = parent.conditionsContainer;
+                        var blockElement = Ext.getCmp(blockId);
+                        var index = that.detectBlockIndex(blockElement, container);
 
-                    container.remove(blockElement, false);
-                    container.insert(index + 1, blockElement);
+                        container.remove(blockElement, false);
+                        container.insert(index + 1, blockElement);
 
-                    parent.recalculateButtonStatus();
-                    parent.recalculateBracketIdent(parent.conditionsContainer.items);
+                        parent.recalculateButtonStatus();
+                        parent.recalculateBracketIdent(parent.conditionsContainer.items);
 
-                    pimcore.layout.refresh();
-                }.bind(window, index, parent)
-            }, "-", {
-                text: t("AND"),
-                toggleGroup: toggleGroup,
-                enableToggle: true,
-                itemId: "toggle_and",
-                pressed: (data.operator === "and")
-            }, {
-                text: t("OR"),
-                toggleGroup: toggleGroup,
-                enableToggle: true,
-                itemId: "toggle_or",
-                pressed: (data.operator === "or")
-            }, {
-                text: t("AND_NOT"),
-                toggleGroup: toggleGroup,
-                enableToggle: true,
-                itemId: "toggle_and_not",
-                pressed: (data.operator === "and_not")
-            }, "->", {
-                iconCls: "pimcore_icon_delete",
-                handler: function (index, parent) {
-                    parent.conditionsContainer.remove(Ext.getCmp(index));
-                    parent.recalculateButtonStatus();
-                    parent.recalculateBracketIdent(parent.conditionsContainer.items);
-                }.bind(window, index, parent)
-            }];
+                        pimcore.layout.refresh();
+                    }.bind(window, index, parent)
+                },
+                "-",
+                {
+                    text: t("AND"),
+                    toggleGroup: toggleGroup,
+                    enableToggle: true,
+                    itemId: "toggle_and",
+                    pressed: (data.operator === "and")
+                },
+                {
+                    text: t("OR"),
+                    toggleGroup: toggleGroup,
+                    enableToggle: true,
+                    itemId: "toggle_or",
+                    pressed: (data.operator === "or")
+                }, {
+                    text: t("AND_NOT"),
+                    toggleGroup: toggleGroup,
+                    enableToggle: true,
+                    itemId: "toggle_and_not",
+                    pressed: (data.operator === "and_not")
+                },
+                "->",
+                {
+                    iconCls: "pimcore_icon_delete",
+                    handler: function (index, parent) {
+                        parent.conditionsContainer.remove(Ext.getCmp(index));
+                        parent.recalculateButtonStatus();
+                        parent.recalculateBracketIdent(parent.conditionsContainer.items);
+                    }.bind(window, index, parent)
+                }
+            ];
         }
     };
 }());
