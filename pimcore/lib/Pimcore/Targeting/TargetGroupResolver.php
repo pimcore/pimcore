@@ -18,7 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Targeting;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Event\Targeting\BuildVisitorInfoEvent;
+use Pimcore\Event\Targeting\TargetingEvent;
+use Pimcore\Event\Targeting\TargetingRuleEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
@@ -74,28 +75,25 @@ class TargetGroupResolver
             return $request->attributes->get(self::ATTRIBUTE_VISITOR_INFO);
         }
 
-        $visitorInfo = $this->createVisitorInfo($request);
+        $visitorInfo = VisitorInfo::fromRequest($request);
 
         if (!$this->isTargetingConfigured()) {
             return $visitorInfo;
         }
 
+        $this->eventDispatcher->dispatch(
+            TargetingEvents::PRE_RESOLVE,
+            new TargetingEvent($visitorInfo)
+        );
+
         $this->matchTargetingRuleConditions($visitorInfo);
-        $this->handleTargetingRuleActions($visitorInfo);
-
-        $request->attributes->set(self::ATTRIBUTE_VISITOR_INFO, $visitorInfo);
-
-        return $visitorInfo;
-    }
-
-    private function createVisitorInfo(Request $request)
-    {
-        $visitorInfo = VisitorInfo::fromRequest($request);
 
         $this->eventDispatcher->dispatch(
-            TargetingEvents::BUILD_VISITOR_INFO,
-            new BuildVisitorInfoEvent($visitorInfo)
+            TargetingEvents::POST_RESOLVE,
+            new TargetingEvent($visitorInfo)
         );
+
+        $request->attributes->set(self::ATTRIBUTE_VISITOR_INFO, $visitorInfo);
 
         return $visitorInfo;
     }
@@ -132,8 +130,18 @@ class TargetGroupResolver
         // store info about matched rule
         $visitorInfo->addTargetingRule($rule);
 
+        $this->eventDispatcher->dispatch(
+            TargetingEvents::PRE_RULE_ACTIONS,
+            new TargetingRuleEvent($visitorInfo, $rule)
+        );
+
         // execute rule actions
         $this->handleTargetingRuleActions($visitorInfo, $rule);
+
+        $this->eventDispatcher->dispatch(
+            TargetingEvents::POST_RULE_ACTIONS,
+            new TargetingRuleEvent($visitorInfo, $rule)
+        );
     }
 
     private function handleTargetingRuleActions(VisitorInfo $visitorInfo, Rule $rule)

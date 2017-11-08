@@ -23,11 +23,38 @@ final class TargetingEvents
      * Fired when the VisitorInfo object was built for a request before
      * any matching and action handling is applied.
      *
-     * @Event("Pimcore\Event\Targeting\BuildVisitorInfoEvent")
+     * @Event("Pimcore\Event\Targeting\TargetingEvent")
      *
      * @var string
      */
-    const BUILD_VISITOR_INFO = 'pimcore.targeting.build_visitor_info';
+    const PRE_RESOLVE = 'pimcore.targeting.pre_resolve';
+
+    /**
+     * Fired after all targeting rules were matched and applied
+     *
+     * @Event("Pimcore\Event\Targeting\TargetingEvent")
+     *
+     * @var string
+     */
+    const POST_RESOLVE = 'pimcore.targeting.post_resolve';
+
+    /**
+     * Fired when a rule matches before any actions are applied
+     *
+     * @Event("Pimcore\Event\Targeting\TargetingRuleEvent")
+     *
+     * @var string
+     */
+    const PRE_RULE_ACTIONS = 'pimcore.targeting.pre_rule_actions';
+
+    /**
+     * Fired when a rule matches aftert all actions were applied
+     *
+     * @Event("Pimcore\Event\Targeting\TargetingRuleEvent")
+     *
+     * @var string
+     */
+    const POST_RULE_ACTIONS = 'pimcore.targeting.post_rule_actions';
 
     /**
      * Fired when a targeting condition is about to be built. Allows to

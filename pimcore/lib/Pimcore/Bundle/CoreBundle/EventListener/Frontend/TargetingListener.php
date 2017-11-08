@@ -19,11 +19,12 @@ use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Event\Analytics\PiwikEvents;
+use Pimcore\Event\Targeting\TargetingEvent;
+use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -80,7 +81,8 @@ class TargetingListener implements EventSubscriberInterface
         return [
             PiwikEvents::CODE_TRACKING_DATA => 'onPiwikTrackingData',
             KernelEvents::REQUEST           => 'onKernelRequest',
-            KernelEvents::RESPONSE          => ['onKernelResponse', -106]
+            KernelEvents::RESPONSE          => ['onKernelResponse', -106],
+            TargetingEvents::POST_RESOLVE   => 'onPostTargetingResolve'
         ];
     }
 
@@ -161,15 +163,17 @@ class TargetingListener implements EventSubscriberInterface
         // propagate response (e.g. redirect) to request handling
         if ($visitorInfo->hasResponse()) {
             $event->setResponse($visitorInfo->getResponse());
+        }
+    }
 
+    public function onPostTargetingResolve(TargetingEvent $event)
+    {
+        $visitorInfo = $event->getVisitorInfo();
+
+        if ($visitorInfo->hasResponse()) {
             return;
         }
 
-        $this->redirectToPersonaVariant($event, $visitorInfo);
-    }
-
-    private function redirectToPersonaVariant(GetResponseEvent $event, VisitorInfo $visitorInfo)
-    {
         if (0 === count($visitorInfo->getTargetGroups())) {
             return;
         }
@@ -200,7 +204,7 @@ class TargetingListener implements EventSubscriberInterface
 
         $redirectUrl = $this->addUrlParam($request->getRequestUri(), '_ptp', $redirectPersona->getId());
 
-        $event->setResponse(new RedirectResponse($redirectUrl, 302));
+        $visitorInfo->setResponse(new RedirectResponse($redirectUrl, 302));
     }
 
     private function getDocumentPersonaIds(Request $request): array

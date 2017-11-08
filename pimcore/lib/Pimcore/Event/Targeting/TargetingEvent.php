@@ -21,7 +21,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
-class BuildVisitorInfoEvent extends Event
+class TargetingEvent extends Event
 {
     /**
      * @var VisitorInfo
