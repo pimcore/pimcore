@@ -596,6 +596,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/file-border.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_file_types {
+    background: url(/pimcore/static6/img/flat-color-icons/file-types.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_file_plain {
     background: url(/pimcore/static6/img/flat-color-icons/file.svg) center center no-repeat !important;
 }
@@ -1144,4 +1148,8 @@
 
 .pimcore_icon_piwik_api_update {
     background: url(/pimcore/static6/img/flat-color-icons/synchronize.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_operator_ignore {
+    background: url(/pimcore/static6/img/flat-color-icons/full_trash.svg) center center no-repeat !important;
 }

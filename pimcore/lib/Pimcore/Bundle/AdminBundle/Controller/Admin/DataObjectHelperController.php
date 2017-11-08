@@ -24,6 +24,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
+use Pimcore\Model\ImportConfig;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
@@ -697,6 +698,77 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
+     * @Route("/import-save-config")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function importSaveConfigAction(Request $request)
+    {
+        try {
+            $classId = $request->get('classId');
+
+            // grid config
+//            $gridConfigData = $this->decodeJson($request->get('gridconfig'));
+//            $gridConfigData['pimcore_version'] = Version::getVersion();
+//            $gridConfigData['pimcore_revision'] = Version::getRevision();
+//            unset($gridConfigData['settings']['isShared']);
+//
+            $configData = $request->get('config');
+            $configData = json_decode($configData, true);
+
+            $importConfigId = $request->get('importConfigId');
+            if ($importConfigId) {
+                try {
+                    $importConfig = ImportConfig::getById($importConfigId);
+                } catch (\Exception $e) {
+                }
+            }
+            if ($importConfig && $importConfig->getOwnerId() != $this->getUser()->getId()) {
+                throw new \Exception("don't mess around with somebody elses configuration");
+            }
+
+
+            if (!$importConfig) {
+                $importConfig = new ImportConfig();
+                $importConfig->setName(date('c'));
+                $importConfig->setClassId($classId);
+                $importConfig->setOwnerId($this->getUser()->getId());
+            }
+
+            if ($configData) {
+                $name = $configData["shareSettings"]["configName"];
+                $description = $configData["shareSettings"]["configDescription"];
+                $importConfig->setName($name);
+                $importConfig->setDescription($description);
+            }
+
+            $configData = json_encode($configData);
+            $importConfig->setConfig($configData);
+            $importConfig->save();
+
+//            $userId = $this->getUser()->getId();
+
+//            $availableConfigs = $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType);
+//            $sharedConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $classId, $searchType);
+
+//            $settings= $this->getShareSettings($gridConfig->getId());
+//            $settings['gridConfigId'] = (int) $gridConfig->getId();
+//            $settings['gridConfigName'] = $gridConfig->getName();
+//            $settings['gridConfigDescription'] = $gridConfig->getDescription();
+//            $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getUser()->getId());
+
+            return $this->json(['success' => true,
+                        'importConfigId' => $importConfig->getId()
+                    ]
+                );
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * @Route("/grid-save-column-config")
      *
      * @param Request $request
@@ -886,6 +958,174 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
+     * @Route("/prepare-import-preview")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function prepareImportPreviewAction(Request $request)
+    {
+
+        $data = $request->get('data');
+        $data = json_decode($data, false);
+        $importId = $data->importId;
+//        $config = $request->get("config");
+//        $config = json_decode($config, true);
+
+
+        try {
+            Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $data) {
+
+                $session->set('importconfig_' . $importId, $data);
+            }, 'pimcore_gridconfig');
+
+
+        } catch (\Exception $e) {
+            Logger::error($e);
+        }
+
+        $response = $this->json([
+            'success' => true
+        ]);
+
+        return $response;
+    }
+
+    /**
+     * @Route("/import-preview")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function importPreviewAction(Request $request)
+    {
+        $importId = $request->get('importId');
+
+        $config = $request->get("config");
+        $config = json_decode($config, false);
+
+//        $rowIndex = $request->get('rowIndex');
+
+        $data = Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $config) {
+            return $session->get('importconfig_' . $importId, $config);
+        }, 'pimcore_gridconfig');
+
+        $config = $data->config;
+        $rowIndex = $data->rowIndex;
+
+
+        // $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import' . $request->get('importId');
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/news_export.csv';         //TODO
+
+        // determine type
+        $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+
+        $count = 0;
+        $haveData = false;
+
+        if (($handle = fopen($file, 'r')) !== false) {
+            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+//                if ($count == 0) {
+//                    $firstRowData = $rowData;
+//                }
+//                $tmpData = [];
+//                foreach ($rowData as $key => $value) {
+//                    $tmpData['field_' . $key] = $value;
+//                }
+//                $data[] = $tmpData;
+//                $cols = count($rowData);
+//
+//                $count++;
+//
+//                if ($count > 18) {
+//                    break;
+//                }
+
+                if ($count == $rowIndex) {
+                    $haveData = true;
+                    break;
+                }
+                $count++;
+
+            }
+            fclose($handle);
+        }
+
+
+        if (!$haveData) {
+            throw new \Exception("don't have data");
+        }
+
+        $paramsBag = [];
+        $object1 = DataObject\News::getById(7);
+//        $object2 = DataObject\News::getById(4);
+
+        $deepCopy = new \DeepCopy\DeepCopy();
+        $object2 = $deepCopy->copy($object1);
+
+
+        $object2 = $this->fillObject($object2, $config, $rowData);
+        $paramsBag["object1"] = $object1;
+        $paramsBag["object2"] = $object2 ;
+
+        $response = $this->render('PimcoreAdminBundle:Admin/DataObject:diffVersions.html.php', $paramsBag);
+
+        return $response;
+    }
+
+
+    protected function fillObject($object, $config, $rowData) {
+        $selectedGridColumns = $config->selectedGridColumns;
+
+
+        $container = \Pimcore::getContainer();
+        $localeService = $container->get(Locale::class);
+        $currentLocale = $localeService->getLocale();
+
+        $colIndex = -1;
+
+        $locale = null;
+        if ($config->resolverSettings) {
+            if ($config->resolverSettings && $config->resolverSettings->language != "default") {
+                $locale = $config->resolverSettings->language;
+            }
+        }
+
+        foreach ($selectedGridColumns as $selectedGridColumn) {
+            $colIndex++;
+
+            $attributes = $selectedGridColumn->attributes;
+            $service = \Pimcore::getContainer()->get('pimcore.object.importcolumnconfig');
+            /** @var $config DataObject\ImportColumnConfig\ConfigElementInterface*/
+            $config = $service->buildInputDataConfig([$attributes]);
+            if (!$config) {
+                continue;
+            }
+
+            $config = $config[0];
+            $target = $object;
+            $context = array();
+
+            if ($locale) {
+                $localeService->setLocale($locale);
+            }
+
+            $config->process($object, $target, $rowData, $colIndex, $context);
+
+            //TODO postprocess ?
+
+        }
+
+
+        return $object;
+
+
+    }
+
+
+    /**
      * IMPORTER
      */
 
@@ -916,6 +1156,134 @@ class DataObjectHelperController extends AdminController
         $response->headers->set('Content-Type', 'text/html');
 
         return $response;
+    }
+
+    /**
+     * @Route("/import-get-file-info-new")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function importGetFileInfoNewAction(Request $request)
+    {
+        $importConfigId = 1;                                //TODO hardcoded
+        $success = true;
+        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
+
+        $classId = $request->get('classId');
+        // $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import' . $request->get('importId');
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/news_export.csv';         //TODO
+
+        // determine type
+        $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+
+        $count = 0;
+        if (($handle = fopen($file, 'r')) !== false) {
+            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                if ($count == 0) {
+                    $firstRowData = $rowData;
+                }
+                $tmpData = [];
+                foreach ($rowData as $key => $value) {
+                    $tmpData['field_' . $key] = $value;
+                }
+                $data[] = $tmpData;
+                $cols = count($rowData);
+
+                $count++;
+
+                if ($count > 18) {
+                    break;
+                }
+            }
+            fclose($handle);
+        }
+
+        // get class data
+        $class = DataObject\ClassDefinition::getById($request->get('classId'));
+        $fields = $class->getFieldDefinitions();
+
+        $availableFields = [];
+
+        foreach ($fields as $key => $field) {
+            $config = null;
+            $title = $field->getName();
+            if (method_exists($field, 'getTitle')) {
+                if ($field->getTitle()) {
+                    $title = $field->getTitle();
+                }
+            }
+
+            if (in_array($field->getFieldType(), $supportedFieldTypes)) {
+                $availableFields[] = [$field->getName(), $title . '(' . $field->getFieldType() . ')'];
+            }
+        }
+
+        $mappingStore = [];
+        for ($i = 0; $i < $cols; $i++) {
+            $mappedField = null;
+            if ($availableFields[$i]) {
+                $mappedField = $availableFields[$i][0];
+            }
+
+            $firstRow = $i;
+            if (is_array($firstRowData)) {
+                $firstRow = $firstRowData[$i];
+                if (strlen($firstRow) > 40) {
+                    $firstRow = substr($firstRow, 0, 40) . '...';
+                }
+            }
+
+            $mappingStore[] = [
+                'source' => $i,
+                'firstRow' => $firstRow,
+                'target' => $mappedField
+            ];
+        }
+
+        //How many rows
+        $csv = new \SplFileObject($file);
+        $csv->setFlags(\SplFileObject::READ_CSV);
+        $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+        $rows = 0;
+        $nbFields = 0;
+        foreach ($csv as $fields) {
+            if (0 === $rows) {
+                $nbFields = count($fields);
+                $rows++;
+            } elseif ($nbFields == count($fields)) {
+                $rows++;
+            }
+        }
+
+        $importConfig = ImportConfig::getById($importConfigId);
+        $selectedGridColumns = [];
+        if ($importConfig) {
+            $configData = $importConfig->getConfig();
+            $configData = json_decode($configData, true);
+            $selectedGridColumns = $configData['selectedGridColumns'];
+            $resolverSettings = $configData['resolverSettings'];
+            $shareSettings = $configData['shareSettings'];
+        }
+
+        return $this->json([
+            'success' => $success,
+            'config' => [
+                'dataPreview' => $data,
+                'dataFields' => array_keys($data[0]),
+                'targetFields' => $availableFields,
+                'mappingStore' => $mappingStore,
+                'selectedGridColumns' => $selectedGridColumns,
+                'resolverSettings' => $resolverSettings,
+                'shareSettings' => $shareSettings,
+                'csvSettings' => $dialect,
+                'rows' => $rows,
+                'cols' => $cols,
+                'classId' => $classId,
+                'importConfigId' => $importConfigId
+            ]
+        ]);
     }
 
     /**

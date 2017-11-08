@@ -49,3 +49,10 @@ services:
     pimcore.object.gridcolumconfig:
         class: Pimcore\Model\DataObject\GridColumnConfig\Service
         public: true
+
+    #
+    # IMPORT CONFIG
+    #
+    pimcore.object.importcolumnconfig:
+        class: Pimcore\Model\DataObject\ImportColumnConfig\Service
+        public: true
