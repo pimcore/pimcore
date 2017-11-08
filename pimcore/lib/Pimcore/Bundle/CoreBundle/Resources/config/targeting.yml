@@ -9,7 +9,8 @@ services:
         arguments:
             $filename: '%pimcore.geoip.db_file%'
 
-    Pimcore\Targeting\TargetGroupResolver: ~
+    Pimcore\Targeting\TargetGroupResolver:
+        lazy: true
 
     Pimcore\Targeting\DataProvider\GeoIp: ~
     Pimcore\Targeting\DataProvider\Device:
@@ -37,14 +38,12 @@ services:
         arguments:
             $expressionLanguage: '@pimcore.targeting.condition_matcher.expression_language'
 
-    Pimcore\Targeting\ActionHandler\AssignTargetGroup:
-        lazy: true
+    Pimcore\Targeting\ActionHandlerLocatorInterface: '@Pimcore\Targeting\ActionHandlerLocator'
+    Pimcore\Targeting\ActionHandlerLocator: ~
 
-    Pimcore\Targeting\ActionHandler\Event:
-        lazy: true
-
-    Pimcore\Targeting\ActionHandler\Redirect:
-        lazy: true
+    Pimcore\Targeting\ActionHandler\AssignTargetGroup: ~
+    Pimcore\Targeting\ActionHandler\Event: ~
+    Pimcore\Targeting\ActionHandler\Redirect: ~
 
     Pimcore\Targeting\Session\SessionConfigurator:
         tags:

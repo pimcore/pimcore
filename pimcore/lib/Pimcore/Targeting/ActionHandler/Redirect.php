@@ -27,9 +27,10 @@ class Redirect implements ActionHandlerInterface
     /**
      * @inheritDoc
      */
-    public function apply(VisitorInfo $visitorInfo, Rule\Actions $actions, Rule $rule)
+    public function apply(VisitorInfo $visitorInfo, Rule $rule, array $action)
     {
-        if (!$actions->getRedirectEnabled() || empty($actions->getRedirectUrl())) {
+        $url = $action['url'] ?? null;
+        if (!$url) {
             return;
         }
 
@@ -45,7 +46,6 @@ class Redirect implements ActionHandlerInterface
             return;
         }
 
-        $url = $actions->getRedirectUrl();
         if (is_numeric($url)) {
             $document = Document::getById($url);
             if (!$document) {
@@ -56,7 +56,7 @@ class Redirect implements ActionHandlerInterface
         }
 
         $url  = $this->addUrlParam($url, '_ptr', $rule->getId());
-        $code = $actions->getRedirectCode() ?? RedirectResponse::HTTP_FOUND;
+        $code = $action['code'] ?? RedirectResponse::HTTP_FOUND;
 
         $visitorInfo->setResponse(new RedirectResponse($url, $code));
     }

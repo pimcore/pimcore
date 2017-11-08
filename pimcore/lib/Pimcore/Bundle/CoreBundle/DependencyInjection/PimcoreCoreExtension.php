@@ -22,6 +22,7 @@ use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Targeting\ActionHandlerLocator;
 use Pimcore\Targeting\DataProviderLocator;
 use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Tool\ArrayUtils;
@@ -314,24 +315,33 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
             $dataProviders[$dataProviderKey] = new Reference($dataProviderServiceId);
         }
 
-        $providerLocator = new Definition(ServiceLocator::class, [$dataProviders]);
-        $providerLocator
-            ->setPublic(false)
-            ->addTag('container.service_locator');
-
-        $locator = $container->getDefinition(DataProviderLocator::class);
-        $locator->setArgument('$locator', $providerLocator);
+        $this->configureTypedLocator($container, DataProviderLocator::class, $dataProviders);
 
         $actionHandlers = [];
         foreach ($config['action_handlers'] as $actionHandlerKey => $actionHandlerServiceId) {
-            $actionHandlers[] = new Reference($actionHandlerServiceId);
+            $actionHandlers[$actionHandlerKey] = new Reference($actionHandlerServiceId);
         }
 
-        $targetGroupResolver = $container->getDefinition(TargetGroupResolver::class);
-        $targetGroupResolver->setArgument(
-            '$actionHandlers',
-            $actionHandlers
-        );
+        $this->configureTypedLocator($container, ActionHandlerLocator::class, $actionHandlers);
+    }
+
+    /**
+     * Configures a "typed locator" (a class exposing get/has for a specific type) wrapping
+     * a standard service locator. Example: Pimcore\Targeting\DataProviderLocator
+     *
+     * @param ContainerBuilder $container
+     * @param string $locatorClass
+     * @param array $services
+     */
+    private function configureTypedLocator(ContainerBuilder $container, string $locatorClass, array $services)
+    {
+        $serviceLocator = new Definition(ServiceLocator::class, [$services]);
+        $serviceLocator
+            ->setPublic(false)
+            ->addTag('container.service_locator');
+
+        $locator = $container->getDefinition($locatorClass);
+        $locator->setArgument('$locator', $serviceLocator);
     }
 
     /**

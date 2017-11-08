@@ -36,9 +36,9 @@ class TargetGroupResolver
     private $conditionMatcher;
 
     /**
-     * @var ActionHandlerInterface[]
+     * @var ActionHandlerLocatorInterface
      */
-    private $actionHandlers = [];
+    private $actionHandlers;
 
     /**
      * @var Connection
@@ -55,30 +55,17 @@ class TargetGroupResolver
      */
     private $targetingRules;
 
-    /**
-     * @param ConditionMatcherInterface $conditionMatcher
-     * @param ActionHandlerInterface[] $actionHandlers
-     * @param Connection $db
-     */
     public function __construct(
         ConditionMatcherInterface $conditionMatcher,
-        array $actionHandlers = [],
+        ActionHandlerLocatorInterface $actionHandlers,
         Connection $db,
         EventDispatcherInterface $eventDispatcher
     )
     {
         $this->conditionMatcher = $conditionMatcher;
-        $this->db               = $db;
+        $this->actionHandlers   = $actionHandlers;
         $this->eventDispatcher  = $eventDispatcher;
-
-        foreach ($actionHandlers as $actionHandler) {
-            $this->addActionHandler($actionHandler);
-        }
-    }
-
-    private function addActionHandler(ActionHandlerInterface $action)
-    {
-        $this->actionHandlers[] = $action;
+        $this->db               = $db;
     }
 
     public function resolve(Request $request): VisitorInfo
@@ -94,7 +81,7 @@ class TargetGroupResolver
         }
 
         $this->matchTargetingRuleConditions($visitorInfo);
-        $this->applyTargetingRuleActions($visitorInfo);
+        $this->handleTargetingRuleActions($visitorInfo);
 
         $request->attributes->set(self::ATTRIBUTE_VISITOR_INFO, $visitorInfo);
 
@@ -143,18 +130,42 @@ class TargetGroupResolver
         }
     }
 
-    private function applyTargetingRuleActions(VisitorInfo $visitorInfo)
+    private function handleTargetingRuleActions(VisitorInfo $visitorInfo)
     {
         foreach ($visitorInfo->getTargetingRules() as $rule) {
             $actions = $rule->getActions();
-            if (!$actions) {
+            if (!$actions || !is_array($actions)) {
                 continue;
             }
 
-            foreach ($this->actionHandlers as $actionHandler) {
-                $actionHandler->apply($visitorInfo, $actions, $rule);
+            foreach ($actions as $action) {
+                if (!is_array($action)) {
+                    continue;
+                }
+
+                $this->handleTargetingRuleAction($visitorInfo, $rule, $action);
             }
         }
+    }
+
+    private function handleTargetingRuleAction(VisitorInfo $visitorInfo, Rule $rule, array $action)
+    {
+        /** @var string $type */
+        $type = $action['type'] ?? null;
+
+        if (empty($type)) {
+            throw new \InvalidArgumentException('Invalid action: Type is not set');
+        }
+
+        if (!$this->actionHandlers->has($type)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid condition: there is no action handler registered for type "%s"',
+                $type
+            ));
+        }
+
+        $actionHandler = $this->actionHandlers->get($type);
+        $actionHandler->apply($visitorInfo, $rule, $action);
     }
 
     /**

@@ -41,9 +41,10 @@ class Event implements ActionHandlerInterface
     /**
      * @inheritDoc
      */
-    public function apply(VisitorInfo $visitorInfo, Rule\Actions $actions, Rule $rule)
+    public function apply(VisitorInfo $visitorInfo, Rule $rule, array $action)
     {
-        if (!$actions->getEventEnabled() || empty($actions->getEventKey())) {
+        $key = $action['key'] ?? null;
+        if (!$key) {
             return;
         }
 
@@ -52,13 +53,11 @@ class Event implements ActionHandlerInterface
 
         $events = $bag->get('events', []);
         $events[] = [
-            'key'   => $actions->getEventKey(),
-            'value' => $actions->getEventValue(),
+            'key'   => $key,
+            'value' => $action['value'] ?? null,
             'date'  => new \DateTimeImmutable()
         ];
 
         $bag->set('events', $events);
-
-        $this->session->save();
     }
 }

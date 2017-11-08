@@ -15,19 +15,13 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\ActionHandler;
+namespace Pimcore\Targeting;
 
-use Pimcore\Model\Tool\Targeting\Rule;
-use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 
-interface ActionHandlerInterface
+interface ActionHandlerLocatorInterface
 {
-    /**
-     * Applies the action
-     *
-     * @param VisitorInfo $visitorInfo
-     * @param Rule $rule
-     * @param array $action
-     */
-    public function apply(VisitorInfo $visitorInfo, Rule $rule, array $action);
+    public function get(string $id): ActionHandlerInterface;
+
+    public function has(string $id): bool;
 }

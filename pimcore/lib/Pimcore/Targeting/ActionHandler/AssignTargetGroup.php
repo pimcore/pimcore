@@ -36,13 +36,14 @@ class AssignTargetGroup implements ActionHandlerInterface
         $this->conditionMatcher = $conditionMatcher;
     }
 
-    public function apply(VisitorInfo $visitorInfo, Rule\Actions $actions, Rule $rule)
+    public function apply(VisitorInfo $visitorInfo, Rule $rule, array $action)
     {
-        if (!$actions->getPersonaEnabled() || empty($actions->getPersonaId())) {
+        $personaId = $action['personaId'] ?? null;
+        if (!$personaId) {
             return;
         }
 
-        $targetGroup = TargetGroup::getById($actions->getPersonaId());
+        $targetGroup = TargetGroup::getById($personaId);
 
         if (!$targetGroup || !$targetGroup->getActive()) {
             return;
@@ -98,8 +99,6 @@ class AssignTargetGroup implements ActionHandlerInterface
 
         $data[$targetGroup->getId()] = $assignments;
         $bag->set('assign_target_group', $data);
-
-        $session->save();
 
         // check amount after assigning - this means that with
         // a threshold of 3 the target group will be assigned on and
