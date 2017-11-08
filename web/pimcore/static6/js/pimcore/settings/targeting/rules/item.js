@@ -84,7 +84,6 @@ pimcore.settings.targeting.rules.item = Class.create({
                 fieldLabel: t("name"),
                 name: "name",
                 width: 350,
-                disabled: true,
                 value: this.data.name
             }, {
                 name: "description",
