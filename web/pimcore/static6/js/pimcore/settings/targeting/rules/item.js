@@ -37,9 +37,16 @@ pimcore.settings.targeting.rules.item = Class.create({
 
 
         // fill data into conditions
-        if(this.data.conditions && this.data.conditions.length > 0) {
-            for(var i=0; i<this.data.conditions.length; i++) {
-                this.addCondition("item" + ucfirst(this.data.conditions[i].type), this.data.conditions[i]);
+        var condition;
+        if (this.data.conditions && this.data.conditions.length > 0) {
+            for (var i = 0; i < this.data.conditions.length; i++) {
+                condition = pimcore.settings.targeting.conditions.getCondition(this.data.conditions[i].type);
+                if (!condition.matchesScope('rule')) {
+                    console.error('Condition ', this.data.conditions[i].type, 'does not match rule scope');
+                    continue;
+                }
+
+                this.addCondition(condition, this.data.conditions[i]);
             }
         }
 
@@ -227,13 +234,18 @@ pimcore.settings.targeting.rules.item = Class.create({
 
     getConditions: function() {
         var addMenu = [];
-        var itemTypes = Object.keys(pimcore.settings.targeting.conditions);
-        for(var i=0; i<itemTypes.length; i++) {
-            if(itemTypes[i].indexOf("item") == 0) {
+
+        var conditionTypes = Object.keys(pimcore.settings.targeting.conditions.getConditions());
+
+        var condition;
+        for (var i = 0; i < conditionTypes.length; i++) {
+            condition = pimcore.settings.targeting.conditions.createCondition(conditionTypes[i]);
+
+            if (condition.matchesScope('rule')) {
                 addMenu.push({
-                    iconCls: "pimcore_icon_add",
-                    handler: this.addCondition.bind(this, itemTypes[i]),
-                    text: pimcore.settings.targeting.conditions[itemTypes[i]](null, null,true)
+                    iconCls: condition.getIconCls(),
+                    text: condition.getName(),
+                    handler: this.addCondition.bind(this, condition)
                 });
             }
         }
@@ -252,9 +264,12 @@ pimcore.settings.targeting.rules.item = Class.create({
         return this.conditionsContainer;
     },
 
-    addCondition: function (type, data) {
+    addCondition: function (condition, data) {
+        if ('undefined' === typeof data) {
+            data = {};
+        }
 
-        var item = pimcore.settings.targeting.conditions[type](this, data);
+        var item = condition.getPanel(this, data);
 
         // add logic for brackets
         var tab = this;
@@ -265,10 +280,11 @@ pimcore.settings.targeting.rules.item = Class.create({
             var rightBracket = el.getEl().insertHtml("beforeEnd",
                 '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
 
-            if(data["bracketLeft"]){
+            if (data["bracketLeft"]) {
                 leftBracket.addCls("pimcore_targeting_bracket_active");
             }
-            if(data["bracketRight"]){
+
+            if (data["bracketRight"]) {
                 rightBracket.addCls("pimcore_targeting_bracket_active");
             }
 

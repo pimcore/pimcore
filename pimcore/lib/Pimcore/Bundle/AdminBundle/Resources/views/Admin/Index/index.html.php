@@ -302,6 +302,7 @@ $scripts = array(
     "pimcore/settings/httpErrorLog.js",
     "pimcore/settings/email/log.js",
     "pimcore/settings/email/blacklist.js",
+    "pimcore/settings/targeting/condition/abstract.js",
     "pimcore/settings/targeting/conditions.js",
     "pimcore/settings/targeting/rules/panel.js",
     "pimcore/settings/targeting/rules/item.js",
