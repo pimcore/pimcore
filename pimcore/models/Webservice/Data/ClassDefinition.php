@@ -110,6 +110,11 @@ class ClassDefinition extends Model\Webservice\Data
     public $group;
 
     /**
+     * @var string
+     */
+    public $linkGeneratorReference;
+
+    /**
      * @param $class
      * @param $options
      */
