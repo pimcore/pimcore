@@ -8,7 +8,7 @@ i.e. add additional columns, change the column order or column width.
 For experienced users there is an option to assemble custom columns using special operators as described in detail in 
 * [Grid Configuration Operators](./02_Grid_Configuration_Operators.md)
 
-## Savind & Sharing
+## Saving & Sharing
 
 You can define a favourite config for each object folder and share it with your friends.
 
