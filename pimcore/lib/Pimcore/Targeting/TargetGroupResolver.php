@@ -125,26 +125,30 @@ class TargetGroupResolver
             $rule->getConditions()
         );
 
-        if ($match) {
-            $visitorInfo->addTargetingRule($rule);
+        if (!$match) {
+            return;
         }
+
+        // store info about matched rule
+        $visitorInfo->addTargetingRule($rule);
+
+        // execute rule actions
+        $this->handleTargetingRuleActions($visitorInfo, $rule);
     }
 
-    private function handleTargetingRuleActions(VisitorInfo $visitorInfo)
+    private function handleTargetingRuleActions(VisitorInfo $visitorInfo, Rule $rule)
     {
-        foreach ($visitorInfo->getTargetingRules() as $rule) {
-            $actions = $rule->getActions();
-            if (!$actions || !is_array($actions)) {
+        $actions = $rule->getActions();
+        if (!$actions || !is_array($actions)) {
+            return;
+        }
+
+        foreach ($actions as $action) {
+            if (!is_array($action)) {
                 continue;
             }
 
-            foreach ($actions as $action) {
-                if (!is_array($action)) {
-                    continue;
-                }
-
-                $this->handleTargetingRuleAction($visitorInfo, $rule, $action);
-            }
+            $this->handleTargetingRuleAction($visitorInfo, $rule, $action);
         }
     }
 

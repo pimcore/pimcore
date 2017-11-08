@@ -55,6 +55,10 @@ class ConditionMatcher implements ConditionMatcherInterface
      */
     public function match(VisitorInfo $visitorInfo, array $conditions): bool
     {
+        if (0 === count($conditions)) {
+            return true;
+        }
+
         $expressionBuilder = new ExpressionBuilder();
 
         foreach ($conditions as $conditionConfig) {
