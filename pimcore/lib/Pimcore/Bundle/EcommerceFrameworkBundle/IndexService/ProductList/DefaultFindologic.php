@@ -638,9 +638,21 @@ class DefaultFindologic implements IProductList
 
                 $categories = explode('_', $catTree);
 
-                foreach (array_slice($categories, 0, -1) as $cat) {
-                    $field = $field->items->item;
+                foreach ($categories as $cat) {
+                    if(is_array($field->items->item))
+                    {
+                        foreach($field->items->item as $entry){
+                            if($entry->name == $cat)
+                            {
+                                $field = $entry->items->item;
+                                break;
+                            }
+                        }
+                    } else {
+                        $field = $field->items->item;
+                    }
                 }
+
             } elseif ($fieldname === 'price') {
                 $field = $this->groupedValues[$fieldname];
 
