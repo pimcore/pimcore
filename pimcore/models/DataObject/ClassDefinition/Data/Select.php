@@ -72,7 +72,7 @@ class Select extends Model\DataObject\ClassDefinition\Data
     /**
      * Column length
      *
-     * @var integer
+     * @var int
      */
     public $columnLength = 190;
 
@@ -84,7 +84,7 @@ class Select extends Model\DataObject\ClassDefinition\Data
     public $phpdocType = 'string';
 
     /**
-     * @return integer
+     * @return int
      */
     public function getColumnLength()
     {
@@ -93,6 +93,7 @@ class Select extends Model\DataObject\ClassDefinition\Data
 
     /**
      * @param $columnLength
+     *
      * @return $this
      */
     public function setColumnLength($columnLength)
@@ -112,7 +113,7 @@ class Select extends Model\DataObject\ClassDefinition\Data
     protected function correctColumnDefinition($type)
     {
         if (preg_match("/(.*)\((\d+)\)/i", $this->$type, $matches)) {
-            $this->{"set" . ucfirst($type)}($matches[1]);
+            $this->{'set' . ucfirst($type)}($matches[1]);
             if ($matches[2] > 190) {
                 $matches[2] = 190;
             }
@@ -126,7 +127,8 @@ class Select extends Model\DataObject\ClassDefinition\Data
     public function getColumnType()
     {
         $this->correctColumnDefinition('columnType');
-        return $this->columnType . "(" . $this->getColumnLength() . ")";
+
+        return $this->columnType . '(' . $this->getColumnLength() . ')';
     }
 
     /**
@@ -135,7 +137,8 @@ class Select extends Model\DataObject\ClassDefinition\Data
     public function getQueryColumnType()
     {
         $this->correctColumnDefinition('queryColumnType');
-        return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
+
+        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
     }
 
     /**
