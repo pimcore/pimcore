@@ -87,7 +87,7 @@ class Service
         $class->setUseTraits($importData['useTraits']);
         $class->setPreviewUrl($importData['previewUrl']);
         $class->setPropertyVisibility($importData['propertyVisibility']);
-        $class->setLinkGeneratorReference($importData['linkGeneratorReference']);
+        $class->setLinkGeneratorReference(isset($importData['linkGeneratorReference']) ? $importData['linkGeneratorReference'] : null);
 
         $class->save();
 
