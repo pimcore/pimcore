@@ -51,6 +51,11 @@ class Rule extends Model\AbstractModel
     public $active = true;
 
     /**
+     * @var int
+     */
+    public $prio = 0;
+
+    /**
      * @var array
      */
     public $conditions = [];
@@ -279,5 +284,21 @@ class Rule extends Model\AbstractModel
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPrio(): int
+    {
+        return $this->prio;
+    }
+
+    /**
+     * @param int $prio
+     */
+    public function setPrio(int $prio)
+    {
+        $this->prio = $prio;
     }
 }

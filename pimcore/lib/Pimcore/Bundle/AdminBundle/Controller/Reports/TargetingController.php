@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
-use Pimcore\Model\Document;
 use Pimcore\Model\Tool\Targeting;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -41,13 +41,18 @@ class TargetingController extends AdminController implements EventedControllerIn
     public function ruleListAction(Request $request)
     {
         $targets = [];
-        $list = new Targeting\Rule\Listing();
 
+        /** @var Targeting\Rule\Listing|Targeting\Rule\Listing\Dao $target */
+        $list = new Targeting\Rule\Listing();
+        $list->setOrderKey('prio');
+        $list->setOrder('ASC');
+
+        /** @var Targeting\Rule $target */
         foreach ($list->load() as $target) {
             $targets[] = [
-                'id' => $target->getId(),
+                'id'   => $target->getId(),
                 'text' => $target->getName(),
-                'qtip' => $target->getId()
+                'qtip' => 'ID: ' . $target->getId()
             ];
         }
 
@@ -123,6 +128,52 @@ class TargetingController extends AdminController implements EventedControllerIn
         $target->save();
 
         return $this->adminJson(['success' => true]);
+    }
+
+    /**
+     * @Route("/rule-order")
+     * @Method("POST")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function ruleOrderAction(Request $request)
+    {
+        $return = [
+            'success' => false,
+            'message' => ''
+        ];
+
+        $rules = $this->decodeJson($request->get('rules'));
+
+        /** @var Targeting\Rule[] $changedRules */
+        $changedRules = [];
+        foreach ($rules as $id => $prio) {
+            /** @var Targeting\Rule $rule */
+            $rule = Targeting\Rule::getById((int)$id);
+            $prio = (int)$prio;
+
+            if ($rule) {
+                if ((int)$rule->getPrio() !== $prio) {
+                    $rule->setPrio((int)$prio);
+                    $changedRules[] = $rule;
+                }
+            } else {
+                $return['message'] = sprintf('Rule %d was not found', (int)$id);
+
+                return $this->adminJson($return, 400);
+            }
+        }
+
+        // save only changed rules
+        foreach ($changedRules as $changedRule) {
+            $changedRule->save();
+        }
+
+        $return['success'] = true;
+
+        return $this->adminJson($return);
     }
 
     /* PERSONAS */

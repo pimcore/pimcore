@@ -192,6 +192,8 @@ class TargetGroupResolver
         /** @var Rule\Listing|Rule\Listing\Dao $list */
         $list = new Rule\Listing();
         $list->setCondition('active = 1');
+        $list->setOrderKey('prio');
+        $list->setOrder('ASC');
 
         $this->targetingRules = $list->load();
 
