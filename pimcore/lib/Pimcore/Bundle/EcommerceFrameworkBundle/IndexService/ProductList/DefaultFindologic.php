@@ -679,15 +679,19 @@ class DefaultFindologic implements IProductList
                 $rec($field->items->item);
             }
 
-            $hits = $field->items->item instanceof \stdClass
-                ? [$field->items->item]
-                : $field->items->item
-            ;
+            if($field->items->item)
+            {
+                $hits = $field->items->item instanceof \stdClass
+                    ? [$field->items->item]
+                    : $field->items->item
+                ;
 
-            foreach ($hits as $item) {
-                $groups[] = [
-                    'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters
-                ];
+                foreach($hits as $item)
+                {
+                    $groups[] = [
+                        'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters
+                    ];
+                }
             }
         }
 
