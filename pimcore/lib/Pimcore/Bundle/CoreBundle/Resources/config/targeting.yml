@@ -51,3 +51,5 @@ services:
     Pimcore\Targeting\Session\SessionConfigurator:
         tags:
             - { name: pimcore.session.configurator }
+
+    Pimcore\Targeting\Document\DocumentTargetingHandler: ~

@@ -23,7 +23,9 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
+use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Model\Version;
+use Pimcore\Targeting\Document\DocumentTargetingHandler;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -64,21 +66,24 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     protected $userLoader;
 
     /**
-     * @param DocumentResolver $documentResolver
-     * @param EditmodeResolver $editmodeResolver
-     * @param RequestHelper $requestHelper
-     * @param UserLoader $userLoader
+     * @var DocumentTargetingHandler
      */
+    private $documentTargetingHandler;
+
     public function __construct(
         DocumentResolver $documentResolver,
         EditmodeResolver $editmodeResolver,
         RequestHelper $requestHelper,
-        UserLoader $userLoader
-    ) {
+        UserLoader $userLoader,
+        DocumentTargetingHandler $documentTargetingHandler
+    )
+    {
         $this->documentResolver = $documentResolver;
         $this->editmodeResolver = $editmodeResolver;
         $this->requestHelper    = $requestHelper;
         $this->userLoader       = $userLoader;
+
+        $this->documentTargetingHandler = $documentTargetingHandler;
     }
 
     /**
@@ -131,8 +136,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // for public versions
             $document = $this->handleVersion($request, $document);
 
-            // check for persona
-            $document = $this->handlePersona($request, $document);
+            // apply target group configuration
+            $this->applyTargetGroups($request, $document);
 
             $this->documentResolver->setDocument($request, $document);
         }
@@ -168,29 +173,44 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    /**
-     * @param Request $request
-     * @param Document $document
-     *
-     * @return Document
-     */
-    protected function handlePersona(Request $request, Document $document)
+    protected function applyTargetGroups(Request $request, Document $document)
     {
-        if ($document instanceof Document\Page) {
-            // reset because of preview and editmode (saved in session)
-            $document->setUsePersona(null);
-
-            if ($request->get('_ptp')) {
-                $this->logger->info('Setting persona to {persona} for document {document}', [
-                    'persona'  => $request->get('_ptp'),
-                    'document' => $document->getFullPath()
-                ]);
-
-                $document->setUsePersona($request->get('_ptp'));
-            }
+        if (!$document instanceof Document\Page) {
+            return;
         }
 
-        return $document;
+        // reset because of preview and editmode (saved in session)
+        $document->setUsePersona(null);
+
+        // if admin request - do not query targeting result but just use the _ptp parameter
+        // to set a target group
+        if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
+            if ($request->get('_ptp')) {
+                $targetGroup = TargetGroup::getById($request->get('_ptp'));
+                if ($targetGroup) {
+                    $document->setUsePersona($targetGroup->getId());
+                }
+            }
+        } else {
+            // load first target group from match result which has valid elements
+            // and apply that on the document
+            $this->documentTargetingHandler->configureTargetGroup($document);
+        }
+
+        if ($document->getUsePersona()) {
+            $this->logger->info('Setting target group to {targetGroup} for document {document}', [
+                'persona'  => $document->getUsePersona(),
+                'document' => $document->getFullPath()
+            ]);
+
+            // store applied target groups on request
+            $targetGroups = $request->attributes->get('_pimcore_target_groups', []);
+            if (!in_array($document->getUsePersona(), $targetGroups)) {
+                $targetGroups[] = $document->getUsePersona();
+            }
+
+            $request->attributes->set('_pimcore_target_groups', $targetGroups);
+        }
     }
 
     /**
