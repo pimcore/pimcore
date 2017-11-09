@@ -171,9 +171,9 @@ pimcore.settings.targeting.actions = (function () {
             }
         }),
 
-        persona: Class.create(pimcore.settings.targeting.action.abstract, {
+        assign_target_group: Class.create(pimcore.settings.targeting.action.abstract, {
             getName: function () {
-                return t('associate_target_group') + " (" + t("personas") + ")";
+                return t('associate_target_group');
             },
 
             getPanel: function (panel, data) {
@@ -203,7 +203,7 @@ pimcore.settings.targeting.actions = (function () {
                         {
                             xtype: "hidden",
                             name: "type",
-                            value: "persona"
+                            value: "assign_target_group"
                         }
                     ]
                 });
