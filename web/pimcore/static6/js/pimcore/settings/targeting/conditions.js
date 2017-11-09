@@ -268,149 +268,174 @@ pimcore.settings.targeting.conditions = (function () {
                     width: 200
                 });
 
+                var createSearchButton = function() {
+                    var handler = function () {
+                        var gmap, marker, circle;
+
+                        var searchHandler = function() {
+                            var geocoder = new google.maps.Geocoder();
+                            if (!geocoder) {
+                                return;
+                            }
+
+                            var address = searchfield.getValue();
+                            geocoder.geocode({'address': address}, function (results, status) {
+                                if (status === google.maps.GeocoderStatus.OK) {
+                                    marker.setPosition(results[0].geometry.location);
+                                    gmap.setCenter(results[0].geometry.location, 16);
+                                    gmap.setZoom(7);
+                                }
+                            });
+                        };
+
+                        var searchfield = new Ext.form.TextField({
+                            width: 400,
+                            name: "mapSearch",
+                            style: "float: left;",
+                            fieldLabel: t("search"),
+                            listeners: {
+                                specialkey: function (f, e) {
+                                    if (e.getKey() === e.ENTER) {
+                                        searchHandler()
+                                    }
+                                }
+                            }
+                        });
+
+                        var currentLocationTextNode = new Ext.Toolbar.TextItem({
+                            text: " - "
+                        });
+
+                        var searchWindow = new Ext.Window({
+                            modal: true,
+                            width: 700,
+                            height: 500,
+                            resizable: false,
+                            tbar: [currentLocationTextNode],
+                            bbar: [searchfield, {
+                                xtype: "button",
+                                text: t("search"),
+                                iconCls: "pimcore_icon_search",
+                                handler: searchHandler
+                            }, "->", {
+                                xtype: "button",
+                                text: t("cancel"),
+                                iconCls: "pimcore_icon_cancel",
+                                handler: function () {
+                                    searchWindow.close();
+                                }
+                            }, {
+                                xtype: "button",
+                                text: t("OK"),
+                                iconCls: "pimcore_icon_save",
+                                handler: function () {
+                                    var point = marker.getPosition();
+                                    latitude.setValue(point.lat());
+                                    longitude.setValue(point.lng());
+                                    radius.setValue(Math.round(circle.getRadius() / 1000));
+
+                                    searchWindow.close();
+                                }
+                            }],
+                            plain: true
+                        });
+
+                        searchWindow.on("afterrender", function () {
+                            var latitudeMap = 0;
+                            var longitudeMap = 0;
+                            var radiusMap = 100000;
+                            var mapZoom = 1;
+                            if (latitude.getValue() && longitude.getValue()) {
+                                latitudeMap = latitude.getValue();
+                                longitudeMap = longitude.getValue();
+                                mapZoom = 14;
+                            }
+                            if (radius.getValue()) {
+                                radiusMap = radius.getValue() * 1000;
+                            }
+
+                            var startingPoint = new google.maps.LatLng(latitudeMap, longitudeMap);
+
+                            gmap = new google.maps.Map(searchWindow.body.dom, {
+                                zoom: mapZoom,
+                                center: startingPoint,
+                                mapTypeId: google.maps.MapTypeId.ROADMAP
+                            });
+
+                            marker = new google.maps.Marker({
+                                position: startingPoint,
+                                map: gmap,
+                                draggable: true
+                            });
+
+                            circle = new google.maps.Circle({
+                                map: gmap,
+                                center: startingPoint,
+                                editable: true,
+                                radius: radiusMap,
+                                fillColor: "#ff6600",
+                                fillOpacity: 0.5,
+                                strokeWeight: 2,
+                                strokeOpacity: 1,
+                                strokeColor: "#000000"
+                            });
+
+                            google.maps.event.addListener(marker, "position_changed", function () {
+                                circle.setCenter(marker.getPosition());
+                            });
+
+                            var GLOBE_WIDTH = 256; // a constant in Google's map projection
+                            var west = circle.getBounds().getSouthWest().lng();
+                            var east = circle.getBounds().getNorthEast().lng();
+                            var angle = east - west;
+                            if (angle < 0) {
+                                angle += 360;
+                            }
+                            var zoom = Math.round(Math.log(searchWindow.body.getWidth() * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+
+                            gmap.setZoom(zoom - 1);
+                        });
+
+                        searchWindow.show();
+                    };
+
+                    return {
+                        xtype: "button",
+                        text: t("open_search_editor"),
+                        iconCls: "pimcore_icon_search",
+                        handler: handler
+                    };
+                };
+
+                var items = [
+                    longitude,
+                    latitude,
+                    radius
+                ];
+
+                if ('undefined' !== typeof google && pimcore.settings.google_maps_api_key) {
+                    items.push(createSearchButton());
+                }
+
+                items.push({
+                    xtype: "displayfield",
+                    style: "margin-top:10px;",
+                    html: 'This product includes GeoLite2 data created by MaxMind, available from <a href="http://www.maxmind.com" target="_blank">http://www.maxmind.com</a>.'
+                });
+
+                items.push({
+                    xtype: "hidden",
+                    name: "type",
+                    value: "geopoint"
+                });
+
                 return new Ext.form.FormPanel({
                     id: id,
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
                     tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
-                    items: [
-                        longitude,
-                        latitude,
-                        radius,
-                        {
-                            xtype: "button",
-                            text: t("open_search_editor"),
-                            iconCls: "pimcore_icon_search",
-                            handler: function () {
-
-                                var gmap, marker, mapPanel, circle;
-
-                                var searchfield = new Ext.form.TextField({
-                                    width: 400,
-                                    name: "mapSearch",
-                                    style: "float: left;",
-                                    fieldLabel: t("search")
-                                });
-
-                                var currentLocationTextNode = new Ext.Toolbar.TextItem({
-                                    text: " - "
-                                });
-
-                                var searchWindow = new Ext.Window({
-                                    modal: true,
-                                    width: 700,
-                                    height: 500,
-                                    resizable: false,
-                                    tbar: [currentLocationTextNode],
-                                    bbar: [searchfield, {
-                                        xtype: "button",
-                                        text: t("search"),
-                                        iconCls: "pimcore_icon_search",
-                                        handler: function () {
-                                            var geocoder = new google.maps.Geocoder();
-                                            if (geocoder) {
-                                                var address = searchfield.getValue();
-                                                geocoder.geocode({'address': address}, function (results, status) {
-                                                    if (status === google.maps.GeocoderStatus.OK) {
-                                                        marker.setPosition(results[0].geometry.location);
-                                                        gmap.setCenter(results[0].geometry.location, 16);
-                                                        gmap.setZoom(7);
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    }, "->", {
-                                        xtype: "button",
-                                        text: t("cancel"),
-                                        iconCls: "pimcore_icon_cancel",
-                                        handler: function () {
-                                            searchWindow.close();
-                                        }
-                                    }, {
-                                        xtype: "button",
-                                        text: t("OK"),
-                                        iconCls: "pimcore_icon_save",
-                                        handler: function () {
-                                            var point = marker.getPosition();
-                                            latitude.setValue(point.lat());
-                                            longitude.setValue(point.lng());
-                                            radius.setValue(Math.round(circle.getRadius() / 1000));
-
-                                            searchWindow.close();
-                                        }
-                                    }],
-                                    plain: true
-                                });
-
-                                searchWindow.on("afterrender", function () {
-                                    var latitudeMap = 0;
-                                    var longitudeMap = 0;
-                                    var radiusMap = 100000;
-                                    var mapZoom = 1;
-                                    if (latitude.getValue() && longitude.getValue()) {
-                                        latitudeMap = latitude.getValue();
-                                        longitudeMap = longitude.getValue();
-                                        mapZoom = 14;
-                                    }
-                                    if (radius.getValue()) {
-                                        radiusMap = radius.getValue() * 1000;
-                                    }
-
-                                    var startingPoint = new google.maps.LatLng(latitudeMap, longitudeMap);
-
-                                    gmap = new google.maps.Map(searchWindow.body.dom, {
-                                        zoom: mapZoom,
-                                        center: startingPoint,
-                                        mapTypeId: google.maps.MapTypeId.ROADMAP
-                                    });
-
-                                    marker = new google.maps.Marker({
-                                        position: startingPoint,
-                                        map: gmap,
-                                        draggable: true
-                                    });
-
-                                    circle = new google.maps.Circle({
-                                        map: gmap,
-                                        center: startingPoint,
-                                        editable: true,
-                                        radius: radiusMap,
-                                        fillColor: "#ff6600",
-                                        fillOpacity: 0.5,
-                                        strokeWeight: 2,
-                                        strokeOpacity: 1,
-                                        strokeColor: "#000000"
-                                    });
-
-                                    google.maps.event.addListener(marker, "position_changed", function () {
-                                        circle.setCenter(marker.getPosition());
-                                    });
-
-                                    var GLOBE_WIDTH = 256; // a constant in Google's map projection
-                                    var west = circle.getBounds().getSouthWest().lng();
-                                    var east = circle.getBounds().getNorthEast().lng();
-                                    var angle = east - west;
-                                    if (angle < 0) {
-                                        angle += 360;
-                                    }
-                                    var zoom = Math.round(Math.log(searchWindow.body.getWidth()
-                                        * 360 / angle / GLOBE_WIDTH) / Math.LN2);
-                                    gmap.setZoom(zoom - 1);
-                                });
-
-                                searchWindow.show();
-                            }
-                        }, {
-                            xtype: "hidden",
-                            name: "type",
-                            value: "geopoint"
-                        }, {
-                            xtype: "displayfield",
-                            style: "margin-top:10px;",
-                            html: 'This product includes GeoLite2 data created by MaxMind, available from <a href="http://www.maxmind.com" target="_blank">http://www.maxmind.com</a>.'
-                        }
-                    ]
+                    items: items
                 });
             }
         }),
