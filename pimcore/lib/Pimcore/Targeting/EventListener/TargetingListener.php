@@ -26,8 +26,11 @@ use Pimcore\Event\Analytics\PiwikEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Targeting\TargetGroupResolver;
+use Pimcore\Targeting\TargetingStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -48,6 +51,11 @@ class TargetingListener implements EventSubscriberInterface
     private $targetGroupResolver;
 
     /**
+     * @var TargetingStorageInterface
+     */
+    private $targetingStorage;
+
+    /**
      * @var RequestHelper
      */
     private $requestHelper;
@@ -55,11 +63,13 @@ class TargetingListener implements EventSubscriberInterface
     public function __construct(
         DocumentResolver $documentResolver,
         TargetGroupResolver $targetGroupResolver,
+        TargetingStorageInterface $targetingStorage,
         RequestHelper $requestHelper
     )
     {
         $this->documentResolver    = $documentResolver;
         $this->targetGroupResolver = $targetGroupResolver;
+        $this->targetingStorage    = $targetingStorage;
         $this->requestHelper       = $requestHelper;
     }
 
@@ -74,6 +84,7 @@ class TargetingListener implements EventSubscriberInterface
             // needs to run before ElementListener to make sure there's a
             // resolved VisitorInfo when the document is loaded
             KernelEvents::REQUEST           => ['onKernelRequest', 10],
+            KernelEvents::RESPONSE          => ['onKernelResponse']
         ];
     }
 
@@ -122,5 +133,43 @@ class TargetingListener implements EventSubscriberInterface
         if ($visitorInfo->hasResponse()) {
             $event->setResponse($visitorInfo->getResponse());
         }
+    }
+
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        if (!$this->enabled) {
+            return;
+        }
+
+        if (!$this->targetingStorage->hasVisitorInfo()) {
+            return;
+        }
+
+        // TODO do this only if a document has a target group set? currently we do this as soon as any target group is assigned
+        $visitorInfo = $this->targetingStorage->getVisitorInfo();
+        if (0 === count($visitorInfo->getTargetGroups())) {
+            return;
+        }
+
+        $response = $event->getResponse();
+
+        // set response to private as soon as we have matching target groups
+        // TODO remove and rely on the vary header set below
+        $response->setPrivate();
+
+        // set a vary header and assign matched target groups
+        $targetGroupIds = array_map(function (TargetGroup $targetGroup) {
+            return $targetGroup->getId();
+        }, $visitorInfo->getTargetGroups());
+
+        $headerName = 'X-Pimcore-TG';
+
+        $vary = $response->getVary();
+        if (!in_array($headerName, $vary)) {
+            $vary[] = $headerName;
+        }
+
+        $response->setVary($vary);
+        $response->headers->set($headerName, implode(',', $targetGroupIds));
     }
 }
