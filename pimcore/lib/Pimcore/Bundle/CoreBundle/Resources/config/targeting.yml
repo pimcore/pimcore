@@ -9,6 +9,8 @@ services:
         arguments:
             $filename: '%pimcore.geoip.db_file%'
 
+    Pimcore\Targeting\EventListener\TargetingListener: ~
+
     Pimcore\Targeting\TargetingStorageInterface: '@Pimcore\Targeting\TargetingStorage'
     Pimcore\Targeting\TargetingStorage: ~
 

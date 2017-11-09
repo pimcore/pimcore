@@ -52,5 +52,5 @@ services:
     pimcore.event_listener.frontend.cookie_policy_notice: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener'
     pimcore.event_listener.frontend.google_tag_manager: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener'
     pimcore.event_listener.frontend.tag_manager: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\TagManagerListener'
-    pimcore.event_listener.frontend.targeting: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\TargetingListener'
+    pimcore.event_listener.frontend.targeting: '@Pimcore\Targeting\EventListener\TargetingListener'
     pimcore.event_listener.frontend.full_page_cache: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener'

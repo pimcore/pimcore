@@ -137,9 +137,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -107 }
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\TargetingListener:
-        public: true
-
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener:
         public: true
         tags:
