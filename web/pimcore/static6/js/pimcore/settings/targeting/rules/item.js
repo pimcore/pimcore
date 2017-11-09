@@ -51,8 +51,14 @@ pimcore.settings.targeting.rules.item = Class.create({
         var condition;
         if (this.data.conditions && this.data.conditions.length > 0) {
             for (var i = 0; i < this.data.conditions.length; i++) {
-                condition = pimcore.settings.targeting.conditions.create(this.data.conditions[i].type);
-                if (!condition.matchesScope('rule')) {
+                try {
+                    condition = pimcore.settings.targeting.conditions.create(this.data.conditions[i].type);
+                } catch (e) {
+                    console.error(e);
+                    continue;
+                }
+
+                if (!condition.matchesScope('targeting_rule')) {
                     console.error('Condition ', this.data.conditions[i].type, 'does not match rule scope');
                     continue;
                 }
@@ -66,7 +72,12 @@ pimcore.settings.targeting.rules.item = Class.create({
         var action;
         if (this.data.actions && this.data.actions.length > 0) {
             for (var i = 0; i < this.data.actions.length; i++) {
-                action = pimcore.settings.targeting.actions.create(this.data.actions[i].type);
+                try {
+                    action = pimcore.settings.targeting.actions.create(this.data.actions[i].type);
+                } catch (e) {
+                    console.error(e);
+                    continue;
+                }
 
                 this.addAction(action, this.data.actions[i]);
             }
@@ -120,9 +131,16 @@ pimcore.settings.targeting.rules.item = Class.create({
 
         var addMenu = [];
         Ext.Array.forEach(pimcore.settings.targeting.conditions.getKeys(), function(key) {
-            var condition = pimcore.settings.targeting.conditions.create(key);
+            var condition;
 
-            if (!condition.matchesScope('rule')) {
+            try {
+                condition = pimcore.settings.targeting.conditions.create(key);
+            } catch (e) {
+                console.error(e);
+                return;
+            }
+
+            if (!condition.matchesScope('targeting_rule')) {
                 return;
             }
 
@@ -154,7 +172,14 @@ pimcore.settings.targeting.rules.item = Class.create({
 
         var addMenu = [];
         Ext.Array.forEach(pimcore.settings.targeting.actions.getKeys(), function(key) {
-            var action = pimcore.settings.targeting.actions.create(key);
+            var action;
+
+            try {
+                action = pimcore.settings.targeting.actions.create(key);
+            } catch (e) {
+                console.error(e);
+                return;
+            }
 
             addMenu.push({
                 iconCls: action.getIconCls(),

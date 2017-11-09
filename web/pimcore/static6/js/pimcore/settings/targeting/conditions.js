@@ -51,6 +51,10 @@ pimcore.settings.targeting.conditions = (function () {
                 return t("browser");
             },
 
+            matchesScope: function (scope) {
+                return in_array(scope, ['targeting_rule', 'targeting_group_entry_condition']);
+            },
+
             getPanel: function (panel, data) {
                 var id = Ext.id();
 
@@ -88,6 +92,10 @@ pimcore.settings.targeting.conditions = (function () {
         country: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
                 return t("country");
+            },
+
+            matchesScope: function (scope) {
+                return in_array(scope, ['targeting_rule', 'targeting_group_entry_condition']);
             },
 
             getPanel: function (panel, data) {
@@ -138,6 +146,10 @@ pimcore.settings.targeting.conditions = (function () {
         language: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
                 return t("language");
+            },
+
+            matchesScope: function (scope) {
+                return in_array(scope, ['targeting_rule', 'targeting_group_entry_condition']);
             },
 
             getPanel: function (panel, data) {
@@ -223,6 +235,10 @@ pimcore.settings.targeting.conditions = (function () {
         geopoint: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
                 return t("geopoint");
+            },
+
+            matchesScope: function (scope) {
+                return in_array(scope, ['targeting_rule', 'targeting_group_entry_condition']);
             },
 
             getPanel: function (panel, data) {
@@ -404,6 +420,10 @@ pimcore.settings.targeting.conditions = (function () {
                 return t("referring_site");
             },
 
+            matchesScope: function (scope) {
+                return in_array(scope, ['targeting_rule', 'targeting_group_entry_condition']);
+            },
+
             getPanel: function (panel, data) {
                 var id = Ext.id();
 
@@ -431,6 +451,10 @@ pimcore.settings.targeting.conditions = (function () {
         searchengine: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
                 return t("searchengine");
+            },
+
+            matchesScope: function (scope) {
+                return in_array(scope, ['targeting_rule', 'targeting_group_entry_condition']);
             },
 
             getPanel: function (panel, data) {
@@ -623,6 +647,10 @@ pimcore.settings.targeting.conditions = (function () {
                 return t("hardware_platform");
             },
 
+            matchesScope: function (scope) {
+                return in_array(scope, ['targeting_rule', 'targeting_group_entry_condition']);
+            },
+
             getPanel: function (panel, data) {
                 var id = Ext.id();
 
@@ -654,6 +682,10 @@ pimcore.settings.targeting.conditions = (function () {
         operatingsystem: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
                 return t("operating_system");
+            },
+
+            matchesScope: function (scope) {
+                return in_array(scope, ['targeting_rule', 'targeting_group_entry_condition']);
             },
 
             getPanel: function (panel, data) {

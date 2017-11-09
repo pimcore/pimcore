@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.settings.targeting.condition.abstract");
 pimcore.settings.targeting.condition.abstract = Class.create({
     matchesScope: function (scope) {
-        return 'rule' === scope;
+        return 'targeting_rule' === scope;
     },
 
     getName: function () {

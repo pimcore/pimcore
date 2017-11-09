@@ -32,20 +32,39 @@ pimcore.settings.targeting.personas.item = Class.create({
                 iconCls: "pimcore_icon_apply",
                 handler: this.save.bind(this)
             }],
-            items: [this.getSettings(),this.getConditions()]
+            items: [
+                this.getSettings(),
+                this.getConditions()
+            ]
         });
 
-
         // fill data into conditions
-        if(this.data.conditions && this.data.conditions.length > 0) {
-            for(var i=0; i<this.data.conditions.length; i++) {
-                this.addCondition("item" + ucfirst(this.data.conditions[i].type), this.data.conditions[i]);
-            }
-        }
+        this.initializeConditions();
 
         this.parent.panel.add(this.tabPanel);
         this.parent.panel.setActiveTab(this.tabPanel);
         this.parent.panel.updateLayout();
+    },
+
+    initializeConditions: function() {
+        var condition;
+        if (this.data.conditions && this.data.conditions.length > 0) {
+            for (var i = 0; i < this.data.conditions.length; i++) {
+                try {
+                    condition = pimcore.settings.targeting.conditions.create(this.data.conditions[i].type);
+                } catch (e) {
+                    console.error(e);
+                    continue;
+                }
+
+                if (!condition.matchesScope('targeting_group_entry_condition')) {
+                    console.error('Condition ', this.data.conditions[i].type, 'does not match rule scope');
+                    continue;
+                }
+
+                this.addCondition(condition, this.data.conditions[i]);
+            }
+        }
     },
 
     getSettings: function () {
@@ -86,19 +105,31 @@ pimcore.settings.targeting.personas.item = Class.create({
     },
 
     getConditions: function() {
+        var createHandler = function(condition) {
+            return this.addCondition.bind(this, condition);
+        }.bind(this);
+
         var addMenu = [];
-        var allowedTypes = ["itemBrowser", "itemCountry", "itemLanguage", "itemGeopoint", "itemReferringsite",
-            "itemSearchengine", "itemHardwareplatform", "itemOperatingsystem"];
-        var itemTypes = Object.keys(pimcore.settings.targeting.conditions);
-        for(var i=0; i<itemTypes.length; i++) {
-            if(itemTypes[i].indexOf("item") == 0 && in_array(itemTypes[i], allowedTypes)) {
-                addMenu.push({
-                    iconCls: "pimcore_icon_add",
-                    handler: this.addCondition.bind(this, itemTypes[i]),
-                    text: pimcore.settings.targeting.conditions[itemTypes[i]](null, null,true)
-                });
+        Ext.Array.forEach(pimcore.settings.targeting.conditions.getKeys(), function(key) {
+            var condition;
+
+            try {
+                condition = pimcore.settings.targeting.conditions.create(key);
+            } catch (e) {
+                console.error(e);
+                return;
             }
-        }
+
+            if (!condition.matchesScope('targeting_group_entry_condition')) {
+                return;
+            }
+
+            addMenu.push({
+                iconCls: condition.getIconCls(),
+                text: condition.getName(),
+                handler: createHandler(condition)
+            });
+        });
 
         this.conditionsContainer = new Ext.Panel({
             title: t("entry_conditions"),
@@ -117,9 +148,12 @@ pimcore.settings.targeting.personas.item = Class.create({
         return this.conditionsContainer;
     },
 
-    addCondition: function (type, data) {
+    addCondition: function (condition, data) {
+        if ('undefined' === typeof data) {
+            data = {};
+        }
 
-        var item = pimcore.settings.targeting.conditions[type](this, data);
+        var item = condition.getPanel(this, data);
 
         // add logic for brackets
         var tab = this;
@@ -130,11 +164,12 @@ pimcore.settings.targeting.personas.item = Class.create({
             var rightBracket = el.getEl().insertHtml("beforeEnd",
                 '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
 
-            if(data["bracketLeft"]){
-                leftBracket.addClass("pimcore_targeting_bracket_active");
+            if (data["bracketLeft"]) {
+                leftBracket.addCls("pimcore_targeting_bracket_active");
             }
-            if(data["bracketRight"]){
-                rightBracket.addClass("pimcore_targeting_bracket_active");
+
+            if (data["bracketRight"]) {
+                rightBracket.addCls("pimcore_targeting_bracket_active");
             }
 
             // open
