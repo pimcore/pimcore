@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.helpers.import.previewTab");
-pimcore.object.helpers.import.previewTab = Class.create({
+pimcore.registerNS("pimcore.object.helpers.import.csvPreviewTab");
+pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
     initialize: function (config, callback) {
 
@@ -21,7 +21,7 @@ pimcore.object.helpers.import.previewTab = Class.create({
 
     },
 
-    getPanel: function() {
+    getPanel: function () {
 
         var data = this.config;
 
@@ -38,6 +38,13 @@ pimcore.object.helpers.import.previewTab = Class.create({
             fields: data.dataFields
         });
 
+        var renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+            if (this.hasHeadline.getValue() && rowIndex == 0) {
+                metaData.tdCls += ' pimcore_import_headline';
+            }
+            return value
+        }.bind(this);
+
         var dataGridCols = [];
         dataGridCols.push({
                 header: t("preview"),
@@ -50,15 +57,6 @@ pimcore.object.helpers.import.previewTab = Class.create({
                             if (!this.hasHeadline.getValue() || rowIndex > 0) {
                                 return 'pimcore_icon_search';
                             }
-                            console.log("getClass");
-                            // case 1:
-                            //     return 'pimcore_icon_revert pimcore_action_column';
-                            // case -1:
-                            //     return 'pimcore_icon_hourglass pimcore_action_column';
-                            // default:
-                            //     return 'pimcore_icon_arrow_right pimcore_action_column';
-
-                            // }
                         }.bind(this),
 
                         handler: function (dataStore, grid, rowIndex, colIndex) {
@@ -74,7 +72,8 @@ pimcore.object.helpers.import.previewTab = Class.create({
 
 
         for (var i = 0; i < data.dataFields.length; i++) {
-            dataGridCols.push({header: t("field") + " " + i, sortable: false, dataIndex: data.dataFields[i], flex: 1});
+            dataGridCols.push({header: t("field") + " " + i, sortable: false, dataIndex: data.dataFields[i], flex: 1, renderer: renderer});
+
         }
 
 
@@ -95,33 +94,7 @@ pimcore.object.helpers.import.previewTab = Class.create({
                 fieldLabel: t("importFileHasHeadRow"),
                 listeners: {
                     change: function (headRecord, dataGrid, checkbox, checked) {
-                        var i;
                         var settingsForm = this.callback.resolverSettingsPanel.setSkipHeaderRow(checked);
-
-                        // if (checked) {
-                        //     dataGrid.store.remove(headRecord);
-                        //     this.importJobTotal = data.rows - 1;
-                        //     this.settingsForm.getForm().findField('skipHeadRow').setValue(true);
-                        //     for (i = 0; i < headRecord.fields.items.length; i++) {
-                        //         var value = headRecord.get("field_" + i);
-                        //         var view = dataGrid.getView();
-                        //         var header = view.getHeaderAtIndex(i);
-                        //         if (header) {
-                        //             header.setText(value);
-                        //         }
-                        //     }
-                        // } else {
-                        //     dataGrid.store.insert(0, headRecord);
-                        //     this.importJobTotal = data.rows;
-                        //     this.settingsForm.getForm().findField('skipHeadRow').setValue(false);
-                        //     for (i = 0; i < headRecord.fields.items.length; i++) {
-                        //         var view = dataGrid.getView();
-                        //         var header = view.getHeaderAtIndex(i);
-                        //         if (header) {
-                        //             header.setText("field_" + i);
-                        //         }
-                        //     }
-                        // }
                         dataGrid.getView().refresh();
                     }.bind(this, headRecord, dataGrid)
                 }
@@ -140,7 +113,7 @@ pimcore.object.helpers.import.previewTab = Class.create({
         });
 
         var previewPanel = new Ext.panel.Panel({
-            title: t("preview"),
+            title: t("csv_file_preview"),
             iconCls: 'pimcore_icon_preview',
             items: [formPanel, dataGrid]
         });

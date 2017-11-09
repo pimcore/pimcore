@@ -53,6 +53,6 @@ services:
     #
     # IMPORT CONFIG
     #
-    pimcore.object.importcolumnconfig:
+    pimcore.object.importconfig:
         class: Pimcore\Model\DataObject\ImportColumnConfig\Service
         public: true

@@ -66,6 +66,18 @@ class DataObjectHelperController extends AdminController
     /**
      * @param $userId
      * @param $classId
+     *
+     * @return ImportConfig\Listing
+     */
+    public function getMyOwnImportConfigs($userId, $classId)
+    {
+        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+        return $service->getMyOwnImportConfigs($userId, $classId);
+    }
+
+    /**
+     * @param $userId
+     * @param $classId
      * @param $searchType
      *
      * @return GridConfig\Listing
@@ -130,6 +142,33 @@ class DataObjectHelperController extends AdminController
 
         return $configListing;
     }
+
+
+    /**
+     * @Route("/delete-import-config")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteImportConfigAction(Request $request)
+    {
+        $configId = $request->get('importConfigId');
+        try {
+            $config = ImportConfig::getById($configId);
+        } catch (\Exception $e) {
+        }
+        $success = false;
+        if ($config) {
+            $config->delete();
+            $success = true;
+
+        }
+
+
+        return $this->json(array("deleteSuccess" => $success));
+    }
+
 
     /**
      * @Route("/grid-delete-column-config")
@@ -729,7 +768,6 @@ class DataObjectHelperController extends AdminController
                 throw new \Exception("don't mess around with somebody elses configuration");
             }
 
-
             if (!$importConfig) {
                 $importConfig = new ImportConfig();
                 $importConfig->setName(date('c'));
@@ -738,8 +776,9 @@ class DataObjectHelperController extends AdminController
             }
 
             if ($configData) {
-                $name = $configData["shareSettings"]["configName"];
-                $description = $configData["shareSettings"]["configDescription"];
+                unset($configData['importConfigId']);
+                $name = $configData['shareSettings']['configName'];
+                $description = $configData['shareSettings']['configDescription'];
                 $importConfig->setName($name);
                 $importConfig->setDescription($description);
             }
@@ -760,7 +799,8 @@ class DataObjectHelperController extends AdminController
 //            $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getUser()->getId());
 
             return $this->json(['success' => true,
-                        'importConfigId' => $importConfig->getId()
+                        'importConfigId' => $importConfig->getId(),
+                    'availableConfigs' => $this->getMyOwnImportConfigs($this->getUser()->getId(), $classId)
                     ]
                 );
         } catch (\Exception $e) {
@@ -966,21 +1006,16 @@ class DataObjectHelperController extends AdminController
      */
     public function prepareImportPreviewAction(Request $request)
     {
-
         $data = $request->get('data');
         $data = json_decode($data, false);
         $importId = $data->importId;
 //        $config = $request->get("config");
 //        $config = json_decode($config, true);
 
-
         try {
             Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $data) {
-
                 $session->set('importconfig_' . $importId, $data);
             }, 'pimcore_gridconfig');
-
-
         } catch (\Exception $e) {
             Logger::error($e);
         }
@@ -1003,7 +1038,7 @@ class DataObjectHelperController extends AdminController
     {
         $importId = $request->get('importId');
 
-        $config = $request->get("config");
+        $config = $request->get('config');
         $config = json_decode($config, false);
 
 //        $rowIndex = $request->get('rowIndex');
@@ -1015,9 +1050,8 @@ class DataObjectHelperController extends AdminController
         $config = $data->config;
         $rowIndex = $data->rowIndex;
 
-
-        // $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import' . $request->get('importId');
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/news_export.csv';         //TODO
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
+//        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/news_export.csv';         //TODO
 
         // determine type
         $dialect = Tool\Admin::determineCsvDialect($file . '_original');
@@ -1048,11 +1082,9 @@ class DataObjectHelperController extends AdminController
                     break;
                 }
                 $count++;
-
             }
             fclose($handle);
         }
-
 
         if (!$haveData) {
             throw new \Exception("don't have data");
@@ -1065,20 +1097,18 @@ class DataObjectHelperController extends AdminController
         $deepCopy = new \DeepCopy\DeepCopy();
         $object2 = $deepCopy->copy($object1);
 
-
         $object2 = $this->fillObject($object2, $config, $rowData);
-        $paramsBag["object1"] = $object1;
-        $paramsBag["object2"] = $object2 ;
+        $paramsBag['object1'] = $object1;
+        $paramsBag['object2'] = $object2 ;
 
         $response = $this->render('PimcoreAdminBundle:Admin/DataObject:diffVersions.html.php', $paramsBag);
 
         return $response;
     }
 
-
-    protected function fillObject($object, $config, $rowData) {
+    protected function fillObject($object, $config, $rowData)
+    {
         $selectedGridColumns = $config->selectedGridColumns;
-
 
         $container = \Pimcore::getContainer();
         $localeService = $container->get(Locale::class);
@@ -1088,7 +1118,7 @@ class DataObjectHelperController extends AdminController
 
         $locale = null;
         if ($config->resolverSettings) {
-            if ($config->resolverSettings && $config->resolverSettings->language != "default") {
+            if ($config->resolverSettings && $config->resolverSettings->language != 'default') {
                 $locale = $config->resolverSettings->language;
             }
         }
@@ -1097,8 +1127,8 @@ class DataObjectHelperController extends AdminController
             $colIndex++;
 
             $attributes = $selectedGridColumn->attributes;
-            $service = \Pimcore::getContainer()->get('pimcore.object.importcolumnconfig');
-            /** @var $config DataObject\ImportColumnConfig\ConfigElementInterface*/
+            $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+            /** @var $config DataObject\ImportColumnConfig\ConfigElementInterface */
             $config = $service->buildInputDataConfig([$attributes]);
             if (!$config) {
                 continue;
@@ -1106,7 +1136,7 @@ class DataObjectHelperController extends AdminController
 
             $config = $config[0];
             $target = $object;
-            $context = array();
+            $context = [];
 
             if ($locale) {
                 $localeService->setLocale($locale);
@@ -1115,15 +1145,10 @@ class DataObjectHelperController extends AdminController
             $config->process($object, $target, $rowData, $colIndex, $context);
 
             //TODO postprocess ?
-
         }
 
-
         return $object;
-
-
     }
-
 
     /**
      * IMPORTER
@@ -1141,10 +1166,10 @@ class DataObjectHelperController extends AdminController
         $data = file_get_contents($_FILES['Filedata']['tmp_name']);
         $data = Tool\Text::convertToUTF8($data);
 
-        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('id');
+        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
         File::put($importFile, $data);
 
-        $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('id') . '_original';
+        $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId') . '_original';
         File::put($importFileOriginal, $data);
 
         $response = $this->json([
@@ -1167,13 +1192,12 @@ class DataObjectHelperController extends AdminController
      */
     public function importGetFileInfoNewAction(Request $request)
     {
-        $importConfigId = 1;                                //TODO hardcoded
+        $importConfigId = $request->get('importConfigId');
         $success = true;
         $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
 
         $classId = $request->get('classId');
-        // $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import' . $request->get('importId');
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/news_export.csv';         //TODO
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
 
         // determine type
         $dialect = Tool\Admin::determineCsvDialect($file . '_original');
@@ -1220,27 +1244,27 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        $mappingStore = [];
-        for ($i = 0; $i < $cols; $i++) {
-            $mappedField = null;
-            if ($availableFields[$i]) {
-                $mappedField = $availableFields[$i][0];
-            }
-
-            $firstRow = $i;
-            if (is_array($firstRowData)) {
-                $firstRow = $firstRowData[$i];
-                if (strlen($firstRow) > 40) {
-                    $firstRow = substr($firstRow, 0, 40) . '...';
-                }
-            }
-
-            $mappingStore[] = [
-                'source' => $i,
-                'firstRow' => $firstRow,
-                'target' => $mappedField
-            ];
-        }
+//        $mappingStore = [];
+//        for ($i = 0; $i < $cols; $i++) {
+//            $mappedField = null;
+//            if ($availableFields[$i]) {
+//                $mappedField = $availableFields[$i][0];
+//            }
+//
+//            $firstRow = $i;
+//            if (is_array($firstRowData)) {
+//                $firstRow = $firstRowData[$i];
+//                if (strlen($firstRow) > 40) {
+//                    $firstRow = substr($firstRow, 0, 40) . '...';
+//                }
+//            }
+//
+//            $mappingStore[] = [
+//                'source' => $i,
+//                'firstRow' => $firstRow,
+//                'target' => $mappedField
+//            ];
+//        }
 
         //How many rows
         $csv = new \SplFileObject($file);
@@ -1257,7 +1281,10 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        $importConfig = ImportConfig::getById($importConfigId);
+        try {
+            $importConfig = ImportConfig::getById($importConfigId);
+        } catch (\Exception $e) {
+        }
         $selectedGridColumns = [];
         if ($importConfig) {
             $configData = $importConfig->getConfig();
@@ -1267,13 +1294,17 @@ class DataObjectHelperController extends AdminController
             $shareSettings = $configData['shareSettings'];
         }
 
+        $userId = $this->getUser()->getId();
+        $availableConfigs = $this->getMyOwnImportConfigs($userId, $classId);
+
         return $this->json([
             'success' => $success,
             'config' => [
+                'importConfigId' => $importConfigId,
                 'dataPreview' => $data,
                 'dataFields' => array_keys($data[0]),
                 'targetFields' => $availableFields,
-                'mappingStore' => $mappingStore,
+//                'mappingStore' => $mappingStore,
                 'selectedGridColumns' => $selectedGridColumns,
                 'resolverSettings' => $resolverSettings,
                 'shareSettings' => $shareSettings,
@@ -1281,8 +1312,9 @@ class DataObjectHelperController extends AdminController
                 'rows' => $rows,
                 'cols' => $cols,
                 'classId' => $classId,
-                'importConfigId' => $importConfigId
-            ]
+                'isShared' => false                         //TODO
+            ],
+            'availableConfigs' => $availableConfigs
         ]);
     }
 

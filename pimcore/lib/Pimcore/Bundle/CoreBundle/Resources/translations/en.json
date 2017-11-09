@@ -1618,7 +1618,7 @@
   "portlet_piwik_error": "Failed to load widget.",
   "restrict_to_locales": "Restrict to locales",
   "predefined": "Predefined",
-  "save_as": "Save as copy",
+  "save_as_copy": "Save as copy",
   "remove_config": "Remove Config",
   "gridconfig_removed": "Grid Config has been removed",
   "gridconfig_not_removed": "Grid Config could not be removed",
@@ -1691,7 +1691,7 @@
   "col_attribute": "Collection Attribute",
   "brick_attribute": "Brick Attribute",
   "brick_type": "Brick Type",
-  "operator_ignore" : "Operator Ignore",
+  "operator_ignore" : "Operator Ignore Column",
   "csv_column_configuration": "Column Configuration",
   "import_configuration": "Import Configuration",
   "col_idx": "Col Idx",
@@ -1702,7 +1702,13 @@
   "resolver_strategy": "Resolver Strategy",
   "resolver_settings": "Resolver Settings",
   "csv_settings": "CSV Settings",
-  "skipheadrow": "Skip head row"
+  "skipheadrow": "Skip head row",
+  "csv_file_preview": "CSV File Preview",
+  "save_as": "Save as",
+  "load_configuration": "Load Configuration",
+  "delete_importconfig_dblcheck": "Are you sure? Also note that this could be a shared config.",
+  "importconfig_removed": "Import config has been removed",
+  "importconfig_not_removed": "Import config could not be removed"
 
   "brick_type": "Brick Type",
   "renderer": "Renderer",

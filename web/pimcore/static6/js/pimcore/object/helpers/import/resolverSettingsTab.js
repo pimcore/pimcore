@@ -38,80 +38,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
         if (!this.settingsForm) {
 
-            this.detailedSettingsPanel = new Ext.panel.Panel({
-                defaults: {
-                    labelWidth: 150,
-                    width: 400
-                }
-                // border: true
-            });
-
-            var storedata = [["default", t("default")]];
-            for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
-                storedata.push([pimcore.settings.websiteLanguages[i],
-                    pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
-            }
-
-            this.languageField = new Ext.form.ComboBox({
-                name: "language",
-                width: 400,
-                mode: 'local',
-                autoSelect: true,
-                editable: false,
-                fieldLabel: t("language"),
-                value: this.config.resolverSettings.language,
-                store: new Ext.data.ArrayStore({
-                    id: 0,
-                    fields: [
-                        'id',
-                        'label'
-                    ],
-                    data: storedata
-                }),
-                triggerAction: 'all',
-                valueField: 'id',
-                displayField: 'label'
-            });
-
-            var resolverOptions = [];
-            resolverOptions.push(["id", t("id")]);
-            resolverOptions.push(["filename", t("filename")]);
-            resolverOptions.push(["code", t("code")]);
-
-            var resolverStore = new Ext.data.ArrayStore({
-                data: resolverOptions,
-                // sorters: 'name',
-                fields: ['type', 'name']
-            });
-
-            this.resolverCombo = new Ext.form.field.ComboBox(
-                {
-                    name: "strategy",
-                    store: resolverStore,
-                    mode: "local",
-                    triggerAction: "all",
-                    fieldLabel: t("resolver"),
-                    value: this.config.resolverSettings.strategy ? this.config.resolverSettings.strategy : 'id',
-                    valueField: 'type',
-                    displayField: 'name',
-                    listeners: {
-                        change: function () {
-                            this.rebuildDetailedSettingsPanel();
-                        }.bind(this)
-                    }
-                }
-            );
-
-            this.skipHeaderRow = new Ext.form.field.Checkbox(
-                {
-                    disabled: true,
-                    fieldLabel: t("skipheadrow"),
-                    id: 'skipHeadRow',
-                    name: "skipHeadRow",
-                    value: this.config.resolverSettings.skipHeadRow
-                }
-            );
-
             this.settingsForm = new Ext.form.FormPanel({
                 title: t('resolver_settings'),
                 iconCls: 'pimcore_icon_settings',
@@ -120,16 +46,101 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     width: 400
                 },
                 items: [
-                    this.skipHeaderRow,
-                    this.languageField,
-                    this.resolverCombo,
-                    this.detailedSettingsPanel
                 ],
                 bodyStyle: "padding: 10px;"
             });
-            this.rebuildDetailedSettingsPanel();
+            this.rebuildPanel();
+
         }
         return this.settingsForm;
+    },
+
+    rebuildPanel: function() {
+        this.settingsForm.removeAll(true);
+
+        this.detailedSettingsPanel = new Ext.panel.Panel({
+            defaults: {
+                labelWidth: 150,
+                width: 400
+            }
+            // border: true
+        });
+
+
+        var storedata = [["default", t("default")]];
+        for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
+            storedata.push([pimcore.settings.websiteLanguages[i],
+                pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
+        }
+
+        this.languageField = new Ext.form.ComboBox({
+            name: "language",
+            width: 400,
+            mode: 'local',
+            autoSelect: true,
+            editable: false,
+            fieldLabel: t("language"),
+            value: this.config.resolverSettings.language,
+            store: new Ext.data.ArrayStore({
+                id: 0,
+                fields: [
+                    'id',
+                    'label'
+                ],
+                data: storedata
+            }),
+            triggerAction: 'all',
+            valueField: 'id',
+            displayField: 'label'
+        });
+
+        var resolverOptions = [];
+        resolverOptions.push(["id", t("id")]);
+        resolverOptions.push(["filename", t("filename")]);
+        resolverOptions.push(["code", t("code")]);
+
+        var resolverStore = new Ext.data.ArrayStore({
+            data: resolverOptions,
+            // sorters: 'name',
+            fields: ['type', 'name']
+        });
+
+        this.resolverCombo = new Ext.form.field.ComboBox(
+            {
+                name: "strategy",
+                store: resolverStore,
+                mode: "local",
+                triggerAction: "all",
+                fieldLabel: t("resolver_strategy"),
+                value: this.config.resolverSettings.strategy ? this.config.resolverSettings.strategy : 'id',
+                valueField: 'type',
+                displayField: 'name',
+                listeners: {
+                    change: function () {
+                        this.rebuildDetailedSettingsPanel();
+                    }.bind(this)
+                }
+            }
+        );
+
+        this.skipHeaderRow = new Ext.form.field.Checkbox(
+            {
+                disabled: true,
+                fieldLabel: t("skipheadrow"),
+                id: 'skipHeadRow',
+                name: "skipHeadRow",
+                value: this.config.resolverSettings.skipHeadRow
+            }
+        );
+
+        this.settingsForm.add(
+            this.skipHeaderRow,
+            this.languageField,
+            this.resolverCombo,
+            this.detailedSettingsPanel);
+
+        this.rebuildDetailedSettingsPanel();
+
     },
 
     rebuildDetailedSettingsPanel: function () {
@@ -142,7 +153,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         } else if (resolver == "filename") {
             this.addFilenameOptions();
         }
-
     },
 
     setSkipHeaderRow: function(value) {

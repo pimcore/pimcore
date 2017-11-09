@@ -59,7 +59,7 @@ pimcore.object.helpers.gridcolumnconfig = {
             width: 600,
             height: 300,
             modal: true,
-            title: t('save_as'),
+            title: t('save_as_copy'),
             layout: "fit",
             items: [configPanel]
         });
@@ -145,7 +145,7 @@ pimcore.object.helpers.gridcolumnconfig = {
         menu.removeAll();
 
         menu.add({
-            text: t('save_as'),
+            text: t('save_as_copy'),
             iconCls: "pimcore_icon_save",
             handler: this.saveConfig.bind(this, true)
         });

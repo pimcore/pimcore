@@ -18,6 +18,8 @@
 namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
 
+use Pimcore\Model\ImportConfig;
+
 class Service
 {
     /**
@@ -72,4 +74,37 @@ class Service
 
         return $config;
     }
+
+    /**
+     * @param $userId
+     * @param $classId
+     *
+     * @return mixed
+     */
+    public function getMyOwnImportConfigs($userId, $classId)
+    {
+            $configListingConditionParts = [];
+        $configListingConditionParts[] = 'ownerId = ' . $userId;
+        $configListingConditionParts[] = 'classId = ' . $classId;
+        $configCondition = implode(' AND ', $configListingConditionParts);
+        $configListing = new ImportConfig\Listing();
+        $configListing->setOrderKey('name');
+        $configListing->setOrder('ASC');
+        $configListing->setCondition($configCondition);
+        $configListing = $configListing->load();
+
+        $result = [];
+        if ($configListing) {
+            /** @var $item ImportConfig */
+            foreach ($configListing as $item) {
+                $result[] = [
+                    'id' => $item->getId(),
+                    'name' => $item->getName()
+                ];
+            }
+        }
+
+        return $result;
+    }
+
 }

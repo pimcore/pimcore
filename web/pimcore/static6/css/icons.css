@@ -134,7 +134,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/page.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_folder {
+.pimcore_icon_folder, .pimcore_icon_load_import_config {
     background: url(/pimcore/static6/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
 }
 
@@ -441,7 +441,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/multiple_devices.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_settings, .pimcore_icon_gridcolumnconfig {
+.pimcore_icon_settings, .pimcore_icon_gridcolumnconfig, .pimcore_icon_importconfig {
     background: url(/pimcore/static6/img/flat-color-icons/settings.svg) center center no-repeat !important;
 }
 
@@ -1151,5 +1151,5 @@
 }
 
 .pimcore_icon_operator_ignore {
-    background: url(/pimcore/static6/img/flat-color-icons/full_trash.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/cancel.svg) center center no-repeat !important;
 }

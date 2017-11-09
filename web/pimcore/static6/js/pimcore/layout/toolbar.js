@@ -968,8 +968,7 @@ pimcore.layout.toolbar = Class.create({
 
 
             settingsItems.push({
-                text: t("csv_import_configuration"),
-                // iconCls: "pimcore_icon_element_tags",
+                text: "CSV Import (direct)",
                 handler: this.openImportConfig
             });
 
@@ -1566,7 +1565,8 @@ pimcore.layout.toolbar = Class.create({
         try {
             var dialog  = new pimcore.object.helpers.import.configDialog({
                 classId: 2,                                 // TODO hardcoded to news class
-                className: "News"
+                className: "News",
+                mode: "direct"
             });
         }
         catch (e) {

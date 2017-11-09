@@ -328,7 +328,7 @@ $scripts = array(
     "pimcore/object/helpers/grid.js",
     "pimcore/object/helpers/gridcolumnconfig.js",
     "pimcore/object/helpers/gridConfigDialog.js",
-    "pimcore/object/helpers/import/previewTab.js",
+    "pimcore/object/helpers/import/csvPreviewTab.js",
     "pimcore/object/helpers/import/columnConfigurationTab.js",
     "pimcore/object/helpers/import/resolverSettingsTab.js",
     "pimcore/object/helpers/import/csvSettingsTab.js",

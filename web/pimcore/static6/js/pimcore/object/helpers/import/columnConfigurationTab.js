@@ -22,9 +22,19 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
             layout: "border",
             iconCls: "pimcore_icon_table",
             title: t("csv_column_configuration"),
-            items: [this.getSelectionPanel(), this.getLeftPanel()]
-
+            items: []
         });
+
+        this.rebuildPanel();
+    },
+    
+    rebuildPanel: function() {
+        this.configPanel.removeAll(true);
+        this.selectionPanel = null;
+        this.leftPanel = null;
+        this.classDefinitionTreePanel = null;
+        this.configPanel.add(this.getSelectionPanel());
+        this.configPanel.add(this.getLeftPanel());
     },
 
     getPanel: function () {
@@ -173,7 +183,15 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                     text: 'Task',
                     dataIndex: 'text',
                     flex: 2,
-                    sortable: true
+                    sortable: true,
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+
+                        if (record.data && record.data.configAttributes && record.data.configAttributes.class == "Ignore") {
+                            metaData.tdCls += ' pimcore_import_operator_ignore';
+                        }
+
+                        return value;
+                    }
                 },
                     {
                         text: t('col_idx'),
@@ -274,7 +292,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                                     // special handling for replacing nodes
                                     if (typeof realOverModel.data.isOverwriteAllowed == "function") {
                                         if (realOverModel.data.isOverwriteAllowed(realOverModel, sourceNode)) {
-                                            console.log("replace allowed");
                                             return true;
                                         }
                                     }
