@@ -121,7 +121,7 @@ class VisitorInfo implements \IteratorAggregate
      */
     public function getTargetGroups(): array
     {
-        return $this->targetGroups;
+        return array_values($this->targetGroups);
     }
 
     /**
@@ -137,7 +137,7 @@ class VisitorInfo implements \IteratorAggregate
 
     public function addTargetGroup(TargetGroup $targetGroup)
     {
-        $this->targetGroups[] = $targetGroup;
+        $this->targetGroups[$targetGroup->getId()] = $targetGroup;
     }
 
     public function hasResponse(): bool
