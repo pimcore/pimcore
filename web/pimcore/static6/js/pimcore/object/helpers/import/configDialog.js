@@ -37,7 +37,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
     showUpload: function () {
 
-        pimcore.helpers.uploadDialog('/admin/object-helper/import-upload?importId=' + this.uniqueImportId, "Filedata", function(res) {
+        pimcore.helpers.uploadDialog('/admin/object-helper/import-upload?importId=' + this.uniqueImportId, "Filedata", function (res) {
             this.getFileInfo(false, null);
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));
@@ -124,18 +124,27 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         buttons.push(this.deleteButton);
 
-        this.loadButton = new Ext.button.Button(
-            {
+        this.loadButton = new Ext.button.Split({
+
                 text: t("load_configuration"),
                 iconCls: "pimcore_icon_load_import_config",
                 handler: function () {
                     this.showLoadDialog();
-                }.bind(this)
+                }.bind(this),
+                menu: [
+                    {
+                        text: t("import_export_configuration"),
+                        iconCls: "pimcore_icon_import",
+                        handler: function () {
+                            this.importConfig();
+                        }.bind(this)
+                    }
+                ]
             }
         );
         buttons.push(this.loadButton);
 
-        this.saveButton = new Ext.SplitButton({
+        this.saveButton = new Ext.button.Split({
             text: t("save_configuration"),
             iconCls: "pimcore_icon_save",
             handler: function () {
@@ -169,7 +178,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.window.show();
     },
 
-    getWindowTitle: function() {
+    getWindowTitle: function () {
         var title = t('import_configuration');
         if (this.importConfigId) {
             title += " - " + this.importConfigId;
@@ -194,7 +203,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         });
     },
 
-    reloadPanels: function(){
+    reloadPanels: function () {
         this.columnConfigPanel.rebuildPanel();
         this.resolverSettingsPanel.rebuildPanel();
         this.saveAndSharePanel.rebuildPanel();
@@ -218,7 +227,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
             this.availableConfigs = data.availableConfigs;
 
 
-
             if (isReload) {
                 this.reloadPanels(data);
             } else {
@@ -239,7 +247,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         return config;
     },
 
-    commitEverything: function() {
+    commitEverything: function () {
         this.columnConfigPanel.commitData();
         this.resolverSettingsPanel.commitData();
         this.saveAndSharePanel.commitData();
@@ -258,7 +266,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         }
     },
 
-    doSave: function() {
+    doSave: function () {
         var config = this.prepareSaveData();
         config = Ext.encode(config);
         try {
@@ -300,7 +308,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
     },
 
-    preview: function(rowIndex) {
+    preview: function (rowIndex) {
         this.commitEverything();
         var config = this.prepareSaveData();
 
@@ -338,12 +346,12 @@ pimcore.object.helpers.import.configDialog = Class.create({
         });
     },
 
-    showVersionPreview: function() {
+    showVersionPreview: function () {
         var frameId = 'object_importpreview_iframe_' + this.uniqueImportId;
         var previewFrame = new Ext.Panel({
             region: "center",
             // bodyCls: "pimcore_overflow_scrolling",
-            html: '<iframe src="about:blank" frameborder="0" style="width:100%; height: 100%;" id="' + frameId  + '"></iframe>'
+            html: '<iframe src="about:blank" frameborder="0" style="width:100%; height: 100%;" id="' + frameId + '"></iframe>'
         });
 
         this.versionPreviewWindow = new Ext.Window({
@@ -415,7 +423,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         return this.window;
     },
 
-    showLoadDialog: function() {
+    showLoadDialog: function () {
 
         var store = new Ext.data.JsonStore({
             proxy: {
@@ -432,7 +440,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 store: store,
                 queryMode: "local",
                 triggerAction: "all",
-                forceSelection:true,
+                forceSelection: true,
                 fieldLabel: t("configuration"),
                 valueField: 'id',
                 typeAhead: true,
@@ -468,13 +476,13 @@ pimcore.object.helpers.import.configDialog = Class.create({
                     }.bind(this)
                 },
                 {
-                text: t("ok"),
-                iconCls: "pimcore_icon_apply",
-                handler: function (configsCombo) {
-                    this.getFileInfo(true, configsCombo.getValue());
-                    this.loadWindow.close();
-                }.bind(this, configsCombo)
-            }
+                    text: t("OK"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function (configsCombo) {
+                        this.getFileInfo(true, configsCombo.getValue());
+                        this.loadWindow.close();
+                    }.bind(this, configsCombo)
+                }
             ]
         });
         this.loadWindow.show();
@@ -502,7 +510,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 },
                 success: function (response) {
 
-                    decodedResponse = Ext.decode(response.responseText);
+                    var decodedResponse = Ext.decode(response.responseText);
                     if (decodedResponse.deleteSuccess) {
 
                         this.importConfigId = null;
@@ -519,5 +527,113 @@ pimcore.object.helpers.import.configDialog = Class.create({
             });
         }
     },
+
+    importConfig: function () {
+
+        Ext.Ajax.request({
+            url: "/admin/object-helper/get-export-configs",
+            params: {
+                classId: this.classId
+            },
+            success: function (response) {
+
+                decodedResponse = Ext.decode(response.responseText);
+                if (decodedResponse.success) {
+                    this.showImportDialog(decodedResponse);
+                } else {
+                    pimcore.helpers.showNotification(t("error"), t("error"), "error");
+                }
+
+
+            }.bind(this)
+        });
+
+    },
+
+    doImportConfig: function (gridConfigId) {
+
+        Ext.Ajax.request({
+            url: "/admin/object-helper/import-export-config",
+            params: {
+                gridConfigId: gridConfigId
+            },
+            success: function (response) {
+
+                var decodedResponse = Ext.decode(response.responseText);
+                if (decodedResponse.success) {
+                    this.config.selectedGridColumns = decodedResponse.selectedGridColumns;
+                    this.reloadPanels();
+                } else {
+                    pimcore.helpers.showNotification(t("error"), t("error"), "error");
+                }
+
+
+            }.bind(this)
+        });
+
+    },
+
+
+    showImportDialog: function (response) {
+
+        var store = new Ext.data.JsonStore({
+            proxy: {
+                type: 'memory'
+            },
+            data: response.data,
+            fields: ['id', 'name'],
+            autoLoad: true
+        });
+
+        var configsCombo = new Ext.form.field.ComboBox(
+            {
+                name: "configuration",
+                store: store,
+                queryMode: "local",
+                triggerAction: "all",
+                forceSelection: true,
+                fieldLabel: t("configuration"),
+                valueField: 'id',
+                typeAhead: true,
+                editable: true,
+                displayField: 'name',
+                width: '100%'
+            }
+        );
+
+        var configPanel = new Ext.panel.Panel({
+            bodyStyle: "padding: 10px;",
+            items: [configsCombo]
+        });
+
+        this.importWindow = new Ext.Window({
+            width: 600,
+            height: 200,
+            modal: true,
+            title: t('import_configuration'),
+            layout: "fit",
+            items: [configPanel],
+            buttons: [
+                {
+                    text: t("cancel"),
+                    iconCls: "pimcore_icon_cancel",
+                    handler: function () {
+                        this.importWindow.close();
+                    }.bind(this)
+                },
+                {
+                    text: t("OK"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function (configsCombo) {
+                        this.doImportConfig(configsCombo.getValue());
+                        this.importWindow.close();
+                    }.bind(this, configsCombo)
+                }
+            ]
+        });
+        this.importWindow.show();
+        configsCombo.focus();
+    }
+
 
 });

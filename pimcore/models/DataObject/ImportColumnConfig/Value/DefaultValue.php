@@ -31,9 +31,8 @@ class DefaultValue extends AbstractConfigElement
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
-
         $data = $rowData[$colIndex];
-        $setter = "set" . ucfirst($this->attribute);
+        $setter = 'set' . ucfirst($this->attribute);
         $target->$setter($data);
 
 //        Logger::debug('process');

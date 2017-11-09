@@ -17,16 +17,14 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
-use Pimcore\Model\Element\ElementInterface;
-
 interface ConfigElementInterface
 {
-
     /**
      * @param $element
      * @param $target
      * @param $rowData
      * @param $rowIndex
+     *
      * @return mixed
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = []);

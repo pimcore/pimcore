@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Localization\Locale;
@@ -72,6 +73,7 @@ class DataObjectHelperController extends AdminController
     public function getMyOwnImportConfigs($userId, $classId)
     {
         $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+
         return $service->getMyOwnImportConfigs($userId, $classId);
     }
 
@@ -143,6 +145,75 @@ class DataObjectHelperController extends AdminController
         return $configListing;
     }
 
+    /**
+     * @Route("/import-export-config")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function importExportConfigAction(Request $request)
+    {
+
+        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+
+        $gridConfigId = $request->get('gridConfigId');
+        $gridConfig = GridConfig::getById($gridConfigId);
+
+        if ($gridConfig && $gridConfig->getOwnerId() != $this->getUser()->getId()) {
+            $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $gridConfig->getClassId());
+
+            if ($sharedGridConfigs) {
+                $found = false;
+                /** @var $sharedConfig GridConfigShare */
+                foreach ($sharedGridConfigs as $sharedConfig) {
+                    if ($sharedConfig->getSharedWithUserId() == $this->getUser()->getId()) {
+                        $found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!$found) {
+                throw new \Exception('not allowed to import somebody elses config');
+            }
+        }
+
+        $importConfigData = $service->createFromExportConfig($gridConfig);
+        $selectedGridColumns = $importConfigData->selectedGridColumns;
+
+
+        return $this->json([ 'success' => true, 'selectedGridColumns' => $selectedGridColumns]);
+    }
+
+    /**
+     * @Route("/get-export-configs")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getExportConfigsAction(Request $request)
+    {
+        $classId = $request->get('classId');
+        $list = $this->getMyOwnGridColumnConfigs($this->getUser()->getId(), $classId, null);
+        if (!is_array($list)) {
+            $result = [];
+        }
+        $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getUser(), $classId, null));
+        $result = [];
+        if ($list) {
+            /** @var $config Config */
+            foreach ($list as $config) {
+                $result[] = [
+                    'id' => $config->getId(),
+                    'name' => $config->getName()
+                ];
+            }
+        }
+
+        return $this->json([ 'success' => true, 'data' => $result]);
+    }
 
     /**
      * @Route("/delete-import-config")
@@ -162,13 +233,10 @@ class DataObjectHelperController extends AdminController
         if ($config) {
             $config->delete();
             $success = true;
-
         }
 
-
-        return $this->json(array("deleteSuccess" => $success));
+        return $this->json(['deleteSuccess' => $success]);
     }
-
 
     /**
      * @Route("/grid-delete-column-config")

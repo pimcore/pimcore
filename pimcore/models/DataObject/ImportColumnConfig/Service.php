@@ -17,7 +17,8 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
-
+use Pimcore\Logger;
+use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
 
 class Service
@@ -83,7 +84,7 @@ class Service
      */
     public function getMyOwnImportConfigs($userId, $classId)
     {
-            $configListingConditionParts = [];
+        $configListingConditionParts = [];
         $configListingConditionParts[] = 'ownerId = ' . $userId;
         $configListingConditionParts[] = 'classId = ' . $classId;
         $configCondition = implode(' AND ', $configListingConditionParts);
@@ -107,4 +108,51 @@ class Service
         return $result;
     }
 
+    /**
+     * @param $gridConfig GridConfig
+     */
+    public function createFromExportConfig($gridConfig) {
+
+        $importConfigData = new \stdClass();
+        $exportConfigData = json_decode($gridConfig->getConfig(), true);
+
+        $importConfigData->classId = $exportConfigData->classId;
+
+//        $importConfigData->resolverSettings = new \stdClass();
+//        $importConfigData->resolverSettings->language = $exportConfigData->language;
+//        $importConfigData->resolverSettings->language = $exportConfigData->language;
+
+
+        $importConfigData->selectedGridColumns = array();
+        if (is_array($exportConfigData["columns"])) {
+            foreach ($exportConfigData["columns"] as $exportColumn) {
+                $importColumn = new \stdClass();
+
+                $importColumn->isOperator = true;
+                $importColumn->attributes = new \stdClass();
+
+                $importColumn->attributes->class = "Ignore";
+
+                $fieldConfig = $exportColumn["fieldConfig"];
+                if ($fieldConfig["isOperator"]) {
+                    $importColumn->attributes->type = "operator";
+                    $importColumn->attributes->label = $fieldConfig["attributes"]["label"];
+                } else {
+                    $importColumn->attributes->type = "value";
+                    $importColumn->attributes->label = $fieldConfig["label"];
+                    $importColumn->attributes->class = "DefaultValue";
+                    $importColumn->attributes->attribute = $fieldConfig["key"];
+                    $importColumn->attributes->dataType = $fieldConfig["type"];
+                }
+
+                $importColumn->attributes->childs = [];
+
+                $importConfigData->selectedGridColumns[] = $importColumn;
+            }
+        }
+
+        return $importConfigData;
+
+
+    }
 }
