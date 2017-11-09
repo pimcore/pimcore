@@ -308,8 +308,8 @@ $scripts = array(
     "pimcore/settings/targeting/actions.js",
     "pimcore/settings/targeting/rules/panel.js",
     "pimcore/settings/targeting/rules/item.js",
-    "pimcore/settings/targeting/personas/panel.js",
-    "pimcore/settings/targeting/personas/item.js",
+    "pimcore/settings/targeting/targetGroups/panel.js",
+    "pimcore/settings/targeting/targetGroups/item.js",
 
     "pimcore/settings/gdpr/gdprPanel.js",
     "pimcore/settings/gdpr/dataproviders/dataObjects.js",

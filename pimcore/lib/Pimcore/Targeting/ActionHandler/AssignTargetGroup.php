@@ -38,12 +38,12 @@ class AssignTargetGroup implements ActionHandlerInterface
 
     public function apply(VisitorInfo $visitorInfo, Rule $rule, array $action)
     {
-        $personaId = $action['personaId'] ?? null;
-        if (!$personaId) {
+        $targetGroupId = $action['targetGroup'] ?? null;
+        if (!$targetGroupId) {
             return;
         }
 
-        $targetGroup = TargetGroup::getById($personaId);
+        $targetGroup = TargetGroup::getById($targetGroupId);
 
         if (!$targetGroup || !$targetGroup->getActive()) {
             return;

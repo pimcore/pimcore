@@ -105,13 +105,13 @@ pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
                             }.bind(this)
                         }
                     },{
-                        fieldLabel: t('associate_target_group') + " (" + t("personas") + ")",
+                        fieldLabel: t('assign_target_group'),
                         xtype: "multiselect",
-                        hidden: pimcore.globalmanager.get("personas").getCount() < 1,
-                        store: pimcore.globalmanager.get("personas"),
+                        hidden: pimcore.globalmanager.get("target_group_store").getCount() < 1,
+                        store: pimcore.globalmanager.get("target_group_store"),
                         displayField: "text",
                         valueField: "id",
-                        name: 'personas',
+                        name: 'personas', // TODO change to target groups
                         width: 600
                     }
                 ]

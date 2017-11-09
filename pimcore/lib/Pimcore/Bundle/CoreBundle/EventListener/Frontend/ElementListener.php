@@ -182,11 +182,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         // reset because of preview and editmode (saved in session)
         $document->setUsePersona(null);
 
-        // if admin request - do not query targeting result but just use the _ptp parameter
+        // if admin request - do not query targeting result but just use the _ptg (target group) parameter
         // to set a target group
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
-            if ($request->get('_ptp')) {
-                $targetGroup = TargetGroup::getById($request->get('_ptp'));
+            if ($request->get('_ptg')) {
+                $targetGroup = TargetGroup::getById((int)$request->get('_ptg'));
                 if ($targetGroup) {
                     $document->setUsePersona($targetGroup->getId());
                 }

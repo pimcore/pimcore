@@ -717,9 +717,9 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        persona: Class.create(pimcore.settings.targeting.condition.abstract, {
+        target_group: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
-                return t("personas");
+                return t("target_group");
             },
 
             getPanel: function (panel, data) {
@@ -733,22 +733,22 @@ pimcore.settings.targeting.conditions = (function () {
                     tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "combo",
-                        name: "persona",
+                        name: "target_group",
                         displayField: 'text',
                         valueField: "id",
-                        store: pimcore.globalmanager.get("personas"),
+                        store: pimcore.globalmanager.get("target_group_store"),
                         editable: false,
                         width: 400,
                         triggerAction: 'all',
                         listWidth: 200,
                         mode: "local",
-                        value: data["persona"],
-                        emptyText: t("select_a_persona"),
-                        fieldLabel: t("select_a_persona")
+                        value: data.target_group,
+                        emptyText: t("select_a_target_group"),
+                        fieldLabel: t("select_a_target_group")
                     }, {
                         xtype: "hidden",
                         name: "type",
-                        value: "persona"
+                        value: "target_group"
                     }]
                 });
             }

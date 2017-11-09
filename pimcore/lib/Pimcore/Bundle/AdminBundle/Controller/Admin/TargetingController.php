@@ -12,11 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Tool\Targeting;
+use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +33,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     /* RULES */
 
     /**
-     * @Route("/rule-list")
+     * @Route("/rule/list")
      *
      * @param Request $request
      *
@@ -60,7 +61,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule-add")
+     * @Route("/rule/add")
      *
      * @param Request $request
      *
@@ -76,7 +77,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule-delete")
+     * @Route("/rule/delete")
      *
      * @param Request $request
      *
@@ -96,7 +97,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule-get")
+     * @Route("/rule/get")
      *
      * @param Request $request
      *
@@ -110,7 +111,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule-save")
+     * @Route("/rule/save")
      *
      * @param Request $request
      *
@@ -131,7 +132,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule-order")
+     * @Route("/rule/order")
      * @Method("POST")
      *
      * @param Request $request
@@ -176,69 +177,74 @@ class TargetingController extends AdminController implements EventedControllerIn
         return $this->adminJson($return);
     }
 
-    /* PERSONAS */
+    /* TARGET GROUPS */
 
     /**
-     * @Route("/persona-list")
+     * @Route("/target-group/list")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function personaListAction(Request $request)
+    public function targetGroupListAction(Request $request)
     {
-        $personas = [];
-        $list = new Targeting\Persona\Listing();
+        $targetGroups = [];
+
+        /** @var TargetGroup\Listing|TargetGroup\Listing\Dao $list */
+        $list = new TargetGroup\Listing();
 
         if ($request->get('add-default')) {
-            $personas[] = [
+            $targetGroups[] = [
                 'id' => 0,
                 'text' => 'default',
                 'qtip' => 0
             ];
         }
 
-        foreach ($list->load() as $persona) {
-            $personas[] = [
-                'id' => $persona->getId(),
-                'text' => $persona->getName(),
-                'qtip' => $persona->getId()
+        /** @var TargetGroup $targetGroup */
+        foreach ($list->load() as $targetGroup) {
+            $targetGroups[] = [
+                'id'   => $targetGroup->getId(),
+                'text' => $targetGroup->getName(),
+                'qtip' => $targetGroup->getId()
             ];
         }
 
-        return $this->adminJson($personas);
+        return $this->adminJson($targetGroups);
     }
 
     /**
-     * @Route("/persona-add")
+     * @Route("/target-group/add")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function personaAddAction(Request $request)
+    public function targetGroupAddAction(Request $request)
     {
-        $persona = new Targeting\Persona();
-        $persona->setName($request->get('name'));
-        $persona->save();
+        /** @var TargetGroup|TargetGroup\Dao $targetGroup */
+        $targetGroup = new TargetGroup();
+        $targetGroup->setName($request->get('name'));
+        $targetGroup->save();
 
-        return $this->adminJson(['success' => true, 'id' => $persona->getId()]);
+        return $this->adminJson(['success' => true, 'id' => $targetGroup->getId()]);
     }
 
     /**
-     * @Route("/persona-delete")
+     * @Route("/target-group/delete")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function personaDeleteAction(Request $request)
+    public function targetGroupDeleteAction(Request $request)
     {
         $success = false;
 
-        $persona = Targeting\Persona::getById($request->get('id'));
-        if ($persona) {
-            $persona->delete();
+        /** @var TargetGroup|TargetGroup\Dao $targetGroup */
+        $targetGroup = TargetGroup::getById($request->get('id'));
+        if ($targetGroup) {
+            $targetGroup->delete();
             $success = true;
         }
 
@@ -246,35 +252,36 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/persona-get")
+     * @Route("/target-group/get")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function personaGetAction(Request $request)
+    public function targetGroupGetAction(Request $request)
     {
-        $persona = Targeting\Persona::getById($request->get('id'));
+        /** @var TargetGroup|TargetGroup\Dao $targetGroup */
+        $targetGroup = TargetGroup::getById($request->get('id'));
 
-        return $this->adminJson($persona);
+        return $this->adminJson($targetGroup);
     }
 
     /**
-     * @Route("/persona-save")
+     * @Route("/target-group/save")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function personaSaveAction(Request $request)
+    public function targetGroupSaveAction(Request $request)
     {
         $data = $this->decodeJson($request->get('data'));
 
-        $persona = Targeting\Persona::getById($request->get('id'));
-        $persona->setValues($data['settings']);
-
-        $persona->setConditions($data['conditions']);
-        $persona->save();
+        /** @var TargetGroup|TargetGroup\Dao $targetGroup */
+        $targetGroup = TargetGroup::getById($request->get('id'));
+        $targetGroup->setValues($data['settings']);
+        $targetGroup->setConditions($data['conditions']);
+        $targetGroup->save();
 
         return $this->adminJson(['success' => true]);
     }
@@ -290,7 +297,7 @@ class TargetingController extends AdminController implements EventedControllerIn
         }
 
         // check permissions
-        $this->checkActionPermission($event, 'targeting', ['personaListAction']);
+        $this->checkActionPermission($event, 'targeting', ['targetGroupListAction']);
     }
 
     /**

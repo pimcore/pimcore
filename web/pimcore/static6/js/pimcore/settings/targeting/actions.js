@@ -173,7 +173,7 @@ pimcore.settings.targeting.actions = (function () {
 
         assign_target_group: Class.create(pimcore.settings.targeting.action.abstract, {
             getName: function () {
-                return t('associate_target_group');
+                return t('assign_target_group');
             },
 
             getPanel: function (panel, data) {
@@ -188,17 +188,17 @@ pimcore.settings.targeting.actions = (function () {
                     items: [
                         {
                             xtype: "combo",
-                            name: "personaId",
+                            name: "targetGroup",
                             displayField: 'text',
                             valueField: "id",
-                            store: pimcore.globalmanager.get("personas"),
+                            store: pimcore.globalmanager.get("target_group_store"),
                             editable: false,
                             width: 400,
                             triggerAction: 'all',
                             listWidth: 200,
                             mode: "local",
-                            value: data.personaId,
-                            emptyText: t("select_a_persona")
+                            value: data.targetGroup,
+                            emptyText: t("select_a_target_group")
                         },
                         {
                             xtype: "hidden",

@@ -12,8 +12,8 @@
  */
 
 /*global google */
-pimcore.registerNS("pimcore.settings.targeting.personas.item");
-pimcore.settings.targeting.personas.item = Class.create({
+pimcore.registerNS("pimcore.settings.targeting.targetGroups.item");
+pimcore.settings.targeting.targetGroups.item = Class.create({
 
     initialize: function(parent, data) {
         this.parent = parent;
@@ -26,7 +26,7 @@ pimcore.settings.targeting.personas.item = Class.create({
             closable: true,
             deferredRender: false,
             forceLayout: true,
-            id: "pimcore_personas_panel_" + this.data.id,
+            id: "pimcore_target_groups_panel_" + this.data.id,
             buttons: [{
                 text: t("save"),
                 iconCls: "pimcore_icon_apply",
@@ -234,7 +234,7 @@ pimcore.settings.targeting.personas.item = Class.create({
         saveData["conditions"] = conditionsData;
 
         Ext.Ajax.request({
-            url: "/admin/reports/targeting/persona-save",
+            url: "/admin/targeting/target-group/save",
             params: {
                 id: this.data.id,
                 data: Ext.encode(saveData)

@@ -39,7 +39,7 @@ class TargetGroup implements ConditionInterface
      */
     public static function fromConfig(array $config)
     {
-        return new self($config['persona'] ?? null);
+        return new self($config['targetGroup'] ?? null);
     }
 
     /**

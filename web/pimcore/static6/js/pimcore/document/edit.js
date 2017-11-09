@@ -24,8 +24,8 @@ pimcore.document.edit = Class.create({
         var link =  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
             + pimcore.settings.language+'&_dc=' + date.getTime();
 
-        if(this.persona && this.persona.getValue()) {
-            link += "&_ptp=" + this.persona.getValue();
+        if(this.targetGroup && this.targetGroup.getValue()) {
+            link += "&_ptg=" + this.targetGroup.getValue();
         }
 
         return link;
@@ -45,7 +45,7 @@ pimcore.document.edit = Class.create({
                 Ext.Ajax.request({
                     url: "/admin/page/clear-editable-data",
                     params: {
-                        persona: this["persona"] ? this.persona.getValue() : "",
+                        targetGroup: this["targetGroup"] ? this.targetGroup.getValue() : "",
                         id: this.document.id
                     },
                     success: function () {
@@ -87,17 +87,17 @@ pimcore.document.edit = Class.create({
                 handler: cleanupFunction.bind(this)
             }];
 
-            // add persona selection to toolbar
-            if(this.document.getType() == "page" && pimcore.globalmanager.get("personas").getCount() > 0) {
+            // add target group selection to toolbar
+            if(this.document.getType() == "page" && pimcore.globalmanager.get("target_group_store").getCount() > 0) {
 
-                this.persona = new Ext.form.ComboBox({
+                this.targetGroup = new Ext.form.ComboBox({
                     displayField:'text',
                     valueField: "id",
                     store: {
                         xtype: "jsonstore",
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/reports/targeting/persona-list?add-default=true"
+                            url: "/admin/targeting/target-group/list?add-default=true"
                         },
                         fields: ["id", "text"]
                     },
@@ -124,13 +124,13 @@ pimcore.document.edit = Class.create({
 
 
                 lbar.push("->", {
-                    tooltip: t("edit_content_for_persona"),
-                    iconCls: "pimcore_icon_personas",
+                    tooltip: t("edit_content_for_target_group"),
+                    iconCls: "pimcore_icon_target_groups",
                     arrowVisible: false,
                     menuAlign: "tl",
-                    menu: [this.persona]
+                    menu: [this.targetGroup]
                 }, {
-                    tooltip: t("clear_content_of_selected_persona"),
+                    tooltip: t("clear_content_of_selected_target_group"),
                     iconCls: "pimcore_icon_cleanup",
                     handler: cleanupFunction.bind(this)
                 });
