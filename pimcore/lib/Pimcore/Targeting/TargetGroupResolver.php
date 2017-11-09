@@ -32,6 +32,11 @@ class TargetGroupResolver
     const ATTRIBUTE_VISITOR_INFO = '_visitor_info';
 
     /**
+     * @var TargetingStorageInterface
+     */
+    private $targetingStorage;
+
+    /**
      * @var ConditionMatcherInterface
      */
     private $conditionMatcher;
@@ -57,12 +62,14 @@ class TargetGroupResolver
     private $targetingRules;
 
     public function __construct(
+        TargetingStorageInterface $targetingStorage,
         ConditionMatcherInterface $conditionMatcher,
         ActionHandlerLocatorInterface $actionHandlers,
         Connection $db,
         EventDispatcherInterface $eventDispatcher
     )
     {
+        $this->targetingStorage = $targetingStorage;
         $this->conditionMatcher = $conditionMatcher;
         $this->actionHandlers   = $actionHandlers;
         $this->eventDispatcher  = $eventDispatcher;
@@ -71,8 +78,8 @@ class TargetGroupResolver
 
     public function resolve(Request $request): VisitorInfo
     {
-        if ($request->attributes->has(self::ATTRIBUTE_VISITOR_INFO)) {
-            return $request->attributes->get(self::ATTRIBUTE_VISITOR_INFO);
+        if ($this->targetingStorage->hasVisitorInfo()) {
+            return $this->targetingStorage->getVisitorInfo();
         }
 
         $visitorInfo = VisitorInfo::fromRequest($request);
@@ -93,7 +100,7 @@ class TargetGroupResolver
             new TargetingEvent($visitorInfo)
         );
 
-        $request->attributes->set(self::ATTRIBUTE_VISITOR_INFO, $visitorInfo);
+        $this->targetingStorage->setVisitorInfo($visitorInfo);
 
         return $visitorInfo;
     }
