@@ -163,11 +163,18 @@ class TargetGroupResolver
                 continue;
             }
 
-            $this->handleTargetingRuleAction($visitorInfo, $rule, $action);
+            $this->applyAction($visitorInfo, $action, $rule);
         }
     }
 
-    private function handleTargetingRuleAction(VisitorInfo $visitorInfo, Rule $rule, array $action)
+    /**
+     * Applies a raw action from config
+     *
+     * @param VisitorInfo $visitorInfo
+     * @param array $action
+     * @param Rule|null $rule
+     */
+    public function applyAction(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
     {
         /** @var string $type */
         $type = $action['type'] ?? null;
@@ -184,7 +191,7 @@ class TargetGroupResolver
         }
 
         $actionHandler = $this->actionHandlers->get($type);
-        $actionHandler->apply($visitorInfo, $rule, $action);
+        $actionHandler->apply($visitorInfo, $action, $rule);
     }
 
     /**

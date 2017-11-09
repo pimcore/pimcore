@@ -23,9 +23,13 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Event\Analytics\PiwikEvents;
+use Pimcore\Event\Targeting\TargetingEvent;
+use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Model\Document\Page;
+use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Targeting\TargetingStorageInterface;
@@ -80,6 +84,7 @@ class TargetingListener implements EventSubscriberInterface
     {
         return [
             PiwikEvents::CODE_TRACKING_DATA => 'onPiwikTrackingData',
+            TargetingEvents::PRE_RESOLVE    => 'onPreResolve',
 
             // needs to run before ElementListener to make sure there's a
             // resolved VisitorInfo when the document is loaded
@@ -101,6 +106,42 @@ class TargetingListener implements EventSubscriberInterface
         $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
             '_paq.push([ function() { pimcore.Targeting.setVisitorId(this.getVisitorId()); } ]);'
         );
+    }
+
+    /**
+     * Handles target groups configured on the document settings panel. If a document
+     * has configured target groups, the assign_target_group will be manually called
+     * for that target group before starting to match other conditions.
+     *
+     * @param TargetingEvent $event
+     */
+    public function onPreResolve(TargetingEvent $event)
+    {
+        $request  = $event->getRequest();
+        $document = $this->documentResolver->getDocument($request);
+
+        if (!$document || !$document instanceof Page || null !== Staticroute::getCurrentRoute()) {
+            return;
+        }
+
+        // read and normalize target group IDs from document
+        $targetGroups = trim((string)$document->getPersonas());
+        $targetGroups = explode(',', $targetGroups);
+        $targetGroups = array_filter(array_map(function ($tg) {
+            return !empty($tg) ? (int)$tg : null;
+        }, $targetGroups));
+
+        if (empty($targetGroups)) {
+            return;
+        }
+
+        $visitorInfo = $event->getVisitorInfo();
+        foreach ($targetGroups as $targetGroup) {
+            $this->targetGroupResolver->applyAction($visitorInfo, [
+                'type'        => 'assign_target_group',
+                'targetGroup' => $targetGroup
+            ]);
+        }
     }
 
     public function onKernelRequest(GetResponseEvent $event)

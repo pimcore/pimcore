@@ -88,11 +88,11 @@ class DocumentTargetingHandler
         $result = [];
         foreach ($visitorInfo->getTargetGroups() as $targetGroup) {
             if (in_array($targetGroup->getId(), $configuredTargetGroups)) {
-                $result[] = $targetGroup;
+                $result[$targetGroup->getId()] = $targetGroup;
             }
         }
 
-        return $result;
+        return array_values($result);
     }
 
     /**

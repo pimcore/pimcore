@@ -23,6 +23,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
+use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Model\Version;
 use Pimcore\Targeting\Document\DocumentTargetingHandler;
@@ -92,7 +93,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 3], // has to be right after DocumentFallbackListener
+            KernelEvents::REQUEST => ['onKernelRequest', 3], // has to be after DocumentFallbackListener and after TargetingListener
         ];
     }
 
@@ -175,7 +176,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function applyTargetGroups(Request $request, Document $document)
     {
-        if (!$document instanceof Document\Page) {
+        if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
             return;
         }
 

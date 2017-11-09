@@ -41,7 +41,7 @@ class Event implements ActionHandlerInterface
     /**
      * @inheritDoc
      */
-    public function apply(VisitorInfo $visitorInfo, Rule $rule, array $action)
+    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
     {
         $key = $action['key'] ?? null;
         if (!$key) {

@@ -36,7 +36,7 @@ class AssignTargetGroup implements ActionHandlerInterface
         $this->conditionMatcher = $conditionMatcher;
     }
 
-    public function apply(VisitorInfo $visitorInfo, Rule $rule, array $action)
+    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
     {
         $targetGroupId = $action['targetGroup'] ?? null;
         if (!$targetGroupId) {
