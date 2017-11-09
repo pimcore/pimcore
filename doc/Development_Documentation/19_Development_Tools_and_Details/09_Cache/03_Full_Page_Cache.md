@@ -9,7 +9,7 @@
 > The full page cache is disabled by default if you're logged in in the admin interface or in the case 
 > the debug mode (settings -> system -> debug) is on.
 
-The full page cache only works with GET request, he takes the whole response (only for the frontend)
+The full page cache only works with GET request, it takes the whole response (only for the frontend)
 including the headers from a request and stores it into the cache. The next request to the same 
 page (hostname and request-uri are used to build the checksum/hash identifier) will be served 
 directly by the cache.
