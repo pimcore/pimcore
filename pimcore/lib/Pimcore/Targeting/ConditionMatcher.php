@@ -55,8 +55,15 @@ class ConditionMatcher implements ConditionMatcherInterface
      */
     public function match(VisitorInfo $visitorInfo, array $conditions): bool
     {
-        if (0 === count($conditions)) {
+        $conditions = array_values($conditions);
+
+        $count = count($conditions);
+        if (0 === $count) {
+            // no conditions -> rule matches
             return true;
+        } elseif (1 === $count) {
+            // no need to build up expression if there's only one condition
+            return $this->matchCondition($visitorInfo, $conditions[0]);
         }
 
         $expressionBuilder = new ExpressionBuilder();
