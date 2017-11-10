@@ -59,7 +59,13 @@ pimcore.report.piwik.settings = Class.create({
                             name: "piwik_url",
                             width: 670,
                             id: "report_settings_piwik_url",
-                            value: this.parent.getValue("piwik.piwik_url")
+                            value: this.parent.getValue("piwik.piwik_url"),
+                            enableKeyEvents: true,
+                            listeners: {
+                                keyup: function (el) {
+                                    el.setRawValue(el.getValue().replace(/https?\:\/\//i,''));
+                                }
+                            }
                         }, {
                             xtype: "checkbox",
                             fieldLabel: t("piwik_use_ssl"),
