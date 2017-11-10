@@ -33,11 +33,11 @@ matrix:
 install:
   - if [ $TASK_TESTS == 1 ]; then chmod +x .travis/setup-sudo.sh && .travis/setup-sudo.sh; fi
   - if [ $TASK_TESTS == 1 ]; then composer install; fi
-  - if [ $TASK_DOCS == 1 ]; then .travis/setup-docs.sh; fi
+  - if [ $TASK_DOCS == 1 ]; then .ci/setup-docs.sh; fi
 
 script:
   - if [ $TASK_TESTS == 1 ]; then (cd tests && chmod +x alltests.sh && ./alltests.sh); fi
-  - if [ $TASK_DOCS == 1 ]; then .travis/run-docs.sh; fi
+  - if [ $TASK_DOCS == 1 ]; then .ci/run-docs.sh; fi
 
 after_script:
   - if [ $TASK_TESTS == 1 ]; then cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log; fi
