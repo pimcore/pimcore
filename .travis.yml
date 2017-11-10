@@ -29,6 +29,9 @@ matrix:
       env:
         - TASK_TESTS=0
         - TASK_DOCS=1
+      cache:
+        directories:
+          - tmp-docs/pimcore-docs/vendor
 
 install:
   - if [ $TASK_TESTS == 1 ]; then chmod +x .travis/setup-sudo.sh && .travis/setup-sudo.sh; fi
