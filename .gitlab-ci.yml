@@ -28,6 +28,9 @@ deploy-docs:
   image: debian:stable
   stage: deploy
   when: always
+  environment:
+    name: docs/${CI_COMMIT_REF_NAME}
+    url: ${DOCS_DEPLOY_BASE_URL}/${CI_COMMIT_REF_NAME}
   only:
     - master
     - pimcore4
