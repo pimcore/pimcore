@@ -19,3 +19,15 @@ CREATE TABLE `importconfigs` (
 DEFAULT CHARSET=utf8mb4;
 ;
 ');
+
+$db->query('
+CREATE TABLE `importconfig_shares` (
+	`importConfigId` INT(11) NOT NULL,
+	`sharedWithUserId` INT(11) NOT NULL,
+	PRIMARY KEY (`importConfigId`, `sharedWithUserId`),
+	INDEX `gridConfigId` (`importConfigId`),
+	INDEX `sharedWithUserId` (`sharedWithUserId`)
+)
+DEFAULT CHARSET=utf8mb4;
+;
+');

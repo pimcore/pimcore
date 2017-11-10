@@ -184,7 +184,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                         sortable: true
                     },
                     {
-                        text: 'col_label',
+                        text: t('col_label'),
                         dataIndex: 'csvLabel',
                         flex: 2,
                         sortable: true
