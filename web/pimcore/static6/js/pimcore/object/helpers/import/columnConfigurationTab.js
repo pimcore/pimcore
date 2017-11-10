@@ -253,13 +253,26 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                                     var element = this.getConfigElement(attr);
 
                                     var copy = element.getCopyNode(record);
+
+
                                     data.records = [copy]; // assign the copy as the new dropNode
                                     this.showConfigWindow(element, copy);
                                     record.parentNode.removeChild(record);
+
                                 }
                             }
                         }.bind(this),
                         drop: function (node, data, overModel) {
+
+                            var record  = data.records[0];
+                            record.set("csvLabel", null, {
+                                dirty: false
+                            });
+
+                            record.set("csvIdx", null, {
+                                dirty: false
+                            });
+
                             this.updatePreviewArea();
 
                         }.bind(this),
@@ -349,6 +362,8 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
 
         tree.select();
 
+        var rootNode = tree.getStore().getRootNode();
+
         var menu = new Ext.menu.Menu();
 
         if (this.id != 0) {
@@ -381,16 +396,18 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                     }.bind(this, record)
                 }));
 
-                menu.add(new Ext.menu.Item({
-                    text: t('ignore'),
-                    iconCls: "pimcore_icon_operator_ignore",
-                    handler: function (node) {
-                        var replacement = pimcore.object.importcolumn.operator.ignore.prototype.getCopyNode(node);
-                        var parent = node.parentNode;
-                        parent.replaceChild(replacement, node);
-                        this.updatePreviewArea();
-                    }.bind(this, record)
-                }));
+                if (record.parentNode == rootNode) {
+                    menu.add(new Ext.menu.Item({
+                        text: t('ignore'),
+                        iconCls: "pimcore_icon_operator_ignore",
+                        handler: function (node) {
+                            var replacement = pimcore.object.importcolumn.operator.ignore.prototype.getCopyNode(node);
+                            var parent = node.parentNode;
+                            parent.replaceChild(replacement, node);
+                            this.updatePreviewArea();
+                        }.bind(this, record)
+                    }));
+                }
             }
         }
 

@@ -856,17 +856,6 @@ class DataObjectHelperController extends AdminController
             $importConfig->setConfig($configData);
             $importConfig->save();
 
-//            $userId = $this->getUser()->getId();
-
-//            $availableConfigs = $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType);
-//            $sharedConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $classId, $searchType);
-
-//            $settings= $this->getShareSettings($gridConfig->getId());
-//            $settings['gridConfigId'] = (int) $gridConfig->getId();
-//            $settings['gridConfigName'] = $gridConfig->getName();
-//            $settings['gridConfigDescription'] = $gridConfig->getDescription();
-//            $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getUser()->getId());
-
             return $this->json(['success' => true,
                         'importConfigId' => $importConfig->getId(),
                     'availableConfigs' => $this->getMyOwnImportConfigs($this->getUser()->getId(), $classId)
@@ -1312,29 +1301,6 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-//        $mappingStore = [];
-//        for ($i = 0; $i < $cols; $i++) {
-//            $mappedField = null;
-//            if ($availableFields[$i]) {
-//                $mappedField = $availableFields[$i][0];
-//            }
-//
-//            $firstRow = $i;
-//            if (is_array($firstRowData)) {
-//                $firstRow = $firstRowData[$i];
-//                if (strlen($firstRow) > 40) {
-//                    $firstRow = substr($firstRow, 0, 40) . '...';
-//                }
-//            }
-//
-//            $mappingStore[] = [
-//                'source' => $i,
-//                'firstRow' => $firstRow,
-//                'target' => $mappedField
-//            ];
-//        }
-
-        //How many rows
         $csv = new \SplFileObject($file);
         $csv->setFlags(\SplFileObject::READ_CSV);
         $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
