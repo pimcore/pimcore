@@ -20,13 +20,7 @@ docs:
     paths:
       - documentation
   script:
-    - rm -rf tmp documentation
-    - git clone https://github.com/pimcore/pimcore-docs.git tmp/pimcore-docs
-    - cd tmp/pimcore-docs
-    - LATEST_VERSION=$(git describe --abbrev=0)
-    - echo "Checking out latest pimcore-docs version ${LATEST_VERSION}"
-    - git checkout ${LATEST_VERSION}
-    - composer install
-    - bin/console prepare ../../doc
-    - bin/console generate
-    - mv build/static ../../documentation
+    - .ci/setup-docs.sh
+    - .ci/run-docs.sh
+    # move to root as we don't want to have subdirectories in build artifact
+    - rm -rf documentation && mv tmp-docs/pimcore-docs/build/static documentation
