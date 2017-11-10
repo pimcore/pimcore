@@ -53,4 +53,4 @@ deploy-docs:
 
     - export DOCS_DEPLOY_FULL_PATH=${DOCS_DEPLOY_PATH}/${CI_COMMIT_REF_NAME}
     - ssh ${DOCS_DEPLOY_USER}@${DOCS_DEPLOY_HOST} "mkdir -p ${DOCS_DEPLOY_FULL_PATH}"
-    - rsync -avz --delete documentation/ ${DOCS_DEPLOY_USER}@${DOCS_DEPLOY_HOST}:${DOCS_DEPLOY_FULL_PATH}
+    - rsync -avz --delete documentation/ ${DOCS_DEPLOY_USER}@${DOCS_DEPLOY_HOST}:${DOCS_DEPLOY_FULL_PATH}/
