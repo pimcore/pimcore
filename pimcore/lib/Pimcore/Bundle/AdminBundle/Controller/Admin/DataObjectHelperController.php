@@ -26,6 +26,7 @@ use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\ImportConfig;
+use Pimcore\Model\Tool\Email\Log;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
@@ -1077,8 +1078,6 @@ class DataObjectHelperController extends AdminController
         $data = $request->get('data');
         $data = json_decode($data, false);
         $importId = $data->importId;
-//        $config = $request->get("config");
-//        $config = json_decode($config, true);
 
         try {
             Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $data) {
@@ -1109,8 +1108,6 @@ class DataObjectHelperController extends AdminController
         $config = $request->get('config');
         $config = json_decode($config, false);
 
-//        $rowIndex = $request->get('rowIndex');
-
         $data = Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $config) {
             return $session->get('importconfig_' . $importId, $config);
         }, 'pimcore_gridconfig');
@@ -1119,7 +1116,6 @@ class DataObjectHelperController extends AdminController
         $rowIndex = $data->rowIndex;
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
-//        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/news_export.csv';         //TODO
 
         // determine type
         $dialect = Tool\Admin::determineCsvDialect($file . '_original');
@@ -1129,22 +1125,6 @@ class DataObjectHelperController extends AdminController
 
         if (($handle = fopen($file, 'r')) !== false) {
             while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-//                if ($count == 0) {
-//                    $firstRowData = $rowData;
-//                }
-//                $tmpData = [];
-//                foreach ($rowData as $key => $value) {
-//                    $tmpData['field_' . $key] = $value;
-//                }
-//                $data[] = $tmpData;
-//                $cols = count($rowData);
-//
-//                $count++;
-//
-//                if ($count > 18) {
-//                    break;
-//                }
-
                 if ($count == $rowIndex) {
                     $haveData = true;
                     break;
@@ -1159,8 +1139,22 @@ class DataObjectHelperController extends AdminController
         }
 
         $paramsBag = [];
-        $object1 = DataObject\News::getById(7);
-//        $object2 = DataObject\News::getById(4);
+
+
+        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+        $resolver = $service->getResolverImplementation($config);
+
+        $classId = $data->classId;
+        $class = DataObject\ClassDefinition::getById($classId);
+
+        $object1 = $resolver->resolve($data->parentId, $rowData);
+
+        if ($object1 == null) {
+            $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
+            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
+            $object1 = $factory->build($className);
+
+        }
 
         $deepCopy = new \DeepCopy\DeepCopy();
         $object2 = $deepCopy->copy($object1);
@@ -1168,8 +1162,10 @@ class DataObjectHelperController extends AdminController
         $object2 = $this->fillObject($object2, $config, $rowData);
         $paramsBag['object1'] = $object1;
         $paramsBag['object2'] = $object2 ;
+        $paramsBag['isImportPreview'] = true;
 
         $response = $this->render('PimcoreAdminBundle:Admin/DataObject:diffVersions.html.php', $paramsBag);
+
 
         return $response;
     }
@@ -1181,6 +1177,8 @@ class DataObjectHelperController extends AdminController
         $container = \Pimcore::getContainer();
         $localeService = $container->get(Locale::class);
         $currentLocale = $localeService->getLocale();
+        Logger::debug($currentLocale);
+
 
         $colIndex = -1;
 
@@ -1191,11 +1189,13 @@ class DataObjectHelperController extends AdminController
             }
         }
 
+        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+
         foreach ($selectedGridColumns as $selectedGridColumn) {
             $colIndex++;
 
             $attributes = $selectedGridColumn->attributes;
-            $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+
             /** @var $config DataObject\ImportColumnConfig\ConfigElementInterface */
             $config = $service->buildInputDataConfig([$attributes]);
             if (!$config) {

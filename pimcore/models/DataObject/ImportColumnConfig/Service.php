@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\ImportResolver\Id;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
 
@@ -118,11 +119,6 @@ class Service
 
         $importConfigData->classId = $exportConfigData->classId;
 
-//        $importConfigData->resolverSettings = new \stdClass();
-//        $importConfigData->resolverSettings->language = $exportConfigData->language;
-//        $importConfigData->resolverSettings->language = $exportConfigData->language;
-
-
         $importConfigData->selectedGridColumns = array();
         if (is_array($exportConfigData["columns"])) {
             foreach ($exportConfigData["columns"] as $exportColumn) {
@@ -134,7 +130,10 @@ class Service
                 $importColumn->attributes->class = "Ignore";
 
                 $fieldConfig = $exportColumn["fieldConfig"];
-                if ($fieldConfig["isOperator"]) {
+                if ($fieldConfig["isOperator"]
+                    || (
+                        isset($fieldConfig["key"])
+                            && ($fieldConfig["key"] == "fullpath"  || strpos($fieldConfig["key"], "~") !== false))) {
                     $importColumn->attributes->type = "operator";
                     $importColumn->attributes->label = $fieldConfig["attributes"]["label"];
                 } else {
@@ -153,6 +152,12 @@ class Service
 
         return $importConfigData;
 
+    }
+
+    public function getResolverImplementation($config) {
+        if ($config->resolverSettings->strategy == "id") {
+            return new Id($config);
+        }
 
     }
 }

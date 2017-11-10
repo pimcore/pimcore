@@ -7,7 +7,6 @@
 
 <body>
 
-
 <?php
 
 use Pimcore\Model\DataObject;
@@ -19,8 +18,13 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
     <tr>
         <th>Name</th>
         <th>Key</th>
-        <th>Version 1</th>
-        <th>Version 2</th>
+        <?php if ($this->isImportPreview) { ?>
+            <th>Before</th>
+            <th>After</th>
+        <?php } else { ?>
+            <th>Version 1</th>
+            <th>Version 2</th>
+        <?php } ?>
     </tr>
     <tr class="system">
         <td>Date</td>
@@ -53,8 +57,10 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
             <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                 <?php
-                    $v1 = $lfd->getVersionPreview($this->object1->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
-                    $v2 = $lfd->getVersionPreview($this->object2->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                    $v1Container = $this->object1->getValueForFieldName($fieldName);
+                    $v1 = $v1Container ? $lfd->getVersionPreview($v1Container->getLocalizedValue($lfd->getName(), $language)) : "";
+                    $v2Container = $this->object2->getValueForFieldName($fieldName);
+                    $v2 = $v2Container ? $lfd->getVersionPreview($v2Container->getLocalizedValue($lfd->getName(), $language)) : "";
                 ?>
                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
                     <td><?= $lfd->getTitle() ?> (<?= $language; ?>)</td>

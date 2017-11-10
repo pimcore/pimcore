@@ -27,7 +27,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
 
         this.rebuildPanel();
     },
-    
+
     rebuildPanel: function() {
         this.configPanel.removeAll(true);
         this.selectionPanel = null;
@@ -131,9 +131,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                 });
             }
         }
-
     },
-
 
     getSelectionPanel: function () {
         if (!this.selectionPanel) {
@@ -149,20 +147,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                         continue;
                     }
                     child = child[0];
-                } else {
-                    //TODO is this still possible ???
-                    // var child = {
-                    //     text: nodeConf.label,
-                    //     key: nodeConf.key,
-                    //     type: "data",
-                    //     dataType: nodeConf.dataType,
-                    //     leaf: true,
-                    //     layout: nodeConf.layout,
-                    //     iconCls: "pimcore_icon_" + nodeConf.dataType
-                    // };
-                    // if (nodeConf.width) {
-                    //     child.width = nodeConf.width;
-                    // }
                 }
                 childs.push(child);
             }
@@ -265,7 +249,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                                     if (record.data.configAttributes) {
                                         // there is nothing to do, this guy has been configured already
                                         return;
-                                        // attr = record.data.configAttributes;
                                     }
                                     var element = this.getConfigElement(attr);
 
@@ -277,7 +260,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                             }
                         }.bind(this),
                         drop: function (node, data, overModel) {
-                            // overModel.set('expandable', true);
                             this.updatePreviewArea();
 
                         }.bind(this),
@@ -297,18 +279,13 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                                     }
                                 }
 
-                                // var sourceType = this.getNodeTypeAndClass(sourceNode);
-                                // var targetType = this.getNodeTypeAndClass(realOverModel);
                                 var allowed = true;
 
-
                                 if (typeof realOverModel.data.isChildAllowed == "function") {
-                                    console.log("no child allowed");
                                     allowed = allowed && realOverModel.data.isChildAllowed(realOverModel, sourceNode);
                                 }
 
                                 if (typeof sourceNode.data.isParentAllowed == "function") {
-                                    console.log("parent not allowed");
                                     allowed = allowed && sourceNode.data.isParentAllowed(realOverModel, sourceNode);
                                 }
 
@@ -367,18 +344,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
         return false;
     },
 
-    getNodeTypeAndClass: function (node) {
-        var type = "value";
-        var className = "";
-        if (node.data.configAttributes) {
-            type = node.data.configAttributes.type;
-            className = node.data.configAttributes['class'];
-        } else if (node.data.dataType) {
-            className = node.data.dataType.toLowerCase();
-        }
-        return {type: type, className: className};
-    },
-
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
         e.stopEvent();
 
@@ -390,7 +355,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
-                handler: function (node) {
+                handler: function (record) {
                     record.parentNode.removeChild(record, true);
                     this.updatePreviewArea();
                 }.bind(this, record)
@@ -405,13 +370,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                     }.bind(this, record)
                 }));
 
-                menu.add(new Ext.menu.Item({
-                    text: t('expand_children'),
-                    iconCls: "pimcore_icon_expand_children",
-                    handler: function (node) {
-                        record.expandChildren();
-                    }.bind(this, record)
-                }));
             }
 
             if (record.data.isOperator || record.data.isValue) {
@@ -420,6 +378,17 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                     iconCls: "pimcore_icon_edit",
                     handler: function (node) {
                         this.getConfigElement(node.data.configAttributes).getConfigDialog(node);
+                    }.bind(this, record)
+                }));
+
+                menu.add(new Ext.menu.Item({
+                    text: t('ignore'),
+                    iconCls: "pimcore_icon_operator_ignore",
+                    handler: function (node) {
+                        var replacement = pimcore.object.importcolumn.operator.ignore.prototype.getCopyNode(node);
+                        var parent = node.parentNode;
+                        parent.replaceChild(replacement, node);
+                        this.updatePreviewArea();
                     }.bind(this, record)
                 }));
             }
@@ -487,8 +456,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
         var tree = new Ext.tree.TreePanel({
             title: t('operators'),
             collapsible: true,
-            // collapsed: true,
-            xtype: "treepanel",
             region: "south",
             autoScroll: true,
             height: 200,
@@ -552,13 +519,9 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                         }
                     }
                     elements.push(treenode);
-                } else {
-                    console.log("config element not found");
                 }
             }
         }
         return elements;
     }
-
-
 });

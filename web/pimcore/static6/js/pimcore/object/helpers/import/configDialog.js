@@ -160,7 +160,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
             text: t("import"),
             iconCls: "pimcore_icon_import",
             handler: function () {
-                console.log("not implemented");
+                console.log("not implemented yet");
             }.bind(this)
         });
 
@@ -242,8 +242,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
         var config = Ext.encode(this.config);
         config = Ext.decode(config);
         delete config['dataPreview'];
-        // delete config['mappingPreview'];
-        // delete config['mappingStore'];
         return config;
     },
 
@@ -315,6 +313,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         var data = {
             importId: this.uniqueImportId,
             importConfigId: this.importConfigId,
+            parentId: this.parentId ? this.parentId : "",
             rowIndex: rowIndex,
             classId: this.classId,
             config: config
@@ -350,7 +349,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
         var frameId = 'object_importpreview_iframe_' + this.uniqueImportId;
         var previewFrame = new Ext.Panel({
             region: "center",
-            // bodyCls: "pimcore_overflow_scrolling",
             html: '<iframe src="about:blank" frameborder="0" style="width:100%; height: 100%;" id="' + frameId + '"></iframe>'
         });
 

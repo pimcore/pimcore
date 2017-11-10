@@ -1709,8 +1709,7 @@
   "delete_importconfig_dblcheck": "Are you sure? Also note that this could be a shared config.",
   "importconfig_removed": "Import config has been removed",
   "importconfig_not_removed": "Import config could not be removed",
-  "import_export_configuration": "Import Export configuration"
-
+  "import_export_configuration": "Import Export configuration",
   "brick_type": "Brick Type",
   "renderer": "Renderer",
   "getter": "Getter",

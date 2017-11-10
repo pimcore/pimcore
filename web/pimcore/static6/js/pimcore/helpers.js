@@ -1007,13 +1007,13 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
 
     var uploadForm = new Ext.form.FormPanel({
         fileUpload: true,
-        width: 400,
+        width: 500,
         bodyStyle: 'padding: 10px;',
         items: [{
             xtype: 'fileuploadfield',
             emptyText: t("select_a_file"),
             fieldLabel: t("file"),
-            width: 330,
+            width: 470,
             name: filename,
             buttonText: "",
             buttonConfig: {
@@ -1042,7 +1042,7 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
 
     uploadWindowCompatible.add(uploadForm);
     uploadWindowCompatible.show();
-    uploadWindowCompatible.setWidth(401);
+    uploadWindowCompatible.setWidth(501);
     uploadWindowCompatible.updateLayout();
 };
 

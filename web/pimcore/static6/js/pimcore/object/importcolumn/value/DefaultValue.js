@@ -68,10 +68,16 @@ pimcore.object.importcolumn.value.defaultvalue = Class.create(pimcore.object.imp
             value: this.node.data.configAttributes.label
         });
 
+        this.attributeField = new Ext.form.field.Text({
+            value: this.node.data.configAttributes.attribute,
+            disabled: true,
+            fieldLabel: t('attribute')
+        });
+
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textField],
+            items: [this.textField, this.attributeField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
