@@ -1,26 +1,56 @@
-image: tetraweb/php:7.1
-
 stages:
-  - docs
+  - build
+  - deploy
 
-cache:
-  key: "$CI_BUILD_REF_NAME"
-  paths:
-    - ~/.composer/cache
-
-before_script:
-  - docker-php-ext-enable zip opcache
-
-docs:
-  stage: docs
+build-docs:
+  image: tetraweb/php:7.1
+  stage: build
   when: always
+  cache:
+    key: "$CI_BUILD_REF_NAME"
+    paths:
+      - ~/.composer/cache
+      - tmp-docs/pimcore-docs/vendor
   artifacts:
     name: "${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}"
     expire_in: 1 week
     paths:
       - documentation
+  before_script:
+    - docker-php-ext-enable zip opcache
   script:
     - .ci/setup-docs.sh
     - .ci/run-docs.sh
     # move to root as we don't want to have subdirectories in build artifact
     - rm -rf documentation && mv tmp-docs/pimcore-docs/build/static documentation
+
+deploy-docs:
+  image: debian:stable
+  stage: deploy
+  when: always
+  only:
+    - master
+    - pimcore4
+  before_script:
+    # test that all env vars are set properly
+    - '[ ! -z "$SSH_PRIVATE_KEY" ]'
+    - '[ ! -z "$SSH_SERVER_HOSTKEYS" ]'
+
+    # install needed packages
+    - '( apt-get update -y && apt-get install openssh-client rsync -y )'
+
+    # See https://docs.gitlab.com/ce/ci/ssh_keys/README.html
+    # to get SSH host keys execute ssh-keyscan <hostname>
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts && chmod 0644 ~/.ssh/known_hosts'
+  script:
+    # test that all env vars are set properly
+    - '[ ! -z "$DOCS_DEPLOY_USER" ]'
+    - '[ ! -z "$DOCS_DEPLOY_HOST" ]'
+    - '[ ! -z "$DOCS_DEPLOY_PATH" ]'
+
+    - export DOCS_DEPLOY_FULL_PATH=${DOCS_DEPLOY_PATH}/${CI_COMMIT_REF_NAME}
+    - ssh ${DOCS_DEPLOY_USER}@${DOCS_DEPLOY_HOST} "mkdir -p ${DOCS_DEPLOY_FULL_PATH}"
+    - rsync -avz --delete documentation/ ${DOCS_DEPLOY_USER}@${DOCS_DEPLOY_HOST}:${DOCS_DEPLOY_FULL_PATH}
