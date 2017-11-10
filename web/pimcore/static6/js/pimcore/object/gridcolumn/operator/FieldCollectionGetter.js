@@ -153,10 +153,7 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
     },
 
     allowChild: function (targetNode, dropNode) {
-        if (targetNode.childNodes.length > 0) {
-            return false;
-        }
-        return true;
+        return false;
     },
 
     getNodeLabel: function (configAttributes) {
