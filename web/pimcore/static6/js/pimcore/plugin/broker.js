@@ -55,6 +55,12 @@ pimcore.plugin.broker = {
             try {
                 this.executePlugin(plugin, e, args);
             } catch (e) {
+                if (
+                    e instanceof pimcore.error.ValidationException
+                    || e instanceof pimcore.error.ActionCancelledException
+                ) {
+                    throw e;
+                }
                 console.error(e);
             }
         }

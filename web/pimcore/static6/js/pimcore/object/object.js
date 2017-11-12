@@ -681,7 +681,21 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }
 
-            pimcore.plugin.broker.fireEvent("preSaveObject", this);
+            try {
+                pimcore.plugin.broker.fireEvent("preSaveObject", this);
+            } catch (e) {
+                if (e instanceof pimcore.error.ValidationException) {
+                    this.tab.unmask();
+                    pimcore.helpers.showPrettyError('object', t("error"), t("error_saving_object"), e.message);
+                    return false;
+                }
+
+                if (e instanceof pimcore.error.ActionCancelledException) {
+                    this.tab.unmask();
+                    pimcore.helpers.showNotification(t("Info"), 'Object not saved: ' + e.message, 'info');
+                    return false;
+                }
+            }
 
             Ext.Ajax.request({
                 url: '/admin/object/save?task=' + task,
