@@ -163,6 +163,33 @@ class VisitorInfo implements \IteratorAggregate
         return $this->targetGroups;
     }
 
+    /**
+     * @return null|TargetGroup
+     */
+    public function getMostRelevantTargetGroup()
+    {
+        if (0 === count($this->targetGroupAssignments)) {
+            return null;
+        }
+
+        /** @var TargetGroupAssignment[] $assignments */
+        $assignments = array_values($this->targetGroupAssignments);
+
+        // sort reverse (highest count first)
+        usort($assignments, function(TargetGroupAssignment $a, TargetGroupAssignment $b) {
+            $aCount = $a->getCount();
+            $bCount = $b->getCount();
+
+            if ($aCount === $bCount) {
+                return 0;
+            }
+
+            return $aCount < $bCount ? 1 : -1;
+        });
+
+        return $assignments[0]->getTargetGroup();
+    }
+
     public function hasResponse(): bool
     {
         return null !== $this->response;
