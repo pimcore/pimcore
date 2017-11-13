@@ -639,11 +639,9 @@ class DefaultFindologic implements IProductList
                 $categories = explode('_', $catTree);
 
                 foreach ($categories as $cat) {
-                    if(is_array($field->items->item))
-                    {
-                        foreach($field->items->item as $entry){
-                            if($entry->name == $cat)
-                            {
+                    if (is_array($field->items->item)) {
+                        foreach ($field->items->item as $entry) {
+                            if ($entry->name == $cat) {
                                 $field = $entry;
                                 break;
                             }
@@ -652,7 +650,6 @@ class DefaultFindologic implements IProductList
                         $field = $field->items->item;
                     }
                 }
-
             } elseif ($fieldname === 'price') {
                 $field = $this->groupedValues[$fieldname];
 
@@ -679,15 +676,13 @@ class DefaultFindologic implements IProductList
                 $rec($field->items->item);
             }
 
-            if($field->items->item)
-            {
+            if ($field->items->item) {
                 $hits = $field->items->item instanceof \stdClass
                     ? [$field->items->item]
                     : $field->items->item
                 ;
 
-                foreach($hits as $item)
-                {
+                foreach ($hits as $item) {
                     $groups[] = [
                         'value' => $item->name, 'label' => $item->name, 'count' => $item->frequency, 'parameter' => $item->parameters
                     ];
