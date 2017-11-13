@@ -32,6 +32,7 @@ abstract class AbstractOperator extends AbstractConfigElement
         $this->label = $config->label;
         $this->childs = $config->childs;
         $this->context = $context;
+        $this->renderer = $config->renderer;
     }
 
     /**

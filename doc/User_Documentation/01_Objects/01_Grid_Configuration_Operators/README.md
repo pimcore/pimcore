@@ -1,12 +1,22 @@
-# Grid Column Configuration Operators
+# Grid Column Configuration Operators (Experimental)
 
-Grid Configuration Operators allow to add special columns to your grid which first are somehow assembled or converted using operators listed below.
+Grid Configuration Operators allow you to add special columns to your grid which first are somehow assembled or converted using operators listed below.
 
-Please note that the portfolio of available operators (and how they work in detail) may change until  release 5.1.0).
+Please note that the portfolio of available operators (and how they work in detail) may change until release 5.1.0).
 
 ![Configurator Button](../../img/gridconfig/operator_overview.png)
 
-## Overview
+## Grid renderer
+
+By default the string representation of the result value is displayed. 
+
+![Render example 1](../../img/gridconfig/gridrenderer1.png)
+
+This can be changed by defining an alternative renderer. In the following example, the image of the second collection item would be rendered as Hotspotimage.
+
+![Render example 2](../../img/gridconfig/gridrenderer2.png)
+
+## Operator Overview
 
 * [Anonymizer](./Operators/01_Anonymizer.md) 
 * [AnyGetter](./Operators/02_AnyGetter.md)

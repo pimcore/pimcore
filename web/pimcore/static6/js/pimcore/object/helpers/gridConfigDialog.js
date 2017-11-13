@@ -86,24 +86,24 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         if (this.showSaveAndShareTab) {
             buttons.push({
                 text: this.isShared ? t("save_copy_and_share") : t("save_and_share"),
-                    iconCls: "pimcore_icon_save",
+                iconCls: "pimcore_icon_save",
                 handler: function () {
-                if (!this.nameField.getValue()) {
-                    Ext.Msg.show({
-                        title: t("error"),
-                        msg: t('name_must_not_be_empty'),
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.MessageBox.ERROR
-                    });
-                    return;
-                }
-                this.commitData(true);
-            }.bind(this)
-        });
+                    if (!this.nameField.getValue()) {
+                        Ext.Msg.show({
+                            title: t("error"),
+                            msg: t('name_must_not_be_empty'),
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.MessageBox.ERROR
+                        });
+                        return;
+                    }
+                    this.commitData(true);
+                }.bind(this)
+            });
         }
 
         this.window = new Ext.Window({
-            width: 850,
+            width: 950,
             height: 700,
             modal: true,
             title: t('grid_column_config'),
@@ -296,6 +296,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     var attributes = child.data.configAttributes;
                     var operatorChilds = this.doGetRecursiveData(child);
                     attributes.childs = operatorChilds;
+                    attributes.renderer = child.data.renderer;
+                    if (attributes.renderer == "default") {
+                        delete attributes.renderer;
+                    }
                     operatorFound = true;
 
                     obj.isOperator = true;
@@ -412,6 +416,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                         continue;
                     }
                     child = child[0];
+                    child.renderer = nodeConf.attributes.renderer;
                 } else {
                     var child = {
                         text: nodeConf.label,
@@ -429,6 +434,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 childs.push(child);
             }
 
+            this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit: 1
+            });
+
+
             this.selectionPanel = new Ext.tree.TreePanel({
                 root: {
                     id: "0",
@@ -439,7 +449,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     expanded: true,
                     children: childs
                 },
-
+                plugins: [this.cellEditing],
                 viewConfig: {
                     plugins: {
                         ptype: 'treeviewdragdrop',
@@ -589,12 +599,58 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 region: 'east',
                 title: t('selected_grid_columns'),
                 layout: 'fit',
-                width: 428,
+                width: 528,
                 split: true,
                 autoScroll: true,
                 listeners: {
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
+                },
+                columns: [{
+                    xtype: 'treecolumn', //this is so we know which column will show the tree
+                    text: t('configuration'),
+                    dataIndex: 'text',
+                    flex: 90
+                }, {
+
+                    dataIndex: 'renderer',
+                    text: t('renderer'),
+                    flex: 30,
+                    renderer: function (data, metaData, record) {
+                        var value = data;
+                        if (value) {
+                            return t(value);
+                        }
+                    }.bind(this),
+                    getEditor: function (record) {
+                        var data = [];
+                        data.push(['default', t('default')]);
+                        data.push(['image', t('image')]);
+                        data.push(['hotspotimage', t('imageadvanced')]);
+                        data.push(['geopoint', t('geopoint')]);
+
+                        var store = new Ext.data.ArrayStore({
+                                autoDestroy: true,
+                                fields: ["key", "value"],
+                                data: data
+                            }
+                        );
+
+                        var editorConfig = {
+                            store: store,
+                            triggerAction: "all",
+                            editable: false,
+                            queryMode: "local",
+                            valueField: 'key',
+                            displayField: 'value',
+                            forceSelection: true,
+                            value: record.data.configAttributes && record.data.configAttributes.renderer ? record.data.configAttributes.renderer : "default"
+                        };
+
+                        var combo = new Ext.form.ComboBox(editorConfig);
+                        return combo;
+                    }
                 }
+                ]
             });
             var store = this.selectionPanel.getStore();
             var model = store.getModel();
@@ -727,9 +783,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 childs.push(pimcore.object.gridcolumn.operator[operators[i]].prototype.getConfigTreeNode());
             }
         }
-        
+
         childs.sort(
-            function(x, y) {
+            function (x, y) {
                 return x.text < y.text ? -1 : 1;
             }
         );

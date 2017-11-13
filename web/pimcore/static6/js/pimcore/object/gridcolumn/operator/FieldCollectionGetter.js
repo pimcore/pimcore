@@ -29,7 +29,7 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
+                text: nodeLabel,
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,

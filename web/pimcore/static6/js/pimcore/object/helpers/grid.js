@@ -241,8 +241,18 @@ pimcore.object.helpers.grid = Class.create({
                     }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
                 if (fields[i].isOperator) {
-                    gridColumns.push({header: field.attributes.label ? field.attributes.label : field.attributes.key, width: 200, sortable: false,
-                        dataIndex: fields[i].key, editable: false});
+                    var operatorColumnConfig = {header: field.attributes.label ? field.attributes.label : field.attributes.key, width: 200, sortable: false,
+                        dataIndex: fields[i].key, editable: false};
+
+                    if (field.attributes.renderer && pimcore.object.tags[field.attributes.renderer]) {
+                        var tag = new pimcore.object.tags[field.attributes.renderer]({}, {});
+                        var fc = tag.getGridColumnConfig({
+                            key: field.attributes.key
+                        });
+                        operatorColumnConfig["renderer"] = fc.renderer;
+                    }
+
+                    gridColumns.push(operatorColumnConfig);
 
                 } else {
                     var fieldType = fields[i].type;

@@ -1689,5 +1689,6 @@
   "offset": "Offset (0-...)",
   "col_attribute": "Collection Attribute",
   "brick_attribute": "Brick Attribute",
-  "brick_type": "Brick Type"
+  "brick_type": "Brick Type",
+  "renderer": "Renderer"
 }

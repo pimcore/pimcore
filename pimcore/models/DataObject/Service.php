@@ -467,7 +467,18 @@ class Service extends Model\Element\Service
 
         $result = $config->getLabeledValue($object);
         if (isset($result->value)) {
-            return $result->value;
+            $result = $result->value;
+
+            if ($config->renderer) {
+                $classname = 'Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($config->renderer);
+                /** @var $rendererImpl Model\DataObject\ClassDefinition\Data */
+                $rendererImpl = new $classname();
+                if (method_exists($rendererImpl, 'getDataForGrid')) {
+                    $result = $rendererImpl->getDataForGrid($result, $object, []);
+                }
+            }
+
+            return $result;
         }
 
         return null;
