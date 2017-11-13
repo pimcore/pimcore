@@ -216,7 +216,7 @@ class Connection extends \Doctrine\DBAL\Connection
         // unfortunately Mysqli driver doesn't support \PDO::FETCH_COLUMN, so we have to do it manually
         $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
-        while ($row = $stmt->fetchColumn()) {
+        while (($row = $stmt->fetchColumn()) || $row !== false) {
             $data[] = $row;
         }
 
