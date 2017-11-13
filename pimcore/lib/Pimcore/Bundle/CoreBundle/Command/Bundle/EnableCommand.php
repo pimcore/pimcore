@@ -37,7 +37,7 @@ class EnableCommand extends AbstractBundleCommand
             ->addArgument(
                 'bundle-class',
                 InputArgument::REQUIRED,
-                'The bundle to enable as fully qualified class name'
+                'The bundle class name to enable, without the namespace, eg. MySpecialBundle'
             )
             ->addOption(
                 'priority',
