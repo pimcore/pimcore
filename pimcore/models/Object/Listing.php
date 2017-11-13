@@ -272,7 +272,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @return bool
      */
-    public function addDistinct() {
+    public function addDistinct()
+    {
         return false;
     }
 }
