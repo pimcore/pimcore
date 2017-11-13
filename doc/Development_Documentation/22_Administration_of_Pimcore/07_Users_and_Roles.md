@@ -58,7 +58,7 @@ The following list outlines what the different system permissions (available for
 * **Users**: defines whether a user may manage other users' settings and system permissions
 * **Website Settings**: User can create and modify website settings
 
-A user will be granted any system permission that is granted to him directly or to any role he incorporates. 
+A user will be granted any system permission that is granted to them directly or to any role they incorporate. 
 A permission granted to a role incorporated by an individual user, can not be rescinded for that individual user. So it 
 does not matter if the checkbox in the user's individual permissions settings is unchecked once a permission is granted 
 through a role.
@@ -88,21 +88,21 @@ The user permissions on element basis are summed up as follows:
 * **create**: new child elements can be created (does not exist for assets)
 * **delete**: element can be deleted
 * **rename**: name of the element can be changed
-* **settings**: element's settings can be managed i.e. the settings tab is visible; the settings permission also the path and thereby he right to move the element in tree
+* **settings**: element's settings can be managed i.e. the settings tab is visible; the settings permission also the path and thereby the right to move the element in tree
 * **versions**: versions tab available
 * **properties**: properties tab available and can be managed
 
-An individual user is granted access to all defined workspaces for any role he incorporates. In addition to that, users 
+An individual user is granted access to all defined workspaces for any role they incorporate. In addition to that, users 
 can have their own workspaces. These are added to the permissions granted by roles.
 
 For example, a role `myRole` has been granted list and view access to `/home/myPath`. The user editor incorporates the 
 role `myRole` and thereby inherits all workspace settings from the role. 
 In case the editor has his own workspace settings on `/home/myPath`, these permissions are added to permissions from any 
-role he incorporates. A permission granted by any role can not be rescinded for a single user.
+role they incorporate. A permission granted by any role can not be rescinded for a single user.
 
 
 It is also possible to restrict access to localized fields on a language-level. By default, a user can view and edit 
-(as long as he also has sufficient object permissions) all localized fields. This can now be restricted to a subset of 
+(as long as they also have sufficient object permissions) all localized fields. This can now be restricted to a subset of 
 languages. 
 
 The configuration panel is accessible via the Special Settings column. The same dialog also allows to specify available
