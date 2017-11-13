@@ -1,5 +1,37 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 148 (2017-11-13)
+
+The ecommerce order manager now has a dependency on the `Pimcore\Model\Factory`. To make the class backwards compatible,
+the dependency is injected via a dedicated setter which is marked as `@required` to support autowiring. If you don't extend
+the default order manager you don't need to do anything as the core order manager is already properly configured. If you
+have custom order manager service definitions, please make sure the definition is autowired or has an explicit setter
+call (see examples below).
+
+```yaml
+services:
+    # enable autowiring either on a service level or as _defaults
+    # for the whole file
+    AppBundle\Ecommerce\Order\OrderManager:
+        autowire: true
+        arguments:
+            - '@pimcore_ecommerce.environment'
+            - '@?'
+            - '@pimcore_ecommerce.voucher_service'
+            - []
+
+
+    # or add a dedicated setter call
+    AppBundle\Ecommerce\Order\OrderManager:
+        arguments:
+            - '@pimcore_ecommerce.environment'
+            - '@?'
+            - '@pimcore_ecommerce.voucher_service'
+            - []
+        calls:
+            - [setModelFactory, ['@Pimcore\Model\Factory']]
+```
+
 ## Build 134 (2017-10-03)
 
 This build changes the default setting for the legacy name mapping in the ecommerce framework (see [LegacyClassMappingTool](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Legacy/LegacyClassMappingTool.php))
