@@ -534,4 +534,12 @@ class Update
             Logger::debug('MayMind GeoIP2 Download skipped, everything up to date, last update: ' . date('m/d/Y H:i', $filemtime));
         }
     }
+    
+    /**
+     * @return string
+     */
+    public static function getUpdateHost(): string
+    {
+        return self::$updateHost;
+    }
 }
