@@ -15,13 +15,12 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\DataProvider;
+namespace Pimcore\Targeting;
 
-interface DependentDataProviderInterface extends DataProviderInterface
+interface DataProviderDependentInterface
 {
     /**
-     * Returns keys of data providers which this data provider
-     * depends on.
+     * Returns keys of data providers which this component depends on.
      *
      * @return array
      */

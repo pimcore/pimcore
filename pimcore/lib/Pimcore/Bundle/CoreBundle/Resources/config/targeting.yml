@@ -21,6 +21,10 @@ services:
         arguments:
             $actionHandler: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
 
+
+    Pimcore\Targeting\DataLoaderInterface: '@Pimcore\Targeting\DataLoader'
+    Pimcore\Targeting\DataLoader: ~
+
     Pimcore\Targeting\DataProvider\GeoIp: ~
     Pimcore\Targeting\DataProvider\Device:
         arguments:

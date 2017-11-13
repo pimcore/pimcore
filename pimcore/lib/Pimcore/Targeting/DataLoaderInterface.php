@@ -15,10 +15,18 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\Condition;
+namespace Pimcore\Targeting;
 
-use Pimcore\Targeting\DataProviderDependentInterface;
+use Pimcore\Targeting\Model\VisitorInfo;
 
-interface DataProviderDependentConditionInterface extends ConditionInterface, DataProviderDependentInterface
+interface DataLoaderInterface
 {
+    /**
+     * Loads data from given data providers while taking
+     * data provider dependencies into account
+     *
+     * @param VisitorInfo $visitorInfo
+     * @param array|string $providerKeys
+     */
+    public function loadDataFromProviders(VisitorInfo $visitorInfo, $providerKeys);
 }

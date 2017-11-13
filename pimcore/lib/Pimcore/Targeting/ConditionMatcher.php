@@ -17,23 +17,21 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting;
 
-use Pimcore\Targeting\Condition\DataProviderDependentConditionInterface;
 use Pimcore\Targeting\ConditionMatcher\ExpressionBuilder;
-use Pimcore\Targeting\DataProvider\DependentDataProviderInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ConditionMatcher implements ConditionMatcherInterface
 {
     /**
-     * @var DataProviderLocatorInterface
-     */
-    private $dataProviders;
-
-    /**
      * @var ConditionFactoryInterface
      */
     private $conditionFactory;
+
+    /**
+     * @var DataLoaderInterface
+     */
+    private $dataLoader;
 
     /**
      * @var ExpressionLanguage
@@ -41,13 +39,13 @@ class ConditionMatcher implements ConditionMatcherInterface
     private $expressionLanguage;
 
     public function __construct(
-        DataProviderLocatorInterface $dataProviders,
         ConditionFactoryInterface $conditionFactory,
+        DataLoaderInterface $dataLoader,
         ExpressionLanguage $expressionLanguage
     )
     {
-        $this->dataProviders      = $dataProviders;
         $this->conditionFactory   = $conditionFactory;
+        $this->dataLoader         = $dataLoader;
         $this->expressionLanguage = $expressionLanguage;
     }
 
@@ -94,40 +92,10 @@ class ConditionMatcher implements ConditionMatcherInterface
             return true;
         }
 
-        if ($condition instanceof DataProviderDependentConditionInterface) {
-            $this->loadDataFromProviders(
-                $visitorInfo,
-                $condition->getDataProviderKeys()
-            );
+        if ($condition instanceof DataProviderDependentInterface) {
+            $this->dataLoader->loadDataFromProviders($visitorInfo, $condition->getDataProviderKeys());
         }
 
         return $condition->match($visitorInfo);
-    }
-
-    private function loadDataFromProviders(VisitorInfo $visitorInfo, array $providerKeys, array $loadedProviders = []): array
-    {
-        foreach ($providerKeys as $providerKey) {
-            // skip already loaded providers to avoid circular reference loops
-            if (in_array($providerKey, $loadedProviders)) {
-                continue;
-            }
-
-            $loadedProviders[] = $providerKey;
-
-            $dataProvider = $this->dataProviders->get($providerKey);
-
-            // load data from required providers
-            if ($dataProvider instanceof DependentDataProviderInterface) {
-                $loadedProviders = $this->loadDataFromProviders(
-                    $visitorInfo,
-                    $dataProvider->getDataProviderKeys(),
-                    $loadedProviders
-                );
-            }
-
-            $dataProvider->load($visitorInfo);
-        }
-
-        return $loadedProviders;
     }
 }

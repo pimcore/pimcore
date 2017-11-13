@@ -19,6 +19,8 @@ namespace Pimcore\Targeting\ActionHandler;
 
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\ActionHandlerLocatorInterface;
+use Pimcore\Targeting\DataLoaderInterface;
+use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
 class DelegatingActionHandler implements ActionHandlerInterface
@@ -28,9 +30,18 @@ class DelegatingActionHandler implements ActionHandlerInterface
      */
     private $actionHandlers;
 
-    public function __construct(ActionHandlerLocatorInterface $actionHandlers)
+    /**
+     * @var DataLoaderInterface
+     */
+    private $dataLoader;
+
+    public function __construct(
+        ActionHandlerLocatorInterface $actionHandlers,
+        DataLoaderInterface $dataLoader
+    )
     {
         $this->actionHandlers = $actionHandlers;
+        $this->dataLoader     = $dataLoader;
     }
 
     /**
@@ -53,6 +64,12 @@ class DelegatingActionHandler implements ActionHandlerInterface
         }
 
         $actionHandler = $this->actionHandlers->get($type);
+
+        // load data providers if necessary
+        if ($actionHandler instanceof DataProviderDependentInterface) {
+            $this->dataLoader->loadDataFromProviders($visitorInfo, $actionHandler->getDataProviderKeys());
+        }
+
         $actionHandler->apply($visitorInfo, $action, $rule);
     }
 }
