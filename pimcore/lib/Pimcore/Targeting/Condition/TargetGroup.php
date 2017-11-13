@@ -55,7 +55,7 @@ class TargetGroup implements ConditionInterface
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        foreach ($visitorInfo->getTargetGroups() as $targetGroup) {
+        foreach ($visitorInfo->getAssignedTargetGroups() as $targetGroup) {
             if ($targetGroup->getId() === $this->targetGroupId) {
                 return true;
             }

@@ -197,7 +197,7 @@ class TargetingListener implements EventSubscriberInterface
 
         // TODO do this only if a document has a target group set? currently we do this as soon as any target group is assigned
         $visitorInfo = $this->targetingStorage->getVisitorInfo();
-        if (0 === count($visitorInfo->getTargetGroups())) {
+        if (0 === count($visitorInfo->getTargetGroupAssignments())) {
             return;
         }
 
@@ -210,7 +210,7 @@ class TargetingListener implements EventSubscriberInterface
         // set a vary header and assign matched target groups
         $targetGroupIds = array_map(function (TargetGroup $targetGroup) {
             return $targetGroup->getId();
-        }, $visitorInfo->getTargetGroups());
+        }, $visitorInfo->getAssignedTargetGroups());
 
         $headerName = 'X-Pimcore-TG';
 

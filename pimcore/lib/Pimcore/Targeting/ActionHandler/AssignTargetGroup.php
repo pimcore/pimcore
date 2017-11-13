@@ -67,7 +67,7 @@ class AssignTargetGroup implements ActionHandlerInterface
         }
 
         if ($assign) {
-            $visitorInfo->addTargetGroup($targetGroup);
+            $visitorInfo->assignTargetGroup($targetGroup);
         }
     }
 

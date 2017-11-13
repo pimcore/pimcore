@@ -86,7 +86,7 @@ class DocumentTargetingHandler
         $visitorInfo = $this->targetingStorage->getVisitorInfo();
 
         $result = [];
-        foreach ($visitorInfo->getTargetGroups() as $targetGroup) {
+        foreach ($visitorInfo->getAssignedTargetGroups() as $targetGroup) {
             if (in_array($targetGroup->getId(), $configuredTargetGroups)) {
                 $result[$targetGroup->getId()] = $targetGroup;
             }

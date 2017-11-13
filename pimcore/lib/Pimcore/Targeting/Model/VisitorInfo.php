@@ -44,11 +44,18 @@ class VisitorInfo implements \IteratorAggregate
     private $targetingRules = [];
 
     /**
-     * Applied target groups
+     * Assigned target groups with count
+     *
+     * @var TargetGroupAssignment[]
+     */
+    private $targetGroupAssignments = [];
+
+    /**
+     * Plain list of assigned target groups
      *
      * @var TargetGroup[]
      */
-    private $targetGroups = [];
+    private $targetGroups;
 
     /**
      * @var array
@@ -117,27 +124,43 @@ class VisitorInfo implements \IteratorAggregate
     }
 
     /**
-     * @return TargetGroup[]
+     * @return TargetGroupAssignment[]
      */
-    public function getTargetGroups(): array
+    public function getTargetGroupAssignments(): array
     {
-        return array_values($this->targetGroups);
+        return $this->targetGroupAssignments;
     }
 
-    /**
-     * @param TargetGroup[] $targetGroups
-     */
-    public function setTargetGroups(array $targetGroups = [])
+    public function assignTargetGroup(TargetGroup $targetGroup)
     {
-        $this->targetGroups = [];
-        foreach ($targetGroups as $targetGroup) {
-            $this->addTargetGroup($targetGroup);
+        if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
+            $this->targetGroupAssignments[$targetGroup->getId()]->inc();
+        } else {
+            $this->targetGroupAssignments[$targetGroup->getId()] = new TargetGroupAssignment($targetGroup, 1);
+            $this->targetGroups = null;
         }
     }
 
-    public function addTargetGroup(TargetGroup $targetGroup)
+    public function clearAssignedTargetGroup(TargetGroup $targetGroup)
     {
-        $this->targetGroups[$targetGroup->getId()] = $targetGroup;
+        if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
+            unset($this->targetGroupAssignments[$targetGroup->getId()]);
+            $this->targetGroups = null;
+        }
+    }
+
+    /**
+     * @return TargetGroup[]
+     */
+    public function getAssignedTargetGroups(): array
+    {
+        if (null === $this->targetGroups) {
+            $this->targetGroups = array_map(function(TargetGroupAssignment $assignment) {
+                return $assignment->getTargetGroup();
+            }, $this->targetGroupAssignments);
+        }
+
+        return $this->targetGroups;
     }
 
     public function hasResponse(): bool
