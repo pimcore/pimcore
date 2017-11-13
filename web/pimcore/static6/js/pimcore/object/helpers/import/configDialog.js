@@ -253,7 +253,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
     saveConfig: function (asCopy) {
         this.commitEverything();
-        if (!this.importConfigId) {
+        if (!this.importConfigId || this.config.isShared) {
             asCopy = true;
         }
 
@@ -485,6 +485,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         });
         this.loadWindow.show();
         configsCombo.focus();
+        configsCombo.expand();
     },
 
     deleteConfig: function () {
@@ -631,6 +632,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         });
         this.importWindow.show();
         configsCombo.focus();
+        configsCombo.expand();
     }
 
 

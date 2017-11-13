@@ -25,7 +25,7 @@ CREATE TABLE `importconfig_shares` (
 	`importConfigId` INT(11) NOT NULL,
 	`sharedWithUserId` INT(11) NOT NULL,
 	PRIMARY KEY (`importConfigId`, `sharedWithUserId`),
-	INDEX `gridConfigId` (`importConfigId`),
+	INDEX `importConfigId` (`importConfigId`),
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
 )
 DEFAULT CHARSET=utf8mb4;

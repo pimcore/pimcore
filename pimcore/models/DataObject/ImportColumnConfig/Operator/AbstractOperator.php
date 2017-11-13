@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
-
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 abstract class AbstractOperator extends AbstractConfigElement
@@ -41,7 +40,6 @@ abstract class AbstractOperator extends AbstractConfigElement
         return $this->childs;
     }
 
-
     /**
      * @return null
      */
@@ -57,5 +55,4 @@ abstract class AbstractOperator extends AbstractConfigElement
     {
         $this->context = $context;
     }
-
 }

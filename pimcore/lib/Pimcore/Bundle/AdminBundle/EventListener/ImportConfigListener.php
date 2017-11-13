@@ -42,6 +42,14 @@ class ImportConfigListener implements EventSubscriberInterface
     {
         $class = $event->getClassDefinition();
         $classId = $class->getId();
+
+        // collect gridConfigs for that class id
+        $db = Db::get();
+        $importConfigIds = $db->fetchCol('select id from importconfigs where classId = ' . $classId);
+        if ($importConfigIds) {
+            $db->query('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
+        }
+
         $this->cleanupImportdConfigs('classId = ' . $classId);
     }
 
@@ -52,6 +60,14 @@ class ImportConfigListener implements EventSubscriberInterface
     {
         $user = $event->getUserRole();
         $userId = $user->getId();
+
+        $db = Db::get();
+
+        $importConfigIds = $db->fetchCol('select id from importconfigs where ownerId = ' . $userId);
+        if ($importConfigIds) {
+            $db->query('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
+        }
+
         $this->cleanupImportConfigs('ownerId = ' . $userId);
     }
 

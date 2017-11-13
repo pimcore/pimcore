@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 class LocaleSwitcher extends AbstractOperator
 {
-
     protected $locale;
 
     public function __construct($config, $context = null)
@@ -42,18 +41,16 @@ class LocaleSwitcher extends AbstractOperator
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
-
         $container = \Pimcore::getContainer();
         $localeService = $container->get(Locale::class);
         $currentLocale = $localeService->getLocale();
-
 
         $childs = $this->getChilds();
 
         if (!$childs) {
             return;
         } else {
-            /** @var  $child AbstractConfigElement */
+            /** @var $child AbstractConfigElement */
             foreach ($childs as $child) {
                 $localeService->setLocale($this->locale);
                 $child->process($element, $target, $rowData, $colIndex, $context);

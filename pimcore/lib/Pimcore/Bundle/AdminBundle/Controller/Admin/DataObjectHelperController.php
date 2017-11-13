@@ -26,7 +26,7 @@ use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\ImportConfig;
-use Pimcore\Model\Tool\Email\Log;
+use Pimcore\Model\ImportConfigShare;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
@@ -63,19 +63,6 @@ class DataObjectHelperController extends AdminController
         }
 
         return $this->json($result);
-    }
-
-    /**
-     * @param $userId
-     * @param $classId
-     *
-     * @return ImportConfig\Listing
-     */
-    public function getMyOwnImportConfigs($userId, $classId)
-    {
-        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
-
-        return $service->getMyOwnImportConfigs($userId, $classId);
     }
 
     /**
@@ -155,7 +142,6 @@ class DataObjectHelperController extends AdminController
      */
     public function importExportConfigAction(Request $request)
     {
-
         $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
 
         $gridConfigId = $request->get('gridConfigId');
@@ -183,8 +169,31 @@ class DataObjectHelperController extends AdminController
         $importConfigData = $service->createFromExportConfig($gridConfig);
         $selectedGridColumns = $importConfigData->selectedGridColumns;
 
-
         return $this->json([ 'success' => true, 'selectedGridColumns' => $selectedGridColumns]);
+    }
+
+    public function getImportConfigs($user, $classId)
+    {
+        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+
+        $list =  $service->getMyOwnImportConfigs($user, $classId);
+
+        if (!is_array($list)) {
+            $list = [];
+        }
+        $list = array_merge($list, $service->getSharedImportConfigs($user, $classId));
+        $result = [];
+        if ($list) {
+            /** @var $config ImportConfig */
+            foreach ($list as $config) {
+                $result[] = [
+                    'id' => $config->getId(),
+                    'name' => $config->getName()
+                ];
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -199,7 +208,7 @@ class DataObjectHelperController extends AdminController
         $classId = $request->get('classId');
         $list = $this->getMyOwnGridColumnConfigs($this->getUser()->getId(), $classId, null);
         if (!is_array($list)) {
-            $result = [];
+            $list = [];
         }
         $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getUser(), $classId, null));
         $result = [];
@@ -852,13 +861,15 @@ class DataObjectHelperController extends AdminController
                 $importConfig->setDescription($description);
             }
 
-            $configData = json_encode($configData);
-            $importConfig->setConfig($configData);
+            $configDataEncoded = json_encode($configData);
+            $importConfig->setConfig($configDataEncoded);
             $importConfig->save();
+
+            $this->updateImportConfigShares($importConfig, $configData);
 
             return $this->json(['success' => true,
                         'importConfigId' => $importConfig->getId(),
-                    'availableConfigs' => $this->getMyOwnImportConfigs($this->getUser()->getId(), $classId)
+                    'availableConfigs' => $this->getImportConfigs($this->getUser(), $classId)
                     ]
                 );
         } catch (\Exception $e) {
@@ -946,6 +957,46 @@ class DataObjectHelperController extends AdminController
         }
 
         return $this->json(['success' => false, 'message' => 'missing_permission']);
+    }
+
+    /**
+     * @param $importConfig ImportConfig
+     * @param $metadata
+     *
+     * @throws \Exception
+     */
+    protected function updateImportConfigShares($importConfig, $configData)
+    {
+        if (!$importConfig) {
+            // nothing to do
+            return;
+        }
+
+        if ($importConfig->getOwnerId() != $this->getUser()->getId()) {
+            throw new \Exception("don't mess with someone elses grid config");
+        }
+        $combinedShares = [];
+        $sharedUserIds = $configData['shareSettings'] ? $configData['shareSettings']['sharedUserIds'] : [];
+        $sharedRoleIds = $configData['shareSettings'] ? $configData['shareSettings']['sharedRoleIds'] : [];
+
+        if ($sharedUserIds) {
+            $combinedShares = explode(',', $sharedUserIds);
+        }
+
+        if ($sharedRoleIds) {
+            $sharedRoleIds = explode(',', $sharedRoleIds);
+            $combinedShares = array_merge($combinedShares, $sharedRoleIds);
+        }
+
+        $db = Db::get();
+        $db->delete('importconfig_shares', ['importConfigId' => $importConfig->getId()]);
+
+        foreach ($combinedShares as $id) {
+            $share = new ImportConfigShare();
+            $share->setImportConfigId($importConfig->getId());
+            $share->setSharedWithUserId($id);
+            $share->save();
+        }
     }
 
     /**
@@ -1129,7 +1180,6 @@ class DataObjectHelperController extends AdminController
 
         $paramsBag = [];
 
-
         $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
         $resolver = $service->getResolverImplementation($config);
 
@@ -1142,7 +1192,6 @@ class DataObjectHelperController extends AdminController
             $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
             $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
             $object1 = $factory->build($className);
-
         }
 
         $deepCopy = new \DeepCopy\DeepCopy();
@@ -1155,7 +1204,6 @@ class DataObjectHelperController extends AdminController
 
         $response = $this->render('PimcoreAdminBundle:Admin/DataObject:diffVersions.html.php', $paramsBag);
 
-
         return $response;
     }
 
@@ -1167,7 +1215,6 @@ class DataObjectHelperController extends AdminController
         $localeService = $container->get(Locale::class);
         $currentLocale = $localeService->getLocale();
         Logger::debug($currentLocale);
-
 
         $colIndex = -1;
 
@@ -1328,8 +1375,7 @@ class DataObjectHelperController extends AdminController
             $shareSettings = $configData['shareSettings'];
         }
 
-        $userId = $this->getUser()->getId();
-        $availableConfigs = $this->getMyOwnImportConfigs($userId, $classId);
+        $availableConfigs = $this->getImportConfigs($this->getUser(), $classId);
 
         return $this->json([
             'success' => $success,
@@ -1346,7 +1392,7 @@ class DataObjectHelperController extends AdminController
                 'rows' => $rows,
                 'cols' => $cols,
                 'classId' => $classId,
-                'isShared' => false                         //TODO
+                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getUser()->getId()
             ],
             'availableConfigs' => $availableConfigs
         ]);

@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
-use Pimcore\Logger;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\ImportResolver\Id;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
@@ -78,13 +78,43 @@ class Service
     }
 
     /**
-     * @param $userId
+     * @param $user
      * @param $classId
      *
-     * @return mixed
+     * @return array|ImportConfig\Listing
      */
-    public function getMyOwnImportConfigs($userId, $classId)
+    public function getSharedImportConfigs($user, $classId)
     {
+        $userId = $user->getId();
+        $db = Db::get();
+        $configListingConditionParts = [];
+        $configListingConditionParts[] = 'sharedWithUserId = ' . $userId;
+        $configListingConditionParts[] = 'classId = ' . $classId;
+        $configListing = [];
+
+        $userIds = [$userId];
+        // collect all roles
+        $userIds = array_merge($userIds, $user->getRoles());
+        $userIds = implode(',', $userIds);
+
+        $query = 'select distinct c.id from importconfigs c, importconfig_shares s where '
+            .  ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId;
+        $ids = $db->fetchCol($query);
+        if ($ids) {
+            $ids = implode(',', $ids);
+            $configListing = new ImportConfig\Listing();
+            $configListing->setOrderKey('name');
+            $configListing->setOrder('ASC');
+            $configListing->setCondition('id in (' . $ids .')');
+            $configListing = $configListing->load();
+        }
+
+        return $configListing;
+    }
+
+    public function getMyOwnImportConfigs($user, $classId)
+    {
+        $userId = $user->getId();
         $configListingConditionParts = [];
         $configListingConditionParts[] = 'ownerId = ' . $userId;
         $configListingConditionParts[] = 'classId = ' . $classId;
@@ -95,53 +125,55 @@ class Service
         $configListing->setCondition($configCondition);
         $configListing = $configListing->load();
 
-        $result = [];
-        if ($configListing) {
-            /** @var $item ImportConfig */
-            foreach ($configListing as $item) {
-                $result[] = [
-                    'id' => $item->getId(),
-                    'name' => $item->getName()
-                ];
-            }
-        }
-
-        return $result;
+        return $configListing;
+//
+//        $result = [];
+//        if ($configListing) {
+//            /** @var $item ImportConfig */
+//            foreach ($configListing as $item) {
+//                $result[] = [
+//                    'id' => $item->getId(),
+//                    'name' => $item->getName()
+//                ];
+//            }
+//        }
+//
+//        return $result;
     }
 
     /**
      * @param $gridConfig GridConfig
      */
-    public function createFromExportConfig($gridConfig) {
-
+    public function createFromExportConfig($gridConfig)
+    {
         $importConfigData = new \stdClass();
         $exportConfigData = json_decode($gridConfig->getConfig(), true);
 
         $importConfigData->classId = $exportConfigData->classId;
 
-        $importConfigData->selectedGridColumns = array();
-        if (is_array($exportConfigData["columns"])) {
-            foreach ($exportConfigData["columns"] as $exportColumn) {
+        $importConfigData->selectedGridColumns = [];
+        if (is_array($exportConfigData['columns'])) {
+            foreach ($exportConfigData['columns'] as $exportColumn) {
                 $importColumn = new \stdClass();
 
                 $importColumn->isOperator = true;
                 $importColumn->attributes = new \stdClass();
 
-                $importColumn->attributes->class = "Ignore";
+                $importColumn->attributes->class = 'Ignore';
 
-                $fieldConfig = $exportColumn["fieldConfig"];
-                if ($fieldConfig["isOperator"]
+                $fieldConfig = $exportColumn['fieldConfig'];
+                if ($fieldConfig['isOperator']
                     || (
-                        isset($fieldConfig["key"])
-                            && ($fieldConfig["key"] == "fullpath"  || strpos($fieldConfig["key"], "~") !== false))) {
-                    $importColumn->attributes->type = "operator";
-                    $importColumn->attributes->label = $fieldConfig["attributes"]["label"];
+                        isset($fieldConfig['key'])
+                            && ($fieldConfig['key'] == 'fullpath' || strpos($fieldConfig['key'], '~') !== false))) {
+                    $importColumn->attributes->type = 'operator';
+                    $importColumn->attributes->label = $fieldConfig['attributes']['label'];
                 } else {
-                    $importColumn->attributes->type = "value";
-                    $importColumn->attributes->label = $fieldConfig["label"];
-                    $importColumn->attributes->class = "DefaultValue";
-                    $importColumn->attributes->attribute = $fieldConfig["key"];
-                    $importColumn->attributes->dataType = $fieldConfig["type"];
+                    $importColumn->attributes->type = 'value';
+                    $importColumn->attributes->label = $fieldConfig['label'];
+                    $importColumn->attributes->class = 'DefaultValue';
+                    $importColumn->attributes->attribute = $fieldConfig['key'];
+                    $importColumn->attributes->dataType = $fieldConfig['type'];
                 }
 
                 $importColumn->attributes->childs = [];
@@ -151,13 +183,12 @@ class Service
         }
 
         return $importConfigData;
-
     }
 
-    public function getResolverImplementation($config) {
-        if ($config->resolverSettings->strategy == "id") {
+    public function getResolverImplementation($config)
+    {
+        if ($config->resolverSettings->strategy == 'id') {
             return new Id($config);
         }
-
     }
 }

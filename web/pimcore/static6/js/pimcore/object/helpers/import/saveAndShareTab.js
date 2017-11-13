@@ -132,6 +132,13 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
     commitData: function () {
         var form = this.saveAndShareForm.getForm();
         var data = form.getFieldValues();
+        if (data.sharedUserIds) {
+            data.sharedUserIds = data.sharedUserIds.join();
+        }
+
+        if (data.sharedRoleIds) {
+            data.sharedRoleIds = data.sharedRoleIds.join();
+        }
         this.config.shareSettings = data;
     }
 

@@ -36,7 +36,7 @@ class DefaultValue extends AbstractConfigElement
         $fd = $class->getFieldDefinition($this->attribute);
 
         if (!$fd) {
-            $lfDef = $class->getFieldDefinition("localizedfields");
+            $lfDef = $class->getFieldDefinition('localizedfields');
             if ($lfDef) {
                 $fd = $lfDef->getFieldDefinition($this->attribute);
             }
