@@ -22,7 +22,7 @@ pimcore.object.gridcolumn.operator.merge = Class.create(pimcore.object.gridcolum
     class: "Merge",
     iconCls: "pimcore_icon_operator_merge",
     defaultText: "operator_merge",
-
+    group: "other",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {

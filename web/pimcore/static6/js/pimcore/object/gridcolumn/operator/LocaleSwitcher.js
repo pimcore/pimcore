@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
     class: "LocaleSwitcher",
     iconCls: "pimcore_icon_operator_localeswitcher",
     defaultText: "operator_localeswitcher",
+    group: "other",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

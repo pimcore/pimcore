@@ -22,7 +22,7 @@ pimcore.object.gridcolumn.operator.objectfieldgetter = Class.create(pimcore.obje
     class: "ObjectFieldGetter",
     iconCls: "pimcore_icon_operator_object_field_getter",
     defaultText: "operator_objectfieldgetter",
-
+    group: "getter",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {

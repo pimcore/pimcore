@@ -21,6 +21,7 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
     class: "ObjectBrickGetter",
     iconCls: "pimcore_icon_objectbricks",
     defaultText: "operator_objectbrickgetter",
+    group: "getter",
 
 
     getConfigTreeNode: function(configAttributes) {

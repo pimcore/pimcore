@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
     class: "Trimmer",
     iconCls: "pimcore_icon_operator_trimmer",
     defaultText: "operator_trimmer",
+    group: "string",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

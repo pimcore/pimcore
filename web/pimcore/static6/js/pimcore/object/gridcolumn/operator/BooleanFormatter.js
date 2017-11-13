@@ -22,7 +22,7 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
     class: "BooleanFormatter",
     iconCls: "pimcore_icon_operator_booleanformatter",
     defaultText: "operator_booleanformatter",
-
+    group: "boolean",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {

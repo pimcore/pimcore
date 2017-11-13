@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
     class: "RequiredBy",
     iconCls: "pimcore_icon_operator_requiredby",
     defaultText: "operator_requiredby",
+    group: "other",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

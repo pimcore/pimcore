@@ -772,18 +772,62 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
     getOperatorTree: function () {
         var operators = Object.keys(pimcore.object.gridcolumn.operator);
-        var childs = [];
+
+        var groups = {};
+
+        // var childs = [];
         for (var i = 0; i < operators.length; i++) {
-            if (!this.availableOperators || this.availableOperators.indexOf(operators[i]) >= 0) {
-                childs.push(pimcore.object.gridcolumn.operator[operators[i]].prototype.getConfigTreeNode());
+            var operator = operators[i];
+            if (!this.availableOperators || this.availableOperators.indexOf(operator) >= 0) {
+                var nodeConfig = pimcore.object.gridcolumn.operator[operator].prototype;
+                var configTreeNode = nodeConfig.getConfigTreeNode();
+                var groupName = nodeConfig.group || "other";
+                if (!groups[groupName]) {
+                    groups[groupName] = [];
+                }
+                groups[groupName].push(configTreeNode);
             }
         }
 
-        childs.sort(
-            function (x, y) {
-                return x.text < y.text ? -1 : 1;
+        var groupKeys = [];
+        for (k in groups) {
+            if (groups.hasOwnProperty(k)) {
+                groupKeys.push(k);
             }
-        );
+        }
+
+        groupKeys.sort();
+
+        var len = groupKeys.length;
+
+        var groupNodes = [];
+
+        for (i = 0; i < len; i++) {
+            k = groupKeys[i];
+            var childs = groups[k];
+            childs.sort(
+                function (x, y) {
+                    return x.text < y.text ? -1 : 1;
+                }
+            );
+
+            var groupNode = {
+                iconCls: 'pimcore_icon_folder',
+                text: t(k),
+                allowDrag: false,
+                allowDrop: false,
+                leaf: false,
+                expanded: true,
+                children: childs
+            };
+
+            groupNodes.push(groupNode);
+
+
+
+
+        }
+
 
         var tree = new Ext.tree.TreePanel({
             title: t('operators'),
@@ -811,7 +855,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 draggable: false,
                 leaf: false,
                 isTarget: false,
-                children: childs
+                children: groupNodes
             }
         });
 

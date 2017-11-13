@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.grid
     class: "Arithmetic",
     iconCls: "pimcore_icon_operator_arithmetic",
     defaultText: "operator_arithmetic",
+    group: "other",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

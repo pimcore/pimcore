@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
     class: "StringReplace",
     iconCls: "pimcore_icon_operator_stringreplace",
     defaultText: "operator_stringreplace",
+    group: "string",
 
 
     getConfigTreeNode: function(configAttributes) {

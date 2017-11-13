@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn
     class: "JSON",
     iconCls: "pimcore_icon_operator_json",
     defaultText: "operator_json",
+    group: "other",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.g
     class: "CaseConverter",
     iconCls: "pimcore_icon_operator_caseconverter",
     defaultText: "operator_caseconverter",
+    group: "string",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

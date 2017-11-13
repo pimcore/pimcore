@@ -22,7 +22,7 @@ pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridc
     class: "Substring",
     iconCls: "pimcore_icon_operator_substring",
     defaultText: "operator_substring",
-
+    group: "string",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {

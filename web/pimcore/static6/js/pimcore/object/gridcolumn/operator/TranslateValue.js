@@ -21,6 +21,7 @@ pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.
     class: "TranslateValue",
     iconCls: "pimcore_icon_localizedfields",
     defaultText: "operator_translate_value",
+    group: "string",
 
 
     getConfigTreeNode: function(configAttributes) {

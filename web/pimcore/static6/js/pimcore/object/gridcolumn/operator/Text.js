@@ -21,6 +21,7 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
     class: "Text",
     iconCls: "pimcore_icon_operator_text",
     defaultText: "operator_text",
+    group: "string",
 
 
     getConfigTreeNode: function(configAttributes) {

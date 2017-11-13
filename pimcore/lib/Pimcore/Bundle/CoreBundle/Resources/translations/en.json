@@ -1690,5 +1690,8 @@
   "col_attribute": "Collection Attribute",
   "brick_attribute": "Brick Attribute",
   "brick_type": "Brick Type",
-  "renderer": "Renderer"
+  "renderer": "Renderer",
+  "getter": "Getter",
+  "string": "String",
+  "boolean": "Boolean"
 }

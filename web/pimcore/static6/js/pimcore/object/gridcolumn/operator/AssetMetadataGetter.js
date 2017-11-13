@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.ob
     class: "AssetMetadataGetter",
     iconCls: "pimcore_icon_operator_assetmetadatagetter",
     defaultText: "operator_assetmetadatagetter",
+    group: "getter",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

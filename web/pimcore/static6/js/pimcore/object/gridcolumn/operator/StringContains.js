@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.
     class: "StringContains",
     iconCls: "pimcore_icon_operator_stringcontains",
     defaultText: "operator_stringcontains",
+    group: "string",
 
 
     getConfigTreeNode: function(configAttributes) {

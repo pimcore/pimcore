@@ -21,6 +21,7 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
     class: "FieldCollectionGetter",
     iconCls: "pimcore_icon_fieldcollection",
     defaultText: "operator_fieldcollectiongetter",
+    group: "getter",
 
 
     getConfigTreeNode: function(configAttributes) {

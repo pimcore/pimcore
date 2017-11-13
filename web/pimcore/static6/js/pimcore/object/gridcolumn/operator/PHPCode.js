@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcol
     class: "PHPCode",
     iconCls: "pimcore_icon_operator_phpcode",
     defaultText: "operator_phpcode",
+    group: "other",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

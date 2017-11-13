@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcol
     class: "IsEqual",
     iconCls: "pimcore_icon_operator_isequal",
     defaultText: "operator_isequal",
+    group: "boolean",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {

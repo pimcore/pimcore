@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gri
     class: "CharCounter",
     iconCls: "pimcore_icon_operator_charcounter",
     defaultText: "operator_charcounter",
+    group: "string",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {

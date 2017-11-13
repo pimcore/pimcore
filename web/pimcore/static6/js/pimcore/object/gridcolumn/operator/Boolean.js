@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcol
     class: "Boolean",
     iconCls: "pimcore_icon_operator_boolean",
     defaultText: "operator_boolean",
+    group: "boolean",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {

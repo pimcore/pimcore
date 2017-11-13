@@ -22,6 +22,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
         class: "AnyGetter",
         iconCls: "pimcore_icon_operator_anygetter",
         defaultText: "operator_anygetter",
+        group: "getter",
 
 
         getConfigTreeNode: function (configAttributes) {
