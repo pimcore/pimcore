@@ -89,6 +89,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 iconCls: "pimcore_icon_save",
                 handler: function () {
                     if (!this.nameField.getValue()) {
+                        this.tabPanel.setActiveTab(this.settingsForm);
                         Ext.Msg.show({
                             title: t("error"),
                             msg: t('name_must_not_be_empty'),
@@ -380,7 +381,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             displayField: 'label'
         });
 
-
         var compositeConfig = {
             xtype: "fieldset",
             layout: 'hbox',
@@ -398,7 +398,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 items: [compositeConfig]
             });
         }
-
 
         return this.languagePanel;
     },
@@ -437,7 +436,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1
             });
-
 
             this.selectionPanel = new Ext.tree.TreePanel({
                 root: {
@@ -492,7 +490,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                         var copy = Ext.apply({}, record.data);
                                         delete copy.id;
                                         copy = record.createNode(copy);
-
 
                                         var ownerTree = this.selectionPanel;
 
@@ -605,51 +602,51 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 listeners: {
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 },
-                columns: [{
-                    xtype: 'treecolumn', //this is so we know which column will show the tree
-                    text: t('configuration'),
-                    dataIndex: 'text',
-                    flex: 90
-                }, {
-
-                    dataIndex: 'renderer',
-                    text: t('renderer'),
-                    flex: 30,
-                    renderer: function (data, metaData, record) {
-                        var value = data;
-                        if (value) {
-                            return t(value);
-                        }
-                    }.bind(this),
-                    getEditor: function (record) {
-                        var data = [];
-                        data.push(['default', t('default')]);
-                        data.push(['image', t('image')]);
-                        data.push(['hotspotimage', t('imageadvanced')]);
-                        data.push(['geopoint', t('geopoint')]);
-
-                        var store = new Ext.data.ArrayStore({
-                                autoDestroy: true,
-                                fields: ["key", "value"],
-                                data: data
+                columns: [
+                    {
+                        xtype: 'treecolumn', //this is so we know which column will show the tree
+                        text: t('configuration'),
+                        dataIndex: 'text',
+                        flex: 90
+                    }, {
+                        dataIndex: 'renderer',
+                        text: t('renderer'),
+                        flex: 30,
+                        renderer: function (data, metaData, record) {
+                            var value = data;
+                            if (value) {
+                                return t(value);
                             }
-                        );
+                        }.bind(this),
+                        getEditor: function (record) {
+                            var data = [];
+                            data.push(['default', t('default')]);
+                            data.push(['image', t('image')]);
+                            data.push(['hotspotimage', t('imageadvanced')]);
+                            data.push(['geopoint', t('geopoint')]);
 
-                        var editorConfig = {
-                            store: store,
-                            triggerAction: "all",
-                            editable: false,
-                            queryMode: "local",
-                            valueField: 'key',
-                            displayField: 'value',
-                            forceSelection: true,
-                            value: record.data.configAttributes && record.data.configAttributes.renderer ? record.data.configAttributes.renderer : "default"
-                        };
+                            var store = new Ext.data.ArrayStore({
+                                    autoDestroy: true,
+                                    fields: ["key", "value"],
+                                    data: data
+                                }
+                            );
 
-                        var combo = new Ext.form.ComboBox(editorConfig);
-                        return combo;
+                            var editorConfig = {
+                                store: store,
+                                triggerAction: "all",
+                                editable: false,
+                                queryMode: "local",
+                                valueField: 'key',
+                                displayField: 'value',
+                                forceSelection: true,
+                                value: record.data.configAttributes && record.data.configAttributes.renderer ? record.data.configAttributes.renderer : "default"
+                            };
+
+                            var combo = new Ext.form.ComboBox(editorConfig);
+                            return combo;
+                        }
                     }
-                }
                 ]
             });
             var store = this.selectionPanel.getStore();
@@ -660,8 +657,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         }
 
         return this.selectionPanel;
-
-
     },
 
     parentIsOperator: function (record) {
@@ -840,6 +835,5 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         }
         return element;
     }
-
 
 });
