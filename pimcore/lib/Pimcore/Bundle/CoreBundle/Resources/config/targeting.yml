@@ -9,13 +9,17 @@ services:
         arguments:
             $filename: '%pimcore.geoip.db_file%'
 
-    Pimcore\Targeting\EventListener\TargetingListener: ~
+    Pimcore\Targeting\EventListener\TargetingListener:
+        arguments:
+            $actionHandler: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
 
     Pimcore\Targeting\TargetingStorageInterface: '@Pimcore\Targeting\TargetingStorage'
     Pimcore\Targeting\TargetingStorage: ~
 
     Pimcore\Targeting\TargetGroupResolver:
         lazy: true
+        arguments:
+            $actionHandler: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
 
     Pimcore\Targeting\DataProvider\GeoIp: ~
     Pimcore\Targeting\DataProvider\Device:
@@ -46,6 +50,8 @@ services:
     Pimcore\Targeting\ActionHandlerLocatorInterface: '@Pimcore\Targeting\ActionHandlerLocator'
     Pimcore\Targeting\ActionHandlerLocator: ~
 
+    Pimcore\Targeting\ActionHandler\ActionHandlerInterface: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
+    Pimcore\Targeting\ActionHandler\DelegatingActionHandler: ~
     Pimcore\Targeting\ActionHandler\AssignTargetGroup: ~
     Pimcore\Targeting\ActionHandler\Event: ~
     Pimcore\Targeting\ActionHandler\Redirect: ~

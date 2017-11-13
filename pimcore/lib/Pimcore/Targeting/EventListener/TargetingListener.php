@@ -31,6 +31,8 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
+use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
+use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Targeting\TargetingStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -55,6 +57,11 @@ class TargetingListener implements EventSubscriberInterface
     private $targetGroupResolver;
 
     /**
+     * @var DelegatingActionHandler|ActionHandlerInterface
+     */
+    private $actionHandler;
+
+    /**
      * @var TargetingStorageInterface
      */
     private $targetingStorage;
@@ -67,12 +74,14 @@ class TargetingListener implements EventSubscriberInterface
     public function __construct(
         DocumentResolver $documentResolver,
         TargetGroupResolver $targetGroupResolver,
+        ActionHandlerInterface $actionHandler,
         TargetingStorageInterface $targetingStorage,
         RequestHelper $requestHelper
     )
     {
         $this->documentResolver    = $documentResolver;
         $this->targetGroupResolver = $targetGroupResolver;
+        $this->actionHandler       = $actionHandler;
         $this->targetingStorage    = $targetingStorage;
         $this->requestHelper       = $requestHelper;
     }
@@ -137,7 +146,7 @@ class TargetingListener implements EventSubscriberInterface
 
         $visitorInfo = $event->getVisitorInfo();
         foreach ($targetGroups as $targetGroup) {
-            $this->targetGroupResolver->applyAction($visitorInfo, [
+            $this->actionHandler->apply($visitorInfo, [
                 'type'        => 'assign_target_group',
                 'targetGroup' => $targetGroup
             ]);

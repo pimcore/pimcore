@@ -23,6 +23,7 @@ use Pimcore\Event\Targeting\TargetingRuleEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
+use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,9 +43,9 @@ class TargetGroupResolver
     private $conditionMatcher;
 
     /**
-     * @var ActionHandlerLocatorInterface
+     * @var DelegatingActionHandler|ActionHandlerInterface
      */
-    private $actionHandlers;
+    private $actionHandler;
 
     /**
      * @var Connection
@@ -64,14 +65,14 @@ class TargetGroupResolver
     public function __construct(
         TargetingStorageInterface $targetingStorage,
         ConditionMatcherInterface $conditionMatcher,
-        ActionHandlerLocatorInterface $actionHandlers,
+        ActionHandlerInterface $actionHandler,
         Connection $db,
         EventDispatcherInterface $eventDispatcher
     )
     {
         $this->targetingStorage = $targetingStorage;
         $this->conditionMatcher = $conditionMatcher;
-        $this->actionHandlers   = $actionHandlers;
+        $this->actionHandler    = $actionHandler;
         $this->eventDispatcher  = $eventDispatcher;
         $this->db               = $db;
     }
@@ -163,35 +164,8 @@ class TargetGroupResolver
                 continue;
             }
 
-            $this->applyAction($visitorInfo, $action, $rule);
+            $this->actionHandler->apply($visitorInfo, $action, $rule);
         }
-    }
-
-    /**
-     * Applies a raw action from config
-     *
-     * @param VisitorInfo $visitorInfo
-     * @param array $action
-     * @param Rule|null $rule
-     */
-    public function applyAction(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
-    {
-        /** @var string $type */
-        $type = $action['type'] ?? null;
-
-        if (empty($type)) {
-            throw new \InvalidArgumentException('Invalid action: Type is not set');
-        }
-
-        if (!$this->actionHandlers->has($type)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid condition: there is no action handler registered for type "%s"',
-                $type
-            ));
-        }
-
-        $actionHandler = $this->actionHandlers->get($type);
-        $actionHandler->apply($visitorInfo, $action, $rule);
     }
 
     /**
