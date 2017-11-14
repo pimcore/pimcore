@@ -111,7 +111,10 @@ class AreabrickPass implements CompilerPassInterface
                 $reflector = $bundleArea['reflector'];
 
                 $definition = new Definition($reflector->getName());
-                $definition->setPublic(false);
+                $definition
+                    ->setPublic(false)
+                    ->setAutowired(true)
+                    ->setAutoconfigured(true);
 
                 // add brick definition to container
                 $container->setDefinition($bundleArea['serviceId'], $definition);
