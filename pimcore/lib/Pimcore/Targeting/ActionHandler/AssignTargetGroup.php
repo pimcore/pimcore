@@ -21,8 +21,7 @@ use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\ConditionMatcherInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Pimcore\Targeting\Session\SessionConfigurator;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
 class AssignTargetGroup implements ActionHandlerInterface
 {
@@ -31,9 +30,18 @@ class AssignTargetGroup implements ActionHandlerInterface
      */
     private $conditionMatcher;
 
-    public function __construct(ConditionMatcherInterface $conditionMatcher)
+    /**
+     * @var TargetingStorageInterface
+     */
+    private $storage;
+
+    public function __construct(
+        ConditionMatcherInterface $conditionMatcher,
+        TargetingStorageInterface $storage
+    )
     {
         $this->conditionMatcher = $conditionMatcher;
+        $this->storage          = $storage;
     }
 
     public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
@@ -62,7 +70,7 @@ class AssignTargetGroup implements ActionHandlerInterface
 
         $threshold = (int)$targetGroup->getThreshold();
         if ($threshold > 1) {
-            // only check session entries if threshold was configured
+            // only check storage entries if threshold was configured
             $assign = $this->checkThresholdAssigment($visitorInfo, $targetGroup, $threshold);
         }
 
@@ -82,23 +90,16 @@ class AssignTargetGroup implements ActionHandlerInterface
 
     private function checkThresholdAssigment(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $threshold): bool
     {
-        $request = $visitorInfo->getRequest();
-        if (!$request->getSession()) {
-            return false;
-        }
+        $storageKey = 'assign_target_group';
 
-        $session = $request->getSession();
-
-        /** @var NamespacedAttributeBag $bag */
-        $bag = $session->getBag(SessionConfigurator::TARGETING_BAG);
-
-        $data = $bag->get('assign_target_group', []);
+        $data = $this->storage->get($visitorInfo, $storageKey, []);
 
         $assignments = $data[$targetGroup->getId()] ?? 0;
         $assignments++;
 
         $data[$targetGroup->getId()] = $assignments;
-        $bag->set('assign_target_group', $data);
+
+        $this->storage->set($visitorInfo, $storageKey, $data);
 
         // check amount after assigning - this means that with
         // a threshold of 3 the target group will be assigned on and

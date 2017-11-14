@@ -15,14 +15,15 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\ActionHandler;
+namespace Pimcore\Targeting\DataProvider;
 
-use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
-class Event implements ActionHandlerInterface
+class TargetingStorage implements DataProviderInterface
 {
+    const PROVIDER_KEY = 'targeting_storage';
+
     /**
      * @var TargetingStorageInterface
      */
@@ -36,21 +37,8 @@ class Event implements ActionHandlerInterface
     /**
      * @inheritDoc
      */
-    public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
+    public function load(VisitorInfo $visitorInfo)
     {
-        $key = $action['key'] ?? null;
-        if (!$key) {
-            return;
-        }
-
-        $events = $this->storage->get($visitorInfo, 'events', []);
-
-        $events[] = [
-            'key'   => $key,
-            'value' => $action['value'] ?? null,
-            'date'  => new \DateTimeImmutable()
-        ];
-
-        $this->storage->set($visitorInfo, 'events', $events);
+        $visitorInfo->set(self::PROVIDER_KEY, $this->storage);
     }
 }

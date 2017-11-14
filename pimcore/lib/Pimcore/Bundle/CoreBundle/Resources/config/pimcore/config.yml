@@ -166,7 +166,7 @@ pimcore:
             geoip: Pimcore\Targeting\DataProvider\GeoIp
             device: Pimcore\Targeting\DataProvider\Device
             piwik: Pimcore\Targeting\DataProvider\Piwik
-            session: Pimcore\Targeting\DataProvider\Session
+            targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
         conditions:
             url: Pimcore\Targeting\Condition\Url
             browser: Pimcore\Targeting\Condition\Browser

@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use Pimcore\Targeting\DataProvider\Session;
+use Pimcore\Targeting\DataProvider\TargetingStorage;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
+use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
 class Event implements DataProviderDependentConditionInterface
 {
@@ -64,7 +64,7 @@ class Event implements DataProviderDependentConditionInterface
      */
     public function getDataProviderKeys(): array
     {
-        return [Session::PROVIDER_KEY];
+        return [TargetingStorage::PROVIDER_KEY];
     }
 
     /**
@@ -80,12 +80,9 @@ class Event implements DataProviderDependentConditionInterface
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        $bag = $visitorInfo->get(Session::PROVIDER_KEY);
-        if (!($bag && $bag instanceof NamespacedAttributeBag)) {
-            return false;
-        }
-
-        $events = $bag->get('events', []);
+        /** @var TargetingStorageInterface $storage */
+        $storage = $visitorInfo->get(TargetingStorage::PROVIDER_KEY);
+        $events  = $storage->get($visitorInfo, 'events', []);
 
         foreach ($events as $event) {
             if ($event['key'] === $this->key) {

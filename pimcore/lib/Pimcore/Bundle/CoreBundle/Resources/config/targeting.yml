@@ -13,6 +13,9 @@ services:
         arguments:
             $actionHandler: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
 
+    Pimcore\Targeting\Storage\TargetingStorageInterface: '@Pimcore\Targeting\Storage\SessionStorage'
+    Pimcore\Targeting\Storage\SessionStorage: ~
+
     Pimcore\Targeting\VisitorInfoStorageInterface: '@Pimcore\Targeting\VisitorInfoStorage'
     Pimcore\Targeting\VisitorInfoStorage: ~
 
@@ -30,7 +33,7 @@ services:
             $cache: '@pimcore.cache.core.pool'
 
     Pimcore\Targeting\DataProvider\Piwik: ~
-    Pimcore\Targeting\DataProvider\Session: ~
+    Pimcore\Targeting\DataProvider\TargetingStorage: ~
 
     Pimcore\Targeting\DataProviderLocatorInterface: '@Pimcore\Targeting\DataProviderLocator'
     Pimcore\Targeting\DataProviderLocator: ~
