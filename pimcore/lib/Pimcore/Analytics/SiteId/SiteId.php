@@ -76,11 +76,11 @@ class SiteId
         $name = null;
 
         if (null === $site) {
-            if($mainDomain = \Pimcore\Config::getSystemConfig()->general->domain) {
+            if ($mainDomain = \Pimcore\Config::getSystemConfig()->general->domain) {
                 return $mainDomain;
             }
 
-            if($currentDomain = \Pimcore\Tool::getHostname()) {
+            if ($currentDomain = \Pimcore\Tool::getHostname()) {
                 return $currentDomain;
             }
 

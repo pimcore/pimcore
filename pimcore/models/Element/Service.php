@@ -1039,7 +1039,7 @@ class Service extends Model\AbstractModel
         $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('resource'));
         $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('writeResource'));
         $deepCopy->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
-        
+
         if ($element instanceof DataObject\Concrete) {
             DataObject\Service::loadAllObjectFields($element);
         }
