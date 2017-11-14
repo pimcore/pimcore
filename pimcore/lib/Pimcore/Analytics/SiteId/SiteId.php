@@ -76,6 +76,14 @@ class SiteId
         $name = null;
 
         if (null === $site) {
+            if($mainDomain = \Pimcore\Config::getSystemConfig()->general->domain) {
+                return $mainDomain;
+            }
+
+            if($currentDomain = \Pimcore\Tool::getHostname()) {
+                return $currentDomain;
+            }
+
             return $translator->trans('main_site', [], 'admin');
         }
 
