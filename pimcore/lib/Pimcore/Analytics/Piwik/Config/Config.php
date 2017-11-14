@@ -97,22 +97,23 @@ class Config
         return [];
     }
 
-    public function getPiwikUrlScheme(): string
-    {
-        $ssl = false;
-        if (null !== $this->config->use_ssl) {
-            $ssl = (bool)$this->config->use_ssl;
-        }
-
-        return $ssl ? 'https' : 'http';
-    }
-
     /**
      * @return string|null
      */
     public function getPiwikUrl()
     {
-        return $this->normalizeStringValue($this->config->piwik_url);
+        $url = $this->normalizeStringValue($this->config->piwik_url);
+
+        if (null !== $url && 0 !== strpos($url, 'http')) {
+            $url = null;
+
+            @trigger_error(
+                'Configured Piwik URL does not include a protocol (https:// or http://). Please update your settings to re-enable Piwik.',
+                E_USER_DEPRECATED
+            );
+        }
+
+        return $url;
     }
 
     /**
@@ -129,6 +130,21 @@ class Config
     public function getReportToken()
     {
         return $this->normalizeStringValue($this->config->report_token);
+    }
+
+    public function getApiClientOptions(): array
+    {
+        $value = $this->normalizeStringValue($this->config->api_client_options);
+        if (empty($value)) {
+            return [];
+        }
+
+        $options = @json_decode($value, true);
+        if (is_array($options)) {
+            return $options;
+        }
+
+        return [];
     }
 
     /**
@@ -179,7 +195,7 @@ class Config
         ];
 
         return sprintf(
-            '//%s/index.php?%s',
+            '%s/index.php?%s',
             rtrim($this->getPiwikUrl(), '/'),
             http_build_query($parameters)
         );

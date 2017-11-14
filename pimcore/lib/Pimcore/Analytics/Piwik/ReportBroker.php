@@ -181,7 +181,7 @@ class ReportBroker
         ], $parameters);
 
         return sprintf(
-            '//%s/index.php?%s',
+            '%s/index.php?%s',
             rtrim($config->getPiwikUrl(), '/'),
             http_build_query($parameters)
         );

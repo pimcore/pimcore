@@ -23,14 +23,6 @@ pimcore.report.piwik.settings = Class.create({
     },
 
     getLayout: function () {
-        var useSsl = this.parent.getValue("piwik.use_ssl");
-
-        // default to true - only set to false if it actually
-        // is a boolean
-        if ('boolean' !== typeof useSsl && !useSsl) {
-            useSsl = true;
-        }
-
         this.panel = new Ext.FormPanel({
             title: "Piwik",
             bodyStyle: "padding: 10px;",
@@ -60,18 +52,34 @@ pimcore.report.piwik.settings = Class.create({
                             width: 670,
                             id: "report_settings_piwik_url",
                             value: this.parent.getValue("piwik.piwik_url"),
-                            enableKeyEvents: true,
-                            listeners: {
-                                keyup: function (el) {
-                                    el.setRawValue(el.getValue().replace(/https?\:\/\//i,''));
-                                }
-                            }
+                            enableKeyEvents: true
+                        }
+                    ]
+                },
+                {
+                    xtype: "fieldset",
+                    defaults: {
+                        labelWidth: 200
+                    },
+                    title: t("piwik_api_settings"),
+                    collapsible: true,
+                    collapsed: true,
+                    items: [
+                        {
+                            xtype: "textarea",
+                            fieldLabel: t("piwik_api_client_options"),
+                            name: "api_client_options",
+                            height: 100,
+                            width: 650,
+                            id: "report_settings_piwik_api_client_options",
+                            value: this.parent.getValue("piwik.api_client_options"),
+                            style: "font-family: Consolas, 'Courier New', Courier, monospace;"
                         }, {
-                            xtype: "checkbox",
-                            fieldLabel: t("piwik_use_ssl"),
-                            name: "piwik_use_ssl",
-                            id: "report_settings_piwik_use_ssl",
-                            checked: useSsl
+                            xtype: "displayfield",
+                            width: 670,
+                            hideLabel: true,
+                            value: t("piwik_api_client_options_description"),
+                            cls: "pimcore_extra_label"
                         }
                     ]
                 },
@@ -391,9 +399,9 @@ pimcore.report.piwik.settings = Class.create({
 
         return {
             piwik_url: Ext.getCmp("report_settings_piwik_url").getValue(),
-            use_ssl: Ext.getCmp("report_settings_piwik_use_ssl").getValue(),
             api_token: Ext.getCmp("report_settings_piwik_api_token").getValue(),
             report_token: Ext.getCmp("report_settings_piwik_report_token").getValue(),
+            api_client_options: Ext.getCmp("report_settings_piwik_api_client_options").getValue(),
             iframe_username: Ext.getCmp("report_settings_piwik_iframe_username").getValue(),
             iframe_password: Ext.getCmp("report_settings_piwik_iframe_password").getValue(),
             sites: sitesData
