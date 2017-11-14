@@ -1,5 +1,21 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 149 (2017-11-14)
+
+The Piwik integration which was recently added was refactored to always use a full URI including the protocol for the Piwik
+URL configuration setting. Please update your settings to include the protocol as otherwise the Piwik tracking will be 
+disabled.
+
+Before:
+
+* `piwik.example.com`
+* `analytics.example.com/piwik`
+
+Now:
+
+* `https://piwik.example.com`
+* `https://analytics.example.com/piwik`
+
 ## Build 148 (2017-11-13)
 
 The ecommerce order manager now has a dependency on the `Pimcore\Model\Factory`. To make the class backwards compatible,

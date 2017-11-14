@@ -19,6 +19,7 @@ namespace Pimcore\Analytics\Piwik\Api;
 
 use GuzzleHttp\Client;
 use Pimcore\Analytics\Piwik\Api\Exception\ApiException;
+use Pimcore\Analytics\Piwik\Config\Config;
 use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Http\ClientFactory;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
@@ -114,22 +115,27 @@ class ApiClient
 
     private function getClient(): Client
     {
-        if (null === $this->client) {
-            $this->client = $this->clientFactory->createClient([
-                'base_uri' => $this->getBaseUri()
-            ]);
+        if (null !== $this->client) {
+            return $this->client;
         }
+
+        $config = $this->configProvider->getConfig();
+
+        $options = array_merge([
+            'base_uri' => $this->getBaseUri($config)
+        ], $config->getApiClientOptions());
+
+        $this->client = $this->clientFactory->createClient($options);
 
         return $this->client;
     }
 
-    private function getBaseUri(): string
+    private function getBaseUri(Config $config): string
     {
-        $config = $this->configProvider->getConfig();
         if (!$config->isConfigured()) {
             throw new \RuntimeException('Piwik is not configured');
         }
 
-        return sprintf('%s://%s', $config->getPiwikUrlScheme(), $config->getPiwikUrl());
+        return $config->getPiwikUrl();
     }
 }

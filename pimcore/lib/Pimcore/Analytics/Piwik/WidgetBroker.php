@@ -338,7 +338,7 @@ class WidgetBroker
         }
 
         $url = sprintf(
-            '//%s?%s',
+            '%s?%s',
             $config->getPiwikUrl(),
             http_build_query($params)
         );

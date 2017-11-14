@@ -6,15 +6,16 @@ integration you need to know the following:
 * The URL to the Piwik installation you want to use
 * The Piwik Site ID where you want to track your site
 
-The Piwik URL needs to be the hostname with an optional path to your Piwik installation without scheme as iframes and
-tracking calls will be included with a `//` scheme for automatic HTTP/HTTPS resolution. Valid examples:
+The Piwik URL needs to be the full URL to your piwik installation including protocol and an optional path on the
+server if Piwik is not installed into the document root. Valid examples: 
 
-* `piwik.example.com`
-* `services.example.com/piwik`
+* `https://piwik.example.com`
+* `https://analytics.example.com/piwik`
 
 Wrong:
 
-* `https://piwik.example.com`
+* `piwik.example.com`
+* `//piwik.example.com`
 
 Similar to Google Analytics, you can configure the Site ID and optional code snippets which should be added to the tracking
 code on a per-site level. All settings can be configured in the Piwik tab of the Marketing Settings panel.
@@ -61,11 +62,14 @@ site configuration. To activate this feature, you need to configure an API token
 
 > As you'll use this token to update Piwik's settings, this token (its user) needs to be configured with write access.
 
-For API requests, the checkbox "Use SSL for API requests" will be used to determine the used scheme.
-
 With a configured API token, each site will show a button to either create a site or update a site's settings:
 
 ![Piwik API Update Buttons](../../img/piwik_api_update_buttons.png)
+
+If you need to pass custom options to the Piwik API client, you can configure a list of Guzzle Request Options as JSON 
+string in the *API Integration* section:
+
+![Piwik API Client Options](../../img/piwik_api_client_options.png)
 
 
 ## Customizing the tracking code
