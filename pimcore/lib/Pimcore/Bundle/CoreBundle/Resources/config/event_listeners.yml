@@ -103,6 +103,10 @@ services:
         calls:
             - [setLogger, ['@logger']]
 
+    Pimcore\Bundle\CoreBundle\EventListener\ResponseStackListener:
+        arguments:
+            $responseStack: '@Pimcore\Http\ResponseStack'
+
 
     #
     # FRONTEND LISTENERS

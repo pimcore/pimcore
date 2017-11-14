@@ -34,6 +34,7 @@ services:
             $templating: '@templating'
             $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
         calls:
+            - [setResponseStack, ['@Pimcore\Http\ResponseStack']] # TODO Pimcore 6 add as constructor dependency
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: pimcore }

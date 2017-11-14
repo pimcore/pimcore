@@ -14,6 +14,8 @@ services:
     Pimcore\Http\Context\PimcoreContextGuesser:
         public: false
 
+    Pimcore\Http\ResponseStack:
+        public: false
 
     #
     # REQUEST RESOLVERS
