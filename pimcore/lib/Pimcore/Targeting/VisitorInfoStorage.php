@@ -19,7 +19,7 @@ namespace Pimcore\Targeting;
 
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class TargetingStorage implements TargetingStorageInterface
+class VisitorInfoStorage implements VisitorInfoStorageInterface
 {
     /**
      * @var VisitorInfo

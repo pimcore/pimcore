@@ -33,8 +33,8 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
-use Pimcore\Targeting\TargetGroupResolver;
-use Pimcore\Targeting\TargetingStorageInterface;
+use Pimcore\Targeting\VisitorInfoResolver;
+use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -53,9 +53,9 @@ class TargetingListener implements EventSubscriberInterface
     private $documentResolver;
 
     /**
-     * @var TargetGroupResolver
+     * @var VisitorInfoResolver
      */
-    private $targetGroupResolver;
+    private $visitorInfoResolver;
 
     /**
      * @var DelegatingActionHandler|ActionHandlerInterface
@@ -63,9 +63,9 @@ class TargetingListener implements EventSubscriberInterface
     private $actionHandler;
 
     /**
-     * @var TargetingStorageInterface
+     * @var VisitorInfoStorageInterface
      */
-    private $targetingStorage;
+    private $visitorInfoStorage;
 
     /**
      * @var RequestHelper
@@ -74,16 +74,16 @@ class TargetingListener implements EventSubscriberInterface
 
     public function __construct(
         DocumentResolver $documentResolver,
-        TargetGroupResolver $targetGroupResolver,
+        VisitorInfoResolver $visitorInfoResolver,
         ActionHandlerInterface $actionHandler,
-        TargetingStorageInterface $targetingStorage,
+        VisitorInfoStorageInterface $visitorInfoStorage,
         RequestHelper $requestHelper
     )
     {
         $this->documentResolver    = $documentResolver;
-        $this->targetGroupResolver = $targetGroupResolver;
+        $this->visitorInfoResolver = $visitorInfoResolver;
         $this->actionHandler       = $actionHandler;
-        $this->targetingStorage    = $targetingStorage;
+        $this->visitorInfoStorage  = $visitorInfoStorage;
         $this->requestHelper       = $requestHelper;
     }
 
@@ -174,11 +174,11 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$this->targetGroupResolver->isTargetingConfigured()) {
+        if (!$this->visitorInfoResolver->isTargetingConfigured()) {
             return;
         }
 
-        $visitorInfo = $this->targetGroupResolver->resolve($request);
+        $visitorInfo = $this->visitorInfoResolver->resolve($request);
 
         // propagate response (e.g. redirect) to request handling
         if ($visitorInfo->hasResponse()) {
@@ -192,12 +192,12 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        if (!$this->targetingStorage->hasVisitorInfo()) {
+        if (!$this->visitorInfoStorage->hasVisitorInfo()) {
             return;
         }
 
         // TODO do this only if a document has a target group set? currently we do this as soon as any target group is assigned
-        $visitorInfo = $this->targetingStorage->getVisitorInfo();
+        $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
         if (0 === count($visitorInfo->getTargetGroupAssignments())) {
             return;
         }

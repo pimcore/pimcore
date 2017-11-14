@@ -19,7 +19,7 @@ use Pimcore\Cache as CacheManager;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
 use Pimcore\Targeting\Session\SessionConfigurator;
-use Pimcore\Targeting\TargetingStorageInterface;
+use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,9 +32,9 @@ class FullPageCacheListener
     use PimcoreContextAwareTrait;
 
     /**
-     * @var TargetingStorageInterface
+     * @var VisitorInfoStorageInterface
      */
-    private $targetingStorage;
+    private $visitorInfoStorage;
 
     /**
      * @var bool
@@ -66,9 +66,9 @@ class FullPageCacheListener
      */
     protected $defaultCacheKey;
 
-    public function __construct(TargetingStorageInterface $targetingStorage)
+    public function __construct(VisitorInfoStorageInterface $visitorInfoStorage)
     {
-        $this->targetingStorage = $targetingStorage;
+        $this->visitorInfoStorage = $visitorInfoStorage;
     }
 
     /**
@@ -362,13 +362,13 @@ class FullPageCacheListener
 
     private function disabledByTargeting(): bool
     {
-        if (!$this->targetingStorage->hasVisitorInfo()) {
+        if (!$this->visitorInfoStorage->hasVisitorInfo()) {
             return false;
         }
 
-        $visitorInfo = $this->targetingStorage->getVisitorInfo();
+        $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
 
-        if (!empty($visitorInfo->getTargetingRules())) {
+        if (!empty($visitorInfo->getMatchingTargetingRules())) {
             return true;
         }
 

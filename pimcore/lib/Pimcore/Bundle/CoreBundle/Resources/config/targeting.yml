@@ -13,14 +13,13 @@ services:
         arguments:
             $actionHandler: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
 
-    Pimcore\Targeting\TargetingStorageInterface: '@Pimcore\Targeting\TargetingStorage'
-    Pimcore\Targeting\TargetingStorage: ~
+    Pimcore\Targeting\VisitorInfoStorageInterface: '@Pimcore\Targeting\VisitorInfoStorage'
+    Pimcore\Targeting\VisitorInfoStorage: ~
 
-    Pimcore\Targeting\TargetGroupResolver:
+    Pimcore\Targeting\VisitorInfoResolver:
         lazy: true
         arguments:
             $actionHandler: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
-
 
     Pimcore\Targeting\DataLoaderInterface: '@Pimcore\Targeting\DataLoader'
     Pimcore\Targeting\DataLoader: ~

@@ -19,7 +19,11 @@ namespace Pimcore\Targeting;
 
 use Pimcore\Targeting\Model\VisitorInfo;
 
-interface TargetingStorageInterface
+/**
+ * Similar to the TokenStorage for user objects, this contains the current
+ * visitorInfo valid for the current request.
+ */
+interface VisitorInfoStorageInterface
 {
     public function getVisitorInfo(): VisitorInfo;
 

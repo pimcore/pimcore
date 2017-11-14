@@ -19,18 +19,18 @@ namespace Pimcore\Targeting\Document;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
-use Pimcore\Targeting\TargetingStorageInterface;
+use Pimcore\Targeting\VisitorInfoStorageInterface;
 
 class DocumentTargetingHandler
 {
     /**
-     * @var TargetingStorageInterface
+     * @var VisitorInfoStorageInterface
      */
-    private $targetingStorage;
+    private $visitorInfoStorage;
 
-    public function __construct(TargetingStorageInterface $targetingStorage)
+    public function __construct(VisitorInfoStorageInterface $visitorInfoStorage)
     {
-        $this->targetingStorage = $targetingStorage;
+        $this->visitorInfoStorage = $visitorInfoStorage;
     }
 
     /**
@@ -45,13 +45,13 @@ class DocumentTargetingHandler
             return;
         }
 
-        if (!$this->targetingStorage->hasVisitorInfo()) {
+        if (!$this->visitorInfoStorage->hasVisitorInfo()) {
             return;
         }
 
-        $visitorInfo = $this->targetingStorage->getVisitorInfo();
+        $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
 
-        $targetGroup = $visitorInfo->getMostRelevantTargetGroup();
+        $targetGroup = $visitorInfo->getPrimaryTargetGroup();
         if (null === $targetGroup) {
             return;
         }

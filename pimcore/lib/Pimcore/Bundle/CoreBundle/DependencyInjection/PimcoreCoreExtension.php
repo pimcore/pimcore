@@ -24,7 +24,6 @@ use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
 use Pimcore\Targeting\ActionHandlerLocator;
 use Pimcore\Targeting\DataProviderLocator;
-use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Tool\ArrayUtils;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;

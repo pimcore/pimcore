@@ -41,7 +41,7 @@ class VisitorInfo implements \IteratorAggregate
      *
      * @var Rule[]
      */
-    private $targetingRules = [];
+    private $matchingTargetingRules = [];
 
     /**
      * Assigned target groups with count
@@ -102,25 +102,25 @@ class VisitorInfo implements \IteratorAggregate
     /**
      * @return Rule[]
      */
-    public function getTargetingRules(): array
+    public function getMatchingTargetingRules(): array
     {
-        return $this->targetingRules;
+        return $this->matchingTargetingRules;
     }
 
     /**
      * @param Rule[] $targetingRules
      */
-    public function setTargetingRules(array $targetingRules = [])
+    public function setMatchingTargetingRules(array $targetingRules = [])
     {
-        $this->targetingRules = [];
+        $this->matchingTargetingRules = [];
         foreach ($targetingRules as $targetingRule) {
-            $this->addTargetingRule($targetingRule);
+            $this->addMatchingTargetingRule($targetingRule);
         }
     }
 
-    public function addTargetingRule(Rule $targetingRule)
+    public function addMatchingTargetingRule(Rule $targetingRule)
     {
-        $this->targetingRules[] = $targetingRule;
+        $this->matchingTargetingRules[] = $targetingRule;
     }
 
     /**
@@ -166,7 +166,7 @@ class VisitorInfo implements \IteratorAggregate
     /**
      * @return null|TargetGroup
      */
-    public function getMostRelevantTargetGroup()
+    public function getPrimaryTargetGroup()
     {
         if (0 === count($this->targetGroupAssignments)) {
             return null;

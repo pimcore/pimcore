@@ -28,14 +28,14 @@ use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class TargetGroupResolver
+class VisitorInfoResolver
 {
     const ATTRIBUTE_VISITOR_INFO = '_visitor_info';
 
     /**
-     * @var TargetingStorageInterface
+     * @var VisitorInfoStorageInterface
      */
-    private $targetingStorage;
+    private $visitorInfoStorage;
 
     /**
      * @var ConditionMatcherInterface
@@ -63,24 +63,24 @@ class TargetGroupResolver
     private $targetingRules;
 
     public function __construct(
-        TargetingStorageInterface $targetingStorage,
+        VisitorInfoStorageInterface $visitorInfoStorage,
         ConditionMatcherInterface $conditionMatcher,
         ActionHandlerInterface $actionHandler,
         Connection $db,
         EventDispatcherInterface $eventDispatcher
     )
     {
-        $this->targetingStorage = $targetingStorage;
-        $this->conditionMatcher = $conditionMatcher;
-        $this->actionHandler    = $actionHandler;
-        $this->eventDispatcher  = $eventDispatcher;
-        $this->db               = $db;
+        $this->visitorInfoStorage = $visitorInfoStorage;
+        $this->conditionMatcher   = $conditionMatcher;
+        $this->actionHandler      = $actionHandler;
+        $this->eventDispatcher    = $eventDispatcher;
+        $this->db                 = $db;
     }
 
     public function resolve(Request $request): VisitorInfo
     {
-        if ($this->targetingStorage->hasVisitorInfo()) {
-            return $this->targetingStorage->getVisitorInfo();
+        if ($this->visitorInfoStorage->hasVisitorInfo()) {
+            return $this->visitorInfoStorage->getVisitorInfo();
         }
 
         $visitorInfo = VisitorInfo::fromRequest($request);
@@ -101,7 +101,7 @@ class TargetGroupResolver
             new TargetingEvent($visitorInfo)
         );
 
-        $this->targetingStorage->setVisitorInfo($visitorInfo);
+        $this->visitorInfoStorage->setVisitorInfo($visitorInfo);
 
         return $visitorInfo;
     }
@@ -136,7 +136,7 @@ class TargetGroupResolver
         }
 
         // store info about matched rule
-        $visitorInfo->addTargetingRule($rule);
+        $visitorInfo->addMatchingTargetingRule($rule);
 
         $this->eventDispatcher->dispatch(
             TargetingEvents::PRE_RULE_ACTIONS,
