@@ -29,7 +29,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         if (config.mode == "direct") {
             this.uniqueImportId = "news";
-            this.getFileInfo(false, null);
+            this.getFileInfo(false, config.importConfigId);
         } else {
             this.showUpload();
         }
@@ -68,8 +68,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
     showWindow: function (data) {
         var config = data.config;
 
-        // --
-
         if (!this.importConfigId) {
             this.buildDefaultSelection();
         }
@@ -79,13 +77,16 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.resolverSettingsPanel = new pimcore.object.helpers.import.resolverSettingsTab(this.config, this);
         this.csvSettingsPanel = new pimcore.object.helpers.import.csvSettingsTab(this.config, this);
         this.saveAndSharePanel = new pimcore.object.helpers.import.saveAndShareTab(this.config, this);
+        this.reportPanel = new pimcore.object.helpers.import.reportTab(this.config, this);
 
         var tabs = [
             this.csvPreviewPanel.getPanel(),
             this.columnConfigPanel.getPanel(),
             this.resolverSettingsPanel.getPanel(),
             this.csvSettingsPanel.getPanel(),
-            this.saveAndSharePanel.getPanel()
+            this.saveAndSharePanel.getPanel(),
+            this.reportPanel.getPanel()
+
         ];
 
         this.tabPanel = new Ext.TabPanel({
@@ -98,7 +99,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         buttons = [];
 
         buttons.push({
-            text: t("cancel"),
+            text: t("close"),
             iconCls: "pimcore_icon_cancel",
             handler: function () {
                 this.window.close();
@@ -160,7 +161,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
             text: t("import"),
             iconCls: "pimcore_icon_import",
             handler: function () {
-                console.log("not implemented yet");
+                this.importStart();
             }.bind(this)
         });
 
@@ -191,7 +192,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
     getFileInfo: function (isReload, importConfigId) {
         Ext.Ajax.request({
-            url: "/admin/object-helper/import-get-file-info-new",
+            url: "/admin/object-helper/import-get-file-info",
             params: {
                 importConfigId: importConfigId,
                 importId: this.uniqueImportId,
@@ -217,13 +218,12 @@ pimcore.object.helpers.import.configDialog = Class.create({
         var data = Ext.decode(response.responseText);
 
         if (data.success) {
-            // --
             Ext.apply(this.config, {});
             Ext.apply(this.config, data.config);
             this.importConfigId = this.config.importConfigId;
             this.isShared = data.isShared;
             this.config.selectedGridColumns = this.config.selectedGridColumns || [];
-            this.importJobTotal = this.config.rows;
+
             this.availableConfigs = data.availableConfigs;
 
 
@@ -633,7 +633,135 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.importWindow.show();
         configsCombo.focus();
         configsCombo.expand();
+    },
+
+    importStart: function () {
+
+        this.commitEverything();
+        var config = this.prepareSaveData();
+
+
+        this.importJobTotal = this.config.rows;
+        if (this.config.resolverSettings.skipHeadRow) {
+            this.importJobTotal--;
+        }
+
+        this.jobRequest = {
+            config: Ext.encode(config),
+            importId: this.uniqueImportId,
+            className: this.className,
+            classId: this.classId,
+            job: 1,
+            parentId: this.parentId
+        };
+
+
+        this.importProgressBar = new Ext.ProgressBar({
+            text: t('Initializing'),
+            style: "margin: 10px;",
+            width: 500
+        });
+
+        this.importProgressWin = new Ext.Window({
+            items: [this.importProgressBar],
+            modal: true,
+            bodyStyle: "background: #fff;",
+            title: t("performing_import"),
+            closable: false
+        });
+
+        this.importProgressWin.show();
+        this.reportPanel.clearData();
+
+        this.reportPanel.getPanel().setDisabled(false);
+        this.tabPanel.setActiveTab(this.reportPanel.getPanel());
+
+        this.importErrors = [];
+        this.importJobCurrent = 1;
+
+        window.setTimeout(function() {
+            this.importProcess();
+        }.bind(this), 1000);
+    },
+
+    importProcess: function () {
+
+        if (this.importJobCurrent > this.importJobTotal) {
+            this.importProgressWin.close();
+
+            // error handling
+            if (this.importErrors.length > 0) {
+                // var jobs = [];
+                // for (var i = 0; i < this.importErrors.length; i++) {
+                //     jobs.push(this.importErrors[i].job);
+                // }
+
+                Ext.Msg.alert(t("error"), t("import_errors"));
+            } else {
+                Ext.Msg.alert(t("success"), t("import_is_done"));
+            }
+
+            if (this.tree) {
+                this.tree.getStore().load({
+                    node: this.parentNode
+                });
+            }
+
+            return;
+        }
+
+        var status = (this.importJobCurrent / this.importJobTotal);
+        var percent = Math.ceil(status * 100);
+        this.importProgressBar.updateProgress(status, percent + "%");
+
+        this.jobRequest.job = this.importJobCurrent;
+        Ext.Ajax.request({
+            url: "/admin/object-helper/import-process",
+            params: this.jobRequest,
+            method: "post",
+            success: function (response) {
+
+                try {
+                    var rdata = Ext.decode(response.responseText);
+                    if (rdata) {
+                        if (!rdata.success) {
+                            this.reportPanel.logData(rdata.rowId, rdata.message);
+                            this.importErrors.push({
+                                job: rdata.message
+                            });
+                        }
+                    }
+                    else {
+                        this.importErrors.push({
+                            job: response.request.parameters.job
+                        });
+                    }
+
+                    window.setTimeout(function () {
+                        this.importJobCurrent++;
+                        this.importProcess();
+                    }.bind(this), 400);
+                } catch (e) {
+                    this.importProgressWin.close();
+                    pimcore.helpers.showNotification(t("error"), e, "error");
+                }
+            }.bind(this),
+            failure: function (response) {
+                var message = t("error");
+
+                try {
+                    var json = Ext.decode(response.responseText);
+                    if (json.message) {
+                        message += ': ' + json.message;
+                    }
+                } catch (e) {}
+
+                this.importProgressWin.close();
+                pimcore.helpers.showNotification(t("error"), message, "error");
+            }.bind(this)
+        });
     }
+
 
 
 });

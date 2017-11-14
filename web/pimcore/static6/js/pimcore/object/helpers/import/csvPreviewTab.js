@@ -47,6 +47,15 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
         var dataGridCols = [];
         dataGridCols.push({
+            header: t("row") + " " + i, sortable: false, dataIndex: "rowId", flex: 1, filter: 'numeric',
+            renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                if (!this.hasHeadline.getValue() || rowIndex > 0) {
+                    return value;
+                }
+            }.bind(this)
+        });
+
+        dataGridCols.push({
                 header: t("preview"),
                 xtype: 'actioncolumn',
                 width: 80,
@@ -72,7 +81,13 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
 
         for (var i = 0; i < data.dataFields.length; i++) {
-            dataGridCols.push({header: t("field") + " " + i, sortable: false, dataIndex: data.dataFields[i], flex: 1, renderer: renderer});
+            dataGridCols.push({
+                header: t("field") + " " + i,
+                sortable: false,
+                dataIndex: data.dataFields[i],
+                flex: 1,
+                renderer: renderer
+            });
 
         }
 
@@ -97,7 +112,8 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
                         var settingsForm = this.callback.resolverSettingsPanel.setSkipHeaderRow(checked);
                         dataGrid.getView().refresh();
                     }.bind(this, headRecord, dataGrid)
-                }
+                },
+                value: this.config.resolverSettings.skipHeadRow
             });
 
         var formPanel = new Ext.form.FormPanel({

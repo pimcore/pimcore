@@ -334,6 +334,7 @@ $scripts = array(
     "pimcore/object/helpers/import/csvSettingsTab.js",
     "pimcore/object/helpers/import/saveAndShareTab.js",
     "pimcore/object/helpers/import/configDialog.js",
+    "pimcore/object/helpers/import/reportTab.js",
     "pimcore/object/helpers/classTree.js",
     "pimcore/object/helpers/gridTabAbstract.js",
     "pimcore/object/helpers/gridCellEditor.js",

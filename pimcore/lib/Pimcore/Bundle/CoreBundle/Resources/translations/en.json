@@ -1715,4 +1715,10 @@
   "getter": "Getter",
   "string": "String",
   "boolean": "Boolean"
+  "col_label": "Label",
+  "performing_import": "Performing Import...",
+  "row": "Row",
+  "import_report": "Import Report",
+  "import_errors": "Some errors occurred. Check the import report!",
+  "import_is_done": "Import is done"
 }

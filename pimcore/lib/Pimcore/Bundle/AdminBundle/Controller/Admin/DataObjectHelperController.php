@@ -825,15 +825,11 @@ class DataObjectHelperController extends AdminController
     {
         try {
             $classId = $request->get('classId');
-
-            // grid config
-//            $gridConfigData = $this->decodeJson($request->get('gridconfig'));
-//            $gridConfigData['pimcore_version'] = Version::getVersion();
-//            $gridConfigData['pimcore_revision'] = Version::getRevision();
-//            unset($gridConfigData['settings']['isShared']);
-//
             $configData = $request->get('config');
             $configData = json_decode($configData, true);
+
+            $configData['pimcore_version'] = Version::getVersion();
+            $configData['pimcore_revision'] = Version::getRevision();
 
             $importConfigId = $request->get('importConfigId');
             if ($importConfigId) {
@@ -1156,14 +1152,15 @@ class DataObjectHelperController extends AdminController
         $rowIndex = $data->rowIndex;
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
+        $originalFile = $file . '_original';
 
         // determine type
-        $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+        $dialect = Tool\Admin::determineCsvDialect($originalFile);
 
         $count = 0;
         $haveData = false;
 
-        if (($handle = fopen($file, 'r')) !== false) {
+        if (($handle = fopen($originalFile, 'r')) !== false) {
             while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                 if ($count == $rowIndex) {
                     $haveData = true;
@@ -1288,13 +1285,13 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-get-file-info-new")
+     * @Route("/import-get-file-info")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function importGetFileInfoNewAction(Request $request)
+    public function importGetFileInfoAction(Request $request)
     {
         $importConfigId = $request->get('importConfigId');
         $success = true;
@@ -1303,19 +1300,23 @@ class DataObjectHelperController extends AdminController
         $classId = $request->get('classId');
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
 
+        $originalFile = $file . '_original';
         // determine type
         $dialect = Tool\Admin::determineCsvDialect($file . '_original');
 
         $count = 0;
-        if (($handle = fopen($file, 'r')) !== false) {
+        if (($handle = fopen($originalFile, 'r')) !== false) {
             while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                $tmpData = [];
                 if ($count == 0) {
                     $firstRowData = $rowData;
                 }
-                $tmpData = [];
+
+                $tmpData["rowId"] = $count + 1;
                 foreach ($rowData as $key => $value) {
                     $tmpData['field_' . $key] = $value;
                 }
+
                 $data[] = $tmpData;
                 $cols = count($rowData);
 
@@ -1348,7 +1349,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        $csv = new \SplFileObject($file);
+        $csv = new \SplFileObject($originalFile);
         $csv->setFlags(\SplFileObject::READ_CSV);
         $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         $rows = 0;
@@ -1384,7 +1385,6 @@ class DataObjectHelperController extends AdminController
                 'dataPreview' => $data,
                 'dataFields' => array_keys($data[0]),
                 'targetFields' => $availableFields,
-//                'mappingStore' => $mappingStore,
                 'selectedGridColumns' => $selectedGridColumns,
                 'resolverSettings' => $resolverSettings,
                 'shareSettings' => $shareSettings,
@@ -1398,112 +1398,6 @@ class DataObjectHelperController extends AdminController
         ]);
     }
 
-    /**
-     * @Route("/import-get-file-info")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function importGetFileInfoAction(Request $request)
-    {
-        $success = true;
-        $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
-
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('id');
-
-        // determine type
-        $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('id') . '_original');
-
-        $count = 0;
-        if (($handle = fopen($file, 'r')) !== false) {
-            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                if ($count == 0) {
-                    $firstRowData = $rowData;
-                }
-                $tmpData = [];
-                foreach ($rowData as $key => $value) {
-                    $tmpData['field_' . $key] = $value;
-                }
-                $data[] = $tmpData;
-                $cols = count($rowData);
-
-                $count++;
-
-                if ($count > 18) {
-                    break;
-                }
-            }
-            fclose($handle);
-        }
-
-        // get class data
-        $class = DataObject\ClassDefinition::getById($request->get('classId'));
-        $fields = $class->getFieldDefinitions();
-
-        $availableFields = [];
-
-        foreach ($fields as $key => $field) {
-            $config = null;
-            $title = $field->getName();
-            if (method_exists($field, 'getTitle')) {
-                if ($field->getTitle()) {
-                    $title = $field->getTitle();
-                }
-            }
-
-            if (in_array($field->getFieldType(), $supportedFieldTypes)) {
-                $availableFields[] = [$field->getName(), $title . '(' . $field->getFieldType() . ')'];
-            }
-        }
-
-        $mappingStore = [];
-        for ($i = 0; $i < $cols; $i++) {
-            $mappedField = null;
-            if ($availableFields[$i]) {
-                $mappedField = $availableFields[$i][0];
-            }
-
-            $firstRow = $i;
-            if (is_array($firstRowData)) {
-                $firstRow = $firstRowData[$i];
-                if (strlen($firstRow) > 40) {
-                    $firstRow = substr($firstRow, 0, 40) . '...';
-                }
-            }
-
-            $mappingStore[] = [
-                'source' => $i,
-                'firstRow' => $firstRow,
-                'target' => $mappedField
-            ];
-        }
-
-        //How many rows
-        $csv = new \SplFileObject($file);
-        $csv->setFlags(\SplFileObject::READ_CSV);
-        $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
-        $rows = 0;
-        $nbFields = 0;
-        foreach ($csv as $fields) {
-            if (0 === $rows) {
-                $nbFields = count($fields);
-                $rows++;
-            } elseif ($nbFields == count($fields)) {
-                $rows++;
-            }
-        }
-
-        return $this->json([
-            'success' => $success,
-            'dataPreview' => $data,
-            'dataFields' => array_keys($data[0]),
-            'targetFields' => $availableFields,
-            'mappingStore' => $mappingStore,
-            'rows' => $rows,
-            'cols' => $cols
-        ]);
-    }
 
     /**
      * @Route("/import-process")
@@ -1514,29 +1408,34 @@ class DataObjectHelperController extends AdminController
      */
     public function importProcessAction(Request $request)
     {
-        $success = true;
-
         $parentId = $request->get('parentId');
         $job = $request->get('job');
-        $id = $request->get('id');
-        $mappingRaw = $this->decodeJson($request->get('mapping'));
-        $class = DataObject\ClassDefinition::getById($request->get('classId'));
-        $skipFirstRow = $request->get('skipHeadRow') == 'true';
-        $fields = $class->getFieldDefinitions();
+        $importId = $request->get('importId');
 
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $id;
+        $configData = $request->get('config');
+        $configData = json_decode($configData, false);
+
+        $skipFirstRow = $configData->resolverSettings->skipHeadRow;
+
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId;
+        $originalFile = $file . '_original';
+
+        if ($job == 1) {
+             if (!copy($originalFile, $file)) {
+                 throw new \Exception("failed to copy file");
+             }
+        }
 
         // currently only csv supported
         // determine type
-        $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $id . '_original');
+        $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId . '_original');
 
-        $count = 0;
         if (($handle = fopen($file, 'r')) !== false) {
-            $data = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+            $rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         }
         if ($skipFirstRow && $job == 1) {
             //read the next row, we need to skip the head row
-            $data = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+            $rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         }
 
         $tmpFile = $file . '_tmp';
@@ -1552,100 +1451,20 @@ class DataObjectHelperController extends AdminController
         unlink($file);
         rename($tmpFile, $file);
 
-        // prepare mapping
-        foreach ($mappingRaw as $map) {
-            if ($map[0] !== '' && $map[1] && !empty($map[2])) {
-                $mapping[$map[2]] = $map[0];
-            } elseif ($map[1] == 'published (system)') {
-                $mapping['published'] = $map[0];
-            } elseif ($map[1] == 'type (system)') {
-                $mapping['type'] = $map[0];
-            }
-        }
+        $rowId = $skipFirstRow ? $job + 1 : $job;
 
-        // create new object
-        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($request->get('className'));
-        $parent = DataObject::getById($request->get('parentId'));
+        try {
+            $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+            $resolver = $service->getResolverImplementation($configData);
 
-        $objectKey = 'object_' . $job;
-        if ($request->get('filename') == 'id') {
-            $objectKey = null;
-        } elseif ($request->get('filename') != 'default') {
-            $objectKey = Element\Service::getValidKey($data[$request->get('filename')], 'object');
-        }
+            $object = $resolver->resolve($parentId, $rowData);
 
-        $overwrite = false;
-        if ($request->get('overwrite') == 'true') {
-            $overwrite = true;
-        }
+            $object = $this->fillObject($object, $configData, $rowData);
+            $object->save();
 
-        if ($parent->isAllowed('create')) {
-            $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-
-            if ($overwrite) {
-                $object = DataObject::getByPath($intendedPath);
-                if (!$object instanceof DataObject\Concrete) {
-                    //create new object
-                    $object = $this->get('pimcore.model.factory')->build($className);
-                } elseif ($object instanceof DataObject\Concrete and !($object instanceof $className)) {
-                    //delete the old object it is of a different class
-                    $object->delete();
-                    $object = $this->get('pimcore.model.factory')->build($className);
-                } elseif ($object instanceof DataObject\Folder) {
-                    //delete the folder
-                    $object->delete();
-                    $object = $this->get('pimcore.model.factory')->build($className);
-                } else {
-                    //use the existing object
-                }
-            } else {
-                $counter = 1;
-                while (DataObject::getByPath($intendedPath) != null) {
-                    $objectKey .= '_' . $counter;
-                    $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-                    $counter++;
-                }
-                $object = $this->get('pimcore.model.factory')->build($className);
-            }
-            $object->setClassId($request->get('classId'));
-            $object->setClassName($request->get('className'));
-            $object->setParentId($request->get('parentId'));
-            $object->setKey($objectKey);
-            $object->setCreationDate(time());
-            $object->setUserOwner($this->getUser()->getId());
-            $object->setUserModification($this->getUser()->getId());
-
-            if (in_array($data[$mapping['type']], ['object', 'variant'])) {
-                $object->setType($data[$mapping['type']]);
-            } else {
-                $object->setType('object');
-            }
-
-            if ($data[$mapping['published']] === '1') {
-                $object->setPublished(true);
-            } else {
-                $object->setPublished(false);
-            }
-
-            foreach ($class->getFieldDefinitions() as $key => $field) {
-                $value = $data[$mapping[$key]];
-                if (array_key_exists($key, $mapping) and $value != null) {
-                    // data mapping
-                    $value = $field->getFromCsvImport($value, $object);
-
-                    if ($value !== null) {
-                        $object->setValue($key, $value);
-                    }
-                }
-            }
-
-            try {
-                $object->save();
-
-                return $this->json(['success' => true]);
-            } catch (\Exception $e) {
-                return $this->json(['success' => false, 'message' => $object->getKey() . ' - ' . $e->getMessage()]);
-            }
+            return $this->json(['success' => true, 'rowId' => $rowId]);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
         }
 
         return $this->json(['success' => $success]);

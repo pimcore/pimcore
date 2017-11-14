@@ -125,9 +125,9 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
         this.skipHeaderRow = new Ext.form.field.Checkbox(
             {
-                disabled: true,
+                readOnly: true,
                 fieldLabel: t("skipheadrow"),
-                id: 'skipHeadRow',
+                inputValue: true,
                 name: "skipHeadRow",
                 value: this.config.resolverSettings.skipHeadRow
             }

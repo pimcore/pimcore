@@ -21,8 +21,14 @@ use Pimcore\Model\DataObject\Concrete;
 
 class Id
 {
+    /**
+     * @var
+     */
     protected $config;
 
+    /**
+     * @var
+     */
     protected $idIdx;
 
     /**
@@ -34,12 +40,27 @@ class Id
         $this->idIdx = $this->config->resolverSettings->column;
     }
 
+    /**
+     * @param $parentId
+     * @param $rowData
+     * @return static
+     * @throws \Exception
+     */
     public function resolve($parentId, $rowData)
     {
         if (!is_null($this->idIdx)) {
             $id = $rowData[$this->idIdx];
 
-            return Concrete::getById($id);
+            $object = Concrete::getById($id);
+            if (!$object) {
+                throw new \Exception("Could not resolve object with id " . $id);
+            }
+
+            $parent = $object->getParent();
+            if (!$parent->isAllowed('create')) {
+                throw new \Exception("no permission to overwrite object with id " . $id);
+            }
+            return $object;
         }
     }
 }

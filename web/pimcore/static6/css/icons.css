@@ -756,11 +756,6 @@
     background: url(/pimcore/static6/img/flat-color-icons/external.svg) center center no-repeat !important;
 }
 
-
-
-
-
-
 .pimcore_icon_clone  {
     background: url(/pimcore/static6/img/flat-color-icons/clone.svg) center center no-repeat !important;
 }
@@ -1152,4 +1147,8 @@
 
 .pimcore_icon_operator_ignore {
     background: url(/pimcore/static6/img/flat-color-icons/cancel.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_import_report {
+    background: url("/pimcore/static6/img/flat-color-icons/inspection.svg") center center no-repeat !important;
 }
