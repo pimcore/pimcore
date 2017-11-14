@@ -21,7 +21,6 @@ use Pimcore\File;
 use Pimcore\Localization\Locale;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Element;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
@@ -1312,7 +1311,7 @@ class DataObjectHelperController extends AdminController
                     $firstRowData = $rowData;
                 }
 
-                $tmpData["rowId"] = $count + 1;
+                $tmpData['rowId'] = $count + 1;
                 foreach ($rowData as $key => $value) {
                     $tmpData['field_' . $key] = $value;
                 }
@@ -1398,7 +1397,6 @@ class DataObjectHelperController extends AdminController
         ]);
     }
 
-
     /**
      * @Route("/import-process")
      *
@@ -1421,9 +1419,9 @@ class DataObjectHelperController extends AdminController
         $originalFile = $file . '_original';
 
         if ($job == 1) {
-             if (!copy($originalFile, $file)) {
-                 throw new \Exception("failed to copy file");
-             }
+            if (!copy($originalFile, $file)) {
+                throw new \Exception('failed to copy file');
+            }
         }
 
         // currently only csv supported
@@ -1455,6 +1453,7 @@ class DataObjectHelperController extends AdminController
 
         try {
             $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+            $configData->classId = $request->get('classId');
             $resolver = $service->getResolverImplementation($configData);
 
             $object = $resolver->resolve($parentId, $rowData);

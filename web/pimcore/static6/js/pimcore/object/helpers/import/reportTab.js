@@ -52,7 +52,8 @@ pimcore.object.helpers.import.reportTab = Class.create({
 
                             handler: function (grid, rowIndex, colIndex) {
                                 var rec = this.dataStore.getAt(rowIndex);
-                                this.callback.preview(rowIndex);
+                                var rowIdx = rec.get("rowId") - 1;
+                                this.callback.preview(rowIdx);
                             }.bind(this)
                         }
                     ]

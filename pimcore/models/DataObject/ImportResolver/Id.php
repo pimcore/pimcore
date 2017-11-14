@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\ImportResolver;
 
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 
 class Id
@@ -43,7 +44,9 @@ class Id
     /**
      * @param $parentId
      * @param $rowData
+     *
      * @return static
+     *
      * @throws \Exception
      */
     public function resolve($parentId, $rowData)
@@ -53,13 +56,21 @@ class Id
 
             $object = Concrete::getById($id);
             if (!$object) {
-                throw new \Exception("Could not resolve object with id " . $id);
+                throw new \Exception('Could not resolve object with id ' . $id);
+            }
+
+            $classDefinition = ClassDefinition::getById($this->config->classId);
+            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+
+            if (!$object instanceof $className) {
+                throw new \Exception('Class mismatch for ID ' . $id);
             }
 
             $parent = $object->getParent();
             if (!$parent->isAllowed('create')) {
-                throw new \Exception("no permission to overwrite object with id " . $id);
+                throw new \Exception('no permission to overwrite object with id ' . $id);
             }
+
             return $object;
         }
     }
