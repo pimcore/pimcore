@@ -27,9 +27,14 @@ class SessionConfigurator implements SessionConfiguratorInterface
 
     public function configure(SessionInterface $session)
     {
-        $bag = new NamespacedAttributeBag('_' . self::TARGETING_BAG);
+        $bag = new NamespacedAttributeBag(self::getTargetingStorageKey());
         $bag->setName(self::TARGETING_BAG);
 
         $session->registerBag($bag);
+    }
+
+    public static function getTargetingStorageKey(): string
+    {
+        return '_' . self::TARGETING_BAG;
     }
 }

@@ -36,6 +36,7 @@ use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\TargetGroupResolver;
 use Pimcore\Targeting\TargetingStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -97,7 +98,7 @@ class TargetingListener implements EventSubscriberInterface
 
             // needs to run before ElementListener to make sure there's a
             // resolved VisitorInfo when the document is loaded
-            KernelEvents::REQUEST           => ['onKernelRequest', 10],
+            KernelEvents::REQUEST           => ['onKernelRequest', 7],
             KernelEvents::RESPONSE          => ['onKernelResponse']
         ];
     }

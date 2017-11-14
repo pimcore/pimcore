@@ -18,14 +18,23 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
+use Pimcore\Targeting\Session\SessionConfigurator;
+use Pimcore\Targeting\TargetingStorageInterface;
 use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 
 class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
+
+    /**
+     * @var TargetingStorageInterface
+     */
+    private $targetingStorage;
 
     /**
      * @var bool
@@ -56,6 +65,11 @@ class FullPageCacheListener
      * @var string
      */
     protected $defaultCacheKey;
+
+    public function __construct(TargetingStorageInterface $targetingStorage)
+    {
+        $this->targetingStorage = $targetingStorage;
+    }
 
     /**
      * @param null $reason
@@ -215,6 +229,11 @@ class FullPageCacheListener
             }
         }
 
+        // check if targeting matched anything and disable cache
+        if ($this->disabledByTargeting()) {
+            return $this->disable('Targeting matched rules/target groups');
+        }
+
         $deviceDetector = Tool\DeviceDetector::getInstance();
         $device = $deviceDetector->getDevice();
         $deviceDetector->setWasUsed(false);
@@ -237,7 +256,7 @@ class FullPageCacheListener
         $cacheKey = null;
         $cacheItem = null;
         foreach ($cacheKeys as $cacheKey) {
-            $cacheItem = CacheManager::load($cacheKey, true);
+            $cacheItem = CacheManager::load($cacheKey);
             if ($cacheItem) {
                 break;
             }
@@ -268,33 +287,32 @@ class FullPageCacheListener
     }
 
     /**
-     * @param KernelEvent $event
+     * @param FilterResponseEvent $event
      *
      * @return bool|void
      */
-    public function onKernelResponse(KernelEvent $event)
+    public function onKernelResponse(FilterResponseEvent $event)
     {
         if (!$event->isMasterRequest()) {
-            return false;
+            return;
         }
 
         $request = $event->getRequest();
         if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontendRequestByAdmin($request)) {
-            return false;
+            return;
         }
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            return false;
+            return;
         }
 
         $response = $event->getResponse();
-
         if (!$response) {
-            return false;
+            return;
         }
 
-        if ($this->enabled && $request->hasSession() && !empty($request->getSession()->getId())) {
-            $this->disable('session in use');
+        if ($this->enabled && $this->disabledBySession($request)) {
+            $this->disable('Session in use');
         }
 
         if ($this->disableReason) {
@@ -340,5 +358,56 @@ class FullPageCacheListener
             // like the inc and snippet cache get into the cache
             CacheManager::addIgnoredTagOnSave('output_inline');
         }
+    }
+
+    private function disabledByTargeting(): bool
+    {
+        if (!$this->targetingStorage->hasVisitorInfo()) {
+            return false;
+        }
+
+        $visitorInfo = $this->targetingStorage->getVisitorInfo();
+
+        if (!empty($visitorInfo->getTargetingRules())) {
+            return true;
+        }
+
+        if (!empty($visitorInfo->getTargetGroupAssignments())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function disabledBySession(Request $request): bool
+    {
+        if (!$request->hasSession() || empty($request->getSession()->getId())) {
+            return false;
+        }
+
+        // we fall back to $_SESSION from here on as the session API does not expose a list of namespaces
+        $sessionData = $_SESSION ?? null;
+        if (empty($sessionData)) {
+            return false;
+        }
+
+        // disable full page cache if any session key besides
+        // Symfony Metadata and Targeting have data
+        $ignoredSessionKeys = [
+            '_sf2_meta',
+            SessionConfigurator::getTargetingStorageKey()
+        ];
+
+        if (!is_array($sessionData)) {
+            return false;
+        }
+
+        foreach ($sessionData as $key => $value) {
+            if (!in_array($key, $ignoredSessionKeys) && !empty($value)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
