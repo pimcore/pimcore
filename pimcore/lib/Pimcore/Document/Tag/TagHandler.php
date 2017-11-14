@@ -19,6 +19,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Http\ResponseStack;
 use Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface;
 use Pimcore\HttpKernel\WebPathResolver;
 use Pimcore\Model\Document\PageSnippet;
@@ -30,6 +31,7 @@ use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class TagHandler implements TagHandlerInterface, LoggerAwareInterface
@@ -72,6 +74,11 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     protected $translator;
 
     /**
+     * @var ResponseStack
+     */
+    private $responseStack;
+
+    /**
      * @var array
      */
     protected $brickTemplateCache = [];
@@ -101,6 +108,16 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         $this->actionRenderer  = $actionRenderer;
         $this->requestHelper   = $requestHelper;
         $this->translator      = $translator;
+    }
+
+    /**
+     * @required
+     *
+     * @deprecated This was added as setter for BC reasons. TODO Pimcore 6: add as constructor dependency
+     */
+    public function setResponseStack(ResponseStack $responseStack)
+    {
+        $this->responseStack = $responseStack;
     }
 
     /**
@@ -206,7 +223,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         ]);
 
         // call action
-        $brick->action($info);
+        $this->handleBrickActionResult($brick->action($info));
 
         if (!$brick->hasViewTemplate()) {
             return;
@@ -264,7 +281,22 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         echo $brick->getHtmlTagClose($info);
 
         // call post render
-        $brick->postRenderAction($info);
+        $this->handleBrickActionResult($brick->postRenderAction($info));
+    }
+
+    private function handleBrickActionResult($result)
+    {
+        // TODO Pimcore 6 rely on responseStack being set as constructor dependency
+        if (null === $this->responseStack) {
+            return;
+        }
+
+        // if the action result is a response object, push it onto the
+        // response stack. this response will be used by the ResponseStackListener
+        // and sent back to the client
+        if ($result instanceof Response) {
+            $this->responseStack->push($result);
+        }
     }
 
     /**

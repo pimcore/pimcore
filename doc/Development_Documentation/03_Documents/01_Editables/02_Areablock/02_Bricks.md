@@ -298,6 +298,9 @@ object as parameter. The `action()` method is no real controller action, it is j
  and code out of the 
 view. However, you can use the action method to prepare data for the view (for example parse request params).
 
+Since Pimcore 5.0.3 you can return a Response object from `action()` and `postRenderAction()` and this response
+will be sent back to the client.
+
 If you need to influence the HTML open and close tag, you can do so by customizing `getHtmlTagOpen()` and 
 `getHtmlTagClose()` (see example below). 
  
@@ -308,6 +311,7 @@ namespace AppBundle\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Iframe extends AbstractTemplateAreabrick
 {
@@ -318,6 +322,11 @@ class Iframe extends AbstractTemplateAreabrick
         $myVar = $info->getRequest()->get('myParam');
 
         $info->getView()->myVar = $myVar;
+
+        // optionally return a response object
+        if ('POST' === $info->getRequest()->getMethod()) {
+            return new RedirectResponse('/foo');
+        }
     }
 
     // OPTIONAL METHODS

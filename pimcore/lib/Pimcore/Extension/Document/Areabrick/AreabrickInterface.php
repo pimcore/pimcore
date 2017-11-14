@@ -15,6 +15,7 @@
 namespace Pimcore\Extension\Document\Areabrick;
 
 use Pimcore\Model\Document\Tag\Area\Info;
+use Symfony\Component\HttpFoundation\Response;
 
 interface AreabrickInterface
 {
@@ -93,14 +94,22 @@ interface AreabrickInterface
     /**
      * Will be called before the view is rendered. Acts as extension point for custom area logic.
      *
+     * If this method returns a Response object, it will be pushed onto the response stack and returned to the client.
+     *
      * @param Info $info
+     *
+     * @return null|Response
      */
     public function action(Info $info);
 
     /**
      * Will be called after rendering.
      *
+     * If this method returns a Response object, it will be pushed onto the response stack and returned to the client.
+     *
      * @param Info $info
+     *
+     * @return null|Response
      */
     public function postRenderAction(Info $info);
 
