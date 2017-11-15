@@ -63,7 +63,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 labelWidth: 150,
                 width: 400
             }
-            // border: true
         });
 
 
@@ -174,6 +173,32 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
             }
         );
     },
+
+    addCodeOptions: function () {
+        var mappingStore = this.getMappingStore();
+
+        this.detailedSettingsPanel.add(
+            {
+                xtype: "textfield",
+                name: "service",
+                fieldLabel: t("service"),
+                value: this.config.resolverSettings.service,
+                width: 300
+            }
+        );
+
+
+        this.detailedSettingsPanel.add(
+            {
+                xtype: "textfield",
+                name: "params",
+                fieldLabel: t("additional_data"),
+                value: this.config.resolverSettings.params,
+                width: 300
+            }
+        );
+    },
+
 
     addFilenameOptions: function () {
         var mappingStore = this.getMappingStore();

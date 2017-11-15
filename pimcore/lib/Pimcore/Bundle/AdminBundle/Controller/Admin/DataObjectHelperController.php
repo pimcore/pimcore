@@ -1243,8 +1243,6 @@ class DataObjectHelperController extends AdminController
             }
 
             $config->process($object, $target, $rowData, $colIndex, $context);
-
-            //TODO postprocess ?
         }
 
         return $object;

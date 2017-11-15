@@ -185,10 +185,17 @@ class Service
         return $importConfigData;
     }
 
+    /**
+     * @param $config
+     * @return Id
+     * @throws \Exception
+     */
     public function getResolverImplementation($config)
     {
-        if ($config->resolverSettings->strategy == 'id') {
-            return new Id($config);
+        switch ($config->resolverSettings->strategy) {
+            case 'id':
+                return new Id($config);
         }
+        throw new \Exception("unknown/unsupported resolver implementation");
     }
 }
