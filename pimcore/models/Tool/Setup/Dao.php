@@ -144,7 +144,7 @@ class Dao extends Model\Dao\AbstractDao
             ['key' => 'reports'],
             ['key' => 'recyclebin'],
             ['key' => 'seo_document_editor'],
-            ['key' => 'tags_config'],
+            ['key' => 'tags_configuration'],
             ['key' => 'tags_assignment'],
             ['key' => 'tags_search'],
             ['key' => 'robots.txt'],

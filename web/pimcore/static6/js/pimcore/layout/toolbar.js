@@ -958,7 +958,7 @@ pimcore.layout.toolbar = Class.create({
             }
 
             // tags for elements
-            if (user.isAllowed("tags_config") && perspectiveCfg.inToolbar("settings.tagConfiguration")) {
+            if (user.isAllowed("tags_configuration") && perspectiveCfg.inToolbar("settings.tagConfiguration")) {
                 settingsItems.push({
                     text: t("element_tag_configuration"),
                     iconCls: "pimcore_icon_element_tags",

@@ -81,7 +81,7 @@ pimcore.element.tag.tree = Class.create({
 
             var user = pimcore.globalmanager.get("user");
             var treePlugins = null;
-            if(this.allowDnD && user.isAllowed("tags_config")) {
+            if(this.allowDnD && user.isAllowed("tags_configuration")) {
                 treePlugins = {
                     ptype: 'treeviewdragdrop',
                     ddGroup: "tags",
@@ -146,7 +146,7 @@ pimcore.element.tag.tree = Class.create({
         var menu = new Ext.menu.Menu();
         var hasEntries = false;
 
-        if(this.allowAdd && user.isAllowed("tags_config")) {
+        if(this.allowAdd && user.isAllowed("tags_configuration")) {
             hasEntries = true;
             menu.add(new Ext.menu.Item({
                 text: t('add_tag'),
@@ -157,7 +157,7 @@ pimcore.element.tag.tree = Class.create({
             }));
         }
 
-        if(this.allowDelete && user.isAllowed("tags_config")) {
+        if(this.allowDelete && user.isAllowed("tags_configuration")) {
             hasEntries = true;
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
@@ -180,7 +180,7 @@ pimcore.element.tag.tree = Class.create({
             }));
         }
 
-        if(this.allowRename && user.isAllowed("tags_config")) {
+        if(this.allowRename && user.isAllowed("tags_configuration")) {
             hasEntries = true;
             menu.add(new Ext.menu.Item({
                 text: t('rename'),
