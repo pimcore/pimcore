@@ -102,7 +102,7 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public function getColumnType()
     {
-        return $this->columnType . "(" . $this->getColumnLength() . ")";
+        return $this->columnType;
     }
 
     /**
@@ -110,7 +110,7 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public function getQueryColumnType()
     {
-        return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
+        return $this->queryColumnType;
     }
 
     /**
