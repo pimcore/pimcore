@@ -31,6 +31,8 @@
     "optimize-autoloader": true,
     "sort-packages": true
   },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "repositories": {
     "vrana-jush": {
       "info1": "External dependency of vrana/adminer which isn't included or referenced by adminer, see also https://sourceforge.net/p/adminer/bugs-and-features/468/ ",
