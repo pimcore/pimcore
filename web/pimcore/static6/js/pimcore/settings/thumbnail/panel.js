@@ -33,7 +33,7 @@ pimcore.settings.thumbnail.panel = Class.create({
                 iconCls: "pimcore_icon_thumbnails",
                 border: false,
                 layout: "border",
-                closable:true,
+                closable: true,
                 items: [this.getTree(), this.getEditPanel()]
             });
 
@@ -50,7 +50,7 @@ pimcore.settings.thumbnail.panel = Class.create({
 
         return this.panel;
     },
-    
+
     getTree: function () {
         if (!this.tree) {
             var store = Ext.create('Ext.data.TreeStore', {
@@ -61,15 +61,12 @@ pimcore.settings.thumbnail.panel = Class.create({
                     url: "/admin/settings/thumbnail-tree",
                     reader: {
                         type: 'json'
-                        //,
-                        //totalProperty : 'total',
-                        //rootProperty: 'nodes'
-
                     }
                 },
                 root: {
                     iconCls: "pimcore_icon_thumbnails"
-                }
+                },
+                sorters: ['text']
             });
 
 
@@ -77,13 +74,12 @@ pimcore.settings.thumbnail.panel = Class.create({
                 store: store,
                 id: "pimcore_panel_thumbnail_tree",
                 region: "west",
-                autoScroll:true,
-                animate:false,
+                autoScroll: true,
+                animate: false,
                 containerScroll: true,
                 width: 200,
                 split: true,
                 root: {
-                    //nodeType: 'async',
                     id: '0',
                     expanded: true,
                     iconCls: "pimcore_icon_thumbnails"
@@ -130,9 +126,9 @@ pimcore.settings.thumbnail.panel = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'itemclick' : this.onTreeNodeClick.bind(this),
+            'itemclick': this.onTreeNodeClick.bind(this),
             'itemcontextmenu': this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function( thisNode, newChildNode, index, eOpts ) {
+            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
                 //newChildNode.data.expanded = true;
                 newChildNode.data.leaf = true;
                 newChildNode.data.iconCls = "pimcore_icon_thumbnails";
@@ -142,14 +138,14 @@ pimcore.settings.thumbnail.panel = Class.create({
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
+    onTreeNodeClick: function (tree, record, item, index, e, eOpts) {
         this.openThumbnail(record.data.id);
     },
 
-    openThumbnail: function(id) {
+    openThumbnail: function (id) {
 
         var existingPanel = Ext.getCmp("pimcore_thumbnail_panel_" + id);
-        if(existingPanel) {
+        if (existingPanel) {
             this.editPanel.setActiveItem(existingPanel);
             return;
         }
@@ -168,7 +164,7 @@ pimcore.settings.thumbnail.panel = Class.create({
         });
     },
 
-    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
+    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
         e.stopEvent();
 
         tree.select();
@@ -186,7 +182,7 @@ pimcore.settings.thumbnail.panel = Class.create({
 
     addField: function () {
         Ext.MessageBox.prompt(t('add_thumbnail'), t('enter_the_name_of_the_new_thumbnail'),
-                                this.addFieldComplete.bind(this), null, null, "");
+            this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
@@ -214,7 +210,7 @@ pimcore.settings.thumbnail.panel = Class.create({
 
                     this.tree.getStore().load();
 
-                    if(!data || !data.success) {
+                    if (!data || !data.success) {
                         Ext.Msg.alert(t('add_thumbnail'), t('problem_creating_new_thumbnail'));
                     } else {
                         this.openThumbnail(data.id);

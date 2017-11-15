@@ -61,15 +61,12 @@ pimcore.settings.videothumbnail.panel = Class.create({
                     url: '/admin/settings/video-thumbnail-tree',
                     reader: {
                         type: 'json'
-                        //,
-                        //totalProperty : 'total',
-                        //rootProperty: 'nodes'
-
                     }
                 },
                 root: {
                     iconCls: "pimcore_icon_thumbnails"
-                }
+                },
+                sorters: ['text']
             });
 
             this.tree = new Ext.tree.TreePanel({
