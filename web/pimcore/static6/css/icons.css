@@ -211,7 +211,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/cancel.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_publish {
+.pimcore_icon_publish, .pimcore_icon_operator_published {
     background: url(/pimcore/static6/img/flat-color-icons/publish.svg) center center no-repeat !important;
 }
 
