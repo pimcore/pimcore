@@ -98,11 +98,28 @@ class Select extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * Correct old column definitions (e.g varchar(255)) to the new format
+     * @param $type
+     */
+    protected function correctColumnDefinition($type){
+        preg_match("/(.*)\((\d+)\)/i",$this->$type,$matches);
+        if($matches[2]){
+            $this->{"set" . ucfirst($type)}($matches[1]);
+            if($matches[2] > 190){
+                $matches[2] = 190;
+            }
+            $this->setColumnLength($matches[2] <= 190 ? $matches[2] : 190);
+        }
+    }
+
+
+    /**
      * @return string
      */
     public function getColumnType()
     {
-        return $this->columnType;
+        $this->correctColumnDefinition('columnType');
+        return $this->columnType . "(" . $this->getColumnLength() . ")";
     }
 
     /**
@@ -110,7 +127,8 @@ class Select extends Model\Object\ClassDefinition\Data
      */
     public function getQueryColumnType()
     {
-        return $this->queryColumnType;
+        $this->correctColumnDefinition('queryColumnType');
+        return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
     }
 
     /**
