@@ -1722,5 +1722,6 @@
   "import_errors": "Some errors occurred. Check the import report!",
   "import_is_done": "Import is done",
   "operator_published": "Operator Published",
-  "operator_published_settings": "Operatore Published Settings"
+  "operator_published_settings": "Operatore Published Settings",
+  "import_file_prefix": "Prefix for new files"
 }

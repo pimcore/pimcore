@@ -17,9 +17,6 @@
 
 namespace Pimcore\Model\DataObject\ImportResolver;
 
-use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Concrete;
-
 class AbstractResolver
 {
     /**
@@ -51,13 +48,14 @@ class AbstractResolver
      */
     public function resolve($parentId, $rowData)
     {
-        throw new \Exception("implement your own logic");
+        throw new \Exception('implement your own logic');
     }
 
     /**
      * @return mixed
      */
-    public function getIdColumn() {
+    public function getIdColumn()
+    {
         return $this->idIdx;
     }
 }

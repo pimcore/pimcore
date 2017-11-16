@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Concrete;
 
 class Id
 {
-
     /**
      * Id constructor.
      */

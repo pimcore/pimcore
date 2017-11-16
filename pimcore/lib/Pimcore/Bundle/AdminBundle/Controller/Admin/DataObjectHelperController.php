@@ -1306,7 +1306,6 @@ class DataObjectHelperController extends AdminController
             while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                 $tmpData = [];
 
-
                 foreach ($rowData as $key => $value) {
                     $tmpData['field_' . $key] = $value;
                 }
@@ -1373,7 +1372,7 @@ class DataObjectHelperController extends AdminController
 
         $availableConfigs = $this->getImportConfigs($this->getUser(), $classId);
 
-        $dialect->lineterminator =  "0x" . bin2hex($dialect->lineterminator);
+        $dialect->lineterminator =  '0x' . bin2hex($dialect->lineterminator);
 
         return $this->json([
             'success' => $success,

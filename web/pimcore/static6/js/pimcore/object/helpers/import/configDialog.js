@@ -29,6 +29,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         if (config.mode == "direct") {
             this.uniqueImportId = "news";
+            this.parentId = config.parentId;
             this.getFileInfo(false, config.importConfigId);
         } else {
             this.showUpload();
@@ -159,7 +160,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         buttons.push({
             text: t("import"),
-            iconCls: "pimcore_icon_import",
+            iconCls: "pimcore_icon_start_import",
             handler: function () {
                 this.importStart();
             }.bind(this)

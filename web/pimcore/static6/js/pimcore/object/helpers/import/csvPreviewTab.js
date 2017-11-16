@@ -47,7 +47,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
         var dataGridCols = [];
         dataGridCols.push({
-            header: t("row") + " " + i, sortable: false, dataIndex: "rowId", flex: 1, filter: 'numeric',
+            header: t("row"), sortable: false, dataIndex: "rowId", flex: 1, filter: 'numeric',
             renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                 if (!this.hasHeadline.getValue() || rowIndex > 0) {
                     return value;

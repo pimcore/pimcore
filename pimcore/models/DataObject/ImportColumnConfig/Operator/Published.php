@@ -17,13 +17,10 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
-use Pimcore\Localization\Locale;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 class Published extends AbstractOperator
 {
-
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
@@ -40,8 +37,7 @@ class Published extends AbstractOperator
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
-        if (method_exists($target, "setPublished")) {
-
+        if (method_exists($target, 'setPublished')) {
             $published = $rowData[$colIndex] ? true : false;
             $target->setPublished($published);
         }

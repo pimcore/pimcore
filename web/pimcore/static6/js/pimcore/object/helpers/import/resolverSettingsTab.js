@@ -28,13 +28,10 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         }
 
         var filenameMappingStore = sourceFields;
-        // filenameMappingStore.push(["default", "default"]);
-        // filenameMappingStore.push(["id", "ID"]);
         return filenameMappingStore;
     },
 
     getPanel: function () {
-
 
         if (!this.settingsForm) {
 
@@ -177,41 +174,27 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
     addIdOptions: function () {
 
-        this.detailedSettingsPanel.add(
-            {
-                xtype: "combo",
-                name: "column",
-                store: mappingStore,
-                mode: "local",
-                triggerAction: "all",
-                fieldLabel: t("column"),
-                value: this.config.resolverSettings.column ? this.config.resolverSettings.column : 0
-            }
-        );
     },
 
     addCodeOptions: function () {
 
-        this.detailedSettingsPanel.add(
-            {
-                xtype: "textfield",
-                name: "phpClass",
-                fieldLabel: t("php_class"),
-                width: 800,
-                value: this.config.resolverSettings.phpClass
-            }
-        );
-
-        this.detailedSettingsPanel.add(
-            {
-                xtype: "textfield",
-                name: "params",
-                fieldLabel: t("additional_data"),
-                value: this.config.resolverSettings.params
-            }
+        this.detailedSettingsPanel.add([
+                {
+                    xtype: "textfield",
+                    name: "phpClass",
+                    fieldLabel: t("php_class"),
+                    width: 800,
+                    value: this.config.resolverSettings.phpClass
+                },
+                {
+                    xtype: "textfield",
+                    name: "params",
+                    fieldLabel: t("additional_data"),
+                    value: this.config.resolverSettings.params
+                }
+            ]
         );
     },
-
 
     addFilenameOptions: function () {
 
@@ -225,8 +208,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 {
                     xtype: "checkbox",
                     name: "overwrite",
-                    inputValue: "true",
-                    uncheckedValue: "false",
+                    inputValue: true,
                     value: this.config.resolverSettings.overwrite,
                     fieldLabel: t("overwrite_object_with_same_key")
                 },
@@ -235,8 +217,13 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     value: t("overwrite_object_with_same_key_description"),
                     cls: 'pimcore_extra_label_bottom',
                     width: '100%'
+                },
+                {
+                    xtype: "textfield",
+                    name: "prefix",
+                    fieldLabel: t("import_file_prefix"),
+                    value: this.config.resolverSettings.prefix
                 }
-
             ]
         );
     },

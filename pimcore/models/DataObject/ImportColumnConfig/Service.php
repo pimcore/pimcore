@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ImportResolver\Code;
+use Pimcore\Model\DataObject\ImportResolver\Filename;
 use Pimcore\Model\DataObject\ImportResolver\Id;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
@@ -188,7 +189,9 @@ class Service
 
     /**
      * @param $config
+     *
      * @return Id
+     *
      * @throws \Exception
      */
     public function getResolverImplementation($config)
@@ -196,9 +199,11 @@ class Service
         switch ($config->resolverSettings->strategy) {
             case 'id':
                 return new Id($config);
+            case 'filename':
+                return new Filename($config);
             case 'code':
                 return new Code($config);
         }
-        throw new \Exception("unknown/unsupported resolver implementation");
+        throw new \Exception('unknown/unsupported resolver implementation');
     }
 }

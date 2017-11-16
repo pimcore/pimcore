@@ -21,7 +21,6 @@ use Pimcore\Localization\Locale;
 
 class Code extends AbstractResolver
 {
-
     /**
      * Id constructor.
      */
@@ -32,7 +31,7 @@ class Code extends AbstractResolver
         $this->resolverImplementation = new $this->config->resolverSettings->phpClass($config);
 
         if (!$this->resolverImplementation) {
-            throw new \Exception("could not resolve service: " . $this->config->resolverSettings->service);
+            throw new \Exception('could not resolve service: ' . $this->config->resolverSettings->service);
         }
     }
 
@@ -64,6 +63,7 @@ class Code extends AbstractResolver
         if (!$object) {
             throw new \Exception('Could not resolve object');
         }
+
         return $object;
     }
 }

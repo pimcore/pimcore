@@ -1,5 +1,0 @@
-# Resolver Strategies
-
-
-
-
