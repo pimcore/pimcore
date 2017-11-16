@@ -1305,15 +1305,13 @@ class DataObjectHelperController extends AdminController
         if (($handle = fopen($originalFile, 'r')) !== false) {
             while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                 $tmpData = [];
-                if ($count == 0) {
-                    $firstRowData = $rowData;
-                }
 
-                $tmpData['rowId'] = $count + 1;
+
                 foreach ($rowData as $key => $value) {
                     $tmpData['field_' . $key] = $value;
                 }
 
+                $tmpData['rowId'] = $count + 1;
                 $data[] = $tmpData;
                 $cols = count($rowData);
 
@@ -1374,6 +1372,8 @@ class DataObjectHelperController extends AdminController
         }
 
         $availableConfigs = $this->getImportConfigs($this->getUser(), $classId);
+
+        $dialect->lineterminator =  "0x" . bin2hex($dialect->lineterminator);
 
         return $this->json([
             'success' => $success,

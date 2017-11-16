@@ -37,16 +37,10 @@ pimcore.object.helpers.import.csvSettingsTab = Class.create({
                 value: this.config.csvSettings.escapechar
             });
 
-            var terminator = "unkown";
-            switch (this.config.csvSettings.lineterminator) {
-                //TODO
-                case "\r\n": terminator = "CRLF";
-                        break;
-            }
             this.lineTerminatorField = new Ext.form.TextField({
                 fieldLabel: t('lineterminator'),
                 name: 'lineterminator',
-                value: terminator
+                value: this.config.csvSettings.lineterminator
             });
 
             this.quoteCharField = new Ext.form.TextField({
@@ -78,8 +72,7 @@ pimcore.object.helpers.import.csvSettingsTab = Class.create({
 
 
     commitData: function () {
-        // var settings = this.csvSettingsForm.getValues();
-        // this.config.csvSettings = settings;
+
     }
 
 

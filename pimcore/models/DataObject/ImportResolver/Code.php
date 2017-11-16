@@ -17,28 +17,23 @@
 
 namespace Pimcore\Model\DataObject\ImportResolver;
 
-use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Localization\Locale;
 
-class Id
+class Code extends AbstractResolver
 {
-    /**
-     * @var
-     */
-    protected $config;
 
     /**
      * Id constructor.
      */
     public function __construct($config)
     {
-        $this->config = $config;
+        parent::__construct($config);
 
-        $this->resolverService = \Pimcore::getContainer()->get($this->config->resolverSettings->service);
-        if (!$this->resolverService) {
+        $this->resolverImplementation = new $this->config->resolverSettings->phpClass($config);
+
+        if (!$this->resolverImplementation) {
             throw new \Exception("could not resolve service: " . $this->config->resolverSettings->service);
         }
-        $this->params = $config->params;
     }
 
     /**
@@ -51,7 +46,21 @@ class Id
      */
     public function resolve($parentId, $rowData)
     {
-        $object = $this->resolverService->resolve($parentId, $rowData);
+        $container = \Pimcore::getContainer();
+        $localeService = $container->get(Locale::class);
+        $currentLocale = $localeService->getLocale();
+
+        $locale = null;
+        if ($this->config->resolverSettings) {
+            if ($this->config->resolverSettings && $this->config->resolverSettings->language != 'default') {
+                $localeService->setLocale($this->config->resolverSettings->language);
+            }
+        }
+
+        $object = $this->resolverImplementation->resolve($parentId, $rowData);
+
+        $localeService->setLocale($currentLocale);
+
         if (!$object) {
             throw new \Exception('Could not resolve object');
         }

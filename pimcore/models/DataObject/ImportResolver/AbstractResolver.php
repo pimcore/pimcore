@@ -20,15 +20,25 @@ namespace Pimcore\Model\DataObject\ImportResolver;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 
-class Id
+class AbstractResolver
 {
+    /**
+     * @var
+     */
+    protected $config;
+
+    /**
+     * @var
+     */
+    protected $idIdx;
 
     /**
      * Id constructor.
      */
     public function __construct($config)
     {
-        parent::__construct($config);
+        $this->config = $config;
+        $this->idIdx = $this->config->resolverSettings->column;
     }
 
     /**
@@ -41,27 +51,13 @@ class Id
      */
     public function resolve($parentId, $rowData)
     {
-        if (!is_null($this->idIdx)) {
-            $id = $rowData[$this->idIdx];
+        throw new \Exception("implement your own logic");
+    }
 
-            $object = Concrete::getById($id);
-            if (!$object) {
-                throw new \Exception('Could not resolve object with id ' . $id);
-            }
-
-            $classDefinition = ClassDefinition::getById($this->config->classId);
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
-
-            if (!$object instanceof $className) {
-                throw new \Exception('Class mismatch for ID ' . $id);
-            }
-
-            $parent = $object->getParent();
-            if (!$parent->isAllowed('create')) {
-                throw new \Exception('no permission to overwrite object with id ' . $id);
-            }
-
-            return $object;
-        }
+    /**
+     * @return mixed
+     */
+    public function getIdColumn() {
+        return $this->idIdx;
     }
 }

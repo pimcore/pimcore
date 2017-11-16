@@ -23,13 +23,13 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
     getMappingStore: function () {
         var data = this.config;
         var sourceFields = [];
-        for (i = 0; i < data.cols; i++) {
+        for (i = 0; i < data.cols - 1; i++) {
             sourceFields.push([i, t("field") + " " + i]);
         }
 
         var filenameMappingStore = sourceFields;
-        filenameMappingStore.push(["default", "default"]);
-        filenameMappingStore.push(["id", "ID"]);
+        // filenameMappingStore.push(["default", "default"]);
+        // filenameMappingStore.push(["id", "ID"]);
         return filenameMappingStore;
     },
 
@@ -45,8 +45,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     labelWidth: 150,
                     width: 400
                 },
-                items: [
-                ],
+                items: [],
                 bodyStyle: "padding: 10px;"
             });
             this.rebuildPanel();
@@ -55,10 +54,11 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         return this.settingsForm;
     },
 
-    rebuildPanel: function() {
+    rebuildPanel: function () {
         this.settingsForm.removeAll(true);
 
         this.detailedSettingsPanel = new Ext.panel.Panel({
+            width: '100%',
             defaults: {
                 labelWidth: 150,
                 width: 400
@@ -74,7 +74,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
         this.languageField = new Ext.form.ComboBox({
             name: "language",
-            width: 400,
             mode: 'local',
             autoSelect: true,
             editable: false,
@@ -147,19 +146,8 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
         this.detailedSettingsPanel.removeAll(true);
 
-        if (resolver == "id") {
-            this.addIdOptions();
-        } else if (resolver == "filename") {
-            this.addFilenameOptions();
-        }
-    },
-
-    setSkipHeaderRow: function(value) {
-        this.skipHeaderRow.setValue(value);
-    },
-
-    addIdOptions: function () {
         var mappingStore = this.getMappingStore();
+
         this.detailedSettingsPanel.add(
             {
                 xtype: "combo",
@@ -168,57 +156,71 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 mode: "local",
                 triggerAction: "all",
                 fieldLabel: t("column"),
-                value: this.config.resolverSettings.column ? this.config.resolverSettings.column : 0,
-                width: 300
+                value: this.config.resolverSettings.column ? this.config.resolverSettings.column : 0
+            });
+
+        switch (resolver) {
+            case "id":
+                this.addIdOptions();
+                break;
+            case "filename":
+                this.addFilenameOptions();
+                break;
+            case "code":
+                this.addCodeOptions();
+        }
+    },
+
+    setSkipHeaderRow: function (value) {
+        this.skipHeaderRow.setValue(value);
+    },
+
+    addIdOptions: function () {
+
+        this.detailedSettingsPanel.add(
+            {
+                xtype: "combo",
+                name: "column",
+                store: mappingStore,
+                mode: "local",
+                triggerAction: "all",
+                fieldLabel: t("column"),
+                value: this.config.resolverSettings.column ? this.config.resolverSettings.column : 0
             }
         );
     },
 
     addCodeOptions: function () {
-        var mappingStore = this.getMappingStore();
 
         this.detailedSettingsPanel.add(
             {
                 xtype: "textfield",
-                name: "service",
-                fieldLabel: t("service"),
-                value: this.config.resolverSettings.service,
-                width: 300
+                name: "phpClass",
+                fieldLabel: t("php_class"),
+                width: 800,
+                value: this.config.resolverSettings.phpClass
             }
         );
-
 
         this.detailedSettingsPanel.add(
             {
                 xtype: "textfield",
                 name: "params",
                 fieldLabel: t("additional_data"),
-                value: this.config.resolverSettings.params,
-                width: 300
+                value: this.config.resolverSettings.params
             }
         );
     },
 
 
     addFilenameOptions: function () {
-        var mappingStore = this.getMappingStore();
+
         this.detailedSettingsPanel.add([
-
-                {
-                    xtype: "combo",
-                    name: "column",
-                    store: mappingStore,
-                    mode: "local",
-                    triggerAction: "all",
-                    fieldLabel: t("column"),
-
-                    value: this.config.resolverSettings.column ? this.config.resolverSettings.column : 0,
-                    width: 300
-                },
                 {
                     xtype: 'displayfield',
                     value: t("object_import_filename_description"),
-                    cls: 'pimcore_extra_label_bottom'
+                    cls: 'pimcore_extra_label_bottom',
+                    width: '100%'
                 },
                 {
                     xtype: "checkbox",
@@ -231,7 +233,8 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 {
                     xtype: 'displayfield',
                     value: t("overwrite_object_with_same_key_description"),
-                    cls: 'pimcore_extra_label_bottom'
+                    cls: 'pimcore_extra_label_bottom',
+                    width: '100%'
                 }
 
             ]

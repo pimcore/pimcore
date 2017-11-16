@@ -557,7 +557,6 @@ $scripts = array(
     "pimcore/object/preview.js",
     "pimcore/object/versions.js",
     "pimcore/object/variantsTab.js",
-    "pimcore/object/importer.js",
     "pimcore/object/folder/search.js",
     "pimcore/object/edit.js",
     "pimcore/object/abstract.js",

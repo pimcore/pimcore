@@ -80,7 +80,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
         );
 
 
-        for (var i = 0; i < data.dataFields.length; i++) {
+        for (var i = 0; i < data.dataFields.length - 1; i++) {
             dataGridCols.push({
                 header: t("field") + " " + i,
                 sortable: false,
