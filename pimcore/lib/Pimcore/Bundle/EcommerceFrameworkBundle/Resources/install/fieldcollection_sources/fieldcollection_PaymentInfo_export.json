@@ -10,7 +10,7 @@
 		"title":null,
 		"width":null,
 		"height":null,
-		"collapsible":null,
+        "collapsible": false,
 		"collapsed":null,
 		"bodyStyle":null,
 		"datatype":"layout",
@@ -469,11 +469,98 @@
 							}
 						],
 						"locked":false
+                    },
+                    {
+                        "fieldtype": "fieldset",
+                        "labelWidth": 150,
+                        "name": "additionalDataOGone",
+                        "type": null,
+                        "region": "",
+                        "title": "Additional OGone Data",
+                        "width": null,
+                        "height": null,
+                        "collapsible": true,
+                        "collapsed": true,
+                        "bodyStyle": "",
+                        "datatype": "layout",
+                        "permissions": null,
+                        "childs": [
+                            {
+                                "fieldtype": "input",
+                                "width": null,
+                                "queryColumnType": "varchar",
+                                "columnType": "varchar",
+                                "columnLength": 255,
+                                "phpdocType": "string",
+                                "regex": "",
+                                "name": "provider_ogone_amount",
+                                "title": "Amount",
+                                "tooltip": "",
+                                "mandatory": false,
+                                "noteditable": true,
+                                "index": false,
+                                "locked": false,
+                                "style": "",
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": false,
+                                "visibleSearch": false
+                            },
+                            {
+                                "fieldtype": "input",
+                                "width": 500,
+                                "queryColumnType": "varchar",
+                                "columnType": "varchar",
+                                "columnLength": 255,
+                                "phpdocType": "string",
+                                "regex": "",
+                                "name": "provider_ogone_PaymentId",
+                                "title": "Payment Id",
+                                "tooltip": "",
+                                "mandatory": false,
+                                "noteditable": true,
+                                "index": false,
+                                "locked": false,
+                                "style": "",
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": false,
+                                "visibleSearch": false
+                            },
+                            {
+                                "fieldtype": "input",
+                                "width": 500,
+                                "queryColumnType": "varchar",
+                                "columnType": "varchar",
+                                "columnLength": 255,
+                                "phpdocType": "string",
+                                "regex": "",
+                                "name": "provider_ogone_PaymentType",
+                                "title": "Payment Type",
+                                "tooltip": "",
+                                "mandatory": false,
+                                "noteditable": true,
+                                "index": false,
+                                "locked": false,
+                                "style": "",
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": false,
+                                "visibleSearch": false
 					}
 				],
 				"locked":false
 			}
 		],
-		"locked":null
+                "locked": false
+            }
+        ],
+        "locked": false
 	}
 }
