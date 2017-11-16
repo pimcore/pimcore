@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\ImportColumnConfig;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ImportResolver\Code;
 use Pimcore\Model\DataObject\ImportResolver\Filename;
+use Pimcore\Model\DataObject\ImportResolver\Fullpath;
 use Pimcore\Model\DataObject\ImportResolver\Id;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
@@ -201,6 +202,8 @@ class Service
                 return new Id($config);
             case 'filename':
                 return new Filename($config);
+            case 'fullpath':
+                return new Fullpath($config);
             case 'code':
                 return new Code($config);
         }

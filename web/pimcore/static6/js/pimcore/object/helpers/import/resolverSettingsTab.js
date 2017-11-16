@@ -21,10 +21,20 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
     },
 
     getMappingStore: function () {
+
+        var dataPreview = this.config.dataPreview;
+        if (dataPreview) {
+            dataPreview = dataPreview[0];
+        }
+
         var data = this.config;
         var sourceFields = [];
         for (i = 0; i < data.cols - 1; i++) {
-            sourceFields.push([i, t("field") + " " + i]);
+            var text = t("field") + " " + i;
+            if (dataPreview && dataPreview["field_" + i]) {
+                text = text  + " - " + dataPreview["field_" + i];
+            }
+            sourceFields.push([i, text]);
         }
 
         var filenameMappingStore = sourceFields;
@@ -62,7 +72,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
             }
         });
 
-
         var storedata = [["default", t("default")]];
         for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
             storedata.push([pimcore.settings.websiteLanguages[i],
@@ -92,6 +101,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         var resolverOptions = [];
         resolverOptions.push(["id", t("id")]);
         resolverOptions.push(["filename", t("filename")]);
+        resolverOptions.push(["fullpath", t("fullpath")]);
         resolverOptions.push(["code", t("code")]);
 
         var resolverStore = new Ext.data.ArrayStore({
@@ -153,6 +163,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 mode: "local",
                 triggerAction: "all",
                 fieldLabel: t("column"),
+                width: 600,
                 value: this.config.resolverSettings.column ? this.config.resolverSettings.column : 0
             });
 
@@ -165,6 +176,10 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 break;
             case "code":
                 this.addCodeOptions();
+            case "fullpath":
+                this.addFullpathOptions();
+                break;
+
         }
     },
 
@@ -227,6 +242,32 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
             ]
         );
     },
+
+    addFullpathOptions: function () {
+
+        this.detailedSettingsPanel.add([
+                {
+                    xtype: "checkbox",
+                    name: "createOnDemand",
+                    inputValue: true,
+                    value: this.config.resolverSettings.createOnDemand,
+                    fieldLabel: t("create_on_demand")
+                }
+            ]
+        );
+
+        this.detailedSettingsPanel.add([
+                {
+                    xtype: "checkbox",
+                    name: "createParents",
+                    inputValue: true,
+                    value: this.config.resolverSettings.createParents,
+                    fieldLabel: t("create_parents")
+                }
+            ]
+        );
+    },
+
 
     commitData: function () {
         var settings = this.settingsForm.getValues();

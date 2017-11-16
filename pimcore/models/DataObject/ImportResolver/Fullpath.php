@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 
-class Filename extends AbstractResolver
+class Fullpath extends AbstractResolver
 {
     /**
      * constructor.
@@ -31,8 +31,9 @@ class Filename extends AbstractResolver
     public function __construct($config)
     {
         parent::__construct($config);
-        $this->overwrite = $config->resolverSettings->overwrite;
-        $this->prefix = $config->resolverSettings->prefix;
+        $this->createOnDemand = $config->resolverSettings->createOnDemand;
+        $this->createParents = $config->resolverSettings->createParents;
+
     }
 
     /**
@@ -45,51 +46,37 @@ class Filename extends AbstractResolver
      */
     public function resolve($parentId, $rowData)
     {
-        $parent = AbstractObject::getById($parentId);
-        if (!$parent) {
-            throw new \Exception('parent not found');
+        $fullpath = $rowData[$this->getIdColumn()];
+        $object = DataObject::getByPath($fullpath);
+        if (!$object && $this->createOnDemand) {
+            $keyParts = explode('/', $fullpath);
+            $objectKey = $keyParts[count($keyParts) - 1];
+            array_pop($keyParts);
+
+            $parentPath = implode("/", $keyParts);
+
+            $parent = DataObject::getByPath($parentPath);
+            if (!$parent && $this->createOnDemand) {
+                $parent = DataObject\Service::createFolderByPath($parentPath);
+            }
+
+            $classId = $this->config->classId;
+            $classDefinition = ClassDefinition::getById($classId);
+            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+            $object = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+            $object->setKey($objectKey);
+            $object->setParent($parent);
+            $object->setPublished(1);
+
+        } else {
+            $parent = $object->getParent();
         }
+
         if (!$parent->isAllowed('create')) {
             throw new \Exception('not allowed to import into folder ' . $parent->getFullPath());
         }
 
-        if ($this->overwrite) {
-            $objectKey = $rowData[$this->getIdColumn()];
-        } else {
-            $objectKey = $this->prefix;
-        }
-        $classId = $this->config->classId;
-        $classDefinition = ClassDefinition::getById($classId);
-        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
-        $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-        $container = \Pimcore::getContainer();
-
-        if ($this->overwrite) {
-            $object = DataObject::getByPath($intendedPath);
-            if (!$object instanceof Concrete) {
-                //create new object
-                $object = $container->get('pimcore.model.factory')->build($className);
-                $object->setPublished(1);
-            } elseif ($object instanceof Concrete and !($object instanceof $className)) {
-                //delete the old object it is of a different class
-                $object->delete();
-                $object = $container->get('pimcore.model.factory')->build($className);
-                $object->setPublished(1);
-            } elseif ($object instanceof Folder) {
-                //delete the folder
-                $object->delete();
-                $object = $container->get('pimcore.model.factory')->build($className);
-                $object->setPublished(1);
-            }
-
-            if ($object) {
-                $object->setParent($parent);
-                $object->setKey($objectKey);
-            }
-        } else {
-            $this->getAlternativeObject($intendedPath, $parent, $className);
-        }
         if (!$object) {
             throw new \Exception('failed to resolve object key ' . $objectKey);
         }

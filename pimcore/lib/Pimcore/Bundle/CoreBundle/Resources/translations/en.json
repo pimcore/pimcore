@@ -1723,5 +1723,8 @@
   "import_is_done": "Import is done",
   "operator_published": "Operator Published",
   "operator_published_settings": "Operatore Published Settings",
-  "import_file_prefix": "Prefix for new files"
+  "import_file_prefix": "Prefix for new files",
+  "create_parents": "Create parents",
+  "fullpath": "Full Path",
+  "create_on_demand": "Create on demand"
 }
