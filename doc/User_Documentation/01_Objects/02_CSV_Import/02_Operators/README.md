@@ -18,7 +18,8 @@ TBD
 
 * [Operator Ignore](./01_Ignore.md)
 * [Operator Published](./02_Published.md)
-* [Operator Published](./03_LocaleSwitcher.md)
+* [Operator Locale Switcher](./03_LocaleSwitcher.md)
+* [Operator Objectbrick Setter](./04_BrickSetter.md)
 * ...
 
 
