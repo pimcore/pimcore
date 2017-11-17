@@ -131,12 +131,16 @@ class VisitorInfo implements \IteratorAggregate
         return $this->targetGroupAssignments;
     }
 
-    public function assignTargetGroup(TargetGroup $targetGroup)
+    public function assignTargetGroup(TargetGroup $targetGroup, int $count = 1)
     {
+        if ($count < 1) {
+            throw new \InvalidArgumentException('Count must be greater than 0');
+        }
+
         if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
-            $this->targetGroupAssignments[$targetGroup->getId()]->inc();
+            $this->targetGroupAssignments[$targetGroup->getId()]->inc($count);
         } else {
-            $this->targetGroupAssignments[$targetGroup->getId()] = new TargetGroupAssignment($targetGroup, 1);
+            $this->targetGroupAssignments[$targetGroup->getId()] = new TargetGroupAssignment($targetGroup, $count);
             $this->targetGroups = null;
         }
     }

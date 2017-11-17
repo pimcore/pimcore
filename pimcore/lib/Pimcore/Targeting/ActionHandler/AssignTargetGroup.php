@@ -68,14 +68,15 @@ class AssignTargetGroup implements ActionHandlerInterface
             return;
         }
 
+        $assignments = $this->storeAssignments($visitorInfo, $targetGroup);
+
         $threshold = (int)$targetGroup->getThreshold();
-        if ($threshold > 1) {
-            // only check storage entries if threshold was configured
-            $assign = $this->checkThresholdAssigment($visitorInfo, $targetGroup, $threshold);
+        if ($threshold > 1 && $assignments < $threshold) {
+            $assign = false;
         }
 
         if ($assign) {
-            $visitorInfo->assignTargetGroup($targetGroup);
+            $visitorInfo->assignTargetGroup($targetGroup, $assignments);
         }
     }
 
@@ -88,7 +89,7 @@ class AssignTargetGroup implements ActionHandlerInterface
         return $this->conditionMatcher->match($visitorInfo, $conditions);
     }
 
-    private function checkThresholdAssigment(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $threshold): bool
+    private function storeAssignments(VisitorInfo $visitorInfo, TargetGroup $targetGroup): int
     {
         $storageKey = 'assign_target_group';
 
@@ -101,9 +102,6 @@ class AssignTargetGroup implements ActionHandlerInterface
 
         $this->storage->set($visitorInfo, $storageKey, $data);
 
-        // check amount after assigning - this means that with
-        // a threshold of 3 the target group will be assigned on and
-        // after the third matching request
-        return $assignments >= $threshold;
+        return $assignments;
     }
 }
