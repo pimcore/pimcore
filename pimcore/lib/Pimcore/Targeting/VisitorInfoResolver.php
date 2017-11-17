@@ -25,12 +25,18 @@ use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class VisitorInfoResolver
 {
     const ATTRIBUTE_VISITOR_INFO = '_visitor_info';
+
+    /**
+     * @var TargetingStorageInterface
+     */
+    private $targetingStorage;
 
     /**
      * @var VisitorInfoStorageInterface
@@ -63,6 +69,7 @@ class VisitorInfoResolver
     private $targetingRules;
 
     public function __construct(
+        TargetingStorageInterface $targetingStorage,
         VisitorInfoStorageInterface $visitorInfoStorage,
         ConditionMatcherInterface $conditionMatcher,
         ActionHandlerInterface $actionHandler,
@@ -70,6 +77,7 @@ class VisitorInfoResolver
         EventDispatcherInterface $eventDispatcher
     )
     {
+        $this->targetingStorage   = $targetingStorage;
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->conditionMatcher   = $conditionMatcher;
         $this->actionHandler      = $actionHandler;
@@ -120,6 +128,16 @@ class VisitorInfoResolver
         $rules = $this->getTargetingRules();
 
         foreach ($rules as $rule) {
+            if ('session' === $rule->getScope()) {
+                if (!$this->ruleWasMatchedInSession($visitorInfo, $rule)) {
+                    continue;
+                }
+            } elseif ('user' === $rule->getScope()) {
+                if (!empty($visitorInfo->getVisitorId())) {
+                    continue;
+                }
+            }
+
             $this->matchTargetingRuleCondition($visitorInfo, $rule);
         }
     }
@@ -133,6 +151,11 @@ class VisitorInfoResolver
 
         if (!$match) {
             return;
+        }
+
+        // record the rule as matched for the current session
+        if ('session' === $rule->getScope()) {
+            $this->addMatchedSessionRule($visitorInfo, $rule);
         }
 
         // store info about matched rule
@@ -186,5 +209,24 @@ class VisitorInfoResolver
         $this->targetingRules = $list->load();
 
         return $this->targetingRules;
+    }
+
+    private function ruleWasMatchedInSession(VisitorInfo $visitorInfo, Rule $rule): bool
+    {
+        $matchedRules = $this->targetingStorage->get($visitorInfo, 'matched_session_rules', []);
+
+        if (in_array($rule->getId(), $matchedRules)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function addMatchedSessionRule(VisitorInfo $visitorInfo, Rule $rule)
+    {
+        $matchedRules   = $this->targetingStorage->get($visitorInfo, 'matched_session_rules', []);
+        $matchedRules[] = $rule->getId();
+
+        $this->targetingStorage->set($visitorInfo, 'matched_session_rules', $matchedRules);
     }
 }
