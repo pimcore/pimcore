@@ -1730,5 +1730,11 @@
   "get_by_resolver": "Get By Attribute",
   "direct": "Direct",
   "skip_empty_values": "Skip empty values",
-  "do_not_overwrite": "Do not overwrite"
+  "do_not_overwrite": "Do not overwrite",
+  "operator_objectbricksetter": "Operator Objectbrick Setter",
+  "never": "Never",
+  "if_not_empty": "If not empty",
+  "always": "Always",
+  "operator_objectbricksetter_settings": "Operator Objectbrick Setter"
+
 }

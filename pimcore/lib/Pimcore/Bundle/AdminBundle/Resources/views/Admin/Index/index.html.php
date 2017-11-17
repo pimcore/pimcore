@@ -496,6 +496,7 @@ $scripts = array(
     "pimcore/object/importcolumn/Abstract.js",
     "pimcore/object/importcolumn/operator/Ignore.js",
     "pimcore/object/importcolumn/operator/LocaleSwitcher.js",
+    "pimcore/object/importcolumn/operator/ObjectBrickSetter.js",
     "pimcore/object/importcolumn/operator/Published.js",
     "pimcore/object/importcolumn/value/DefaultValue.js",
     "pimcore/object/objectbrick.js",

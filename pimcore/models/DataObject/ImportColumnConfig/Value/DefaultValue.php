@@ -19,6 +19,8 @@ namespace Pimcore\Model\DataObject\ImportColumnConfig\Value;
 
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
+use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
+use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 class DefaultValue extends AbstractConfigElement
 {
@@ -41,13 +43,24 @@ class DefaultValue extends AbstractConfigElement
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
-        $class = $element->getClass();
-        $fd = $class->getFieldDefinition($this->attribute);
+
+
+        if ($target instanceof Concrete) {
+            $realAttribute = $this->attribute;
+            $container = $target->getClass();
+        } else if ($target instanceof AbstractData) {
+            $keyParts = explode("~", $this->attribute);
+            $brickType = $keyParts[0];
+            $realAttribute = $keyParts[1];
+            $container = Definition::getByKey($brickType);
+        }
+
+        $fd = $container->getFieldDefinition($realAttribute);
 
         if (!$fd) {
-            $lfDef = $class->getFieldDefinition('localizedfields');
+            $lfDef = $container->getFieldDefinition('localizedfields');
             if ($lfDef) {
-                $fd = $lfDef->getFieldDefinition($this->attribute);
+                $fd = $lfDef->getFieldDefinition($realAttribute);
             }
         }
 
@@ -61,10 +74,10 @@ class DefaultValue extends AbstractConfigElement
             if (!$this->mode != "direct") {
                 $data = $fd->getFromCsvImport($data);
             }
-            $setter = 'set' . ucfirst($this->attribute);
+            $setter = 'set' . ucfirst($realAttribute);
 
             if ($this->doNotOverwrite) {
-                $getter = 'get' . ucfirst($this->attribute);
+                $getter = 'get' . ucfirst($realAttribute);
                 $currentValue = $target->$getter();
                 if ($currentValue) {
                     return;

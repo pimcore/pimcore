@@ -273,7 +273,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
     },
 
     addGetByOptions: function () {
-
         this.detailedSettingsPanel.add([
                 {
                     xtype: "textfield",

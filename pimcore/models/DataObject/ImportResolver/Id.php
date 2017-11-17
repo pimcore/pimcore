@@ -20,7 +20,7 @@ namespace Pimcore\Model\DataObject\ImportResolver;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 
-class Id
+class Id extends AbstractResolver
 {
     /**
      * Id constructor.

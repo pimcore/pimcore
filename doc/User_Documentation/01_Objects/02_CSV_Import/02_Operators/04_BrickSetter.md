@@ -1,0 +1,16 @@
+# Operator Brick Setter
+
+Allows to set a brick field and create the brick itself if needed.
+
+* `Attribute`: the object attribute
+* `Brick Type`: the brick type
+
+Mode:
+* `Never`: Never create the brick. If there CSV data for that brick an error will occur.
+* `If not empty`: Create brick if CSV data is not empty
+* `Always`: Always create the brick
+
+![Setter Settings](../../../img/csvimport/operator_bricksetter.png)
+
+
+
