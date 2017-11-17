@@ -70,8 +70,20 @@ class DocumentTargetingHandler
         if (count($matchingTargetGroups) > 0) {
             $targetGroup = $matchingTargetGroups[0];
 
-            $this->targetGroupMapping[$document->getId()] = $targetGroup->getId();
+            $this->targetGroupMapping[$document->getId()] = $targetGroup;
             $document->setUsePersona($targetGroup->getId());
+        }
+    }
+
+    /**
+     * @param Document $document
+     *
+     * @return TargetGroup|null
+     */
+    public function getConfiguredTargetGroup(Document $document)
+    {
+        if (isset($this->targetGroupMapping[$document->getId()])) {
+            return $this->targetGroupMapping[$document->getId()];
         }
     }
 

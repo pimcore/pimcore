@@ -1,0 +1,52 @@
+{% extends 'WebProfilerBundle:Profiler:layout.html.twig' %}
+
+{% block toolbar %}
+    {% if collector.hasData %}
+        {% set icon %}
+            {# this is the content displayed as a panel in the toolbar #}
+            {{ include("PimcoreCoreBundle:Profiler:target.svg.twig") }}
+
+            {% if collector.documentTargetGroup is not null %}
+                <span class="sf-toolbar-value">{{ collector.documentTargetGroup.name }}</span>
+            {% endif %}
+        {% endset %}
+
+        {% set text %}
+            {# this is the content displayed when hovering the mouse over
+               the toolbar panel #}
+            <div class="sf-toolbar-info-piece">
+                <b>Rules</b>
+                <span>{{ collector.rules|length }}</span>
+            </div>
+
+            <div class="sf-toolbar-info-piece">
+                <b>Target Groups</b>
+                <span>{{ collector.targetGroups|length }}</span>
+            </div>
+
+            {% if collector.documentTargetGroup is not null %}
+                <div class="sf-toolbar-info-piece">
+                    <b>Target Group</b>
+                    <span>{{ collector.documentTargetGroup.name }}</span>
+                </div>
+            {% endif %}
+        {% endset %}
+    {% endif %}
+
+    {# the 'link' value set to 'false' means that this panel doesn't
+       show a section in the web profiler #}
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: false }) }}
+{% endblock %}
+
+{% block menu %}
+    <span class="label">
+        <span class="icon">
+            {{ include("PimcoreCoreBundle:Profiler:target.svg.twig") }}
+        </span>
+        <strong>Targeting</strong>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    <h2>Targeting</h2>
+{% endblock %}
