@@ -51,6 +51,13 @@ class VisitorInfo implements \IteratorAggregate
     private $targetGroupAssignments = [];
 
     /**
+     * Target group assignments sorted by count
+     *
+     * @var TargetGroupAssignment[]
+     */
+    private $sortedTargetGroupAssignments;
+
+    /**
      * Plain list of assigned target groups
      *
      * @var TargetGroup[]
@@ -124,56 +131,14 @@ class VisitorInfo implements \IteratorAggregate
     }
 
     /**
+     * Returns target group assignments ordered by assignment count
+     *
      * @return TargetGroupAssignment[]
      */
     public function getTargetGroupAssignments(): array
     {
-        return $this->targetGroupAssignments;
-    }
-
-    public function assignTargetGroup(TargetGroup $targetGroup, int $count = 1)
-    {
-        if ($count < 1) {
-            throw new \InvalidArgumentException('Count must be greater than 0');
-        }
-
-        if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
-            $this->targetGroupAssignments[$targetGroup->getId()]->inc($count);
-        } else {
-            $this->targetGroupAssignments[$targetGroup->getId()] = new TargetGroupAssignment($targetGroup, $count);
-            $this->targetGroups = null;
-        }
-    }
-
-    public function clearAssignedTargetGroup(TargetGroup $targetGroup)
-    {
-        if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
-            unset($this->targetGroupAssignments[$targetGroup->getId()]);
-            $this->targetGroups = null;
-        }
-    }
-
-    /**
-     * @return TargetGroup[]
-     */
-    public function getAssignedTargetGroups(): array
-    {
-        if (null === $this->targetGroups) {
-            $this->targetGroups = array_map(function(TargetGroupAssignment $assignment) {
-                return $assignment->getTargetGroup();
-            }, $this->targetGroupAssignments);
-        }
-
-        return $this->targetGroups;
-    }
-
-    /**
-     * @return null|TargetGroup
-     */
-    public function getPrimaryTargetGroup()
-    {
-        if (0 === count($this->targetGroupAssignments)) {
-            return null;
+        if (null !== $this->sortedTargetGroupAssignments) {
+            return $this->sortedTargetGroupAssignments;
         }
 
         /** @var TargetGroupAssignment[] $assignments */
@@ -191,7 +156,51 @@ class VisitorInfo implements \IteratorAggregate
             return $aCount < $bCount ? 1 : -1;
         });
 
-        return $assignments[0]->getTargetGroup();
+        $this->sortedTargetGroupAssignments = $assignments;
+
+        return $this->sortedTargetGroupAssignments;
+    }
+
+    public function assignTargetGroup(TargetGroup $targetGroup, int $count = 1)
+    {
+        if ($count < 1) {
+            throw new \InvalidArgumentException('Count must be greater than 0');
+        }
+
+        if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
+            $this->targetGroupAssignments[$targetGroup->getId()]->inc($count);
+        } else {
+            $this->targetGroupAssignments[$targetGroup->getId()] = new TargetGroupAssignment($targetGroup, $count);
+        }
+
+        $this->targetGroups = null;
+        $this->sortedTargetGroupAssignments = null;
+    }
+
+    public function clearAssignedTargetGroup(TargetGroup $targetGroup)
+    {
+        if (isset($this->targetGroupAssignments[$targetGroup->getId()])) {
+            unset($this->targetGroupAssignments[$targetGroup->getId()]);
+
+            $this->targetGroups = null;
+            $this->sortedTargetGroupAssignments = null;
+        }
+    }
+
+    /**
+     * Returns assigned target groups ordered by assignment count
+     *
+     * @return TargetGroup[]
+     */
+    public function getAssignedTargetGroups(): array
+    {
+        if (null === $this->targetGroups) {
+            $this->targetGroups = array_map(function(TargetGroupAssignment $assignment) {
+                return $assignment->getTargetGroup();
+            }, $this->getTargetGroupAssignments());
+        }
+
+        return $this->targetGroups;
     }
 
     public function hasResponse(): bool
