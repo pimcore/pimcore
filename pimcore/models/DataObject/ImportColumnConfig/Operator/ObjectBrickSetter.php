@@ -43,25 +43,24 @@ class ObjectBrickSetter extends AbstractOperator
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
         $container = \Pimcore::getContainer();
-        $brickContainerGetter = "get" . ucfirst($this->attr);
+        $brickContainerGetter = 'get' . ucfirst($this->attr);
         $brickContainer = $target->$brickContainerGetter();
 
-        $brickGetter = "get" . ucfirst($this->brickType);
+        $brickGetter = 'get' . ucfirst($this->brickType);
         $brick = $brickContainer->$brickGetter();
 
         $colData = $rowData[$colIndex];
 
         if (!$brick) {
-            if ($this->mode == "ifNotEmpty" && $colData || $this->mode == "always") {
-
-                $brickClass = "Pimcore\\Model\\DataObject\\Objectbrick\\Data\\" . ucfirst($this->brickType);
+            if ($this->mode == 'ifNotEmpty' && $colData || $this->mode == 'always') {
+                $brickClass = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($this->brickType);
                 $factory = $container->get('pimcore.model.factory');
                 $brick = $factory->build($brickClass, [$element]);
             }
         }
 
         if (!$brick && $colData) {
-            throw new \Exception("brick does not exist");
+            throw new \Exception('brick does not exist');
         }
 
         $childs = $this->getChilds();
@@ -75,10 +74,10 @@ class ObjectBrickSetter extends AbstractOperator
             }
         }
 
-        $bricksetter = "set" . ucfirst($this->brickType);
+        $bricksetter = 'set' . ucfirst($this->brickType);
         $brickContainer->$bricksetter($brick);
 
-        $brickContainerSetter = "set" . ucfirst($this->attr);
+        $brickContainerSetter = 'set' . ucfirst($this->attr);
         $target->$brickContainerSetter($brickContainer);
     }
 }

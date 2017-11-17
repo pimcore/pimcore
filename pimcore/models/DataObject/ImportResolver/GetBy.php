@@ -69,8 +69,6 @@ class GetBy extends AbstractResolver
             return $object;
         }
 
-
-        throw new \Exception('failed to resolve object where ' . $this->attribute . " = " . $cellData);
-
+        throw new \Exception('failed to resolve object where ' . $this->attribute . ' = ' . $cellData);
     }
 }

@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
 use DeepCopy\DeepCopy;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\ImportColumnConfig\Operator\PHPCode;
 use Pimcore\Model\DataObject\ImportResolver\Code;
 use Pimcore\Model\DataObject\ImportResolver\Filename;
 use Pimcore\Model\DataObject\ImportResolver\Fullpath;
@@ -71,9 +72,9 @@ class Service
 
                     if (class_exists($name)) {
                         $operatorInstance = new $name($configElement, $context);
-//                        if ($operatorInstance instanceof PHPCode) {
-//                            $operatorInstance = $operatorInstance->getRealInstance();
-//                        }
+                        if ($operatorInstance instanceof PHPCode) {
+                            $operatorInstance = $operatorInstance->getRealInstance();
+                        }
                         if ($operatorInstance) {
                             $config[] = $operatorInstance;
                         }
@@ -198,13 +199,13 @@ class Service
 
                             $newChild = new \stdClass();
                             $newChild->attribute = $child['attribute'];
-//                            $newChild->type = "value";
 
-                            $newChild->dataType = $child['dataType'];;
+
+                            $newChild->dataType = $child['dataType'];
                             $newChild->label = $child['label'];
                             $newChild->class = 'DefaultValue';
 
-                            $importColumn->attributes->childs = [$newChild];
+                            $lfImportColumn->attributes->childs = [$newChild];
                             $importColumns[] = $lfImportColumn;
                         }
 

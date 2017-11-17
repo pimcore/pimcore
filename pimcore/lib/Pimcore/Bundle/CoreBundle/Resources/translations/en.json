@@ -1696,7 +1696,7 @@
   "import_configuration": "Import Configuration",
   "col_idx": "Col Idx",
   "col_label" : "Sample",
-  "operator_ignore_setting": "Operatore Ignore Settings",
+  "operator_ignore_settings": "Operatore Ignore Settings",
   "save_configuration": "Save Configuration",
   "column": "Column",
   "resolver_strategy": "Resolver Strategy",

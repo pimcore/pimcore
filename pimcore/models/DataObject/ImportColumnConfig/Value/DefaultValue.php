@@ -24,7 +24,6 @@ use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 class DefaultValue extends AbstractConfigElement
 {
-
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
@@ -43,13 +42,11 @@ class DefaultValue extends AbstractConfigElement
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
-
-
         if ($target instanceof Concrete) {
             $realAttribute = $this->attribute;
             $container = $target->getClass();
-        } else if ($target instanceof AbstractData) {
-            $keyParts = explode("~", $this->attribute);
+        } elseif ($target instanceof AbstractData) {
+            $keyParts = explode('~', $this->attribute);
             $brickType = $keyParts[0];
             $realAttribute = $keyParts[1];
             $container = Definition::getByKey($brickType);
@@ -71,7 +68,7 @@ class DefaultValue extends AbstractConfigElement
                 return;
             }
 
-            if ($this->mode != "direct") {
+            if ($this->mode != 'direct') {
                 $data = $fd->getFromCsvImport($data);
             }
             $setter = 'set' . ucfirst($realAttribute);
@@ -86,6 +83,5 @@ class DefaultValue extends AbstractConfigElement
 
             $target->$setter($data);
         }
-
     }
 }

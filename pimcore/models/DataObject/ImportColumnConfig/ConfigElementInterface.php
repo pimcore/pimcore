@@ -20,10 +20,10 @@ namespace Pimcore\Model\DataObject\ImportColumnConfig;
 interface ConfigElementInterface
 {
     /**
-     * @param $element
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
+     * @param $element the original object
+     * @param $target the current target element which initially is the same as the object. every operator can change the target depending on its needs
+     * @param $rowData the csv record
+     * @param $colIndex the column index (0 is the first column)
      *
      * @return mixed
      */
