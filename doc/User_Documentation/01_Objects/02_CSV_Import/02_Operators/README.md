@@ -17,7 +17,7 @@ TBD
 ## Overview 
 
 * [Operator Ignore](./01_Ignore.md)
-* [Operator Published](./02_Publish.md)
+* [Operator Published](./02_Published.md)
 * [Operator Published](./03_LocaleSwitcher.md)
 * ...
 
