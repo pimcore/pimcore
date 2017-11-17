@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting;
 
+use Pimcore\Targeting\Condition\ConditionInterface;
+use Pimcore\Targeting\Condition\VariableConditionInterface;
 use Pimcore\Targeting\ConditionMatcher\ExpressionBuilder;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -38,6 +40,11 @@ class ConditionMatcher implements ConditionMatcherInterface
      */
     private $expressionLanguage;
 
+    /**
+     * @var array
+     */
+    private $collectedVariables = [];
+
     public function __construct(
         ConditionFactoryInterface $conditionFactory,
         DataLoaderInterface $dataLoader,
@@ -52,9 +59,10 @@ class ConditionMatcher implements ConditionMatcherInterface
     /**
      * @inheritdoc
      */
-    public function match(VisitorInfo $visitorInfo, array $conditions): bool
+    public function match(VisitorInfo $visitorInfo, array $conditions, bool $collectVariables = false): bool
     {
-        $conditions = array_values($conditions);
+        // reset internal state
+        $this->collectedVariables = [];
 
         $count = count($conditions);
         if (0 === $count) {
@@ -62,13 +70,13 @@ class ConditionMatcher implements ConditionMatcherInterface
             return true;
         } elseif (1 === $count) {
             // no need to build up expression if there's only one condition
-            return $this->matchCondition($visitorInfo, $conditions[0]);
+            return $this->matchCondition($visitorInfo, $conditions[0], $collectVariables);
         }
 
         $expressionBuilder = new ExpressionBuilder();
 
         foreach ($conditions as $conditionConfig) {
-            $conditionResult = $this->matchCondition($visitorInfo, $conditionConfig);
+            $conditionResult = $this->matchCondition($visitorInfo, $conditionConfig, $collectVariables);
 
             $expressionBuilder->addCondition($conditionConfig, $conditionResult);
         }
@@ -80,22 +88,48 @@ class ConditionMatcher implements ConditionMatcherInterface
         return (bool)$result;
     }
 
-    private function matchCondition(VisitorInfo $visitorInfo, array $config): bool
+    /**
+     * @inheritDoc
+     */
+    public function getCollectedVariables(): array
+    {
+        return $this->collectedVariables;
+    }
+
+    private function matchCondition(VisitorInfo $visitorInfo, array $config, bool $collectVariables = false): bool
     {
         $condition = $this->conditionFactory->build($config);
 
         // check prerequisites - e.g. a condition without a value
         // (= all values match) does not need to fetch provider data
         // as location or browser
-        // TODO does unconfigured resolve to true or false?
         if (!$condition->canMatch()) {
-            return true;
+            return false;
         }
 
         if ($condition instanceof DataProviderDependentInterface) {
             $this->dataLoader->loadDataFromProviders($visitorInfo, $condition->getDataProviderKeys());
         }
 
-        return $condition->match($visitorInfo);
+        $result = $condition->match($visitorInfo);
+
+        if ($collectVariables) {
+            $this->collectConditionVariables($visitorInfo, $config, $condition);
+        }
+
+        return $result;
+    }
+
+    private function collectConditionVariables(VisitorInfo $visitorInfo, array $config, ConditionInterface $condition)
+    {
+        $data = [
+            'type' => $config['type']
+        ];
+
+        if ($condition instanceof VariableConditionInterface) {
+            $data['data'] = $condition->getVariables($visitorInfo);
+        }
+
+        $this->collectedVariables[] = $data;
     }
 }

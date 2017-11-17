@@ -112,7 +112,12 @@ pimcore.settings.targeting.rules.item = Class.create({
                 mode: "local",
                 triggerAction: "all",
                 editable: false,
-                store: [["user", t("user")],["session", t("session")], ["hit", t("hit")]]
+                store: [
+                    ["user", t("user")],
+                    ["session", t("session")],
+                    ["session_with_variables", t("session_with_variables")],
+                    ["hit", t("hit")]
+                ]
             }, {
                 name: "active",
                 fieldLabel: t("active"),

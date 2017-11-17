@@ -128,11 +128,11 @@ class VisitorInfoResolver
         $rules = $this->getTargetingRules();
 
         foreach ($rules as $rule) {
-            if ('session' === $rule->getScope()) {
+            if (Rule::SCOPE_SESSION === $rule->getScope()) {
                 if (!$this->ruleWasMatchedInSession($visitorInfo, $rule)) {
                     continue;
                 }
-            } elseif ('user' === $rule->getScope()) {
+            } elseif (Rule::SCOPE_USER === $rule->getScope()) {
                 if (!empty($visitorInfo->getVisitorId())) {
                     continue;
                 }
@@ -144,17 +144,29 @@ class VisitorInfoResolver
 
     private function matchTargetingRuleCondition(VisitorInfo $visitorInfo, Rule $rule)
     {
+        $scopeWithVariables = Rule::SCOPE_SESSION_WITH_VARIABLES === $rule->getScope();
+
         $match = $this->conditionMatcher->match(
             $visitorInfo,
-            $rule->getConditions()
+            $rule->getConditions(),
+            $scopeWithVariables
         );
 
         if (!$match) {
             return;
         }
 
+        if ($scopeWithVariables) {
+            $collectedVariables = $this->conditionMatcher->getCollectedVariables();
+
+            // match only once with the same variables
+            if ($this->ruleWasMatchedInSessionWithVariables($visitorInfo, $rule, $collectedVariables)) {
+                return;
+            }
+        }
+
         // record the rule as matched for the current session
-        if ('session' === $rule->getScope()) {
+        if (Rule::SCOPE_SESSION === $rule->getScope()) {
             $this->addMatchedSessionRule($visitorInfo, $rule);
         }
 
@@ -228,5 +240,23 @@ class VisitorInfoResolver
         $matchedRules[] = $rule->getId();
 
         $this->targetingStorage->set($visitorInfo, 'matched_session_rules', $matchedRules);
+    }
+
+    private function ruleWasMatchedInSessionWithVariables(VisitorInfo $visitorInfo, Rule $rule, array $variables): bool
+    {
+        $hash = sha1(serialize($variables));
+
+        $storedVariables = $this->targetingStorage->get($visitorInfo, 'rule_condition_variables', []);
+
+        // hash was already matched
+        if (isset($storedVariables[$rule->getId()]) && $storedVariables[$rule->getId()] === $hash) {
+            return true;
+        }
+
+        // store hash to storage
+        $storedVariables[$rule->getId()] = $hash;
+        $this->targetingStorage->set($visitorInfo, 'rule_condition_variables', $storedVariables);
+
+        return false;
     }
 }

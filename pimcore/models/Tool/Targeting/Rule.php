@@ -25,6 +25,11 @@ use Pimcore\Model\Tool;
  */
 class Rule extends Model\AbstractModel
 {
+    const SCOPE_USER = 'user';
+    const SCOPE_HIT = 'hit';
+    const SCOPE_SESSION = 'session';
+    const SCOPE_SESSION_WITH_VARIABLES = 'session_with_variables';
+
     /**
      * @var int
      */
