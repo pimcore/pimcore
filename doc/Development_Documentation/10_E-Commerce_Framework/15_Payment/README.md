@@ -115,6 +115,20 @@ pimcore_ecommerce_config:
                         shop_id: shop_id
                         secret: secret
                         password: password
+            ogone:
+                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\OGone
+                profile: sandbox
+                profiles:
+                    sandbox:
+                        secret: D343DDFD3434
+                        pspid: MyTestAccount
+                        mode: sandbox                        
+#                       encryptionType: SHA256 or SHA512 (optional)                                              
+                    live:
+                        secret: D343DDFD3434
+                        pspid: MyLiveAccount
+                        mode: live                        
+#                       encryptionType: SHA256 or SHA512 (optional)                                                             
 ```
 
 The payment provider name will be referenced from the checkout manager configuration and can be used to fetch a specific
@@ -128,6 +142,7 @@ Currently following Payment Providers are integrated into the framework:
 - [Datatrans](./03_Datatrans.md)
 - [PayPal](./04_PayPal.md)
 - [Klarna](./05_Klarna.md)
+- [OGone](./06_OGone.md)
 
 
 ## Further Payment Aspects

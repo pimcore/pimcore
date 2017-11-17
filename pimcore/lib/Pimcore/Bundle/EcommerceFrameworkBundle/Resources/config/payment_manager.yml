@@ -26,6 +26,11 @@ services:
             $options: []
             $formFactory: '@form.factory'
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\OGone:
+        arguments:
+            $options: []
+            $formFactory: '@form.factory'
+
     Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless:
         arguments:
             $options: []

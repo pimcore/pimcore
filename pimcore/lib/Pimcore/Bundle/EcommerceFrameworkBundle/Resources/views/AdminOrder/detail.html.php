@@ -243,6 +243,7 @@ $regionArray = $locale->getDisplayRegions();
                                     $provider[] = 'qpay';
                                     $provider[] = 'datatrans';
                                     $provider[] = 'paypal';
+                                    $provider[] = 'ogone';
 
                                     $amount = null;
                                     foreach($provider as $p)
