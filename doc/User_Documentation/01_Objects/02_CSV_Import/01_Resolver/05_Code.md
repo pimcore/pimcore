@@ -2,7 +2,7 @@
 
 Resolves the objects via your custom piece of code.
 
-![Settings](../../../img/resolver/code_resolver.png)
+![Settings](../../../img/csvimport/code_resolver.png)
 
 Sample implementation:
 

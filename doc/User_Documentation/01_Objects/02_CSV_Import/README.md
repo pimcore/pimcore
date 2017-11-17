@@ -12,6 +12,9 @@ The CSV preview grid shows the first 20 CSV rows. Click the `Search` icon to ver
 
 The column configuration how CSV columns are mapped to object properties.
 
+Operators can be used to change the way how the data is processed. See [Operator Overview](./02_Operators/README.md)
+
+
 ## Resolver Settings
 
 Objects can be looked up in different ways. Your CSV export might have a `filename` column so you decide to match via the filename.

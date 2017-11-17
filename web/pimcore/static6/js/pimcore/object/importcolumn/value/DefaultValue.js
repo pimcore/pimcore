@@ -74,10 +74,42 @@ pimcore.object.importcolumn.value.defaultvalue = Class.create(pimcore.object.imp
             fieldLabel: t('attribute')
         });
 
+        var mode = this.node.data.configAttributes.mode ? this.node.data.configAttributes.mode : "default";
+
+        this.modeField = new Ext.form.RadioGroup({
+            xtype: 'radiogroup',
+            fieldLabel: t('mode'),
+            border: true,
+            columns: 1,
+            vertical: true,
+            items: [
+                {boxLabel: t('default'), name: 'mode', inputValue: 'default', checked: mode == "default" },
+                {boxLabel: t('direct'), name: 'mode', inputValue: 'direct', checked: mode == "direct"},
+            ]
+        });
+
+        this.doNotOverwrite = new Ext.form.field.Checkbox(
+            {
+                fieldLabel: t("do_not_overwrite"),
+                inputValue: true,
+                name: "doNotOverwrite",
+                value: this.node.data.configAttributes.doNotOverwrite
+            }
+        );
+
+        this.skipEmptyValues = new Ext.form.field.Checkbox(
+            {
+                fieldLabel: t("skip_empty_values"),
+                inputValue: true,
+                name: "skipEmptyValues",
+                value: this.node.data.configAttributes.skipEmptyValues
+            }
+        );
+
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textField, this.attributeField],
+            items: [this.textField, this.attributeField, this.modeField, this.doNotOverwrite, this.skipEmptyValues],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -89,7 +121,7 @@ pimcore.object.importcolumn.value.defaultvalue = Class.create(pimcore.object.imp
 
         this.window = new Ext.Window({
             width: 400,
-            height: 300,
+            height: 400,
             modal: true,
             title: t('settings'),
             layout: "fit",
@@ -102,6 +134,10 @@ pimcore.object.importcolumn.value.defaultvalue = Class.create(pimcore.object.imp
 
     commitData: function () {
         this.node.data.configAttributes.label = this.textField.getValue();
+        this.node.data.configAttributes.mode = this.modeField.getValue().mode;
+        this.node.data.configAttributes.doNotOverwrite = this.doNotOverwrite.getValue();
+        this.node.data.configAttributes.skipEmptyValues = this.skipEmptyValues.getValue();
+
         var nodeLabel = this.textField.getValue();
         this.node.set('text', nodeLabel);
 

@@ -22,6 +22,15 @@ use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 class DefaultValue extends AbstractConfigElement
 {
+
+    public function __construct($config, $context = null)
+    {
+        parent::__construct($config, $context);
+        $this->mode = $config->mode;
+        $this->doNotOverwrite = $config->doNotOverwrite;
+        $this->skipEmptyValues = $config->skipEmptyValues;
+    }
+
     /**
      * @param $element Concrete
      * @param $target
@@ -43,13 +52,27 @@ class DefaultValue extends AbstractConfigElement
         }
 
         if ($fd) {
-            // TODO switch between direct and fromCsvImport
             $data = $rowData[$colIndex];
-            $data = $fd->getFromCsvImport($data);
+
+            if ($this->skipEmptyValues && !$data) {
+                return;
+            }
+
+            if (!$this->mode != "direct") {
+                $data = $fd->getFromCsvImport($data);
+            }
             $setter = 'set' . ucfirst($this->attribute);
+
+            if ($this->doNotOverwrite) {
+                $getter = 'get' . ucfirst($this->attribute);
+                $currentValue = $target->$getter();
+                if ($currentValue) {
+                    return;
+                }
+            }
+
             $target->$setter($data);
         }
 
-        return null;
     }
 }

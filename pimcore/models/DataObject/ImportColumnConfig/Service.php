@@ -155,6 +155,8 @@ class Service
 
         $importConfigData->classId = $exportConfigData->classId;
 
+        $forbiddenKeys = ['id', 'fullpath', 'filename', 'published', 'creationDate', 'modificationDate'];
+
         $importConfigData->selectedGridColumns = [];
         if (is_array($exportConfigData['columns'])) {
             foreach ($exportConfigData['columns'] as $exportColumn) {
@@ -166,10 +168,8 @@ class Service
                 $importColumn->attributes->class = 'Ignore';
 
                 $fieldConfig = $exportColumn['fieldConfig'];
-                if ($fieldConfig['isOperator']
-                    || (
-                        isset($fieldConfig['key'])
-                            && ($fieldConfig['key'] == 'fullpath' || strpos($fieldConfig['key'], '~') !== false))) {
+                if ($fieldConfig['isOperator'] || (isset($fieldConfig['key'])
+                            && (in_array($fieldConfig['key'], $forbiddenKeys) || strpos($fieldConfig['key'], '~') !== false))) {
                     $importColumn->attributes->type = 'operator';
                     $importColumn->attributes->label = $fieldConfig['attributes']['label'];
                 } else {

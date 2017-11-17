@@ -478,8 +478,10 @@ pimcore.object.helpers.import.configDialog = Class.create({
                     text: t("OK"),
                     iconCls: "pimcore_icon_apply",
                     handler: function (configsCombo) {
-                        this.getFileInfo(true, configsCombo.getValue());
-                        this.loadWindow.close();
+                        if (configsCombo.getValue()) {
+                            this.getFileInfo(true, configsCombo.getValue());
+                            this.loadWindow.close();
+                        }
                     }.bind(this, configsCombo)
                 }
             ]
@@ -625,8 +627,10 @@ pimcore.object.helpers.import.configDialog = Class.create({
                     text: t("OK"),
                     iconCls: "pimcore_icon_apply",
                     handler: function (configsCombo) {
-                        this.doImportConfig(configsCombo.getValue());
-                        this.importWindow.close();
+                        if (configsCombo.getValue()) {
+                            this.doImportConfig(configsCombo.getValue());
+                            this.importWindow.close();
+                        }
                     }.bind(this, configsCombo)
                 }
             ]

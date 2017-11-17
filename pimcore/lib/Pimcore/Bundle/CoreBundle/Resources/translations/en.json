@@ -1727,5 +1727,8 @@
   "create_parents": "Create parents",
   "fullpath": "Full Path",
   "create_on_demand": "Create on demand",
-  "get_by_resolver": "Get By Attribute"
+  "get_by_resolver": "Get By Attribute",
+  "direct": "Direct",
+  "skip_empty_values": "Skip empty values",
+  "do_not_overwrite": "Do not overwrite"
 }

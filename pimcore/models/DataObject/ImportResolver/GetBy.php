@@ -56,6 +56,7 @@ class GetBy extends AbstractResolver
         $list->setCondition($this->attribute . ' = ' . $list->quote($cellData));
         $list->setLimit(1);
         $list = $list->load();
+
         if ($list) {
             $object = $list[0];
             if ($object) {
@@ -68,6 +69,8 @@ class GetBy extends AbstractResolver
             return $object;
         }
 
-        return null;
+
+        throw new \Exception('failed to resolve object where ' . $this->attribute . " = " . $cellData);
+
     }
 }

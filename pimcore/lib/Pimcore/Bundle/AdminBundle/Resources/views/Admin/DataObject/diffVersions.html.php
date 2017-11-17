@@ -54,6 +54,15 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <?php } ?>
         <td><?= json_encode($this->object2->getPublished()); ?></td>
     </tr>
+    <tr class="system">
+        <td>Id</td>
+        <td>o_id</td>
+        <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+            <td><?= json_encode($this->object1->getId()); ?></td>
+        <?php } ?>
+        <td><?= json_encode($this->object2->getId()); ?></td>
+    </tr>
+
 
     <tr class="">
         <td colspan="3">&nbsp;</td>
