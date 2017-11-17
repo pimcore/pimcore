@@ -1188,6 +1188,7 @@ class DataObjectHelperController extends AdminController
             $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
             $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
             $object1 = $factory->build($className);
+            $paramsBag['isNew'] = true;
         }
 
         $deepCopy = new \DeepCopy\DeepCopy();
@@ -1372,7 +1373,7 @@ class DataObjectHelperController extends AdminController
 
         $availableConfigs = $this->getImportConfigs($this->getUser(), $classId);
 
-        $dialect->lineterminator =  '0x' . bin2hex($dialect->lineterminator);
+        $dialect->lineterminator =  bin2hex($dialect->lineterminator);
 
         return $this->json([
             'success' => $success,

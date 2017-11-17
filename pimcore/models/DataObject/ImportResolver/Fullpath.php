@@ -18,10 +18,7 @@
 namespace Pimcore\Model\DataObject\ImportResolver;
 
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Folder;
 
 class Fullpath extends AbstractResolver
 {
@@ -33,7 +30,6 @@ class Fullpath extends AbstractResolver
         parent::__construct($config);
         $this->createOnDemand = $config->resolverSettings->createOnDemand;
         $this->createParents = $config->resolverSettings->createParents;
-
     }
 
     /**
@@ -53,7 +49,7 @@ class Fullpath extends AbstractResolver
             $objectKey = $keyParts[count($keyParts) - 1];
             array_pop($keyParts);
 
-            $parentPath = implode("/", $keyParts);
+            $parentPath = implode('/', $keyParts);
 
             $parent = DataObject::getByPath($parentPath);
             if (!$parent && $this->createOnDemand) {
@@ -67,7 +63,6 @@ class Fullpath extends AbstractResolver
             $object->setKey($objectKey);
             $object->setParent($parent);
             $object->setPublished(1);
-
         } else {
             $parent = $object->getParent();
         }
@@ -76,35 +71,10 @@ class Fullpath extends AbstractResolver
             throw new \Exception('not allowed to import into folder ' . $parent->getFullPath());
         }
 
-
         if (!$object) {
             throw new \Exception('failed to resolve object key ' . $objectKey);
         }
 
         return $object;
-    }
-
-    /**
-     * @param $intendedPath
-     * @param $parent
-     * @param $className
-     *
-     * @return string
-     */
-    public function getAlternativeObject($intendedPath, $parent, $className)
-    {
-        $counter = 1;
-        $objectKey = $intendedPath;
-        while (DataObject::getByPath($intendedPath) != null) {
-            $objectKey = $this->prefix . $counter;
-            $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-            $counter++;
-        }
-        $container = \Pimcore::getContainer();
-        $object = $container->get('pimcore.model.factory')->build($className);
-        $object->setParent($parent);
-        $object->setKey($objectKey);
-
-        return $objectKey;
     }
 }

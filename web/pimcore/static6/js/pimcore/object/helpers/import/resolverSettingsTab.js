@@ -103,6 +103,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         resolverOptions.push(["filename", t("filename")]);
         resolverOptions.push(["fullpath", t("fullpath")]);
         resolverOptions.push(["code", t("code")]);
+        resolverOptions.push(["getBy", t("get_by_resolver")]);
 
         var resolverStore = new Ext.data.ArrayStore({
             data: resolverOptions,
@@ -178,6 +179,9 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                 this.addCodeOptions();
             case "fullpath":
                 this.addFullpathOptions();
+                break;
+            case "getBy":
+                this.addGetByOptions();
                 break;
 
         }
@@ -263,6 +267,19 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     inputValue: true,
                     value: this.config.resolverSettings.createParents,
                     fieldLabel: t("create_parents")
+                }
+            ]
+        );
+    },
+
+    addGetByOptions: function () {
+
+        this.detailedSettingsPanel.add([
+                {
+                    xtype: "textfield",
+                    name: "attribute",
+                    fieldLabel: t("attribute"),
+                    value: this.config.resolverSettings.attribute
                 }
             ]
         );

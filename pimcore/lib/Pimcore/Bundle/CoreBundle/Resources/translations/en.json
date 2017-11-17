@@ -1726,5 +1726,6 @@
   "import_file_prefix": "Prefix for new files",
   "create_parents": "Create parents",
   "fullpath": "Full Path",
-  "create_on_demand": "Create on demand"
+  "create_on_demand": "Create on demand",
+  "get_by_resolver": "Get By Attribute"
 }

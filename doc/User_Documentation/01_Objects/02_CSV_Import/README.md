@@ -4,6 +4,10 @@
 
 TODO
 
+## Preview
+
+The CSV preview grid shows the first 20 CSV rows. Click the `Search` icon to verify your settings and to see a preview of the changes that would happen.
+
 ## Column Configuration
 
 The column configuration how CSV columns are mapped to object properties.

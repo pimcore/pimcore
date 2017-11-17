@@ -21,6 +21,7 @@ use Pimcore\Db;
 use Pimcore\Model\DataObject\ImportResolver\Code;
 use Pimcore\Model\DataObject\ImportResolver\Filename;
 use Pimcore\Model\DataObject\ImportResolver\Fullpath;
+use Pimcore\Model\DataObject\ImportResolver\GetBy;
 use Pimcore\Model\DataObject\ImportResolver\Id;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
@@ -206,6 +207,8 @@ class Service
                 return new Fullpath($config);
             case 'code':
                 return new Code($config);
+            case 'getBy':
+                return new GetBy($config);
         }
         throw new \Exception('unknown/unsupported resolver implementation');
     }
