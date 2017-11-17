@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
+use DeepCopy\DeepCopy;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ImportResolver\Code;
 use Pimcore\Model\DataObject\ImportResolver\Filename;
@@ -25,9 +26,12 @@ use Pimcore\Model\DataObject\ImportResolver\GetBy;
 use Pimcore\Model\DataObject\ImportResolver\Id;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
+use Pimcore\Tool;
 
 class Service
 {
+    const FORBIDDEN_KEYS = ['id', 'fullpath', 'filename', 'published', 'creationDate', 'modificationDate'];
+
     /**
      * @param $outputDataConfig
      *
@@ -102,14 +106,14 @@ class Service
         $userIds = implode(',', $userIds);
 
         $query = 'select distinct c.id from importconfigs c, importconfig_shares s where '
-            .  ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId;
+            . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId;
         $ids = $db->fetchCol($query);
         if ($ids) {
             $ids = implode(',', $ids);
             $configListing = new ImportConfig\Listing();
             $configListing->setOrderKey('name');
             $configListing->setOrder('ASC');
-            $configListing->setCondition('id in (' . $ids .')');
+            $configListing->setCondition('id in (' . $ids . ')');
             $configListing = $configListing->load();
         }
 
@@ -130,19 +134,6 @@ class Service
         $configListing = $configListing->load();
 
         return $configListing;
-//
-//        $result = [];
-//        if ($configListing) {
-//            /** @var $item ImportConfig */
-//            foreach ($configListing as $item) {
-//                $result[] = [
-//                    'id' => $item->getId(),
-//                    'name' => $item->getName()
-//                ];
-//            }
-//        }
-//
-//        return $result;
     }
 
     /**
@@ -155,38 +146,82 @@ class Service
 
         $importConfigData->classId = $exportConfigData->classId;
 
-        $forbiddenKeys = ['id', 'fullpath', 'filename', 'published', 'creationDate', 'modificationDate'];
-
         $importConfigData->selectedGridColumns = [];
         if (is_array($exportConfigData['columns'])) {
             foreach ($exportConfigData['columns'] as $exportColumn) {
-                $importColumn = new \stdClass();
-
-                $importColumn->isOperator = true;
-                $importColumn->attributes = new \stdClass();
-
-                $importColumn->attributes->class = 'Ignore';
-
-                $fieldConfig = $exportColumn['fieldConfig'];
-                if ($fieldConfig['isOperator'] || (isset($fieldConfig['key'])
-                            && (in_array($fieldConfig['key'], $forbiddenKeys) || strpos($fieldConfig['key'], '~') !== false))) {
-                    $importColumn->attributes->type = 'operator';
-                    $importColumn->attributes->label = $fieldConfig['attributes']['label'];
+                $importColumn = $this->getImportColumn($exportColumn);
+                if (is_array($importColumn)) {
+                    foreach ($importColumn as $item) {
+                        $importConfigData->selectedGridColumns[] = $item;
+                    }
                 } else {
-                    $importColumn->attributes->type = 'value';
-                    $importColumn->attributes->label = $fieldConfig['label'];
-                    $importColumn->attributes->class = 'DefaultValue';
-                    $importColumn->attributes->attribute = $fieldConfig['key'];
-                    $importColumn->attributes->dataType = $fieldConfig['type'];
+                    $importConfigData->selectedGridColumns[] = $importColumn;
                 }
-
-                $importColumn->attributes->childs = [];
-
-                $importConfigData->selectedGridColumns[] = $importColumn;
             }
         }
 
         return $importConfigData;
+    }
+
+    public function getImportColumn($exportColumn)
+    {
+        $importColumn = new \stdClass();
+
+        $importColumn->isOperator = true;
+        $importColumn->attributes = new \stdClass();
+
+        $importColumn->attributes->class = 'Ignore';
+
+        $fieldConfig = $exportColumn['fieldConfig'];
+        if ($fieldConfig['isOperator'] || (isset($fieldConfig['key'])
+                && (in_array($fieldConfig['key'], self::FORBIDDEN_KEYS) || strpos($fieldConfig['key'], '~') !== false))) {
+            $importColumn->attributes->type = 'operator';
+            $importColumn->attributes->label = $fieldConfig['attributes']['label'];
+            $importColumn->attributes->childs = [];
+
+            if ($fieldConfig['attributes']['type'] == 'operator' && $fieldConfig['attributes']['class'] == 'LFExpander') {
+                $childs = $fieldConfig['attributes']['childs'];
+                if (count($childs) == 1) {
+                    $importColumns = [];
+                    $child = $childs[0];
+                    if (!$child['isOperator']) {
+                        if ($fieldConfig['attributes']['locales']) {
+                            $validLanguages = $fieldConfig['attributes']['locales'];
+                        } else {
+                            $validLanguages = Tool::getValidLanguages();
+                        }
+                        foreach ($validLanguages as $validLanguage) {
+                            $copier = new DeepCopy();
+                            $lfImportColumn = $copier->copy($importColumn);
+                            $lfImportColumn->attributes->class = 'LocaleSwitcher';
+                            $lfImportColumn->attributes->locale = $validLanguage;
+
+                            $newChild = new \stdClass();
+                            $newChild->attribute = $child['attribute'];
+//                            $newChild->type = "value";
+
+                            $newChild->dataType = $child['dataType'];;
+                            $newChild->label = $child['label'];
+                            $newChild->class = 'DefaultValue';
+
+                            $importColumn->attributes->childs = [$newChild];
+                            $importColumns[] = $lfImportColumn;
+                        }
+
+                        return $importColumns;
+                    }
+                }
+            }
+        } else {
+            $importColumn->attributes->type = 'value';
+            $importColumn->attributes->label = $fieldConfig['label'];
+            $importColumn->attributes->class = 'DefaultValue';
+            $importColumn->attributes->attribute = $fieldConfig['key'];
+            $importColumn->attributes->dataType = $fieldConfig['type'];
+            $importColumn->attributes->childs = [];
+        }
+
+        return $importColumn;
     }
 
     /**
@@ -199,17 +234,17 @@ class Service
     public function getResolverImplementation($config)
     {
         switch ($config->resolverSettings->strategy) {
-            case 'id':
-                return new Id($config);
-            case 'filename':
-                return new Filename($config);
-            case 'fullpath':
-                return new Fullpath($config);
-            case 'code':
-                return new Code($config);
-            case 'getBy':
-                return new GetBy($config);
-        }
+        case 'id':
+            return new Id($config);
+        case 'filename':
+            return new Filename($config);
+        case 'fullpath':
+            return new Fullpath($config);
+        case 'code':
+            return new Code($config);
+        case 'getBy':
+            return new GetBy($config);
+    }
         throw new \Exception('unknown/unsupported resolver implementation');
     }
 }

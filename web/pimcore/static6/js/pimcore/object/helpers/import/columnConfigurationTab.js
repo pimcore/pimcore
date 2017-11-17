@@ -509,8 +509,8 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                 element = new pimcore.object.importcolumn[configAttributes.type][jsClass](this.config.classId);
             }
         } else {
-            var dataType = configAttributes.dataType.toLowerCase();
-            if (pimcore.object.importcolumn.value[dataType]) {
+            var dataType = configAttributes.dataType ? configAttributes.dataType.toLowerCase() : null;
+            if (dataType && pimcore.object.importcolumn.value[dataType]) {
                 element = new pimcore.object.importcolumn.value[dataType](this.config.classId);
             } else {
                 element = new pimcore.object.importcolumn.value.defaultvalue(this.config.classId);

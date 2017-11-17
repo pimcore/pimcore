@@ -71,7 +71,7 @@ class DefaultValue extends AbstractConfigElement
                 return;
             }
 
-            if (!$this->mode != "direct") {
+            if ($this->mode != "direct") {
                 $data = $fd->getFromCsvImport($data);
             }
             $setter = 'set' . ucfirst($realAttribute);

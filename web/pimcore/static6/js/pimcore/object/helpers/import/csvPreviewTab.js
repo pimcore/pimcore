@@ -79,18 +79,17 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
             }
         );
 
-
         for (var i = 0; i < data.dataFields.length - 1; i++) {
             dataGridCols.push({
                 header: t("field") + " " + i,
                 sortable: false,
                 dataIndex: data.dataFields[i],
                 flex: 1,
-                renderer: renderer
+                renderer: renderer,
+                minWidth: 100
             });
 
         }
-
 
         var dataGrid = new Ext.grid.Panel({
             store: dataStore,
