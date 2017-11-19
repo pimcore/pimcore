@@ -76,10 +76,57 @@ The second file mentioned above is the `after.sh` which you can use to add custo
 logic. You can use the following template to run the CLI installer for all your desired installations. This
 will be executed during provisioning (first start of a virtual machine or when called with `--provision`). 
 
-```bash
-#!/bin/bash
-
+```#!/bin/sh
 set -e
+
+# installs dependencies
+install_dependencies() {
+  cd ~/$1
+
+  # PHP extensions
+  sudo apt-get install -y php7.1-apcu php7.1-imagick php7.1-redis
+
+  # System packages
+  sudo apt-get install -y libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript libimage-exiftool-perl
+
+  # ffmpeg
+  if [ ! -e /usr/local/ffmpeg/ffmpeg ]; then
+    wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz -O ffmpeg.tar.xz
+    tar -Jxf ffmpeg*.tar.xz
+    rm ffmpeg*.tar.xz
+    sudo mv ffmpeg-* /usr/local/ffmpeg
+    sudo ln -s /usr/local/ffmpeg/ffmpeg /usr/local/bin/
+    sudo ln -s /usr/local/ffmpeg/ffprobe /usr/local/bin/
+    sudo ln -s /usr/local/ffmpeg/qt-faststart /usr/local/bin/
+    sudo ln -s /usr/local/ffmpeg/qt-faststart /usr/local/bin/qtfaststart
+  fi
+
+  # Image optimizers
+  if [ ! -e /usr/local/bin/zopflipng ]; then
+    sudo wget https://github.com/imagemin/zopflipng-bin/raw/master/vendor/linux/zopflipng -O /usr/local/bin/zopflipng
+    sudo chmod 0755 /usr/local/bin/zopflipng
+  fi
+  if [ ! -e /usr/local/bin/pngcrush ]; then
+    sudo wget https://github.com/imagemin/pngcrush-bin/raw/master/vendor/linux/pngcrush -O /usr/local/bin/pngcrush
+    sudo chmod 0755 /usr/local/bin/pngcrush
+  fi
+  if [ ! -e /usr/local/bin/jpegoptim ]; then
+    sudo wget https://github.com/imagemin/jpegoptim-bin/raw/master/vendor/linux/jpegoptim -O /usr/local/bin/jpegoptim
+    sudo chmod 0755 /usr/local/bin/jpegoptim
+  fi
+  if [ ! -e /usr/local/bin/pngout ]; then
+    sudo wget https://github.com/imagemin/pngout-bin/raw/master/vendor/linux/x64/pngout -O /usr/local/bin/pngout
+    sudo chmod 0755 /usr/local/bin/pngout
+  fi
+  if [ ! -e /usr/local/bin/advpng ]; then
+    sudo wget https://github.com/imagemin/advpng-bin/raw/master/vendor/linux/advpng -O /usr/local/bin/advpng
+    sudo chmod 0755 /usr/local/bin/advpng
+  fi
+  if [ ! -e /usr/local/bin/cjpeg ]; then
+    sudo wget https://github.com/imagemin/mozjpeg-bin/raw/master/vendor/linux/cjpeg -O /usr/local/bin/cjpeg
+    sudo chmod 0755 /usr/local/bin/cjpeg
+  fi
+}
 
 # installs pimcore
 # expects the following
@@ -88,8 +135,11 @@ set -e
 #   - site is mapped to /home/vagrant/<site name>
 install_pimcore() {
     cd ~/$1
+    
+    # install composer dependencies
+    composer install
 
-    # system was already installled - skip installation
+    # Pimcore was already installled - skip installation
     if [ -e var/config/system.php ]; then
         >&2 echo "var/config/system.php was found in $1...skipping installation"
         return
@@ -98,14 +148,14 @@ install_pimcore() {
     # prepare DB - change character set to utf8mb4
     mysql -e "ALTER DATABASE \`$1\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
 
-    # install composer dependencies
-    composer install
-
     # install pimcore
     bin/install --symlink --profile ${2:-empty} --no-interaction \
         --admin-username admin --admin-password admin \
         --mysql-username homestead --mysql-password secret --mysql-database $1
 }
+
+# install dependencies
+install_dependencies
 
 # install pimcore
 export PIMCORE_ENVIRONMENT=dev
@@ -114,6 +164,7 @@ install_pimcore pimcore demo-basic-twig
 # install further instances
 # install_pimcore pimcore-test basic-cms
 # ...
+
 ```
 
 ## Starting the machine
@@ -128,6 +179,50 @@ $ vagrant up
 This will take a couple of minutes on the first start as it needs to download, import and provision
 your machine. If everything went well you should be able to open [https://pimcore.app](https://pimcore.app)
 in your browser and see a working Pimcore installation.
+
+## Enabling NFS for better performance
+You can try enabling NFS for better shared folder performance.
+
+### Linux
+
+Install nfs-kernel-server on your host machine. For Ubuntu:
+
+```
+$ sudo apt-get install nfs-kernel-server
+```
+
+Add nfs to folders in Homestead.yaml:
+```
+folders:
+    - map: ~/work/pimcore
+      to: /home/vagrant/pimcore
+      type: "nfs"
+      options:
+        linux__nfs_options: ['async','rw','no_subtree_check','all_squash']
+```
+
+Reload Vagrant to check if Pimcore speeds up:
+```
+$ vagrant reload
+```
+
+### Windows
+Install winnfsd plugin for Vagrant:
+```
+$ vagrant plugin install vagrant-winnfsd
+```
+
+Add nfs to folders in Homestead.yaml:
+```
+folders:
+    - map: ~/work/pimcore
+      to: /home/vagrant/pimcore
+      type: "nfs"
+```
+Reload Vagrant to check if Pimcore speeds up:
+```
+$ vagrant reload
+```
 
 ## Troubleshooting
 
