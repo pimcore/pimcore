@@ -137,7 +137,9 @@ class VariantsController extends AdminController
 
                     foreach ($fields as $f) {
                         $parts = explode('~', $f);
-                        if (count($parts) > 1) {
+                        if (substr($f, 0, 1) == '~') {
+                            $type = $parts[1];
+                        } elseif (count($parts) > 1) {
                             $bricks[$parts[0]] = $parts[0];
                         }
                     }

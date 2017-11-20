@@ -1676,14 +1676,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 foreach ($fields as $f) {
                     $parts = explode('~', $f);
-                    $sub = substr($f, 0, 1);
                     if (substr($f, 0, 1) == '~') {
                         $type = $parts[1];
-                        //                        $field = $parts[2];
-                        //                        $keyid = $parts[3];
-                        // key value, ignore for now
-                        if ($type == 'classificationstore') {
-                        }
                     } elseif (count($parts) > 1) {
                         $bricks[$parts[0]] = $parts[0];
                     }

@@ -474,12 +474,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                     var element = this.getConfigElement(attr);
                                     var copy = element.getCopyNode(record);
                                     data.records = [copy]; // assign the copy as the new dropNode
-                                    var window = element.getConfigDialog(copy);
+                                    var configWindow = element.getConfigDialog(copy);
 
-                                    if (window) {
+                                    if (configWindow) {
                                         //this is needed because of new focus management of extjs6
                                         setTimeout(function () {
-                                            window.focus();
+                                            configWindow.focus();
                                         }, 250);
                                     }
 
@@ -494,7 +494,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                         var ownerTree = this.selectionPanel;
 
                                         if (record.data.dataType == "classificationstore") {
-                                            window.setTimeout(function () {
+                                            setTimeout(function () {
                                                 var ccd = new pimcore.object.classificationstore.columnConfigDialog();
                                                 ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
                                             }.bind(this), 100);
