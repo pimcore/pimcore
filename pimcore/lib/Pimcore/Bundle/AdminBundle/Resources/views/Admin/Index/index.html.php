@@ -240,6 +240,7 @@ $scripts = array(
     "pimcore/common.js",
     "pimcore/elementservice.js",
     "pimcore/helpers.js",
+    "pimcore/error.js",
 
     "pimcore/treenodelocator.js",
     "pimcore/helpers/generic-grid.js",
