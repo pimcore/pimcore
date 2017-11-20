@@ -15,6 +15,7 @@ services:
 
     Pimcore\Targeting\Storage\TargetingStorageInterface: '@Pimcore\Targeting\Storage\SessionStorage'
     Pimcore\Targeting\Storage\SessionStorage: ~
+    Pimcore\Targeting\Storage\CookieStorage: ~
 
     Pimcore\Targeting\VisitorInfoStorageInterface: '@Pimcore\Targeting\VisitorInfoStorage'
     Pimcore\Targeting\VisitorInfoStorage: ~
