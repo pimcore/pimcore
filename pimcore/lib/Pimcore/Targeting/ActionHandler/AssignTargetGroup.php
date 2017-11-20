@@ -25,6 +25,8 @@ use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
 class AssignTargetGroup implements ActionHandlerInterface
 {
+    const STORAGE_KEY = 'assign_target_group';
+
     /**
      * @var ConditionMatcherInterface
      */
@@ -60,42 +62,53 @@ class AssignTargetGroup implements ActionHandlerInterface
         }
 
         $targetGroup = TargetGroup::getById($targetGroupId);
-
         if (!$targetGroup || !$targetGroup->getActive()) {
             return;
         }
 
-        $assign = true;
+        $count = $this->storeAssignments($visitorInfo, $targetGroup, $weight);
 
-        if (!$assign) {
-            return;
-        }
+        $this->assignToVisitor($visitorInfo, $targetGroup, $count);
+    }
 
-        $assignments = $this->storeAssignments($visitorInfo, $targetGroup, $weight);
+    /**
+     * Loads stored assignments from storage and applies it to visitor info
+     *
+     * @param VisitorInfo $visitorInfo
+     */
+    public function loadStoredAssignments(VisitorInfo $visitorInfo)
+    {
+        $data = $this->storage->get($visitorInfo, self::STORAGE_KEY, []);
 
-        $threshold = (int)$targetGroup->getThreshold();
-        if ($threshold > 1 && $assignments < $threshold) {
-            $assign = false;
-        }
+        foreach ($data as $targetGroupId => $count) {
+            $targetGroup = TargetGroup::getById($targetGroupId);
+            if (!$targetGroup || !$targetGroup->getActive()) {
+                return;
+            }
 
-        if ($assign) {
-            $visitorInfo->assignTargetGroup($targetGroup, $assignments);
+            $this->assignToVisitor($visitorInfo, $targetGroup, $count);
         }
     }
 
     private function storeAssignments(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $weight): int
     {
-        $storageKey = 'assign_target_group';
+        $data = $this->storage->get($visitorInfo, self::STORAGE_KEY, []);
 
-        $data = $this->storage->get($visitorInfo, $storageKey, []);
+        $count = $data[$targetGroup->getId()] ?? 0;
+        $count += $weight;
 
-        $assignments = $data[$targetGroup->getId()] ?? 0;
-        $assignments += $weight;
+        $data[$targetGroup->getId()] = $count;
 
-        $data[$targetGroup->getId()] = $assignments;
+        $this->storage->set($visitorInfo, self::STORAGE_KEY, $data);
 
-        $this->storage->set($visitorInfo, $storageKey, $data);
+        return $count;
+    }
 
-        return $assignments;
+    private function assignToVisitor(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $count)
+    {
+        $threshold = (int)$targetGroup->getThreshold();
+        if ($threshold > 1 && $count >= $threshold) {
+            $visitorInfo->assignTargetGroup($targetGroup, $count);
+        }
     }
 }

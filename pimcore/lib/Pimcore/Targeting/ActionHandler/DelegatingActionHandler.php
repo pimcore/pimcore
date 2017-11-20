@@ -56,14 +56,7 @@ class DelegatingActionHandler implements ActionHandlerInterface
             throw new \InvalidArgumentException('Invalid action: Type is not set');
         }
 
-        if (!$this->actionHandlers->has($type)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid condition: there is no action handler registered for type "%s"',
-                $type
-            ));
-        }
-
-        $actionHandler = $this->actionHandlers->get($type);
+        $actionHandler = $this->getActionHandler($type);
 
         // load data providers if necessary
         if ($actionHandler instanceof DataProviderDependentInterface) {
@@ -71,5 +64,17 @@ class DelegatingActionHandler implements ActionHandlerInterface
         }
 
         $actionHandler->apply($visitorInfo, $action, $rule);
+    }
+
+    public function getActionHandler(string $type): ActionHandlerInterface
+    {
+        if (!$this->actionHandlers->has($type)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid condition: there is no action handler registered for type "%s"',
+                $type
+            ));
+        }
+
+        return $this->actionHandlers->get($type);
     }
 }

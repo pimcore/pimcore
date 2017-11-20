@@ -23,6 +23,8 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Event\Analytics\PiwikEvents;
+use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\ActionHandler\AssignTargetGroup;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
@@ -118,6 +120,15 @@ class TargetingListener implements EventSubscriberInterface
         );
     }
 
+    public function onPreResolve(TargetingEvent $event)
+    {
+        /** @var AssignTargetGroup $assignTargetGroupHandler */
+        $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
+        $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
+
+        $this->assignDocumentTargetGroups($event);
+    }
+
     /**
      * Handles target groups configured on the document settings panel. If a document
      * has configured target groups, the assign_target_group will be manually called
@@ -125,7 +136,7 @@ class TargetingListener implements EventSubscriberInterface
      *
      * @param TargetingEvent $event
      */
-    public function onPreResolve(TargetingEvent $event)
+    private function assignDocumentTargetGroups(TargetingEvent $event)
     {
         $request  = $event->getRequest();
         $document = $this->documentResolver->getDocument($request);
