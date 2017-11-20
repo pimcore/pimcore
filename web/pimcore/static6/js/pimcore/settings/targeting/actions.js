@@ -188,6 +188,7 @@ pimcore.settings.targeting.actions = (function () {
                     items: [
                         {
                             xtype: "combo",
+                            fieldLabel: t('target_group'),
                             name: "targetGroup",
                             displayField: 'text',
                             valueField: "id",
@@ -199,6 +200,15 @@ pimcore.settings.targeting.actions = (function () {
                             mode: "local",
                             value: data.targetGroup,
                             emptyText: t("select_a_target_group")
+                        },
+                        {
+                            xtype: 'numberfield',
+                            fieldLabel: t('assign_target_group_weight'),
+                            name: "weight",
+                            value: data.weight ? data.weight : 1,
+                            width: 200,
+                            minValue: 1,
+                            allowDecimals: false
                         },
                         {
                             xtype: "hidden",

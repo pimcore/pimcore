@@ -110,6 +110,7 @@
   "visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups": "Visitors of this page will be automatically associated with the selected Target Groups",
   "assign_target_group": "Assign Target Group",
   "assign_target_groups": "Assign Target Groups",
+  "assign_target_group_weight": "Weight",
   "target_group": "Target Group",
   "target_groups": "Target Groups",
   "add_target_group": "Add Target Group",

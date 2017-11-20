@@ -51,6 +51,14 @@ class AssignTargetGroup implements ActionHandlerInterface
             return;
         }
 
+        $weight = 1;
+        if (isset($action['weight'])) {
+            $weight = (int)$action['weight'];
+            if ($weight < 1) {
+                $weight = 1;
+            }
+        }
+
         $targetGroup = TargetGroup::getById($targetGroupId);
 
         if (!$targetGroup || !$targetGroup->getActive()) {
@@ -63,7 +71,7 @@ class AssignTargetGroup implements ActionHandlerInterface
             return;
         }
 
-        $assignments = $this->storeAssignments($visitorInfo, $targetGroup);
+        $assignments = $this->storeAssignments($visitorInfo, $targetGroup, $weight);
 
         $threshold = (int)$targetGroup->getThreshold();
         if ($threshold > 1 && $assignments < $threshold) {
@@ -75,14 +83,14 @@ class AssignTargetGroup implements ActionHandlerInterface
         }
     }
 
-    private function storeAssignments(VisitorInfo $visitorInfo, TargetGroup $targetGroup): int
+    private function storeAssignments(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $weight): int
     {
         $storageKey = 'assign_target_group';
 
         $data = $this->storage->get($visitorInfo, $storageKey, []);
 
         $assignments = $data[$targetGroup->getId()] ?? 0;
-        $assignments++;
+        $assignments += $weight;
 
         $data[$targetGroup->getId()] = $assignments;
 

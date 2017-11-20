@@ -769,7 +769,7 @@ pimcore.settings.targeting.conditions = (function () {
                         mode: "local",
                         value: data.target_group,
                         emptyText: t("select_a_target_group"),
-                        fieldLabel: t("select_a_target_group")
+                        fieldLabel: t("target_group")
                     }, {
                         xtype: "hidden",
                         name: "type",
