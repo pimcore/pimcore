@@ -21,6 +21,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -66,6 +67,19 @@ class CookieStorage implements TargetingStorageInterface
         return isset($this->data[$name]);
     }
 
+    public function get(VisitorInfo $visitorInfo, string $name, $default = null)
+    {
+        if (null === $this->data) {
+            $this->data = $this->loadData($visitorInfo);
+        }
+
+        if (isset($this->data[$name])) {
+            return $this->data[$name];
+        }
+
+        return $default;
+    }
+
     public function set(VisitorInfo $visitorInfo, string $name, $value)
     {
         if (null === $this->data) {
@@ -80,17 +94,29 @@ class CookieStorage implements TargetingStorageInterface
         }
     }
 
-    public function get(VisitorInfo $visitorInfo, string $name, $default = null)
+    public function all(VisitorInfo $visitorInfo): array
     {
         if (null === $this->data) {
             $this->data = $this->loadData($visitorInfo);
         }
 
-        if (isset($this->data[$name])) {
-            return $this->data[$name];
+        return $this->data;
+    }
+
+    public function clear(VisitorInfo $visitorInfo)
+    {
+        if (null === $this->data) {
+            $this->data = $this->loadData($visitorInfo);
         }
 
-        return $default;
+        if (!empty($this->data)) {
+            $this->data = [];
+        }
+
+        if (!$this->changed) {
+            $this->changed = true;
+            $this->addSaveListener($visitorInfo);
+        }
     }
 
     private function loadData(VisitorInfo $visitorInfo): array
@@ -124,25 +150,28 @@ class CookieStorage implements TargetingStorageInterface
                 return;
             }
 
-            $json = json_encode($this->data);
-
             $response = $event->getResponse();
-            $response->headers->setCookie($this->createSaveCookie($json));
+
+            if (empty($this->data)) {
+                $this->setCookie($response, null);
+            } else {
+                $this->setCookie($response, json_encode($this->data));
+            }
         };
 
         $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener);
     }
 
-    protected function createSaveCookie(string $data): Cookie
+    protected function setCookie(Response $response, $value)
     {
-        return new Cookie(
+        $response->headers->setCookie(new Cookie(
             self::COOKIE_NAME,
-            $data,
+            $value,
             (new \DateTime('+7 days')),
             '/',
             null,
             false,
             false
-        );
+        ));
     }
 }

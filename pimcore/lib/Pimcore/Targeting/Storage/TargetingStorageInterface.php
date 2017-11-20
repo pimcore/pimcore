@@ -25,9 +25,13 @@ use Pimcore\Targeting\Model\VisitorInfo;
  */
 interface TargetingStorageInterface
 {
+    public function all(VisitorInfo $visitorInfo): array;
+
     public function has(VisitorInfo $visitorInfo, string $name): bool;
 
     public function set(VisitorInfo $visitorInfo, string $name, $value);
 
     public function get(VisitorInfo $visitorInfo, string $name, $default = null);
+
+    public function clear(VisitorInfo $visitorInfo);
 }

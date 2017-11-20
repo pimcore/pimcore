@@ -53,6 +53,26 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->get($name, $default);
     }
 
+    public function all(VisitorInfo $visitorInfo): array
+    {
+        $bag = $this->getSessionBag($visitorInfo, true);
+        if (null === $bag) {
+            return [];
+        }
+
+        return $bag->all();
+    }
+
+    public function clear(VisitorInfo $visitorInfo)
+    {
+        $bag = $this->getSessionBag($visitorInfo, true);
+        if (null === $bag) {
+            return;
+        }
+
+        $bag->clear();
+    }
+
     /**
      * @param VisitorInfo $visitorInfo
      * @param bool $checkPreviousSession
