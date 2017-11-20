@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition;
 
 use GeoIp2\Model\City;
+use Location\Coordinate;
+use Location\Distance\Haversine;
 use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\Model\VisitorInfo;
 
@@ -26,22 +28,22 @@ class GeoPoint implements DataProviderDependentConditionInterface
     /**
      * @var float
      */
-    private $longitude;
+    private $latitude;
 
     /**
      * @var float
      */
-    private $latitude;
+    private $longitude;
 
     /**
      * @var int
      */
     private $radius;
 
-    public function __construct(float $longitude = null, float $latitude = null, int $radius = null)
+    public function __construct(float $latitude = null, float $longitude = null, int $radius = null)
     {
-        $this->longitude = $longitude;
         $this->latitude  = $latitude;
+        $this->longitude = $longitude;
         $this->radius    = $radius;
     }
 
@@ -51,8 +53,8 @@ class GeoPoint implements DataProviderDependentConditionInterface
     public static function fromConfig(array $config)
     {
         return new static(
-            $config['longitude'] ?? null,
             $config['latitude'] ?? null,
+            $config['longitude'] ?? null,
             $config['radius'] ?? null
         );
     }
@@ -70,7 +72,7 @@ class GeoPoint implements DataProviderDependentConditionInterface
      */
     public function canMatch(): bool
     {
-        return !empty($this->longitude) && !empty($this->latitude) && !empty($this->radius);
+        return !empty($this->latitude) && !empty($this->longitude) && !empty($this->radius);
     }
 
     /**
@@ -81,11 +83,26 @@ class GeoPoint implements DataProviderDependentConditionInterface
         /** @var City $city */
         $city = $visitorInfo->get(GeoIp::PROVIDER_KEY);
 
-        if (!$city) {
+        if (!$city || empty($city->location->latitude) || empty($city->location->longitude)) {
             return false;
         }
 
-        // TODO calculate distance
-        return false;
+        $distance = $this->calculateDistance(
+            (float)$this->latitude, (float)$this->longitude,
+            (float)$city->location->latitude, (float)$city->location->longitude
+        );
+
+        return $distance < ($this->radius * 1000);
+    }
+
+    private function calculateDistance(float $latA, float $longA, float $latB, float $longB): float
+    {
+        $coordA = new Coordinate($latA, $longA);
+        $coordB = new Coordinate($latB, $longB);
+
+        $calculator = new Haversine();
+        $distance   = $calculator->getDistance($coordA, $coordB);
+
+        return $distance;
     }
 }
