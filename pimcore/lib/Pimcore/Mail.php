@@ -216,11 +216,15 @@ class Mail extends \Swift_Message
         $emailSettings =& $systemConfig[$type];
 
         if ($emailSettings['sender']['email']) {
-            $this->setFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
+            if (empty($this->getFrom())) {
+                $this->setFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
+            }
         }
 
         if ($emailSettings['return']['email']) {
-            $this->setReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
+            if (empty($this->getReplyTo())) {
+                $this->setReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
+            }
         }
 
         $this->placeholderObject = new \Pimcore\Placeholder();
