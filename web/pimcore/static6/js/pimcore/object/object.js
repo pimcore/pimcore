@@ -682,7 +682,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
 
             try {
-                pimcore.plugin.broker.fireEvent("preSaveObject", this);
+                pimcore.plugin.broker.fireEvent('preSaveObject', this, 'object');
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
                     this.tab.unmask();

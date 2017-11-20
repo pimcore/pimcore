@@ -50,6 +50,7 @@ corresponding method to the javascript plugin class.
 | preOpenDocument | before document is opened, document and type are passed as parameters |
 | postOpenDocument | after document is opened, document and type are passed as parameters |
 | preOpenObject | before object is opened, object and type are passed as parameters |
+| preSaveObject | before object is saved, object and type are passed as parameters
 | postOpenObject | after object is opened, object and type are passed as parameters |
 | prepareAssetTreeContextMenu | before context menu is opened, menu, tree class and asset record are passed as parameters |
 | prepareObjectTreeContextMenu | before context menu is opened, menu, tree class and object record are passed as parameters |
@@ -63,6 +64,52 @@ after uninstall.
 **Note:** In order to be notified upon uninstall, a plugin must override the `getClassName` method of `pimcore.plugin.admin` 
 and return its own class name. 
 
+## Validate Pimcore Object's Data in frontend before saving
+
+It is possible to validate Pimcore Object's Data in frontend and cancel the saving if needed.
+
+This can be done by throwing any of the following two exceptions and passing in the message to be displayed for the user:
+
+```
+pimcore.error.ActionCancelledException
+pimcore.error.ValidationCancelledException
+```
+
+
+The only difference between above exceptions is in how the error message is displayed:
+
+- ValidationException displays error alert (the same as ValidationException coming from the backend)
+
+  ![Validation Exception](../../img/object-validation-exception.png)
+
+- ActionCancelledException displays instead just a non intrusive notification in the bottom right corner.
+
+  ![Action Cancelled Exception](../../img/object-action-cancelled-exception.png)
+
+Code example in startup.js:
+
+```
+pimcore.registerNS("pimcore.plugin.MyTestBundle");
+
+pimcore.plugin.MyTestBundle = Class.create(pimcore.plugin.admin, {
+    getClassName: function () {
+        return "pimcore.plugin.MyTestBundle";
+    },
+
+    initialize: function () {
+        pimcore.plugin.broker.registerPlugin(this);
+    },
+
+    preSaveObject: function (object, type) {
+        var userAnswer = confirm("Are you sure you want to change the Product Number?");
+        if (!userAnswer) {
+            throw new pimcore.error.ActionCancelledException('Cancelled by user');
+        }
+    }
+});
+
+var MyTestBundlePlugin = new pimcore.plugin.MyTestBundle();
+```
 
 ## I18n texts for plugins
 
