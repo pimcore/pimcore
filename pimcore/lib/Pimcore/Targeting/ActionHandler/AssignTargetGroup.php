@@ -25,7 +25,7 @@ use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
 class AssignTargetGroup implements ActionHandlerInterface
 {
-    const STORAGE_KEY = 'assign_target_group';
+    const STORAGE_KEY = 'tg';
 
     /**
      * @var ConditionMatcherInterface
