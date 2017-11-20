@@ -4,7 +4,7 @@
 
 Allows you to provide a custom setter implementation.
 
-![Setter Settings](../../../img/csvimport/operator_PHPCode.png)
+![Settings](../../../img/csvimport/operator_PHPCode.png)
 
 Sample implementation: Unpublishes the object if the creation date was before 2017-11-17 which is CSV column 8 in this example.
 In addition,it replaces the short text.

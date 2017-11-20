@@ -12,7 +12,7 @@ Operators can then be used to change the way how the data is processed.
 
 ## Simple example
 
-TBD
+![Setter Settings](../../../img/csvimport/column_config_example.png)
 
 ## Overview 
 
@@ -20,6 +20,8 @@ TBD
 * [Operator Published](./02_Published.md)
 * [Operator Locale Switcher](./03_LocaleSwitcher.md)
 * [Operator Objectbrick Setter](./04_BrickSetter.md)
+* [Operator PHPCode](./05_PHPCode.md)
+* [Operator Iterator](./06_Iterator.md)
 * ...
 
 

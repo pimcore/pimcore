@@ -1,4 +1,6 @@
 # Operator Publish
 
-Published / Unpublishes an object.
+![Settings](../../../img/csvimport/operator_published.png)
+
+Publishes / Unpublishes an object.
 

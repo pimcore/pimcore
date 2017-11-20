@@ -1735,6 +1735,8 @@
   "never": "Never",
   "if_not_empty": "If not empty",
   "always": "Always",
-  "operator_objectbricksetter_settings": "Operator Objectbrick Setter"
+  "operator_objectbricksetter_settings": "Operator Objectbrick Setter",
+  "operator_iterator": "Operator Iterator",
+  "iterator_operator_settings": "Operator Iterator Settings"
 
 }

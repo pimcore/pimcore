@@ -2,7 +2,8 @@
 
 ## General
 
-TODO
+The CSV import tool allows to you create & update existing objects from a CSV file. Various settings can be made regarding how existing objects are 
+matched and how CSV columns are applied.
 
 ## Preview
 
@@ -32,11 +33,12 @@ Moreover, a saved configuration can be shared with other users or roles. Note th
 
 ## Load Configuration
 
-Load a saved configuration
+Load a saved configuration.
 
 ## Import Export Configuration
 
-Load a export configuration and create a rudimentary import configuration   
+Load a export configuration and create a rudimentary import configuration. Please note that a complete import configuration cannot be automatically generated on the flye.
+But there are at least certain basic options that can be automatically set.   
 
 
 

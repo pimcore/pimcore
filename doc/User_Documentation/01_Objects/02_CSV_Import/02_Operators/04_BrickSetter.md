@@ -1,5 +1,7 @@
 # Operator Brick Setter
 
+![Settings](../../../img/csvimport/operator_bricksetter.png)
+
 Allows to set a brick field and create the brick itself if needed.
 
 * `Attribute`: the object attribute
@@ -10,7 +12,7 @@ Mode:
 * `If not empty`: Create brick if CSV data is not empty
 * `Always`: Always create the brick
 
-![Setter Settings](../../../img/csvimport/operator_bricksetter.png)
+![Example](../../../img/csvimport/operator_bricksetter_example.png)
 
 
 

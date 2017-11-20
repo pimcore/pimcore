@@ -895,7 +895,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/grid.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_table_tab {
+.pimcore_icon_table_tab, .pimcore_icon_operator_iterator {
     background: url(/pimcore/static6/img/flat-color-icons/list.svg) center center no-repeat !important;
 }
 
