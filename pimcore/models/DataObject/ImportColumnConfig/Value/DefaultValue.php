@@ -42,7 +42,7 @@ class DefaultValue extends AbstractConfigElement
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
-        if ($target instanceof Concrete) {
+        if ($target instanceof \Pimcore\Model\DataObject\Concrete) {
             $realAttribute = $this->attribute;
             $container = $target->getClass();
         } elseif ($target instanceof AbstractData) {

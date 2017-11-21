@@ -1641,12 +1641,35 @@ class DataObjectHelperController extends AdminController
 
         list($fields, $bricks) = $this->extractFieldsAndBricks($request);
 
-        $csv = $this->getCsvData($request, $list, $fields, $request->get('initial'));
+        $addTitles = $request->get('initial');
 
-        file_put_contents($this->getCsvFile($fileHandle), $csv, FILE_APPEND);
+        $csv = $this->getCsvData($request, $list, $fields, $addTitles);
+
+        $fp = fopen($this->getCsvFile($fileHandle), 'a');
+
+        $firstLine = true;
+        foreach ($csv as $line) {
+            if ($addTitles && $firstLine) {
+                $firstLine = false;
+                $line = implode(';', $line) . "\r\n";
+                fwrite($fp, $line);
+            } else {
+                fputs($fp, implode(";", array_map(array($this, "encodeFunc"), $line))."\r\n");
+            }
+
+        }
+
+        fclose($fp);
 
         return $this->json(['success' => true]);
     }
+
+    public function encodeFunc($value) {
+        $value = str_replace('"','""',$value);
+        //force wrap value in quotes and return
+        return '"'.$value.'"';
+    }
+
 
     /**
      * @Route("/download-csv-file")
@@ -1758,7 +1781,7 @@ class DataObjectHelperController extends AdminController
             }
         }
         //create csv
-        $csv = '';
+        $csv = [];
         if (!empty($objects)) {
             if ($addTitles) {
                 $columns = array_keys($objects[0]);
@@ -1766,22 +1789,10 @@ class DataObjectHelperController extends AdminController
                     $columnName = $mappedFieldnames[$columnKey];
                     $columns[$columnIdx] = '"' . $columnName . '"';
                 }
-                $csv = implode(';', $columns) . "\r\n";
+                $csv []= $columns;
             }
             foreach ($objects as $o) {
-                foreach ($o as $key => $value) {
-
-                    //clean value of evil stuff such as " and linebreaks
-                    if (is_string($value)) {
-                        $value = strip_tags($value);
-                        $value = str_replace('"', '', $value);
-                        $value = str_replace("\r", '', $value);
-                        $value = str_replace("\n", '', $value);
-
-                        $o[$key] = '"' . $value . '"';
-                    }
-                }
-                $csv .= implode(';', $o) . "\r\n";
+                $csv []= $o;
             }
         }
 

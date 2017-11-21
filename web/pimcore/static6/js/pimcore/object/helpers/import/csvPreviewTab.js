@@ -23,6 +23,20 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
     getPanel: function () {
 
+        this.previewPanel = new Ext.panel.Panel({
+            title: t("csv_file_preview"),
+            iconCls: 'pimcore_icon_preview',
+            items: []
+        });
+
+        this.rebuildPanel();
+
+        return this.previewPanel;
+    },
+
+    rebuildPanel: function() {
+        this.previewPanel.removeAll();
+
         var data = this.config;
 
         var dataStore = new Ext.data.JsonStore({
@@ -127,13 +141,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
             bodyStyle: "padding: 10px;"
         });
 
-        var previewPanel = new Ext.panel.Panel({
-            title: t("csv_file_preview"),
-            iconCls: 'pimcore_icon_preview',
-            items: [formPanel, dataGrid]
-        });
-
-        return previewPanel;
+        this.previewPanel.add([formPanel, dataGrid]);
     }
 
 });

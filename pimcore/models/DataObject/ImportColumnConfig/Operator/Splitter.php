@@ -21,12 +21,12 @@ use Pimcore\Localization\Locale;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
-class Iterator extends AbstractOperator
+class Splitter extends AbstractOperator
 {
-
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
+        $this->glue = $config->glue;
     }
 
     /**
@@ -39,15 +39,27 @@ class Iterator extends AbstractOperator
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
+
+        $originalCellData = $rowData[$colIndex];
+
         $childs = $this->getChilds();
 
         if (!$childs) {
             return;
         } else {
             /** @var $child AbstractConfigElement */
-            foreach ($childs as $child) {
-                $child->process($element, $target, $rowData, $colIndex, $context);
+            $dataParts = explode($this->glue, $originalCellData);
+
+            for ($i = 0; $i < count($childs); $i++) {
+                $child = $childs[$i];
+                if (isset($dataParts[$i])) {
+                    $dataPart = $dataParts[$i];
+                    $rowData[$colIndex] = $dataPart;
+                    $child->process($element, $target, $rowData, $colIndex, $context);
+                }
             }
         }
+
+        $rowData[$colIndex] = $originalCellData;
     }
 }

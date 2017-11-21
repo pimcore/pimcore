@@ -21,9 +21,8 @@ use Pimcore\Localization\Locale;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
-class Iterator extends AbstractOperator
+class Unserialize extends AbstractOperator
 {
-
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);
@@ -39,15 +38,23 @@ class Iterator extends AbstractOperator
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
+
+        $originalCellData = $rowData[$colIndex];
+        $celldata = unserialize($rowData[$colIndex]);
+        $rowData[$colIndex] = $celldata;
+
         $childs = $this->getChilds();
 
         if (!$childs) {
             return;
         } else {
             /** @var $child AbstractConfigElement */
-            foreach ($childs as $child) {
+            for ($i = 0; $i < count($childs); $i++) {
+                $child = $childs[$i];
                 $child->process($element, $target, $rowData, $colIndex, $context);
             }
         }
+
+        $rowData[$colIndex] = $originalCellData;
     }
 }

@@ -1737,6 +1737,10 @@
   "always": "Always",
   "operator_objectbricksetter_settings": "Operator Objectbrick Setter",
   "operator_iterator": "Operator Iterator",
-  "iterator_operator_settings": "Operator Iterator Settings"
+  "iterator_operator_settings": "Operator Iterator Settings",
+  "operator_splitter": "Operator Splitter",
+  "splitter_operator_settings": "Operator Splitter Settings",
+  "operator_unserialize": "Operator Unserialize",
+  "operator_unserialize_settings": "Operator Unserialize Settings"
 
 }

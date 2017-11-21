@@ -1,6 +1,6 @@
 # Operator PHPCode
 
-![Setting](../../../img/gridconfig/operator_phpcode_symbol.png)
+![Symbol](../../../img/gridconfig/operator_phpcode_symbol.png)
 
 Allows you to provide a custom setter implementation.
 

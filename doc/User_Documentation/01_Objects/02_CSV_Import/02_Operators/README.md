@@ -22,6 +22,8 @@ Operators can then be used to change the way how the data is processed.
 * [Operator Objectbrick Setter](./04_BrickSetter.md)
 * [Operator PHPCode](./05_PHPCode.md)
 * [Operator Iterator](./06_Iterator.md)
+* [Operator Splitter](./07_Splitter.md)
+* [Operator Unserialize](./08_Unserialize.md)
 * ...
 
 

@@ -206,6 +206,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
     },
 
     reloadPanels: function () {
+        this.csvPreviewPanel.rebuildPanel();
         this.columnConfigPanel.rebuildPanel();
         this.resolverSettingsPanel.rebuildPanel();
         this.saveAndSharePanel.rebuildPanel();

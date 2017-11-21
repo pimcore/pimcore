@@ -195,7 +195,7 @@
     background: url(/pimcore/static6/img/flat-color-icons/target.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_cut {
+.pimcore_icon_cut, .pimcore_icon_operator_splitter {
     background: url(/pimcore/static6/img/flat-color-icons/scissors.svg) center center no-repeat !important;
 }
 

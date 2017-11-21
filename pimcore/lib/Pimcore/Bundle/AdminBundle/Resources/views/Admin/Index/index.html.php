@@ -500,6 +500,8 @@ $scripts = array(
     "pimcore/object/importcolumn/operator/ObjectBrickSetter.js",
     "pimcore/object/importcolumn/operator/PHPCode.js",
     "pimcore/object/importcolumn/operator/Published.js",
+    "pimcore/object/importcolumn/operator/Splitter.js",
+    "pimcore/object/importcolumn/operator/Unserialize.js",
     "pimcore/object/importcolumn/value/DefaultValue.js",
     "pimcore/object/objectbrick.js",
     "pimcore/object/objectbricks/field.js",

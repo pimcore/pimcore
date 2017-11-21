@@ -1,6 +1,6 @@
-# Iterator
+# Operator Iterator
 
-![Setting](../../../img/gridconfig/operator_phpcode_symbol.png)
+![Symbol](../../../img/csvimport/operator_iterator.png)
 
-Allows you to provide a custom setter implementation.
+Iterates over all child elements and applies the cell data.
 

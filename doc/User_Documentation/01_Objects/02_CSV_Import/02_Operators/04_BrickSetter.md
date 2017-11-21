@@ -1,6 +1,6 @@
 # Operator Brick Setter
 
-![Settings](../../../img/csvimport/operator_bricksetter.png)
+![Symbol](../../../img/csvimport/operator_bricksetter.png)
 
 Allows to set a brick field and create the brick itself if needed.
 

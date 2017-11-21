@@ -537,7 +537,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         this.exportParameters['ids[]'] = jobs[this.exportJobCurrent];
         this.exportParameters["fields[]"] = fields;
         this.exportParameters.classId = this.classId;
-        this.exportParameters.initial = initial;
+        this.exportParameters.initial = initial ? 1 : 0;
 
         Ext.Ajax.request({
             url: "/admin/object-helper/do-export",
