@@ -61,6 +61,7 @@ services:
     Pimcore\Targeting\ActionHandler\DelegatingActionHandler: ~
     Pimcore\Targeting\ActionHandler\AssignTargetGroup: ~
     Pimcore\Targeting\ActionHandler\Redirect: ~
+    Pimcore\Targeting\ActionHandler\CodeSnippet: ~
 
     Pimcore\Targeting\Session\SessionConfigurator:
         tags:

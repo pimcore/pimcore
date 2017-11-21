@@ -188,6 +188,7 @@ pimcore:
         action_handlers:
             assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
             redirect: Pimcore\Targeting\ActionHandler\Redirect
+            codesnippet: Pimcore\Targeting\ActionHandler\CodeSnippet
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

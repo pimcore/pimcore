@@ -70,6 +70,11 @@ class VisitorInfo implements \IteratorAggregate
     private $data = [];
 
     /**
+     * @var array
+     */
+    private $actions = [];
+
+    /**
      * @var Response
      */
     private $response;
@@ -252,5 +257,20 @@ class VisitorInfo implements \IteratorAggregate
     public function set($key, $value)
     {
         $this->data[$key] = $value;
+    }
+
+    public function addAction(array $action)
+    {
+        $this->actions[] = $action;
+    }
+
+    public function getActions(): array
+    {
+        return $this->actions;
+    }
+
+    public function hasActions(): bool
+    {
+        return count($this->actions) > 0;
     }
 }

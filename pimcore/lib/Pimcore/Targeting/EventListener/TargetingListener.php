@@ -23,8 +23,6 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Event\Analytics\PiwikEvents;
-use Pimcore\Targeting\Model\VisitorInfo;
-use Pimcore\Targeting\ActionHandler\AssignTargetGroup;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
@@ -32,9 +30,10 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
+use Pimcore\Targeting\ActionHandler\AssignTargetGroup;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
+use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\VisitorInfoResolver;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -207,31 +206,61 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        // TODO do this only if a document has a target group set? currently we do this as soon as any target group is assigned
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
-        if (0 === count($visitorInfo->getTargetGroupAssignments())) {
+        $response    = $event->getResponse();
+
+        // inject frontend actions into response
+        $this->addResponseActions($response, $visitorInfo);
+
+        // check if the visitor info influences the response
+        if ($this->appliesPersonalization($visitorInfo)) {
+            // set response to private as soon as we apply personalization
+            $response->setPrivate();
+        }
+    }
+
+    private function addResponseActions(Response $response, VisitorInfo $visitorInfo)
+    {
+        if (!$this->isHtmlResponse($response)) {
             return;
         }
 
-        $response = $event->getResponse();
+        // filter frontend actions
+        $actions = array_filter($visitorInfo->getActions(), function (array $action) {
+            return ($action['scope'] ?? null) === 'frontend';
+        });
 
-        // set response to private as soon as we have matching target groups
-        // TODO remove and rely on the vary header set below
-        $response->setPrivate();
-
-        // set a vary header and assign matched target groups
-        $targetGroupIds = array_map(function (TargetGroup $targetGroup) {
-            return $targetGroup->getId();
-        }, $visitorInfo->getAssignedTargetGroups());
-
-        $headerName = 'X-Pimcore-TG';
-
-        $vary = $response->getVary();
-        if (!in_array($headerName, $vary)) {
-            $vary[] = $headerName;
+        if (empty($actions)) {
+            return;
         }
 
-        $response->setVary($vary);
-        $response->headers->set($headerName, implode(',', $targetGroupIds));
+        $code = <<<EOL
+<script type="text/javascript">
+    window.pimcore = window.pimcore || {};
+    window.pimcore.targeting = window.pimcore.targeting || {};
+    window.pimcore.targeting.actions = %s;
+</script>
+EOL;
+
+        $code = sprintf($code, json_encode($actions));
+
+        $this->injectBeforeHeadEnd($response, $code);
+    }
+
+    private function appliesPersonalization(VisitorInfo $visitorInfo): bool
+    {
+        if (count($visitorInfo->getTargetGroupAssignments()) > 0) {
+            return true;
+        }
+
+        if ($visitorInfo->hasActions()) {
+            return true;
+        }
+
+        if ($visitorInfo->hasResponse()) {
+            return true;
+        }
+
+        return false;
     }
 }
