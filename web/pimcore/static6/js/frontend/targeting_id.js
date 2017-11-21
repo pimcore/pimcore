@@ -98,48 +98,6 @@
                 doc[add](pre + 'readystatechange', init, false);
                 win[add](pre + 'load', init, false);
             }
-        },
-
-        executeInsertedScripts: function (domelement) {
-            var scripts = [];
-
-            var ret = domelement.childNodes;
-            for (var i = 0; ret[i]; i++) {
-                if (scripts && util.nodeName(ret[i], "script")
-                    && (!ret[i].type || ret[i].type.toLowerCase() === "text/javascript")) {
-                    scripts.push(ret[i].parentNode ? ret[i].parentNode.removeChild(ret[i]) : ret[i]);
-                }
-            }
-
-            for (var script in scripts) {
-                util.evalScript(scripts[script]);
-            }
-        },
-
-        nodeName: function (elem, name) {
-            return elem.nodeName && elem.nodeName.toUpperCase() === name.toUpperCase();
-        },
-
-        evalScript: function (elem) {
-            var data = ( elem.text || elem.textContent || elem.innerHTML || "" );
-            var head = document.getElementsByTagName("head")[0] || document.documentElement,
-                script = document.createElement("script");
-
-            script.type = "text/javascript";
-
-            try {
-                script.appendChild(document.createTextNode(data));
-            } catch (e) {
-                // IE8 Workaround
-                script.text = data;
-            }
-
-            head.insertBefore(script, head.firstChild);
-            head.removeChild(script);
-
-            if (elem.parentNode) {
-                elem.parentNode.removeChild(elem);
-            }
         }
     };
 
@@ -231,46 +189,6 @@
         user.save();
     };
 
-    window.pimcore.targeting.action_handlers = {
-        code_snippet: function(config) {
-            util.logger.canLog('info') && console.info('Executing code snippet', config);
-
-            if (!(config.code && config.position && config.selector)) {
-                return;
-            }
-
-            var el = document.querySelector(config.selector);
-            if (!el) {
-                return;
-            }
-
-            try {
-                var frag = document.createDocumentFragment();
-                var temp = document.createElement('div');
-
-                temp.innerHTML = config.code;
-
-                while (temp.firstChild) {
-                    frag.appendChild(temp.firstChild);
-                }
-
-                if (config.position === "end") {
-                    el.appendChild(frag);
-                } else if (config.position === "beginning") {
-                    el.insertBefore(frag, el.firstChild);
-                } else if (config.position === "replace") {
-                    el.innerHTML = config.code;
-                } else {
-                    return;
-                }
-
-                util.executeInsertedScripts(el);
-            } catch (e) {
-                util.logger.canLog('error') && console.error(e);
-            }
-        }
-    };
-
     // track links
     util.contentLoaded(window, function () {
         try {
@@ -287,21 +205,6 @@
             }
         } catch (e) {
             util.logger.canLog('error') && console.error(e);
-        }
-    });
-
-    // execute code snippets
-    util.contentLoaded(window, function () {
-        if ('undefined' === typeof window.pimcore.targeting.actions || window.pimcore.targeting.actions.length === 0) {
-            return;
-        }
-
-        for (var i = 0; i < window.pimcore.targeting.actions.length; i++) {
-            var action = window.pimcore.targeting.actions[i];
-
-            if ('undefined' !== typeof action.type && 'function' === typeof window.pimcore.targeting.action_handlers[action.type]) {
-                window.pimcore.targeting.action_handlers[action.type](action);
-            }
         }
     });
 }());

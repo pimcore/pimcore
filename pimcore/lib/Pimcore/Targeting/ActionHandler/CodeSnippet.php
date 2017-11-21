@@ -17,11 +17,23 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\ActionHandler;
 
+use Pimcore\Http\Response\CodeInjector;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Symfony\Component\HttpFoundation\Response;
 
-class CodeSnippet implements ActionHandlerInterface
+class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionHandlerInterface
 {
+    /**
+     * @var CodeInjector
+     */
+    private $codeInjector;
+
+    public function __construct(CodeInjector $codeInjector)
+    {
+        $this->codeInjector = $codeInjector;
+    }
+
     /**
      * @inheritDoc
      */
@@ -36,11 +48,23 @@ class CodeSnippet implements ActionHandlerInterface
         }
 
         $visitorInfo->addAction([
-            'type'     => 'code_snippet',
-            'scope'    => 'frontend',
+            'type'     => 'codesnippet',
+            'scope'    => VisitorInfo::ACTION_SCOPE_RESPONSE,
             'code'     => $code,
             'selector' => $selector,
             'position' => $position
         ]);
+    }
+
+    public function transformResponse(VisitorInfo $visitorInfo, Response $response, array $actions)
+    {
+        foreach ($actions as $action) {
+            $this->codeInjector->inject(
+                $response,
+                $action['code'],
+                $action['selector'],
+                $action['position']
+            );
+        }
     }
 }
