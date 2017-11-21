@@ -116,7 +116,7 @@ class TargetingListener implements EventSubscriberInterface
         );
 
         $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
-            '_paq.push([ function() { pimcore.Targeting.setVisitorId(this.getVisitorId()); } ]);'
+            '_paq.push([ function() { pimcore.targeting.setVisitorId(this.getVisitorId()); } ]);'
         );
     }
 

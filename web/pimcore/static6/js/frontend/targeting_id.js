@@ -35,9 +35,13 @@
     };
 
     var util = {
-        log: function (msg) {
-            if (typeof console !== "undefined" && typeof console["log"] === "function") {
-                console.log(msg);
+        logger: {
+            canLog: function(type) {
+                if ('undefined' === typeof type) {
+                    type = 'log';
+                }
+
+                return ('undefined' !== typeof window.console && 'function' === typeof window.console[type]);
             }
         },
 
@@ -109,7 +113,7 @@
         };
 
         User.prototype.setVisitorId = function (id) {
-            console.log('[TARGETING] Setting visitor ID to', id);
+            util.logger.canLog('info') && console.info('[TARGETING] Setting visitor ID to', id);
 
             this.data.visitorId = id;
         };
@@ -119,7 +123,7 @@
             data.visitorId = this.data.visitorId;
             data.timestamp = (new Date()).getTime();
 
-            console.log('TRACK ACTIVITY', data, this);
+            util.logger.canLog('info') && console.info('TRACK ACTIVITY', data, this);
 
             this.data.activityLog.unshift(data);
 
@@ -145,15 +149,15 @@
 
             if (0 === this.data.activityLog.length) {
                 this.data.sessionId = nowTimestamp;
-                util.log("No previous activity - new sessionId: " + this.data.sessionId);
+                util.logger.canLog('info') && console.info("No previous activity - new sessionId: " + this.data.sessionId);
             } else {
                 var lastActivity = this.data.activityLog[0];
                 if (lastActivity.timestamp < (nowTimestamp - (30 * 60 * 1000))) {
                     this.data.sessionId = nowTimestamp; // session expired
-                    util.log("Previous session expired, new sessionId: " + this.data.sessionId);
+                    util.logger.canLog('info') && console.info("Previous session expired, new sessionId: " + this.data.sessionId);
                 } else {
                     this.data.sessionId = lastActivity.sessionId;
-                    util.log("SessionId present: " + this.data.sessionId);
+                    util.logger.canLog('info') && console.info("SessionId present: " + this.data.sessionId);
                 }
             }
         };
@@ -177,6 +181,14 @@
         url: location.href
     }).save();
 
+    window.pimcore = window.pimcore || {};
+    window.pimcore.targeting = window.pimcore.targeting || {};
+
+    window.pimcore.targeting.setVisitorId = function (id) {
+        user.setVisitorId(id);
+        user.save();
+    };
+
     // track links
     util.contentLoaded(window, function () {
         try {
@@ -191,16 +203,8 @@
             for (var le = 0; le < linkElements.length; le++) {
                 util.listen(linkElements[le], "click", linkClickHandler);
             }
-        } catch (e12) {
-            util.log(e12);
+        } catch (e) {
+            util.logger.canLog('error') && console.error(e);
         }
     });
-
-    window.pimcore = window.pimcore || {};
-    window.pimcore.Targeting = {
-        setVisitorId: function (id) {
-            user.setVisitorId(id);
-            user.save();
-        }
-    };
 }());
