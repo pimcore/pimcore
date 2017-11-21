@@ -24,6 +24,7 @@ Operators can then be used to change the way how the data is processed.
 * [Operator Iterator](./06_Iterator.md)
 * [Operator Splitter](./07_Splitter.md)
 * [Operator Unserialize](./08_Unserialize.md)
+* [Operator Base64](./09_Base64.md)
 * ...
 
 

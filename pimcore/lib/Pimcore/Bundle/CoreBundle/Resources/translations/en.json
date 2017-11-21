@@ -1741,6 +1741,8 @@
   "operator_splitter": "Operator Splitter",
   "splitter_operator_settings": "Operator Splitter Settings",
   "operator_unserialize": "Operator Unserialize",
-  "operator_unserialize_settings": "Operator Unserialize Settings"
-
+  "operator_unserialize_settings": "Operator Unserialize Settings",
+  "operator_base64_settings": "Operate Base64 Settings",
+  "operator_base64": "Operator Base64",
+  "string": "String"
 }

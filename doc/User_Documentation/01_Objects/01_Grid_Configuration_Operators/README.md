@@ -22,6 +22,7 @@ This can be changed by defining an alternative renderer. In the following exampl
 * [AnyGetter](./Operators/02_AnyGetter.md)
 * [Arithmetic](./Operators/03_Arithmethic.md)
 * [AssetMetadata](./Operators/04_AssetMetadataGetter.md)
+* [Base64](./Operators/04a_Base64.md)
 * [Boolean](./Operators/05_Boolean.md)
 * [Boolean Formatter](./Operators/06_BooleanFormatter.md)
 * [CaseConverter](./Operators/07_CaseConverter.md)
