@@ -668,12 +668,22 @@ pimcore.object.helpers.import.configDialog = Class.create({
             width: 500
         });
 
+        this.stopIt = false;
         this.importProgressWin = new Ext.Window({
             items: [this.importProgressBar],
             modal: true,
             bodyStyle: "background: #fff;",
             title: t("performing_import"),
-            closable: false
+            closable: false,
+            buttonAlign: 'center',
+            buttons: [
+                {
+                    text: t("stop"),
+                    iconCls: "pimcore_icon_stop",
+                    handler: function () {
+                        this.stopIt = true;
+                    }.bind(this)
+                }]
         });
 
         this.importProgressWin.show();
@@ -685,23 +695,18 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.importErrors = [];
         this.importJobCurrent = 1;
 
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             this.importProcess();
         }.bind(this), 1000);
     },
 
     importProcess: function () {
 
-        if (this.importJobCurrent > this.importJobTotal) {
+        if (this.importJobCurrent > this.importJobTotal || this.stopIt) {
             this.importProgressWin.close();
 
             // error handling
             if (this.importErrors.length > 0) {
-                // var jobs = [];
-                // for (var i = 0; i < this.importErrors.length; i++) {
-                //     jobs.push(this.importErrors[i].job);
-                // }
-
                 Ext.Msg.alert(t("error"), t("import_errors"));
             } else {
                 Ext.Msg.alert(t("success"), t("import_is_done"));
@@ -730,8 +735,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata) {
+                        this.reportPanel.logData(rdata.rowId, rdata.message, rdata.success, rdata.objectId);
                         if (!rdata.success) {
-                            this.reportPanel.logData(rdata.rowId, rdata.message);
                             this.importErrors.push({
                                 job: rdata.message
                             });
@@ -760,14 +765,14 @@ pimcore.object.helpers.import.configDialog = Class.create({
                     if (json.message) {
                         message += ': ' + json.message;
                     }
-                } catch (e) {}
+                } catch (e) {
+                }
 
                 this.importProgressWin.close();
                 pimcore.helpers.showNotification(t("error"), message, "error");
             }.bind(this)
         });
     }
-
 
 
 });

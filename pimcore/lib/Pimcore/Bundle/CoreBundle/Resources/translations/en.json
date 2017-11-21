@@ -1744,5 +1744,10 @@
   "operator_unserialize_settings": "Operator Unserialize Settings",
   "operator_base64_settings": "Operate Base64 Settings",
   "operator_base64": "Operator Base64",
-  "string": "String"
+  "string": "String",
+  "delimiter": "Delimiter",
+  "escapechar": "Escape Character",
+  "lineterminator": "Line Terminator (hex)",
+  "quotechar": "Quote Character"
+
 }

@@ -44,7 +44,7 @@ pimcore.object.helpers.import.csvSettingsTab = Class.create({
             });
 
             this.quoteCharField = new Ext.form.TextField({
-                fieldLabel: t('chotechar'),
+                fieldLabel: t('quotechar'),
                 name: 'quotechar',
                 value: this.config.csvSettings.quotechar
             });

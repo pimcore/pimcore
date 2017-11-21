@@ -1459,12 +1459,10 @@ class DataObjectHelperController extends AdminController
             $object = $this->fillObject($object, $configData, $rowData);
             $object->save();
 
-            return $this->json(['success' => true, 'rowId' => $rowId]);
+            return $this->json(['success' => true, 'rowId' => $rowId, "message" => $object->getFullPath(), "objectId" => $object->getId()]);
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
         }
-
-        return $this->json(['success' => $success]);
     }
 
     /**

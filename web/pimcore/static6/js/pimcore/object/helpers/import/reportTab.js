@@ -33,7 +33,7 @@ pimcore.object.helpers.import.reportTab = Class.create({
                     }
                 },
                 fields: [
-                    "rowId", "message"
+                    "rowId", "message", "success", "objectId"
                 ]
             });
 
@@ -47,18 +47,58 @@ pimcore.object.helpers.import.reportTab = Class.create({
                     items: [
                         {
                             getClass: function (v, meta, rec, rowIndex) {
-                                return 'pimcore_icon_search';
+                                if (!rec.get("success")) {
+                                    return 'pimcore_icon_search';
+                                }
                             }.bind(this),
 
                             handler: function (grid, rowIndex, colIndex) {
                                 var rec = this.dataStore.getAt(rowIndex);
-                                var rowIdx = rec.get("rowId") - 1;
-                                this.callback.preview(rowIdx);
+                                if (!rec.get("success")) {
+                                    var rowIdx = rec.get("rowId") - 1;
+                                    this.callback.preview(rowIdx);
+                                }
                             }.bind(this)
                         }
                     ]
                 }
             );
+
+            dataGridCols.push(
+                {
+                    xtype: 'actioncolumn',
+                    header: t("open"),
+                    tooltip: t('open'),
+                    width: 80,
+                    items: [
+                        {
+                            getClass: function (v, meta, rec, rowIndex) {
+                                if (rec.get("success")) {
+                                    return 'pimcore_icon_open';
+                                }
+                            }.bind(this),
+
+                            handler: function (grid, rowIndex, colIndex) {
+                                var rec = this.dataStore.getAt(rowIndex);
+                                if (rec.get("success")) {
+                                    pimcore.helpers.openObject(rec.get("objectId"), "object");
+                                }
+                            }.bind(this)
+                        }
+                    ]
+                });
+
+            dataGridCols.push({
+                header: t("success"), width: 80, sortable: true, dataIndex: 'success',
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    if (record.get('success')) {
+                        return '<div style="height: 16px;" class="pimcore_icon_success">&nbsp;</div>';
+                    } else {
+                        return '<div style="height: 16px;" class="pimcore_icon_error">&nbsp;</div>';
+                    }
+                },
+                filter: 'boolean'
+            });
 
 
             dataGridCols.push({
@@ -72,6 +112,7 @@ pimcore.object.helpers.import.reportTab = Class.create({
             var dataGrid = new Ext.grid.Panel({
                 store: this.dataStore,
                 columns: dataGridCols,
+                plugins: ['gridfilters'],
                 viewConfig: {
                     forceFit: false
                 },
@@ -94,14 +135,13 @@ pimcore.object.helpers.import.reportTab = Class.create({
         this.dataStore.removeAll();
     },
 
-    logData: function (rowId, message) {
-        this.dataStore.add({
+    logData: function (rowId, message, success, objectId) {
+        this.dataStore.insert(0, {
                 rowId: rowId,
-                message: message
+                message: message,
+                success: success,
+                objectId: objectId
             }
         );
-
     }
-
-
 });
