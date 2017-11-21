@@ -214,27 +214,42 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                                         }
                                     }
                                 }
+                               
+                                var attr = record.data;
+                                if (record.data.configAttributes) {
+                                    attr = record.data.configAttributes;
+                                }
+                                var element = this.getConfigElement(attr);
 
-                                if (true || isOperator || this.parentIsOperator(realOverModel)) {
-                                    var attr = record.data;
-                                    if (record.data.configAttributes) {
-                                        attr = record.data.configAttributes;
-                                    }
-                                    var element = this.getConfigElement(attr);
-                                    var copy = element.getCopyNode(record);
+                                var copy = element.getCopyNode(record);
 
-                                    if (isOverwrite) {
-                                        var parentNode = realOverModel.parentNode;
-                                        parentNode.replaceChild(copy, realOverModel);
-                                        dropHandlers.cancelDrop();
-                                        this.updatePreviewArea();
-
-                                    } else {
-                                        data.records = [copy]; // assign the copy as the new dropNode
-                                    }
-                                    this.showConfigWindow(element, copy);
+                                if (attr.key && attr.key.indexOf("~") !== -1) {
+                                    var brickOperator = new pimcore.object.importcolumn.operator.objectbricksetter();
+                                    var brickNode = brickOperator.getConfigTreeNode();
+                                    brickNode.expanded = true;
+                                    brickNode.configAttributes.attr = record.data.brickField;
+                                    keyParts = attr.key.split("~");
+                                    brickNode.configAttributes.brickType = keyParts[0];
+                                    brickNode = realOverModel.createNode(brickNode);
+                                    brickNode.appendChild(copy);
+                                    copy = brickNode;
 
                                 }
+
+
+
+                                if (isOverwrite) {
+                                    var parentNode = realOverModel.parentNode;
+                                    parentNode.replaceChild(copy, realOverModel);
+                                    dropHandlers.cancelDrop();
+                                    this.updatePreviewArea();
+
+                                } else {
+                                    data.records = [copy]; // assign the copy as the new dropNode
+                                }
+                                this.showConfigWindow(element, copy);
+
+                               
                             } else {
                                 // node has been moved inside right selection panel
                                 var record = data.records[0];
@@ -251,9 +266,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                                         return;
                                     }
                                     var element = this.getConfigElement(attr);
-
                                     var copy = element.getCopyNode(record);
-
 
                                     data.records = [copy]; // assign the copy as the new dropNode
                                     this.showConfigWindow(element, copy);
@@ -278,33 +291,30 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                         }.bind(this),
                         nodedragover: function (targetNode, dropPosition, dragData, e, eOpts) {
                             var sourceNode = dragData.records[0];
+                            var realOverModel = targetNode;
 
-                            if (true || sourceNode.data.isOperator) {
-                                var realOverModel = targetNode;
-                                if (dropPosition == "before" || dropPosition == "after") {
-                                    realOverModel = realOverModel.parentNode;
-                                } else {
-                                    // special handling for replacing nodes
-                                    if (typeof realOverModel.data.isOverwriteAllowed == "function") {
-                                        if (realOverModel.data.isOverwriteAllowed(realOverModel, sourceNode)) {
-                                            return true;
-                                        }
+                            if (dropPosition == "before" || dropPosition == "after") {
+                                realOverModel = realOverModel.parentNode;
+                            } else {
+                                // special handling for replacing nodes
+                                if (typeof realOverModel.data.isOverwriteAllowed == "function") {
+                                    if (realOverModel.data.isOverwriteAllowed(realOverModel, sourceNode)) {
+                                        return true;
                                     }
                                 }
-
-                                var allowed = true;
-
-                                if (typeof realOverModel.data.isChildAllowed == "function") {
-                                    allowed = allowed && realOverModel.data.isChildAllowed(realOverModel, sourceNode);
-                                }
-
-                                if (typeof sourceNode.data.isParentAllowed == "function") {
-                                    allowed = allowed && sourceNode.data.isParentAllowed(realOverModel, sourceNode);
-                                }
-
-
-                                return allowed;
                             }
+
+                            var allowed = true;
+
+                            if (typeof realOverModel.data.isChildAllowed == "function") {
+                                allowed = allowed && realOverModel.data.isChildAllowed(realOverModel, sourceNode);
+                            }
+
+                            if (typeof sourceNode.data.isParentAllowed == "function") {
+                                allowed = allowed && sourceNode.data.isParentAllowed(realOverModel, sourceNode);
+                            }
+                            return allowed;
+
                         }.bind(this),
                         options: {
                             target: this.selectionPanel
@@ -408,6 +418,8 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                         }.bind(this, record)
                     }));
                 }
+
+                menu.add(this.getChangeTypeMenu(record));
             }
         }
 
@@ -454,6 +466,69 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
 
         return tree;
     },
+
+    getChangeTypeMenu: function(record) {
+        var operators = Object.keys(pimcore.object.importcolumn.operator);
+        var childs = [];
+        for (var i = 0; i < operators.length; i++) {
+            childs.push(pimcore.object.importcolumn.operator[operators[i]].prototype.getConfigTreeNode());
+        }
+
+        childs.sort(
+            function (x, y) {
+                return x.text < y.text ? -1 : 1;
+            }
+        );
+
+        var menu = [];
+        for (var i = 0; i < childs.length; i++) {
+            var child = childs[i];
+            var item = new Ext.menu.Item({
+                text: child.text,
+                iconCls: child.iconCls,
+                hideOnClick: true,
+                handler: function (node, newType) {
+                    var jsClass = newType.toLowerCase();
+                    var replacement = pimcore.object.importcolumn.operator[jsClass].prototype.getConfigTreeNode();
+
+                    replacement.expanded = node.data.expanded;
+                    replacement.expandable = node.data.expandable;
+                    replacement.leaf = node.data.leaf;
+
+                    replacement = node.createNode(replacement);
+                    replacement.data.configAttributes.label = node.data.configAttributes.label;
+
+                    var parent = node.parentNode;
+                    var originalChilds = [];
+
+                    node.eachChild(function(child) {
+                        originalChilds.push(child);
+                    });
+
+
+                    node.removeAll();
+                    parent.replaceChild(replacement, node);
+
+                    replacement.appendChild(originalChilds);
+
+                    var element = this.getConfigElement(replacement.data.configAttributes);
+                    this.showConfigWindow(element, replacement);
+                    this.updatePreviewArea();
+                }.bind(this, record, child.configAttributes.class)
+            });
+            menu.push(item);
+        }
+
+        var changeTypeItem =  new Ext.menu.Item({
+            text: t('change_type'),
+            iconCls: "pimcore_icon_convert",
+            hideOnClick: false,
+            menu: menu
+        });
+        return changeTypeItem;
+
+    },
+
 
     getOperatorTree: function () {
         var operators = Object.keys(pimcore.object.importcolumn.operator);

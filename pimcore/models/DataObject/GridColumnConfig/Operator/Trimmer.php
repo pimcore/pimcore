@@ -51,16 +51,18 @@ class Trimmer extends AbstractOperator
                 $childValues = [$childValues];
             }
 
-            /** @var $childValue string */
-            foreach ($childValues as $childValue) {
-                if ($this->trim == self::LEFT) {
-                    $childValue = ltrim($childValue);
-                } elseif ($this->trim == self::RIGHT) {
-                    $childValue = rtrim($childValue);
-                } elseif ($this->trim == self::BOTH) {
-                    $childValue = trim($childValue);
+            if ($childValues) {
+                /** @var $childValue string */
+                foreach ($childValues as $childValue) {
+                    if ($this->trim == self::LEFT) {
+                        $childValue = ltrim($childValue);
+                    } elseif ($this->trim == self::RIGHT) {
+                        $childValue = rtrim($childValue);
+                    } elseif ($this->trim == self::BOTH) {
+                        $childValue = trim($childValue);
+                    }
+                    $valueArray[] = $childValue;
                 }
-                $valueArray[] = $childValue;
             }
 
             $result->isArrayType = $isArrayType;

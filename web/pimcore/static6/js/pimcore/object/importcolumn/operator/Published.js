@@ -115,6 +115,7 @@ pimcore.object.importcolumn.operator.published = Class.create(pimcore.object.gri
         });
 
         this.window.show();
+        this.textField.focus();
         return this.window;
     },
 

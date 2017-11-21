@@ -28,7 +28,6 @@ pimcore.object.helpers.classTree = Class.create({
         var tree = new Ext.tree.TreePanel({
             title: t('class_definitions'),
             region: "center",
-            //ddGroup: "columnconfigelement",
             autoScroll: true,
             rootVisible: false,
             root: {
@@ -70,7 +69,11 @@ pimcore.object.helpers.classTree = Class.create({
                 if (data[keys[i]].childs) {
                     var attributePrefix = "";
                     var text = t(data[keys[i]].nodeLabel);
+
+                    var brickField = null;
+
                     if(data[keys[i]].nodeType == "objectbricks") {
+                        brickField = data[keys[i]].brickField;
                         text = ts(data[keys[i]].nodeLabel) + " " + t("columns");
                         attributePrefix = data[keys[i]].nodeLabel;
                     }
@@ -83,7 +86,7 @@ pimcore.object.helpers.classTree = Class.create({
 
                     baseNode = tree.getRootNode().appendChild(baseNode);
                     for (var j = 0; j < data[keys[i]].childs.length; j++) {
-                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, attributePrefix));
+                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, attributePrefix, brickField));
                     }
                     if(data[keys[i]].nodeType == "object") {
                         baseNode.expand();
@@ -95,7 +98,7 @@ pimcore.object.helpers.classTree = Class.create({
         }
     },
 
-    recursiveAddNode: function (con, scope, attributePrefix) {
+    recursiveAddNode: function (con, scope, attributePrefix, brickField) {
 
         var fn = null;
         var newNode = null;
@@ -104,14 +107,14 @@ pimcore.object.helpers.classTree = Class.create({
             fn = this.addLayoutChild.bind(scope, con.fieldtype, con);
         }
         else if (con.datatype == "data") {
-            fn = this.addDataChild.bind(scope, con.fieldtype, con, attributePrefix, this.showFieldName);
+            fn = this.addDataChild.bind(scope, con.fieldtype, con, attributePrefix, this.showFieldName, brickField);
         }
 
         newNode = fn();
 
         if (con.childs) {
             for (var i = 0; i < con.childs.length; i++) {
-                this.recursiveAddNode(con.childs[i], newNode, attributePrefix);
+                this.recursiveAddNode(con.childs[i], newNode, attributePrefix, brickField);
             }
         }
 
@@ -146,7 +149,7 @@ pimcore.object.helpers.classTree = Class.create({
         return newNode;
     },
 
-    addDataChild: function (type, initData, attributePrefix, showFieldname) {
+    addDataChild: function (type, initData, attributePrefix, showFieldname, brickField) {
 
         if(type != "objectbricks" && !initData.invisible) {
             var isLeaf = true;
@@ -176,7 +179,8 @@ pimcore.object.helpers.classTree = Class.create({
                 allowDrag: draggable,
                 dataType: type,
                 iconCls: "pimcore_icon_" + type,
-                expanded: true
+                expanded: true,
+                brickField: brickField
             };
 
             newNode = this.appendChild(newNode);

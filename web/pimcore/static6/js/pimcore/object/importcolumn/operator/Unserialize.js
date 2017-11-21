@@ -89,8 +89,6 @@ pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.g
             value: this.node.data.configAttributes.label
         });
 
-
-
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
