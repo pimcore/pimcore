@@ -30,7 +30,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Class OGone
  * Payment integration for Ingenico OGone
+ *
  * @see https://payment-services.ingenico.com/int/en/ogone/support/guides/integration%20guides/e-commerce/introduction
+ *
  * @package Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment
  */
 class OGone implements IPayment
@@ -122,32 +124,30 @@ class OGone implements IPayment
         'WIN3DS',                          'WITHROOT'
     ];
 
-    /** @var string[] parameters that can be used for the creation of the SHA fingerprint  */
+    /** @var string[] parameters that can be used for the creation of the SHA fingerprint */
     private static $_SHA_OUT_PARAMETERS = [
-            "AAVADDRESS",               "AAVCHECK",             "AAVMAIL",
-            "AAVNAME",                  "AAVPHONE",             "AAVZIP",
-            "ACCEPTANCE",               "ALIAS",                "AMOUNT",
-            "BIC",                      "BIN",                  "BRAND",
-            "CARDNO",                   "CCCTY",                "CN",
-            "COLLECTOR_BIC",            "COLLECTOR_IBAN",       "COMPLUS",
-            "CREATION_STATUS",          "CREDITDEBIT",          "CURRENCY",
-            "CVCCHECK",                 "DCC_COMMPERCENTAGE",   "DCC_CONVAMOUNT",
-            "DCC_CONVCCY",              "DCC_EXCHRATE",         "DCC_EXCHRATESOURCE",
-            "DCC_EXCHRATETS",           "DCC_INDICATOR",        "DCC_MARGINPERCENTAGE",
-            "DCC_VALIDHOURS",           "DEVICEID",             "DIGESTCARDNO",
-            "ECI",                      "ED",                   "EMAIL",
-            "ENCCARDNO",                "FXAMOUNT",             "FXCURRENCY",
-            "IP",                       "IPCTY",                "MANDATEID",
-            "MOBILEMODE",               "NBREMAILUSAGE",        "NBRIPUSAGE",
-            "NBRIPUSAGE_ALLTX",         "NBRUSAGE",             "NCERROR",
-            "ORDERID",                  "PAYID",                "PAYIDSUB",
-            "PAYMENT_REFERENCE",        "PM",                   "SCO_CATEGORY",
-            "SCORING",                  "SEQUENCETYPE",         "SIGNDATE",
-            "STATUS",                   "SUBBRAND",             "SUBSCRIPTION_ID",
-            "TRXDATE",                  "VC"
+            'AAVADDRESS',               'AAVCHECK',             'AAVMAIL',
+            'AAVNAME',                  'AAVPHONE',             'AAVZIP',
+            'ACCEPTANCE',               'ALIAS',                'AMOUNT',
+            'BIC',                      'BIN',                  'BRAND',
+            'CARDNO',                   'CCCTY',                'CN',
+            'COLLECTOR_BIC',            'COLLECTOR_IBAN',       'COMPLUS',
+            'CREATION_STATUS',          'CREDITDEBIT',          'CURRENCY',
+            'CVCCHECK',                 'DCC_COMMPERCENTAGE',   'DCC_CONVAMOUNT',
+            'DCC_CONVCCY',              'DCC_EXCHRATE',         'DCC_EXCHRATESOURCE',
+            'DCC_EXCHRATETS',           'DCC_INDICATOR',        'DCC_MARGINPERCENTAGE',
+            'DCC_VALIDHOURS',           'DEVICEID',             'DIGESTCARDNO',
+            'ECI',                      'ED',                   'EMAIL',
+            'ENCCARDNO',                'FXAMOUNT',             'FXCURRENCY',
+            'IP',                       'IPCTY',                'MANDATEID',
+            'MOBILEMODE',               'NBREMAILUSAGE',        'NBRIPUSAGE',
+            'NBRIPUSAGE_ALLTX',         'NBRUSAGE',             'NCERROR',
+            'ORDERID',                  'PAYID',                'PAYIDSUB',
+            'PAYMENT_REFERENCE',        'PM',                   'SCO_CATEGORY',
+            'SCORING',                  'SEQUENCETYPE',         'SIGNDATE',
+            'STATUS',                   'SUBBRAND',             'SUBSCRIPTION_ID',
+            'TRXDATE',                  'VC'
     ];
-
-
 
     public function __construct(array $options, FormFactoryInterface $formFactory)
     {
@@ -161,9 +161,12 @@ class OGone implements IPayment
 
     /**
      * Start payment and build form, including fingerprint for Ogone.
+     *
      * @param IPrice $price
      * @param array $config
+     *
      * @return FormBuilderInterface
+     *
      * @throws \Exception
      */
     public function initPayment(IPrice $price, array $config)
@@ -173,7 +176,7 @@ class OGone implements IPayment
             'attr' => ['id' => 'payment_ogone_form']
         ]);
 
-        /** @var $paymentInfo \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo **/
+        /** @var $paymentInfo \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo * */
         $paymentInfo = $config['paymentInfo'];
         //$order = $paymentInfo->getObject();
 
@@ -183,19 +186,19 @@ class OGone implements IPayment
         $form->setAttribute('data-currency', 'EUR');
 
         $params = [
-            "PSPID"         => $this->getProviderOption('pspid'),
-            "ORDERID"       => $config['orderIdent'],
-            "AMOUNT"        => $price->getAmount()->asNumeric()*100,
-            "CURRENCY"      => $price->getCurrency()->getShortName(),
-            "LANGUAGE"      => $config['language'],
-            "ACCEPTURL"     =>  $config['successUrl'],
-            "CANCELURL"     => $config['cancelUrl'],
-            "DECLINEURL"    => $config['errorUrl'],
-            "TP"            =>  $this->getProviderOption('TP', 'paymenttemplate.html'),
+            'PSPID'         => $this->getProviderOption('pspid'),
+            'ORDERID'       => $config['orderIdent'],
+            'AMOUNT'        => $price->getAmount()->asNumeric() * 100,
+            'CURRENCY'      => $price->getCurrency()->getShortName(),
+            'LANGUAGE'      => $config['language'],
+            'ACCEPTURL'     =>  $config['successUrl'],
+            'CANCELURL'     => $config['cancelUrl'],
+            'DECLINEURL'    => $config['errorUrl'],
+            'TP'            =>  $this->getProviderOption('TP', 'paymenttemplate.html'),
         ];
 
         if (isset($config['customerStatement'])) {
-            $params["TITLE"] = $config['customerStatement'];
+            $params['TITLE'] = $config['customerStatement'];
         }
 
         $additionalParams = $this->mapAdditionalPaymentData($params, $config);
@@ -208,14 +211,18 @@ class OGone implements IPayment
         // new sha verification method (all parameters)
         $params = $this->getRawSHA($params, self::$_SHA_IN_PARAMETERS, $this->getProviderOption('secret'));
         $sha = $this->getSHA($this->getProviderOption('encryptionType'), $params);
-        $this->addHiddenField($form, "SHASIGN", $sha);
+        $this->addHiddenField($form, 'SHASIGN', $sha);
+
         return $form;
     }
 
     /**
      * Handles response of payment provider and creates payment status object. Fingerprint must match.
+     *
      * @param array $response
+     *
      * @return IStatus
+     *
      * @throws \Exception
      */
     public function handleResponse($response)
@@ -225,7 +232,6 @@ class OGone implements IPayment
 
         $params = $this->getRawSHA($cleanedResponseParams, self::$_SHA_OUT_PARAMETERS, $this->getProviderOption('secret'));
         $verificationSha = $this->getSHA($this->getProviderOption('encryptionType'), $params);
-
 
         if ($verificationSha != $response['SHASIGN']) {
             throw new \Exception('The verification of the response data was not successful.');
@@ -244,19 +250,19 @@ class OGone implements IPayment
         $price = new Price(Decimal::create($amount), new Currency($currency));
 
         $this->setAuthorizedData([
-            "orderNumber"       => $orderId,
-            "paymentMethod"     => $paymentMethod,
-            "paymentId"         => $oGonePaymentId,
-            "amount"            => $amount,
-            "currency"          => $currency,
-            "ip"                => $ip,
-            "customerName"      >= $customerName
+            'orderNumber'       => $orderId,
+            'paymentMethod'     => $paymentMethod,
+            'paymentId'         => $oGonePaymentId,
+            'amount'            => $amount,
+            'currency'          => $currency,
+            'ip'                => $ip,
+            'customerName' >= $customerName
         ]);
 
         $responseStatus = new Status(
             $orderId, //internal Payment ID
             $orderId, //paymentReference
-            "",
+            '',
             !empty($orderId) && $state === 'success' ? IStatus::STATUS_AUTHORIZED : IStatus::STATUS_CANCELLED,
             [
                 'ogone_amount'          => (string)$price,
@@ -266,12 +272,15 @@ class OGone implements IPayment
                 'ogone_response'        => $response
             ]
         );
+
         return $responseStatus;
     }
 
     /**
      * Check options that have been passed by the main configuration
+     *
      * @param OptionsResolver $resolver
+     *
      * @return OptionsResolver
      */
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
@@ -283,15 +292,19 @@ class OGone implements IPayment
             'mode'
         ]);
         $resolver->setAllowedValues('encryptionType', ['SHA1', 'SHA256', 'SHA512']);
-        $notEmptyValidator = function ($value) { return !empty($value);};
+        $notEmptyValidator = function ($value) {
+            return !empty($value);
+        };
         foreach ($resolver->getRequiredOptions() as $requiredProperty) {
             $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
         }
+
         return $resolver;
     }
 
     /**
      * @inheritdoc
+     *
      * @return string
      */
     public function getName()
@@ -301,35 +314,45 @@ class OGone implements IPayment
 
     /**
      * Helper method for adding hidden fields to a form.
+     *
      * @param FormBuilderInterface $form
      * @param $name
      * @param $value
+     *
      * @return FormBuilderInterface
      */
-    private function addHiddenField(FormBuilderInterface &$form, $name, $value) {
+    private function addHiddenField(FormBuilderInterface &$form, $name, $value)
+    {
         return $form->add($name, HiddenType::class, ['data' => $value]);
     }
 
     /**
      * Helper method to get a value from the main provider configuration based on a string.
+     *
      * @param string $key the name of the provider option.
      * @param string $default if given (not empty) then the default value will be used if there is no array entry. If empty, then a missing key
      *        will result in an error.
+     *
      * @return mixed|string
      */
-    private function getProviderOption(string $key, $default = '') {
+    private function getProviderOption(string $key, $default = '')
+    {
         return empty($default) ? $this->providerOptions[$key] : (isset($this->providerOptions[$key]) ? $this->providerOptions[$key] : $default);
     }
 
     /**
      * Overwrite this method if you want to pass additional parmeters to Ogone during the @link(initPayment) method.
      * The parameters must be one of @code(self::$_SHA_IN_PARAMETERS)
+     *
      * @param array $params
      * @param array $config
+     *
      * @return array
+     *
      * @throws \Exception
      */
-    protected function mapAdditionalPaymentData(array $params, array $config) {
+    protected function mapAdditionalPaymentData(array $params, array $config)
+    {
         /* Example fields: EMAIL, "CN", "OWNERADDRESS", "OWNERZIP", "OWNERCITY", etc. */
         $additionalParams = []; //@map onto additional params from config
         return $additionalParams;
@@ -338,22 +361,27 @@ class OGone implements IPayment
     /**
      * Process additional parameters, such as customer data and throw an exception if invalid parameters have been
      * passed (invalid = not known by the oGone register).
+     *
      * @param array $params
      * @param array $config
      * @param array $additionalParams
+     *
      * @return array
+     *
      * @throws \Exception
      */
-    private function processAdditionalPaymentData(array $params, array $config, array $additionalParams) {
+    private function processAdditionalPaymentData(array $params, array $config, array $additionalParams)
+    {
         /* Example fields: EMAIL, "CN", "OWNERADDRESS", "OWNERZIP", "OWNERCITY", etc. */
         foreach ($additionalParams as $key => $value) {
             if (!in_array($key, self::$_SHA_IN_PARAMETERS)) {
                 throw new \Exception('Unknown parameter "%s" for oGone. Please only use parameters that are specified by oGone. Also see "%s".',
-                    $key, "https://payment-services.ingenico.com/int/en/ogone/support/guides/integration%20guides/e-commerce/link-your-website-to-the-payment-page#formparameters");
+                    $key, 'https://payment-services.ingenico.com/int/en/ogone/support/guides/integration%20guides/e-commerce/link-your-website-to-the-payment-page#formparameters');
             } else {
                 $params[$key] = $value;
             }
         }
+
         return $params;
     }
 
@@ -388,7 +416,7 @@ class OGone implements IPayment
      */
     public function executeDebit(IPrice $price = null, $reference = null)
     {
-        throw new NotImplementedException("executeDebit is not implemented yet.");
+        throw new NotImplementedException('executeDebit is not implemented yet.');
     }
 
     /**
@@ -404,7 +432,7 @@ class OGone implements IPayment
      */
     public function executeCredit(IPrice $price, $reference, $transactionId)
     {
-        throw new NotImplementedException("executeCredit is not implemented yet.");
+        throw new NotImplementedException('executeCredit is not implemented yet.');
     }
 
     /**
@@ -413,12 +441,13 @@ class OGone implements IPayment
      * @param  array  $parameters The parameters.
      * @param  array  $include    Which parameters to include.
      * @param  string $passphrase The passphrase to use.
+     *
      * @return string
      */
     protected function getRawSHA($parameters, $include, $passphrase)
     {
-        uksort($parameters, "strnatcasecmp"); //sort by keys, case insensitivity
-        $params = array();
+        uksort($parameters, 'strnatcasecmp'); //sort by keys, case insensitivity
+        $params = [];
         // add required params to our digest
         foreach ($parameters as $key => $value) {
             $upperKey = strtoupper($key);
@@ -432,27 +461,29 @@ class OGone implements IPayment
 
     /**
      * Encode a raw string into a SHA fingerprint.
+     *
      * @param string $encryptionType SHA1, SHA256, SHA512
      * @param string $rawString the raw string that should be encoded
+     *
      * @return string the encoded string
+     *
      * @throws \Exception
      */
     private function getSHA(string $encryptionType, string $rawString)
     {
         switch ($encryptionType) {
-            case "SHA1":
+            case 'SHA1':
                 return mb_strtoupper(sha1($rawString));
-            case "SHA256":
+            case 'SHA256':
                 if (function_exists('hash')) {
                     return mb_strtoupper(hash('sha256', $rawString));
                 }
                 break;
-            case "SHA512":
+            case 'SHA512':
                 if (function_exists('hash')) {
                     return mb_strtoupper(hash('sha512', $rawString));
                 }
-        };
+        }
         throw new \Exception(sprintf('Algorithm "%s" not available in OGone payment provider.', $encryptionType));
-
     }
 }
