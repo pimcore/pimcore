@@ -18,10 +18,11 @@
 namespace Pimcore\Model\Tool\Targeting\Rule;
 
 use Pimcore\Model;
+use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Tool\Serialize;
 
 /**
- * @property Model\Tool\Targeting\Rule|Model\Tool\Targeting\Rule\Dao $model
+ * @property Rule|Model\Tool\Targeting\Rule\Dao $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
@@ -70,16 +71,14 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Save object to database
-     *
-     * @return bool
      */
     public function save()
     {
         if ($this->model->getId()) {
-            return $this->model->update();
+            $this->model->update();
+        } else {
+            $this->create();
         }
-
-        $this->create();
     }
 
     /**

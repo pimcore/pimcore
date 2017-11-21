@@ -18,16 +18,17 @@
 namespace Pimcore\Model\Tool\Targeting\Rule;
 
 use Pimcore\Model;
+use Pimcore\Model\Tool\Targeting\Rule;
 
 /**
- * @method \Pimcore\Model\Tool\Targeting\Rule\Listing\Dao getDao()
+ * @method Listing\Dao getDao()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Tool\Targeting\Rule
+     * Contains the results of the list
      *
-     * @var array
+     * @var Rule[]
      */
     public $targets = [];
 
@@ -44,11 +45,11 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $targets
+     * @param Rule[] $targets
      *
      * @return $this
      */
-    public function setTargets($targets)
+    public function setTargets(array $targets)
     {
         $this->targets = $targets;
 
@@ -56,9 +57,9 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Rule[]
      */
-    public function getTargets()
+    public function getTargets(): array
     {
         return $this->targets;
     }
