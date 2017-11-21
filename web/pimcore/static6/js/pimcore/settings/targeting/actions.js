@@ -75,45 +75,6 @@ pimcore.settings.targeting.actions = (function () {
             }
         }),
 
-        event: Class.create(pimcore.settings.targeting.action.abstract, {
-            getName: function () {
-                return t("event");
-            },
-
-            getPanel: function (panel, data) {
-                var id = Ext.id();
-
-                return new Ext.form.FormPanel({
-                    id: id,
-                    forceLayout: true,
-                    style: "margin: 10px 0 0 0",
-                    bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.actions.getTopBar(this, id, panel),
-                    items: [
-                        {
-                            xtype: "textfield",
-                            name: "key",
-                            width: 300,
-                            fieldLabel: t("key"),
-                            value: data.key
-                        },
-                        {
-                            xtype: "textfield",
-                            name: "value",
-                            width: 200,
-                            fieldLabel: t("value"),
-                            value: data.value
-                        },
-                        {
-                            xtype: "hidden",
-                            name: "type",
-                            value: "event"
-                        }
-                    ]
-                });
-            }
-        }),
-
         codesnippet: Class.create(pimcore.settings.targeting.action.abstract, {
             getName: function () {
                 return t("code_snippet");

@@ -60,7 +60,6 @@ services:
     Pimcore\Targeting\ActionHandler\ActionHandlerInterface: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
     Pimcore\Targeting\ActionHandler\DelegatingActionHandler: ~
     Pimcore\Targeting\ActionHandler\AssignTargetGroup: ~
-    Pimcore\Targeting\ActionHandler\Event: ~
     Pimcore\Targeting\ActionHandler\Redirect: ~
 
     Pimcore\Targeting\Session\SessionConfigurator:

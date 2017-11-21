@@ -197,41 +197,6 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        event: Class.create(pimcore.settings.targeting.condition.abstract, {
-            getName: function () {
-                return t("event");
-            },
-
-            getPanel: function (panel, data) {
-                var id = Ext.id();
-
-                return new Ext.form.FormPanel({
-                    id: id,
-                    forceLayout: true,
-                    style: "margin: 10px 0 0 0",
-                    bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
-                    items: [{
-                        xtype: 'textfield',
-                        fieldLabel: t('key'),
-                        name: "key",
-                        value: data.key,
-                        width: 300
-                    }, {
-                        xtype: 'textfield',
-                        fieldLabel: t('value'),
-                        name: "value",
-                        value: data.value,
-                        width: 200
-                    }, {
-                        xtype: "hidden",
-                        name: "type",
-                        value: "event"
-                    }]
-                });
-            }
-        }),
-
         geopoint: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
                 return t("geopoint");
@@ -510,7 +475,7 @@ pimcore.settings.targeting.conditions = (function () {
             }
         }),
 
-        vistitedpagebefore: Class.create(pimcore.settings.targeting.condition.abstract, {
+        visitedpagebefore: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
                 return t("visited_page_before");
             },
@@ -533,13 +498,13 @@ pimcore.settings.targeting.conditions = (function () {
                     }, {
                         xtype: "hidden",
                         name: "type",
-                        value: "vistitedpagebefore"
+                        value: "visitedpagebefore"
                     }]
                 });
             }
         }),
 
-        vistitedpagesbefore: Class.create(pimcore.settings.targeting.condition.abstract, {
+        visitedpagesbefore: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
                 return t("visited_pages_before_number");
             },
@@ -562,7 +527,7 @@ pimcore.settings.targeting.conditions = (function () {
                     }, {
                         xtype: "hidden",
                         name: "type",
-                        value: "vistitedpagesbefore"
+                        value: "visitedpagesbefore"
                     }]
                 });
             }
@@ -604,64 +569,6 @@ pimcore.settings.targeting.conditions = (function () {
                         xtype: "hidden",
                         name: "type",
                         value: "timeonsite"
-                    }]
-                });
-            }
-        }),
-
-        linkclicked: Class.create(pimcore.settings.targeting.condition.abstract, {
-            getName: function () {
-                return t("link_clicked");
-            },
-
-            getPanel: function (panel, data) {
-                var id = Ext.id();
-
-                return new Ext.form.FormPanel({
-                    id: id,
-                    forceLayout: true,
-                    style: "margin: 10px 0 0 0",
-                    bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
-                    items: [{
-                        xtype: 'textfield',
-                        fieldLabel: "URL",
-                        name: "url",
-                        value: data.url,
-                        width: 450
-                    }, {
-                        xtype: "hidden",
-                        name: "type",
-                        value: "linkclicked"
-                    }]
-                });
-            }
-        }),
-
-        linksclicked: Class.create(pimcore.settings.targeting.condition.abstract, {
-            getName: function () {
-                return t("number_of_links_clicked");
-            },
-
-            getPanel: function (panel, data) {
-                var id = Ext.id();
-
-                return new Ext.form.FormPanel({
-                    id: id,
-                    forceLayout: true,
-                    style: "margin: 10px 0 0 0",
-                    bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-                    tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
-                    items: [{
-                        xtype: 'numberfield',
-                        fieldLabel: t("number"),
-                        name: "number",
-                        value: data.number,
-                        width: 200
-                    }, {
-                        xtype: "hidden",
-                        name: "type",
-                        value: "linksclicked"
                     }]
                 });
             }
@@ -780,6 +687,13 @@ pimcore.settings.targeting.conditions = (function () {
         })
     };
 
+    // BC aliases
+    var aliases = {
+        vistitedpagebefore: 'visitedpagebefore',
+        vistitedpagesbefore: 'visitedpagesbefore',
+        persona: 'target_group'
+    };
+
     return {
         register: function (name, condition) {
             conditions[name] = condition;
@@ -792,6 +706,10 @@ pimcore.settings.targeting.conditions = (function () {
         },
 
         get: function (name) {
+            if ('undefined' === typeof conditions[name] && 'undefined' !== typeof aliases[name]) {
+                name = aliases[name];
+            }
+
             if ('undefined' === typeof conditions[name]) {
                 throw new Error('Condition ' + name + ' is not defined', name);
             }
