@@ -33,6 +33,7 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\AssignTargetGroup;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
+use Pimcore\Targeting\ActionHandler\ResponseTransformingActionHandlerInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\VisitorInfoResolver;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
@@ -100,7 +101,7 @@ class TargetingListener implements EventSubscriberInterface
             // needs to run before ElementListener to make sure there's a
             // resolved VisitorInfo when the document is loaded
             KernelEvents::REQUEST           => ['onKernelRequest', 7],
-            KernelEvents::RESPONSE          => ['onKernelResponse']
+            KernelEvents::RESPONSE          => ['onKernelResponse', -115]
         ];
     }
 
@@ -209,8 +210,10 @@ class TargetingListener implements EventSubscriberInterface
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
         $response    = $event->getResponse();
 
-        // inject frontend actions into response
-        $this->addResponseActions($response, $visitorInfo);
+        if ($event->isMasterRequest()) {
+            // handle recorded actions on response
+            $this->handleResponseActions($visitorInfo, $response);
+        }
 
         // check if the visitor info influences the response
         if ($this->appliesPersonalization($visitorInfo)) {
@@ -219,32 +222,50 @@ class TargetingListener implements EventSubscriberInterface
         }
     }
 
-    private function addResponseActions(Response $response, VisitorInfo $visitorInfo)
+    private function handleResponseActions(VisitorInfo $visitorInfo, Response $response)
     {
-        if (!$this->isHtmlResponse($response)) {
-            return;
-        }
-
-        // filter frontend actions
-        $actions = array_filter($visitorInfo->getActions(), function (array $action) {
-            return ($action['scope'] ?? null) === 'frontend';
-        });
-
+        $actions = $this->getResponseActions($visitorInfo);
         if (empty($actions)) {
             return;
         }
 
-        $code = <<<EOL
-<script type="text/javascript">
-    window.pimcore = window.pimcore || {};
-    window.pimcore.targeting = window.pimcore.targeting || {};
-    window.pimcore.targeting.actions = %s;
-</script>
-EOL;
+        foreach ($actions as $type => $typeActions) {
+            $handler = $this->actionHandler->getActionHandler($type);
+            if (!$handler instanceof ResponseTransformingActionHandlerInterface) {
+                throw new \RuntimeException(sprintf(
+                    'The "%s" action handler does not implement ResponseTransformingActionHandlerInterface',
+                    $type
+                ));
+            }
 
-        $code = sprintf($code, json_encode($actions));
+            $handler->transformResponse($visitorInfo, $response, $typeActions);
+        }
+    }
 
-        $this->injectBeforeHeadEnd($response, $code);
+    private function getResponseActions(VisitorInfo $visitorInfo): array
+    {
+        $actions = [];
+
+        if (!$visitorInfo->hasActions()) {
+            return $actions;
+        }
+
+        foreach ($visitorInfo->getActions() as $action) {
+            $type  = $action['type'] ?? null;
+            $scope = $action['scope'] ?? null;
+
+            if (empty($type) || empty($scope) || $scope !== VisitorInfo::ACTION_SCOPE_RESPONSE) {
+                continue;
+            }
+
+            if (!is_array($actions[$type])) {
+                $actions[$type] = [$action];
+            } else {
+                $actions[$type][] = $action;
+            }
+        }
+
+        return $actions;
     }
 
     private function appliesPersonalization(VisitorInfo $visitorInfo): bool

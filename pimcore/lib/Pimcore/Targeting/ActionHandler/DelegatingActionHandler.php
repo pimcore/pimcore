@@ -66,6 +66,11 @@ class DelegatingActionHandler implements ActionHandlerInterface
         $actionHandler->apply($visitorInfo, $action, $rule);
     }
 
+    public function hasActionHandler(string $type): bool
+    {
+        return $this->actionHandlers->has($type);
+    }
+
     public function getActionHandler(string $type): ActionHandlerInterface
     {
         if (!$this->actionHandlers->has($type)) {
