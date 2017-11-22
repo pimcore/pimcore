@@ -67,4 +67,4 @@ services:
         tags:
             - { name: pimcore.session.configurator }
 
-    Pimcore\Targeting\Document\DocumentTargetingHandler: ~
+    Pimcore\Targeting\Document\DocumentTargetingConfigurator: ~

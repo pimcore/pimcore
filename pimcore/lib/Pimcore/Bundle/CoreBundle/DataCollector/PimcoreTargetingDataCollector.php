@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\DataCollector;
 
 use Pimcore\Http\Request\Resolver\DocumentResolver;
-use Pimcore\Targeting\Document\DocumentTargetingHandler;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,9 +30,9 @@ class PimcoreTargetingDataCollector extends DataCollector
     private $visitorInfoStorage;
 
     /**
-     * @var DocumentTargetingHandler
+     * @var DocumentTargetingConfigurator
      */
-    private $documentTargetingHandler;
+    private $documentTargetingConfigurator;
 
     /**
      * @var DocumentResolver
@@ -41,13 +41,13 @@ class PimcoreTargetingDataCollector extends DataCollector
 
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
-        DocumentTargetingHandler $documentTargetingHandler,
+        DocumentTargetingConfigurator $documentTargetingConfigurator,
         DocumentResolver $documentResolver
     )
     {
-        $this->visitorInfoStorage       = $visitorInfoStorage;
-        $this->documentTargetingHandler = $documentTargetingHandler;
-        $this->documentResolver         = $documentResolver;
+        $this->visitorInfoStorage            = $visitorInfoStorage;
+        $this->documentTargetingConfigurator = $documentTargetingConfigurator;
+        $this->documentResolver              = $documentResolver;
     }
 
     /**
@@ -103,7 +103,7 @@ class PimcoreTargetingDataCollector extends DataCollector
             return;
         }
 
-        $targetGroup = $this->documentTargetingHandler->getConfiguredTargetGroup($document);
+        $targetGroup = $this->documentTargetingConfigurator->getConfiguredTargetGroup($document);
 
         if (!$targetGroup) {
             return;

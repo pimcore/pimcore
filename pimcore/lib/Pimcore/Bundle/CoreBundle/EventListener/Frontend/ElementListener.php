@@ -26,7 +26,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Model\Version;
-use Pimcore\Targeting\Document\DocumentTargetingHandler;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -67,24 +67,23 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     protected $userLoader;
 
     /**
-     * @var DocumentTargetingHandler
+     * @var DocumentTargetingConfigurator
      */
-    private $documentTargetingHandler;
+    private $documentTargetingConfigurator;
 
     public function __construct(
         DocumentResolver $documentResolver,
         EditmodeResolver $editmodeResolver,
         RequestHelper $requestHelper,
         UserLoader $userLoader,
-        DocumentTargetingHandler $documentTargetingHandler
+        DocumentTargetingConfigurator $documentTargetingConfigurator
     )
     {
-        $this->documentResolver = $documentResolver;
-        $this->editmodeResolver = $editmodeResolver;
-        $this->requestHelper    = $requestHelper;
-        $this->userLoader       = $userLoader;
-
-        $this->documentTargetingHandler = $documentTargetingHandler;
+        $this->documentResolver              = $documentResolver;
+        $this->editmodeResolver              = $editmodeResolver;
+        $this->requestHelper                 = $requestHelper;
+        $this->userLoader                    = $userLoader;
+        $this->documentTargetingConfigurator = $documentTargetingConfigurator;
     }
 
     /**
@@ -195,7 +194,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         } else {
             // load first target group from match result which has valid elements
             // and apply that on the document
-            $this->documentTargetingHandler->configureTargetGroup($document);
+            $this->documentTargetingConfigurator->configureTargetGroup($document);
         }
 
         if ($document->getUseTargetGroup()) {

@@ -24,7 +24,7 @@ use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 
-class DocumentTargetingHandler
+class DocumentTargetingConfigurator
 {
     /**
      * @var VisitorInfoStorageInterface
