@@ -19,3 +19,8 @@ if (!$schema->getTable('targeting_rules')->hasColumn('prio')) {
 if ($schema->getTable('targeting_target_groups')->hasColumn('conditions')) {
     $db->query('ALTER TABLE `targeting_target_groups` DROP `conditions`');
 }
+
+$documentsPageTable = $schema->getTable('documents_page');
+if ($documentsPageTable->hasColumn('personas') && !$documentsPageTable->hasColumn('targetGroupIds')) {
+    $db->query('ALTER TABLE `documents_page` CHANGE `personas` `targetGroupIds` VARCHAR(255)');
+}

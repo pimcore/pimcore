@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Redirect;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
@@ -70,11 +71,11 @@ class Page extends TargetingDocument
     public $prettyUrl;
 
     /**
-     * comma separated IDs of personas
+     * Comma separated IDs of target groups
      *
      * @var string
      */
-    public $personas = '';
+    public $targetGroupIds = '';
 
     /**
      * @throws \Exception
@@ -288,26 +289,106 @@ class Page extends TargetingDocument
     }
 
     /**
+     * Set linked Target Groups as set in properties panel as list of IDs
+     *
+     * @param array $targetGroupIds
+     */
+    public function setTargetGroupIds(array $targetGroupIds)
+    {
+        $targetGroupIds = array_map(function($id) {
+            return (int)$id;
+        }, $targetGroupIds);
+
+        $targetGroupIds = array_filter($targetGroupIds, function($id) {
+            return $id > 0;
+        });
+
+        $targetGroupIds = implode(',', $targetGroupIds);
+        $targetGroupIds = trim($targetGroupIds, ' ,');
+
+        if (!empty($targetGroupIds)) {
+            $targetGroupIds = ',' . $targetGroupIds . ',';
+        }
+
+        $this->targetGroupIds = $targetGroupIds;
+    }
+
+    /**
+     * Get serialized list of Target Group IDs
+     *
+     * @return string
+     */
+    public function getTargetGroupIds()
+    {
+        return $this->targetGroupIds;
+    }
+
+    /**
+     * Set assigned target groups
+     *
+     * @param TargetGroup[]|int[] $targetGroups
+     */
+    public function setTargetGroups(array $targetGroups)
+    {
+        $ids = array_map(function($targetGroup) {
+            if (is_numeric($targetGroup)) {
+                return (int)$targetGroup;
+            } elseif ($targetGroup instanceof TargetGroup) {
+                return $targetGroup->getId();
+            }
+
+            return null;
+        }, $targetGroups);
+
+        $ids = array_filter($ids, function($id) {
+            return null !== $id && $id > 0;
+        });
+
+        $this->setTargetGroupIds($ids);
+    }
+
+    /**
+     * Return list of assigned target groups (via properties panel)
+     *
+     * @return TargetGroup[]
+     */
+    public function getTargetGroups(): array
+    {
+        $ids = explode(',', $this->targetGroupIds);
+
+        $targetGroups = array_map(function($id) {
+            $id = trim($id);
+            if (!empty($id)) {
+                $targetGroup = TargetGroup::getById($id);
+                if ($targetGroup) {
+                    return $targetGroup;
+                }
+            }
+        }, $ids);
+
+        $targetGroups = array_filter($targetGroups);
+
+        return $targetGroups;
+    }
+
+    /**
+     * @deprecated Use setTargetGroupIds instead. Will be removed in Pimcore 6.
+     *
      * @param string $personas
      */
     public function setPersonas($personas)
     {
-        if (is_array($personas)) {
-            $personas = implode(',', $personas);
-        }
-        $personas = trim($personas, ' ,');
-        if (!empty($personas)) {
-            $personas = ',' . $personas . ',';
-        }
-        $this->personas = $personas;
+        $this->setTargetGroupIds((array)$personas);
     }
 
     /**
+     * @deprecated Use getTargetGroupIds instead. Will be removed in Pimcore 6.
+     *
      * @return string
      */
     public function getPersonas()
     {
-        return $this->personas;
+        return $this->getTargetGroupIds();
     }
 
     /**
