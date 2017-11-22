@@ -24,7 +24,7 @@ use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Model\Version;
 use Pimcore\Targeting\Document\DocumentTargetingHandler;
 use Pimcore\Tool\Session;

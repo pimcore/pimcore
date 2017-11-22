@@ -20,7 +20,7 @@ namespace Pimcore\Targeting\Document;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
-use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 
 class DocumentTargetingHandler

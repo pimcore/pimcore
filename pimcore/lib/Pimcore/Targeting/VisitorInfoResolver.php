@@ -120,7 +120,7 @@ class VisitorInfoResolver
     public function isTargetingConfigured(): bool
     {
         $configuredRules = $this->db->fetchColumn(
-            'SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1'
+            'SELECT id FROM targeting_target_groups UNION SELECT id FROM targeting_rules LIMIT 1'
         );
 
         return $configuredRules && (int)$configuredRules > 0;

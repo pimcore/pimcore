@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Tool\Targeting;
-use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

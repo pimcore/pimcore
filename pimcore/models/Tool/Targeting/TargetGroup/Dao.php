@@ -15,26 +15,25 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Tool\Targeting\Persona;
+namespace Pimcore\Model\Tool\Targeting\TargetGroup;
 
 use Pimcore\Model;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tool\Serialize;
 
 /**
- * @deprecated Use TargetGroup\Dao instead. Will be removed in Pimcore 6.
- *
- * @property \Pimcore\Model\Tool\Targeting\Persona $model
+ * @property TargetGroup $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param null $id
+     * @param int|null $id
      *
      * @throws \Exception
      */
-    public function getById($id = null)
+    public function getById(int $id = null)
     {
-        if ($id != null) {
+        if (null !== $id) {
             $this->model->setId($id);
         }
 
@@ -45,37 +44,24 @@ class Dao extends Model\Dao\AbstractDao
 
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('persona with id ' . $this->model->getId() . " doesn't exist");
+            throw new \Exception('Target Group with id ' . $this->model->getId() . " doesn't exist");
         }
     }
 
-    /**
-     * Save object to database
-     *
-     * @return bool
-     *
-     * @todo: update and create don't return anything
-     */
     public function save()
     {
         if ($this->model->getId()) {
-            return $this->model->update();
+            $this->model->update();
+        } else {
+            $this->create();
         }
-
-        return $this->create();
     }
 
-    /**
-     * Deletes object from database
-     */
     public function delete()
     {
         $this->db->delete('targeting_target_groups', ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function update()
     {
         try {
@@ -87,9 +73,11 @@ class Dao extends Model\Dao\AbstractDao
                     if (is_array($value) || is_object($value)) {
                         $value = Serialize::serialize($value);
                     }
+
                     if (is_bool($value)) {
-                        $value = (int) $value;
+                        $value = (int)$value;
                     }
+
                     $data[$key] = $value;
                 }
             }
@@ -100,17 +88,12 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * Create a new record for the object in database
-     *
-     * @return bool
-     */
     public function create()
     {
         $this->db->insert('targeting_target_groups', []);
 
         $this->model->setId($this->db->lastInsertId());
 
-        return $this->save();
+        $this->save();
     }
 }

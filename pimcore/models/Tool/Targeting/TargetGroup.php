@@ -20,11 +20,9 @@ namespace Pimcore\Model\Tool\Targeting;
 use Pimcore\Model;
 
 /**
- * @deprecated Use TargetGroup instead. Will be removed in Pimcore 6.
- *
- * @method \Pimcore\Model\Tool\Targeting\Persona\Dao getDao()
+ * @method TargetGroup\Dao getDao()
  */
-class Persona extends Model\AbstractModel
+class TargetGroup extends Model\AbstractModel
 {
     /**
      * @var int
@@ -52,39 +50,21 @@ class Persona extends Model\AbstractModel
     public $active = true;
 
     /**
-     * @deprecated Conditions are not supported anymore and will not ne persisted. Property will be removed in Pimcore 6.
-     *
-     * @var array
-     */
-    public $conditions = [];
-
-    /**
      * @param $id
      *
-     * @return null|Persona
+     * @return null|TargetGroup
      */
     public static function getById($id)
     {
         try {
-            $persona = new self();
-            $persona->setId(intval($id));
-            $persona->getDao()->getById();
+            $targetGroup = new self();
+            $targetGroup->setId(intval($id));
+            $targetGroup->getDao()->getById();
 
-            return $persona;
+            return $targetGroup;
         } catch (\Exception $e) {
             return null;
         }
-    }
-
-    /**
-     * add the persona to the current user
-     *
-     * @param $id
-     */
-    public static function fire($id)
-    {
-        $targetingService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.targeting');
-        $targetingService->addPersona($id);
     }
 
     /**
@@ -94,9 +74,10 @@ class Persona extends Model\AbstractModel
      */
     public static function isIdActive($id)
     {
-        $persona = Model\Tool\Targeting\Persona::getById($id);
-        if ($persona) {
-            return $persona->getActive();
+        $targetGroup = Model\Tool\Targeting\TargetGroup::getById($id);
+
+        if ($targetGroup) {
+            return $targetGroup->getActive();
         }
 
         return false;
@@ -160,33 +141,6 @@ class Persona extends Model\AbstractModel
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @deprecated Conditions are not supported anymore and will not ne persisted. Method will be removed in Pimcore 6.
-     *
-     * @param $conditions
-     *
-     * @return $this
-     */
-    public function setConditions($conditions)
-    {
-        if (!$conditions) {
-            $conditions = [];
-        }
-        $this->conditions = $conditions;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Conditions are not supported anymore and will not ne persisted. Method will be removed in Pimcore 6.
-     *
-     * @return array
-     */
-    public function getConditions()
-    {
-        return $this->conditions;
     }
 
     /**

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Model;
 
-use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

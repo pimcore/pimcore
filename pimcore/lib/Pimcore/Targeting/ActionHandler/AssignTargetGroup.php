@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\ActionHandler;
 
-use Pimcore\Model\Tool\Targeting\Persona as TargetGroup;
 use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\ConditionMatcherInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
