@@ -9,9 +9,8 @@ services:
         arguments:
             $filename: '%pimcore.geoip.db_file%'
 
-    Pimcore\Targeting\EventListener\TargetingListener:
-        arguments:
-            $actionHandler: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
+    Pimcore\Targeting\EventListener\TargetingListener: ~
+    Pimcore\Targeting\EventListener\DocumentTargetGroupListener: ~
 
     Pimcore\Targeting\Storage\TargetingStorageInterface: '@Pimcore\Targeting\Storage\SessionStorage'
     Pimcore\Targeting\Storage\SessionStorage: ~
@@ -22,8 +21,6 @@ services:
 
     Pimcore\Targeting\VisitorInfoResolver:
         lazy: true
-        arguments:
-            $actionHandler: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
 
     Pimcore\Targeting\DataLoaderInterface: '@Pimcore\Targeting\DataLoader'
     Pimcore\Targeting\DataLoader: ~

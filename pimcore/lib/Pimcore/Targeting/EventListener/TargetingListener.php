@@ -21,15 +21,11 @@ use Pimcore\Analytics\Piwik\Event\TrackingDataEvent;
 use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Event\Analytics\PiwikEvents;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
-use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
-use Pimcore\Model\Document\Page;
-use Pimcore\Model\Staticroute;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\AssignTargetGroup;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
@@ -46,13 +42,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class TargetingListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
-    use ResponseInjectionTrait;
     use EnabledTrait;
-
-    /**
-     * @var DocumentResolver
-     */
-    private $documentResolver;
 
     /**
      * @var VisitorInfoResolver
@@ -75,14 +65,12 @@ class TargetingListener implements EventSubscriberInterface
     private $requestHelper;
 
     public function __construct(
-        DocumentResolver $documentResolver,
         VisitorInfoResolver $visitorInfoResolver,
         ActionHandlerInterface $actionHandler,
         VisitorInfoStorageInterface $visitorInfoStorage,
         RequestHelper $requestHelper
     )
     {
-        $this->documentResolver    = $documentResolver;
         $this->visitorInfoResolver = $visitorInfoResolver;
         $this->actionHandler       = $actionHandler;
         $this->visitorInfoStorage  = $visitorInfoStorage;
@@ -125,44 +113,6 @@ class TargetingListener implements EventSubscriberInterface
         /** @var AssignTargetGroup $assignTargetGroupHandler */
         $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
         $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
-
-        $this->assignDocumentTargetGroups($event);
-    }
-
-    /**
-     * Handles target groups configured on the document settings panel. If a document
-     * has configured target groups, the assign_target_group will be manually called
-     * for that target group before starting to match other conditions.
-     *
-     * @param TargetingEvent $event
-     */
-    private function assignDocumentTargetGroups(TargetingEvent $event)
-    {
-        $request  = $event->getRequest();
-        $document = $this->documentResolver->getDocument($request);
-
-        if (!$document || !$document instanceof Page || null !== Staticroute::getCurrentRoute()) {
-            return;
-        }
-
-        // read and normalize target group IDs from document
-        $targetGroups = trim((string)$document->getPersonas());
-        $targetGroups = explode(',', $targetGroups);
-        $targetGroups = array_filter(array_map(function ($tg) {
-            return !empty($tg) ? (int)$tg : null;
-        }, $targetGroups));
-
-        if (empty($targetGroups)) {
-            return;
-        }
-
-        $visitorInfo = $event->getVisitorInfo();
-        foreach ($targetGroups as $targetGroup) {
-            $this->actionHandler->apply($visitorInfo, [
-                'type'        => 'assign_target_group',
-                'targetGroup' => $targetGroup
-            ]);
-        }
     }
 
     public function onKernelRequest(GetResponseEvent $event)

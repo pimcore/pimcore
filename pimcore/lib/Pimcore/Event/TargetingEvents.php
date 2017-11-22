@@ -66,4 +66,14 @@ final class TargetingEvents
      * @var string
      */
     const BUILD_CONDITION = 'pimcore.targeting.build_condition';
+
+    /**
+     * Fired when a target group which is configured on document settings
+     * is assigned to a visitor info.
+     *
+     * @Event("Pimcore\Event\Targeting\AssignDocumentTargetGroupEvent")
+     *
+     * @var string
+     */
+    const ASSIGN_DOCUMENT_TARGET_GROUP = 'pimcore.targeting.assign_document_target_group';
 }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\ActionHandler;
 
+use Pimcore\Event\TargetingEvents;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\ConditionMatcherInterface;
@@ -61,7 +62,12 @@ class AssignTargetGroup implements ActionHandlerInterface
             }
         }
 
-        $targetGroup = TargetGroup::getById($targetGroupId);
+        if ($targetGroupId instanceof TargetGroup) {
+            $targetGroup = $targetGroupId;
+        } else {
+            $targetGroup = TargetGroup::getById($targetGroupId);
+        }
+
         if (!$targetGroup || !$targetGroup->getActive()) {
             return;
         }
