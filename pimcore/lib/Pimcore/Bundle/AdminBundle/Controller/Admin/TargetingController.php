@@ -195,7 +195,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
         if ($request->get('add-default')) {
             $targetGroups[] = [
-                'id' => 0,
+                'id'   => 0,
                 'text' => 'default',
                 'qtip' => 0
             ];

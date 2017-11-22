@@ -18,6 +18,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 use Pimcore\Tool;
@@ -389,19 +390,21 @@ class PageController extends DocumentControllerBase
      */
     public function clearEditableDataAction(Request $request)
     {
-        $personaId = $request->get('persona');
+        $targetGroupId = $request->get('targetGroup');
         $docId = $request->get('id');
 
         $doc = Document::getById($docId);
 
+        /** @var Document\Tag $element */
         foreach ($doc->getElements() as $element) {
-            if ($personaId && $doc instanceof Document\Page) {
-                if (preg_match('/^' . preg_quote($doc->getPersonaElementPrefix($personaId), '/') . '/', $element->getName())) {
+            if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
+                // remove target group specific elements
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupElementPrefix($targetGroupId), '/') . '/', $element->getName())) {
                     $doc->removeElement($element->getName());
                 }
             } else {
-                // remove all but persona data
-                if (!preg_match("/^persona_\-/", $element->getName())) {
+                // remove all but target group data
+                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $element->getName())) {
                     $doc->removeElement($element->getName());
                 }
             }

@@ -76,7 +76,7 @@ class TagRenderer implements LoggerAwareInterface
         //personal element name needed for real name of tag in case of personalized content - in order to build hierarchical name correctly
         $personalElementName = $inputName;
         if ($document && $document instanceof Page) {
-            $personalElementName = $document->getPersonaElementName($inputName);
+            $personalElementName = $document->getTargetGroupElementName($inputName);
         }
 
         if (null === $editmode) {

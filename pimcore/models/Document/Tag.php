@@ -627,9 +627,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             );
         }
 
-        // check for persona content
-        if ($document && $document instanceof Document\Page) {
-            $name = $document->getPersonaElementName($name);
+        // check for target group content
+        if ($document && $document instanceof Document\Targeting\TargetingDocumentInterface) {
+            $name = $document->getTargetGroupElementName($name);
         }
 
         // @todo add document-id to registry key | for example for embeded snippets

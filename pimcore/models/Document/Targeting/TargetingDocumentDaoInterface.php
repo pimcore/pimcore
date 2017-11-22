@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -8,26 +11,25 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Document
- *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Document;
+namespace Pimcore\Model\Document\Targeting;
 
-use Pimcore\Model;
-
-/**
- * @method \Pimcore\Model\Document\Snippet\Dao getDao()
- */
-class Snippet extends TargetingDocument
+interface TargetingDocumentDaoInterface
 {
     /**
-     * Static type of the document
+     * Checks if the document has targeting specific elements
      *
-     * @var string
+     * @return bool
      */
-    public $type = 'snippet';
+    public function hasTargetGroupSpecificElements(): bool;
+
+    /**
+     * Returns targeting specific element names
+     *
+     * @return array
+     */
+    public function getTargetGroupSpecificElementNames(): array;
 }

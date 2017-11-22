@@ -181,7 +181,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         // reset because of preview and editmode (saved in session)
-        $document->setUsePersona(null);
+        $document->setUseTargetGroup(null);
 
         // if admin request - do not query targeting result but just use the _ptg (target group) parameter
         // to set a target group
@@ -189,7 +189,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             if ($request->get('_ptg')) {
                 $targetGroup = TargetGroup::getById((int)$request->get('_ptg'));
                 if ($targetGroup) {
-                    $document->setUsePersona($targetGroup->getId());
+                    $document->setUseTargetGroup($targetGroup->getId());
                 }
             }
         } else {
@@ -198,19 +198,11 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             $this->documentTargetingHandler->configureTargetGroup($document);
         }
 
-        if ($document->getUsePersona()) {
+        if ($document->getUseTargetGroup()) {
             $this->logger->info('Setting target group to {targetGroup} for document {document}', [
-                'persona'  => $document->getUsePersona(),
-                'document' => $document->getFullPath()
+                'targetGroup' => $document->getUseTargetGroup(),
+                'document'    => $document->getFullPath()
             ]);
-
-            // store applied target groups on request
-            $targetGroups = $request->attributes->get('_pimcore_target_groups', []);
-            if (!in_array($document->getUsePersona(), $targetGroups)) {
-                $targetGroups[] = $document->getUsePersona();
-            }
-
-            $request->attributes->set('_pimcore_target_groups', $targetGroups);
         }
     }
 

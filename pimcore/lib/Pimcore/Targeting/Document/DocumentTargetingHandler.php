@@ -20,6 +20,7 @@ namespace Pimcore\Targeting\Document;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 
@@ -71,7 +72,7 @@ class DocumentTargetingHandler
             $targetGroup = $matchingTargetGroups[0];
 
             $this->targetGroupMapping[$document->getId()] = $targetGroup;
-            $document->setUsePersona($targetGroup->getId());
+            $document->setUseTargetGroup($targetGroup->getId());
         }
     }
 
@@ -140,7 +141,7 @@ class DocumentTargetingHandler
 
         $targetGroups = [];
         foreach ($document->getElements() as $key => $tag) {
-            $pattern = '/^' . Page::PERSONA_ELEMENT_PREFIX_PREFIXPART . '([0-9]+)' . Page::PERSONA_ELEMENT_PREFIX_SUFFIXPART . '/';
+            $pattern = '/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '([0-9]+)' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX, '/') . '/';
             if (preg_match($pattern, $key, $matches)) {
                 $targetGroups[] = (int)$matches[1];
             }
