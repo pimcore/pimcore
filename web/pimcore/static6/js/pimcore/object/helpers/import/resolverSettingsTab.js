@@ -86,7 +86,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
             fieldLabel: t("language"),
             value: this.config.resolverSettings.language,
             store: new Ext.data.ArrayStore({
-                id: 0,
                 fields: [
                     'id',
                     'label'

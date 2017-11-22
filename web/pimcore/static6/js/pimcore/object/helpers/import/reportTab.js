@@ -119,11 +119,33 @@ pimcore.object.helpers.import.reportTab = Class.create({
                 autoScroll: true
             });
 
+            this.importProgressBar = new Ext.ProgressBar({
+                text: t('Initializing'),
+                style: "margin: 10px;",
+                width: 500
+            });
+
+            this.stopButton = new Ext.button.Button(
+                        {
+                            text: t("stop"),
+                            iconCls: "pimcore_icon_stop",
+                            handler: function () {
+                                this.callback.stopIt = true;
+                            }.bind(this)
+                        }
+            );
+
+            this.statusBar = new Ext.form.FieldContainer(
+                {
+                    layout: "hbox",
+                    items: [this.importProgressBar, this.stopButton]
+                });
+
             this.reportPanel = new Ext.panel.Panel({
                 disabled: true,
                 title: t("import_report"),
                 iconCls: 'pimcore_icon_import_report',
-                items: [dataGrid]
+                items: [this.statusBar, dataGrid]
             });
         }
 

@@ -321,7 +321,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                         }
                     }
                 },
-                id: 'tree',
                 region: 'east',
                 title: t('selected_grid_columns'),
                 layout: 'fit',

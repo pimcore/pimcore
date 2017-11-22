@@ -104,7 +104,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
             text: t("close"),
             iconCls: "pimcore_icon_cancel",
             handler: function () {
-                this.window.close();
+                this.containerPanel.close();
             }.bind(this)
         });
 
@@ -158,7 +158,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         buttons.push(this.saveButton);
 
-
         buttons.push({
             text: t("import"),
             iconCls: "pimcore_icon_start_import",
@@ -167,18 +166,18 @@ pimcore.object.helpers.import.configDialog = Class.create({
             }.bind(this)
         });
 
-
-        this.window = new Ext.Window({
-            width: 1000,
-            height: 700,
-            modal: true,
+        this.containerPanel = new Ext.panel.Panel({
             title: this.getWindowTitle(),
             layout: "fit",
+            iconCls: "pimcore_icon_import",
             items: [this.tabPanel],
-            buttons: buttons
+            buttons: buttons,
+            closable: true
         });
 
-        this.window.show();
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.add(this.containerPanel);
+        tabPanel.setActiveTab(this.containerPanel);
     },
 
     getWindowTitle: function () {
@@ -211,7 +210,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.columnConfigPanel.rebuildPanel();
         this.resolverSettingsPanel.rebuildPanel();
         this.saveAndSharePanel.rebuildPanel();
-        this.window.setTitle(this.getWindowTitle());
+        this.containerPanel.setTitle(this.getWindowTitle());
         this.deleteButton.enable(!this.isShared);
     },
 
@@ -287,7 +286,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                         if (rdata && rdata.success) {
                             this.importConfigId = rdata.importConfigId;
                             this.availableConfigs = rdata.availableConfigs;
-                            this.window.setTitle(this.getWindowTitle());
+                            this.containerPanel.setTitle(this.getWindowTitle());
                             pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
                         }
                         else {
@@ -484,6 +483,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                         if (configsCombo.getValue()) {
                             this.getFileInfo(true, configsCombo.getValue());
                             this.loadWindow.close();
+                            this.tabPanel.setActiveTab(this.columnConfigPanel.getPanel());
                         }
                     }.bind(this, configsCombo)
                 }
@@ -520,7 +520,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
                         this.importConfigId = null;
                         this.deleteButton.disable();
-                        this.window.setTitle(this.getWindowTitle());
+                        this.containerPanel.setTitle(this.getWindowTitle());
 
                         pimcore.helpers.showNotification(t("success"), t("importconfig_removed"), "success");
                     } else {
@@ -568,6 +568,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 if (decodedResponse.success) {
                     this.config.selectedGridColumns = decodedResponse.selectedGridColumns;
                     this.reloadPanels();
+                    this.tabPanel.setActiveTab(this.columnConfigPanel.getPanel());
                 } else {
                     pimcore.helpers.showNotification(t("error"), t("error"), "error");
                 }
@@ -575,9 +576,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
             }.bind(this)
         });
-
     },
-
 
     showImportDialog: function (response) {
 
@@ -648,7 +647,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.commitEverything();
         var config = this.prepareSaveData();
 
-
         this.importJobTotal = this.config.rows;
         if (this.config.resolverSettings.skipHeadRow) {
             this.importJobTotal--;
@@ -664,32 +662,9 @@ pimcore.object.helpers.import.configDialog = Class.create({
             additionalData: this.additionalData
         };
 
-
-        this.importProgressBar = new Ext.ProgressBar({
-            text: t('Initializing'),
-            style: "margin: 10px;",
-            width: 500
-        });
-
         this.stopIt = false;
-        this.importProgressWin = new Ext.Window({
-            items: [this.importProgressBar],
-            modal: true,
-            bodyStyle: "background: #fff;",
-            title: t("performing_import"),
-            closable: false,
-            buttonAlign: 'center',
-            buttons: [
-                {
-                    text: t("stop"),
-                    iconCls: "pimcore_icon_stop",
-                    handler: function () {
-                        this.stopIt = true;
-                    }.bind(this)
-                }]
-        });
 
-        this.importProgressWin.show();
+        this.reportPanel.stopButton.setDisabled(false);
         this.reportPanel.clearData();
 
         this.reportPanel.getPanel().setDisabled(false);
@@ -706,8 +681,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
     importProcess: function () {
 
         if (this.importJobCurrent > this.importJobTotal || this.stopIt) {
-            this.importProgressWin.close();
-
+            this.reportPanel.stopButton.setDisabled(true);
             // error handling
             if (this.importErrors.length > 0) {
                 Ext.Msg.alert(t("error"), t("import_errors"));
@@ -726,7 +700,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         var status = (this.importJobCurrent / this.importJobTotal);
         var percent = Math.ceil(status * 100);
-        this.importProgressBar.updateProgress(status, percent + "%");
+        this.reportPanel.importProgressBar.updateProgress(status, percent + "%");
 
         this.jobRequest.job = this.importJobCurrent;
         this.jobRequest.importJobTotal = this.importJobTotal;
@@ -758,7 +732,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                         this.importProcess();
                     }.bind(this), 400);
                 } catch (e) {
-                    this.importProgressWin.close();
+                    this.reportPanel.stopButton.setDisabled(true);
                     pimcore.helpers.showNotification(t("error"), e, "error");
                 }
             }.bind(this),
@@ -773,11 +747,9 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 } catch (e) {
                 }
 
-                this.importProgressWin.close();
+                this.reportPanel.stopButton.setDisabled(true);
                 pimcore.helpers.showNotification(t("error"), message, "error");
             }.bind(this)
         });
     }
-
-
 });
