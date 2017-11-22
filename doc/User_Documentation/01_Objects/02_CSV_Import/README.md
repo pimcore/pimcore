@@ -49,3 +49,24 @@ But there are at least certain basic options that can be automatically set.
 Lists all errors.
 
 ![Preview](../../img/csvimport/report.png)
+
+## Events
+
+You can use the events described in the 
+[Events](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectImportEvents.php)
+section to hook into the import process.
+
+If you want to open the import window programmatically, use the following code:
+
+```javascript
+            var dialog = new pimcore.object.helpers.import.configDialog({
+                classId: 2,                         // the class id
+                mode: "direct",                     // instructs the importer not to ask for the file
+                importConfigId: 19,                 // the saved configuration id
+                parentId: 63,                       // the tree parent id (optional)
+                uniqueImportId: "news",             // the unique id of this import (IMPORTANT: CSV is expected to be available at ' PIMCORE_SYSTEM_TEMP_DIRECTORY + '/import_' + [uniqueImportId])
+                additionalData: {                   // optional data passed to the event handler
+                    something: "everything"
+                }
+            });
+```

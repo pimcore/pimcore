@@ -26,9 +26,10 @@ pimcore.object.helpers.import.configDialog = Class.create({
         }
         this.classId = config.classId;
         this.className = config.className;
+        this.additionalData = config.additionalData || {};
 
         if (config.mode == "direct") {
-            this.uniqueImportId = "news";
+            this.uniqueImportId = config.uniqueImportId;
             this.parentId = config.parentId;
             this.getFileInfo(false, config.importConfigId);
         } else {
@@ -318,7 +319,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
             parentId: this.parentId ? this.parentId : "",
             rowIndex: rowIndex,
             classId: this.classId,
-            config: config
+            config: config,
+            additionalData: this.additionalData
         };
 
         Ext.Ajax.request({
@@ -658,7 +660,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
             className: this.className,
             classId: this.classId,
             job: 1,
-            parentId: this.parentId
+            parentId: this.parentId,
+            additionalData: this.additionalData
         };
 
 
@@ -726,6 +729,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.importProgressBar.updateProgress(status, percent + "%");
 
         this.jobRequest.job = this.importJobCurrent;
+        this.jobRequest.importJobTotal = this.importJobTotal;
+
         Ext.Ajax.request({
             url: "/admin/object-helper/import-process",
             params: this.jobRequest,

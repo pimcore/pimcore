@@ -1563,12 +1563,15 @@ pimcore.layout.toolbar = Class.create({
 
     openImportConfig: function () {
         try {
-            var dialog  = new pimcore.object.helpers.import.configDialog({
-                classId: 2,                                 // TODO hardcoded to news class
-                className: "News",
+            var dialog = new pimcore.object.helpers.import.configDialog({
+                classId: 2,
                 mode: "direct",
                 importConfigId: 19,
-                parentId: 63
+                parentId: 63,
+                uniqueImportId: "news",
+                additionalData: {
+                    something: "everything"
+                }
             });
         }
         catch (e) {

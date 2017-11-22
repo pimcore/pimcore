@@ -25,6 +25,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Object Class Definition](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectClassDefinitionEvents.php)
 - [Object Classification Store](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectClassificationStoreEvents.php)
 - [Object Custom Layouts](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectCustomLayoutEvents.php)
+- [Object Import](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectImportEvents.php)
 - [Users / Roles](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/UserRoleEvents.php)
 - [Workflows](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/WorkflowEvents.php)
   

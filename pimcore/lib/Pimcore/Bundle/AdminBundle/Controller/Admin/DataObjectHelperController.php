@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Db;
+use Pimcore\Event\DataObjectImportEvents;
+use Pimcore\Event\Model\DataObjectImportEvent;
 use Pimcore\File;
 use Pimcore\Localization\Locale;
 use Pimcore\Logger;
@@ -171,6 +173,11 @@ class DataObjectHelperController extends AdminController
         return $this->json([ 'success' => true, 'selectedGridColumns' => $selectedGridColumns]);
     }
 
+    /**
+     * @param $user
+     * @param $classId
+     * @return array
+     */
     public function getImportConfigs($user, $classId)
     {
         $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
@@ -1140,14 +1147,15 @@ class DataObjectHelperController extends AdminController
     {
         $importId = $request->get('importId');
 
-        $config = $request->get('config');
-        $config = json_decode($config, false);
+        $configData = $request->get('config');
+        $configData = json_decode($configData, false);
 
-        $data = Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $config) {
-            return $session->get('importconfig_' . $importId, $config);
+        $data = Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $configData) {
+            return $session->get('importconfig_' . $importId, $configData);
         }, 'pimcore_gridconfig');
 
-        $config = $data->config;
+        $configData = $data->config;
+        $additionalData = $data->additionalData;
         $rowIndex = $data->rowIndex;
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
@@ -1177,7 +1185,7 @@ class DataObjectHelperController extends AdminController
         $paramsBag = [];
 
         $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
-        $resolver = $service->getResolverImplementation($config);
+        $resolver = $service->getResolverImplementation($configData);
 
         $classId = $data->classId;
         $class = DataObject\ClassDefinition::getById($classId);
@@ -1194,7 +1202,17 @@ class DataObjectHelperController extends AdminController
         $deepCopy = new \DeepCopy\DeepCopy();
         $object2 = $deepCopy->copy($object1);
 
-        $object2 = $this->fillObject($object2, $config, $rowData);
+        $context = [];
+        $eventData = new DataObjectImportEvent($configData, $originalFile);
+        $eventData->setAdditionalData($additionalData);
+        $eventData->setContext($context);
+
+
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
+
+        $context = $eventData->getContext();
+
+        $object2 = $this->populateObject($object2, $configData, $rowData, $originalFile, $context);
         $paramsBag['object1'] = $object1;
         $paramsBag['object2'] = $object2 ;
         $paramsBag['isImportPreview'] = true;
@@ -1204,9 +1222,16 @@ class DataObjectHelperController extends AdminController
         return $response;
     }
 
-    protected function fillObject($object, $config, $rowData)
+
+    /**
+     * @param $object
+     * @param $configData
+     * @param $rowData
+     * @return mixed
+     */
+    protected function populateObject($object, $configData, $rowData, $context)
     {
-        $selectedGridColumns = $config->selectedGridColumns;
+        $selectedGridColumns = $configData->selectedGridColumns;
 
         $container = \Pimcore::getContainer();
         $localeService = $container->get(Locale::class);
@@ -1216,9 +1241,9 @@ class DataObjectHelperController extends AdminController
         $colIndex = -1;
 
         $locale = null;
-        if ($config->resolverSettings) {
-            if ($config->resolverSettings && $config->resolverSettings->language != 'default') {
-                $locale = $config->resolverSettings->language;
+        if ($configData->resolverSettings) {
+            if ($configData->resolverSettings && $configData->resolverSettings->language != 'default') {
+                $locale = $configData->resolverSettings->language;
             }
         }
 
@@ -1237,7 +1262,6 @@ class DataObjectHelperController extends AdminController
 
             $config = $config[0];
             $target = $object;
-            $context = [];
 
             if ($locale) {
                 $localeService->setLocale($locale);
@@ -1405,8 +1429,10 @@ class DataObjectHelperController extends AdminController
     public function importProcessAction(Request $request)
     {
         $parentId = $request->get('parentId');
+        $additionalData = $request->get('additionalData');
         $job = $request->get('job');
         $importId = $request->get('importId');
+        $importJobTotal = $request->get('importJobTotal');
 
         $configData = $request->get('config');
         $configData = json_decode($configData, false);
@@ -1416,7 +1442,14 @@ class DataObjectHelperController extends AdminController
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId;
         $originalFile = $file . '_original';
 
+        $context = [];
+        $eventData = new DataObjectImportEvent($configData, $originalFile);
+        $eventData->setAdditionalData($additionalData);
+        $eventData->setContext($context);
+
         if ($job == 1) {
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::BEFORE_START, $eventData);
+
             if (!copy($originalFile, $file)) {
                 throw new \Exception('failed to copy file');
             }
@@ -1456,9 +1489,19 @@ class DataObjectHelperController extends AdminController
 
             $object = $resolver->resolve($parentId, $rowData);
 
-            $object = $this->fillObject($object, $configData, $rowData);
+            $context = $eventData->getContext();
+            $object = $this->populateObject($object, $configData, $rowData, $originalFile, $context);
+
+            $eventData->setObject($object);
+            $eventData->setRowData($rowData);
+
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
+
             $object->save();
 
+            if ($job >= $importJobTotal) {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::DONE, $eventData);
+            }
             return $this->json(['success' => true, 'rowId' => $rowId, "message" => $object->getFullPath(), "objectId" => $object->getId()]);
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
@@ -1891,10 +1934,6 @@ class DataObjectHelperController extends AdminController
             }
         }
     }
-
-    /**
-     * @extjs - TODO remove this, when old ext support is removed
-     */
 
     /**
      * Flattens object data to an array with key=>value where
