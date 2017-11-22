@@ -59,11 +59,6 @@ class AssignTargetGroup implements ActionHandlerInterface
 
         $assign = true;
 
-        // TODO is this appropriate to check for first visit?
-        if (!$visitorInfo->hasVisitorId()) {
-            $assign = $this->checkEntryConditions($visitorInfo, $targetGroup);
-        }
-
         if (!$assign) {
             return;
         }
@@ -78,15 +73,6 @@ class AssignTargetGroup implements ActionHandlerInterface
         if ($assign) {
             $visitorInfo->assignTargetGroup($targetGroup, $assignments);
         }
-    }
-
-    private function checkEntryConditions(VisitorInfo $visitorInfo, TargetGroup $targetGroup): bool
-    {
-        if (empty($conditions = $targetGroup->getConditions())) {
-            return true;
-        }
-
-        return $this->conditionMatcher->match($visitorInfo, $conditions);
     }
 
     private function storeAssignments(VisitorInfo $visitorInfo, TargetGroup $targetGroup): int

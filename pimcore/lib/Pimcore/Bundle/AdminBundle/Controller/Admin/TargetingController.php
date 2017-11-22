@@ -280,7 +280,6 @@ class TargetingController extends AdminController implements EventedControllerIn
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = TargetGroup::getById($request->get('id'));
         $targetGroup->setValues($data['settings']);
-        $targetGroup->setConditions($data['conditions']);
         $targetGroup->save();
 
         return $this->adminJson(['success' => true]);

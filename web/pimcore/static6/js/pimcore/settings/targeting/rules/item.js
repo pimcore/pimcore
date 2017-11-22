@@ -107,7 +107,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                 name: "scope",
                 fieldLabel: t("scope"),
                 xtype: "combo",
-                width: 200,
+                width: 250,
                 value: this.data["scope"],
                 mode: "local",
                 triggerAction: "all",

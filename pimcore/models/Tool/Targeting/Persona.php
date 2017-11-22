@@ -50,6 +50,8 @@ class Persona extends Model\AbstractModel
     public $active = true;
 
     /**
+     * @deprecated Conditions are not supported anymore and will not ne persisted. Property will be removed in Pimcore 6.
+     *
      * @var array
      */
     public $conditions = [];
@@ -159,6 +161,8 @@ class Persona extends Model\AbstractModel
     }
 
     /**
+     * @deprecated Conditions are not supported anymore and will not ne persisted. Method will be removed in Pimcore 6.
+     *
      * @param $conditions
      *
      * @return $this
@@ -174,6 +178,8 @@ class Persona extends Model\AbstractModel
     }
 
     /**
+     * @deprecated Conditions are not supported anymore and will not ne persisted. Method will be removed in Pimcore 6.
+     *
      * @return array
      */
     public function getConditions()

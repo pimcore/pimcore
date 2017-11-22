@@ -39,7 +39,6 @@ class Dao extends Model\Dao\AbstractDao
         $data = $this->db->fetchRow('SELECT * FROM targeting_personas WHERE id = ?', $this->model->getId());
 
         if ($data['id']) {
-            $data['conditions'] = Serialize::unserialize($data['conditions']);
             $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
 
             $this->assignVariablesToModel($data);
