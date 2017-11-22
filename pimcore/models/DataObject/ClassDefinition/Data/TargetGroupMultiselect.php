@@ -19,30 +19,29 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Tool;
 
-/**
- * @deprecated Use TargetGroupMultiselect instead. Will be removed in Pimcore 6
- */
-class Personamultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
+class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = 'personamultiselect';
+    public $fieldtype = 'targetGroupMultiselect';
 
     public function configureOptions()
     {
-        $list = new Tool\Targeting\Persona\Listing();
+        /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
+        $list = new Tool\Targeting\TargetGroup\Listing();
         $list->setOrder('asc');
         $list->setOrderKey('name');
-        $personas = $list->load();
+
+        $targetGroups = $list->load();
 
         $options = [];
-        foreach ($personas as $persona) {
+        foreach ($targetGroups as $targetGroup) {
             $options[] = [
-                'value' => $persona->getId(),
-                'key' => $persona->getName()
+                'value' => $targetGroup->getId(),
+                'key'   => $targetGroup->getName()
             ];
         }
 

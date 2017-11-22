@@ -19,17 +19,14 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Tool;
 
-/**
- * @deprecated Use TargetGroup instead. Will be removed in Pimcore 6
- */
-class Persona extends Model\DataObject\ClassDefinition\Data\Select
+class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**
      * Static type of this element
      *
      * @var string
      */
-    public $fieldtype = 'persona';
+    public $fieldtype = 'targetGroup';
 
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
@@ -75,16 +72,18 @@ class Persona extends Model\DataObject\ClassDefinition\Data\Select
 
     public function configureOptions()
     {
-        $list = new Tool\Targeting\Persona\Listing();
+        /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
+        $list = new Tool\Targeting\TargetGroup\Listing();
         $list->setOrder('asc');
         $list->setOrderKey('name');
-        $personas = $list->load();
+
+        $targetGroups = $list->load();
 
         $options = [];
-        foreach ($personas as $persona) {
+        foreach ($targetGroups as $targetGroup) {
             $options[] = [
-                'value' => $persona->getId(),
-                'key' => $persona->getName()
+                'value' => $targetGroup->getId(),
+                'key'   => $targetGroup->getName()
             ];
         }
 
@@ -106,9 +105,10 @@ class Persona extends Model\DataObject\ClassDefinition\Data\Select
         }
 
         if (!empty($data)) {
-            $persona = Tool\Targeting\Persona::getById($data);
-            if (!$persona instanceof Tool\Targeting\Persona) {
-                throw new Model\Element\ValidationException('Invalid persona reference');
+            $targetGroup = Tool\Targeting\TargetGroup::getById($data);
+
+            if (!$targetGroup instanceof Tool\Targeting\TargetGroup) {
+                throw new Model\Element\ValidationException('Invalid target group reference');
             }
         }
     }

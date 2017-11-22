@@ -11,13 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-/**
- * @deprecated Use pimcore.object.classes.data.targetGroup instead. Will be removed in Pimcore 6.
- */
-pimcore.registerNS("pimcore.object.classes.data.persona");
-pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.targetGroup");
+pimcore.object.classes.data.targetGroup = Class.create(pimcore.object.classes.data.data, {
 
-    type: "persona",
+    type: "targetGroup",
+
     /**
      * define where this datatype is allowed
      */
@@ -26,24 +24,24 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
         objectbrick: true,
         fieldcollection: true,
         localizedfield: false,
-        classificationstore : false,
+        classificationstore: false,
         block: true
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "persona";
+        this.type = "targetGroup";
 
-        if(!initData["name"]) {
+        if (!initData["name"]) {
             initData = {
-                title: t("persona")
+                title: t("target_group")
             };
         }
 
-        initData.fieldtype = "persona";
+        initData.fieldtype = "targetGroup";
         initData.datatype = "data";
-        initData.name = "persona";
+        initData.name = "targetGroup";
         initData.noteditable = false;
-        treeNode.set("text", "persona");
+        treeNode.set("text", "targetGroup");
 
         this.initData(initData);
 
@@ -51,7 +49,7 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
     },
 
     getTypeName: function () {
-        return t("persona");
+        return t("target_group");
     },
 
     getGroup: function () {
@@ -59,17 +57,6 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
     },
 
     getIconClass: function () {
-        return "pimcore_icon_personas";
-    },
-
-    getLayout: function ($super) {
-
-        $super();
-
-        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
-        nameField.disable();
-
-        return this.layout;
+        return "pimcore_icon_targetGroup";
     }
-
 });

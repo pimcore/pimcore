@@ -11,13 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-/**
- * @deprecated Use pimcore.object.classes.data.targetGroupMultiselect instead. Will be removed in Pimcore 6.
- */
-pimcore.registerNS("pimcore.object.classes.data.personamultiselect");
-pimcore.object.classes.data.personamultiselect = Class.create(pimcore.object.classes.data.multiselect, {
+pimcore.registerNS("pimcore.object.classes.data.targetGroupMultiselect");
+pimcore.object.classes.data.targetGroupMultiselect = Class.create(pimcore.object.classes.data.multiselect, {
 
-    type: "personamultiselect",
+    type: "targetGroupMultiselect",
+
     /**
      * define where this datatype is allowed
      */
@@ -26,12 +24,12 @@ pimcore.object.classes.data.personamultiselect = Class.create(pimcore.object.cla
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false,
+        classificationstore: false,
         block: true
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "personamultiselect";
+        this.type = "targetGroupMultiselect";
 
         this.initData(initData);
 
@@ -43,15 +41,14 @@ pimcore.object.classes.data.personamultiselect = Class.create(pimcore.object.cla
     },
 
     getTypeName: function () {
-        return t("personamultiselect");
+        return t("target_group_multiselect");
     },
 
     getIconClass: function () {
-        return "pimcore_icon_persona";
+        return "pimcore_icon_targetGroupMultiselect";
     },
 
     getLayout: function ($super) {
-
         $super();
 
         this.specificPanel.removeAll();
@@ -78,18 +75,17 @@ pimcore.object.classes.data.personamultiselect = Class.create(pimcore.object.cla
         delete this.datax.options;
     },
 
-    applySpecialData: function(source) {
+    applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {
-                this.datax =  {};
+                this.datax = {};
             }
-            Ext.apply(this.datax,
-                {
-                    options: source.datax.options,
-                    width: source.datax.width,
-                    height: source.datax.height
-                });
+
+            Ext.apply(this.datax, {
+                options: source.datax.options,
+                width: source.datax.width,
+                height: source.datax.height
+            });
         }
     }
-
 });

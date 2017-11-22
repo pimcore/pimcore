@@ -11,16 +11,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-/**
- * @deprecated Use pimcore.object.tags.targetGroupMultiselect instead. Will be removed in Pimcore 6.
- */
-pimcore.registerNS("pimcore.object.tags.personamultiselect");
-pimcore.object.tags.personamultiselect = Class.create(pimcore.object.tags.multiselect, {
+pimcore.registerNS("pimcore.object.tags.targetGroupMultiselect");
+pimcore.object.tags.targetGroupMultiselect = Class.create(pimcore.object.tags.multiselect, {
 
-    type: "personamultiselect",
+    type: "targetGroupMultiselect",
 
-    getGridColumnFilter: function(field) {
+    getGridColumnFilter: function (field) {
         return null;
     }
-
 });

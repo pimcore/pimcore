@@ -113,6 +113,7 @@
   "assign_target_group_weight": "Weight",
   "target_group": "Target Group",
   "target_groups": "Target Groups",
+  "target_group_multiselect": "Target Group Multiselect",
   "add_target_group": "Add Target Group",
   "edit_content_for_target_group": "Edit Content for Target Group",
   "select_a_target_group": "Select a Target Group",

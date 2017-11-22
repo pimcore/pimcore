@@ -122,6 +122,8 @@ pimcore:
                     objects: \Pimcore\Model\DataObject\ClassDefinition\Data\Objects
                     objectsMetadata: \Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata
                     password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
+                    targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
+                    targetGroupMultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
                     persona: \Pimcore\Model\DataObject\ClassDefinition\Data\Persona
                     personamultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Personamultiselect
                     quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
