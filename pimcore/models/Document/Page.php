@@ -291,19 +291,14 @@ class Page extends TargetingDocument
     /**
      * Set linked Target Groups as set in properties panel as list of IDs
      *
-     * @param array $targetGroupIds
+     * @param string|array $targetGroupIds
      */
-    public function setTargetGroupIds(array $targetGroupIds)
+    public function setTargetGroupIds($targetGroupIds)
     {
-        $targetGroupIds = array_map(function($id) {
-            return (int)$id;
-        }, $targetGroupIds);
+        if (is_array($targetGroupIds)) {
+            $targetGroupIds = implode(',', $targetGroupIds);
+        }
 
-        $targetGroupIds = array_filter($targetGroupIds, function($id) {
-            return $id > 0;
-        });
-
-        $targetGroupIds = implode(',', $targetGroupIds);
         $targetGroupIds = trim($targetGroupIds, ' ,');
 
         if (!empty($targetGroupIds)) {
@@ -318,7 +313,7 @@ class Page extends TargetingDocument
      *
      * @return string
      */
-    public function getTargetGroupIds()
+    public function getTargetGroupIds(): string
     {
         return $this->targetGroupIds;
     }

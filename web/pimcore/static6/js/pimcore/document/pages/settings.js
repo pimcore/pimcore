@@ -337,11 +337,10 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                 store: pimcore.globalmanager.get("target_group_store"),
                                 displayField: "text",
                                 valueField: "id",
-                                // TODO change personas to target groups here
-                                name: 'personas',
+                                name: 'targetGroupIds',
                                 width: 700,
                                 //listWidth: 200,
-                                value: this.document.data["personas"],
+                                value: this.document.data["targetGroupIds"],
                                 minHeight: 100
                             })
                         ]
