@@ -33,9 +33,6 @@ services:
     Pimcore\Targeting\DataProvider\Piwik: ~
     Pimcore\Targeting\DataProvider\TargetingStorage: ~
 
-    Pimcore\Targeting\DataProviderLocatorInterface: '@Pimcore\Targeting\DataProviderLocator'
-    Pimcore\Targeting\DataProviderLocator: ~
-
     Pimcore\Targeting\ConditionFactoryInterface: '@Pimcore\Targeting\ConditionFactory'
     Pimcore\Targeting\ConditionFactory:
         arguments:
@@ -50,9 +47,6 @@ services:
     Pimcore\Targeting\ConditionMatcher:
         arguments:
             $expressionLanguage: '@pimcore.targeting.condition_matcher.expression_language'
-
-    Pimcore\Targeting\ActionHandlerLocatorInterface: '@Pimcore\Targeting\ActionHandlerLocator'
-    Pimcore\Targeting\ActionHandlerLocator: ~
 
     Pimcore\Targeting\ActionHandler\ActionHandlerInterface: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
     Pimcore\Targeting\ActionHandler\DelegatingActionHandler: ~

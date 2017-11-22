@@ -18,15 +18,15 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\ActionHandler;
 
 use Pimcore\Model\Tool\Targeting\Rule;
-use Pimcore\Targeting\ActionHandlerLocatorInterface;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Psr\Container\ContainerInterface;
 
 class DelegatingActionHandler implements ActionHandlerInterface
 {
     /**
-     * @var ActionHandlerLocatorInterface
+     * @var ContainerInterface
      */
     private $actionHandlers;
 
@@ -36,7 +36,7 @@ class DelegatingActionHandler implements ActionHandlerInterface
     private $dataLoader;
 
     public function __construct(
-        ActionHandlerLocatorInterface $actionHandlers,
+        ContainerInterface $actionHandlers,
         DataLoaderInterface $dataLoader
     )
     {
@@ -53,7 +53,7 @@ class DelegatingActionHandler implements ActionHandlerInterface
         $type = $action['type'] ?? null;
 
         if (empty($type)) {
-            throw new \InvalidArgumentException('Invalid action: Type is not set');
+            throw new \InvalidArgumentException('Invalid action: type is not set');
         }
 
         $actionHandler = $this->getActionHandler($type);

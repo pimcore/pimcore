@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting;
 
+use Pimcore\Targeting\DataProvider\DataProviderInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
 interface DataLoaderInterface
@@ -29,4 +30,22 @@ interface DataLoaderInterface
      * @param array|string $providerKeys
      */
     public function loadDataFromProviders(VisitorInfo $visitorInfo, $providerKeys);
+
+    /**
+     * Checks if a data provider is registered
+     *
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function hasDataProvider(string $type): bool;
+
+    /**
+     * Returns the data provider instance identified by name
+     *
+     * @param string $type
+     *
+     * @return DataProviderInterface
+     */
+    public function getDataProvider(string $type): DataProviderInterface;
 }

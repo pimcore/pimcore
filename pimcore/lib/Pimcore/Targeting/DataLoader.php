@@ -17,16 +17,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting;
 
+use Pimcore\Targeting\DataProvider\DataProviderInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Psr\Container\ContainerInterface;
 
 class DataLoader implements DataLoaderInterface
 {
     /**
-     * @var DataProviderLocatorInterface
+     * @var ContainerInterface
      */
     private $dataProviders;
 
-    public function __construct(DataProviderLocatorInterface $dataProviders)
+    public function __construct(ContainerInterface $dataProviders)
     {
         $this->dataProviders = $dataProviders;
     }
@@ -63,5 +65,28 @@ class DataLoader implements DataLoaderInterface
 
             $dataProvider->load($visitorInfo);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hasDataProvider(string $type): bool
+    {
+        return $this->dataProviders->has($type);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDataProvider(string $type): DataProviderInterface
+    {
+        if (!$this->dataProviders->has($type)) {
+            throw new \InvalidArgumentException(sprintf(
+                'There is no data provider registered for type "%s"',
+                $type
+            ));
+        }
+
+        return $this->dataProviders->get($type);
     }
 }

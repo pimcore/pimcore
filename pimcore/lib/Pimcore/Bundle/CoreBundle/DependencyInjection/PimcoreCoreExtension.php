@@ -22,8 +22,8 @@ use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
-use Pimcore\Targeting\ActionHandlerLocator;
-use Pimcore\Targeting\DataProviderLocator;
+use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
+use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Tool\ArrayUtils;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
@@ -314,14 +314,28 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
             $dataProviders[$dataProviderKey] = new Reference($dataProviderServiceId);
         }
 
-        $this->configureTypedLocator($container, DataProviderLocator::class, $dataProviders);
+        $dataProviderLocator = new Definition(ServiceLocator::class, [$dataProviders]);
+        $dataProviderLocator
+            ->setPublic(false)
+            ->addTag('container.service_locator');
+
+        $container
+            ->findDefinition(DataLoaderInterface::class)
+            ->setArgument('$dataProviders', $dataProviderLocator);
 
         $actionHandlers = [];
         foreach ($config['action_handlers'] as $actionHandlerKey => $actionHandlerServiceId) {
             $actionHandlers[$actionHandlerKey] = new Reference($actionHandlerServiceId);
         }
 
-        $this->configureTypedLocator($container, ActionHandlerLocator::class, $actionHandlers);
+        $actionHandlerLocator = new Definition(ServiceLocator::class, [$actionHandlers]);
+        $actionHandlerLocator
+            ->setPublic(false)
+            ->addTag('container.service_locator');
+
+        $container
+            ->getDefinition(DelegatingActionHandler::class)
+            ->setArgument('$actionHandlers', $actionHandlerLocator);
     }
 
     /**
