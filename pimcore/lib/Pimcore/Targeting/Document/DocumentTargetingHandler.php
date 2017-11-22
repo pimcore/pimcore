@@ -152,7 +152,7 @@ class DocumentTargetingHandler
             return TargetGroup::isIdActive($id);
         });
 
-        $this->cache->save($cacheKey, $targetGroups, [sprintf('document_%d', $document->getId())]);
+        $this->cache->save($cacheKey, $targetGroups, [sprintf('document_%d', $document->getId()), 'target_groups']);
 
         return $targetGroups;
     }

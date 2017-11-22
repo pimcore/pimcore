@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
@@ -217,15 +218,18 @@ class TargetingController extends AdminController implements EventedControllerIn
      * @Route("/target-group/add")
      *
      * @param Request $request
+     * @param CoreHandlerInterface $cache
      *
      * @return JsonResponse
      */
-    public function targetGroupAddAction(Request $request)
+    public function targetGroupAddAction(Request $request, CoreHandlerInterface $cache)
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = new TargetGroup();
         $targetGroup->setName($request->get('name'));
         $targetGroup->save();
+
+        $cache->clearTag('target_groups');
 
         return $this->adminJson(['success' => true, 'id' => $targetGroup->getId()]);
     }
@@ -234,10 +238,11 @@ class TargetingController extends AdminController implements EventedControllerIn
      * @Route("/target-group/delete")
      *
      * @param Request $request
+     * @param CoreHandlerInterface $cache
      *
      * @return JsonResponse
      */
-    public function targetGroupDeleteAction(Request $request)
+    public function targetGroupDeleteAction(Request $request, CoreHandlerInterface $cache)
     {
         $success = false;
 
@@ -247,6 +252,8 @@ class TargetingController extends AdminController implements EventedControllerIn
             $targetGroup->delete();
             $success = true;
         }
+
+        $cache->clearTag('target_groups');
 
         return $this->adminJson(['success' => $success]);
     }
@@ -270,10 +277,11 @@ class TargetingController extends AdminController implements EventedControllerIn
      * @Route("/target-group/save")
      *
      * @param Request $request
+     * @param CoreHandlerInterface $cache
      *
      * @return JsonResponse
      */
-    public function targetGroupSaveAction(Request $request)
+    public function targetGroupSaveAction(Request $request, CoreHandlerInterface $cache)
     {
         $data = $this->decodeJson($request->get('data'));
 
@@ -281,6 +289,8 @@ class TargetingController extends AdminController implements EventedControllerIn
         $targetGroup = TargetGroup::getById($request->get('id'));
         $targetGroup->setValues($data['settings']);
         $targetGroup->save();
+
+        $cache->clearTag('target_groups');
 
         return $this->adminJson(['success' => true]);
     }
