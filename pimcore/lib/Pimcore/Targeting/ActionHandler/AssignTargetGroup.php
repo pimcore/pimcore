@@ -113,7 +113,9 @@ class AssignTargetGroup implements ActionHandlerInterface
     private function assignToVisitor(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $count)
     {
         $threshold = (int)$targetGroup->getThreshold();
-        if ($threshold > 1 && $count >= $threshold) {
+
+        // only assign if count reached the threshold if threshold is > 1
+        if ($threshold <= 1 || $count >= $threshold) {
             $visitorInfo->assignTargetGroup($targetGroup, $count);
         }
     }

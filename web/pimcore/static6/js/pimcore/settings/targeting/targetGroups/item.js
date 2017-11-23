@@ -60,7 +60,9 @@ pimcore.settings.targeting.targetGroups.item = Class.create({
                 name: "threshold",
                 fieldLabel: t("threshold"),
                 xtype: "numberfield",
-                value: this.data["threshold"]
+                value: this.data["threshold"],
+                minValue: 1,
+                allowDecimals: false
             }, {
                 name: "active",
                 fieldLabel: t("active"),
