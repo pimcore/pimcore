@@ -1,5 +1,11 @@
 (function () {
-    var visitorIdCookieName = '_pc_vis';
+    window.pimcore = window.pimcore || {};
+    window.pimcore.targeting = window.pimcore.targeting || {};
+
+    var cookieNames = {
+        visitorId: '_pc_vis',
+        visitorIdHistory: '_pc_vis_h'
+    };
 
     // see http://clubmate.fi/setting-and-reading-cookies-with-javascript/
     var Cookie = {
@@ -152,17 +158,48 @@
     };
 
     var User = (function() {
+        var generateVisitorId = function(length) {
+            var chars = '0123456789abcdef';
+
+            var result = '';
+            for (var i = length; i > 0; --i) {
+                result += chars[Math.floor(Math.random() * chars.length)];
+            }
+
+            return result;
+        };
+
         var User = function () {
             this.data = {
                 sessionId: null,
                 visitorId: null,
+                visitorIds: [],
                 activityLog: []
             };
 
             this.load();
+
+            if (!this.data.visitorId) {
+                this.setVisitorId(generateVisitorId(16));
+                this.save();
+            }
         };
 
         User.prototype.setVisitorId = function (id) {
+            if (!id) {
+                return;
+            }
+
+            if (this.data.visitorId) {
+                // don't do anything if ID is already set
+                if (id === this.data.visitorId) {
+                    return;
+                } else {
+                    // store last visitor ID in list
+                    this.data.visitorIds.push(this.data.visitorId);
+                }
+            }
+
             util.logger.canLog('info') && console.info('[TARGETING] Setting visitor ID to', id);
 
             this.data.visitorId = id;
@@ -189,16 +226,19 @@
             }
 
             if (data) {
-                this.data = data;
+                for (var key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        this.data[key] = data[key];
+                    }
+                }
             }
 
-            var cookieVisitorId = Cookie.get(visitorIdCookieName);
+            var cookieVisitorId = Cookie.get(cookieNames.visitorId);
             if (cookieVisitorId) {
                 this.setVisitorId(cookieVisitorId);
             }
 
             // check / generate sessionId
-            var sessionId;
             var nowTimestamp = (new Date()).getTime();
 
             if (0 === this.data.activityLog.length) {
@@ -221,8 +261,14 @@
                 localStorage.setItem("pimcore_targeting_userdata", JSON.stringify(this.data));
             }
 
+            // set visitor ID cookie
             if (this.data.visitorId) {
-                Cookie.set(visitorIdCookieName, this.data.visitorId, 365);
+                Cookie.set(cookieNames.visitorId, this.data.visitorId, 365);
+            }
+
+            // set cookie with last 10 visitor IDs
+            if (this.data.visitorIds.length > 0) {
+                Cookie.set(cookieNames.visitorIdHistory, this.data.visitorIds.slice(-5), 365);
             }
         };
 
