@@ -284,15 +284,26 @@
         }
     };
 
-    // track links
     util.contentLoaded(window, function () {
+        // track page views
+        user.addActivityLog({
+            type: "pageView",
+            url: location.href
+        }).save();
+
+        // track links
         try {
             var linkElements = document.querySelectorAll("a");
             var linkClickHandler = function (ev) {
-                user.addActivityLog({
-                    type: "linkClicked",
-                    href: el.getAttribute("href")
-                }).save();
+                var el = ev.target ? ev.target : ev.srcElement;
+                var href = el.getAttribute("href");
+
+                if (href) {
+                    user.addActivityLog({
+                        type: "linkClicked",
+                        href: href
+                    }).save();
+                }
             };
 
             for (var le = 0; le < linkElements.length; le++) {
