@@ -109,7 +109,7 @@ class Service
 
         $query = 'select distinct c.id from importconfigs c, importconfig_shares s where '
             . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId
-                . ' UNION distinct select c2.id from importconfigs c2 where shareGlobally = 1';
+                . ' UNION distinct select c2.id from importconfigs c2 where shareGlobally = 1 and c2.classId = ' . $classId;
         $ids = $db->fetchCol($query);
         if ($ids) {
             $ids = implode(',', $ids);
