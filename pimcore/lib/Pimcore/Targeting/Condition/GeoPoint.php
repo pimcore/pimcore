@@ -20,11 +20,14 @@ namespace Pimcore\Targeting\Condition;
 use GeoIp2\Model\City;
 use Location\Coordinate;
 use Location\Distance\Haversine;
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class GeoPoint implements DataProviderDependentConditionInterface
+class GeoPoint implements DataProviderDependentConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var float
      */
@@ -92,7 +95,16 @@ class GeoPoint implements DataProviderDependentConditionInterface
             (float)$city->location->latitude, (float)$city->location->longitude
         );
 
-        return $distance < ($this->radius * 1000);
+        if ($distance < ($this->radius * 1000)) {
+            $this->setMatchedVariables([
+                'latitude'  => (float)$city->location->latitude,
+                'longitude' => (float)$city->location->longitude
+            ]);
+
+            return true;
+        }
+
+        return false;
     }
 
     private function calculateDistance(float $latA, float $longA, float $latB, float $longB): float

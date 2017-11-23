@@ -18,11 +18,14 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition;
 
 use DeviceDetector\DeviceDetector;
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class HardwarePlatform implements DataProviderDependentConditionInterface
+class HardwarePlatform implements DataProviderDependentConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var null|string
      */
@@ -69,6 +72,13 @@ class HardwarePlatform implements DataProviderDependentConditionInterface
             return false;
         }
 
-        return $dd->getDeviceName() === $this->platform;
+        $platform = $dd->getDeviceName();
+        if ($platform === $this->platform) {
+            $this->setMatchedVariable('platform', $platform);
+
+            return true;
+        }
+
+        return false;
     }
 }

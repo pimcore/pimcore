@@ -114,20 +114,24 @@ class ConditionMatcher implements ConditionMatcherInterface
         $result = $condition->match($visitorInfo);
 
         if ($collectVariables) {
-            $this->collectConditionVariables($visitorInfo, $config, $condition);
+            $this->collectConditionVariables($config, $condition);
         }
 
         return $result;
     }
 
-    private function collectConditionVariables(VisitorInfo $visitorInfo, array $config, ConditionInterface $condition)
+    private function collectConditionVariables(array $config, ConditionInterface $condition)
     {
         $data = [
             'type' => $config['type']
         ];
 
         if ($condition instanceof VariableConditionInterface) {
-            $data['data'] = $condition->getVariables($visitorInfo);
+            $variables = $condition->getMatchedVariables();
+
+            if (!empty($variables)) {
+                $data['data'] = $variables;
+            }
         }
 
         $this->collectedVariables[] = $data;

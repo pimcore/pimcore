@@ -18,11 +18,14 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition;
 
 use GeoIp2\Model\City;
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Country implements DataProviderDependentConditionInterface
+class Country implements DataProviderDependentConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var string
      */
@@ -72,6 +75,12 @@ class Country implements DataProviderDependentConditionInterface
             return false;
         }
 
-        return $city->country->isoCode === $this->country;
+        if ($city->country->isoCode === $this->country) {
+            $this->setMatchedVariable('iso_code', $city->country->isoCode);
+
+            return true;
+        }
+
+        return false;
     }
 }

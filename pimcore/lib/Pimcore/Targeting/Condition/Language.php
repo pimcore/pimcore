@@ -17,10 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Language implements ConditionInterface
+class Language implements ConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var string|null
      */
@@ -63,6 +66,8 @@ class Language implements ConditionInterface
         }
 
         if ($language === $this->language) {
+            $this->setMatchedVariable('language', $language);
+
             return true;
         }
 
@@ -71,6 +76,8 @@ class Language implements ConditionInterface
             $normalizedLanguage = explode('_', $language)[0];
 
             if ($normalizedLanguage === $this->language) {
+                $this->setMatchedVariable('language', $language);
+
                 return true;
             }
         }

@@ -17,10 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class TargetGroup implements ConditionInterface
+class TargetGroup implements ConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var int|null
      */
@@ -57,6 +60,8 @@ class TargetGroup implements ConditionInterface
     {
         foreach ($visitorInfo->getAssignedTargetGroups() as $targetGroup) {
             if ($targetGroup->getId() === $this->targetGroupId) {
+                $this->setMatchedVariable('target_group_id', $targetGroup->getId());
+
                 return true;
             }
         }

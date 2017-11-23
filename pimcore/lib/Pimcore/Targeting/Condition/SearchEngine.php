@@ -17,10 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class SearchEngine implements ConditionInterface
+class SearchEngine implements ConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var string|null
      */
@@ -85,6 +88,8 @@ class SearchEngine implements ConditionInterface
         }
 
         if (preg_match($pattern, $referrer)) {
+            $this->setMatchedVariable('referrer', $referrer);
+
             return true;
         }
 

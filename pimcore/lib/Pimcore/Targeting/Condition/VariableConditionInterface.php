@@ -17,17 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use Pimcore\Targeting\Model\VisitorInfo;
-
 interface VariableConditionInterface
 {
     /**
      * Returns variables which are evaluated in the "Session with Variables"
-     * rule scope
+     * rule scope. This is expected to return the variables which were fetched
+     * in the last evaluation run. Each condition is a dedicated instance and
+     * can return the variables which were resolved during matching.
      *
-     * @param VisitorInfo $visitorInfo
+     * It's important to store/return these variables in a deterministic way (e.g.
+     * array key order) as the hash of their serialized contents is compared against
+     * a stored hash to dermine if the rule actions need to be evaluated.
      *
      * @return array
      */
-    public function getVariables(VisitorInfo $visitorInfo): array;
+    public function getMatchedVariables(): array;
 }

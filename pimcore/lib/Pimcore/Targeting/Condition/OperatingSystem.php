@@ -18,11 +18,14 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition;
 
 use DeviceDetector\DeviceDetector;
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class OperatingSystem implements DataProviderDependentConditionInterface
+class OperatingSystem implements DataProviderDependentConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var null|string
      */
@@ -86,6 +89,13 @@ class OperatingSystem implements DataProviderDependentConditionInterface
             return false;
         }
 
-        return $dd->getOs('short_name') === $this->system;
+        $os = $dd->getOs('short_name');
+        if ($os === $this->system) {
+            $this->setMatchedVariable('os', $os);
+
+            return true;
+        }
+
+        return false;
     }
 }

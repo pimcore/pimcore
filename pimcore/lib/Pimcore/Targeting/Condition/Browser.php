@@ -18,11 +18,14 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition;
 
 use DeviceDetector\DeviceDetector;
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Browser implements DataProviderDependentConditionInterface
+class Browser implements DataProviderDependentConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var null|string
      */
@@ -77,6 +80,15 @@ class Browser implements DataProviderDependentConditionInterface
         $type = $clientInfo['type'] ?? null;
         $name = $clientInfo['name'] ?? null;
 
-        return 'browser' === $type && strtolower($name) === strtolower($this->browser);
+        if ('browser' === $type && strtolower($name ?? '') === strtolower($this->browser)) {
+            $this->setMatchedVariables([
+                'type' => $type,
+                'name' => $name
+            ]);
+
+            return true;
+        }
+
+        return false;
     }
 }

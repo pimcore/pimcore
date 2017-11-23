@@ -17,10 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
+use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Url implements ConditionInterface
+class Url implements ConditionInterface, VariableConditionInterface
 {
+    use VariableConditionTrait;
+
     /**
      * @var string|null
      */
@@ -57,8 +60,12 @@ class Url implements ConditionInterface
     {
         $request = $visitorInfo->getRequest();
 
-        $result = preg_match($this->pattern, $request->getUri());
+        $uri    = $request->getUri();
+        $result = preg_match($this->pattern, $uri);
+
         if ($result) {
+            $this->setMatchedVariable('uri', $uri);
+
             return true;
         }
 
