@@ -11,6 +11,9 @@ For details see [Symfonys monolog docs](http://symfony.com/doc/current/logging.h
 The log file will be rotated and compressed if it gets larger than 200 MB. The archived logs 
 will be kept for 30 days.
 
+## php.log
+By default, Pimcore changes the PHP Engines `error_reporting` to `E_ALL & ~E_NOTICE & ~E_STRICT`, `error_log` to `/var/logs/php.log` and sets `log_errors` to `1`.
+To prevent this behaviour and keep your php.ini settings, set the constant `PIMCORE_ALLOW_PHP_ERROR_LOG_OVERRIDE` to `false`.
 
 ## usagelog.log
 In this log you can find every action done within the Pimcore Backend Interface. 
