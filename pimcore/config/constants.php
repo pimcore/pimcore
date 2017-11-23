@@ -82,3 +82,6 @@ $resolveConstant('PIMCORE_RECYCLEBIN_DIRECTORY', PIMCORE_PRIVATE_VAR . '/recycle
 $resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
 $resolveConstant('PIMCORE_LOG_MAIL_PERMANENT', PIMCORE_PRIVATE_VAR . '/email');
 $resolveConstant('PIMCORE_USERIMAGE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/user-image');
+
+// set to false to prevent Pimcore to override error_reporting, error_log and log_error php settings.
+$resolveConstant('PIMCORE_ALLOW_PHP_ERROR_LOG_OVERRIDE',true);
