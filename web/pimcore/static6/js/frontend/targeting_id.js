@@ -212,7 +212,7 @@
 
             util.logger.canLog('info') && console.info('TRACK ACTIVITY', data, this);
 
-            this.data.activityLog.unshift(data);
+            this.data.activityLog.push(data);
 
             return this;
         };
