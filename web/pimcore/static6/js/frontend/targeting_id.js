@@ -35,6 +35,56 @@
     };
 
     var util = {
+        featureDetect: (function () {
+            // tests are taken from to modernizr (MIT license)
+            // https://github.com/Modernizr/Modernizr/tree/master/feature-detects
+            var tests = {
+                localStorage: function () {
+                    var v = 'test';
+
+                    try {
+                        localStorage.setItem(v, v);
+                        localStorage.removeItem(v);
+
+                        return true;
+                    } catch (e) {
+                        return false;
+                    }
+                },
+
+                sessionStorage: function() {
+                    var v = 'test';
+
+                    try {
+                        sessionStorage.setItem(v, v);
+                        sessionStorage.removeItem(v);
+
+                        return true;
+                    } catch (e) {
+                        return false;
+                    }
+                },
+
+                json: function () {
+                    return 'JSON' in window && 'parse' in JSON && 'stringify' in JSON;
+                }
+            };
+
+            var results = {};
+
+            return function (type) {
+                if ('undefined' === typeof tests[type]) {
+                    throw new Error('Test ' + type + ' is not defined');
+                }
+
+                if ('undefined' === typeof results[type]) {
+                    results[type] = tests[type].call();
+                }
+
+                return results[type];
+            };
+        }()),
+
         logger: {
             canLog: function(type) {
                 if ('undefined' === typeof type) {
@@ -131,8 +181,12 @@
         };
 
         User.prototype.load = function () {
-            var data = localStorage.getItem("pimcore_targeting_userdata");
-            data = JSON.parse(data);
+            var data = {};
+
+            if (util.featureDetect('localStorage')) {
+                var storedData = localStorage.getItem("pimcore_targeting_userdata");
+                data = JSON.parse(storedData);
+            }
 
             if (data) {
                 this.data = data;
@@ -163,7 +217,9 @@
         };
 
         User.prototype.save = function () {
-            localStorage.setItem("pimcore_targeting_userdata", JSON.stringify(this.data));
+            if (util.featureDetect('localStorage')) {
+                localStorage.setItem("pimcore_targeting_userdata", JSON.stringify(this.data));
+            }
 
             if (this.data.visitorId) {
                 Cookie.set(visitorIdCookieName, this.data.visitorId, 365);
