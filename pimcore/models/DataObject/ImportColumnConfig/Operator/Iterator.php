@@ -17,13 +17,11 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
-use Pimcore\Localization\Locale;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 class Iterator extends AbstractOperator
 {
-
     public function __construct($config, $context = null)
     {
         parent::__construct($config, $context);

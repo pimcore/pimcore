@@ -32,8 +32,9 @@ Give a short overview about the auto-detected CSV dialect.
 
 ## Save & Share
 
-Allows you to describe your configuration. A saved configuration can be loaded and reused at a later time.
-Moreover, a saved configuration can be shared with other users or roles. Note that you will still be owner.
+Allows you to describe your configuration. A configuration can be saved and reused at a later time.
+Moreover, a saved configuration can be shared with other users or roles. For admins it is also possible to share the configuration globally.
+Note that you will still be owner.
 
 ## Load Configuration
 

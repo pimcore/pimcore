@@ -12,9 +12,11 @@ CREATE TABLE `importconfigs` (
     `description` LONGTEXT NULL,	
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,
+	`shareGlobally` TINYINT(1) NULL,
 	PRIMARY KEY (`id`),
 	INDEX `ownerId` (`ownerId`),
-	INDEX `classId` (`classId`)
+	INDEX `classId` (`classId`),
+	INDEX `shareGlobally` (`shareGlobally`)
 )
 DEFAULT CHARSET=utf8mb4;
 ;
@@ -29,5 +31,12 @@ CREATE TABLE `importconfig_shares` (
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
 )
 DEFAULT CHARSET=utf8mb4;
+;
+');
+
+$db->query('
+ALTER TABLE `gridconfigs`
+	ADD COLUMN `shareGlobally` TINYINT(1) NULL DEFAULT NULL AFTER `creationDate`,
+	ADD INDEX `shareGlobally` (`shareGlobally`);
 ;
 ');

@@ -11,6 +11,7 @@ For experienced users there is an option to assemble custom columns using specia
 ## Saving & Sharing
 
 You can define a favourite config for each object folder and share it with your friends.
+As an admin user you can also share the config globally (i.e. without having to pick certain users).
 
 ![Configurator Button Expanded](../img/gridconfig/configurator_button_expanded.png)
 

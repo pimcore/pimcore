@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
-use Pimcore\Localization\Locale;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
@@ -39,7 +38,6 @@ class Splitter extends AbstractOperator
      */
     public function process($element, &$target, &$rowData, $colIndex, &$context = [])
     {
-
         $originalCellData = $rowData[$colIndex];
 
         $childs = $this->getChilds();

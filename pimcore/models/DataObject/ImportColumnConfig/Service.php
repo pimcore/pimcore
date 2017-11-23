@@ -107,7 +107,8 @@ class Service
         $userIds = implode(',', $userIds);
 
         $query = 'select distinct c.id from importconfigs c, importconfig_shares s where '
-            . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId;
+            . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId
+                . ' UNION distinct select c2.id from importconfigs c2 where shareGlobally = 1';
         $ids = $db->fetchCol($query);
         if ($ids) {
             $ids = implode(',', $ids);
@@ -121,6 +122,12 @@ class Service
         return $configListing;
     }
 
+    /**
+     * @param $user
+     * @param $classId
+     *
+     * @return ImportConfig\Listing
+     */
     public function getMyOwnImportConfigs($user, $classId)
     {
         $userId = $user->getId();
@@ -164,6 +171,11 @@ class Service
         return $importConfigData;
     }
 
+    /**
+     * @param $exportColumn
+     *
+     * @return array|\stdClass
+     */
     public function getImportColumn($exportColumn)
     {
         $importColumn = new \stdClass();
@@ -199,7 +211,6 @@ class Service
 
                             $newChild = new \stdClass();
                             $newChild->attribute = $child['attribute'];
-
 
                             $newChild->dataType = $child['dataType'];
                             $newChild->label = $child['label'];

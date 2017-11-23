@@ -92,6 +92,22 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
             value: this.config.shareSettings ? this.config.shareSettings.configDescription : ""
         });
 
+        this.saveAndShareForm.add(this.nameField, this.descriptionField);
+
+        var user = pimcore.globalmanager.get("user");
+        if (user.admin) {
+            this.shareGlobally = new Ext.form.field.Checkbox(
+                {
+                    fieldLabel: t("share_globally"),
+                    inputValue: true,
+                    name: "shareGlobally",
+                    value: this.config.shareSettings ? this.config.shareSettings.shareGlobally : false
+                }
+            );
+
+            this.saveAndShareForm.add(this.shareGlobally);
+        }
+
         this.userSharingField = Ext.create('Ext.form.field.Tag', {
             name: "sharedUserIds",
             width: '100%',
@@ -126,7 +142,7 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
             value: this.config.shareSettings.sharedRoleIds ? this.config.shareSettings.sharedRoleIds : ""
         });
 
-        this.saveAndShareForm.add(this.nameField, this.descriptionField, this.userSharingField, this.rolesSharingField);
+        this.saveAndShareForm.add(this.userSharingField, this.rolesSharingField);
     },
 
     commitData: function () {
@@ -139,6 +155,7 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
         if (data.sharedRoleIds) {
             data.sharedRoleIds = data.sharedRoleIds.join();
         }
+
         this.config.shareSettings = data;
     }
 

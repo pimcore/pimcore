@@ -118,8 +118,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
     getSaveAndSharePanel: function () {
 
-        //TODO values - must not be empty
-
         this.userStore = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,
@@ -199,6 +197,25 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             value: this.settings.sharedRoleIds ? this.settings.sharedRoleIds : ""
         });
 
+        var items = [this.nameField, this.descriptionField];
+
+        var user = pimcore.globalmanager.get("user");
+        if (user.admin) {
+            this.shareGlobally = new Ext.form.field.Checkbox(
+                {
+                    fieldLabel: t("share_globally"),
+                    inputValue: true,
+                    name: "shareGlobally",
+                    value: this.settings.shareGlobally
+                }
+            );
+
+            items.push(this.shareGlobally);
+        }
+
+        items.push(this.userSharingField);
+        items.push(this.rolesSharingField);
+
         this.settingsForm = Ext.create('Ext.form.FormPanel', {
             defaults: {
                 labelWidth: 200
@@ -209,7 +226,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             border: false,
             iconCls: "pimcore_icon_save_and_share",
             title: t("save_and_share"),
-            items: [this.nameField, this.descriptionField, this.userSharingField, this.rolesSharingField]
+            items: items
         });
         return this.settingsForm;
     },
@@ -328,6 +345,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             if (this.settings.sharedRoleIds != null) {
                 this.settings.sharedRoleIds = this.settings.sharedRoleIds.join();
             }
+
+            this.settings.shareGlobally = this.shareGlobally ? this.shareGlobally.getValue() : false;
         }
 
         if (!operatorFound) {

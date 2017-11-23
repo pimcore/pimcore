@@ -19,6 +19,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class DataObjectImportEvent
+ *
  * @package Pimcore\Event\Model
  */
 class DataObjectImportEvent extends Event
@@ -33,18 +34,15 @@ class DataObjectImportEvent extends Event
      */
     protected $originalFile;
 
-
     /**
      * @var Concrete
      */
     protected $object;
 
-
     /**
      * @var
      */
     protected $rowData;
-
 
     /**
      * @var
@@ -56,9 +54,9 @@ class DataObjectImportEvent extends Event
      */
     protected $context;
 
-
     /**
      * DataObjectImportEvent constructor.
+     *
      * @param $config
      * @param $originalFile
      */
@@ -163,7 +161,4 @@ class DataObjectImportEvent extends Event
     {
         $this->context = $context;
     }
-
-
-
 }

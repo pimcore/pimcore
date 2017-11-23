@@ -876,10 +876,12 @@ CREATE TABLE `gridconfigs` (
 	`description` LONGTEXT NULL,
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,
+	`shareGlobally` TINYINT(1) NULL,
 	PRIMARY KEY (`id`),
 	INDEX `ownerId` (`ownerId`),
 	INDEX `classId` (`classId`),
-	INDEX `searchType` (`searchType`)
+	INDEX `searchType` (`searchType`),
+	INDEX `shareGlobally` (`shareGlobally`)
 )
 DEFAULT CHARSET=utf8mb4;
 ;
@@ -917,12 +919,14 @@ CREATE TABLE `importconfigs` (
 	`classId` INT(11) NULL,
 	`name` VARCHAR(50) NULL,
 	`config` LONGTEXT NULL,
-    `description` LONGTEXT NULL,
+  `description` LONGTEXT NULL,
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,
+	`shareGlobally` TINYINT(1) NULL,
 	PRIMARY KEY (`id`),
 	INDEX `ownerId` (`ownerId`),
-	INDEX `classId` (`classId`)
+	INDEX `classId` (`classId`),
+	INDEX `shareGlobally` (`shareGlobally`)
 )
 DEFAULT CHARSET=utf8mb4;
 ;

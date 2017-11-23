@@ -48,7 +48,6 @@ final class DataObjectImportEvents
      *
      * fired after an object (row) gets saved
      *
-     *
      * @var string
      */
     const POST_SAVE = 'pimcore.dataobject.import.postSave';
@@ -61,5 +60,4 @@ final class DataObjectImportEvents
      * @var string
      */
     const DONE = 'pimcore.dataobject.import.done';
-
 }

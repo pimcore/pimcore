@@ -1748,6 +1748,7 @@
   "delimiter": "Delimiter",
   "escapechar": "Escape Character",
   "lineterminator": "Line Terminator (hex)",
-  "quotechar": "Quote Character"
+  "quotechar": "Quote Character",
+  "share_globally": "Share globally"
 
 }

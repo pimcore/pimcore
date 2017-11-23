@@ -119,8 +119,10 @@ class DataObjectHelperController extends AdminController
         $userIds = array_merge($userIds, $user->getRoles());
         $userIds = implode(',', $userIds);
 
-        $query = 'select distinct c.id from gridconfigs c, gridconfig_shares s where c.searchType = ' . $db->quote($searchType)
-                    .  ' and c.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId;
+        $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
+                    where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $classId . ')
+                            UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1';
+
         $ids = $db->fetchCol($query);
         if ($ids) {
             $ids = implode(',', $ids);
@@ -176,6 +178,7 @@ class DataObjectHelperController extends AdminController
     /**
      * @param $user
      * @param $classId
+     *
      * @return array
      */
     public function getImportConfigs($user, $classId)
@@ -403,6 +406,7 @@ class DataObjectHelperController extends AdminController
                 $gridConfig = json_decode($gridConfig, true);
                 $gridConfigName = $savedGridConfig->getName();
                 $gridConfigDescription = $savedGridConfig->getDescription();
+                $sharedGlobally = $savedGridConfig->isShareGlobally();
             }
         }
 
@@ -607,6 +611,7 @@ class DataObjectHelperController extends AdminController
         $settings['gridConfigId'] = (int)  $gridConfigId;
         $settings['gridConfigName'] = $gridConfigName;
         $settings['gridConfigDescription'] = $gridConfigDescription;
+        $settings['shareGlobally'] = $sharedGlobally;
         $settings['isShared'] = (!$gridConfigId || $shared) ? true : false;
 
         return [
@@ -861,6 +866,7 @@ class DataObjectHelperController extends AdminController
                 $description = $configData['shareSettings']['configDescription'];
                 $importConfig->setName($name);
                 $importConfig->setDescription($description);
+                $importConfig->setShareGlobally($configData['shareSettings']['shareGlobally'] && $this->getUser()->isAdmin());
             }
 
             $configDataEncoded = json_encode($configData);
@@ -930,6 +936,7 @@ class DataObjectHelperController extends AdminController
                 if ($metadata) {
                     $gridConfig->setName($metadata['gridConfigName']);
                     $gridConfig->setDescription($metadata['gridConfigDescription']);
+                    $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getUser()->isAdmin());
                 }
 
                 $gridConfigData = json_encode($gridConfigData);
@@ -945,6 +952,7 @@ class DataObjectHelperController extends AdminController
                 $settings['gridConfigId'] = (int) $gridConfig->getId();
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
+                $settings['shareGlobally'] = $gridConfig->isShareGlobally();
                 $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getUser()->getId());
 
                 return $this->json(['success' => true,
@@ -1207,7 +1215,6 @@ class DataObjectHelperController extends AdminController
         $eventData->setAdditionalData($additionalData);
         $eventData->setContext($context);
 
-
         \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
 
         $context = $eventData->getContext();
@@ -1222,11 +1229,11 @@ class DataObjectHelperController extends AdminController
         return $response;
     }
 
-
     /**
      * @param $object
      * @param $configData
      * @param $rowData
+     *
      * @return mixed
      */
     protected function populateObject($object, $configData, $rowData, $context)
@@ -1502,7 +1509,8 @@ class DataObjectHelperController extends AdminController
             if ($job >= $importJobTotal) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::DONE, $eventData);
             }
-            return $this->json(['success' => true, 'rowId' => $rowId, "message" => $object->getFullPath(), "objectId" => $object->getId()]);
+
+            return $this->json(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
         }
@@ -1695,9 +1703,8 @@ class DataObjectHelperController extends AdminController
                 $line = implode(';', $line) . "\r\n";
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode(";", array_map(array($this, "encodeFunc"), $line))."\r\n");
+                fputs($fp, implode(';', array_map([$this, 'encodeFunc'], $line))."\r\n");
             }
-
         }
 
         fclose($fp);
@@ -1705,12 +1712,12 @@ class DataObjectHelperController extends AdminController
         return $this->json(['success' => true]);
     }
 
-    public function encodeFunc($value) {
-        $value = str_replace('"','""',$value);
+    public function encodeFunc($value)
+    {
+        $value = str_replace('"', '""', $value);
         //force wrap value in quotes and return
         return '"'.$value.'"';
     }
-
 
     /**
      * @Route("/download-csv-file")
@@ -1830,10 +1837,10 @@ class DataObjectHelperController extends AdminController
                     $columnName = $mappedFieldnames[$columnKey];
                     $columns[$columnIdx] = '"' . $columnName . '"';
                 }
-                $csv []= $columns;
+                $csv[]= $columns;
             }
             foreach ($objects as $o) {
-                $csv []= $o;
+                $csv[]= $o;
             }
         }
 
