@@ -17,14 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Model;
 
-use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Model\Tool\Targeting\Rule;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class VisitorInfo implements \IteratorAggregate
 {
     const VISITOR_ID_COOKIE_NAME = '_pc_vis';
+    const SESSION_ID_COOKIE_NAME = '_pc_ses';
 
     const ACTION_SCOPE_RESPONSE = 'response';
 
@@ -37,6 +38,11 @@ class VisitorInfo implements \IteratorAggregate
      * @var string|null
      */
     private $visitorId;
+
+    /**
+     * @var string|null
+     */
+    private $sessionId;
 
     /**
      * Matched targeting rules
@@ -81,18 +87,30 @@ class VisitorInfo implements \IteratorAggregate
      */
     private $response;
 
-    public function __construct(Request $request, string $visitorId = null, array $data = [])
+    public function __construct(Request $request, string $visitorId = null, string $sessionId = null)
     {
         $this->request   = $request;
         $this->visitorId = $visitorId;
-        $this->data      = $data;
+        $this->sessionId = $sessionId;
     }
 
     public static function fromRequest(Request $request): self
     {
         $visitorId = $request->cookies->get(self::VISITOR_ID_COOKIE_NAME);
+        if (!empty($visitorId)) {
+            $visitorId = (string)$visitorId;
+        } else {
+            $visitorId = null;
+        }
 
-        return new static($request, $visitorId);
+        $sessionId = $request->cookies->get(self::SESSION_ID_COOKIE_NAME);
+        if (!empty($sessionId)) {
+            $sessionId = (string)$sessionId;
+        } else {
+            $sessionId = null;
+        }
+
+        return new static($request, $visitorId, $sessionId);
     }
 
     public function getRequest(): Request
@@ -111,6 +129,19 @@ class VisitorInfo implements \IteratorAggregate
     public function getVisitorId()
     {
         return $this->visitorId;
+    }
+
+    public function hasSessionId(): bool
+    {
+        return !empty($this->sessionId);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSessionId()
+    {
+        return $this->sessionId;
     }
 
     /**

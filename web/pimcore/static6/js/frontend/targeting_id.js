@@ -4,6 +4,7 @@
 
     var cookieNames = {
         visitorId: '_pc_vis',
+        sessionId: '_pc_ses',
         visitorIdHistory: '_pc_vis_h'
     };
 
@@ -270,8 +271,14 @@
                 this.data.sessionId = nowTimestamp;
                 util.logger.canLog('info') && console.info("[TARGETING] No previous activity. New sessionId: " + this.data.sessionId);
             } else {
-                var lastActivity = this.data.activityLog[0];
-                if (lastActivity.timestamp < (nowTimestamp - (30 * 60 * 1000))) {
+                var lastActivity = this.data.activityLog.slice(-1);
+
+                var sessionLength = window.pimcore.targeting.options.sessionLength;
+                if (!sessionLength) {
+                    sessionLength = 30;
+                }
+
+                if (lastActivity.timestamp < (nowTimestamp - (sessionLength * 60 * 1000))) {
                     this.data.sessionId = nowTimestamp; // session expired
                     util.logger.canLog('info') && console.info("[TARGETING] Previous session expired. New sessionId: " + this.data.sessionId);
                 } else {
@@ -291,6 +298,11 @@
                 Cookie.set(cookieNames.visitorId, this.data.visitorId, 365);
             }
 
+            // set session ID cookie
+            if (this.data.sessionId) {
+                Cookie.set(cookieNames.sessionId, this.data.sessionId);
+            }
+
             // set cookie with last 10 visitor IDs
             if (this.data.visitorIds.length > 0) {
                 Cookie.set(cookieNames.visitorIdHistory, this.data.visitorIds.slice(-5), 365);
@@ -301,7 +313,8 @@
     }());
 
     window.pimcore.targeting.options = util.merge({
-        log: false
+        log: false,
+        sessionLength: 30
     }, window.pimcore.targeting.options || {});
 
     var user = new User();
