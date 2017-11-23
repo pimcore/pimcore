@@ -48,7 +48,7 @@ final class TargetingEvents
     const PRE_RULE_ACTIONS = 'pimcore.targeting.pre_rule_actions';
 
     /**
-     * Fired when a rule matches aftert all actions were applied
+     * Fired when a rule matches after all actions were applied
      *
      * @Event("Pimcore\Event\Targeting\TargetingRuleEvent")
      *
