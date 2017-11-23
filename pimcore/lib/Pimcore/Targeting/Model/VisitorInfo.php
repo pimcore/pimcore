@@ -168,6 +168,17 @@ class VisitorInfo implements \IteratorAggregate
         return $this->sortedTargetGroupAssignments;
     }
 
+    /**
+     * Returns TargetGroupAssignment for given TargetGroup
+     *
+     * @param TargetGroup $targetGroup
+     * @return TargetGroupAssignment | null
+     */
+    public function getTargetGroupAssignment(TargetGroup $targetGroup): TargetGroupAssignment
+    {
+        return $this->targetGroupAssignments[$targetGroup->getId()];
+    }
+
     public function assignTargetGroup(TargetGroup $targetGroup, int $count = 1)
     {
         if ($count < 1) {
