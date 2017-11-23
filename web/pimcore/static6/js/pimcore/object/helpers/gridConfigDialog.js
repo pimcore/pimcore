@@ -88,19 +88,19 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 text: this.isShared ? t("save_copy_and_share") : t("save_and_share"),
                 iconCls: "pimcore_icon_save",
                 handler: function () {
-                    if (!this.nameField.getValue()) {
-                        this.tabPanel.setActiveTab(this.settingsForm);
-                        Ext.Msg.show({
-                            title: t("error"),
-                            msg: t('name_must_not_be_empty'),
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.MessageBox.ERROR
-                        });
-                        return;
-                    }
-                    this.commitData(true);
-                }.bind(this)
-            });
+                if (!this.nameField.getValue()) {
+                    this.tabPanel.setActiveTab(this.savePanel);
+                    Ext.Msg.show({
+                        title: t("error"),
+                        msg: t('name_must_not_be_empty'),
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.MessageBox.ERROR
+                    });
+                    return;
+                }
+                this.commitData(true);
+            }.bind(this)
+        });
         }
 
         this.window = new Ext.Window({
@@ -851,7 +851,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         var tree = new Ext.tree.TreePanel({
             title: t('operators'),
             collapsible: true,
-            // collapsed: true,
             xtype: "treepanel",
             region: "south",
             autoScroll: true,

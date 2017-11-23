@@ -392,9 +392,9 @@ class DataObjectHelperController extends AdminController
                         $userIds = array_merge($userIds, $this->getUser()->getRoles());
                     }
                     $userIds = implode(',', $userIds);
-                    $shared = $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
+                    $shared = $savedGridConfig->isShareGlobally() || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
 
-                    $shared = GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
+//                    $shared = $savedGridConfig->isShareGlobally() ||GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
                 } catch (\Exception $e) {
                 }
 
