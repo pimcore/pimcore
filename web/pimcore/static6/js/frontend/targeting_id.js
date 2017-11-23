@@ -41,6 +41,27 @@
     };
 
     var util = {
+        merge: function() {
+            if (arguments.length === 0) {
+                return {};
+            }
+
+            var result = arguments[0],
+                obj, prop;
+
+            for (var i = 1; i < arguments.length; i++) {
+                obj = arguments[i];
+
+                for (prop in obj) {
+                    if (obj.hasOwnProperty(prop)) {
+                        result[prop] = obj[prop];
+                    }
+                }
+            }
+
+            return result;
+        },
+
         featureDetect: (function () {
             // tests are taken from to modernizr (MIT license)
             // https://github.com/Modernizr/Modernizr/tree/master/feature-detects
@@ -93,6 +114,10 @@
 
         logger: {
             canLog: function(type) {
+                if (!window.pimcore.targeting.options.log) {
+                    return false;
+                }
+
                 if ('undefined' === typeof type) {
                     type = 'log';
                 }
@@ -210,7 +235,7 @@
             data.visitorId = this.data.visitorId;
             data.timestamp = (new Date()).getTime();
 
-            util.logger.canLog('info') && console.info('TRACK ACTIVITY', data, this);
+            util.logger.canLog('info') && console.info('[TARGETING] Track activity', data, this);
 
             this.data.activityLog.push(data);
 
@@ -243,15 +268,15 @@
 
             if (0 === this.data.activityLog.length) {
                 this.data.sessionId = nowTimestamp;
-                util.logger.canLog('info') && console.info("No previous activity - new sessionId: " + this.data.sessionId);
+                util.logger.canLog('info') && console.info("[TARGETING] No previous activity. New sessionId: " + this.data.sessionId);
             } else {
                 var lastActivity = this.data.activityLog[0];
                 if (lastActivity.timestamp < (nowTimestamp - (30 * 60 * 1000))) {
                     this.data.sessionId = nowTimestamp; // session expired
-                    util.logger.canLog('info') && console.info("Previous session expired, new sessionId: " + this.data.sessionId);
+                    util.logger.canLog('info') && console.info("[TARGETING] Previous session expired. New sessionId: " + this.data.sessionId);
                 } else {
                     this.data.sessionId = lastActivity.sessionId;
-                    util.logger.canLog('info') && console.info("SessionId present: " + this.data.sessionId);
+                    util.logger.canLog('info') && console.info("[TARGETING] SessionId present: " + this.data.sessionId);
                 }
             }
         };
@@ -274,6 +299,10 @@
 
         return User;
     }());
+
+    window.pimcore.targeting.options = util.merge({
+        log: false
+    }, window.pimcore.targeting.options || {});
 
     var user = new User();
 

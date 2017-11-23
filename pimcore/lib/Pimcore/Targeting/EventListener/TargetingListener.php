@@ -99,10 +99,26 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        $event->getBlock(Tracker::BLOCK_BEFORE_SCRIPT_TAG)->append(
+        // TODO always inject targeting independent of Piwik
+        // TODO find a nicer way to check for nested options
+        $parts = [
             '<script type="text/javascript" src="/pimcore/static6/js/frontend/targeting_id.js"></script>'
-        );
+        ];
 
+        // enable targeting logging in debug mode
+        if (\Pimcore::inDebugMode()) {
+            array_unshift($parts, <<<EOF
+<script type="text/javascript">
+window.pimcore = window.pimcore || {};
+window.pimcore.targeting = window.pimcore.targeting || {};
+window.pimcore.targeting.options = window.pimcore.targeting.options || {};
+window.pimcore.targeting.options.log = false;
+</script>
+EOF
+            );
+        }
+
+        $event->getBlock(Tracker::BLOCK_BEFORE_SCRIPT_TAG)->append($parts);
         $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
             '_paq.push([ function() { pimcore.targeting.api.setVisitorId(this.getVisitorId()); } ]);'
         );
