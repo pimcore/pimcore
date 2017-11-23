@@ -277,18 +277,11 @@
 
     var user = new User();
 
-    // track page views
-    user.addActivityLog({
-        type: "pageView",
-        url: location.href
-    }).save();
-
-    window.pimcore = window.pimcore || {};
-    window.pimcore.targeting = window.pimcore.targeting || {};
-
-    window.pimcore.targeting.setVisitorId = function (id) {
-        user.setVisitorId(id);
-        user.save();
+    window.pimcore.targeting.api = {
+        setVisitorId: function (id) {
+            user.setVisitorId(id);
+            user.save();
+        }
     };
 
     // track links
