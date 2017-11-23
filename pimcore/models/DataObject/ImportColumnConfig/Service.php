@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
 use DeepCopy\DeepCopy;
 use Pimcore\Db;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ImportColumnConfig\Operator\PHPCode;
 use Pimcore\Model\DataObject\ImportResolver\Code;
 use Pimcore\Model\DataObject\ImportResolver\Filename;
@@ -153,11 +154,12 @@ class Service
         $exportConfigData = json_decode($gridConfig->getConfig(), true);
 
         $importConfigData->classId = $exportConfigData->classId;
+        $class = ClassDefinition::getById($exportConfigData['classId']);
 
         $importConfigData->selectedGridColumns = [];
         if (is_array($exportConfigData['columns'])) {
             foreach ($exportConfigData['columns'] as $exportColumn) {
-                $importColumn = $this->getImportColumn($exportColumn);
+                $importColumn = $this->getImportColumn($class, $exportColumn);
                 if (is_array($importColumn)) {
                     foreach ($importColumn as $item) {
                         $importConfigData->selectedGridColumns[] = $item;
@@ -172,11 +174,12 @@ class Service
     }
 
     /**
+     * @param $class ClassDefinition
      * @param $exportColumn
      *
      * @return array|\stdClass
      */
-    public function getImportColumn($exportColumn)
+    public function getImportColumn($class, $exportColumn)
     {
         $importColumn = new \stdClass();
 
@@ -192,7 +195,27 @@ class Service
             $importColumn->attributes->label = $fieldConfig['attributes']['label'];
             $importColumn->attributes->childs = [];
 
-            if ($fieldConfig['attributes']['type'] == 'operator' && $fieldConfig['attributes']['class'] == 'LFExpander') {
+            $keyParts = explode('~', $fieldConfig['key']);
+
+            if (isset($fieldConfig['key']) && count($keyParts) > 1) {
+                // object brick
+
+                $bricktype = $keyParts[0];
+                $fieldname = \Pimcore\Model\DataObject\Service::getFieldForBrickType($class, $bricktype);
+                $importColumn->attributes->class = 'ObjectBrickSetter';
+                $importColumn->attributes->brickType = $bricktype;
+                $importColumn->attributes->attr = $fieldname;
+//                $importColumn->attributes->label = $fieldname;
+
+                $bricksetter = new \stdClass();
+                $bricksetter->type = 'value';
+                $bricksetter->label = $fieldConfig['label'];
+                $bricksetter->class = 'DefaultValue';
+                $bricksetter->attribute = $fieldConfig['key'];
+                $bricksetter->dataType = $fieldConfig['type'];
+                $bricksetter->childs = [];
+                $importColumn->attributes->childs[] = $bricksetter;
+            } elseif ($fieldConfig['attributes']['type'] == 'operator' && $fieldConfig['attributes']['class'] == 'LFExpander') {
                 $childs = $fieldConfig['attributes']['childs'];
                 if (count($childs) == 1) {
                     $importColumns = [];

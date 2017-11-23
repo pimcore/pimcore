@@ -171,7 +171,7 @@ pimcore.object.importcolumn.operator.objectbricksetter = Class.create(pimcore.ob
     getNodeLabel: function (configAttributes) {
         var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
         if (configAttributes.attr) {
-            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.attr  + "-" + configAttributes.brickType  + "-" + configAttributes.brickAttr + ')</span>';
+            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.attr  + "-" + configAttributes.brickType + ')</span>';
         }
 
         return nodeLabel;

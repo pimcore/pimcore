@@ -4,6 +4,8 @@
 
 Allows to set a brick field and create the brick itself if needed.
 
+Note: you can directly drag and drop a brick field from the class definition tree.
+
 * `Attribute`: the object attribute
 * `Brick Type`: the brick type
 
