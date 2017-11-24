@@ -1619,7 +1619,7 @@
   "restrict_to_locales": "Restrict to locales",
   "predefined": "Predefined",
   "save_as_copy": "Save as copy",
-  "remove_config": "Remove Config",
+  "remove_config": "Remove Configuration",
   "gridconfig_removed": "Grid Config has been removed",
   "gridconfig_not_removed": "Grid Config could not be removed",
   "set_as_favourite": "Set as favourite",
