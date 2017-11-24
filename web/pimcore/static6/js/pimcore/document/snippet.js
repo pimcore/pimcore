@@ -120,7 +120,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         }
 
 
-        // save all data allowed		
+        // save all data allowed
         if (this.isAllowed("properties")) {
             // properties
             try {
@@ -152,6 +152,10 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         // data
         try {
             parameters.data = Ext.encode(this.edit.getValues());
+
+            if (this.edit.targetGroup && this.edit.targetGroup.getValue()) {
+                parameters.appendEditables = "true";
+            }
         }
         catch (e5) {
             //console.log(e5);

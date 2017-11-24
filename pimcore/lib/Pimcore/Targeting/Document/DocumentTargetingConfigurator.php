@@ -19,7 +19,6 @@ namespace Pimcore\Targeting\Document;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
@@ -58,7 +57,7 @@ class DocumentTargetingConfigurator
      */
     public function configureTargetGroup(Document $document)
     {
-        if (!$document instanceof Page) {
+        if (!$document instanceof TargetingDocumentInterface) {
             return;
         }
 
@@ -123,13 +122,13 @@ class DocumentTargetingConfigurator
      * Resolves valid target groups for a document. A target group is seen as valid
      * if it has at least one element configured for that target group.
      *
-     * @param Document $document
+     * @param Document|Document\TargetingDocument|TargetingDocumentInterface $document
      *
      * @return array
      */
     public function getTargetGroupsForDocument(Document $document): array
     {
-        if (!$document instanceof Document\PageSnippet) {
+        if (!$document instanceof TargetingDocumentInterface) {
             return [];
         }
 

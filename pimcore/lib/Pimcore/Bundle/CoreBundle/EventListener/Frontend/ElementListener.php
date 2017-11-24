@@ -175,7 +175,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
     protected function applyTargetGroups(Request $request, Document $document)
     {
-        if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
+        if (!$document instanceof Document\Targeting\TargetingDocumentInterface || null !== Staticroute::getCurrentRoute()) {
             return;
         }
 
