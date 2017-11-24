@@ -18,14 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition;
 
 use DeviceDetector\DeviceDetector;
-use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class OperatingSystem implements DataProviderDependentConditionInterface, VariableConditionInterface
+class OperatingSystem extends AbstractVariableCondition implements DataProviderDependentConditionInterface
 {
-    use VariableConditionTrait;
-
     /**
      * @var null|string
      */

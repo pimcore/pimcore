@@ -25,7 +25,7 @@ interface VariableConditionInterface
      * in the last evaluation run. Each condition is a dedicated instance and
      * can return the variables which were resolved during matching.
      *
-     * It's important to store/return these variables in a deterministic way (e.g.
+     * It's important to store/return these variables in a deterministic way (e.g. same
      * array key order) as the hash of their serialized contents is compared against
      * a stored hash to dermine if the rule actions need to be evaluated.
      *

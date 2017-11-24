@@ -20,14 +20,11 @@ namespace Pimcore\Targeting\Condition;
 use GeoIp2\Model\City;
 use Location\Coordinate;
 use Location\Distance\Haversine;
-use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class GeoPoint implements DataProviderDependentConditionInterface, VariableConditionInterface
+class GeoPoint extends AbstractVariableCondition implements DataProviderDependentConditionInterface
 {
-    use VariableConditionTrait;
-
     /**
      * @var float
      */

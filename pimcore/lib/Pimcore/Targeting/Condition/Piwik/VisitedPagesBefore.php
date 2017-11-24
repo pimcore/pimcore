@@ -17,16 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition\Piwik;
 
+use Pimcore\Targeting\Condition\AbstractVariableCondition;
 use Pimcore\Targeting\Condition\DataProviderDependentConditionInterface;
-use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
-use Pimcore\Targeting\Condition\VariableConditionInterface;
 use Pimcore\Targeting\DataProvider\Piwik;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class VisitedPagesBefore implements DataProviderDependentConditionInterface, VariableConditionInterface
+class VisitedPagesBefore extends AbstractVariableCondition implements DataProviderDependentConditionInterface
 {
-    use VariableConditionTrait;
-
     /**
      * @var int
      */

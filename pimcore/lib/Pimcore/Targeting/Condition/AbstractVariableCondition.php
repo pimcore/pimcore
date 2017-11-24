@@ -15,12 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\Condition\Traits;
+namespace Pimcore\Targeting\Condition;
 
-/**
- * @implements VariableConditionInterface
- */
-trait VariableConditionTrait
+abstract class AbstractVariableCondition implements ConditionInterface, VariableConditionInterface
 {
     /**
      * @var array
@@ -35,12 +32,12 @@ trait VariableConditionTrait
         return $this->variables;
     }
 
-    private function setMatchedVariables(array $variables)
+    final protected function setMatchedVariables(array $variables)
     {
         $this->variables = $variables;
     }
 
-    private function setMatchedVariable(string $key, $value)
+    final protected function setMatchedVariable(string $key, $value)
     {
         $this->variables[$key] = $value;
     }

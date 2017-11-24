@@ -17,13 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Url implements ConditionInterface, VariableConditionInterface
+class Url extends AbstractVariableCondition implements ConditionInterface
 {
-    use VariableConditionTrait;
-
     /**
      * @var string|null
      */

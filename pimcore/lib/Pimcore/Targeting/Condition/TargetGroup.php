@@ -17,13 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class TargetGroup implements ConditionInterface, VariableConditionInterface
+class TargetGroup extends AbstractVariableCondition implements ConditionInterface
 {
-    use VariableConditionTrait;
-
     /**
      * @var int|null
      */

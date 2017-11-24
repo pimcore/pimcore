@@ -18,14 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition;
 
 use GeoIp2\Model\City;
-use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Country implements DataProviderDependentConditionInterface, VariableConditionInterface
+class Country extends AbstractVariableCondition implements DataProviderDependentConditionInterface
 {
-    use VariableConditionTrait;
-
     /**
      * @var string
      */

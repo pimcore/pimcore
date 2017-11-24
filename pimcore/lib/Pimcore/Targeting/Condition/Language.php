@@ -17,13 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use Pimcore\Targeting\Condition\Traits\VariableConditionTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Language implements ConditionInterface, VariableConditionInterface
+class Language extends AbstractVariableCondition implements ConditionInterface
 {
-    use VariableConditionTrait;
-
     /**
      * @var string|null
      */
@@ -58,7 +55,7 @@ class Language implements ConditionInterface, VariableConditionInterface
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        $request  = $visitorInfo->getRequest();
+        $request = $visitorInfo->getRequest();
 
         $language = $request->getPreferredLanguage();
         if (empty($language)) {
