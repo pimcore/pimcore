@@ -19,9 +19,10 @@ namespace Pimcore\Targeting\Condition;
 
 use GeoIp2\Model\City;
 use Pimcore\Targeting\DataProvider\GeoIp;
+use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class Country extends AbstractVariableCondition implements DataProviderDependentConditionInterface
+class Country extends AbstractVariableCondition implements DataProviderDependentInterface
 {
     /**
      * @var string

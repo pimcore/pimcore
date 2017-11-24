@@ -19,9 +19,10 @@ namespace Pimcore\Targeting\Condition;
 
 use DeviceDetector\DeviceDetector;
 use Pimcore\Targeting\DataProvider\Device;
+use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class OperatingSystem extends AbstractVariableCondition implements DataProviderDependentConditionInterface
+class OperatingSystem extends AbstractVariableCondition implements DataProviderDependentInterface
 {
     /**
      * @var null|string

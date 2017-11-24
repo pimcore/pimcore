@@ -18,11 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition\Piwik;
 
 use Pimcore\Targeting\Condition\AbstractVariableCondition;
-use Pimcore\Targeting\Condition\DataProviderDependentConditionInterface;
 use Pimcore\Targeting\DataProvider\Piwik;
+use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class VisitedPagesBefore extends AbstractVariableCondition implements DataProviderDependentConditionInterface
+class VisitedPagesBefore extends AbstractVariableCondition implements DataProviderDependentInterface
 {
     /**
      * @var int

@@ -17,11 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition\Piwik;
 
-use Pimcore\Targeting\Condition\DataProviderDependentConditionInterface;
+use Pimcore\Targeting\Condition\ConditionInterface;
 use Pimcore\Targeting\DataProvider\Piwik;
+use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class TimeOnSite implements DataProviderDependentConditionInterface
+class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
 {
     /**
      * @var int

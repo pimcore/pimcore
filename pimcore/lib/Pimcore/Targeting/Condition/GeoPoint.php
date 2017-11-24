@@ -21,9 +21,10 @@ use GeoIp2\Model\City;
 use Location\Coordinate;
 use Location\Distance\Haversine;
 use Pimcore\Targeting\DataProvider\GeoIp;
+use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 
-class GeoPoint extends AbstractVariableCondition implements DataProviderDependentConditionInterface
+class GeoPoint extends AbstractVariableCondition implements DataProviderDependentInterface
 {
     /**
      * @var float

@@ -17,6 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting;
 
+/**
+ * Defines a component which depends on data providers. Currently supported for
+ *
+ *  - Conditions
+ *  - Data Providers (depending on other data providers)
+ *  - Action Handlers
+ */
 interface DataProviderDependentInterface
 {
     /**
