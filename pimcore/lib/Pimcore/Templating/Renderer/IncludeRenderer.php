@@ -17,7 +17,9 @@ namespace Pimcore\Templating\Renderer;
 use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\Frontend;
 use Pimcore\View;
@@ -30,11 +32,17 @@ class IncludeRenderer
     protected $actionRenderer;
 
     /**
-     * @param ActionRenderer $actionRenderer
+     * @var DocumentTargetingConfigurator
      */
-    public function __construct(ActionRenderer $actionRenderer)
+    private $targetingConfigurator;
+
+    public function __construct(
+        ActionRenderer $actionRenderer,
+        DocumentTargetingConfigurator $targetingConfigurator
+    )
     {
-        $this->actionRenderer = $actionRenderer;
+        $this->actionRenderer        = $actionRenderer;
+        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
@@ -56,6 +64,32 @@ class IncludeRenderer
             $params = [];
         }
 
+        $originalInclude = $include;
+
+        // this is if $this->inc is called eg. with $this->href() as argument
+        if (!$include instanceof PageSnippet && is_object($include) && method_exists($include, '__toString')) {
+            $include = (string)$include;
+        }
+
+        if (is_numeric($include)) {
+            try {
+                $include = Model\Document::getById($include);
+            } catch (\Exception $e) {
+                $include = $originalInclude;
+            }
+        } elseif (is_string($include)) {
+            try {
+                $include = Model\Document::getByPath($include);
+            } catch (\Exception $e) {
+                $include = $originalInclude;
+            }
+        }
+
+        if ($include instanceof PageSnippet && $include->isPublished()) {
+            // apply best matching target group (if any)
+            $this->targetingConfigurator->configureTargetGroup($include);
+        }
+
         // check if output-cache is enabled, if so, we're also using the cache here
         $cacheKey    = null;
         $cacheConfig = false;
@@ -64,7 +98,7 @@ class IncludeRenderer
             if ($cacheConfig = Frontend::isOutputCacheEnabled()) {
                 // cleanup params to avoid serializing Element\ElementInterface objects
                 $cacheParams = $params;
-                $cacheParams['~~include-document'] = $include;
+                $cacheParams['~~include-document'] = $originalInclude;
 
                 array_walk($cacheParams, function (&$value, $key) {
                     if ($value instanceof Element\ElementInterface) {
@@ -73,6 +107,11 @@ class IncludeRenderer
                         $value = (string)$value;
                     }
                 });
+
+                // TODO is this enough for cache or should we disable caching completely?
+                if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
+                    $params['target_group'] = $include->getUseTargetGroup();
+                }
 
                 $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
                 if ($content = Cache::load($cacheKey)) {
@@ -88,27 +127,6 @@ class IncludeRenderer
         }
 
         \Pimcore\Cache\Runtime::set('pimcore_editmode', false);
-
-        $includeBak = $include;
-
-        // this is if $this->inc is called eg. with $this->href() as argument
-        if (!$include instanceof PageSnippet && is_object($include) && method_exists($include, '__toString')) {
-            $include = (string)$include;
-        }
-
-        if (is_numeric($include)) {
-            try {
-                $include = Model\Document::getById($include);
-            } catch (\Exception $e) {
-                $include = $includeBak;
-            }
-        } elseif (is_string($include)) {
-            try {
-                $include = Model\Document::getByPath($include);
-            } catch (\Exception $e) {
-                $include = $includeBak;
-            }
-        }
 
         $params  = array_merge($params, ['document' => $include]);
         $content = '';
