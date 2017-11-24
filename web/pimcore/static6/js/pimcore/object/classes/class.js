@@ -1036,7 +1036,7 @@ pimcore.object.classes.klass = Class.create({
                     parentNode = parentNode.parentNode;
                 }
 
-                if ((fieldValidation && in_arrayi(containerAwareDataName,this.usedFieldNames) == false) || data.name == "localizedfields") {
+                if ((fieldValidation && in_arrayi(containerAwareDataName,this.usedFieldNames) == false) || data.name == "localizedfields" && data.fieldtype == "localizedfields") {
 
                     if(data.datatype == "data") {
                         this.usedFieldNames.push(containerAwareDataName);
