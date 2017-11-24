@@ -69,21 +69,21 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     /**
      * @var DocumentTargetingConfigurator
      */
-    private $documentTargetingConfigurator;
+    private $targetingConfigurator;
 
     public function __construct(
         DocumentResolver $documentResolver,
         EditmodeResolver $editmodeResolver,
         RequestHelper $requestHelper,
         UserLoader $userLoader,
-        DocumentTargetingConfigurator $documentTargetingConfigurator
+        DocumentTargetingConfigurator $targetingConfigurator
     )
     {
-        $this->documentResolver              = $documentResolver;
-        $this->editmodeResolver              = $editmodeResolver;
-        $this->requestHelper                 = $requestHelper;
-        $this->userLoader                    = $userLoader;
-        $this->documentTargetingConfigurator = $documentTargetingConfigurator;
+        $this->documentResolver      = $documentResolver;
+        $this->editmodeResolver      = $editmodeResolver;
+        $this->requestHelper         = $requestHelper;
+        $this->userLoader            = $userLoader;
+        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
@@ -194,7 +194,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         } else {
             // load first target group from match result which has valid elements
             // and apply that on the document
-            $this->documentTargetingConfigurator->configureTargetGroup($document);
+            $this->targetingConfigurator->configureTargetGroup($document);
         }
 
         if ($document->getUseTargetGroup()) {

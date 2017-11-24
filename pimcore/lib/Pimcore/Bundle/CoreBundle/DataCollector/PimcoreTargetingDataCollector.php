@@ -32,7 +32,7 @@ class PimcoreTargetingDataCollector extends DataCollector
     /**
      * @var DocumentTargetingConfigurator
      */
-    private $documentTargetingConfigurator;
+    private $targetingConfigurator;
 
     /**
      * @var DocumentResolver
@@ -41,13 +41,13 @@ class PimcoreTargetingDataCollector extends DataCollector
 
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
-        DocumentTargetingConfigurator $documentTargetingConfigurator,
+        DocumentTargetingConfigurator $targetingConfigurator,
         DocumentResolver $documentResolver
     )
     {
-        $this->visitorInfoStorage            = $visitorInfoStorage;
-        $this->documentTargetingConfigurator = $documentTargetingConfigurator;
-        $this->documentResolver              = $documentResolver;
+        $this->visitorInfoStorage    = $visitorInfoStorage;
+        $this->targetingConfigurator = $targetingConfigurator;
+        $this->documentResolver      = $documentResolver;
     }
 
     /**
@@ -103,7 +103,7 @@ class PimcoreTargetingDataCollector extends DataCollector
             return;
         }
 
-        $targetGroup = $this->documentTargetingConfigurator->getConfiguredTargetGroup($document);
+        $targetGroup = $this->targetingConfigurator->getConfiguredTargetGroup($document);
 
         if (!$targetGroup) {
             return;
