@@ -116,8 +116,12 @@ class DefaultAdapter implements AddressSourceAdapterInterface
         $class = ClassDefinition::getByName($this->class);
         $tableName = 'object_' . $class->getId();
 
-        $db = \Pimcore\Db::get();
-        $emails = $db->fetchCol("SELECT email FROM $tableName WHERE o_id IN (" . implode(',', $ids) . ')');
+        $emails = [];
+
+        if (count($ids) > 0) {
+            $db = \Pimcore\Db::get();
+            $emails = $db->fetchCol("SELECT email FROM $tableName WHERE o_id IN (" . implode(',', $ids) . ')');
+        }
 
         $containers = [];
         foreach ($emails as $email) {
