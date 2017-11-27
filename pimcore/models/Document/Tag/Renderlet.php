@@ -24,6 +24,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -127,6 +128,12 @@ class Renderlet extends Model\Document\Tag
         }
 
         if ($this->o instanceof Element\ElementInterface) {
+            // apply best matching target group (if any)
+            if ($this->o instanceof Document\Targeting\TargetingDocumentInterface) {
+                $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
+                $targetingConfigurator->configureTargetGroup($this->o);
+            }
+
             $blockparams = ['action', 'controller', 'module', 'bundle', 'template'];
 
             $params = [

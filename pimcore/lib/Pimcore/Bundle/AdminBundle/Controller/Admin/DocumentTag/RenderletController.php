@@ -24,6 +24,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -55,7 +56,10 @@ class RenderletController extends AdminController
         $attributes = [];
 
         // load element to make sure the request is valid
-        $this->loadElement($request);
+        $element = $this->loadElement($request);
+
+        // apply targeting to element
+        $this->configureElementTargeting($request, $element);
 
         $controller = $request->get('controller');
         $action     = $request->get('action');
@@ -119,5 +123,20 @@ class RenderletController extends AdminController
         }
 
         return $element;
+    }
+
+    private function configureElementTargeting(Request $request, ElementInterface $element)
+    {
+        if (!$element instanceof Document\Targeting\TargetingDocumentInterface) {
+            return;
+        }
+
+        // set selected target group on element
+        if ($request->get('_ptg')) {
+            $targetGroup = TargetGroup::getById((int)$request->get('_ptg'));
+            if ($targetGroup) {
+                $element->setUseTargetGroup($targetGroup->getId());
+            }
+        }
     }
 }
