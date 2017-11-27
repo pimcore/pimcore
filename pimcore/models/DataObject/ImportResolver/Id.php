@@ -22,13 +22,6 @@ use Pimcore\Model\DataObject\Concrete;
 
 class Id extends AbstractResolver
 {
-    /**
-     * Id constructor.
-     */
-    public function __construct($config)
-    {
-        parent::__construct($config);
-    }
 
     /**
      * @param $parentId

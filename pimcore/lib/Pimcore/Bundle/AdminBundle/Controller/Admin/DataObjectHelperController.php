@@ -1240,10 +1240,7 @@ class DataObjectHelperController extends AdminController
     {
         $selectedGridColumns = $configData->selectedGridColumns;
 
-        $container = \Pimcore::getContainer();
-        $localeService = $container->get(Locale::class);
-        $currentLocale = $localeService->getLocale();
-        Logger::debug($currentLocale);
+        $localeService = $this->get(Locale::class);
 
         $colIndex = -1;
 
@@ -1296,10 +1293,12 @@ class DataObjectHelperController extends AdminController
         $data = file_get_contents($_FILES['Filedata']['tmp_name']);
         $data = Tool\Text::convertToUTF8($data);
 
-        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
+        $importId = $request->get('importId');
+        $importId = str_replace('..','',$importId);
+        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId;
         File::put($importFile, $data);
 
-        $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId') . '_original';
+        $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId . '_original';
         File::put($importFileOriginal, $data);
 
         $response = $this->json([
@@ -1490,7 +1489,7 @@ class DataObjectHelperController extends AdminController
         $rowId = $skipFirstRow ? $job + 1 : $job;
 
         try {
-            $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+            $service = $this->get('pimcore.object.importconfig');
             $configData->classId = $request->get('classId');
             $resolver = $service->getResolverImplementation($configData);
 

@@ -1690,7 +1690,6 @@
   "offset": "Offset (0-...)",
   "col_attribute": "Collection Attribute",
   "brick_attribute": "Brick Attribute",
-  "brick_type": "Brick Type",
   "operator_ignore" : "Operator Ignore Column",
   "csv_column_configuration": "Column Configuration",
   "import_configuration": "Import Configuration",
@@ -1714,7 +1713,7 @@
   "renderer": "Renderer",
   "getter": "Getter",
   "string": "String",
-  "boolean": "Boolean"
+  "boolean": "Boolean",
   "col_label": "Label",
   "performing_import": "Performing Import...",
   "row": "Row",
