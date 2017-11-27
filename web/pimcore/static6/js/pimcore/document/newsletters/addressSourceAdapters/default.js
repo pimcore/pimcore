@@ -111,7 +111,7 @@ pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
                         store: pimcore.globalmanager.get("target_group_store"),
                         displayField: "text",
                         valueField: "id",
-                        name: 'personas', // TODO change to target groups
+                        name: 'target_groups',
                         width: 600
                     }
                 ]
