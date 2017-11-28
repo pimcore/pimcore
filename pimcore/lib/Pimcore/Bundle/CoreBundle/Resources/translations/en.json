@@ -66,6 +66,7 @@
   "use_different_email_delivery_settings": "Use different email delivery settings for newsletters",
   "duration": "Duration",
   "scope": "Scope",
+  "matching_scope": "Matching Scope",
   "hit": "Hit",
   "session": "Session",
   "session_with_variables": "Session (with variables)",
