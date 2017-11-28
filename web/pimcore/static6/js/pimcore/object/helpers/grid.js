@@ -217,7 +217,8 @@ pimcore.object.helpers.grid = Class.create({
                     width: 40,
                     sortable: true,
                     filter: 'boolean',
-                    dataIndex: "published"
+                    dataIndex: "published",
+                    disabled: this.isSearch
                 }));
             } else if(field.key == "fullpath") {
                 gridColumns.push({header: t("path"), width: this.getColumnWidth(field, 200), sortable: true,
