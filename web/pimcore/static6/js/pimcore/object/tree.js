@@ -872,9 +872,9 @@ pimcore.object.tree = Class.create({
         var importer = new pimcore.object.helpers.import.configDialog(
             {
                 tree: tree,
-                record: record,
                 classId: classId,
-                className: className
+                className: className,
+                parentNode: record
             });
 
     },
