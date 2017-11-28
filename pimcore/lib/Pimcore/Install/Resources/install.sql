@@ -876,10 +876,12 @@ CREATE TABLE `gridconfigs` (
 	`description` LONGTEXT NULL,
 	`creationDate` INT(11) NULL,
 	`modificationDate` INT(11) NULL,
+	`shareGlobally` TINYINT(1) NULL,
 	PRIMARY KEY (`id`),
 	INDEX `ownerId` (`ownerId`),
 	INDEX `classId` (`classId`),
-	INDEX `searchType` (`searchType`)
+	INDEX `searchType` (`searchType`),
+	INDEX `shareGlobally` (`shareGlobally`)
 )
 DEFAULT CHARSET=utf8mb4;
 ;
@@ -905,6 +907,36 @@ CREATE TABLE `gridconfig_shares` (
 	`sharedWithUserId` INT(11) NOT NULL,
 	PRIMARY KEY (`gridConfigId`, `sharedWithUserId`),
 	INDEX `gridConfigId` (`gridConfigId`),
+	INDEX `sharedWithUserId` (`sharedWithUserId`)
+)
+DEFAULT CHARSET=utf8mb4;
+;
+
+DROP TABLE IF EXISTS `importconfigs`;
+CREATE TABLE `importconfigs` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`ownerId` INT(11) NULL,
+	`classId` INT(11) NULL,
+	`name` VARCHAR(50) NULL,
+	`config` LONGTEXT NULL,
+  `description` LONGTEXT NULL,
+	`creationDate` INT(11) NULL,
+	`modificationDate` INT(11) NULL,
+	`shareGlobally` TINYINT(1) NULL,
+	PRIMARY KEY (`id`),
+	INDEX `ownerId` (`ownerId`),
+	INDEX `classId` (`classId`),
+	INDEX `shareGlobally` (`shareGlobally`)
+)
+DEFAULT CHARSET=utf8mb4;
+;
+
+DROP TABLE IF EXISTS `importconfig_shares`;
+CREATE TABLE `importconfig_shares` (
+	`importConfigId` INT(11) NOT NULL,
+	`sharedWithUserId` INT(11) NOT NULL,
+	PRIMARY KEY (`importConfigId`, `sharedWithUserId`),
+	INDEX `data.sharedRoleIds` (`importConfigId`),
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
 )
 DEFAULT CHARSET=utf8mb4;

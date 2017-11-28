@@ -69,6 +69,11 @@ class GridConfig extends AbstractModel
     public $modificationDate;
 
     /**
+     * @var bool
+     */
+    public $shareGlobally;
+
+    /**
      * @param int $id
      *
      * @return GridConfig
@@ -253,5 +258,21 @@ class GridConfig extends AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShareGlobally()
+    {
+        return $this->shareGlobally;
+    }
+
+    /**
+     * @param bool $shareGlobally
+     */
+    public function setShareGlobally($shareGlobally)
+    {
+        $this->shareGlobally = $shareGlobally;
     }
 }

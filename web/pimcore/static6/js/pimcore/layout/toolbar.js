@@ -966,6 +966,13 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
+
+            settingsItems.push({
+                text: "CSV Import (direct)",
+                handler: this.openImportConfig
+            });
+
+
             // help menu
             if (settingsItems.length > 0) {
                 this.settingsMenu = new Ext.menu.Menu({
@@ -1551,6 +1558,24 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("word", new pimcore.settings.translation.word());
+        }
+    },
+
+    openImportConfig: function () {
+        try {
+            var dialog = new pimcore.object.helpers.import.configDialog({
+                classId: 2,
+                mode: "direct",
+                importConfigId: 19,
+                parentId: 63,
+                uniqueImportId: "news",
+                additionalData: {
+                    something: "everything"
+                }
+            });
+        }
+        catch (e) {
+            console.log(e);
         }
     },
 

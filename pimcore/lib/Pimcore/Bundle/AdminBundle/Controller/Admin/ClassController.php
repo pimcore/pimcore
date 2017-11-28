@@ -869,14 +869,16 @@ class ClassController extends AdminController implements EventedControllerInterf
             $classDefs = $brickDefinition->getClassDefinitions();
             if (!empty($classDefs)) {
                 foreach ($classDefs as $classDef) {
-                    if ($classDef['classname'] == $class->getId()) {
+                    if ($classDef['classname'] == $class->getName()) {
                         $fieldName = $classDef['fieldname'];
                         if ($filteredFieldDefinition && !$filteredFieldDefinition[$fieldName]) {
                             continue;
                         }
 
                         $key = $brickDefinition->getKey();
+
                         $result[$key]['nodeLabel'] = $key;
+                        $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
                         $result[$key]['childs'] = $brickDefinition->getLayoutdefinitions()->getChilds();
                         break;

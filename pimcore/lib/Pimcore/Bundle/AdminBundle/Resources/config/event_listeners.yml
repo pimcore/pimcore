@@ -25,6 +25,11 @@ services:
     #
     Pimcore\Bundle\AdminBundle\EventListener\GridConfigListener: ~
 
+    #
+    # IMPORT CONFIG CLEANUP
+    #
+    Pimcore\Bundle\AdminBundle\EventListener\ImportConfigListener: ~
+
 
     #
     # MISC

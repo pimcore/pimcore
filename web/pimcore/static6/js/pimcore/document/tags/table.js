@@ -81,6 +81,7 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
                     editor: new Ext.form.TextField({
                         allowBlank: true
                     }),
+                    hideable: false,
                     sortable: false
                 });
             }

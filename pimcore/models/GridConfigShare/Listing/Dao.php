@@ -20,7 +20,7 @@ namespace Pimcore\Model\GridConfigShare\Listing;
 use Pimcore\Model;
 
 /**
- * @property \Pimcore\Model\GridConfigFavourite\Listing $model
+ * @property \Pimcore\Model\GridConfigShare\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
@@ -31,16 +31,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $gridConfigsFavourites = [];
+        $gridConfigs = [];
         $data = $this->db->fetchAll('SELECT * FROM gridconfig_shares' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($data as $configData) {
-            $gridConfig = new Model\GridConfig();
+            $gridConfig = new Model\GridConfigShare();
             $gridConfig->setValues($configData);
             $gridConfigs[] = $gridConfig;
         }
 
-        $this->model->setGridconfigFavourites($gridConfigsFavourites);
+        $this->model->setGridconfigShares($gridConfigs);
 
         return $gridConfigs;
     }

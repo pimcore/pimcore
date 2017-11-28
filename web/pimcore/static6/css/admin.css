@@ -1525,3 +1525,11 @@ span.warning {
     font-size: x-small;
     color: blue;
 }
+
+.pimcore_import_headline {
+    font-weight: bold;
+}
+
+.pimcore_import_operator_ignore {
+    color: gray !important;
+}
