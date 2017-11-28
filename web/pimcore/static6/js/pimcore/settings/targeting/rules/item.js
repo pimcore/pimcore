@@ -107,16 +107,16 @@ pimcore.settings.targeting.rules.item = Class.create({
                 name: "scope",
                 fieldLabel: t("matching_scope"),
                 xtype: "combo",
-                width: 250,
+                width: 350,
                 value: this.data["scope"],
                 mode: "local",
                 triggerAction: "all",
                 editable: false,
                 store: [
-                    ["user", t("user")],
+                    ["hit", t("hit")],
                     ["session", t("session")],
                     ["session_with_variables", t("session_with_variables")],
-                    ["hit", t("hit")]
+                    ["visitor", t("targeting_visitor")]
                 ]
             }, {
                 name: "active",

@@ -34,7 +34,8 @@ class VisitorInfoResolver
     const ATTRIBUTE_VISITOR_INFO = '_visitor_info';
 
     const STORAGE_KEY_RULE_CONDITION_VARIABLES = 'vi:var';
-    const STORAGE_KEY_MATCHED_SESSION_RULES = 'vi:rul';
+    const STORAGE_KEY_MATCHED_SESSION_RULES = 'vi:sru'; // visitorInfo:sessionRules
+    const STORAGE_KEY_MATCHED_VISITOR_RULES = 'vi:vru'; // visitorInfo:visitorRules
 
     /**
      * @var TargetingStorageInterface
@@ -132,11 +133,11 @@ class VisitorInfoResolver
 
         foreach ($rules as $rule) {
             if (Rule::SCOPE_SESSION === $rule->getScope()) {
-                if (!$this->ruleWasMatchedInSession($visitorInfo, $rule)) {
+                if ($this->ruleWasMatchedInSession($visitorInfo, $rule)) {
                     continue;
                 }
-            } elseif (Rule::SCOPE_USER === $rule->getScope()) {
-                if (!empty($visitorInfo->getVisitorId())) {
+            } elseif (Rule::SCOPE_VISITOR === $rule->getScope()) {
+                if ($this->ruleWasMatchedForVisitor($visitorInfo, $rule)) {
                     continue;
                 }
             }
@@ -168,9 +169,12 @@ class VisitorInfoResolver
             }
         }
 
-        // record the rule as matched for the current session
         if (Rule::SCOPE_SESSION === $rule->getScope()) {
-            $this->addMatchedSessionRule($visitorInfo, $rule);
+            // record the rule as matched for the current session
+            $this->markRuleAsMatchedInSession($visitorInfo, $rule);
+        } elseif (Rule::SCOPE_VISITOR === $rule->getScope()) {
+            // record the rule as matched for the visitor
+            $this->markRuleAsMatchedForVisitor($visitorInfo, $rule);
         }
 
         // store info about matched rule
@@ -228,37 +232,52 @@ class VisitorInfoResolver
 
     private function ruleWasMatchedInSession(VisitorInfo $visitorInfo, Rule $rule): bool
     {
-        $matchedRules = $this->targetingStorage->get(
-            $visitorInfo,
-            TargetingStorageInterface::SCOPE_SESSION,
-            self::STORAGE_KEY_MATCHED_SESSION_RULES,
-            []
+        return $this->ruleWasMatched(
+            $visitorInfo, $rule,
+            TargetingStorageInterface::SCOPE_SESSION, self::STORAGE_KEY_MATCHED_SESSION_RULES
         );
-
-        if (in_array($rule->getId(), $matchedRules)) {
-            return false;
-        }
-
-        return true;
     }
 
-    private function addMatchedSessionRule(VisitorInfo $visitorInfo, Rule $rule)
+    private function markRuleAsMatchedInSession(VisitorInfo $visitorInfo, Rule $rule)
     {
-        $matchedRules = $this->targetingStorage->get(
-            $visitorInfo,
-            TargetingStorageInterface::SCOPE_SESSION,
-            self::STORAGE_KEY_MATCHED_SESSION_RULES,
-            []
+        $this->markRuleAsMatched(
+            $visitorInfo, $rule,
+            TargetingStorageInterface::SCOPE_SESSION, self::STORAGE_KEY_MATCHED_SESSION_RULES
         );
+    }
 
-        $matchedRules[] = $rule->getId();
-
-        $this->targetingStorage->set(
-            $visitorInfo,
-            TargetingStorageInterface::SCOPE_SESSION,
-            self::STORAGE_KEY_MATCHED_SESSION_RULES,
-            $matchedRules
+    private function ruleWasMatchedForVisitor(VisitorInfo $visitorInfo, Rule $rule): bool
+    {
+        return $this->ruleWasMatched(
+            $visitorInfo, $rule,
+            TargetingStorageInterface::SCOPE_VISITOR, self::STORAGE_KEY_MATCHED_VISITOR_RULES
         );
+    }
+
+    private function markRuleAsMatchedForVisitor(VisitorInfo $visitorInfo, Rule $rule)
+    {
+        $this->markRuleAsMatched(
+            $visitorInfo, $rule,
+            TargetingStorageInterface::SCOPE_VISITOR, self::STORAGE_KEY_MATCHED_VISITOR_RULES
+        );
+    }
+
+    private function ruleWasMatched(VisitorInfo $visitorInfo, Rule $rule, string $scope, string $storageKey): bool
+    {
+        $matchedRules = $this->targetingStorage->get($visitorInfo, $scope, $storageKey, []);
+
+        return in_array($rule->getId(), $matchedRules);
+    }
+
+    private function markRuleAsMatched(VisitorInfo $visitorInfo, Rule $rule, string $scope, string $storageKey)
+    {
+        $matchedRules = $this->targetingStorage->get($visitorInfo, $scope, $storageKey, []);
+
+        if (!in_array($rule->getId(), $matchedRules)) {
+            $matchedRules[] = $rule->getId();
+        }
+
+        $this->targetingStorage->set($visitorInfo, $scope, $storageKey, $matchedRules);
     }
 
     private function ruleWasMatchedInSessionWithVariables(VisitorInfo $visitorInfo, Rule $rule, array $variables): bool

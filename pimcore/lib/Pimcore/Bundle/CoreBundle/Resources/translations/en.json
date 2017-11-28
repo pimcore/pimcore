@@ -70,6 +70,7 @@
   "hit": "Hit",
   "session": "Session",
   "session_with_variables": "Session (with variables)",
+  "targeting_visitor": "Visitor",
   "OK": "OK",
   "entry_conditions": "Entry Conditions",
   "entry_conditions_description": "Entry conditions are only checked at the first visit of the user",
