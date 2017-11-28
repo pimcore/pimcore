@@ -328,10 +328,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                 split: true,
                 autoScroll: true,
                 listeners: {
-                    itemcontextmenu: this.onTreeNodeContextmenu.bind(this),
-                    itemdblclick: function (node, record) {
-                        this.selectionPanel.getRootNode().removeChild(record, true);
-                    }.bind(this)
+                    itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 }
             });
             var store = this.selectionPanel.getStore();
