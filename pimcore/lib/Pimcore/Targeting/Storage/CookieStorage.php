@@ -18,16 +18,19 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage;
 
 use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\Storage\Cookie\CookieSaveHandlerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class CookieStorage implements TargetingStorageInterface
 {
+    /**
+     * @var CookieSaveHandlerInterface
+     */
+    private $saveHandler;
+
     /**
      * @var RequestStack
      */
@@ -57,10 +60,12 @@ class CookieStorage implements TargetingStorageInterface
     ];
 
     public function __construct(
+        CookieSaveHandlerInterface $saveHandler,
         RequestStack $requestHelper,
         EventDispatcherInterface $eventDispatcher
     )
     {
+        $this->saveHandler     = $saveHandler;
         $this->requestStack    = $requestHelper;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -117,6 +122,13 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
+    private function validateScope(string $scope)
+    {
+        if (!isset($this->scopeCookieMapping[$scope])) {
+            throw new \InvalidArgumentException(sprintf('Scope "%s" is not supported', $scope));
+        }
+    }
+
     private function loadData(VisitorInfo $visitorInfo): array
     {
         if (null !== $this->data) {
@@ -125,39 +137,14 @@ class CookieStorage implements TargetingStorageInterface
 
         $request = $visitorInfo->getRequest();
 
-        $data = [
-            self::SCOPE_VISITOR => $this->loadScopeData($request, self::SCOPE_VISITOR),
-            self::SCOPE_SESSION => $this->loadScopeData($request, self::SCOPE_SESSION),
-        ];
+        $data = [];
+        foreach (array_keys($this->scopeCookieMapping) as $scope) {
+            $data[$scope] = $this->saveHandler->load($request, $scope, $this->scopeCookieMapping[$scope]);
+        }
 
         $this->data = $data;
 
-        return $data;
-    }
-
-    private function loadScopeData(Request $request, string $scope): array
-    {
-        $this->validateScope($scope);
-
-        $cookie = $request->cookies->get($this->scopeCookieMapping[$scope], null);
-
-        if (null === $cookie) {
-            return [];
-        }
-
-        $json = json_decode($cookie, true);
-        if (is_array($json)) {
-            return $json;
-        }
-
-        return [];
-    }
-
-    private function validateScope(string $scope)
-    {
-        if (!isset($this->scopeCookieMapping[$scope])) {
-            throw new \InvalidArgumentException(sprintf('Scope "%s" is not supported', $scope));
-        }
+        return $this->data;
     }
 
     private function addSaveListener(VisitorInfo $visitorInfo)
@@ -176,38 +163,27 @@ class CookieStorage implements TargetingStorageInterface
             }
 
             $response = $event->getResponse();
-
             foreach (array_keys($this->scopeCookieMapping) as $scope) {
-                $data = $this->data[$scope] ?? [];
-
-                if (empty($data)) {
-                    $this->setScopeCookie($response, $scope, null);
-                } else {
-                    $this->setScopeCookie($response, $scope, json_encode($data));
-                }
+                $this->saveHandler->save(
+                    $response,
+                    $scope,
+                    $this->scopeCookieMapping[$scope],
+                    $this->expiryFor($scope),
+                    $this->data[$scope] ?? null
+                );
             }
         };
 
         $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener);
     }
 
-    protected function setScopeCookie(Response $response, string $scope, $value)
+    protected function expiryFor(string $scope)
     {
-        $cookieName = $this->scopeCookieMapping[$scope];
-
         $expire = 0;
         if (self::SCOPE_VISITOR === $scope) {
             $expire = new \DateTime('+1 year');
         }
 
-        $response->headers->setCookie(new Cookie(
-            $cookieName,
-            $value,
-            $expire,
-            '/',
-            null,
-            false,
-            false
-        ));
+        return $expire;
     }
 }
