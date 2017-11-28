@@ -101,6 +101,24 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    {
+        if ($visitorInfo->hasVisitorId()) {
+            return $this->primaryStorage->getCreatedAt($visitorInfo, $scope);
+        } else {
+            return $this->fallbackStorage->getCreatedAt($visitorInfo, $scope);
+        }
+    }
+
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    {
+        if ($visitorInfo->hasVisitorId()) {
+            return $this->primaryStorage->getUpdatedAt($visitorInfo, $scope);
+        } else {
+            return $this->fallbackStorage->getUpdatedAt($visitorInfo, $scope);
+        }
+    }
+
     private function migrateFromFallback(VisitorInfo $visitorInfo)
     {
         foreach (self::VALID_SCOPES as $scope) {

@@ -26,6 +26,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class CookieStorage implements TargetingStorageInterface
 {
+    const STORAGE_KEY_CREATED_AT = '_c';
+    const STORAGE_KEY_UPDATED_AT = '_u';
+
     /**
      * @var CookieSaveHandlerInterface
      */
@@ -72,16 +75,14 @@ class CookieStorage implements TargetingStorageInterface
 
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
-        $this->validateScope($scope);
-        $this->loadData($visitorInfo);
+        $this->loadData($visitorInfo, $scope);
 
         return isset($this->data[$scope][$name]);
     }
 
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
-        $this->validateScope($scope);
-        $this->loadData($visitorInfo);
+        $this->loadData($visitorInfo, $scope);
 
         if (isset($this->data[$scope][$name])) {
             return $this->data[$scope][$name];
@@ -92,18 +93,17 @@ class CookieStorage implements TargetingStorageInterface
 
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
-        $this->validateScope($scope);
-        $this->loadData($visitorInfo);
+        $this->loadData($visitorInfo, $scope);
 
         $this->data[$scope][$name] = $value;
 
+        $this->updateTimestamps($this->data[$scope], true);
         $this->addSaveListener($visitorInfo);
     }
 
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
-        $this->validateScope($scope);
-        $this->loadData($visitorInfo);
+        $this->loadData($visitorInfo, $scope);
 
         return $this->data[$scope];
     }
@@ -111,40 +111,56 @@ class CookieStorage implements TargetingStorageInterface
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
         if (null === $scope) {
-            $this->data = [];
+            $this->data = null;
         } else {
-            $this->validateScope($scope);
-            $this->loadData($visitorInfo);
-
-            $this->data[$scope] = [];
+            if (isset($this->data[$scope])) {
+                unset($this->data[$scope]);
+            }
         }
 
         $this->addSaveListener($visitorInfo);
     }
 
-    private function validateScope(string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    {
+        $this->loadData($visitorInfo, $scope);
+
+        if (!isset($this->data[$scope][self::STORAGE_KEY_CREATED_AT])) {
+            return null;
+        }
+
+        return \DateTimeImmutable::createFromFormat('U', (string)$this->data[$scope][self::STORAGE_KEY_CREATED_AT]);
+    }
+
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    {
+        $this->loadData($visitorInfo, $scope);
+
+        if (!isset($this->data[$scope][self::STORAGE_KEY_UPDATED_AT])) {
+            return null;
+        }
+
+        return \DateTimeImmutable::createFromFormat('U', (string)$this->data[$scope][self::STORAGE_KEY_CREATED_AT]);
+    }
+
+    private function loadData(VisitorInfo $visitorInfo, string $scope): array
     {
         if (!isset($this->scopeCookieMapping[$scope])) {
             throw new \InvalidArgumentException(sprintf('Scope "%s" is not supported', $scope));
         }
-    }
 
-    private function loadData(VisitorInfo $visitorInfo): array
-    {
-        if (null !== $this->data) {
-            return $this->data;
+        if (null !== $this->data[$scope]) {
+            return $this->data[$scope];
         }
 
         $request = $visitorInfo->getRequest();
 
-        $data = [];
-        foreach (array_keys($this->scopeCookieMapping) as $scope) {
-            $data[$scope] = $this->saveHandler->load($request, $scope, $this->scopeCookieMapping[$scope]);
-        }
+        $this->data[$scope] = $this->saveHandler->load($request, $scope, $this->scopeCookieMapping[$scope]);
 
-        $this->data = $data;
+        // add created_at and updated_at if not set
+        $this->updateTimestamps($this->data[$scope]);
 
-        return $this->data;
+        return $this->data[$scope];
     }
 
     private function addSaveListener(VisitorInfo $visitorInfo)
@@ -175,6 +191,22 @@ class CookieStorage implements TargetingStorageInterface
         };
 
         $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener);
+    }
+
+    private function updateTimestamps(array &$data, bool $update = false)
+    {
+        $time = time();
+
+        // no created at -> initialize created and updated
+        if (!isset($data[self::STORAGE_KEY_CREATED_AT])) {
+            $data[self::STORAGE_KEY_CREATED_AT] = $time;
+            $data[self::STORAGE_KEY_UPDATED_AT] = $time;
+        }
+
+        // set updated depending on argument
+        if ($update) {
+            $data[self::STORAGE_KEY_UPDATED_AT] = $time;
+        }
     }
 
     protected function expiryFor(string $scope)

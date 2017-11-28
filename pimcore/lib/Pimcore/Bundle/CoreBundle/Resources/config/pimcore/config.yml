@@ -179,7 +179,7 @@ pimcore:
             hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
             operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
             geopoint: Pimcore\Targeting\Condition\GeoPoint
-            timeonsite: Pimcore\Targeting\Condition\Piwik\TimeOnSite
+            timeonsite: Pimcore\Targeting\Condition\TimeOnSite
             visitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
             visitedpagesbefore: Pimcore\Targeting\Condition\Piwik\VisitedPagesBefore
             target_group: Pimcore\Targeting\Condition\TargetGroup

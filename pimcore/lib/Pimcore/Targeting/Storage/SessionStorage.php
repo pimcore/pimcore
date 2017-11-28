@@ -23,6 +23,9 @@ use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 
 class SessionStorage implements TargetingStorageInterface
 {
+    const STORAGE_KEY_CREATED_AT = '_c';
+    const STORAGE_KEY_UPDATED_AT = '_u';
+
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -41,6 +44,8 @@ class SessionStorage implements TargetingStorageInterface
         }
 
         $bag->set($name, $value);
+
+        $this->updateTimestamps($bag, true);
     }
 
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
@@ -78,6 +83,28 @@ class SessionStorage implements TargetingStorageInterface
                 }
             }
         }
+    }
+
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    {
+        $bag = $this->getSessionBag($visitorInfo, $scope);
+
+        if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {
+            return null;
+        }
+
+        return \DateTimeImmutable::createFromFormat('U', (string)$bag->get(self::STORAGE_KEY_CREATED_AT));
+    }
+
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    {
+        $bag = $this->getSessionBag($visitorInfo, $scope);
+
+        if (!$bag->has(self::STORAGE_KEY_UPDATED_AT)) {
+            return null;
+        }
+
+        return \DateTimeImmutable::createFromFormat('U', (string)$bag->get(self::STORAGE_KEY_UPDATED_AT));
     }
 
     /**
@@ -122,6 +149,24 @@ class SessionStorage implements TargetingStorageInterface
                 ));
         }
 
+        $this->updateTimestamps($bag);
+
         return $bag;
+    }
+
+    private function updateTimestamps(NamespacedAttributeBag $bag, bool $update = false)
+    {
+        $time = time();
+
+        // no created at -> initialize created and updated
+        if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {
+            $bag->set(self::STORAGE_KEY_CREATED_AT, $time);
+            $bag->set(self::STORAGE_KEY_UPDATED_AT, $time);
+        }
+
+        // set updated depending on argument
+        if ($update) {
+            $bag->set(self::STORAGE_KEY_UPDATED_AT, $time);
+        }
     }
 }

@@ -15,12 +15,12 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\Condition\Piwik;
+namespace Pimcore\Targeting\Condition;
 
-use Pimcore\Targeting\Condition\ConditionInterface;
-use Pimcore\Targeting\DataProvider\Piwik;
+use Pimcore\Targeting\DataProvider\TargetingStorage;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
 class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
 {
@@ -55,7 +55,7 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
      */
     public function getDataProviderKeys(): array
     {
-        return [Piwik::PROVIDER_KEY];
+        return [TargetingStorage::PROVIDER_KEY];
     }
 
     /**
@@ -71,19 +71,16 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        $visitData = $visitorInfo->get(Piwik::PROVIDER_KEY);
+        /** @var TargetingStorageInterface $storage */
+        $storage = $visitorInfo->get(TargetingStorage::PROVIDER_KEY);
 
-        if (!$visitData || !is_array($visitData) || empty($visitData)) {
+        $createdAt = $storage->getUpdatedAt($visitorInfo, TargetingStorageInterface::SCOPE_SESSION);
+        if (null === $createdAt) {
             return false;
         }
 
-        if (0 === count($visitData['lastVisits'] ?? [])) {
-            return false;
-        }
+        $timeOnSite = time() - $createdAt->getTimestamp();
 
-        $lastVisit = $visitData['lastVisits'][0];
-        $duration  = (int)($lastVisit['visitDuration'] ?? 0);
-
-        return $duration >= $this->seconds;
+        return $timeOnSite >= $this->seconds;
     }
 }
