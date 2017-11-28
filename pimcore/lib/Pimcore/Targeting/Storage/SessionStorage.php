@@ -25,9 +25,7 @@ class SessionStorage implements TargetingStorageInterface
 {
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
-        $this->validateScope($scope);
-
-        $bag = $this->getSessionBag($visitorInfo, true);
+        $bag = $this->getSessionBag($visitorInfo, $scope, true);
         if (null === $bag) {
             return false;
         }
@@ -37,9 +35,7 @@ class SessionStorage implements TargetingStorageInterface
 
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
-        $this->validateScope($scope);
-
-        $bag = $this->getSessionBag($visitorInfo);
+        $bag = $this->getSessionBag($visitorInfo, $scope);
         if (null === $bag) {
             return;
         }
@@ -49,9 +45,7 @@ class SessionStorage implements TargetingStorageInterface
 
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
-        $this->validateScope($scope);
-
-        $bag = $this->getSessionBag($visitorInfo, true);
+        $bag = $this->getSessionBag($visitorInfo, $scope, true);
         if (null === $bag) {
             return $default;
         }
@@ -61,9 +55,7 @@ class SessionStorage implements TargetingStorageInterface
 
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
-        $this->validateScope($scope);
-
-        $bag = $this->getSessionBag($visitorInfo, true);
+        $bag = $this->getSessionBag($visitorInfo, $scope, true);
         if (null === $bag) {
             return [];
         }
@@ -74,31 +66,30 @@ class SessionStorage implements TargetingStorageInterface
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
         if (null !== $scope) {
-            $this->validateScope($scope);
-        }
-
-        $bag = $this->getSessionBag($visitorInfo, true);
-        if (null === $bag) {
-            return;
-        }
-
-        $bag->clear();
-    }
-
-    private function validateScope(string $scope)
-    {
-        if (self::SCOPE_SESSION !== $scope) {
-            throw new \LogicException(sprintf('The session storage is not able to handle the "%s" scope', $scope));
+            $bag = $this->getSessionBag($visitorInfo, $scope, true);
+            if (null !== $bag) {
+                $bag->clear();
+            }
+        } else {
+            foreach (self::VALID_SCOPES as $sc) {
+                $bag = $this->getSessionBag($visitorInfo, $sc, true);
+                if (null !== $bag) {
+                    $bag->clear();
+                }
+            }
         }
     }
 
     /**
+     * Loads a session bag
+     *
      * @param VisitorInfo $visitorInfo
+     * @param string $scope
      * @param bool $checkPreviousSession
      *
      * @return null|NamespacedAttributeBag
      */
-    private function getSessionBag(VisitorInfo $visitorInfo, bool $checkPreviousSession = false)
+    private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
     {
         $request = $visitorInfo->getRequest();
 
@@ -113,7 +104,23 @@ class SessionStorage implements TargetingStorageInterface
         $session = $request->getSession();
 
         /** @var NamespacedAttributeBag $bag */
-        $bag = $session->getBag(SessionConfigurator::TARGETING_BAG);
+        $bag = null;
+
+        switch ($scope) {
+            case self::SCOPE_SESSION:
+                $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_SESSION);
+                break;
+
+            case self::SCOPE_VISITOR:
+                $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_VISITOR);
+                break;
+
+            default:
+                throw new \InvalidArgumentException(sprintf(
+                    'The session storage is not able to handle the "%s" scope',
+                    $scope
+                ));
+        }
 
         return $bag;
     }

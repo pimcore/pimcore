@@ -23,18 +23,26 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SessionConfigurator implements SessionConfiguratorInterface
 {
-    const TARGETING_BAG = 'pimcore_targeting';
+    const TARGETING_BAG_SESSION = 'pimcore_targeting_session';
+    const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
 
     public function configure(SessionInterface $session)
     {
-        $bag = new NamespacedAttributeBag(self::getTargetingStorageKey());
-        $bag->setName(self::TARGETING_BAG);
+        $sessionBag = new NamespacedAttributeBag('_' . self::TARGETING_BAG_SESSION);
+        $sessionBag->setName(self::TARGETING_BAG_SESSION);
 
-        $session->registerBag($bag);
+        $visitorBag = new NamespacedAttributeBag('_' . self::TARGETING_BAG_VISITOR);
+        $visitorBag->setName(self::TARGETING_BAG_VISITOR);
+
+        $session->registerBag($sessionBag);
+        $session->registerBag($visitorBag);
     }
 
-    public static function getTargetingStorageKey(): string
+    public static function getTargetingStorageKeys(): array
     {
-        return '_' . self::TARGETING_BAG;
+        return [
+            '_' . self::TARGETING_BAG_SESSION,
+            '_' . self::TARGETING_BAG_VISITOR
+        ];
     }
 }

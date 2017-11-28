@@ -391,16 +391,16 @@ class FullPageCacheListener
             return false;
         }
 
-        // disable full page cache if any session key besides
-        // Symfony Metadata and Targeting have data
-        $ignoredSessionKeys = [
-            '_sf2_meta',
-            SessionConfigurator::getTargetingStorageKey()
-        ];
-
         if (!is_array($sessionData)) {
             return false;
         }
+
+        // disable full page cache if any session key besides
+        // Symfony Metadata and Targeting have data
+        $ignoredSessionKeys = array_merge(
+            ['_sf2_meta'],
+            SessionConfigurator::getTargetingStorageKeys()
+        );
 
         foreach ($sessionData as $key => $value) {
             if (!in_array($key, $ignoredSessionKeys) && !empty($value)) {
