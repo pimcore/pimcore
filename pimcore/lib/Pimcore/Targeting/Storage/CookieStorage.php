@@ -20,6 +20,7 @@ namespace Pimcore\Targeting\Storage;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -27,8 +28,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class CookieStorage implements TargetingStorageInterface
 {
-    const COOKIE_NAME = '_pc_str';
-
     /**
      * @var RequestStack
      */
@@ -49,6 +48,14 @@ class CookieStorage implements TargetingStorageInterface
      */
     private $changed = false;
 
+    /**
+     * @var array
+     */
+    private $scopeCookieMapping = [
+        self::SCOPE_SESSION => '_pc_tss', // tss = targeting session storage
+        self::SCOPE_VISITOR => '_pc_tvs', // tvs = targeting visitor storage
+    ];
+
     public function __construct(
         RequestStack $requestHelper,
         EventDispatcherInterface $eventDispatcher
@@ -58,65 +65,56 @@ class CookieStorage implements TargetingStorageInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function has(VisitorInfo $visitorInfo, string $name): bool
+    public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
-        if (null === $this->data) {
-            $this->data = $this->loadData($visitorInfo);
-        }
+        $this->validateScope($scope);
+        $this->loadData($visitorInfo);
 
-        return isset($this->data[$name]);
+        return isset($this->data[$scope][$name]);
     }
 
-    public function get(VisitorInfo $visitorInfo, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
-        if (null === $this->data) {
-            $this->data = $this->loadData($visitorInfo);
-        }
+        $this->validateScope($scope);
+        $this->loadData($visitorInfo);
 
-        if (isset($this->data[$name])) {
-            return $this->data[$name];
+        if (isset($this->data[$scope][$name])) {
+            return $this->data[$scope][$name];
         }
 
         return $default;
     }
 
-    public function set(VisitorInfo $visitorInfo, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
-        if (null === $this->data) {
-            $this->data = $this->loadData($visitorInfo);
-        }
+        $this->validateScope($scope);
+        $this->loadData($visitorInfo);
 
-        $this->data[$name] = $value;
+        $this->data[$scope][$name] = $value;
 
-        if (!$this->changed) {
-            $this->changed = true;
-            $this->addSaveListener($visitorInfo);
-        }
+        $this->addSaveListener($visitorInfo);
     }
 
-    public function all(VisitorInfo $visitorInfo): array
+    public function all(VisitorInfo $visitorInfo, string $scope): array
     {
-        if (null === $this->data) {
-            $this->data = $this->loadData($visitorInfo);
-        }
+        $this->validateScope($scope);
+        $this->loadData($visitorInfo);
 
-        return $this->data;
+        return $this->data[$scope];
     }
 
-    public function clear(VisitorInfo $visitorInfo)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
-        if (null === $this->data) {
-            $this->data = $this->loadData($visitorInfo);
-        }
-
-        if (!empty($this->data)) {
+        if (null === $scope) {
             $this->data = [];
+        } else {
+            $this->validateScope($scope);
+            $this->loadData($visitorInfo);
+
+            $this->data[$scope] = [];
         }
 
-        if (!$this->changed) {
-            $this->changed = true;
-            $this->addSaveListener($visitorInfo);
-        }
+        $this->addSaveListener($visitorInfo);
     }
 
     private function loadData(VisitorInfo $visitorInfo): array
@@ -126,14 +124,28 @@ class CookieStorage implements TargetingStorageInterface
         }
 
         $request = $visitorInfo->getRequest();
-        $cookie  = $request->cookies->get(self::COOKIE_NAME, null);
+
+        $data = [
+            self::SCOPE_VISITOR => $this->loadScopeData($request, self::SCOPE_VISITOR),
+            self::SCOPE_SESSION => $this->loadScopeData($request, self::SCOPE_SESSION),
+        ];
+
+        $this->data = $data;
+
+        return $data;
+    }
+
+    private function loadScopeData(Request $request, string $scope): array
+    {
+        $this->validateScope($scope);
+
+        $cookie = $request->cookies->get($this->scopeCookieMapping[$scope], null);
 
         if (null === $cookie) {
             return [];
         }
 
         $json = json_decode($cookie, true);
-
         if (is_array($json)) {
             return $json;
         }
@@ -141,8 +153,21 @@ class CookieStorage implements TargetingStorageInterface
         return [];
     }
 
+    private function validateScope(string $scope)
+    {
+        if (!isset($this->scopeCookieMapping[$scope])) {
+            throw new \InvalidArgumentException(sprintf('Scope "%s" is not supported', $scope));
+        }
+    }
+
     private function addSaveListener(VisitorInfo $visitorInfo)
     {
+        if ($this->changed) {
+            return;
+        }
+
+        $this->changed = true;
+
         // adds a response listener setting the storage cookie
         $listener = function (FilterResponseEvent $event) use ($visitorInfo) {
             // only handle event for the visitor info which triggered the save
@@ -152,22 +177,33 @@ class CookieStorage implements TargetingStorageInterface
 
             $response = $event->getResponse();
 
-            if (empty($this->data)) {
-                $this->setCookie($response, null);
-            } else {
-                $this->setCookie($response, json_encode($this->data));
+            foreach (array_keys($this->scopeCookieMapping) as $scope) {
+                $data = $this->data[$scope] ?? [];
+
+                if (empty($data)) {
+                    $this->setScopeCookie($response, $scope, null);
+                } else {
+                    $this->setScopeCookie($response, $scope, json_encode($data));
+                }
             }
         };
 
         $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener);
     }
 
-    protected function setCookie(Response $response, $value)
+    protected function setScopeCookie(Response $response, string $scope, $value)
     {
+        $cookieName = $this->scopeCookieMapping[$scope];
+
+        $expire = 0;
+        if (self::SCOPE_VISITOR === $scope) {
+            $expire = new \DateTime('+1 year');
+        }
+
         $response->headers->setCookie(new Cookie(
-            self::COOKIE_NAME,
+            $cookieName,
             $value,
-            (new \DateTime('+7 days')),
+            $expire,
             '/',
             null,
             false,

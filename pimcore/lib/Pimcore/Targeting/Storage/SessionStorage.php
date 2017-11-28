@@ -23,8 +23,10 @@ use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 
 class SessionStorage implements TargetingStorageInterface
 {
-    public function has(VisitorInfo $visitorInfo, string $name): bool
+    public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
+        $this->validateScope($scope);
+
         $bag = $this->getSessionBag($visitorInfo, true);
         if (null === $bag) {
             return false;
@@ -33,8 +35,10 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->has($name);
     }
 
-    public function set(VisitorInfo $visitorInfo, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
+        $this->validateScope($scope);
+
         $bag = $this->getSessionBag($visitorInfo);
         if (null === $bag) {
             return;
@@ -43,8 +47,10 @@ class SessionStorage implements TargetingStorageInterface
         $bag->set($name, $value);
     }
 
-    public function get(VisitorInfo $visitorInfo, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
+        $this->validateScope($scope);
+
         $bag = $this->getSessionBag($visitorInfo, true);
         if (null === $bag) {
             return $default;
@@ -53,8 +59,10 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->get($name, $default);
     }
 
-    public function all(VisitorInfo $visitorInfo): array
+    public function all(VisitorInfo $visitorInfo, string $scope): array
     {
+        $this->validateScope($scope);
+
         $bag = $this->getSessionBag($visitorInfo, true);
         if (null === $bag) {
             return [];
@@ -63,14 +71,25 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->all();
     }
 
-    public function clear(VisitorInfo $visitorInfo)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
+        if (null !== $scope) {
+            $this->validateScope($scope);
+        }
+
         $bag = $this->getSessionBag($visitorInfo, true);
         if (null === $bag) {
             return;
         }
 
         $bag->clear();
+    }
+
+    private function validateScope(string $scope)
+    {
+        if (self::SCOPE_SESSION !== $scope) {
+            throw new \LogicException(sprintf('The session storage is not able to handle the "%s" scope', $scope));
+        }
     }
 
     /**

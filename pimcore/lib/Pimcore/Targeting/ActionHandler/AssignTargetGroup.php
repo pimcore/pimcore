@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\ActionHandler;
 
-use Pimcore\Event\TargetingEvents;
 use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\ConditionMatcherInterface;
@@ -84,7 +83,12 @@ class AssignTargetGroup implements ActionHandlerInterface
      */
     public function loadStoredAssignments(VisitorInfo $visitorInfo)
     {
-        $data = $this->storage->get($visitorInfo, self::STORAGE_KEY, []);
+        $data = $this->storage->get(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_VISITOR,
+            self::STORAGE_KEY,
+            []
+        );
 
         foreach ($data as $targetGroupId => $count) {
             $targetGroup = TargetGroup::getById($targetGroupId);
@@ -98,14 +102,24 @@ class AssignTargetGroup implements ActionHandlerInterface
 
     private function storeAssignments(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $weight): int
     {
-        $data = $this->storage->get($visitorInfo, self::STORAGE_KEY, []);
+        $data = $this->storage->get(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_VISITOR,
+            self::STORAGE_KEY,
+            []
+        );
 
         $count = $data[$targetGroup->getId()] ?? 0;
         $count += $weight;
 
         $data[$targetGroup->getId()] = $count;
 
-        $this->storage->set($visitorInfo, self::STORAGE_KEY, $data);
+        $this->storage->set(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_VISITOR,
+            self::STORAGE_KEY,
+            $data
+        );
 
         return $count;
     }

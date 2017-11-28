@@ -25,13 +25,21 @@ use Pimcore\Targeting\Model\VisitorInfo;
  */
 interface TargetingStorageInterface
 {
-    public function all(VisitorInfo $visitorInfo): array;
+    const SCOPE_SESSION = 'session';
+    const SCOPE_VISITOR = 'visitor';
 
-    public function has(VisitorInfo $visitorInfo, string $name): bool;
+    const VALID_SCOPES = [
+        self::SCOPE_SESSION,
+        self::SCOPE_VISITOR
+    ];
 
-    public function set(VisitorInfo $visitorInfo, string $name, $value);
+    public function all(VisitorInfo $visitorInfo, string $scope): array;
 
-    public function get(VisitorInfo $visitorInfo, string $name, $default = null);
+    public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool;
 
-    public function clear(VisitorInfo $visitorInfo);
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value);
+
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null);
+
+    public function clear(VisitorInfo $visitorInfo, string $scope = null);
 }

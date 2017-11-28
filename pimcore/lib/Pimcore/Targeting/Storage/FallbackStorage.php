@@ -22,6 +22,8 @@ use Pimcore\Targeting\Model\VisitorInfo;
 /**
  * Implements a 2-step storage handling a primary storage which needs a visitor ID (e.g. external DB)
  * and a fallback storage which is able to save data without a visitor ID (e.g. session or cookie).
+ *
+ * WIP: not working yet!
  */
 class FallbackStorage implements TargetingStorageInterface
 {
@@ -44,72 +46,74 @@ class FallbackStorage implements TargetingStorageInterface
         $this->fallbackStorage = $fallbackStorage;
     }
 
-    public function has(VisitorInfo $visitorInfo, string $name): bool
+    public function has(VisitorInfo $visitorInfo, string $name, string $scope): bool
     {
         if ($visitorInfo->hasVisitorId()) {
-            if (!$this->primaryStorage->has($visitorInfo, $name)) {
+            if (!$this->primaryStorage->has($visitorInfo, $name, $scope)) {
                 $this->migrateFromFallback($visitorInfo);
             }
 
-            return $this->primaryStorage->has($visitorInfo, $name);
+            return $this->primaryStorage->has($visitorInfo, $name, $scope);
         } else {
-            return $this->fallbackStorage->has($visitorInfo, $name);
+            return $this->fallbackStorage->has($visitorInfo, $name, $scope);
         }
     }
 
-    public function set(VisitorInfo $visitorInfo, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
         if ($visitorInfo->hasVisitorId()) {
-            $this->primaryStorage->set($visitorInfo, $name, $value);
+            $this->primaryStorage->set($visitorInfo, $scope, $name, $value);
         } else {
-            $this->fallbackStorage->set($visitorInfo, $name, $value);
+            $this->fallbackStorage->set($visitorInfo, $scope, $name, $value);
         }
     }
 
-    public function get(VisitorInfo $visitorInfo, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
         if ($visitorInfo->hasVisitorId()) {
-            if (!$this->primaryStorage->has($visitorInfo, $name)) {
+            if (!$this->primaryStorage->has($visitorInfo, $scope, $name)) {
                 $this->migrateFromFallback($visitorInfo);
             }
 
-            return $this->primaryStorage->get($visitorInfo, $name, $default);
+            return $this->primaryStorage->get($visitorInfo, $scope, $name, $default);
         } else {
-            return $this->fallbackStorage->get($visitorInfo, $name, $default);
+            return $this->fallbackStorage->get($visitorInfo, $scope, $name, $default);
         }
     }
 
-    public function all(VisitorInfo $visitorInfo): array
+    public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if ($visitorInfo->hasVisitorId()) {
             $this->migrateFromFallback($visitorInfo);
 
-            return $this->primaryStorage->all($visitorInfo);
+            return $this->primaryStorage->all($visitorInfo, $scope);
         } else {
-            return $this->fallbackStorage->all($visitorInfo);
+            return $this->fallbackStorage->all($visitorInfo, $scope);
         }
     }
 
-    public function clear(VisitorInfo $visitorInfo)
+    public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
-        $this->fallbackStorage->clear($visitorInfo);
+        $this->fallbackStorage->clear($visitorInfo, $scope);
 
         if ($visitorInfo->hasVisitorId()) {
-            $this->primaryStorage->clear($visitorInfo);
+            $this->primaryStorage->clear($visitorInfo, $scope);
         }
     }
 
     private function migrateFromFallback(VisitorInfo $visitorInfo)
     {
-        $fallbackData = $this->fallbackStorage->all($visitorInfo);
-        if (empty($fallbackData)) {
-            return;
-        }
+        foreach (self::VALID_SCOPES as $scope) {
+            $fallbackData = $this->fallbackStorage->all($visitorInfo, $scope);
+            if (empty($fallbackData)) {
+                continue;
+            }
 
-        foreach ($fallbackData as $key => $value) {
-            $this->primaryStorage->set($visitorInfo, $key, $value);
-        }
+            foreach ($fallbackData as $key => $value) {
+                $this->primaryStorage->set($visitorInfo, $scope, $key, $value);
+            }
 
-        $this->fallbackStorage->clear($visitorInfo);
+            $this->fallbackStorage->clear($visitorInfo, $scope);
+        }
     }
 }

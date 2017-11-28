@@ -228,7 +228,12 @@ class VisitorInfoResolver
 
     private function ruleWasMatchedInSession(VisitorInfo $visitorInfo, Rule $rule): bool
     {
-        $matchedRules = $this->targetingStorage->get($visitorInfo, self::STORAGE_KEY_MATCHED_SESSION_RULES, []);
+        $matchedRules = $this->targetingStorage->get(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_SESSION,
+            self::STORAGE_KEY_MATCHED_SESSION_RULES,
+            []
+        );
 
         if (in_array($rule->getId(), $matchedRules)) {
             return false;
@@ -239,17 +244,33 @@ class VisitorInfoResolver
 
     private function addMatchedSessionRule(VisitorInfo $visitorInfo, Rule $rule)
     {
-        $matchedRules   = $this->targetingStorage->get($visitorInfo, self::STORAGE_KEY_MATCHED_SESSION_RULES, []);
+        $matchedRules = $this->targetingStorage->get(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_SESSION,
+            self::STORAGE_KEY_MATCHED_SESSION_RULES,
+            []
+        );
+
         $matchedRules[] = $rule->getId();
 
-        $this->targetingStorage->set($visitorInfo, self::STORAGE_KEY_MATCHED_SESSION_RULES, $matchedRules);
+        $this->targetingStorage->set(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_SESSION,
+            self::STORAGE_KEY_MATCHED_SESSION_RULES,
+            $matchedRules
+        );
     }
 
     private function ruleWasMatchedInSessionWithVariables(VisitorInfo $visitorInfo, Rule $rule, array $variables): bool
     {
         $hash = sha1(serialize($variables));
 
-        $storedVariables = $this->targetingStorage->get($visitorInfo, self::STORAGE_KEY_RULE_CONDITION_VARIABLES, []);
+        $storedVariables = $this->targetingStorage->get(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_SESSION,
+            self::STORAGE_KEY_RULE_CONDITION_VARIABLES,
+            []
+        );
 
         // hash was already matched
         if (isset($storedVariables[$rule->getId()]) && $storedVariables[$rule->getId()] === $hash) {
@@ -259,7 +280,12 @@ class VisitorInfoResolver
         // store hash to storage
         $storedVariables[$rule->getId()] = $hash;
 
-        $this->targetingStorage->set($visitorInfo, self::STORAGE_KEY_RULE_CONDITION_VARIABLES, $storedVariables);
+        $this->targetingStorage->set(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_SESSION,
+            self::STORAGE_KEY_RULE_CONDITION_VARIABLES,
+            $storedVariables
+        );
 
         return false;
     }
