@@ -19,6 +19,10 @@ services:
             $saveHandler: '@Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler'
 
     Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
+    Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler:
+        arguments:
+            $secret: '%kernel.secret%'
+
     Pimcore\Targeting\VisitorInfoStorageInterface: '@Pimcore\Targeting\VisitorInfoStorage'
     Pimcore\Targeting\VisitorInfoStorage: ~
 
