@@ -124,8 +124,11 @@ class Note extends Model\AbstractModel
                 }
             }
         }
-
+        $isUpdate = $this->getId() ? true : false;
         $this->getDao()->save();
+        if(!$isUpdate){
+            \Pimcore::getEventManager()->trigger("element.note.postAdd", $this);
+        }
     }
 
     /**

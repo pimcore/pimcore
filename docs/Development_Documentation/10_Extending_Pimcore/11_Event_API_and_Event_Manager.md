@@ -164,6 +164,12 @@ attach multiple events
 | `asset.document.image-thumbnail` | `Pimcore\Model\Asset\Document\ImageThumbnail` | (bool) `deferred`, (bool) `generated` | fires after the image thumbnail was created                                 |
 | `asset.postCopy`                 | `Pimcore\Model\Asset`                         | `Pimcore\Model\Asset base_element`    | base_element contains the base asset used in copying process                |
 
+### Elements
+
+| Name                             | Target                                        | Parameters                            | Description                                                                 |
+|----------------------------------|-----------------------------------------------|---------------------------------------|-----------------------------------------------------------------------------|
+| `element.note.postAdd`                   | `Pimcore\Model\Element\Note`                          | -                                     |Fired when a note was added to an object/asset/document |
+
 ### Object Class
 
 | Name | Target | Parameters | Description | 
