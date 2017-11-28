@@ -338,7 +338,7 @@ class ClassDefinition extends Model\AbstractModel
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (!(method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner())) {
                     if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                        $cd .= '* @method \\Pimcore\\Model\\DataObject\\'.ucfirst(
+                        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                                 $this->getName()
                             ).'\Listing getBy'.ucfirst(
                                 $def->getName()
