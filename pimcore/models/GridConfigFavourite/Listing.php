@@ -58,6 +58,4 @@ class Listing extends Model\Listing\AbstractListing
     {
         $this->gridconfigFavourites = $gridconfigFavourites;
     }
-
-
 }

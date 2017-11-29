@@ -1294,7 +1294,7 @@ class DataObjectHelperController extends AdminController
         $data = Tool\Text::convertToUTF8($data);
 
         $importId = $request->get('importId');
-        $importId = str_replace('..','',$importId);
+        $importId = str_replace('..', '', $importId);
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId;
         File::put($importFile, $data);
 

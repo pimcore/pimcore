@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 class Unserialize extends AbstractOperator
 {
-
     /**
      * @param $element Concrete
      * @param $target

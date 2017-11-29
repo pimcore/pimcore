@@ -24,12 +24,12 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * @param $ownerId
      * @param $classId
      * @param null $objectId
      * @param null $searchType
+     *
      * @throws \Exception
      */
     public function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = null)
@@ -37,10 +37,9 @@ class Dao extends Model\Dao\AbstractDao
         $query = 'SELECT * FROM gridconfig_favourites WHERE ownerId = ? AND classId = ? AND searchType = ?';
         $params = [$ownerId, $classId, $searchType];
         if (!is_null($objectId)) {
-            $query .= " AND objectId = ?";
+            $query .= ' AND objectId = ?';
             $params[]= $objectId;
         }
-
 
         $data = $this->db->fetchRow($query, $params);
 

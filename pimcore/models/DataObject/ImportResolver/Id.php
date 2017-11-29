@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Concrete;
 
 class Id extends AbstractResolver
 {
-
     /**
      * @param $parentId
      * @param $rowData

@@ -521,7 +521,7 @@ class Thumbnail
             $htmlImgTag = $html;
         }
 
-        if(isset($options['useDataSrc']) && $options['useDataSrc']) {
+        if (isset($options['useDataSrc']) && $options['useDataSrc']) {
             $htmlImgTag = preg_replace('/ src(set)?=/i', ' data-src$1=', $htmlImgTag);
         }
 
