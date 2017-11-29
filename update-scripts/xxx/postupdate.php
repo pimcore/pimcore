@@ -26,7 +26,7 @@ if ($documentsPageTable->hasColumn('personas') && !$documentsPageTable->hasColum
 }
 
 if (!$schema->hasTable('targeting_storage')) {
-    Db::get()->query(<<<'EOF'
+    $db->query(<<<'EOF'
 CREATE TABLE `targeting_storage` (
   `visitorId` varchar(255) NOT NULL,
   `scope` varchar(50) NOT NULL,
