@@ -18,6 +18,7 @@ services:
         arguments:
             $saveHandler: '@Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler'
     Pimcore\Targeting\Storage\DbStorage: ~
+    Pimcore\Targeting\Storage\RedisStorage: ~
 
     Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
     Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler:
