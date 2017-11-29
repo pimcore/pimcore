@@ -12,13 +12,29 @@ services:
     Pimcore\Targeting\EventListener\TargetingListener: ~
     Pimcore\Targeting\EventListener\DocumentTargetGroupListener: ~
 
-    Pimcore\Targeting\Storage\TargetingStorageInterface: '@Pimcore\Targeting\Storage\CookieStorage'
+    #
+    # TARGETING STORAGE
+    #
+
+    Pimcore\Targeting\Storage\TargetingStorageInterface: '@Pimcore\Targeting\Storage\RedisStorage'
+
+    # Session
     Pimcore\Targeting\Storage\SessionStorage: ~
+
+    # Cookie
+    Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
+    Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler:
+        arguments:
+            $secret: '%kernel.secret%'
+
     Pimcore\Targeting\Storage\CookieStorage:
         arguments:
             $saveHandler: '@Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler'
+
+    # Database
     Pimcore\Targeting\Storage\DbStorage: ~
 
+    # Redis
     pimcore.targeting.storage.redis.connection:
         class: Credis_Client
         factory: [Pimcore\Storage\Redis\ConnectionFactory, createConnection]
@@ -29,16 +45,24 @@ services:
         arguments:
             $redis: '@pimcore.targeting.storage.redis.connection'
 
-    Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
-    Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler:
-        arguments:
-            $secret: '%kernel.secret%'
+    # Example for fallback
+    # Pimcore\Targeting\Storage\FallbackStorage:
+    #    arguments:
+    #        $primaryStorage: '@Pimcore\Targeting\Storage\DbStorage'
+    #        $fallbackStorage: '@Pimcore\Targeting\Storage\CookieStorage'
+
+
 
     Pimcore\Targeting\VisitorInfoStorageInterface: '@Pimcore\Targeting\VisitorInfoStorage'
     Pimcore\Targeting\VisitorInfoStorage: ~
 
     Pimcore\Targeting\VisitorInfoResolver:
         lazy: true
+
+
+    #
+    # DATA PROVIDERS
+    #
 
     Pimcore\Targeting\DataLoaderInterface: '@Pimcore\Targeting\DataLoader'
     Pimcore\Targeting\DataLoader: ~
@@ -50,6 +74,11 @@ services:
 
     Pimcore\Targeting\DataProvider\Piwik: ~
     Pimcore\Targeting\DataProvider\TargetingStorage: ~
+
+
+    #
+    # CONDITIONS
+    #
 
     Pimcore\Targeting\ConditionFactoryInterface: '@Pimcore\Targeting\ConditionFactory'
     Pimcore\Targeting\ConditionFactory:
@@ -65,6 +94,11 @@ services:
     Pimcore\Targeting\ConditionMatcher:
         arguments:
             $expressionLanguage: '@pimcore.targeting.condition_matcher.expression_language'
+
+
+    #
+    # ACTION HANDLERS
+    #
 
     Pimcore\Targeting\ActionHandler\ActionHandlerInterface: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
     Pimcore\Targeting\ActionHandler\DelegatingActionHandler: ~
