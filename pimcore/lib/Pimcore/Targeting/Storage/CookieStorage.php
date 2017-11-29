@@ -73,6 +73,13 @@ class CookieStorage implements TargetingStorageInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    public function all(VisitorInfo $visitorInfo, string $scope): array
+    {
+        $this->loadData($visitorInfo, $scope);
+
+        return $this->data[$scope];
+    }
+
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         $this->loadData($visitorInfo, $scope);
@@ -97,15 +104,8 @@ class CookieStorage implements TargetingStorageInterface
 
         $this->data[$scope][$name] = $value;
 
-        $this->updateTimestamps($scope, true);
+        $this->updateTimestamps($scope);
         $this->addSaveListener($visitorInfo);
-    }
-
-    public function all(VisitorInfo $visitorInfo, string $scope): array
-    {
-        $this->loadData($visitorInfo, $scope);
-
-        return $this->data[$scope];
     }
 
     public function clear(VisitorInfo $visitorInfo, string $scope = null)

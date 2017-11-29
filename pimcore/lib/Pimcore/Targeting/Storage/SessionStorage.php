@@ -26,6 +26,16 @@ class SessionStorage implements TargetingStorageInterface
     const STORAGE_KEY_CREATED_AT = '_c';
     const STORAGE_KEY_UPDATED_AT = '_u';
 
+    public function all(VisitorInfo $visitorInfo, string $scope): array
+    {
+        $bag = $this->getSessionBag($visitorInfo, $scope, true);
+        if (null === $bag) {
+            return [];
+        }
+
+        return $bag->all();
+    }
+
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -56,16 +66,6 @@ class SessionStorage implements TargetingStorageInterface
         }
 
         return $bag->get($name, $default);
-    }
-
-    public function all(VisitorInfo $visitorInfo, string $scope): array
-    {
-        $bag = $this->getSessionBag($visitorInfo, $scope, true);
-        if (null === $bag) {
-            return [];
-        }
-
-        return $bag->all();
     }
 
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
