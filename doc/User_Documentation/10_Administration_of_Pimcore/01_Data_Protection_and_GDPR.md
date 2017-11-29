@@ -58,5 +58,22 @@ it used.
 > Of course Pimcore cannot cleanup external data copies or backups. This has to be taken care of by the owner of the actual solution. 
 
 
+## Deactivation of Usage Log
+Pimcore logs information about every action that is done in Pimcore backend for audit trail and traceability reasons. The 
+logged information concludes timestamp, user id, called action and can be used to reproduce things if something 
+goes wrong.
 
+This feature can be deactivated in system settings. See [Logging Docs](../../Development_Documentation/19_Development_Tools_and_Details/07_Logging.md) 
+in the Development Documentation for more details. 
+ 
+> It is not recommended to turn off this feature. 
+ 
+## Deactivation of Versions
+For every save action of data elements (documents, assets, data objects) Pimcore writes a version for traceability, audit 
+trail and the possibility to go back to older versions. The version information concludes timestamp, user and the actual 
+data. 
 
+This feature can be deactivated in system settings. See [Versioning Docs](../../Development_Documentation/18_Tools_and_Features/01_Versioning.md) 
+in the Development Documentation for more details. 
+ 
+> It is not recommended to turn off this feature. 
