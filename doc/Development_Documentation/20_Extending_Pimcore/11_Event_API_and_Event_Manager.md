@@ -28,8 +28,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Object Import](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectImportEvents.php)
 - [Users / Roles](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/UserRoleEvents.php)
 - [Workflows](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/WorkflowEvents.php)
-  
-  
+- [Elements](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/ElementEvents.php)
 - [Admin](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/AdminEvents.php)
 - [Frontend](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/FrontendEvents.php)
 - [Cache](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/CoreCacheEvents.php)
