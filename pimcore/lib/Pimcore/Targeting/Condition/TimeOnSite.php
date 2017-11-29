@@ -24,8 +24,6 @@ use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
 class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
 {
-    const STORAGE_KEY_TIME_ON_SITE = 'tos';
-
     /**
      * @var int
      */
@@ -76,12 +74,12 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
         /** @var TargetingStorageInterface $storage */
         $storage = $visitorInfo->get(TargetingStorage::PROVIDER_KEY);
 
-        // set a dummy value to make sure storage updates/creates its timestamps
-        if (!$storage->has($visitorInfo, TargetingStorageInterface::SCOPE_SESSION, self::STORAGE_KEY_TIME_ON_SITE)) {
+        // set a meta value to make sure storage updates/creates its timestamps
+        if (!$storage->has($visitorInfo, TargetingStorageInterface::SCOPE_SESSION, TargetingStorageInterface::STORAGE_KEY_META_ENTRY)) {
             $storage->set(
                 $visitorInfo,
                 TargetingStorageInterface::SCOPE_SESSION,
-                self::STORAGE_KEY_TIME_ON_SITE,
+                TargetingStorageInterface::STORAGE_KEY_META_ENTRY,
                 1
             );
         }

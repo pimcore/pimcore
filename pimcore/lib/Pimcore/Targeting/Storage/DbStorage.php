@@ -66,10 +66,11 @@ class DbStorage implements TargetingStorageInterface
         }
 
         $stmt = $this->db->executeQuery(
-            'SELECT name, value FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope',
+            'SELECT name, value FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope AND name != :metaKey',
             [
                 'visitorId' => $visitorInfo->getVisitorId(),
-                'scope'     => $scope
+                'scope'     => $scope,
+                'metaKey'   => self::STORAGE_KEY_META_ENTRY,
             ]
         );
 

@@ -33,6 +33,14 @@ interface TargetingStorageInterface
         self::SCOPE_VISITOR
     ];
 
+    /**
+     * The meta entry does not store any data, but can be used if a value is needed for metadata handling. Use cases:
+     *
+     *  - write an entry to make sure the storage has a created/updated date
+     *  - set the entry created date to something in the past when migrating from another storage
+     */
+    const STORAGE_KEY_META_ENTRY = '_m';
+
     public function all(VisitorInfo $visitorInfo, string $scope): array;
 
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool;

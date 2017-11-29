@@ -33,7 +33,18 @@ class SessionStorage implements TargetingStorageInterface
             return [];
         }
 
-        return $bag->all();
+        $blacklist = [
+            self::STORAGE_KEY_CREATED_AT,
+            self::STORAGE_KEY_UPDATED_AT,
+            self::STORAGE_KEY_META_ENTRY,
+        ];
+
+        // filter internal values
+        $result = array_filter( $bag->all(), function ($key) use ($blacklist) {
+            return !in_array($key, $blacklist, true);
+        }, ARRAY_FILTER_USE_KEY);
+
+        return $result;
     }
 
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
