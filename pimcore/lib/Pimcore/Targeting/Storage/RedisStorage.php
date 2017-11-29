@@ -32,13 +32,8 @@ class RedisStorage implements TargetingStorageInterface
      */
     private $redis;
 
-    public function __construct(\Credis_Client $redis = null)
+    public function __construct(\Credis_Client $redis)
     {
-        // TODO remove
-        if (null === $redis) {
-            $redis = new \Credis_Client('127.0.0.1', 6379, null, '', 5);
-        }
-
         $this->redis = $redis;
     }
 

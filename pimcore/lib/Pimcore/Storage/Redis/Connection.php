@@ -15,11 +15,12 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Cache\Pool\Redis;
+namespace Pimcore\Storage\Redis;
 
-/**
- * @deprecated Use Pimcore\Storage\Redis\Connection instead.
- */
-class Connection extends \Pimcore\Storage\Redis\Connection
+class Connection extends \Credis_Client
 {
+    public function isStandalone(): bool
+    {
+        return $this->standalone;
+    }
 }

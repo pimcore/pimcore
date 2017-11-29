@@ -2,7 +2,7 @@ services:
     # redis connection built from config data pimcore.cache.pools.redis.connection
     pimcore.cache.core.redis.connection:
         class: Credis_Client
-        factory: [Pimcore\Cache\Pool\Redis\ConnectionFactory, createConnection]
+        factory: [Pimcore\Storage\Redis\ConnectionFactory, createConnection]
         arguments: ['%pimcore.cache.core.redis.connection%']
 
     # redis cache pool

@@ -18,7 +18,16 @@ services:
         arguments:
             $saveHandler: '@Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler'
     Pimcore\Targeting\Storage\DbStorage: ~
-    Pimcore\Targeting\Storage\RedisStorage: ~
+
+    pimcore.targeting.storage.redis.connection:
+        class: Credis_Client
+        factory: [Pimcore\Storage\Redis\ConnectionFactory, createConnection]
+        arguments:
+            - { server: 127.0.0.1, database: 7 }
+
+    Pimcore\Targeting\Storage\RedisStorage:
+        arguments:
+            $redis: '@pimcore.targeting.storage.redis.connection'
 
     Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
     Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler:
