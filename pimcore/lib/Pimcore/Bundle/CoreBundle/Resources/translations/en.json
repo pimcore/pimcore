@@ -1743,11 +1743,19 @@
   "operator_unserialize_settings": "Operator Unserialize Settings",
   "operator_base64_settings": "Operate Base64 Settings",
   "operator_base64": "Operator Base64",
-  "string": "String",
   "delimiter": "Delimiter",
   "escapechar": "Escape Character",
   "lineterminator": "Line Terminator (hex)",
   "quotechar": "Quote Character",
-  "share_globally": "Share globally"
-
+  "share_globally": "Share globally",
+  "gdpr_data_extractor": "GDPR Data Extractor",
+  "gdpr_data_extractor_label_id": "ID",
+  "gdpr_data_extractor_label_firstname": "Firstname",
+  "gdpr_data_extractor_label_lastname": "Lastname",
+  "gdpr_data_extractor_label_email": "E-Mail",
+  "gdpr_dataSource_dataObjects": "Data Objects",
+  "gdpr_dataSource_export": "Export",
+  "gdpr_dataSource_sentMail": "Sent Mail",
+  "gdpr_dataSource_sentMail_only_email": "Search only based on E-Mail",
+  "gdpr_dataSource_pimcoreUsers": "Pimcore Backend User Data"
 }

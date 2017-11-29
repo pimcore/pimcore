@@ -1160,3 +1160,7 @@
 .pimcore_icon_start_import {
     background: url("/pimcore/static6/img/flat-color-icons/import.svg") center center no-repeat !important;
 }
+
+.pimcore_icon_gdpr  {
+    background: url(/pimcore/static6/img/flat-color-icons/feedback.svg) left center no-repeat !important;
+}

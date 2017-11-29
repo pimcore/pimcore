@@ -56,3 +56,26 @@ services:
     pimcore.object.importconfig:
         class: Pimcore\Model\DataObject\ImportColumnConfig\Service
         public: true
+
+
+    #
+    # GDPR Services
+    #
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager: ~
+
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects:
+        arguments:
+            $config: '%pimcore.gdpr-data-extrator.dataobjects%'
+        public: true
+        tags:
+            - {name: pimcore.gdpr.data-provider, id: objects}
+
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail:
+        public: true
+        tags:
+            - {name: pimcore.gdpr.data-provider, id: sentMail}
+
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers:
+        public: true
+        tags:
+            - {name: pimcore.gdpr.data-provider, id: pimcoreUsers}
