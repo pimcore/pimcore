@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Type;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
@@ -68,15 +69,23 @@ class DbStorage implements TargetingStorageInterface
             return [];
         }
 
-        $stmt = $this->db->executeQuery(
-            'SELECT name, value FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope AND name != :metaKey',
-            [
-                'visitorId' => $visitorInfo->getVisitorId(),
-                'scope'     => $scope,
-                'metaKey'   => self::STORAGE_KEY_META_ENTRY,
-            ]
-        );
+        $qb = $this->db->createQueryBuilder();
+        $qb
+            ->select('name', 'value')
+            ->from($this->tableName)
+            ->where('visitorId = :visitorId')
+            ->andWhere('scope = :scope')
+            ->andWhere('name != :metaKey');
 
+        $qb->setParameters([
+            'visitorId' => $visitorInfo->getVisitorId(),
+            'scope'     => $scope,
+            'metaKey'   => self::STORAGE_KEY_META_ENTRY,
+        ]);
+
+        $this->addExpiryParam($qb, $scope);
+
+        $stmt   = $qb->execute();
         $result = $stmt->fetchAll();
 
         $data = [];
@@ -93,15 +102,23 @@ class DbStorage implements TargetingStorageInterface
             return false;
         }
 
-        $stmt = $this->db->executeQuery(
-            'SELECT COUNT(name) AS count FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope AND name = :name',
-            [
-                'visitorId' => $visitorInfo->getVisitorId(),
-                'scope'     => $scope,
-                'name'      => $name
-            ]
-        );
+        $qb = $this->db->createQueryBuilder();
+        $qb
+            ->select('COUNT(name) as count')
+            ->from($this->tableName)
+            ->where('visitorId = :visitorId')
+            ->andWhere('scope = :scope')
+            ->andWhere('name = :name');
 
+        $qb->setParameters([
+            'visitorId' => $visitorInfo->getVisitorId(),
+            'scope'     => $scope,
+            'name'      => $name,
+        ]);
+
+        $this->addExpiryParam($qb, $scope);
+
+        $stmt   = $qb->execute();
         $result = (int)$stmt->fetchColumn();
 
         return 1 === $result;
@@ -133,6 +150,8 @@ EOF;
                 'value'     => $json,
             ]
         );
+
+        $this->cleanup($scope);
     }
 
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
@@ -141,15 +160,23 @@ EOF;
             return $default;
         }
 
-        $stmt = $this->db->executeQuery(
-            'SELECT value FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope AND name = :name',
-            [
-                'visitorId' => $visitorInfo->getVisitorId(),
-                'scope'     => $scope,
-                'name'      => $name
-            ]
-        );
+        $qb = $this->db->createQueryBuilder();
+        $qb
+            ->select('value')
+            ->from($this->tableName)
+            ->where('visitorId = :visitorId')
+            ->andWhere('scope = :scope')
+            ->andWhere('name = :name');
 
+        $qb->setParameters([
+            'visitorId' => $visitorInfo->getVisitorId(),
+            'scope'     => $scope,
+            'name'      => $name,
+        ]);
+
+        $this->addExpiryParam($qb, $scope);
+
+        $stmt   = $qb->execute();
         $result = $stmt->fetchColumn();
 
         if (!$result) {
@@ -212,6 +239,8 @@ EOF;
                 $storage->getUpdatedAt($visitorInfo, $scope)
             );
 
+            $this->cleanup($scope);
+
             $this->db->commit();
         } catch (\Exception $e) {
             $this->db->rollBack();
@@ -222,36 +251,38 @@ EOF;
 
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
-        if (!$visitorInfo->hasVisitorId()) {
-            return null;
-        }
-
-        $stmt = $this->db->executeQuery(
-            'SELECT MIN(creationDate) FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope',
-            [
-                'visitorId' => $visitorInfo->getVisitorId(),
-                'scope'     => $scope
-            ]
-        );
-
-        return $this->convertToDateTime($stmt->fetchColumn());
+        return $this->loadDate($visitorInfo, $scope, 'MIN(creationDate)');
     }
 
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    {
+        return $this->loadDate($visitorInfo, $scope, 'MAX(modificationDate)');
+    }
+
+    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $select)
     {
         if (!$visitorInfo->hasVisitorId()) {
             return null;
         }
 
-        $stmt = $this->db->executeQuery(
-            'SELECT MAX(modificationDate) FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope',
-            [
-                'visitorId' => $visitorInfo->getVisitorId(),
-                'scope'     => $scope
-            ]
-        );
+        $qb = $this->db->createQueryBuilder();
+        $qb
+            ->select($select)
+            ->from($this->tableName)
+            ->where('visitorId = :visitorId')
+            ->andWhere('scope = :scope');
 
-        return $this->convertToDateTime($stmt->fetchColumn());
+        $qb->setParameters([
+            'visitorId' => $visitorInfo->getVisitorId(),
+            'scope'     => $scope,
+        ]);
+
+        $this->addExpiryParam($qb, $scope);
+
+        $stmt = $qb->execute();
+        $date = $this->convertToDateTime($stmt->fetchColumn());
+
+        return $date;
     }
 
     private function convertToDateTime($result = null)
@@ -307,5 +338,32 @@ EOF;
         }
 
         return $expiry;
+    }
+
+    private function addExpiryParam(QueryBuilder $qb, string $scope)
+    {
+        $expiry = $this->expiryFor($scope);
+        if (0 === $expiry) {
+            return;
+        }
+
+        $qb->andWhere('modificationDate >= (NOW() - INTERVAL :expiry SECOND)');
+        $qb->setParameter('expiry', $expiry);
+    }
+
+    private function cleanup(string $scope)
+    {
+        $expiry = $this->expiryFor($scope);
+        if (0 === $expiry) {
+            return;
+        }
+
+        $this->db->executeQuery(
+            'DELETE FROM ' . $this->tableName . ' WHERE scope = :scope AND modificationDate < (NOW() - INTERVAL :expiry SECOND)',
+            [
+                'scope'  => $scope,
+                'expiry' => $expiry
+            ]
+        );
     }
 }
