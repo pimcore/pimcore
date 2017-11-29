@@ -24,7 +24,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DbStorage implements TargetingStorageInterface
+class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterface
 {
     use TimestampsTrait;
 
@@ -257,6 +257,18 @@ EOF;
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         return $this->loadDate($visitorInfo, $scope, 'MAX(modificationDate)');
+    }
+
+    public function maintenance()
+    {
+        // clean up expired keys scopes with an expiration
+        foreach (self::VALID_SCOPES as $scope) {
+            $expiry = $this->expiryFor($scope);
+
+            if ($expiry > 0) {
+                $this->cleanup($scope);
+            }
+        }
     }
 
     private function loadDate(VisitorInfo $visitorInfo, string $scope, string $select)
