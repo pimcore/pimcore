@@ -472,9 +472,7 @@ class Thumbnail
         $htmlImgTag = '<img '.implode(' ', $attributes).' />';
 
         // $this->getConfig() can be empty, the original image is returned
-        if (!$this->getConfig() || !$this->getConfig()->hasMedias()) {
-            return $htmlImgTag;
-        } else {
+        if ($this->getConfig() && $this->getConfig()->hasMedias()) {
             // output the <picture> - element
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
@@ -510,8 +508,6 @@ class Thumbnail
                 $html .= ' />' . "\n";
             }
 
-            //$html .= "\t" . '<noscript>' . "\n\t\t" . $htmlImgTag . "\n\t" . '</noscript>' . "\n";
-
             $attrCleanedForPicture = $attributes;
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
@@ -522,8 +518,14 @@ class Thumbnail
 
             $html .= '</picture>' . "\n";
 
-            return $html;
+            $htmlImgTag = $html;
         }
+
+        if(isset($options['useDataSrc']) && $options['useDataSrc']) {
+            $htmlImgTag = preg_replace('/ src(set)?=/i', ' data-src$1=', $htmlImgTag);
+        }
+
+        return $htmlImgTag;
     }
 
     /**
