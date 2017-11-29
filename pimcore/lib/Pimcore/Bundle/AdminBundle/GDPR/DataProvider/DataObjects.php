@@ -145,9 +145,7 @@ class DataObjects implements DataProviderInterface
             return ['data' => [], 'success' => true, 'total' => 0];
         }
 
-
         $offset = $start;
-
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
 
@@ -155,30 +153,20 @@ class DataObjects implements DataProviderInterface
         $conditionParts = [];
         $db = \Pimcore\Db::get();
 
-        $queryParams = [];
-
         //id search
         if($id) {
-            $queryParams[] = '( MATCH (`data`,`properties`) AGAINST (+"' . $id . '" IN BOOLEAN MODE) )';
+            $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST (+"' . $id . '" IN BOOLEAN MODE) )';
         }
 
-        if($firstname || $lastname) {
+        // search for firstname, lastname, email
+        if($firstname || $lastname || $email) {
             $firstname = $this->prepareQueryString($firstname);
             $lastname = $this->prepareQueryString($lastname);
-
-            $queryString = ($firstname ? '+"' . $firstname . '"' : '') . " " . ($lastname ? '+"' . $lastname . '"' : '');
-            $queryParams[] = '( MATCH (`data`,`properties`) AGAINST ("' . $db->quote($queryString) . '" IN BOOLEAN MODE) )';
-        }
-
-        if($email) {
             $email = $this->prepareQueryString($email);
 
-            $queryString = $db->quote('+"' . $email . '"');
-            $queryParams[] = '( MATCH (`data`,`properties`) AGAINST (' . $queryString . ' IN BOOLEAN MODE) )';
+            $queryString = ($firstname ? '+"' . $firstname . '"' : '') . " " . ($lastname ? '+"' . $lastname . '"' : '') . " " . ($email ? '+"' . $email . '"' : '');
+            $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST ("' . $db->quote($queryString) . '" IN BOOLEAN MODE) )';
         }
-
-        $conditionParts[] = "(" . implode(" OR ", $queryParams) . ")";
-
 
         $conditionParts[] = '( maintype = "object" AND type IN ("object", "variant") )';
 

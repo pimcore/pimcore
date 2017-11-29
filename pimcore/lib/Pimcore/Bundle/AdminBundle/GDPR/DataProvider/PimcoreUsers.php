@@ -100,7 +100,7 @@ class PimcoreUsers implements DataProviderInterface
             $conditionParamData[] = '%' . $email . '%';
         }
 
-        $userListing->setCondition(implode(" OR ", $conditionParams), $conditionParamData);
+        $userListing->setCondition(implode(" AND ", $conditionParams), $conditionParamData);
         $userListing->setLimit($limit);
         $userListing->setOffset($start);
 
