@@ -34,10 +34,12 @@ class RequestHelper
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @return Request
-     */
-    public function getCurrentRequest()
+    public function hasCurrentRequest(): bool
+    {
+        return null !== $this->requestStack->getCurrentRequest();
+    }
+
+    public function getCurrentRequest(): Request
     {
         if (!$this->requestStack->getCurrentRequest()) {
             throw new \LogicException('A Request must be available.');
@@ -60,10 +62,12 @@ class RequestHelper
         return $request;
     }
 
-    /**
-     * @return Request
-     */
-    public function getMasterRequest()
+    public function hasMasterRequest(): bool
+    {
+        return null !== $this->requestStack->getMasterRequest();
+    }
+
+    public function getMasterRequest(): Request
     {
         $masterRequest = $this->requestStack->getMasterRequest();
         if (null === $masterRequest) {
