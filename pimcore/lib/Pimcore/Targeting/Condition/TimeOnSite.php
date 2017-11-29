@@ -74,15 +74,13 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
         /** @var TargetingStorageInterface $storage */
         $storage = $visitorInfo->get(TargetingStorage::PROVIDER_KEY);
 
-        // set a meta value to make sure storage updates/creates its timestamps
-        if (!$storage->has($visitorInfo, TargetingStorageInterface::SCOPE_SESSION, TargetingStorageInterface::STORAGE_KEY_META_ENTRY)) {
-            $storage->set(
-                $visitorInfo,
-                TargetingStorageInterface::SCOPE_SESSION,
-                TargetingStorageInterface::STORAGE_KEY_META_ENTRY,
-                1
-            );
-        }
+        // set/update meta value to make sure storage updates/creates its timestamps
+        $storage->set(
+            $visitorInfo,
+            TargetingStorageInterface::SCOPE_SESSION,
+            TargetingStorageInterface::STORAGE_KEY_META_ENTRY,
+            1
+        );
 
         $createdAt = $storage->getCreatedAt($visitorInfo, TargetingStorageInterface::SCOPE_SESSION);
         if (null === $createdAt) {
