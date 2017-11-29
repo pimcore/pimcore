@@ -24,3 +24,21 @@ $documentsPageTable = $schema->getTable('documents_page');
 if ($documentsPageTable->hasColumn('personas') && !$documentsPageTable->hasColumn('targetGroupIds')) {
     $db->query('ALTER TABLE `documents_page` CHANGE `personas` `targetGroupIds` VARCHAR(255)');
 }
+
+if (!$schema->hasTable('targeting_storage')) {
+    Db::get()->query(<<<'EOF'
+CREATE TABLE `targeting_storage` (
+  `visitorId` varchar(255) NOT NULL,
+  `scope` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `value` text,
+  `creationDate` datetime DEFAULT NULL,
+  `modificationDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`visitorId`,`scope`,`name`),
+  KEY `targeting_storage_scope_index` (`scope`),
+  KEY `targeting_storage_name_index` (`name`),
+  KEY `targeting_storage_visitorId_index` (`visitorId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+EOF
+    );
+}
