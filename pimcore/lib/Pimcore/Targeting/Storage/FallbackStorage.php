@@ -18,12 +18,20 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage;
 
 use Pimcore\Targeting\Model\VisitorInfo;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Implements a 2-step storage handling a primary storage which needs a visitor ID (e.g. external DB)
  * and a fallback storage which is able to save data without a visitor ID (e.g. session or cookie).
  *
- * WIP: not working yet!
+ * As soon as the primary storage is able to handle the request, data is migrated from the fallback to
+ * the primary. Example flow (cookie + redis):
+ *
+ *  - Visitor visits page for the first time without a visitor ID. This request will write to the fallback storage
+ *  (cookie) and a visitor ID is generated during this first request.
+ *  - The next request already includes a visitorID. Upon encountering the visitor ID for the first time, data is
+ *  migrated from the fallback to the primary and the fallback data is cleared (if configured).
  */
 class FallbackStorage implements TargetingStorageInterface
 {
@@ -37,25 +45,63 @@ class FallbackStorage implements TargetingStorageInterface
      */
     private $fallbackStorage;
 
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var array
+     */
+    private $options = [];
+
     public function __construct(
         TargetingStorageInterface $primaryStorage,
-        TargetingStorageInterface $fallbackStorage
+        TargetingStorageInterface $fallbackStorage,
+        LoggerInterface $logger,
+        array $options = []
     )
     {
         $this->primaryStorage  = $primaryStorage;
         $this->fallbackStorage = $fallbackStorage;
+        $this->logger          = $logger;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->options = $resolver->resolve($options);
     }
 
-    public function has(VisitorInfo $visitorInfo, string $name, string $scope): bool
+    protected function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'clear_after_migration' => false
+        ]);
+
+        $resolver->setAllowedTypes('clear_after_migration', 'bool');
+    }
+
+    public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if ($visitorInfo->hasVisitorId()) {
-            if (!$this->primaryStorage->has($visitorInfo, $name, $scope)) {
-                $this->migrateFromFallback($visitorInfo);
+            $this->migrateFromFallback($visitorInfo, $scope);
+
+            return $this->primaryStorage->all($visitorInfo, $scope);
+        } else {
+            return $this->fallbackStorage->all($visitorInfo, $scope);
+        }
+    }
+
+    public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
+    {
+        if ($visitorInfo->hasVisitorId()) {
+            if (!$this->primaryStorage->has($visitorInfo, $scope, $name)) {
+                $this->migrateFromFallback($visitorInfo, $scope);
             }
 
-            return $this->primaryStorage->has($visitorInfo, $name, $scope);
+            return $this->primaryStorage->has($visitorInfo, $scope, $name);
         } else {
-            return $this->fallbackStorage->has($visitorInfo, $name, $scope);
+            return $this->fallbackStorage->has($visitorInfo, $scope, $name);
         }
     }
 
@@ -72,23 +118,12 @@ class FallbackStorage implements TargetingStorageInterface
     {
         if ($visitorInfo->hasVisitorId()) {
             if (!$this->primaryStorage->has($visitorInfo, $scope, $name)) {
-                $this->migrateFromFallback($visitorInfo);
+                $this->migrateFromFallback($visitorInfo, $scope);
             }
 
             return $this->primaryStorage->get($visitorInfo, $scope, $name, $default);
         } else {
             return $this->fallbackStorage->get($visitorInfo, $scope, $name, $default);
-        }
-    }
-
-    public function all(VisitorInfo $visitorInfo, string $scope): array
-    {
-        if ($visitorInfo->hasVisitorId()) {
-            $this->migrateFromFallback($visitorInfo);
-
-            return $this->primaryStorage->all($visitorInfo, $scope);
-        } else {
-            return $this->fallbackStorage->all($visitorInfo, $scope);
         }
     }
 
@@ -99,6 +134,11 @@ class FallbackStorage implements TargetingStorageInterface
         if ($visitorInfo->hasVisitorId()) {
             $this->primaryStorage->clear($visitorInfo, $scope);
         }
+    }
+
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): bool
+    {
+        throw new \LogicException('migrateFromStorage() is not supported in FallbackStorage');
     }
 
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
@@ -119,19 +159,17 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
-    private function migrateFromFallback(VisitorInfo $visitorInfo)
+    private function migrateFromFallback(VisitorInfo $visitorInfo, string $scope)
     {
-        foreach (self::VALID_SCOPES as $scope) {
-            $fallbackData = $this->fallbackStorage->all($visitorInfo, $scope);
-            if (empty($fallbackData)) {
-                continue;
-            }
+        try {
+            $this->primaryStorage->migrateFromStorage($this->fallbackStorage, $visitorInfo, $scope);
 
-            foreach ($fallbackData as $key => $value) {
-                $this->primaryStorage->set($visitorInfo, $scope, $key, $value);
+            if ($this->options['clear_after_migration']) {
+                // clear fallback after successful migration
+                $this->fallbackStorage->clear($visitorInfo, $scope);
             }
-
-            $this->fallbackStorage->clear($visitorInfo, $scope);
+        } catch (\Throwable $e) {
+            $this->logger->error($e);
         }
     }
 }

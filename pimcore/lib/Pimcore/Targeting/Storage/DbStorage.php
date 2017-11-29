@@ -20,10 +20,13 @@ namespace Pimcore\Targeting\Storage;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DbStorage implements TargetingStorageInterface
 {
+    use TimestampsTrait;
+
     /**
      * @var Connection
      */
@@ -112,8 +115,17 @@ class DbStorage implements TargetingStorageInterface
 
         $json = json_encode($value);
 
+        $query = <<<EOF
+INSERT INTO {$this->tableName}
+    (visitorId, scope, name, value, creationDate, modificationDate)
+VALUES
+    (:visitorId, :scope, :name, :value, NOW(), NOW())
+ON DUPLICATE KEY UPDATE
+    value = :value, modificationDate = NOW();
+EOF;
+
         $this->db->executeQuery(
-            'INSERT INTO ' . $this->tableName . '(visitorId, scope, name, value, creationDate, modificationDate) VALUES (:visitorId, :scope, :name, :value, NOW(), NOW()) ON DUPLICATE KEY UPDATE value = :value, modificationDate = NOW()',
+            $query,
             [
                 'visitorId' => $visitorInfo->getVisitorId(),
                 'scope'     => $scope,
@@ -176,6 +188,38 @@ class DbStorage implements TargetingStorageInterface
         }
     }
 
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    {
+        // only allow migration if a visitor ID is available as otherwise the fallback
+        // would clear the original storage although data was not stored
+        if (!$visitorInfo->hasVisitorId()) {
+            throw new \LogicException('Can\'t migrate to DB storage as no visitor ID is set');
+        }
+
+        $values = $storage->all($visitorInfo, $scope);
+
+        $this->db->beginTransaction();
+
+        try {
+            foreach ($values as $name => $value) {
+                $this->set($visitorInfo, $scope, $name, $value);
+            }
+
+            $this->updateTimestamps(
+                $visitorInfo,
+                $scope,
+                $storage->getCreatedAt($visitorInfo, $scope),
+                $storage->getUpdatedAt($visitorInfo, $scope)
+            );
+
+            $this->db->commit();
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+
+            throw $e;
+        }
+    }
+
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -219,5 +263,39 @@ class DbStorage implements TargetingStorageInterface
         $dateTime = $this->db->convertToPHPValue($result, Type::DATETIME);
 
         return \DateTimeImmutable::createFromMutable($dateTime);
+    }
+
+    private function updateTimestamps(
+        VisitorInfo $visitorInfo,
+        string $scope,
+        \DateTimeInterface $createdAt = null,
+        \DateTimeInterface $updatedAt = null
+    )
+    {
+        $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
+
+        $query = <<<EOF
+INSERT INTO {$this->tableName}
+    (visitorId, scope, name, value, creationDate, modificationDate)
+VALUES
+    (:visitorId, :scope, :name, :value, :creationDate, :modificationDate)
+ON DUPLICATE KEY UPDATE
+    value = :value, creationDate = :creationDate, modificationDate = :modificationDate;
+EOF;
+
+        $this->db->executeQuery(
+            $query,
+            [
+                'visitorId'        => $visitorInfo->getVisitorId(),
+                'scope'            => $scope,
+                'name'             => self::STORAGE_KEY_META_ENTRY,
+                'value'            => 1,
+                'creationDate'     => $timestamps['createdAt'],
+                'modificationDate' => $timestamps['updatedAt'],
+            ], [
+                'creationDate'     => Type::DATETIME,
+                'modificationDate' => Type::DATETIME,
+            ]
+        );
     }
 }

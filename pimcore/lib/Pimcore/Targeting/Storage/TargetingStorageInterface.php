@@ -51,22 +51,14 @@ interface TargetingStorageInterface
 
     public function clear(VisitorInfo $visitorInfo, string $scope = null);
 
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope);
+
     /**
-     * Time when the storage was written for the first time
-     *
-     * @param VisitorInfo $visitorInfo
-     * @param string $scope
-     *
      * @return \DateTimeImmutable|null
      */
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope);
 
     /**
-     * Time when the storage was updated for the last time
-     *
-     * @param VisitorInfo $visitorInfo
-     * @param string $scope
-     *
      * @return \DateTimeImmutable|null
      */
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope);

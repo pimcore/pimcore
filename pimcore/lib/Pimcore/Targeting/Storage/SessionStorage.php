@@ -19,10 +19,13 @@ namespace Pimcore\Targeting\Storage;
 
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Session\SessionConfigurator;
+use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 
 class SessionStorage implements TargetingStorageInterface
 {
+    use TimestampsTrait;
+
     const STORAGE_KEY_CREATED_AT = '_c';
     const STORAGE_KEY_UPDATED_AT = '_u';
 
@@ -96,11 +99,32 @@ class SessionStorage implements TargetingStorageInterface
         }
     }
 
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    {
+        // only allow migration if a session bag is available as otherwise the fallback
+        // would clear the original storage although data was not stored
+        $bag = $this->getSessionBag($visitorInfo, $scope);
+        if (null === $bag) {
+            throw new \LogicException('Can\'t migrate to Session storage as session bag could not be loaded');
+        }
+
+        $values = $storage->all($visitorInfo, $scope);
+        foreach ($values as $name => $value) {
+            $bag->set($name, $value);
+        }
+
+        // update created/updated at from storage
+        $this->updateTimestamps(
+            $bag,
+            $storage->getCreatedAt($visitorInfo, $scope),
+            $storage->getUpdatedAt($visitorInfo, $scope)
+        );
+    }
+
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
-
-        if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {
+        if (null === $bag || !$bag->has(self::STORAGE_KEY_CREATED_AT)) {
             return null;
         }
 
@@ -111,7 +135,7 @@ class SessionStorage implements TargetingStorageInterface
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
 
-        if (!$bag->has(self::STORAGE_KEY_UPDATED_AT)) {
+        if (null === $bag || !$bag->has(self::STORAGE_KEY_UPDATED_AT)) {
             return null;
         }
 
@@ -163,15 +187,19 @@ class SessionStorage implements TargetingStorageInterface
         return $bag;
     }
 
-    private function updateTimestamps(NamespacedAttributeBag $bag)
+    private function updateTimestamps(
+        NamespacedAttributeBag $bag,
+        \DateTimeInterface $createdAt = null,
+        \DateTimeInterface $updatedAt = null
+    )
     {
-        $time = time();
+        $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {
-            $bag->set(self::STORAGE_KEY_CREATED_AT, $time);
-            $bag->set(self::STORAGE_KEY_UPDATED_AT, $time);
+            $bag->set(self::STORAGE_KEY_CREATED_AT, $timestamps['createdAt']->getTimestamp());
+            $bag->set(self::STORAGE_KEY_UPDATED_AT, $timestamps['updatedAt']->getTimestamp());
         } else {
-            $bag->set(self::STORAGE_KEY_UPDATED_AT, $time);
+            $bag->set(self::STORAGE_KEY_UPDATED_AT, $timestamps['updatedAt']->getTimestamp());
         }
     }
 }

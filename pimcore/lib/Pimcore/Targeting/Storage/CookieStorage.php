@@ -19,6 +19,7 @@ namespace Pimcore\Targeting\Storage;
 
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\Cookie\CookieSaveHandlerInterface;
+use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -26,6 +27,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class CookieStorage implements TargetingStorageInterface
 {
+    use TimestampsTrait;
+
     const STORAGE_KEY_CREATED_AT = '_c';
     const STORAGE_KEY_UPDATED_AT = '_u';
 
@@ -132,6 +135,26 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
+    public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
+    {
+        $values = $storage->all($visitorInfo, $scope);
+
+        $this->loadData($visitorInfo, $scope);
+
+        foreach ($values as $name => $value) {
+            $this->data[$scope][$name] = $value;
+        }
+
+        // update created/updated at from storage
+        $this->updateTimestamps(
+            $scope,
+            $storage->getCreatedAt($visitorInfo, $scope),
+            $storage->getUpdatedAt($visitorInfo, $scope)
+        );
+
+        $this->addSaveListener($visitorInfo);
+    }
+
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         $this->loadData($visitorInfo, $scope);
@@ -201,15 +224,19 @@ class CookieStorage implements TargetingStorageInterface
         $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener);
     }
 
-    private function updateTimestamps(string $scope)
-    {
-        $time = time();
+    private function updateTimestamps(
+        string $scope,
+        \DateTimeInterface $createdAt = null,
+        \DateTimeInterface $updatedAt = null
+    ) {
+
+        $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!isset($this->data[$scope][self::STORAGE_KEY_CREATED_AT])) {
-            $this->data[$scope][self::STORAGE_KEY_CREATED_AT] = $time;
-            $this->data[$scope][self::STORAGE_KEY_UPDATED_AT] = $time;
+            $this->data[$scope][self::STORAGE_KEY_CREATED_AT] = $timestamps['createdAt']->getTimestamp();
+            $this->data[$scope][self::STORAGE_KEY_UPDATED_AT] = $timestamps['updatedAt']->getTimestamp();
         } else {
-            $this->data[$scope][self::STORAGE_KEY_UPDATED_AT] = $time;
+            $this->data[$scope][self::STORAGE_KEY_UPDATED_AT] = $timestamps['updatedAt']->getTimestamp();
         }
     }
 
