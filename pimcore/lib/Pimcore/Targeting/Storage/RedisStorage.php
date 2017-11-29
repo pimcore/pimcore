@@ -91,10 +91,11 @@ class RedisStorage implements TargetingStorageInterface
         $json = json_encode($value);
 
         $key = $this->buildKey($visitorInfo, $scope);
-        $this->redis->hSet($key, $name, $json);
 
         // TODO pipeline
-        $this->updateTimestamps($visitorInfo, $scope);
+        $this->redis->hSet($key, $name, $json);
+        $this->updateTimestamps($key);
+        $this->updateExpiry($scope, $key);
     }
 
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
@@ -150,24 +151,26 @@ class RedisStorage implements TargetingStorageInterface
             return;
         }
 
+        $key = $this->buildKey($visitorInfo, $scope);
+
+        // TODO pipeline
         if (!empty($values)) {
             $data = [];
             foreach ($values as $name => $value) {
                 $data[$name] = json_encode($value);
             }
 
-            // TODO pipeline with timestamps
-            $key = $this->buildKey($visitorInfo, $scope);
             $this->redis->hMSet($key, $data);
         }
 
         // update created/updated at from storage
         $this->updateTimestamps(
-            $visitorInfo,
-            $scope,
+            $key,
             $storage->getCreatedAt($visitorInfo, $scope),
             $storage->getUpdatedAt($visitorInfo, $scope)
         );
+
+        $this->updateExpiry($scope, $key);
     }
 
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
@@ -202,21 +205,36 @@ class RedisStorage implements TargetingStorageInterface
     }
 
     private function updateTimestamps(
-        VisitorInfo $visitorInfo,
-        string $scope,
+        string $key,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
     )
     {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
-        $key        = $this->buildKey($visitorInfo, $scope);
 
-        // TODO pipeline
         if (!$this->redis->hGet($key, self::STORAGE_KEY_CREATED_AT)) {
             $this->redis->hSet($key, self::STORAGE_KEY_CREATED_AT, (string)($timestamps['createdAt']->getTimestamp()));
             $this->redis->hSet($key, self::STORAGE_KEY_UPDATED_AT, (string)($timestamps['updatedAt']->getTimestamp()));
         } else {
             $this->redis->hSet($key, self::STORAGE_KEY_UPDATED_AT, (string)($timestamps['updatedAt']->getTimestamp()));
         }
+    }
+
+    private function updateExpiry(string $scope, string $key)
+    {
+        $expiry = $this->expiryFor($scope);
+        if ($expiry > 0) {
+            $this->redis->expire($key, $expiry);
+        }
+    }
+
+    protected function expiryFor(string $scope): int
+    {
+        $expiry = 0;
+        if (self::SCOPE_SESSION === $scope) {
+            $expiry = 30 * 60; // 30 minutes
+        }
+
+        return $expiry;
     }
 }

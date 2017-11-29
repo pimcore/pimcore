@@ -298,4 +298,14 @@ EOF;
             ]
         );
     }
+
+    protected function expiryFor(string $scope): int
+    {
+        $expiry = 0;
+        if (self::SCOPE_SESSION === $scope) {
+            $expiry = 30 * 60; // 30 minutes
+        }
+
+        return $expiry;
+    }
 }

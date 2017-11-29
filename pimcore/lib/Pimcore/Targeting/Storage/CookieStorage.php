@@ -242,11 +242,11 @@ class CookieStorage implements TargetingStorageInterface
 
     protected function expiryFor(string $scope)
     {
-        $expire = 0;
+        $expiry = 0;
         if (self::SCOPE_VISITOR === $scope) {
-            $expire = new \DateTime('+1 year');
+            $expiry = new \DateTime('+1 year');
         }
 
-        return $expire;
+        return $expiry;
     }
 }
