@@ -45,7 +45,7 @@ class SessionStorage implements TargetingStorageInterface
 
         $bag->set($name, $value);
 
-        $this->updateTimestamps($bag, true);
+        $this->updateTimestamps($bag);
     }
 
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
@@ -149,23 +149,17 @@ class SessionStorage implements TargetingStorageInterface
                 ));
         }
 
-        $this->updateTimestamps($bag);
-
         return $bag;
     }
 
-    private function updateTimestamps(NamespacedAttributeBag $bag, bool $update = false)
+    private function updateTimestamps(NamespacedAttributeBag $bag)
     {
         $time = time();
 
-        // no created at -> initialize created and updated
         if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {
             $bag->set(self::STORAGE_KEY_CREATED_AT, $time);
             $bag->set(self::STORAGE_KEY_UPDATED_AT, $time);
-        }
-
-        // set updated depending on argument
-        if ($update) {
+        } else {
             $bag->set(self::STORAGE_KEY_UPDATED_AT, $time);
         }
     }

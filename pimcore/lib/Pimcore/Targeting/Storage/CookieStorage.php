@@ -47,7 +47,7 @@ class CookieStorage implements TargetingStorageInterface
     /**
      * @var array
      */
-    private $data;
+    private $data = [];
 
     /**
      * @var bool
@@ -97,7 +97,7 @@ class CookieStorage implements TargetingStorageInterface
 
         $this->data[$scope][$name] = $value;
 
-        $this->updateTimestamps($this->data[$scope], true);
+        $this->updateTimestamps($scope, true);
         $this->addSaveListener($visitorInfo);
     }
 
@@ -157,9 +157,6 @@ class CookieStorage implements TargetingStorageInterface
 
         $this->data[$scope] = $this->saveHandler->load($request, $scope, $this->scopeCookieMapping[$scope]);
 
-        // add created_at and updated_at if not set
-        $this->updateTimestamps($this->data[$scope]);
-
         return $this->data[$scope];
     }
 
@@ -193,19 +190,15 @@ class CookieStorage implements TargetingStorageInterface
         $this->eventDispatcher->addListener(KernelEvents::RESPONSE, $listener);
     }
 
-    private function updateTimestamps(array &$data, bool $update = false)
+    private function updateTimestamps(string $scope)
     {
         $time = time();
 
-        // no created at -> initialize created and updated
-        if (!isset($data[self::STORAGE_KEY_CREATED_AT])) {
-            $data[self::STORAGE_KEY_CREATED_AT] = $time;
-            $data[self::STORAGE_KEY_UPDATED_AT] = $time;
-        }
-
-        // set updated depending on argument
-        if ($update) {
-            $data[self::STORAGE_KEY_UPDATED_AT] = $time;
+        if (!isset($this->data[$scope][self::STORAGE_KEY_CREATED_AT])) {
+            $this->data[$scope][self::STORAGE_KEY_CREATED_AT] = $time;
+            $this->data[$scope][self::STORAGE_KEY_UPDATED_AT] = $time;
+        } else {
+            $this->data[$scope][self::STORAGE_KEY_UPDATED_AT] = $time;
         }
     }
 
