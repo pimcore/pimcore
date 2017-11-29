@@ -52,7 +52,7 @@ to iterate through all block elements.
 
 ```twig
 {% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
-    <h2>{{ pimcore_input('subline' }}</h2>
+    <h2>{{ pimcore_input('subline') }}</h2>
     {{ pimcore_wysiwyg('content') }}
 {% endfor %}
 ```
