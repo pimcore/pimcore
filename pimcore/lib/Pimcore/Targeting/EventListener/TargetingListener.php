@@ -38,6 +38,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class TargetingListener implements EventSubscriberInterface
 {
@@ -64,6 +65,11 @@ class TargetingListener implements EventSubscriberInterface
      */
     private $requestHelper;
 
+    /**
+     * @var Stopwatch
+     */
+    private $stopwatch;
+
     public function __construct(
         VisitorInfoResolver $visitorInfoResolver,
         ActionHandlerInterface $actionHandler,
@@ -75,6 +81,11 @@ class TargetingListener implements EventSubscriberInterface
         $this->actionHandler       = $actionHandler;
         $this->visitorInfoStorage  = $visitorInfoStorage;
         $this->requestHelper       = $requestHelper;
+    }
+
+    public function setStopwatch(Stopwatch $stopwatch = null)
+    {
+        $this->stopwatch = $stopwatch;
     }
 
     /**
@@ -126,9 +137,13 @@ EOF
 
     public function onPreResolve(TargetingEvent $event)
     {
+        $this->startStopwatch('Targeting:loadStoredAssignments', 'targeting');
+
         /** @var AssignTargetGroup $assignTargetGroupHandler */
         $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
         $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
+
+        $this->stopStopwatch('Targeting:loadStoredAssignments');
     }
 
     public function onKernelRequest(GetResponseEvent $event)
@@ -155,7 +170,11 @@ EOF
             return;
         }
 
+        $this->startStopwatch('Targeting:resolveVisitorInfo', 'targeting');
+
         $visitorInfo = $this->visitorInfoResolver->resolve($request);
+
+        $this->stopStopwatch('Targeting:resolveVisitorInfo');
 
         // propagate response (e.g. redirect) to request handling
         if ($visitorInfo->hasResponse()) {
@@ -177,8 +196,12 @@ EOF
         $response    = $event->getResponse();
 
         if ($event->isMasterRequest()) {
+            $this->startStopwatch('Targeting:responseActions', 'targeting');
+
             // handle recorded actions on response
             $this->handleResponseActions($visitorInfo, $response);
+
+            $this->stopStopwatch('Targeting:responseActions');
         }
 
         // check if the visitor info influences the response
@@ -249,5 +272,19 @@ EOF
         }
 
         return false;
+    }
+
+    private function startStopwatch(string $name, string $category)
+    {
+        if ($this->stopwatch) {
+            $this->stopwatch->start($name, $category);
+        }
+    }
+
+    private function stopStopwatch(string $name)
+    {
+        if ($this->stopwatch) {
+            $this->stopwatch->stop($name);
+        }
     }
 }
