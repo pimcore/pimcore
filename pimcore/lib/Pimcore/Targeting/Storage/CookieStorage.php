@@ -183,7 +183,7 @@ class CookieStorage implements TargetingStorageInterface
             throw new \InvalidArgumentException(sprintf('Scope "%s" is not supported', $scope));
         }
 
-        if (null !== $this->data[$scope]) {
+        if (isset($this->data[$scope]) && null !== $this->data[$scope]) {
             return $this->data[$scope];
         }
 
