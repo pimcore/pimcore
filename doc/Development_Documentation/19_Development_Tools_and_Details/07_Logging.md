@@ -12,8 +12,10 @@ The log file will be rotated and compressed if it gets larger than 200 MB. The a
 will be kept for 30 days.
 
 ## php.log
-By default, Pimcore changes the PHP Engines `error_reporting` to `E_ALL & ~E_NOTICE & ~E_STRICT`, `error_log` to `/var/logs/php.log` and sets `log_errors` to `1`.
-To prevent this behaviour and keep your php.ini settings, set the constant `PIMCORE_ALLOW_PHP_ERROR_LOG_OVERRIDE` to `false`.
+By default Pimcore writes PHP-Engine Log Messages to the file `php.log`.
+You can change this using constant `PIMCORE_PHP_ERROR_LOG` that is used to set PHP's [error_log Configuration](http://php.net/manual/en/errorfunc.configuration.php#ini.error-log).
+
+You can additionally use the Constant `PIMCORE_PHP_ERROR_REPORTING` to set PHP's [error_reporting](http://php.net/manual/en/errorfunc.configuration.php#ini.error-reporting)
 
 ## usagelog.log
 In this log you can find every action done within the Pimcore Backend Interface. 

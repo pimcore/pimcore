@@ -11,21 +11,21 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-$oldErrorReporting = error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 /** @var $loader \Composer\Autoload\ClassLoader */
 $loader = include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 require_once __DIR__ . '/constants.php';
-if (false === PIMCORE_ALLOW_PHP_ERROR_LOG_OVERRIDE) {
-    error_reporting($oldErrorReporting);
-}
+if ( is_integer(PIMCORE_PHP_ERROR_REPORTING) )
+    error_reporting(PIMCORE_PHP_ERROR_REPORTING);
 // needs to be included manually since the updater invalidates the classmap and therefore cannot find the class anymore during an update
 require_once PIMCORE_PATH . '/lib/Pimcore.php';
 Pimcore::setAutoloader($loader);
 require_once __DIR__ . '/autoload.php';
 
-$phpLog = PIMCORE_LOG_DIRECTORY . '/php.log';
-if (PIMCORE_ALLOW_PHP_ERROR_LOG_OVERRIDE && is_writable(PIMCORE_LOG_DIRECTORY)) {
-    ini_set('error_log', $phpLog);
+if ( "syslog" === PIMCORE_PHP_ERROR_LOG
+     || is_writable( dirname(PIMCORE_PHP_ERROR_LOG) )
+   ) {
+    ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
     ini_set('log_errors', '1');
 }
