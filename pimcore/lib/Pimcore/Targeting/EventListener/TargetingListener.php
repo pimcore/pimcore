@@ -21,6 +21,7 @@ use Pimcore\Analytics\Piwik\Event\TrackingDataEvent;
 use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Event\Analytics\PiwikEvents;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
@@ -38,10 +39,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 class TargetingListener implements EventSubscriberInterface
 {
+    use StopwatchTrait;
+
     use PimcoreContextAwareTrait;
     use EnabledTrait;
 
@@ -65,11 +67,6 @@ class TargetingListener implements EventSubscriberInterface
      */
     private $requestHelper;
 
-    /**
-     * @var Stopwatch
-     */
-    private $stopwatch;
-
     public function __construct(
         VisitorInfoResolver $visitorInfoResolver,
         ActionHandlerInterface $actionHandler,
@@ -81,11 +78,6 @@ class TargetingListener implements EventSubscriberInterface
         $this->actionHandler       = $actionHandler;
         $this->visitorInfoStorage  = $visitorInfoStorage;
         $this->requestHelper       = $requestHelper;
-    }
-
-    public function setStopwatch(Stopwatch $stopwatch = null)
-    {
-        $this->stopwatch = $stopwatch;
     }
 
     /**
@@ -272,19 +264,5 @@ EOF
         }
 
         return false;
-    }
-
-    private function startStopwatch(string $name, string $category)
-    {
-        if ($this->stopwatch) {
-            $this->stopwatch->start($name, $category);
-        }
-    }
-
-    private function stopStopwatch(string $name)
-    {
-        if ($this->stopwatch) {
-            $this->stopwatch->stop($name);
-        }
     }
 }

@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Targeting;
 
 use Doctrine\DBAL\Connection;
+use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\Targeting\TargetingRuleEvent;
 use Pimcore\Event\TargetingEvents;
@@ -31,6 +32,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class VisitorInfoResolver
 {
+    use StopwatchTrait;
+
     const ATTRIBUTE_VISITOR_INFO = '_visitor_info';
 
     const STORAGE_KEY_RULE_CONDITION_VARIABLES = 'vi:var';
@@ -150,11 +153,15 @@ class VisitorInfoResolver
     {
         $scopeWithVariables = Rule::SCOPE_SESSION_WITH_VARIABLES === $rule->getScope();
 
+        $this->startStopwatch('Targeting:match:' . $rule->getName(), 'targeting');
+
         $match = $this->conditionMatcher->match(
             $visitorInfo,
             $rule->getConditions(),
             $scopeWithVariables
         );
+
+        $this->stopStopwatch('Targeting:match:' . $rule->getName());
 
         if (!$match) {
             return;

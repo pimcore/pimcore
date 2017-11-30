@@ -60,22 +60,27 @@ services:
     Pimcore\Targeting\VisitorInfoStorage: ~
 
     Pimcore\Targeting\VisitorInfoResolver:
-        lazy: true
-
+        calls:
+            - [setStopwatch, ['@?debug.stopwatch']]
 
     #
     # DATA PROVIDERS
     #
 
     Pimcore\Targeting\DataLoaderInterface: '@Pimcore\Targeting\DataLoader'
-    Pimcore\Targeting\DataLoader: ~
+    Pimcore\Targeting\DataLoader:
+        calls:
+            - [setStopwatch, ['@?debug.stopwatch']]
 
     Pimcore\Targeting\DataProvider\GeoIp: ~
     Pimcore\Targeting\DataProvider\Device:
         arguments:
             $cache: '@pimcore.cache.core.pool'
 
-    Pimcore\Targeting\DataProvider\Piwik: ~
+    Pimcore\Targeting\DataProvider\Piwik:
+        calls:
+            - [setStopwatch, ['@?debug.stopwatch']]
+
     Pimcore\Targeting\DataProvider\TargetingStorage: ~
 
 

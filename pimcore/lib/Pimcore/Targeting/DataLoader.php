@@ -17,12 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting;
 
+use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Targeting\DataProvider\DataProviderInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Container\ContainerInterface;
 
 class DataLoader implements DataLoaderInterface
 {
+    use StopwatchTrait;
+
     /**
      * @var ContainerInterface
      */
@@ -63,7 +66,11 @@ class DataLoader implements DataLoaderInterface
                 );
             }
 
+            $this->startStopwatch('Targeting:load:' . $providerKey, 'targeting');
+
             $dataProvider->load($visitorInfo);
+
+            $this->stopStopwatch('Targeting:load:' . $providerKey);
         }
     }
 

@@ -20,11 +20,15 @@ namespace Pimcore\Targeting\DataProvider;
 use Pimcore\Analytics\Piwik\Api\VisitorClient;
 use Pimcore\Analytics\Piwik\Config\Config;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
+use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class Piwik implements DataProviderInterface
 {
+    use StopwatchTrait;
+
     const PROVIDER_KEY = 'piwik';
 
     /**
@@ -72,7 +76,11 @@ class Piwik implements DataProviderInterface
         $result = null;
 
         try {
+            $this->startStopwatch('Targeting:piwikData', 'targeting');
+
             $result = $this->loadData($visitorInfo);
+
+            $this->stopStopwatch('Targeting:piwikData');
         } catch (\Exception $e) {
             $this->logger->error($e);
         }
