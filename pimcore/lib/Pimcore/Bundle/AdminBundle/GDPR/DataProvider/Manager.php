@@ -16,58 +16,42 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Pimcore\DependencyInjection\CollectionServiceLocator;
 
 class Manager
 {
+    /**
+     * @var CollectionServiceLocator
+     */
+    private $services;
 
     /**
-     * @var string[]
+     * @var array
      */
-    protected $services = [];
+    private $sortedServices;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-
-    /**
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
+    public function __construct(CollectionServiceLocator $services)
     {
-        $this->container = $container;
+        $this->services = $services;
     }
-
-    /**
-     * @param string $serviceId
-     * @param string $service
-     */
-    public function registerService(string $serviceId, string $service) {
-        $this->services[$serviceId] = $service;
-    }
-
 
     /**
      * Returns registered services in sorted order
      *
      * @return DataProviderInterface[]
      */
-    public function getServices(): array {
-        $serviceInstances = [];
-        foreach($this->services as $serviceId) {
-            if($this->container->has($serviceId)) {
-                $serviceInstances[] = $this->container->get($serviceId);
-            }
+    public function getServices(): array
+    {
+        if (null !== $this->sortedServices) {
+            return $this->sortedServices;
         }
 
-        usort($serviceInstances, function(DataProviderInterface $left, DataProviderInterface $right) {
+        $this->sortedServices = $this->services->all();
+
+        usort($this->sortedServices, function (DataProviderInterface $left, DataProviderInterface $right) {
             return $left->getSortPriority() > $right->getSortPriority();
         });
 
-        return $serviceInstances;
+        return $this->sortedServices;
     }
-
 }

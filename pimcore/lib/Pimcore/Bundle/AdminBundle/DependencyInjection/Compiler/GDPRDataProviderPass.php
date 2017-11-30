@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,14 +17,15 @@
 
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
 
-
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager;
+use Pimcore\DependencyInjection\CollectionServiceLocator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 class GDPRDataProviderPass implements CompilerPassInterface
 {
-
     /**
      * Registers each service with tag pimcore.gdpr.data-provider as dataprovider for gdpr data extractor
      *
@@ -29,18 +33,18 @@ class GDPRDataProviderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $taggedServices = $container->findTaggedServiceIds('pimcore.gdpr.data-provider');
-        $manager = $container->getDefinition(Manager::class);
+        $providers = $container->findTaggedServiceIds('pimcore.gdpr.data-provider');
 
-        foreach($taggedServices as $id => $tags) {
-            foreach ($tags as $tag) {
-                if (!array_key_exists('id', $tag)) {
-                    throw new \Exception(sprintf('Missing "id" attribute on data provider DI tag for service %s', $id));
-                }
-
-                // register the brick with its ID on the areabrick manager
-                $manager->addMethodCall('registerService', [$tag['id'], $id]);
-            }
+        $mapping = [];
+        foreach ($providers as $id => $tags) {
+            $mapping[$id] = new Reference($id);
         }
+
+        $collectionLocator = new Definition(CollectionServiceLocator::class, [$mapping]);
+        $collectionLocator->setPublic(false);
+        $collectionLocator->addTag('container.service_locator');
+
+        $manager = $container->getDefinition(Manager::class);
+        $manager->setArgument('$services', $collectionLocator);
     }
 }

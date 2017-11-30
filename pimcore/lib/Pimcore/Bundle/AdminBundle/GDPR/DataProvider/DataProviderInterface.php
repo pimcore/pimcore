@@ -16,10 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
-
 interface DataProviderInterface
 {
-
     /**
      * Returns sort priority - higher is sorted first
      *
@@ -40,6 +38,4 @@ interface DataProviderInterface
      * @return string
      */
     public function getJsClassName(): string;
-
-
 }

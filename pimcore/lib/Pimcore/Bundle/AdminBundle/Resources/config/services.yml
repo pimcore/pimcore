@@ -61,21 +61,14 @@ services:
     #
     # GDPR Services
     #
+
+    # Tagged data providers will be injected from compiler pass
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager: ~
 
+    # Providers implementing DataProviderInterface will be auto-tagged via autoconfiguration
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects:
         arguments:
             $config: '%pimcore.gdpr-data-extrator.dataobjects%'
-        public: true
-        tags:
-            - {name: pimcore.gdpr.data-provider, id: objects}
 
-    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail:
-        public: true
-        tags:
-            - {name: pimcore.gdpr.data-provider, id: sentMail}
-
-    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers:
-        public: true
-        tags:
-            - {name: pimcore.gdpr.data-provider, id: pimcoreUsers}
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers: ~

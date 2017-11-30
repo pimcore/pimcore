@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,51 +17,35 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
-
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager;
-use Pimcore\Bundle\AdminBundle\Security\User\Exception\InvalidUserException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
-/**
- * Class AdminController
- *
- * @package GDPRDataExtractorBundle\Controller
- */
 class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
 {
     /**
      * @Route("/get-data-providers")
      */
-    public function getDataProvidersAction(Request $request, Manager $manager)
+    public function getDataProvidersAction(Manager $manager)
     {
-        $services = $manager->getServices();
-
         $response = [];
-
-        foreach($services as $service) {
-
+        foreach ($manager->getServices() as $service) {
             $response[] = [
-                'name' => $service->getName(),
+                'name'    => $service->getName(),
                 'jsClass' => $service->getJsClassName()
             ];
 
         }
+
         return $this->json($response);
     }
 
-    /**
-     * @param FilterControllerEvent $event
-     */
     public function onKernelController(FilterControllerEvent $event)
     {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
+        if (!$event->isMasterRequest()) {
             return;
         }
 
         $this->checkActionPermission($event, 'gdpr_data_extractor');
     }
-
 }
