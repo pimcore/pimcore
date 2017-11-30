@@ -23,7 +23,14 @@ _pimcore_update:
     type:     annotation
     prefix:   /admin/update
 
+_pimcore_gdpr:
+    resource: "@PimcoreAdminBundle/Controller/GDPR/"
+    type:     annotation
+    prefix:   /admin/gdpr
+
 _pimcore_api_rest:
     resource: "@PimcoreAdminBundle/Controller/Rest/"
     type:     annotation
     prefix:   /webservice/rest
+
+

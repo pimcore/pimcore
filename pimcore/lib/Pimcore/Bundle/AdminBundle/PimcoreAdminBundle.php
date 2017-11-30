@@ -14,7 +14,9 @@
 
 namespace Pimcore\Bundle\AdminBundle;
 
+use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\GDPRDataProviderPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
+use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface;
 use Pimcore\Bundle\AdminBundle\Security\Factory\PreAuthenticatedAdminSessionFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,10 +29,17 @@ class PimcoreAdminBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
+        // auto-tag GDPR data providers
+        $container
+            ->registerForAutoconfiguration(DataProviderInterface::class)
+            ->addTag('pimcore.gdpr.data-provider');
+
         $container->addCompilerPass(new SerializerPass());
+        $container->addCompilerPass(new GDPRDataProviderPass());
 
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
         $extension->addSecurityListenerFactory(new PreAuthenticatedAdminSessionFactory());
     }
 }
+

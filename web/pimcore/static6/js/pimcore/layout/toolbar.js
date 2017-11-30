@@ -337,6 +337,16 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
+            if(user.isAllowed("gdpr_data_extractor")&& perspectiveCfg.inToolbar("extras.gdpr_data_extractor")) {
+                extrasItems.push({
+                    text: t("gdpr_data_extractor"),
+                    iconCls: "pimcore_icon_gdpr",
+                    handler: function() {
+                        new pimcore.settings.gdpr.gdprPanel();
+                    }
+                });
+            }
+
             if (extrasItems.length > 0) {
                 extrasItems.push("-");
             }

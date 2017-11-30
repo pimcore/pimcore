@@ -13,7 +13,9 @@ will be kept for 30 days.
 
 
 ## usagelog.log
-In this log you can find every action done within the Pimcore Backend Interface. 
+In this log you can find every action done within the Pimcore Backend Interface. It can be deactivated in system settings.
+
+![Usage Log Setting](../img/usage-log-setting.jpg)
 
 ##### Example Entry: 
 ``` 
