@@ -16,7 +16,7 @@ services:
     # TARGETING STORAGE
     #
 
-    Pimcore\Targeting\Storage\TargetingStorageInterface: '@Pimcore\Targeting\Storage\RedisStorage'
+    Pimcore\Targeting\Storage\TargetingStorageInterface: '@Pimcore\Targeting\Storage\CookieStorage'
 
     # Session
     Pimcore\Targeting\Storage\SessionStorage: ~
