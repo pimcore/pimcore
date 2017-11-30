@@ -53,7 +53,7 @@ class AttributeFactory
             'interpreter_id' => null,
             'interpreter_options' => [],
             'hide_in_fieldlist_datatype' => false,
-            'mapping' => null
+            'mapping' => null, // TODO Pimcore 5.1 remove
         ]);
 
         foreach (['field_name', 'type', 'locale', 'filter_group', 'getter_id', 'interpreter_id'] as $stringOption) {
@@ -108,7 +108,6 @@ class AttributeFactory
             $interpreter,
             $options['interpreter_options'],
             $options['hide_in_fieldlist_datatype'],
-            $options['mapping'],
         ]);
 
         return $attribute;
