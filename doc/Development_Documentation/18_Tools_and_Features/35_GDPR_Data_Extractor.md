@@ -61,22 +61,39 @@ To do so, following steps are necessary:
 
 1) Create a custom implementation of 
 [`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/AdminBundle/GDPR/DataProvider/DataProviderInterface.php#L20). 
-Following functions need to be implemented: 
-* `getSortPriority()` - Returns sort priority for the tabs - higher is sorted first. 
-* `getName()` - Returns the name of the data provider.
-* `getJsClassName()` - Returns the name of the JavaScript class implementation for frontend presentation. 
+The following functions need to be implemented:
 
-2) Implement the specified JavaScript class with all the user interface with following restrictions: 
-* The constructor gets the current `searchParams` as parameter.  
-* It needs to have a function `getPanel()` that returns a `Ext.Panel`. 
+    * `getSortPriority()` - Returns sort priority for the tabs - higher is sorted first.
+    * `getName()` - Returns the name of the data provider.
+    * `getJsClassName()` - Returns the name of the JavaScript class implementation for frontend presentation.
 
-3) Register your custom implementation as service with the tag `pimcore.gdpr.data-provider`: 
-```yml
-    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\MyCustomDataProvider:
-        public: true
-        tags:
-            - {name: pimcore.gdpr.data-provider, id: MyCustomDataProvider}
-``` 
+2) Implement the specified JavaScript class with all the user interface with following restrictions:
+
+    * The constructor gets the current `searchParams` as parameter.
+    * It needs to have a function `getPanel()` that returns a `Ext.Panel`.
+
+3) Register your custom implementation as service. The service needs to be tagged with the tag `pimcore.gdpr.data-provider`.
+   If you're using autoconfiguration this will be automatically done for you, otherwise you need to specify the tag in
+   your service definition:
+
+    ```yml
+    # either enable autoconfigure as _defaults (or only for your service)
+    services:
+        _defaults:
+            autoconfigure: true
+            public: false
+
+        AppBundle\GDPR\DataProvider\MyCustomDataProvider: ~
+
+    # or specify the tag manually if not using autoconfiguration
+    services:
+        _defaults:
+            public: false
+
+        AppBundle\GDPR\DataProvider\MyCustomDataProvider:
+            tags:
+                - { name: pimcore.gdpr.data-provider }
+    ```
 
 For an example see the implementation for the [customers data provider](https://github.com/pimcore/customer-data-framework/blob/master/src/GDPR/DataProvider/Customers.php) 
 in our customer management framework. 

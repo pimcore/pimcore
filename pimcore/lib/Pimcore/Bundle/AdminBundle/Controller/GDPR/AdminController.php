@@ -34,7 +34,6 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 'name'    => $service->getName(),
                 'jsClass' => $service->getJsClassName()
             ];
-
         }
 
         return $this->json($response);
