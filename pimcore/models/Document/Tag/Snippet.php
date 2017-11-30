@@ -156,7 +156,7 @@ class Snippet extends Model\Document\Tag
             Logger::error($e);
 
             if (\Pimcore::inDebugMode()) {
-                return 'ERROR: ' . $e->getMessage() . ' (for details see debug.log)';
+                return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
             }
         }
     }

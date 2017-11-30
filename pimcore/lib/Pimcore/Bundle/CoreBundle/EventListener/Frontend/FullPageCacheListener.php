@@ -206,7 +206,7 @@ class FullPageCacheListener
         } catch (\Exception $e) {
             Logger::error($e);
 
-            return $this->disable('ERROR: Exception (see debug.log)');
+            return $this->disable('ERROR: Exception (see log files in /var/logs)');
         }
 
         foreach ($excludePatterns as $pattern) {

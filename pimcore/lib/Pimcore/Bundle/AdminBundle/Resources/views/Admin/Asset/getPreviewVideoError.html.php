@@ -88,7 +88,7 @@
             <?php } else { ?>
                 <?= $this->translate("preview_not_available"); ?>
                 <br />
-                Error unknown, please check the debug.log
+                Error unknown, please check the log files
             <?php } ?>
         </td>
     </tr>

@@ -384,7 +384,7 @@ pimcore.settings.update = Class.create({
                             if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
                                 response = response.responseText;
                             }
-                            this.showErrorMessage("Download fails, see debug.log for more details.<br /><br />"
+                            this.showErrorMessage("Download fails, see log files in /var/logs for more details.<br /><br />"
                             + "Error-Message:<br /><hr />" + this.formatError(response));
                         }
 
@@ -405,7 +405,7 @@ pimcore.settings.update = Class.create({
                         if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
                             response = response.responseText;
                         }
-                        this.showErrorMessage("Download fails, see debug.log for more details.<br /><hr />"
+                        this.showErrorMessage("Download fails, see log files in /var/logs for more details.<br /><hr />"
                         + this.formatError(response) );
                     }.bind(this),
                     params: this.downloadJobs[this.parallelJobsStarted]
@@ -474,7 +474,7 @@ pimcore.settings.update = Class.create({
                             if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
                                 response = response.responseText;
                             }
-                            this.showErrorMessage("Install of update fails, see debug.log for more details.<br />"
+                            this.showErrorMessage("Install of update fails, see log files in /var/logs for more details.<br />"
                             + "<br />Error-Message:<br /><hr />" + this.formatError(response) );
                         }
 
@@ -495,7 +495,7 @@ pimcore.settings.update = Class.create({
                         if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
                             response = response.responseText;
                         }
-                        this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><hr />"
+                        this.showErrorMessage("Install of update fails, see log files in /var/logs for more details.<br /><hr />"
                         + this.formatError(response) );
                     }.bind(this),
                     params: this.updateJobs[this.proceduralJobsStarted]

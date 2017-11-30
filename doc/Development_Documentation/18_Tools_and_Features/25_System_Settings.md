@@ -52,7 +52,7 @@ creating a plugin. Please don't activate it in production systems!
 What exactly does the dev mode:
 * Loading the source javascript files (uncompressed & commented)
 * Disables some caches (Webservice Cache, ...)
-* extensive logging into debug.log
+* extensive logging into logfiles
 * ... and some more little things
 
 

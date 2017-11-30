@@ -405,7 +405,7 @@ class Video extends Model\Document\Tag
 
                     return $this->getProgressCode($image);
                 } else {
-                    return $this->getErrorCode('The video conversion failed, please see the debug.log for more details.');
+                    return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
                 }
             } else {
                 return $this->getErrorCode("The given thumbnail doesn't exist: '" . $options['thumbnail'] . "'");

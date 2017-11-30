@@ -596,7 +596,7 @@
   "data_mapping": "Data Mapping",
   "unsupported_filetype": "Unsupported Filetype",
   "class_saved_successfully": "Class saved successfully",
-  "class_save_error": "Class cannot be saved. see debug.log",
+  "class_save_error": "Class cannot be saved. see log files in /var/logs",
   "email_log_resend_window_success_message": "The email has been sent successfully to all recipients.",
   "email_log_resend_window_error_message": "An error occurred. The email has not been resent.",
   "condition": "Condition",
