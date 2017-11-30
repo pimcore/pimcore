@@ -20,7 +20,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
-use Pimcore\View\Helper\TranslateAdmin;
 
 abstract class AbstractTokenManager implements ITokenManager
 {
@@ -130,14 +129,14 @@ abstract class AbstractTokenManager implements ITokenManager
      */
     public function exportCsv(array $params)
     {
-        $translator = new TranslateAdmin();
+       $translator = \Pimcore::getContainer()->get("pimcore.translator");
 
         $stream = fopen('php://temp', 'w+');
         fputcsv($stream, [
-            $translator->translateAdmin('bundle_ecommerce_voucherservice_table-token'),
-            $translator->translateAdmin('bundle_ecommerce_voucherservice_table-usages'),
-            $translator->translateAdmin('bundle_ecommerce_voucherservice_table-length'),
-            $translator->translateAdmin('bundle_ecommerce_voucherservice_table-date'),
+            $translator->trans('bundle_ecommerce_voucherservice_table-token', [], 'admin'),
+            $translator->trans('bundle_ecommerce_voucherservice_table-usages', [], 'admin'),
+            $translator->trans('bundle_ecommerce_voucherservice_table-length', [], 'admin'),
+            $translator->trans('bundle_ecommerce_voucherservice_table-date', [], 'admin'),
         ]);
 
         $data = null;
