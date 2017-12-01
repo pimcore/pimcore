@@ -161,7 +161,7 @@ pimcore.object.helpers.gridcolumnconfig = {
         menu.add({
             text: t('remove_config'),
             iconCls: "pimcore_icon_delete",
-            disabled: !this.settings.gridConfigId,
+            disabled: !this.settings.gridConfigId || this.settings.isShared,
             handler: this.deleteGridConfig.bind(this)
         });
 

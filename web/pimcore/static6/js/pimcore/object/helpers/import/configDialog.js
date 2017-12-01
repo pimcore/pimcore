@@ -211,7 +211,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.resolverSettingsPanel.rebuildPanel();
         this.saveAndSharePanel.rebuildPanel();
         this.containerPanel.setTitle(this.getWindowTitle());
-        this.deleteButton.enable(!this.isShared);
+        this.deleteButton.setDisabled(this.config.isShared);
     },
 
 
@@ -223,7 +223,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
             Ext.apply(this.config, {});
             Ext.apply(this.config, data.config);
             this.importConfigId = this.config.importConfigId;
-            this.isShared = data.isShared;
             this.config.selectedGridColumns = this.config.selectedGridColumns || [];
 
             this.availableConfigs = data.availableConfigs;
@@ -286,6 +285,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
                         if (rdata && rdata.success) {
                             this.importConfigId = rdata.importConfigId;
                             this.availableConfigs = rdata.availableConfigs;
+                            this.config.isShared = false;
+                            this.deleteButton.setDisabled(false);
                             this.containerPanel.setTitle(this.getWindowTitle());
                             pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
                         }

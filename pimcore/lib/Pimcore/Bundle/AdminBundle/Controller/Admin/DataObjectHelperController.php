@@ -250,6 +250,12 @@ class DataObjectHelperController extends AdminController
         }
         $success = false;
         if ($config) {
+
+            if ($config->getOwnerId() != $this->getUser()->getId()) {
+                throw new \Exception("don't mess with someone elses grid config");
+            }
+
+
             $config->delete();
             $success = true;
         }
@@ -273,6 +279,10 @@ class DataObjectHelperController extends AdminController
         }
         $success = false;
         if ($gridConfig) {
+            if ($gridConfig->getOwnerId() != $this->getUser()->getId()) {
+                throw new \Exception("don't mess with someone elses grid config");
+            }
+
             $gridConfig->delete();
             $success = true;
         }
