@@ -18,32 +18,31 @@
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
 use Pimcore\Localization\Locale;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 class LocaleSwitcher extends AbstractOperator
 {
-    protected $locale;
-
-    public function __construct($config, $context = null)
-    {
-        parent::__construct($config, $context);
-        $this->locale = $config->locale;
-    }
+    /**
+     * @var Locale
+     */
+    private $localeService;
 
     /**
-     * @param $element Concrete
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return null|\stdClass
+     * @var string
      */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    private $locale;
+
+    public function __construct(Locale $localeService, \stdClass $config, $context = null)
     {
-        $container = \Pimcore::getContainer();
-        $localeService = $container->get(Locale::class);
-        $currentLocale = $localeService->getLocale();
+        parent::__construct($config, $context);
+
+        $this->localeService = $localeService;
+        $this->locale        = (string)$config->locale;
+    }
+
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
+    {
+        $currentLocale = $this->localeService->getLocale();
 
         $childs = $this->getChilds();
 
@@ -52,11 +51,12 @@ class LocaleSwitcher extends AbstractOperator
         } else {
             /** @var $child AbstractConfigElement */
             foreach ($childs as $child) {
-                $localeService->setLocale($this->locale);
+                $this->localeService->setLocale($this->locale);
+
                 $child->process($element, $target, $rowData, $colIndex, $context);
             }
         }
 
-        $localeService->setLocale($currentLocale);
+        $this->localeService->setLocale($currentLocale);
     }
 }

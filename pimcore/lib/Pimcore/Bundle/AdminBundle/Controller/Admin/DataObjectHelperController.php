@@ -23,6 +23,8 @@ use Pimcore\File;
 use Pimcore\Localization\Locale;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ImportColumnConfig\Service as ImportService;
+use Pimcore\Model\FactoryInterface;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
@@ -31,6 +33,7 @@ use Pimcore\Model\ImportConfigShare;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -143,13 +146,13 @@ class DataObjectHelperController extends AdminController
      * @Route("/import-export-config")
      *
      * @param Request $request
+     * @param ImportService $importService
      *
      * @return JsonResponse
+     * @throws \Exception
      */
-    public function importExportConfigAction(Request $request)
+    public function importExportConfigAction(Request $request, ImportService $importService)
     {
-        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
-
         $gridConfigId = $request->get('gridConfigId');
 
         if ($gridConfigId == -1) {
@@ -183,7 +186,7 @@ class DataObjectHelperController extends AdminController
             $gridConfig = GridConfig::getById($gridConfigId);
             $user = $this->getUser();
             if ($gridConfig && $gridConfig->getOwnerId() != $user->getId()) {
-                $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $gridConfig->getClassId());
+                $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $gridConfig->getClassId()); // TODO parameter searchType is missing
 
                 if ($sharedGridConfigs) {
                     $found = false;
@@ -204,28 +207,27 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        $importConfigData = $service->createFromExportConfig($gridConfig);
+        $importConfigData = $importService->createFromExportConfig($gridConfig);
         $selectedGridColumns = $importConfigData->selectedGridColumns;
 
         return $this->json([ 'success' => true, 'selectedGridColumns' => $selectedGridColumns]);
     }
 
     /**
+     * @param ImportService $importService
      * @param $user
      * @param $classId
      *
      * @return array
      */
-    public function getImportConfigs($user, $classId)
+    private function getImportConfigs(ImportService $importService, $user, $classId)
     {
-        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
-
-        $list =  $service->getMyOwnImportConfigs($user, $classId);
+        $list =  $importService->getMyOwnImportConfigs($user, $classId);
 
         if (!is_array($list)) {
             $list = [];
         }
-        $list = array_merge($list, $service->getSharedImportConfigs($user, $classId));
+        $list = array_merge($list, $importService->getSharedImportConfigs($user, $classId));
         $result = [];
         if ($list) {
             /** @var $config ImportConfig */
@@ -904,10 +906,11 @@ class DataObjectHelperController extends AdminController
      * @Route("/import-save-config")
      *
      * @param Request $request
+     * @param ImportService $importService
      *
      * @return JsonResponse
      */
-    public function importSaveConfigAction(Request $request)
+    public function importSaveConfigAction(Request $request, ImportService $importService)
     {
         try {
             $classId = $request->get('classId');
@@ -952,7 +955,7 @@ class DataObjectHelperController extends AdminController
 
             return $this->json(['success' => true,
                         'importConfigId' => $importConfig->getId(),
-                    'availableConfigs' => $this->getImportConfigs($this->getUser(), $classId)
+                    'availableConfigs' => $this->getImportConfigs($importService, $this->getUser(), $classId)
                     ]
                 );
         } catch (\Exception $e) {
@@ -1225,10 +1228,20 @@ class DataObjectHelperController extends AdminController
      * @Route("/import-preview")
      *
      * @param Request $request
+     * @param ImportService $importService
+     * @param Locale $localeService
+     * @param FactoryInterface $modelFactory
+     * @param EventDispatcherInterface $eventDispatcher
      *
-     * @return JsonResponse
+     * @return Response
      */
-    public function importPreviewAction(Request $request)
+    public function importPreviewAction(
+        Request $request,
+        ImportService $importService,
+        Locale $localeService,
+        FactoryInterface $modelFactory,
+        EventDispatcherInterface $eventDispatcher
+    )
     {
         try {
             $importId = $request->get('importId');
@@ -1253,6 +1266,7 @@ class DataObjectHelperController extends AdminController
             $count = 0;
             $haveData = false;
 
+            $rowData = [];
             if (($handle = fopen($originalFile, 'r')) !== false) {
                 while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                     if ($count == $rowIndex) {
@@ -1270,18 +1284,16 @@ class DataObjectHelperController extends AdminController
 
             $paramsBag = [];
 
-            $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
-            $resolver = $service->getResolverImplementation($configData);
+            $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
             $classId = $data->classId;
             $class = DataObject\ClassDefinition::getById($classId);
 
-            $object1 = $resolver->resolve($data->parentId, $rowData);
+            $object1 = $resolver->resolve($configData, $data->parentId, $rowData);
 
             if ($object1 == null) {
-                $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
                 $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
-                $object1 = $factory->build($className);
+                $object1 = $modelFactory->build($className);
                 $paramsBag['isNew'] = true;
             }
 
@@ -1293,11 +1305,13 @@ class DataObjectHelperController extends AdminController
             $eventData->setAdditionalData($additionalData);
             $eventData->setContext($context);
 
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
+            $eventDispatcher->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
 
             $context = $eventData->getContext();
 
-            $object2 = $this->populateObject($object2, $configData, $rowData, $originalFile, $context);
+            // TODO originalFile did not exist in populateObject and was removed. check!
+            $object2 = $this->populateObject($importService, $localeService, $object2, $configData, $rowData, $context);
+
             $paramsBag['object1'] = $object1;
             $paramsBag['object2'] = $object2;
             $paramsBag['isImportPreview'] = true;
@@ -1312,18 +1326,16 @@ class DataObjectHelperController extends AdminController
         }
     }
 
-    /**
-     * @param $object
-     * @param $configData
-     * @param $rowData
-     *
-     * @return mixed
-     */
-    protected function populateObject($object, $configData, $rowData, $context)
+    protected function populateObject(
+        ImportService $importService,
+        Locale $localeService,
+        $object,
+        $configData,
+        $rowData,
+        $context
+    )
     {
         $selectedGridColumns = $configData->selectedGridColumns;
-
-        $localeService = $this->get(Locale::class);
 
         $colIndex = -1;
 
@@ -1334,15 +1346,13 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
-
         foreach ($selectedGridColumns as $selectedGridColumn) {
             $colIndex++;
 
             $attributes = $selectedGridColumn->attributes;
 
             /** @var $config DataObject\ImportColumnConfig\ConfigElementInterface */
-            $config = $service->buildInputDataConfig([$attributes]);
+            $config = $importService->buildInputDataConfig([$attributes]);
             if (!$config) {
                 continue;
             }
@@ -1399,10 +1409,11 @@ class DataObjectHelperController extends AdminController
      * @Route("/import-get-file-info")
      *
      * @param Request $request
+     * @param ImportService $importService
      *
      * @return JsonResponse
      */
-    public function importGetFileInfoAction(Request $request)
+    public function importGetFileInfoAction(Request $request, ImportService $importService)
     {
         $importConfigId = $request->get('importConfigId');
         $success = true;
@@ -1484,7 +1495,7 @@ class DataObjectHelperController extends AdminController
             $shareSettings = $configData['shareSettings'];
         }
 
-        $availableConfigs = $this->getImportConfigs($this->getUser(), $classId);
+        $availableConfigs = $this->getImportConfigs($importService, $this->getUser(), $classId);
 
         $dialect->lineterminator =  bin2hex($dialect->lineterminator);
 
@@ -1512,10 +1523,19 @@ class DataObjectHelperController extends AdminController
      * @Route("/import-process")
      *
      * @param Request $request
+     * @param ImportService $importService
+     * @param Locale $localeService
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
+     * @throws \Exception
      */
-    public function importProcessAction(Request $request)
+    public function importProcessAction(
+        Request $request,
+        ImportService $importService,
+        Locale $localeService,
+        EventDispatcherInterface $eventDispatcher
+    )
     {
         $parentId = $request->get('parentId');
         $additionalData = $request->get('additionalData');
@@ -1548,9 +1568,11 @@ class DataObjectHelperController extends AdminController
         // determine type
         $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId . '_original');
 
+        $rowData = [];
         if (($handle = fopen($file, 'r')) !== false) {
             $rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         }
+
         if ($skipFirstRow && $job == 1) {
             //read the next row, we need to skip the head row
             $rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
@@ -1572,24 +1594,25 @@ class DataObjectHelperController extends AdminController
         $rowId = $skipFirstRow ? $job + 1 : $job;
 
         try {
-            $service = $this->get('pimcore.object.importconfig');
             $configData->classId = $request->get('classId');
-            $resolver = $service->getResolverImplementation($configData);
+            $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
-            $object = $resolver->resolve($parentId, $rowData);
+            $object = $resolver->resolve($configData, $parentId, $rowData);
 
             $context = $eventData->getContext();
-            $object = $this->populateObject($object, $configData, $rowData, $originalFile, $context);
+
+            // TODO originalFile did not exist in populateObject and was removed. check!
+            $object = $this->populateObject($importService, $localeService, $object, $configData, $rowData, $context);
 
             $eventData->setObject($object);
             $eventData->setRowData($rowData);
 
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
+            $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
 
             $object->save();
 
             if ($job >= $importJobTotal) {
-                \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::DONE, $eventData);
+                $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
             }
 
             return $this->json(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
@@ -1750,10 +1773,11 @@ class DataObjectHelperController extends AdminController
      * @Route("/do-export")
      *
      * @param Request $request
+     * @param Locale $localeService
      *
      * @return JsonResponse
      */
-    public function doExportAction(Request $request)
+    public function doExportAction(Request $request, Locale $localeService)
     {
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $ids = $request->get('ids');
@@ -1774,7 +1798,7 @@ class DataObjectHelperController extends AdminController
 
         $addTitles = $request->get('initial');
 
-        $csv = $this->getCsvData($request, $list, $fields, $addTitles);
+        $csv = $this->getCsvData($request, $localeService, $list, $fields, $addTitles);
 
         $fp = fopen($this->getCsvFile($fileHandle), 'a');
 
@@ -1859,13 +1883,14 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @param Request $request
+     * @param Locale $localeService
      * @param $list
      * @param $fields
      * @param bool $addTitles
      *
      * @return string
      */
-    protected function getCsvData(Request $request, $list, $fields, $addTitles = true)
+    protected function getCsvData(Request $request, Locale $localeService, $list, $fields, $addTitles = true)
     {
         $requestedLanguage = $this->extractLanguage($request);
         $mappedFieldnames = [];
@@ -1876,9 +1901,6 @@ class DataObjectHelperController extends AdminController
         DataObject\AbstractObject::setGetInheritedValues(true);
 
         $helperDefinitions = DataObject\Service::getHelperDefinitions();
-
-        $container = \Pimcore::getContainer();
-        $localeService = $container->get(Locale::class);
 
         foreach ($list->getObjects() as $object) {
             if ($fields) {

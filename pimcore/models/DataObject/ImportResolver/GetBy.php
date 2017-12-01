@@ -17,48 +17,51 @@
 
 namespace Pimcore\Model\DataObject\ImportResolver;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\FactoryInterface;
 
 class GetBy extends AbstractResolver
 {
     /**
-     * constructor.
+     * @var FactoryInterface
      */
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->attribute = $config->resolverSettings->attribute;
+    private $modelFactory;
 
-        if (!$this->attribute) {
-            throw new \Exception('attribute not set');
-        }
+    public function __construct(FactoryInterface $modelFactory)
+    {
+        $this->modelFactory = $modelFactory;
     }
 
-    /**
-     * @param $parentId
-     * @param $rowData
-     *
-     * @return static
-     *
-     * @throws \Exception
-     */
-    public function resolve($parentId, $rowData)
+    public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $idColumn = $this->getIdColumn();
+        $attribute = $config->resolverSettings->attribute;
+
+        if (!$attribute) {
+            throw new \InvalidArgumentException('Attribute is not set');
+        }
+
+        $idColumn = $this->getIdColumn($config);
         $cellData = $rowData[$idColumn];
 
-        $classId = $this->config->classId;
+        $classId = $config->classId;
         $classDefinition = ClassDefinition::getById($classId);
         $listClassName = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName() . '\\Listing');
 
-        $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClassName);
+        $list = $this->modelFactory->build($listClassName);
 
-        $list->setCondition($this->attribute . ' = ' . $list->quote($cellData));
+        $list->setCondition($attribute . ' = ' . $list->quote($cellData));
         $list->setLimit(1);
         $list = $list->load();
 
         if ($list) {
+            /** @var ElementInterface|Concrete|Document|Asset $object */
             $object = $list[0];
+
             if ($object) {
                 $parent = $object->getParent();
                 if (!$parent->isAllowed('create')) {
@@ -69,6 +72,6 @@ class GetBy extends AbstractResolver
             return $object;
         }
 
-        throw new \Exception('failed to resolve object where ' . $this->attribute . ' = ' . $cellData);
+        throw new \Exception('failed to resolve object where ' . $attribute . ' = ' . $cellData);
     }
 }

@@ -17,32 +17,48 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Value;
 
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
+use Pimcore\Model\DataObject\ImportColumnConfig\ValueInterface;
 use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 
-class DefaultValue extends AbstractConfigElement
+class DefaultValue extends AbstractConfigElement implements ValueInterface
 {
-    public function __construct($config, $context = null)
-    {
-        parent::__construct($config, $context);
-        $this->mode = $config->mode;
-        $this->doNotOverwrite = $config->doNotOverwrite;
-        $this->skipEmptyValues = $config->skipEmptyValues;
-    }
+    /**
+     * @var string
+     */
+    private $mode;
 
     /**
-     * @param $element Concrete
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return null|\stdClass
+     * @var bool
      */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    private $doNotOverwrite;
+
+    /**
+     * @var bool
+     */
+    private $skipEmptyValues;
+
+    public function __construct(\stdClass $config, $context = null)
     {
-        if ($target instanceof \Pimcore\Model\DataObject\Concrete) {
+        parent::__construct($config, $context);
+
+        $this->mode            = $config->mode;
+        $this->doNotOverwrite  = (bool)$config->doNotOverwrite;
+        $this->skipEmptyValues = (bool)$config->skipEmptyValues;
+    }
+
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
+    {
+        /** @var ClassDefinition|Definition $container */
+        $container = null;
+
+        /** @var string $realAttribute */
+        $realAttribute = null;
+
+        if ($target instanceof Concrete) {
             $realAttribute = $this->attribute;
             $container = $target->getClass();
         } elseif ($target instanceof AbstractData) {
@@ -52,36 +68,44 @@ class DefaultValue extends AbstractConfigElement
             $container = Definition::getByKey($brickType);
         }
 
+        if (null === $container) {
+            throw new \RuntimeException('Container could not be resolved');
+        }
+
         $fd = $container->getFieldDefinition($realAttribute);
 
         if (!$fd) {
+            /** @var ClassDefinition\Data\Localizedfields $lfDef */
             $lfDef = $container->getFieldDefinition('localizedfields');
+
             if ($lfDef) {
                 $fd = $lfDef->getFieldDefinition($realAttribute);
             }
         }
 
-        if ($fd) {
-            $data = $rowData[$colIndex];
+        if (!$fd) {
+            return;
+        }
 
-            if ($this->skipEmptyValues && !$data) {
+        $data = $rowData[$colIndex];
+
+        if ($this->skipEmptyValues && !$data) {
+            return;
+        }
+
+        if ($this->mode != 'direct') {
+            $data = $fd->getFromCsvImport($data);
+        }
+
+        $setter = 'set' . ucfirst($realAttribute);
+        if ($this->doNotOverwrite) {
+            $getter = 'get' . ucfirst($realAttribute);
+            $currentValue = $target->$getter();
+            if ($currentValue) {
                 return;
             }
-
-            if ($this->mode != 'direct') {
-                $data = $fd->getFromCsvImport($data);
-            }
-            $setter = 'set' . ucfirst($realAttribute);
-
-            if ($this->doNotOverwrite) {
-                $getter = 'get' . ucfirst($realAttribute);
-                $currentValue = $target->$getter();
-                if ($currentValue) {
-                    return;
-                }
-            }
-
-            $target->$setter($data);
         }
+
+        $target->$setter($data);
     }
 }

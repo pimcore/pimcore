@@ -22,37 +22,32 @@ use Pimcore\Model\DataObject\Concrete;
 
 class Id extends AbstractResolver
 {
-    /**
-     * @param $parentId
-     * @param $rowData
-     *
-     * @return static
-     *
-     * @throws \Exception
-     */
-    public function resolve($parentId, $rowData)
+    public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        if (!is_null($this->idIdx)) {
-            $id = $rowData[$this->idIdx];
-
-            $object = Concrete::getById($id);
-            if (!$object) {
-                throw new \Exception('Could not resolve object with id ' . $id);
-            }
-
-            $classDefinition = ClassDefinition::getById($this->config->classId);
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
-
-            if (!$object instanceof $className) {
-                throw new \Exception('Class mismatch for ID ' . $id);
-            }
-
-            $parent = $object->getParent();
-            if (!$parent->isAllowed('create')) {
-                throw new \Exception('no permission to overwrite object with id ' . $id);
-            }
-
-            return $object;
+        $idColumn = $this->getIdColumn($config);
+        if (null === $idColumn) {
+            throw new \InvalidArgumentException('ID column is not set');
         }
+
+        $id = $rowData[$idColumn];
+
+        $object = Concrete::getById($id);
+        if (!$object) {
+            throw new \Exception('Could not resolve object with id ' . $id);
+        }
+
+        $classDefinition = ClassDefinition::getById($config->classId);
+        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+
+        if (!$object instanceof $className) {
+            throw new \Exception('Class mismatch for ID ' . $id);
+        }
+
+        $parent = $object->getParent();
+        if (!$parent->isAllowed('create')) {
+            throw new \Exception('no permission to overwrite object with id ' . $id);
+        }
+
+        return $object;
     }
 }

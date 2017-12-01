@@ -50,13 +50,6 @@ services:
         class: Pimcore\Model\DataObject\GridColumnConfig\Service
         public: true
 
-    #
-    # IMPORT CONFIG
-    #
-    pimcore.object.importconfig:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Service
-        public: true
-
 
     #
     # GDPR Services

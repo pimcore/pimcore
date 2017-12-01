@@ -17,26 +17,23 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 class Splitter extends AbstractOperator
 {
-    public function __construct($config, $context = null)
+    /**
+     * @var string
+     */
+    private $glue;
+
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->glue = $config->glue;
     }
 
-    /**
-     * @param $element Concrete
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return null|\stdClass
-     */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         $originalCellData = $rowData[$colIndex];
 
@@ -50,9 +47,10 @@ class Splitter extends AbstractOperator
 
             for ($i = 0; $i < count($childs); $i++) {
                 $child = $childs[$i];
+
                 if (isset($dataParts[$i])) {
-                    $dataPart = $dataParts[$i];
-                    $rowData[$colIndex] = $dataPart;
+                    $rowData[$colIndex] = $dataParts[$i];
+
                     $child->process($element, $target, $rowData, $colIndex, $context);
                 }
             }

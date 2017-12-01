@@ -17,25 +17,9 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
-use Pimcore\Model\DataObject\Concrete;
-
 class Published extends AbstractOperator
 {
-    public function __construct($config, $context = null)
-    {
-        parent::__construct($config, $context);
-        $this->locale = $config->locale;
-    }
-
-    /**
-     * @param $element Concrete
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return null|\stdClass
-     */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         if (method_exists($target, 'setPublished')) {
             $published = $rowData[$colIndex] ? true : false;

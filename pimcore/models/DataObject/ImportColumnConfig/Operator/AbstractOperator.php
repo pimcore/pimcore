@@ -18,41 +18,30 @@
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
+use Pimcore\Model\DataObject\ImportColumnConfig\ConfigElementInterface;
+use Pimcore\Model\DataObject\ImportColumnConfig\OperatorInterface;
 
-abstract class AbstractOperator extends AbstractConfigElement
+abstract class AbstractOperator extends AbstractConfigElement implements OperatorInterface
 {
     /**
-     * @var ConfigElementInterface
+     * @var ConfigElementInterface[]
      */
-    protected $childs;
+    protected $childs = [];
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
-        $this->childs = $config->childs;
-        $this->context = $context;
+        parent::__construct($config, $context);
+
+        if (is_array($config->childs)) {
+            $this->childs = $config->childs;
+        }
     }
 
     /**
-     * @return ConfigElementInterface
+     * @return ConfigElementInterface[]
      */
-    public function getChilds()
+    public function getChilds(): array
     {
         return $this->childs;
-    }
-
-    /**
-     * @return null
-     */
-    public function getContext()
-    {
-        return $this->context;
-    }
-
-    /**
-     * @param null $context
-     */
-    public function setContext($context)
-    {
-        $this->context = $context;
     }
 }

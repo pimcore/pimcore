@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,15 +20,17 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig;
 
+use Pimcore\Model\Element\ElementInterface;
+
 interface ConfigElementInterface
 {
     /**
-     * @param $element the original object
-     * @param $target the current target element which initially is the same as the object. every operator can change the target depending on its needs
-     * @param $rowData the csv record
-     * @param $colIndex the column index (0 is the first column)
-     *
-     * @return mixed
+     * @param ElementInterface $element The original object
+     * @param mixed $target             The current target element which initially is the same as the object. every
+     *                                  operator can change the target depending on its needs
+     * @param array $rowData            The csv record
+     * @param int $colIndex             The column index (0 is the first column)
+     * @param array $context
      */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = []);
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = []);
 }

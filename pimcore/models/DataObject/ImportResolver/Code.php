@@ -22,43 +22,36 @@ use Pimcore\Localization\Locale;
 class Code extends AbstractResolver
 {
     /**
-     * Id constructor.
+     * @var Locale
      */
-    public function __construct($config)
+    private $localeService;
+
+    public function __construct(Locale $localeService)
     {
-        parent::__construct($config);
-
-        $this->resolverImplementation = new $this->config->resolverSettings->phpClass($config);
-
-        if (!$this->resolverImplementation) {
-            throw new \Exception('could not resolve service: ' . $this->config->resolverSettings->service);
-        }
+        $this->localeService = $localeService;
     }
 
-    /**
-     * @param $parentId
-     * @param $rowData
-     *
-     * @return static
-     *
-     * @throws \Exception
-     */
-    public function resolve($parentId, $rowData)
+    public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $container = \Pimcore::getContainer();
-        $localeService = $container->get(Locale::class);
-        $currentLocale = $localeService->getLocale();
+        /** @var ResolverInterface $resolverImplementation */
+        $resolverImplementation = new $config->resolverSettings->phpClass();
+
+        if (!$resolverImplementation) {
+            throw new \Exception('could not resolve service: ' . $config->resolverSettings->service);
+        }
+
+        $currentLocale = $this->localeService->getLocale();
 
         $locale = null;
-        if ($this->config->resolverSettings) {
-            if ($this->config->resolverSettings && $this->config->resolverSettings->language != 'default') {
-                $localeService->setLocale($this->config->resolverSettings->language);
+        if ($config->resolverSettings) {
+            if ($config->resolverSettings && 'default' !== $config->resolverSettings->language) {
+                $this->localeService->setLocale($config->resolverSettings->language);
             }
         }
 
-        $object = $this->resolverImplementation->resolve($parentId, $rowData);
+        $object = $resolverImplementation->resolve($config, $parentId, $rowData);
 
-        $localeService->setLocale($currentLocale);
+        $this->localeService->setLocale($currentLocale);
 
         if (!$object) {
             throw new \Exception('Could not resolve object');

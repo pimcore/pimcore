@@ -22,64 +22,63 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\FactoryInterface;
 
 class Filename extends AbstractResolver
 {
     /**
-     * constructor.
+     * @var FactoryInterface
      */
-    public function __construct($config)
+    private $modelFactory;
+
+    public function __construct(FactoryInterface $modelFactory)
     {
-        parent::__construct($config);
-        $this->overwrite = $config->resolverSettings->overwrite;
-        $this->prefix = $config->resolverSettings->prefix;
+        $this->modelFactory = $modelFactory;
     }
 
-    /**
-     * @param $parentId
-     * @param $rowData
-     *
-     * @return static
-     *
-     * @throws \Exception
-     */
-    public function resolve($parentId, $rowData)
+    public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
+        $overwrite = (bool)$config->resolverSettings->overwrite;
+        $prefix    = (string)$config->resolverSettings->prefix;
+
         $parent = AbstractObject::getById($parentId);
         if (!$parent) {
             throw new \Exception('parent not found');
         }
+
         if (!$parent->isAllowed('create')) {
             throw new \Exception('not allowed to import into folder ' . $parent->getFullPath());
         }
 
-        if ($this->overwrite) {
-            $objectKey = $rowData[$this->getIdColumn()];
+        if ($overwrite) {
+            $objectKey = $rowData[$this->getIdColumn($config)];
         } else {
-            $objectKey = $this->prefix;
+            $objectKey = $prefix;
         }
-        $classId = $this->config->classId;
+
+        $classId         = $config->classId;
         $classDefinition = ClassDefinition::getById($classId);
-        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+        $className       = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
         $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-        $container = \Pimcore::getContainer();
+        $object       = null;
 
-        if ($this->overwrite) {
+        if ($overwrite) {
             $object = DataObject::getByPath($intendedPath);
             if (!$object instanceof Concrete) {
                 //create new object
-                $object = $container->get('pimcore.model.factory')->build($className);
+                $object = $this->modelFactory->build($className);
                 $object->setPublished(1);
             } elseif ($object instanceof Concrete and !($object instanceof $className)) {
                 //delete the old object it is of a different class
                 $object->delete();
-                $object = $container->get('pimcore.model.factory')->build($className);
+                $object = $this->modelFactory->build($className);
                 $object->setPublished(1);
             } elseif ($object instanceof Folder) {
                 //delete the folder
                 $object->delete();
-                $object = $container->get('pimcore.model.factory')->build($className);
+                $object = $this->modelFactory->build($className);
                 $object->setPublished(1);
             }
 
@@ -88,8 +87,10 @@ class Filename extends AbstractResolver
                 $object->setKey($objectKey);
             }
         } else {
-            $this->getAlternativeObject($intendedPath, $parent, $className);
+            // TODO is an assignment missing here?
+            $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
         }
+
         if (!$object) {
             throw new \Exception('failed to resolve object key ' . $objectKey);
         }
@@ -97,24 +98,18 @@ class Filename extends AbstractResolver
         return $object;
     }
 
-    /**
-     * @param $intendedPath
-     * @param $parent
-     * @param $className
-     *
-     * @return string
-     */
-    public function getAlternativeObject($intendedPath, $parent, $className)
+    private function getAlternativeObject(string $prefix, string $intendedPath, ElementInterface $parent, string $className): string
     {
-        $counter = 1;
+        $counter   = 1;
         $objectKey = $intendedPath;
+
         while (DataObject::getByPath($intendedPath) != null) {
-            $objectKey = $this->prefix . $counter;
+            $objectKey    = $prefix . $counter;
             $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
             $counter++;
         }
-        $container = \Pimcore::getContainer();
-        $object = $container->get('pimcore.model.factory')->build($className);
+
+        $object = $this->modelFactory->build($className);
         $object->setParent($parent);
         $object->setKey($objectKey);
 

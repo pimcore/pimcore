@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -20,71 +23,131 @@ namespace Pimcore\Model\DataObject\ImportColumnConfig;
 use DeepCopy\DeepCopy;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\OperatorFactoryInterface;
+use Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\ValueFactoryInterface;
 use Pimcore\Model\DataObject\ImportColumnConfig\Operator\PHPCode;
-use Pimcore\Model\DataObject\ImportResolver\Code;
-use Pimcore\Model\DataObject\ImportResolver\Filename;
-use Pimcore\Model\DataObject\ImportResolver\Fullpath;
-use Pimcore\Model\DataObject\ImportResolver\GetBy;
-use Pimcore\Model\DataObject\ImportResolver\Id;
+use Pimcore\Model\DataObject\ImportResolver\ResolverInterface;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
 use Pimcore\Tool;
+use Psr\Container\ContainerInterface;
 
 class Service
 {
     const FORBIDDEN_KEYS = ['id', 'fullpath', 'filename', 'published', 'creationDate', 'modificationDate'];
 
     /**
-     * @param $outputDataConfig
-     *
-     * @return ConfigElementInterface[]
+     * @var Db\Connection
      */
-    public function buildInputDataConfig($outputDataConfig, $context = null)
+    private $db;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $resolvers;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $operatorFactories;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $valueFactories;
+
+    public function __construct(
+        Db\Connection $db,
+        ContainerInterface $resolvers,
+        ContainerInterface $operatorFactories,
+        ContainerInterface $valueFactories
+    )
     {
-        $config = [];
-        $config = $this->doBuildConfig($outputDataConfig, $config, $context);
+        $this->db                = $db;
+        $this->resolvers         = $resolvers;
+        $this->operatorFactories = $operatorFactories;
+        $this->valueFactories    = $valueFactories;
+    }
+
+    public function getResolver(string $name): ResolverInterface
+    {
+        if (!$this->resolvers->has($name)) {
+            throw new \InvalidArgumentException(sprintf('There is no resolver registered for "%s"', $name));
+        }
+
+        /** @var ResolverInterface $resolver */
+        $resolver = $this->resolvers->get($name);
+
+        return $resolver;
+    }
+
+    /**
+     * @param \stdClass[] $jsonConfigs
+     * @param mixed|null $context
+     *
+     * @return array
+     */
+    public function buildInputDataConfig(array $jsonConfigs, $context = null): array
+    {
+        $config = $this->doBuildConfig($jsonConfigs, [], $context);
 
         return $config;
     }
 
     /**
-     * @param $jsonConfig
+     * @param \stdClass[] $jsonConfigs
      * @param $config
-     * @param null $context
+     * @param mixed|null $context
      *
-     * @return array
+     * @return ConfigElementInterface[]
      */
-    private function doBuildConfig($jsonConfig, $config, $context = null)
+    private function doBuildConfig(array $jsonConfigs, array $config, $context = null): array
     {
-        if (!empty($jsonConfig)) {
-            foreach ($jsonConfig as $configElement) {
-                if ($configElement->type == 'value') {
-                    $name = 'Pimcore\\Model\\DataObject\\ImportColumnConfig\\Value\\' . ucfirst($configElement->class);
+        if (empty($jsonConfigs)) {
+            return $config;
+        }
 
-                    if (class_exists($name)) {
-                        $config[] = new $name($configElement, $context);
-                    }
-                } elseif ($configElement->type == 'operator') {
-                    $name = 'Pimcore\\Model\\DataObject\\ImportColumnConfig\\Operator\\' . ucfirst($configElement->class);
+        foreach ($jsonConfigs as $configElement) {
+            if ('Ignore' === $configElement->class) {
+                continue;
+            }
 
-                    if (!empty($configElement->childs)) {
-                        $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
-                    }
-
-                    if (class_exists($name)) {
-                        $operatorInstance = new $name($configElement, $context);
-                        if ($operatorInstance instanceof PHPCode) {
-                            $operatorInstance = $operatorInstance->getRealInstance();
-                        }
-                        if ($operatorInstance) {
-                            $config[] = $operatorInstance;
-                        }
-                    }
+            if ('value' === $configElement->type) {
+                $config[] = $this->buildValue($configElement->class, $configElement, $context);
+            } elseif ('operator' === $configElement->type) {
+                if (!empty($configElement->childs)) {
+                    $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
                 }
+
+                $config[] = $this->buildOperator($configElement->class, $configElement, $context);
             }
         }
 
         return $config;
+    }
+
+    private function buildOperator(string $name, \stdClass $configElement, $context = null): OperatorInterface
+    {
+        if (!$this->operatorFactories->has($name)) {
+            throw new \InvalidArgumentException(sprintf('Operator "%s" is not supported', $name));
+        }
+
+        /** @var OperatorFactoryInterface $factory */
+        $factory = $this->operatorFactories->get($name);
+
+        return $factory->build($configElement, $context);
+    }
+
+    private function buildValue(string $name, \stdClass $configElement, $context = null): ValueInterface
+    {
+        if (!$this->valueFactories->has($name)) {
+            throw new \InvalidArgumentException(sprintf('Value "%s" is not supported', $name));
+        }
+
+        /** @var ValueFactoryInterface $factory */
+        $factory = $this->valueFactories->get($name);
+
+        return $factory->build($configElement, $context);
     }
 
     /**
@@ -96,7 +159,6 @@ class Service
     public function getSharedImportConfigs($user, $classId)
     {
         $userId = $user->getId();
-        $db = Db::get();
         $configListingConditionParts = [];
         $configListingConditionParts[] = 'sharedWithUserId = ' . $userId;
         $configListingConditionParts[] = 'classId = ' . $classId;
@@ -110,7 +172,9 @@ class Service
         $query = 'select distinct c.id from importconfigs c, importconfig_shares s where '
             . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId
                 . ' UNION distinct select c2.id from importconfigs c2 where shareGlobally = 1 and c2.classId = ' . $classId;
-        $ids = $db->fetchCol($query);
+
+        $ids = $this->db->fetchCol($query);
+
         if ($ids) {
             $ids = implode(',', $ids);
             $configListing = new ImportConfig\Listing();
@@ -257,29 +321,5 @@ class Service
         }
 
         return $importColumn;
-    }
-
-    /**
-     * @param $config
-     *
-     * @return Id
-     *
-     * @throws \Exception
-     */
-    public function getResolverImplementation($config)
-    {
-        switch ($config->resolverSettings->strategy) {
-        case 'id':
-            return new Id($config);
-        case 'filename':
-            return new Filename($config);
-        case 'fullpath':
-            return new Fullpath($config);
-        case 'code':
-            return new Code($config);
-        case 'getBy':
-            return new GetBy($config);
-    }
-        throw new \Exception('unknown/unsupported resolver implementation');
     }
 }

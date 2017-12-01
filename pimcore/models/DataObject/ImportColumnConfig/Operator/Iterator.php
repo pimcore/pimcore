@@ -17,20 +17,11 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
 
 class Iterator extends AbstractOperator
 {
-    /**
-     * @param $element Concrete
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return null|\stdClass
-     */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         $childs = $this->getChilds();
 

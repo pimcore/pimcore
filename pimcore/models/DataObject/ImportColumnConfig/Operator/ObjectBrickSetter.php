@@ -17,45 +17,56 @@
 
 namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
 
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
+use Pimcore\Model\FactoryInterface;
 
 class ObjectBrickSetter extends AbstractOperator
 {
-    protected $locale;
-
-    public function __construct($config, $context = null)
-    {
-        parent::__construct($config, $context);
-        $this->attr = $config->attr;
-        $this->brickType = $config->brickType;
-        $this->mode = $config->mode;
-    }
+    /**
+     * @var FactoryInterface
+     */
+    private $modelFactory;
 
     /**
-     * @param $element Concrete
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return null|\stdClass
+     * @var string
      */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    private $attr;
+
+    /**
+     * @var string
+     */
+    private $brickType;
+
+    /**
+     * @var string
+     */
+    private $mode;
+
+    public function __construct(FactoryInterface $modelFactory, \stdClass $config, $context = null)
     {
-        $container = \Pimcore::getContainer();
+        parent::__construct($config, $context);
+
+        $this->modelFactory = $modelFactory;
+
+        $this->attr      = $config->attr;
+        $this->brickType = $config->brickType;
+        $this->mode      = $config->mode;
+    }
+
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
+    {
         $brickContainerGetter = 'get' . ucfirst($this->attr);
-        $brickContainer = $target->$brickContainerGetter();
+        $brickContainer       = $target->$brickContainerGetter();
 
         $brickGetter = 'get' . ucfirst($this->brickType);
-        $brick = $brickContainer->$brickGetter();
+        $brick       = $brickContainer->$brickGetter();
 
         $colData = $rowData[$colIndex];
 
         if (!$brick) {
             if ($this->mode == 'ifNotEmpty' && $colData || $this->mode == 'always') {
                 $brickClass = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($this->brickType);
-                $factory = $container->get('pimcore.model.factory');
-                $brick = $factory->build($brickClass, [$element]);
+                $brick      = $this->modelFactory->build($brickClass, [$element]);
             }
         }
 
