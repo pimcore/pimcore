@@ -137,7 +137,10 @@ pimcore.object.helpers.import.reportTab = Class.create({
 
             this.statusBar = new Ext.form.FieldContainer(
                 {
-                    layout: "hbox",
+                    layout: {
+                        type: "hbox",
+                        align: 'middle'
+                    },
                     items: [this.importProgressBar, this.stopButton]
                 });
 
