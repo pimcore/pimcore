@@ -45,6 +45,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectHelperController extends AdminController
 {
+    const SYSTEM_COLUMNS =  ['id', 'fullpath', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
+
     /**
      * @Route("/load-object-data")
      *
@@ -149,20 +151,53 @@ class DataObjectHelperController extends AdminController
         $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
 
         $gridConfigId = $request->get('gridConfigId');
-        $gridConfig = GridConfig::getById($gridConfigId);
 
-        if ($gridConfig && $gridConfig->getOwnerId() != $this->getUser()->getId()) {
-            $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $gridConfig->getClassId());
+        if ($gridConfigId == -1) {
+            $gridConfig = new GridConfig();
+            $classId = $request->get('classId');
+            $class = DataObject\ClassDefinition::getById($classId);
+            // getDefaultGridFields($noSystemColumns, $class, $gridType, $noBrickColumns, $fields, $context, $objectId)
 
-            if ($sharedGridConfigs) {
-                $found = false;
-                /** @var $sharedConfig GridConfigShare */
-                foreach ($sharedGridConfigs as $sharedConfig) {
-                    if ($sharedConfig->getSharedWithUserId() == $this->getUser()->getId()) {
-                        $found = true;
-                        break;
+            $fields = $class->getFieldDefinitions();
+            $context = ['purpose' => 'gridconfig', 'class' => $class];
+
+            $availableColumns = $this->getDefaultGridFields(false, $class, 'grid', false, $fields, $context, null);
+            $availableColumns = json_decode(json_encode($availableColumns), true);
+
+
+            foreach ($availableColumns as &$column) {
+                $fieldConfig=[
+                    "key" => $column["key"],
+                    "label" => $column["label"],
+                    "type" => $column["type"]
+                ];
+
+                $column["fieldConfig"] = $fieldConfig;
+            }
+
+            $config = [];
+            $config['classId'] = $classId;
+            $config['columns'] = $availableColumns;
+            $gridConfig->setClassId($classId);
+            $gridConfig->setConfig(json_encode($config));
+        } else {
+            $gridConfig = GridConfig::getById($gridConfigId);
+            $user = $this->getUser();
+            if ($gridConfig && $gridConfig->getOwnerId() != $user->getId()) {
+                $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $gridConfig->getClassId());
+
+                if ($sharedGridConfigs) {
+                    $found = false;
+                    /** @var $sharedConfig GridConfigShare */
+                    foreach ($sharedGridConfigs as $sharedConfig) {
+                        if ($sharedConfig->getSharedWithUserId() == $this->getUser()->getId()) {
+                            $found = true;
+                            break;
+                        }
                     }
                 }
+            } else {
+                $found = true;
             }
 
             if (!$found) {
@@ -222,6 +257,12 @@ class DataObjectHelperController extends AdminController
         }
         $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getUser(), $classId, null));
         $result = [];
+
+        $result[] = [
+            'id' => -1,
+            'name' => '--default--'
+        ];
+
         if ($list) {
             /** @var $config Config */
             foreach ($list as $config) {
@@ -251,11 +292,9 @@ class DataObjectHelperController extends AdminController
         }
         $success = false;
         if ($config) {
-
             if ($config->getOwnerId() != $this->getUser()->getId()) {
                 throw new \Exception("don't mess with someone elses grid config");
             }
-
 
             $config->delete();
             $success = true;
@@ -432,82 +471,21 @@ class DataObjectHelperController extends AdminController
         }
 
         $availableFields = [];
-        $systemColumns = ['id', 'fullpath', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
+
         if (empty($gridConfig)) {
-            $count = 0;
-
-            if (!$request->get('no_system_columns')) {
-                $vis = $class->getPropertyVisibility();
-                foreach ($systemColumns as $sc) {
-                    $key = $sc;
-                    if ($key == 'fullpath') {
-                        $key = 'path';
-                    }
-
-                    if (empty($types) && ($vis[$gridType][$key] || $gridType == 'all')) {
-                        $availableFields[] = [
-                            'key' => $sc,
-                            'type' => 'system',
-                            'label' => $sc,
-                            'position' => $count];
-                        $count++;
-                    }
-                }
-            }
-
-            $includeBricks = !$request->get('no_brick_columns');
-
-            foreach ($fields as $key => $field) {
-                if ($field instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    foreach ($field->getFieldDefinitions($context) as $fd) {
-                        if (empty($types) || in_array($fd->getFieldType(), $types)) {
-                            $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count, false, null, $class, $objectId);
-                            if (!empty($fieldConfig)) {
-                                $availableFields[] = $fieldConfig;
-                                $count++;
-                            }
-                        }
-                    }
-                } elseif ($field instanceof DataObject\ClassDefinition\Data\Objectbricks && $includeBricks) {
-                    if (in_array($field->getFieldType(), $types)) {
-                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, false, null, $class, $objectId);
-                        if (!empty($fieldConfig)) {
-                            $availableFields[] = $fieldConfig;
-                            $count++;
-                        }
-                    } else {
-                        $allowedTypes = $field->getAllowedTypes();
-                        if (!empty($allowedTypes)) {
-                            foreach ($allowedTypes as $t) {
-                                $brickClass = DataObject\Objectbrick\Definition::getByKey($t);
-                                $brickFields = $brickClass->getFieldDefinitions($context);
-                                if (!empty($brickFields)) {
-                                    foreach ($brickFields as $bf) {
-                                        $fieldConfig = $this->getFieldGridConfig($bf, $gridType, $count, false, $t . '~', $class, $objectId);
-                                        if (!empty($fieldConfig)) {
-                                            $availableFields[] = $fieldConfig;
-                                            $count++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (empty($types) || in_array($field->getFieldType(), $types)) {
-                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, !empty($types), null, $class, $objectId);
-                        if (!empty($fieldConfig)) {
-                            $availableFields[] = $fieldConfig;
-                            $count++;
-                        }
-                    }
-                }
-            }
+            $availableFields = $this->getDefaultGridFields(
+                $request->get('no_system_columns'),
+                $class,
+                $gridType,
+                $request->get('no_brick_columns'),
+                $fields,
+                $context,
+                $objectId);
         } else {
             $savedColumns = $gridConfig['columns'];
             foreach ($savedColumns as $key => $sc) {
                 if (!$sc['hidden']) {
-                    if (in_array($key, $systemColumns)) {
+                    if (in_array($key, self::SYSTEM_COLUMNS)) {
                         $colConfig = [
                             'key' => $key,
                             'type' => 'system',
@@ -636,6 +614,93 @@ class DataObjectHelperController extends AdminController
             'sharedConfigs' => $sharedConfigs
 
         ];
+    }
+
+    /**
+     * @param $noSystemColumns
+     * @param $class DataObject\ClassDefinition
+     * @param $gridType
+     * @param $noBrickColumns
+     * @param $fields
+     * @param $context
+     * @param $objectId
+     *
+     * @return array
+     */
+    public function getDefaultGridFields($noSystemColumns, $class, $gridType, $noBrickColumns, $fields, $context, $objectId)
+    {
+        $count = 0;
+        $availableFields = [];
+
+        if (!$noSystemColumns) {
+            $vis = $class->getPropertyVisibility();
+            foreach (self::SYSTEM_COLUMNS as $sc) {
+                $key = $sc;
+                if ($key == 'fullpath') {
+                    $key = 'path';
+                }
+
+                if (empty($types) && ($vis[$gridType][$key] || $gridType == 'all')) {
+                    $availableFields[] = [
+                        'key' => $sc,
+                        'type' => 'system',
+                        'label' => $sc,
+                        'position' => $count];
+                    $count++;
+                }
+            }
+        }
+
+        $includeBricks = !$noBrickColumns;
+
+        foreach ($fields as $key => $field) {
+            if ($field instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                foreach ($field->getFieldDefinitions($context) as $fd) {
+                    if (empty($types) || in_array($fd->getFieldType(), $types)) {
+                        $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count, false, null, $class, $objectId);
+                        if (!empty($fieldConfig)) {
+                            $availableFields[] = $fieldConfig;
+                            $count++;
+                        }
+                    }
+                }
+            } elseif ($field instanceof DataObject\ClassDefinition\Data\Objectbricks && $includeBricks) {
+                if (in_array($field->getFieldType(), $types)) {
+                    $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, false, null, $class, $objectId);
+                    if (!empty($fieldConfig)) {
+                        $availableFields[] = $fieldConfig;
+                        $count++;
+                    }
+                } else {
+                    $allowedTypes = $field->getAllowedTypes();
+                    if (!empty($allowedTypes)) {
+                        foreach ($allowedTypes as $t) {
+                            $brickClass = DataObject\Objectbrick\Definition::getByKey($t);
+                            $brickFields = $brickClass->getFieldDefinitions($context);
+                            if (!empty($brickFields)) {
+                                foreach ($brickFields as $bf) {
+                                    $fieldConfig = $this->getFieldGridConfig($bf, $gridType, $count, false, $t . '~', $class, $objectId);
+                                    if (!empty($fieldConfig)) {
+                                        $availableFields[] = $fieldConfig;
+                                        $count++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (empty($types) || in_array($field->getFieldType(), $types)) {
+                    $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, !empty($types), null, $class, $objectId);
+                    if (!empty($fieldConfig)) {
+                        $availableFields[] = $fieldConfig;
+                        $count++;
+                    }
+                }
+            }
+        }
+
+        return $availableFields;
     }
 
     protected function getCalculatedColumnConfig($config)
@@ -1241,6 +1306,7 @@ class DataObjectHelperController extends AdminController
             return $response;
         } catch (\Exception $e) {
             $response = new Response($e);
+
             return $response;
         }
     }

@@ -211,7 +211,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.resolverSettingsPanel.rebuildPanel();
         this.saveAndSharePanel.rebuildPanel();
         this.containerPanel.setTitle(this.getWindowTitle());
-        this.deleteButton.setDisabled(this.config.isShared);
+        this.deleteButton.setDisabled(!this.importConfigId || this.config.isShared);
     },
 
 
@@ -310,7 +310,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
     },
 
     preview: function(rowIndex) {
-        if (this.importConfigId) {
+        if (this.importConfigId || this.importedConfig) {
             this.doPreview(rowIndex);
         } else {
             Ext.Msg.show({
@@ -588,6 +588,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 var decodedResponse = Ext.decode(response.responseText);
                 if (decodedResponse.success) {
                     this.config.selectedGridColumns = decodedResponse.selectedGridColumns;
+                    this.importedConfig = true;
                     this.reloadPanels();
                     this.tabPanel.setActiveTab(this.columnConfigPanel.getPanel());
                 } else {
