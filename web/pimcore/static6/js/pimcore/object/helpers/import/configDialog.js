@@ -309,7 +309,26 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
     },
 
-    preview: function (rowIndex) {
+    preview: function() {
+        if (this.importConfigId) {
+            this.doPreview();
+        } else {
+            Ext.Msg.show({
+                title: t('no_configuration'),
+                message: t('no_configuration_message'),
+                buttons: Ext.Msg.YESNO,
+                icon: Ext.Msg.QUESTION,
+                fn: function(btn) {
+                    if (btn === 'yes') {
+                        this.doPreview();
+                    }
+                }.bind(this)
+            });
+        }
+
+    },
+
+    doPreview: function (rowIndex) {
         this.commitEverything();
         var config = this.prepareSaveData();
 

@@ -1757,5 +1757,9 @@
   "gdpr_dataSource_export": "Export",
   "gdpr_dataSource_sentMail": "Sent Mail",
   "gdpr_dataSource_sentMail_only_email": "Search only based on E-Mail",
-  "gdpr_dataSource_pimcoreUsers": "Pimcore Backend User Data"
+  "gdpr_dataSource_pimcoreUsers": "Pimcore Backend User Data",
+  "no_configuration": "No Configuration",
+  "no_configuration_message": "No column configuration is set. Do you really want to continue?"
+
+
 }

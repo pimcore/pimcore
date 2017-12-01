@@ -35,6 +35,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -1163,80 +1164,85 @@ class DataObjectHelperController extends AdminController
      */
     public function importPreviewAction(Request $request)
     {
-        $importId = $request->get('importId');
+        try {
+            $importId = $request->get('importId');
 
-        $configData = $request->get('config');
-        $configData = json_decode($configData, false);
+            $configData = $request->get('config');
+            $configData = json_decode($configData, false);
 
-        $data = Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $configData) {
-            return $session->get('importconfig_' . $importId, $configData);
-        }, 'pimcore_gridconfig');
+            $data = Tool\Session::useSession(function (AttributeBagInterface $session) use ($importId, $configData) {
+                return $session->get('importconfig_' . $importId, $configData);
+            }, 'pimcore_gridconfig');
 
-        $configData = $data->config;
-        $additionalData = $data->additionalData;
-        $rowIndex = $data->rowIndex;
+            $configData = $data->config;
+            $additionalData = $data->additionalData;
+            $rowIndex = $data->rowIndex;
 
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
-        $originalFile = $file . '_original';
+            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
+            $originalFile = $file . '_original';
 
-        // determine type
-        $dialect = Tool\Admin::determineCsvDialect($originalFile);
+            // determine type
+            $dialect = Tool\Admin::determineCsvDialect($originalFile);
 
-        $count = 0;
-        $haveData = false;
+            $count = 0;
+            $haveData = false;
 
-        if (($handle = fopen($originalFile, 'r')) !== false) {
-            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                if ($count == $rowIndex) {
-                    $haveData = true;
-                    break;
+            if (($handle = fopen($originalFile, 'r')) !== false) {
+                while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                    if ($count == $rowIndex) {
+                        $haveData = true;
+                        break;
+                    }
+                    $count++;
                 }
-                $count++;
+                fclose($handle);
             }
-            fclose($handle);
+
+            if (!$haveData) {
+                throw new \Exception("don't have data");
+            }
+
+            $paramsBag = [];
+
+            $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
+            $resolver = $service->getResolverImplementation($configData);
+
+            $classId = $data->classId;
+            $class = DataObject\ClassDefinition::getById($classId);
+
+            $object1 = $resolver->resolve($data->parentId, $rowData);
+
+            if ($object1 == null) {
+                $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
+                $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
+                $object1 = $factory->build($className);
+                $paramsBag['isNew'] = true;
+            }
+
+            $deepCopy = new \DeepCopy\DeepCopy();
+            $object2 = $deepCopy->copy($object1);
+
+            $context = [];
+            $eventData = new DataObjectImportEvent($configData, $originalFile);
+            $eventData->setAdditionalData($additionalData);
+            $eventData->setContext($context);
+
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
+
+            $context = $eventData->getContext();
+
+            $object2 = $this->populateObject($object2, $configData, $rowData, $originalFile, $context);
+            $paramsBag['object1'] = $object1;
+            $paramsBag['object2'] = $object2;
+            $paramsBag['isImportPreview'] = true;
+
+            $response = $this->render('PimcoreAdminBundle:Admin/DataObject:diffVersions.html.php', $paramsBag);
+
+            return $response;
+        } catch (\Exception $e) {
+            $response = new Response($e);
+            return $response;
         }
-
-        if (!$haveData) {
-            throw new \Exception("don't have data");
-        }
-
-        $paramsBag = [];
-
-        $service = \Pimcore::getContainer()->get('pimcore.object.importconfig');
-        $resolver = $service->getResolverImplementation($configData);
-
-        $classId = $data->classId;
-        $class = DataObject\ClassDefinition::getById($classId);
-
-        $object1 = $resolver->resolve($data->parentId, $rowData);
-
-        if ($object1 == null) {
-            $factory = \Pimcore::getContainer()->get('pimcore.model.factory');
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
-            $object1 = $factory->build($className);
-            $paramsBag['isNew'] = true;
-        }
-
-        $deepCopy = new \DeepCopy\DeepCopy();
-        $object2 = $deepCopy->copy($object1);
-
-        $context = [];
-        $eventData = new DataObjectImportEvent($configData, $originalFile);
-        $eventData->setAdditionalData($additionalData);
-        $eventData->setContext($context);
-
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
-
-        $context = $eventData->getContext();
-
-        $object2 = $this->populateObject($object2, $configData, $rowData, $originalFile, $context);
-        $paramsBag['object1'] = $object1;
-        $paramsBag['object2'] = $object2 ;
-        $paramsBag['isImportPreview'] = true;
-
-        $response = $this->render('PimcoreAdminBundle:Admin/DataObject:diffVersions.html.php', $paramsBag);
-
-        return $response;
     }
 
     /**
