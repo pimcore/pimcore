@@ -13,7 +13,7 @@ The CSV preview grid shows the first 20 CSV rows. Click the `Search` icon to ver
 
 ## Column Configuration
 
-The column configuration how CSV columns are mapped to object properties.
+The column configuration defines how CSV columns are mapped to object properties.
 
 Operators can be used to change the way how the data is processed. See [Operator Overview](./02_Operators/README.md)
 
