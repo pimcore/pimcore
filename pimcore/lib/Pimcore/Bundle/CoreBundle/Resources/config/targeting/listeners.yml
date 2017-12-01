@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Targeting\EventListener\TargetingListener:
+        calls:
+            - [setStopwatch, ['@?debug.stopwatch']]
+
+    Pimcore\Targeting\EventListener\DocumentTargetGroupListener: ~

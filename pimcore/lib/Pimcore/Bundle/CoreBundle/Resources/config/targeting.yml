@@ -4,25 +4,13 @@ services:
         autoconfigure: true
         public: false
 
-    GeoIp2\ProviderInterface: '@GeoIp2\Database\Reader'
-    GeoIp2\Database\Reader:
-        arguments:
-            $filename: '%pimcore.geoip.db_file%'
-
-    Pimcore\Targeting\EventListener\TargetingListener:
-        calls:
-            - [setStopwatch, ['@?debug.stopwatch']]
-
-    Pimcore\Targeting\EventListener\DocumentTargetGroupListener: ~
-
     #
     # TARGETING STORAGE
     #
-
-    Pimcore\Targeting\Storage\TargetingStorageInterface: '@Pimcore\Targeting\Storage\CookieStorage'
-
-    # Session
-    Pimcore\Targeting\Storage\SessionStorage: ~
+    # The TargetingStorageInterface alias will be set to whatever service_id is configured
+    # in pimcore.targeting.service_id. The services below are just the core storages, but
+    # it's possible to define a custom service which can be configured via service_id.
+    #
 
     # Cookie
     Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
@@ -34,19 +22,23 @@ services:
         arguments:
             $saveHandler: '@Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler'
 
+    # Session Storage. If this is used, the pimcore.targeting.session.enabled entry
+    # must be set to true to load the session configurator.
+    Pimcore\Targeting\Storage\SessionStorage: ~
+
     # Database
     Pimcore\Targeting\Storage\DbStorage: ~
 
-    # Redis
-    pimcore.targeting.storage.redis.connection:
-        class: Credis_Client
-        factory: [Pimcore\Storage\Redis\ConnectionFactory, createConnection]
-        arguments:
-            - { server: 127.0.0.1, database: 7 }
+    # Example for redis
+    # pimcore.targeting.storage.redis.connection:
+    #    class: Credis_Client
+    #    factory: [Pimcore\Storage\Redis\ConnectionFactory, createConnection]
+    #    arguments:
+    #        - { server: 127.0.0.1, database: 7 }
 
-    Pimcore\Targeting\Storage\RedisStorage:
-        arguments:
-            $redis: '@pimcore.targeting.storage.redis.connection'
+    # Pimcore\Targeting\Storage\RedisStorage:
+    #     arguments:
+    #         $redis: '@pimcore.targeting.storage.redis.connection'
 
     # Example for fallback
     # Pimcore\Targeting\Storage\FallbackStorage:
@@ -55,6 +47,9 @@ services:
     #        $fallbackStorage: '@Pimcore\Targeting\Storage\CookieStorage'
 
 
+    #
+    # VISITOR INFO
+    #
 
     Pimcore\Targeting\VisitorInfoStorageInterface: '@Pimcore\Targeting\VisitorInfoStorage'
     Pimcore\Targeting\VisitorInfoStorage: ~
@@ -63,9 +58,15 @@ services:
         calls:
             - [setStopwatch, ['@?debug.stopwatch']]
 
+
     #
     # DATA PROVIDERS
     #
+
+    GeoIp2\ProviderInterface: '@GeoIp2\Database\Reader'
+    GeoIp2\Database\Reader:
+        arguments:
+            $filename: '%pimcore.geoip.db_file%'
 
     Pimcore\Targeting\DataLoaderInterface: '@Pimcore\Targeting\DataLoader'
     Pimcore\Targeting\DataLoader:
@@ -114,8 +115,9 @@ services:
     Pimcore\Targeting\ActionHandler\Redirect: ~
     Pimcore\Targeting\ActionHandler\CodeSnippet: ~
 
-    Pimcore\Targeting\Session\SessionConfigurator:
-        tags:
-            - { name: pimcore.session.configurator }
+
+    #
+    # DOCUMENT HANDLING
+    #
 
     Pimcore\Targeting\Document\DocumentTargetingConfigurator: ~
