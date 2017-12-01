@@ -309,9 +309,9 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
     },
 
-    preview: function() {
+    preview: function(rowIndex) {
         if (this.importConfigId) {
-            this.doPreview();
+            this.doPreview(rowIndex);
         } else {
             Ext.Msg.show({
                 title: t('no_configuration'),
@@ -320,7 +320,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 icon: Ext.Msg.QUESTION,
                 fn: function(btn) {
                     if (btn === 'yes') {
-                        this.doPreview();
+                        this.doPreview(rowIndex);
                     }
                 }.bind(this)
             });
@@ -580,7 +580,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
         Ext.Ajax.request({
             url: "/admin/object-helper/import-export-config",
             params: {
-                gridConfigId: gridConfigId
+                gridConfigId: gridConfigId,
+                classId: this.classId
             },
             success: function (response) {
 
