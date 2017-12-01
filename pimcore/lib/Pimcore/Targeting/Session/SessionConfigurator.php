@@ -17,14 +17,24 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Session;
 
+use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
+use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Session\SessionConfiguratorInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class SessionConfigurator implements SessionConfiguratorInterface
+class SessionConfigurator implements SessionConfiguratorInterface, EventSubscriberInterface
 {
     const TARGETING_BAG_SESSION = 'pimcore_targeting_session';
     const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys'
+        ];
+    }
 
     public function configure(SessionInterface $session)
     {
@@ -38,11 +48,12 @@ class SessionConfigurator implements SessionConfiguratorInterface
         $session->registerBag($visitorBag);
     }
 
-    public static function getTargetingStorageKeys(): array
+    public function configureIgnoredSessionKeys(IgnoredSessionKeysEvent $event)
     {
-        return [
+        // configures full page cache to ignore session data in targeting storage
+        $event->setKeys(array_merge($event->getKeys(), [
             '_' . self::TARGETING_BAG_SESSION,
             '_' . self::TARGETING_BAG_VISITOR
-        ];
+        ]));
     }
 }

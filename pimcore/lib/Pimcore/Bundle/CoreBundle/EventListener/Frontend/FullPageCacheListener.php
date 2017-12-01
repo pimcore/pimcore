@@ -15,13 +15,12 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Cache as CacheManager;
+use Pimcore\Cache;
+use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
-use Pimcore\Targeting\Session\SessionConfigurator;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -35,6 +34,11 @@ class FullPageCacheListener
      * @var VisitorInfoStorageInterface
      */
     private $visitorInfoStorage;
+
+    /**
+     * @var SessionStatus
+     */
+    private $sessionStatus;
 
     /**
      * @var bool
@@ -66,9 +70,13 @@ class FullPageCacheListener
      */
     protected $defaultCacheKey;
 
-    public function __construct(VisitorInfoStorageInterface $visitorInfoStorage)
+    public function __construct(
+        VisitorInfoStorageInterface $visitorInfoStorage,
+        SessionStatus $sessionStatus
+    )
     {
         $this->visitorInfoStorage = $visitorInfoStorage;
+        $this->sessionStatus      = $sessionStatus;
     }
 
     /**
@@ -256,7 +264,7 @@ class FullPageCacheListener
         $cacheKey = null;
         $cacheItem = null;
         foreach ($cacheKeys as $cacheKey) {
-            $cacheItem = CacheManager::load($cacheKey);
+            $cacheItem = Cache::load($cacheKey);
             if ($cacheItem) {
                 break;
             }
@@ -311,7 +319,7 @@ class FullPageCacheListener
             return;
         }
 
-        if ($this->enabled && $this->disabledBySession($request)) {
+        if ($this->enabled && $this->sessionStatus->isDisabledBySession($request)) {
             $this->disable('Session in use');
         }
 
@@ -347,7 +355,7 @@ class FullPageCacheListener
                     $tags = ['output_lifetime'];
                 }
 
-                CacheManager::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
+                Cache::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
             } catch (\Exception $e) {
                 Logger::error($e);
 
@@ -356,7 +364,7 @@ class FullPageCacheListener
         } else {
             // output-cache was disabled, add "output" as cleared tag to ensure that no other "output" tagged elements
             // like the inc and snippet cache get into the cache
-            CacheManager::addIgnoredTagOnSave('output_inline');
+            Cache::addIgnoredTagOnSave('output_inline');
         }
     }
 
@@ -374,38 +382,6 @@ class FullPageCacheListener
 
         if (!empty($visitorInfo->getTargetGroupAssignments())) {
             return true;
-        }
-
-        return false;
-    }
-
-    private function disabledBySession(Request $request): bool
-    {
-        if (!$request->hasSession() || empty($request->getSession()->getId())) {
-            return false;
-        }
-
-        // we fall back to $_SESSION from here on as the session API does not expose a list of namespaces
-        $sessionData = $_SESSION ?? null;
-        if (empty($sessionData)) {
-            return false;
-        }
-
-        if (!is_array($sessionData)) {
-            return false;
-        }
-
-        // disable full page cache if any session key besides
-        // Symfony Metadata and Targeting have data
-        $ignoredSessionKeys = array_merge(
-            ['_sf2_meta'],
-            SessionConfigurator::getTargetingStorageKeys()
-        );
-
-        foreach ($sessionData as $key => $value) {
-            if (!in_array($key, $ignoredSessionKeys) && !empty($value)) {
-                return true;
-            }
         }
 
         return false;

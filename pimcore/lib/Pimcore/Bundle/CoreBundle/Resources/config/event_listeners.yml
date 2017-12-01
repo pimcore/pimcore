@@ -137,6 +137,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -107 }
 
+    Pimcore\Cache\FullPage\SessionStatus:
+        arguments:
+            $symfonyMetadataStorageKey: '%session.metadata.storage_key%'
+
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener:
         public: true
         tags:
