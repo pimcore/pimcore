@@ -51,11 +51,14 @@ class Service
         if (!$type) {
             $type = 'input';
         }
-        $className = '\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\' . ucfirst($type);
+
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+
         /** @var $dataDefinition \Pimcore\Model\DataObject\ClassDefinition\Data */
-        $dataDefinition = new $className();
+        $dataDefinition = $loader->build($type);
 
         $dataDefinition->setValues($definition);
+        $className = get_class($dataDefinition);
 
         if (method_exists($className, '__set_state')) {
             $dataDefinition = $className::__set_state($dataDefinition);
