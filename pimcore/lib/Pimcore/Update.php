@@ -430,7 +430,7 @@ class Update
             $process->mustRun();
         } catch (\Exception $e) {
             Logger::error($e);
-            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>" . $command . "</pre> Please run it manually on commandline!";
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>" . $command . "</pre> Please run it manually on commandline! (with the PHP user, e.g. su -l www-data -s /bin/bash)";
         }
 
         return [
@@ -454,7 +454,7 @@ class Update
             $process->mustRun();
         } catch (\Exception $e) {
             Logger::error($e);
-            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>" . $command . "</pre> Please run it manually on commandline!";
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>" . $command . "</pre> Please run it manually on commandline! (with the PHP user, e.g. su -l www-data -s /bin/bash)";
         }
 
         return [
