@@ -424,12 +424,13 @@ class Update
 
             $composerOptions = array_merge(['-n'], $options);
 
-            $process = new Process($composerPath . ' update ' . implode(' ', $composerOptions) . ' -d ' . PIMCORE_COMPOSER_FILE_PATH);
+            $command = $composerPath . ' update ' . implode(' ', $composerOptions) . ' -d ' . PIMCORE_COMPOSER_FILE_PATH;
+            $process = new Process($command);
             $process->setTimeout(900);
             $process->mustRun();
         } catch (\Exception $e) {
             Logger::error($e);
-            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer update</pre> Please run it manually on commandline!";
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>" . $command . "</pre> Please run it manually on commandline!";
         }
 
         return [
@@ -447,12 +448,13 @@ class Update
 
         try {
             $composerPath = \Pimcore\Tool\Console::getExecutable('composer');
-            $process = new Process($composerPath . ' dumpautoload -d ' . PIMCORE_COMPOSER_FILE_PATH);
+            $command = $composerPath . ' dumpautoload -d ' . PIMCORE_COMPOSER_FILE_PATH;
+            $process = new Process();
             $process->setTimeout(300);
             $process->mustRun();
         } catch (\Exception $e) {
             Logger::error($e);
-            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer dumpautoload</pre> Please run it manually on commandline!";
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>" . $command . "</pre> Please run it manually on commandline!";
         }
 
         return [
