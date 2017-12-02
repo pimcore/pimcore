@@ -82,7 +82,7 @@ $entries->setOrder("desc");
 $entries->setCondition("name LIKE ?", ["%bernie%"]); // use prepared statements! Mysqli only supports ? placeholders
 // or
 $entries->setCondition("name LIKE :name", ["name" => "%bernie%"]); // With PDO_Mysql you can use named parameters
-// to add param to the condition
+// to add param to the condition (cannot be used with setCondition in the same listing, you should use setCondition OR addConditionParam but not both)
 $entries->addConditionParam("city = ?", "New York", "AND"); // concatenator can be AND or OR
    
 //if necessary you can of course custom build your query
