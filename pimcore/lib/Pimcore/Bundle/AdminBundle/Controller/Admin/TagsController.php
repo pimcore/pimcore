@@ -15,7 +15,9 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -301,6 +303,13 @@ class TagsController extends AdminController
 
         $childsList->setCondition($condition, $object->getRealFullPath() . '/%');
 
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $childsList,
+            'context' => []
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $childsList = $beforeListLoadEvent->getArgument('list');
+
         return $childsList->loadIdList();
     }
 
@@ -325,6 +334,13 @@ class TagsController extends AdminController
 
         $childsList->setCondition($condition, $asset->getRealFullPath() . '/%');
 
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $childsList,
+            'context' => []
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $childsList = $beforeListLoadEvent->getArgument('list');
+
         return $childsList->loadIdList();
     }
 
@@ -348,6 +364,13 @@ class TagsController extends AdminController
         }
 
         $childsList->setCondition($condition, $document->getRealFullPath() . '/%');
+
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $childsList,
+            'context' => []
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $childsList = $beforeListLoadEvent->getArgument('list');
 
         return $childsList->loadIdList();
     }

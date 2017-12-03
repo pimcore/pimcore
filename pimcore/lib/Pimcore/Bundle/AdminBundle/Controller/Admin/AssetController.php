@@ -146,19 +146,21 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function treeGetChildsByIdAction(Request $request)
     {
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
         $assets = [];
         $cv = false;
-        $asset = Asset::getById($request->get('node'));
+        $asset = Asset::getById($allParams['node']);
 
-        $limit = intval($request->get('limit'));
-        if (!$request->get('limit')) {
+        $limit = intval($allParams['limit']);
+        if (!$allParams['limit']) {
             $limit = 100000000;
         }
-        $offset = intval($request->get('start'));
+        $offset = intval($allParams['start']);
 
         if ($asset->hasChildren()) {
-            if ($request->get('view')) {
-                $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get('view'));
+            if ($allParams['view']) {
+                $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
             }
 
             // get assets
@@ -180,6 +182,14 @@ class AssetController extends ElementControllerBase implements EventedController
             $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, assets.filename ASC", false);
 
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
+
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $childsList,
+                'context' => $allParams
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $childsList = $beforeListLoadEvent->getArgument('list');
+
             $childs = $childsList->load();
 
             foreach ($childs as $childAsset) {
@@ -189,7 +199,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         }
 
-        if ($request->get('limit')) {
+        if ($allParams['limit']) {
             return $this->json([
                 'offset' => $offset,
                 'limit' => $limit,
@@ -1425,16 +1435,25 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function getFolderContentPreviewAction(Request $request)
     {
-        $folder = Asset::getById($request->get('id'));
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
+        $filterPrepareEvent = new GenericEvent($this, [
+            'requestParams' => $allParams
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+
+        $allParams = $filterPrepareEvent->getArgument('requestParams');
+
+        $folder = Asset::getById($allParams['id']);
 
         $start = 0;
         $limit = 10;
 
-        if ($request->get('limit')) {
-            $limit = $request->get('limit');
+        if ($allParams['limit']) {
+            $limit = $allParams['limit'];
         }
-        if ($request->get('start')) {
-            $start = $request->get('start');
+        if ($allParams['start']) {
+            $start = $allParams['start'];
         }
 
         $conditionFilters = [];
@@ -1459,6 +1478,15 @@ class AssetController extends ElementControllerBase implements EventedController
         $list->setOrderKey('filename');
         $list->setOrder('asc');
 
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $list,
+            'context' => $allParams
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $list = $beforeListLoadEvent->getArgument('list');
+
+        $list->load();
+
         $assets = [];
 
         foreach ($list as $asset) {
@@ -1477,22 +1505,32 @@ class AssetController extends ElementControllerBase implements EventedController
                     $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
                 }
 
-                $assets[] = [
-                    'id' => $asset->getId(),
-                    'type' => $asset->getType(),
-                    'filename' => $asset->getFilename(),
-                    'filenameDisplay' => $filenameDisplay,
-                    'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true',
-                    'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
-                ];
+                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+                if ($asset->isAllowed('list')) {
+                    $assets[] = [
+                        'id' => $asset->getId(),
+                        'type' => $asset->getType(),
+                        'filename' => $asset->getFilename(),
+                        'filenameDisplay' => $filenameDisplay,
+                        'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true',
+                        'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
+                    ];
+                }
             }
         }
 
-        return $this->json([
-            'assets' => $assets,
-            'success' => true,
-            'total' => $list->getTotalCount()
+		// We need to temporary use data key to be compatible with the ASSET_LIST_AFTER_LIST_LOAD global event
+        $result = ['data' => $assets, 'success' => true, 'total' => $list->getTotalCount()];
+
+        $afterListLoadEvent = new GenericEvent($this, [
+            'list' => $result,
+            'context' => $allParams
         ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $result = $afterListLoadEvent->getArgument('list');
+
+		// Here we revert to assets key
+        return $this->json(['assets' => $result['data'], 'success' => $result['success'], 'total' => $result['total']]);
     }
 
     /**
@@ -2072,28 +2110,37 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function gridProxyAction(Request $request)
     {
-        if ($request->get('data')) {
-            if ($request->get('xaction') == 'update') {
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
+        $filterPrepareEvent = new GenericEvent($this, [
+            'requestParams' => $allParams
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+
+        $allParams = $filterPrepareEvent->getArgument('requestParams');
+		
+        if ($allParams['data']) {
+            if ($allParams['xaction'] == 'update') {
                 //TODO probably not needed
             }
         } else {
             $db = \Pimcore\Db::get();
             // get list of objects
-            $folder = Asset::getById($request->get('folderId'));
+            $folder = Asset::getById($allParams['folderId']);
 
             $start = 0;
             $limit = 20;
             $orderKey = 'id';
             $order = 'ASC';
 
-            if ($request->get('limit')) {
-                $limit = $request->get('limit');
+            if ($allParams['limit']) {
+                $limit = $allParams['limit'];
             }
-            if ($request->get('start')) {
-                $start = $request->get('start');
+            if ($allParams['start']) {
+                $start = $allParams['start'];
             }
 
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
                 if ($orderKey == 'fullpath') {
@@ -2106,14 +2153,14 @@ class AssetController extends ElementControllerBase implements EventedController
             $list = new Asset\Listing();
 
             $conditionFilters = [];
-            if ($request->get('only_direct_children') == 'true') {
+            if ($allParams['only_direct_children'] == 'true') {
                 $conditionFilters[] = 'parentId = ' . $folder->getId();
             } else {
                 $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
             }
 
             $conditionFilters[] = "type != 'folder'";
-            $filterJson = $request->get('filter');
+            $filterJson = $allParams['filter'];
             if ($filterJson) {
                 $filters = $this->decodeJson($filterJson);
                 foreach ($filters as $filter) {
@@ -2180,6 +2227,13 @@ class AssetController extends ElementControllerBase implements EventedController
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $list,
+                'context' => $allParams
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $list = $beforeListLoadEvent->getArgument('list');
+
             $list->load();
 
             $assets = [];
@@ -2189,18 +2243,30 @@ class AssetController extends ElementControllerBase implements EventedController
                 $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
                 $size = @filesize($filename);
 
-                $assets[] = [
-                    'id' => $asset->getid(),
-                    'type' => $asset->getType(),
-                    'fullpath' => $asset->getRealFullPath(),
-                    'creationDate' => $asset->getCreationDate(),
-                    'modificationDate' => $asset->getModificationDate(),
-                    'size' => formatBytes($size),
-                    'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
-                ];
+                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+                if ($asset->isAllowed('list')) {
+                    $assets[] = [
+                        'id' => $asset->getid(),
+                        'type' => $asset->getType(),
+                        'fullpath' => $asset->getRealFullPath(),
+                        'creationDate' => $asset->getCreationDate(),
+                        'modificationDate' => $asset->getModificationDate(),
+                        'size' => formatBytes($size),
+                        'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
+                    ];
+                }
             }
 
-            return $this->json(['data' => $assets, 'success' => true, 'total' => $list->getTotalCount()]);
+			$result = ['data' => $assets, 'success' => true, 'total' => $list->getTotalCount()];
+
+            $afterListLoadEvent = new GenericEvent($this, [
+                'list' => $result,
+                'context' => $allParams
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $result = $afterListLoadEvent->getArgument('list');
+
+            return $this->json($result);
         }
     }
 

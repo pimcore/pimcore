@@ -117,6 +117,129 @@ final class AdminEvents
     const SEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.search.list.afterListLoad';
 
     /**
+     * Fired before the request params are parsed. This event apply to the grid list.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - requestParams | contains the request parameters
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_LIST_BEFORE_FILTER_PREPARE = 'pimcore.admin.object.list.beforeFilterPrepare';
+
+    /**
+     * Allows you to modify the object list before it is loaded. This is a global event (search list, grid list, tree list, ...).
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | the object list
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.object.list.beforeListLoad';
+
+    /**
+     * Allows you to modify the the result after the list was loaded. This event apply to the grid list.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | raw result as an array
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_LIST_AFTER_LIST_LOAD = 'pimcore.admin.object.list.afterListLoad';
+
+    /**
+     * Fired before the request params are parsed. This event apply to both the folder content preview list and the grid list.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - requestParams | contains the request parameters
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_BEFORE_FILTER_PREPARE = 'pimcore.admin.asset.list.beforeFilterPrepare';
+
+    /**
+     * Allows you to modify the asset list before it is loaded. This is a global event (folder content preview list, grid list, tree list, ...).
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | the object list
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.asset.list.beforeListLoad';
+
+    /**
+     * Allows you to modify the the result after the list was loaded. This event apply to both the folder content preview list and the grid list.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | raw result as an array
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_AFTER_LIST_LOAD = 'pimcore.admin.asset.list.afterListLoad';
+
+    /**
+     * Fired before the request params are parsed. This event apply to the seo panel tree.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - requestParams | contains the request parameters
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const DOCUMENT_LIST_BEFORE_FILTER_PREPARE = 'pimcore.admin.document.list.beforeFilterPrepare';
+
+    /**
+     * Allows you to modify the document list before it is loaded. This is a global event (seo panel tree, tree list, ...).
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | the object list
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const DOCUMENT_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.document.list.beforeListLoad';
+
+    /**
+     * Allows you to modify the the result after the list was loaded. This event apply to the seo panel tree.
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - list | raw result as an array
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const DOCUMENT_LIST_AFTER_LIST_LOAD = 'pimcore.admin.document.list.afterListLoad';
+
+    /**
      * Fired before the request params are parsed.
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController

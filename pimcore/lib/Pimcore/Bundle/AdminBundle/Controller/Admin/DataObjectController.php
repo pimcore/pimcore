@@ -51,6 +51,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function treeGetChildsByIdAction(Request $request)
     {
+        $allParams = array_merge($request->request->all(), $request->query->all());
+		
         $object = DataObject\AbstractObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
@@ -115,6 +117,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setObjectTypes($objectTypes);
 
             Element\Service::addTreeFilterJoins($cv, $childsList);
+
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $childsList,
+                'context' => $allParams
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
 
@@ -1522,7 +1531,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function gridProxyAction(Request $request)
     {
-        $requestedLanguage = $request->get('language');
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
+        $filterPrepareEvent = new GenericEvent($this, [
+            'requestParams' => $allParams
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+
+        $allParams = $filterPrepareEvent->getArgument('requestParams');
+		
+        $requestedLanguage = $allParams['language'];
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
                 //                $this->get('translator')->setLocale($requestedLanguage);
@@ -1532,10 +1550,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $requestedLanguage = $request->getLocale();
         }
 
-        if ($request->get('data')) {
-            if ($request->get('xaction') == 'update') {
+        if ($allParams['data']) {
+            if ($allParams['xaction'] == 'update') {
                 try {
-                    $data = $this->decodeJson($request->get('data'));
+                    $data = $this->decodeJson($allParams['data']);
 
                     // save
                     $object = DataObject::getById($data['id']);
@@ -1644,15 +1662,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                     $object->save();
 
-                    return $this->json(['data' => DataObject\Service::gridObjectData($object, $request->get('fields'), $requestedLanguage), 'success' => true]);
+                    return $this->json(['data' => DataObject\Service::gridObjectData($object, $allParams['fields'], $requestedLanguage), 'success' => true]);
                 } catch (\Exception $e) {
                     return $this->json(['success' => false, 'message' => $e->getMessage()]);
                 }
             }
         } else {
             // get list of objects
-            $folder = DataObject::getById($request->get('folderId'));
-            $class = DataObject\ClassDefinition::getById($request->get('classId'));
+            $folder = DataObject::getById($allParams['folderId']);
+            $class = DataObject\ClassDefinition::getById($allParams['classId']);
             $className = $class->getName();
 
             $colMappings = [
@@ -1671,8 +1689,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $fields = [];
             $bricks = [];
-            if ($request->get('fields')) {
-                $fields = $request->get('fields');
+            if ($allParams['fields']) {
+                $fields = $allParams['fields'];
 
                 foreach ($fields as $f) {
                     $parts = explode('~', $f);
@@ -1684,14 +1702,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
 
-            if ($request->get('limit')) {
-                $limit = $request->get('limit');
+            if ($allParams['limit']) {
+                $limit = $allParams['limit'];
             }
-            if ($request->get('start')) {
-                $start = $request->get('start');
+            if ($allParams['start']) {
+                $start = $allParams['start'];
             }
 
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
 
             $doNotQuote = false;
 
@@ -1722,7 +1740,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $list = new $listClass();
 
             $conditionFilters = [];
-            if ($request->get('only_direct_children') == 'true') {
+            if ($allParams['only_direct_children'] == 'true') {
                 $conditionFilters[] = 'o_parentId = ' . $folder->getId();
             } else {
                 $quotedPath = $list->quote($folder->getRealFullPath());
@@ -1744,15 +1762,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $featureFilters = false;
 
             // create filter condition
-            if ($request->get('filter')) {
-                $conditionFilters[] = DataObject\Service::getFilterCondition($request->get('filter'), $class);
-                $featureFilters = DataObject\Service::getFeatureFilters($request->get('filter'), $class);
+            if ($allParams['filter']) {
+                $conditionFilters[] = DataObject\Service::getFilterCondition($allParams['filter'], $class);
+                $featureFilters = DataObject\Service::getFeatureFilters($allParams['filter'], $class);
                 if ($featureFilters) {
                     $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
                 }
             }
-            if ($request->get('condition') && $this->getUser()->isAdmin()) {
-                $conditionFilters[] = '(' . $request->get('condition') . ')';
+            if ($allParams['condition'] && $this->getUser()->isAdmin()) {
+                $conditionFilters[] = '(' . $allParams['condition'] . ')';
             }
 
             if (!empty($bricks)) {
@@ -1782,15 +1800,34 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
 
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $list,
+                'context' => $allParams
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $list = $beforeListLoadEvent->getArgument('list');
+
             $list->load();
 
             $objects = [];
             foreach ($list->getObjects() as $object) {
                 $o = DataObject\Service::gridObjectData($object, $fields, $requestedLanguage);
-                $objects[] = $o;
+                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_object is insufficient and could lead security breach
+                if ($object->isAllowed('list')) {
+                    $objects[] = $o;
+                }
             }
 
-            return $this->json(['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()]);
+			$result = ['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()];
+
+            $afterListLoadEvent = new GenericEvent($this, [
+                'list' => $result,
+                'context' => $allParams
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $result = $afterListLoadEvent->getArgument('list');
+
+            return $this->json($result);
         }
     }
 
