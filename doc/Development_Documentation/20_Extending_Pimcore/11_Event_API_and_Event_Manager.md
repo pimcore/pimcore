@@ -80,3 +80,11 @@ class TestListener {
 }
 ```
 
+### Hook into the list of objects in the tree, the grid list and the search panel
+
+There are some global events having effect on several places. One of those is `pimcore.admin.object.list.beforeListLoad`.
+The object list can be modified (changing condition for instance) before being loaded. This global event will apply to the tree, the grid list, the search panel and everywhere objects are listed in the Pimcore GUI.
+This way, it is possible to create custom permission rules to decide if the object should or not be listed (for instance, the user must be the owner of the object, ...).
+
+It extends the possibility further than just limiting list permissions folder by folder depending the user/role object workspace.
+To ensure maximum security, it is advisable to combine this with an object DI to overload isAllowed method with the same custom permission rules. This way proper permission is ensuring all the way (rest services, ...).
