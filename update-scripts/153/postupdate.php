@@ -1,10 +1,6 @@
 <?php
 
-//add permission for gdpr_data_extractor
-$permission = new \Pimcore\Model\User\Permission\Definition();
-$permission->setKey("gdpr_data_extractor");
-
-$res = new \Pimcore\Model\User\Permission\Definition\Dao();
-$res->configure(\Pimcore\Db::get());
-$res->setModel($permission);
-$res->save();
+$db = \Pimcore\Db::get();
+$db->insert('users_permission_definitions', ['key' => 'piwik_settings']);
+$db->insert('users_permission_definitions', ['key' => 'piwik_reports']);
+$db->insert('users_permission_definitions', ['key' => 'share_configurations']);

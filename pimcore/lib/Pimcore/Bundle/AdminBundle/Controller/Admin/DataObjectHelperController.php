@@ -1053,7 +1053,8 @@ class DataObjectHelperController extends AdminController
      */
     protected function updateImportConfigShares($importConfig, $configData)
     {
-        if (!$importConfig) {
+        $user = $this->getUser();
+        if (!$importConfig || $user->isAllowed("share_configurations")) {
             // nothing to do
             return;
         }
@@ -1093,7 +1094,8 @@ class DataObjectHelperController extends AdminController
      */
     protected function updateGridConfigShares($gridConfig, $metadata)
     {
-        if (!$gridConfig) {
+        $user = $this->getUser();
+        if (!$gridConfig || !$user->isAllowed("share_permissions")) {
             // nothing to do
             return;
         }

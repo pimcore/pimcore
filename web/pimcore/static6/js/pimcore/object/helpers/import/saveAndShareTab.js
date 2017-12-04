@@ -25,6 +25,8 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
 
         var data = this.config;
 
+        var user = pimcore.globalmanager.get("user");
+
         if (!this.saveAndShareForm) {
 
             this.saveAndShareForm = Ext.create('Ext.form.FormPanel', {
@@ -44,36 +46,40 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
         return this.saveAndShareForm;
     },
 
-    rebuildPanel: function() {
+    rebuildPanel: function () {
         this.saveAndShareForm.removeAll(true);
 
-        this.userStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: '/admin/user/get-users',
-                reader: {
-                    rootProperty: 'data',
-                    idProperty: 'id'
-                }
-            },
-            fields: ['id', 'label']
-        });
+        var user = pimcore.globalmanager.get("user");
+        if (user.isAllowed("share_configurations")) {
 
-        this.rolesStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: '/admin/user/get-roles',
-                reader: {
-                    rootProperty: 'data',
-                    idProperty: 'id'
-                }
-            },
-            fields: ['id', 'label']
-        });
+            this.userStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/user/get-users',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'id'
+                    }
+                },
+                fields: ['id', 'label']
+            });
+
+            this.rolesStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/user/get-roles',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'id'
+                    }
+                },
+                fields: ['id', 'label']
+            });
+        }
 
         this.nameField = new Ext.form.TextField({
             fieldLabel: t('name'),
@@ -94,7 +100,7 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
 
         this.saveAndShareForm.add(this.nameField, this.descriptionField);
 
-        var user = pimcore.globalmanager.get("user");
+
         if (user.admin) {
             this.shareGlobally = new Ext.form.field.Checkbox(
                 {
@@ -108,56 +114,60 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
             this.saveAndShareForm.add(this.shareGlobally);
         }
 
-        this.userSharingField = Ext.create('Ext.form.field.Tag', {
-            name: "sharedUserIds",
-            width: '100%',
-            height: 100,
-            fieldLabel: t("shared_users"),
-            queryDelay: 0,
-            resizable: true,
-            queryMode: 'local',
-            minChars: 1,
-            store: this.userStore,
-            displayField: 'label',
-            valueField: 'id',
-            forceSelection: true,
-            filterPickList: true,
-            value: this.config.shareSettings.sharedUserIds ? this.config.shareSettings.sharedUserIds : ""
-        });
+        if (user.isAllowed("share_configurations")) {
+            this.userSharingField = Ext.create('Ext.form.field.Tag', {
+                name: "sharedUserIds",
+                width: '100%',
+                height: 100,
+                fieldLabel: t("shared_users"),
+                queryDelay: 0,
+                resizable: true,
+                queryMode: 'local',
+                minChars: 1,
+                store: this.userStore,
+                displayField: 'label',
+                valueField: 'id',
+                forceSelection: true,
+                filterPickList: true,
+                value: this.config.shareSettings.sharedUserIds ? this.config.shareSettings.sharedUserIds : ""
+            });
 
-        this.rolesSharingField = Ext.create('Ext.form.field.Tag', {
-            name: "sharedRoleIds",
-            width: '100%',
-            height: 100,
-            fieldLabel: t("shared_roles"),
-            queryDelay: 0,
-            resizable: true,
-            queryMode: 'local',
-            minChars: 1,
-            store: this.rolesStore,
-            displayField: 'label',
-            valueField: 'id',
-            forceSelection: true,
-            filterPickList: true,
-            value: this.config.shareSettings.sharedRoleIds ? this.config.shareSettings.sharedRoleIds : ""
-        });
+            this.rolesSharingField = Ext.create('Ext.form.field.Tag', {
+                name: "sharedRoleIds",
+                width: '100%',
+                height: 100,
+                fieldLabel: t("shared_roles"),
+                queryDelay: 0,
+                resizable: true,
+                queryMode: 'local',
+                minChars: 1,
+                store: this.rolesStore,
+                displayField: 'label',
+                valueField: 'id',
+                forceSelection: true,
+                filterPickList: true,
+                value: this.config.shareSettings.sharedRoleIds ? this.config.shareSettings.sharedRoleIds : ""
+            });
 
-        this.saveAndShareForm.add(this.userSharingField, this.rolesSharingField);
+            this.saveAndShareForm.add(this.userSharingField, this.rolesSharingField);
+        }
     },
 
     commitData: function () {
         var form = this.saveAndShareForm.getForm();
         var data = form.getFieldValues();
-        if (data.sharedUserIds) {
-            data.sharedUserIds = data.sharedUserIds.join();
+        var user = pimcore.globalmanager.get("user");
+        if (user.isAllowed("share_configurations")) {
+            if (data.sharedUserIds) {
+                data.sharedUserIds = data.sharedUserIds.join();
+            }
+
+            if (data.sharedRoleIds) {
+                data.sharedRoleIds = data.sharedRoleIds.join();
+            }
+
+            this.config.shareSettings = data;
         }
 
-        if (data.sharedRoleIds) {
-            data.sharedRoleIds = data.sharedRoleIds.join();
-        }
-
-        this.config.shareSettings = data;
     }
-
-
 });

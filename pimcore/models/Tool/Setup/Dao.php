@@ -160,6 +160,7 @@ class Dao extends Model\Dao\AbstractDao
             ['key' => 'users'],
             ['key' => 'piwik_settings'],
             ['key' => 'piwik_reports'],
+            ['key' => 'share_configurations']
         ];
 
         foreach ($userPermissions as $up) {
