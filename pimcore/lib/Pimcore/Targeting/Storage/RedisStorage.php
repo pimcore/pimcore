@@ -87,10 +87,15 @@ class RedisStorage implements TargetingStorageInterface
 
         $key = $this->buildKey($visitorInfo, $scope);
 
-        // TODO pipeline
-        $this->redis->hSet($key, $name, $json);
-        $this->updateTimestamps($key);
-        $this->updateExpiry($scope, $key);
+        $currentCreatedAt = $this->getCurrentCreatedAt($key);
+
+        $multi = $this->redis->multi();
+        $multi->hSet($key, $name, $json);
+
+        $this->updateTimestamps($multi, $key, $currentCreatedAt);
+        $this->updateExpiry($multi, $scope, $key);
+
+        $multi->exec();
     }
 
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
@@ -148,24 +153,31 @@ class RedisStorage implements TargetingStorageInterface
 
         $key = $this->buildKey($visitorInfo, $scope);
 
-        // TODO pipeline
+        $currentCreatedAt = $this->getCurrentCreatedAt($key);
+
+        $multi = $this->redis->multi();
+
         if (!empty($values)) {
             $data = [];
             foreach ($values as $name => $value) {
                 $data[$name] = json_encode($value);
             }
 
-            $this->redis->hMSet($key, $data);
+            $multi->hMSet($key, $data);
         }
 
         // update created/updated at from storage
         $this->updateTimestamps(
+            $multi,
             $key,
+            $currentCreatedAt,
             $storage->getCreatedAt($visitorInfo, $scope),
             $storage->getUpdatedAt($visitorInfo, $scope)
         );
 
-        $this->updateExpiry($scope, $key);
+        $this->updateExpiry($multi, $scope, $key);
+
+        $multi->exec();
     }
 
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
@@ -199,27 +211,33 @@ class RedisStorage implements TargetingStorageInterface
         return sprintf('%s:%s', $visitorInfo->getVisitorId(), $scope);
     }
 
+    private function getCurrentCreatedAt(string $key): int
+    {
+        return (int)$this->redis->hGet($key, self::STORAGE_KEY_CREATED_AT);
+    }
+
     private function updateTimestamps(
+        \Credis_Client $multi,
         string $key,
+        int $currentCreatedAt,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
     )
     {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
-        if (!$this->redis->hGet($key, self::STORAGE_KEY_CREATED_AT)) {
-            $this->redis->hSet($key, self::STORAGE_KEY_CREATED_AT, (string)($timestamps['createdAt']->getTimestamp()));
-            $this->redis->hSet($key, self::STORAGE_KEY_UPDATED_AT, (string)($timestamps['updatedAt']->getTimestamp()));
-        } else {
-            $this->redis->hSet($key, self::STORAGE_KEY_UPDATED_AT, (string)($timestamps['updatedAt']->getTimestamp()));
+        if (0 === $currentCreatedAt) {
+            $multi->hSet($key, self::STORAGE_KEY_CREATED_AT, (string)($timestamps['createdAt']->getTimestamp()));
         }
+
+        $multi->hSet($key, self::STORAGE_KEY_UPDATED_AT, (string)($timestamps['updatedAt']->getTimestamp()));
     }
 
-    private function updateExpiry(string $scope, string $key)
+    private function updateExpiry(\Credis_Client $multi, string $scope, string $key)
     {
         $expiry = $this->expiryFor($scope);
         if ($expiry > 0) {
-            $this->redis->expire($key, $expiry);
+            $multi->expire($key, $expiry);
         }
     }
 
