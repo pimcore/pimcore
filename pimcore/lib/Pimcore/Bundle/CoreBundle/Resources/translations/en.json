@@ -875,7 +875,7 @@
   "error_moving_document": "Your document could not be moved.",
   "translations": "Website Translations",
   "translations_admin": "Admin Translations",
-  "debug_description": "With debug-mode on errors and warnings are displayed directly in the browser, otherwise they are deactivated and the error-controller is active (Error Page). Multiple IP addresses can be specified by separating them with a comma.",
+  "debug_description": "With debug-mode on errors and warnings are displayed directly in the browser, otherwise they are deactivated and the error-controller is active (Error Page). Multiple IP addresses can be specified by separating them with a comma. You can also specify IP ranges by specifying a mask, e.g. 192.168.1.0/24",
   "icon": "Icon",
   "add_document": "Add document",
   "please_enter_the_name_of_the_new_document": "Please enter the name of the new document",

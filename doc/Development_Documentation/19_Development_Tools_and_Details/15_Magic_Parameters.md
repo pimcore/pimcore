@@ -40,3 +40,15 @@ pimcore:
             # you could also change the parameter from pimcore_debug_translations to something else
             parameter: my_custom_parameter
 ```
+
+
+## Magic cookies
+
+### `pimcore_disable_debug`
+
+You can set the `pimcore_disable_debug` cookie to something truthy (e.g. `1`) to disable the debug mode for requests
+from your browser. The cookie will only be checked if debug mode would be turned on (e.g. is activated and your IP matches).
+
+The following bookmarklet can be used to set the cookie:
+
+* <a href="javascript:(function()%7Bdocument.cookie%3D%22pimcore_disable_debug%3D1%3B%20path%3D%2F%22%7D)()">Disable Pimcore Debug</a> 
