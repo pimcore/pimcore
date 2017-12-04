@@ -29,4 +29,14 @@ final class FullPageCacheEvents
      * @var string
      */
     const IGNORED_SESSION_KEYS = 'pimcore.cache.full_page.ignored_session_keys';
+
+    /**
+     * Fired before the response is written to cache. Can be used to set or purge
+     * data on the cached response.
+     *
+     * @Event("Pimcore\Event\Cache\FullPage\PrepareResponseEvent")
+     *
+     * @var string
+     */
+    const PREPARE_RESPONSE = 'pimcore.cache.full_page.prepare_response';
 }

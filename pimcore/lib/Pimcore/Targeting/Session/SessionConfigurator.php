@@ -18,9 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Session;
 
 use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
+use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Session\Attribute\NamespacedAttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -32,7 +34,8 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
     public static function getSubscribedEvents()
     {
         return [
-            FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys'
+            FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys',
+            FullPageCacheEvents::PREPARE_RESPONSE     => 'prepareFullPageCacheResponse'
         ];
     }
 
@@ -55,5 +58,38 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
             '_' . self::TARGETING_BAG_SESSION,
             '_' . self::TARGETING_BAG_VISITOR
         ]));
+    }
+
+    /**
+     * Removes session cookie from cached response
+     *
+     * @param PrepareResponseEvent $event
+     */
+    public function prepareFullPageCacheResponse(PrepareResponseEvent $event)
+    {
+        $request  = $event->getRequest();
+        $response = $event->getResponse();
+
+        if (!$request->hasSession()) {
+            return;
+        }
+
+        $sessionName = $request->getSession()->getName();
+        if (empty($sessionName)) {
+            return;
+        }
+
+        $cookies = $response->headers->getCookies();
+
+        /** @var Cookie $cookie */
+        foreach ($cookies as $cookie) {
+            if ($cookie->getName() === $sessionName) {
+                $response->headers->removeCookie(
+                    $cookie->getName(),
+                    $cookie->getPath(),
+                    $cookie->getDomain()
+                );
+            }
+        }
     }
 }

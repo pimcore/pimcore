@@ -17,10 +17,13 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache;
 use Pimcore\Cache\FullPage\SessionStatus;
+use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
+use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -39,6 +42,11 @@ class FullPageCacheListener
      * @var SessionStatus
      */
     private $sessionStatus;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @var bool
@@ -72,11 +80,13 @@ class FullPageCacheListener
 
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
-        SessionStatus $sessionStatus
+        SessionStatus $sessionStatus,
+        EventDispatcherInterface $eventDispatcher
     )
     {
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->sessionStatus      = $sessionStatus;
+        $this->eventDispatcher    = $eventDispatcher;
     }
 
     /**
@@ -348,7 +358,10 @@ class FullPageCacheListener
                     $cacheKey .= '_' . $deviceDetector->getDevice();
                 }
 
-                $cacheItem = $response;
+                $event = new PrepareResponseEvent($request, $response);
+                $this->eventDispatcher->dispatch(FullPageCacheEvents::PREPARE_RESPONSE, $event);
+
+                $cacheItem = $event->getResponse();
 
                 $tags = ['output'];
                 if ($this->lifetime) {

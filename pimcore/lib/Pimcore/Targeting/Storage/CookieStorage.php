@@ -29,6 +29,9 @@ class CookieStorage implements TargetingStorageInterface
 {
     use TimestampsTrait;
 
+    const COOKIE_NAME_SESSION = '_pc_tss'; // tss = targeting session storage
+    const COOKIE_NAME_VISITOR = '_pc_tvs'; // tvs = targeting visitor storage
+
     const STORAGE_KEY_CREATED_AT = '_c';
     const STORAGE_KEY_UPDATED_AT = '_u';
 
@@ -61,8 +64,8 @@ class CookieStorage implements TargetingStorageInterface
      * @var array
      */
     private $scopeCookieMapping = [
-        self::SCOPE_SESSION => '_pc_tss', // tss = targeting session storage
-        self::SCOPE_VISITOR => '_pc_tvs', // tvs = targeting visitor storage
+        self::SCOPE_SESSION => self::COOKIE_NAME_SESSION,
+        self::SCOPE_VISITOR => self::COOKIE_NAME_VISITOR,
     ];
 
     public function __construct(

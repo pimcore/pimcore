@@ -9,3 +9,4 @@ services:
             - [setStopwatch, ['@?debug.stopwatch']]
 
     Pimcore\Targeting\EventListener\DocumentTargetGroupListener: ~
+    Pimcore\Targeting\EventListener\FullPageCacheCookieCleanupListener: ~
