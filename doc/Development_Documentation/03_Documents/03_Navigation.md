@@ -51,7 +51,7 @@ echo $this->navigation()->render($mainNavigation);
 {% set mainNavigation = pimcore_build_nav(document, navStartNode) %}
 
 {# later you can render the navigation #}
-{{ pimcore_render_nav(mainNavigation }}
+{{ pimcore_render_nav(mainNavigation) }}
 ```
 
 </div>
