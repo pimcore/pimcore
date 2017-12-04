@@ -352,7 +352,7 @@ class Update
             } catch (\Exception $e) {
                 Logger::error($e);
                 $outputMessage .= 'EXCEPTION: ' . $e->getMessage();
-                $outputMessage .= '<br>For details please have a look into the log files in /var/logs<br>';
+                $outputMessage .= '<br>For details please have a look into the log files in /var/logs or /var/installer/logs<br>';
             }
             $outputMessage .= ob_get_clean();
         }
