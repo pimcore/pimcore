@@ -105,7 +105,7 @@ pimcore.settings.targeting.rules.item = Class.create({
                 value: this.data.description
             }, {
                 name: "scope",
-                fieldLabel: t("matching_scope"),
+                fieldLabel: t("action_scope"),
                 xtype: "combo",
                 width: 350,
                 value: this.data["scope"],
