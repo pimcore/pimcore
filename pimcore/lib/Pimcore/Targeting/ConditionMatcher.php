@@ -21,6 +21,7 @@ use Pimcore\Targeting\Condition\ConditionInterface;
 use Pimcore\Targeting\Condition\VariableConditionInterface;
 use Pimcore\Targeting\ConditionMatcher\ExpressionBuilder;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ConditionMatcher implements ConditionMatcherInterface
@@ -41,6 +42,11 @@ class ConditionMatcher implements ConditionMatcherInterface
     private $expressionLanguage;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var array
      */
     private $collectedVariables = [];
@@ -48,12 +54,14 @@ class ConditionMatcher implements ConditionMatcherInterface
     public function __construct(
         ConditionFactoryInterface $conditionFactory,
         DataLoaderInterface $dataLoader,
-        ExpressionLanguage $expressionLanguage
+        ExpressionLanguage $expressionLanguage,
+        LoggerInterface $logger
     )
     {
         $this->conditionFactory   = $conditionFactory;
         $this->dataLoader         = $dataLoader;
         $this->expressionLanguage = $expressionLanguage;
+        $this->logger             = $logger;
     }
 
     /**
@@ -98,7 +106,13 @@ class ConditionMatcher implements ConditionMatcherInterface
 
     private function matchCondition(VisitorInfo $visitorInfo, array $config, bool $collectVariables = false): bool
     {
-        $condition = $this->conditionFactory->build($config);
+        try {
+            $condition = $this->conditionFactory->build($config);
+        } catch (\Throwable $e) {
+            $this->logger->error($e);
+
+            return false;
+        }
 
         // check prerequisites - e.g. a condition without a value
         // (= all values match) does not need to fetch provider data
