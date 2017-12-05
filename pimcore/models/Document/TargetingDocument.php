@@ -72,8 +72,9 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
             return $name;
         }
 
-        if (!preg_match('/^' . preg_quote($this->getTargetGroupElementPrefix(), '/') . '/', $name)) {
-            $name = $this->getTargetGroupElementPrefix() . $name;
+        $prefix = $this->getTargetGroupElementPrefix();
+        if (!preg_match('/^' . preg_quote($prefix, '/') . '/', $name)) {
+            $name = $prefix . $name;
         }
 
         return $name;
