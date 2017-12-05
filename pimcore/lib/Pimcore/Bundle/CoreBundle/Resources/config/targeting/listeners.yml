@@ -8,5 +8,6 @@ services:
         calls:
             - [setStopwatch, ['@?debug.stopwatch']]
 
+    Pimcore\Targeting\EventListener\PiwikVisitorIdListener: ~
     Pimcore\Targeting\EventListener\DocumentTargetGroupListener: ~
     Pimcore\Targeting\EventListener\FullPageCacheCookieCleanupListener: ~

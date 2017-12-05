@@ -17,13 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\EventListener;
 
-use Pimcore\Analytics\Piwik\Event\TrackingDataEvent;
-use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Debug\Traits\StopwatchTrait;
-use Pimcore\Event\Analytics\PiwikEvents;
 use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -86,10 +83,9 @@ class TargetingListener implements EventSubscriberInterface
         return [
             // needs to run before ElementListener to make sure there's a
             // resolved VisitorInfo when the document is loaded
-            KernelEvents::REQUEST           => ['onKernelRequest', 7],
-            KernelEvents::RESPONSE          => ['onKernelResponse', -115],
-            PiwikEvents::CODE_TRACKING_DATA => 'onPiwikTrackingData',
-            TargetingEvents::PRE_RESOLVE    => 'onPreResolve',
+            KernelEvents::REQUEST        => ['onKernelRequest', 7],
+            KernelEvents::RESPONSE       => ['onKernelResponse', -115],
+            TargetingEvents::PRE_RESOLVE => 'onPreResolve',
         ];
     }
 
@@ -161,7 +157,7 @@ class TargetingListener implements EventSubscriberInterface
 
             $this->stopStopwatch('Targeting:responseActions');
 
-            if ($this->visitorInfoResolver->isTargetingConfigured() && $this->isHtmlResponse($response)) {
+            if ($this->visitorInfoResolver->isTargetingConfigured()) {
                 $this->injectTargetingCode($response);
             }
         }
@@ -173,19 +169,12 @@ class TargetingListener implements EventSubscriberInterface
         }
     }
 
-    public function onPiwikTrackingData(TrackingDataEvent $event)
+    private function injectTargetingCode(Response $response)
     {
-        if (!$this->enabled) {
+        if (!$this->isHtmlResponse($response)) {
             return;
         }
 
-        $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
-            '_paq.push([ function() { pimcore.targeting.api.setVisitorId(this.getVisitorId()); } ]);'
-        );
-    }
-
-    private function injectTargetingCode(Response $response)
-    {
         $parts = [];
 
         // enable targeting logging in debug mode
