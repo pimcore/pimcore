@@ -271,7 +271,7 @@
                 this.data.sessionId = nowTimestamp;
                 util.logger.canLog('info') && console.info("[TARGETING] No previous activity. New sessionId: " + this.data.sessionId);
             } else {
-                var lastActivity = this.data.activityLog.slice(-1);
+                var lastActivity = this.data.activityLog.slice(-1)[0];
 
                 var sessionLength = window.pimcore.targeting.options.sessionLength;
                 if (!sessionLength) {
