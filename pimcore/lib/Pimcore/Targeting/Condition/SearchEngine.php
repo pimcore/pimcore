@@ -37,7 +37,9 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
     public function __construct(string $engine = null)
     {
         if (!empty($engine)) {
-            if (!in_array($engine, $this->validEngines)) {
+            $validEngines = array_merge(['all'], $this->validEngines);
+
+            if (!in_array($engine, $validEngines, true)) {
                 throw new \InvalidArgumentException(sprintf(
                     'Invalid engine: "%s"',
                     $engine
@@ -61,9 +63,9 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
      */
     public function canMatch(): bool
     {
-        // can always match as empty means all engines
-        // which still restricts to checking engines
-        return true;
+        $validEngines = array_merge(['all'], $this->validEngines);
+
+        return !empty($this->engine) && in_array($this->engine, $validEngines, true);
     }
 
     /**
@@ -78,10 +80,16 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
             return false;
         }
 
-        if (!empty($this->engine)) {
-            $pattern = '/' . $this->engine . '/i';
+        $pattern = null;
+
+        if ('all' === $this->engine) {
+            $engines = array_map(function (string $engine) {
+                return preg_quote($engine, '/');
+            }, $this->validEngines);
+
+            $pattern = '/(' . implode('|', $engines) . ')/i';
         } else {
-            $pattern = '/' . implode('|', $this->validEngines) . '/i';
+            $pattern = '/(' . preg_quote($this->engine, '/') . ')/i';
         }
 
         if (preg_match($pattern, $referrer)) {

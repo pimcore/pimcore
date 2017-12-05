@@ -461,11 +461,11 @@ pimcore.settings.targeting.conditions = (function () {
                         fieldLabel: t('searchengine'),
                         name: "searchengine",
                         disableKeyFilter: true,
-                        store: [["", t("all")], ["google", "Google"], ["bing", "Bing"], ["yahoo", "Yahoo!"]],
+                        store: [["all", t("all")], ["google", "Google"], ["bing", "Bing"], ["yahoo", "Yahoo!"]],
                         triggerAction: "all",
                         mode: "local",
                         width: 350,
-                        value: data.searchengine ? data.searchengine : ""
+                        value: data.searchengine ? data.searchengine : "all"
                     }, {
                         xtype: "hidden",
                         name: "type",
@@ -597,7 +597,7 @@ pimcore.settings.targeting.conditions = (function () {
                         fieldLabel: t('hardware_platform'),
                         name: "platform",
                         disableKeyFilter: true,
-                        store: [["", t("all")], ["desktop", t("desktop")], ["tablet", t("tablet")], ["mobile", t("mobile")]],
+                        store: [["all", t("all")], ["desktop", t("desktop")], ["tablet", t("tablet")], ["mobile", t("mobile")]],
                         triggerAction: "all",
                         mode: "local",
                         width: 350,
@@ -634,7 +634,7 @@ pimcore.settings.targeting.conditions = (function () {
                         fieldLabel: t('operating_system'),
                         name: "system",
                         disableKeyFilter: true,
-                        store: [["", t("all")], ["windows", "Windows"], ["macos", "Mac OS"], ["linux", "Linux"],
+                        store: [["all", t("all")], ["windows", "Windows"], ["macos", "Mac OS"], ["linux", "Linux"],
                             ["android", "Android"], ["ios", "iOS"]],
                         triggerAction: "all",
                         mode: "local",

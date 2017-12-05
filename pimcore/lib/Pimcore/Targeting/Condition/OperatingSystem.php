@@ -91,8 +91,9 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
             return false;
         }
 
-        if ($osInfo['short_name'] === $this->system) {
-            $this->setMatchedVariable('os', $osInfo['short_name']);
+        $os = $osInfo['short_name'] ?? null;
+        if ($os && ('all' === $this->system || $os === $this->system)) {
+            $this->setMatchedVariable('os', $os);
 
             return true;
         }

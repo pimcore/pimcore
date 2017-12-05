@@ -75,7 +75,7 @@ class HardwarePlatform extends AbstractVariableCondition implements DataProvider
         }
 
         $platform = $deviceInfo['type'] ?? null;
-        if ($platform && $platform === $this->platform) {
+        if ($platform && ('all' === $this->platform || $platform === $this->platform)) {
             $this->setMatchedVariable('platform', $platform);
 
             return true;
