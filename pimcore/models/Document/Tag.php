@@ -24,6 +24,7 @@ use Pimcore\Event\Model\Document\TagNameEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Webservice;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Model\ViewModelInterface;
@@ -607,7 +608,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * Builds a tag name for an editable, taking current
-     * block state (block, index) into account.
+     * block state (block, index) and targeting into account.
      *
      * @param string $type
      * @param string $name
@@ -627,17 +628,19 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             );
         }
 
-        // check for target group content
-        if ($document && $document instanceof Document\Targeting\TargetingDocumentInterface) {
-            $name = $document->getTargetGroupElementName($name);
-        }
-
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
 
         $container      = \Pimcore::getContainer();
         $blockState     = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
+
+        // if element not nested inside a hierarchical element (e.g. block), add the
+        // targeting prefix if configured on the document. hasBlocks() determines if
+        // there are any parent blocks for the current element
+        if ($document && $document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
+            $name = $document->getTargetGroupElementName($name);
+        }
 
         $tagName = $namingStrategy->buildTagName($name, $type, $blockState);
 
@@ -655,5 +658,20 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         return $tagName;
+    }
+
+    public static function buildTagRealName(string $name, Document $document): string
+    {
+        $container  = \Pimcore::getContainer();
+        $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+
+        // if element not nested inside a hierarchical element (e.g. block), add the
+        // targeting prefix if configured on the document. hasBlocks() determines if
+        // there are any parent blocks for the current element
+        if ($document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
+            $name = $document->getTargetGroupElementName($name);
+        }
+
+        return $name;
     }
 }
