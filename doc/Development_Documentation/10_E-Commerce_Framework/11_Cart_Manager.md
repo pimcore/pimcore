@@ -63,7 +63,7 @@ if (count($cart->getItems()) > 0) {
 
 
 ## Price Calculation in Carts
-Each cart has a `CartPriceCalculator` (configuration see below) who is responsible for calculating total sums of the 
+Each cart has a `CartPriceCalculator` (configuration see below) which is responsible for calculating total sums of the 
 cart. The `CartPriceCalculator` sums up all product prices to a sub total, adds (or subtracts) so called price 
 modificators like shipping costs, cart discounts, etc. and then calculates a grand total. 
 
