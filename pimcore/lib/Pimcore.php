@@ -19,6 +19,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
@@ -121,19 +122,29 @@ class Pimcore
             $conf = include $debugModeFile;
             $debug = $conf['active'];
 
-            // enable debug mode only for one IP
-            if ($conf['ip'] && $debug) {
+            // enable debug mode only for a comma-separated list of IP addresses/ranges
+            if ($debug && $conf['ip']) {
                 $debug = false;
 
                 $clientIp = Tool::getClientIp();
                 if (null !== $clientIp) {
                     $debugIpAddresses = explode_and_trim(',', $conf['ip']);
-                    if (in_array($clientIp, $debugIpAddresses)) {
+
+                    if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
                         $debug = true;
                     }
                 }
             }
         }
+
+        if ($debug) {
+            $request = Tool::resolveRequest();
+            if ($request && (bool)$request->cookies->get('pimcore_disable_debug')) {
+                $debug = false;
+            }
+        }
+
+        self::$debugMode = $debug;
 
         return $debug;
     }
