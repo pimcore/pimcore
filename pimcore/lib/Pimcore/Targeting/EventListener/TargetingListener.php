@@ -161,7 +161,7 @@ class TargetingListener implements EventSubscriberInterface
 
             $this->stopStopwatch('Targeting:responseActions');
 
-            if ($this->visitorInfoResolver->isTargetingConfigured()) {
+            if ($this->visitorInfoResolver->isTargetingConfigured() && $this->isHtmlResponse($response)) {
                 $this->injectTargetingCode($response);
             }
         }
