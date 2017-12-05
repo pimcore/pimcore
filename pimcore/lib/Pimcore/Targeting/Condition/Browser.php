@@ -63,20 +63,19 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var DeviceDetector $dd */
-        $dd = $visitorInfo->get(Device::PROVIDER_KEY);
+        $device = $visitorInfo->get(Device::PROVIDER_KEY);
 
-        if (!$dd || $dd->isBot()) {
+        if (!$device || empty($device) || true === ($device['is_bot'] ?? false)) {
             return false;
         }
 
-        $clientInfo = $dd->getClient();
-        if (!$clientInfo) {
+        $client = $device['client'] ?? null;
+        if (!$client) {
             return false;
         }
 
-        $type = $clientInfo['type'] ?? null;
-        $name = $clientInfo['name'] ?? null;
+        $type = $client['type'] ?? null;
+        $name = $client['name'] ?? null;
 
         if ('browser' === $type && strtolower($name ?? '') === strtolower($this->browser)) {
             $this->setMatchedVariables([

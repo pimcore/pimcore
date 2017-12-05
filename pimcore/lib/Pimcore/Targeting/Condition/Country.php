@@ -66,15 +66,14 @@ class Country extends AbstractVariableCondition implements DataProviderDependent
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var City $city */
         $city = $visitorInfo->get(GeoIp::PROVIDER_KEY);
 
         if (!$city) {
             return false;
         }
 
-        if ($city->country->isoCode === $this->country) {
-            $this->setMatchedVariable('iso_code', $city->country->isoCode);
+        if ($city['country']['iso_code'] === $this->country) {
+            $this->setMatchedVariable('iso_code', $city['country']['iso_code']);
 
             return true;
         }

@@ -80,16 +80,19 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var DeviceDetector $dd */
-        $dd = $visitorInfo->get(Device::PROVIDER_KEY);
+        $device = $visitorInfo->get(Device::PROVIDER_KEY);
 
-        if (!$dd || $dd->isBot()) {
+        if (!$device || empty($device) || true === ($device['is_bot'] ?? false)) {
             return false;
         }
 
-        $os = $dd->getOs('short_name');
-        if ($os === $this->system) {
-            $this->setMatchedVariable('os', $os);
+        $osInfo = $device['os'] ?? null;
+        if (!$osInfo) {
+            return false;
+        }
+
+        if ($osInfo['short_name'] === $this->system) {
+            $this->setMatchedVariable('os', $osInfo['short_name']);
 
             return true;
         }

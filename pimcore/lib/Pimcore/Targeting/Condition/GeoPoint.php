@@ -81,22 +81,21 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var City $city */
         $city = $visitorInfo->get(GeoIp::PROVIDER_KEY);
 
-        if (!$city || empty($city->location->latitude) || empty($city->location->longitude)) {
+        if (!$city || empty($city['location']['latitude']) || empty($city['location']['longitude'])) {
             return false;
         }
 
         $distance = $this->calculateDistance(
             (float)$this->latitude, (float)$this->longitude,
-            (float)$city->location->latitude, (float)$city->location->longitude
+            (float)$city['location']['latitude'], (float)$city['location']['longitude']
         );
 
         if ($distance < ($this->radius * 1000)) {
             $this->setMatchedVariables([
-                'latitude'  => (float)$city->location->latitude,
-                'longitude' => (float)$city->location->longitude
+                'latitude'  => (float)$city['location']['latitude'],
+                'longitude' => (float)$city['location']['longitude']
             ]);
 
             return true;

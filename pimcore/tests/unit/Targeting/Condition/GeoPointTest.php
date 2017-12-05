@@ -149,26 +149,26 @@ class GeoPointTest extends TestCase
 
     private function createVisitorInfo(string $point): VisitorInfo
     {
-        $city = $this->createCity($point);
+        $city = $this->createCityData($point);
 
-        // create visitor info and set City mock as GeoIP provider key
+        // create visitor info and set city data as GeoIP provider key
         $visitorInfo = new VisitorInfo(new Request());
         $visitorInfo->set(GeoIp::PROVIDER_KEY, $city);
 
         return $visitorInfo;
     }
 
-    private function createCity(string $point): City
+    private function createCityData(string $point): array
     {
         if (!isset($this->points[$point])) {
             throw new \InvalidArgumentException(sprintf('Point "%s" is not defined', $point));
         }
 
-        return new City([
+        return [
             'location' => [
                 'latitude'  => $this->points[$point][0],
                 'longitude' => $this->points[$point][1]
             ]
-        ]);
+        ];
     }
 }

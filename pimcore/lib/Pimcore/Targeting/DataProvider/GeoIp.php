@@ -17,10 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\DataProvider;
 
+use GeoIp2\Model\City;
 use GeoIp2\ProviderInterface;
+use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\Validator\Constraints\Ip;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Psr\Log\LoggerInterface;
 
 class GeoIp implements DataProviderInterface
 {
@@ -32,22 +33,27 @@ class GeoIp implements DataProviderInterface
     private $geoIpProvider;
 
     /**
-     * @var ValidatorInterface
+     * @var LoggerInterface
      */
-    private $validator;
+    private $logger;
 
     /**
-     * @var Ip
+     * @var CoreHandlerInterface
      */
-    private $constraint;
+    private $cache;
 
     public function __construct(
         ProviderInterface $geoIpProvider,
-        ValidatorInterface $validator
+        LoggerInterface $logger
     )
     {
-        $this->validator     = $validator;
         $this->geoIpProvider = $geoIpProvider;
+        $this->logger        = $logger;
+    }
+
+    public function setCache(CoreHandlerInterface $cache)
+    {
+        $this->cache = $cache;
     }
 
     /**
@@ -63,7 +69,7 @@ class GeoIp implements DataProviderInterface
 
         $ip = $visitorInfo->getRequest()->getClientIp();
         if ($this->isPublicIp($ip)) {
-            $result = $this->geoIpProvider->city($ip);
+            $result = $this->loadData($ip);
         }
 
         $visitorInfo->set(
@@ -74,14 +80,71 @@ class GeoIp implements DataProviderInterface
 
     private function isPublicIp(string $ip): bool
     {
-        if (null === $this->constraint) {
-            $this->constraint = new Ip([
-                'version' => Ip::ALL_ONLY_PUBLIC
-            ]);
+        $result = filter_var($ip, FILTER_VALIDATE_IP);
+
+        return $result === $ip;
+    }
+
+    private function loadData(string $ip)
+    {
+        if (null === $this->cache) {
+            return $this->doLoadData($ip);
         }
 
-        $errors = $this->validator->validate($ip, $this->constraint);
+        $cacheKey = implode('_', ['targeting', self::PROVIDER_KEY, sha1($ip)]);
 
-        return $errors->count() === 0;
+        if ($result = $this->cache->load($cacheKey)) {
+            return $result;
+        }
+
+        $result = $this->doLoadData($ip);
+        if (!$result) {
+            return $result;
+        }
+
+        $this->cache->save($cacheKey, $result, ['targeting', 'targeting_' . self::PROVIDER_KEY]);
+
+        return $result;
+    }
+
+    private function doLoadData(string $ip)
+    {
+        $city = null;
+
+        try {
+            $city = $this->geoIpProvider->city($ip);
+        } catch (\Throwable $e) {
+            $this->logger->error($e);
+
+            return null;
+        }
+
+        if (!$city) {
+            return null;
+        }
+
+        return $this->extractData($city);
+    }
+
+    protected function extractData(City $city): array
+    {
+        $data = $city->jsonSerialize();
+
+        // remove localized names as we don't need them
+        $filter = function ($key) {
+            return 'names' !== $key;
+        };
+
+        foreach (array_keys($data) as $section) {
+            $data[$section] = array_filter($data[$section], $filter, ARRAY_FILTER_USE_KEY);
+        }
+
+        if (isset($data['subdivisions']) && count($data['subdivisions']) > 0) {
+            foreach ($data['subdivisions'] as $idx => $subdivision) {
+                $data['subdivisions'][$idx] = array_filter($data['subdivisions'][$idx], $filter, ARRAY_FILTER_USE_KEY);
+            }
+        }
+
+        return $data;
     }
 }

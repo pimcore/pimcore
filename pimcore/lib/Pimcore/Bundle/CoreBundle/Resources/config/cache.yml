@@ -17,6 +17,7 @@ services:
     #
 
     Pimcore\Cache\Core\CoreHandlerInterface: '@pimcore.cache.core.handler'
+    Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface: '@pimcore.cache.core.pool'
 
     # the actual core handler which is used from Pimcore\Cache
     # the pimcore.cache.core.pool service is defined by config

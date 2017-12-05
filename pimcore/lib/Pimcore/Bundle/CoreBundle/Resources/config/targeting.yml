@@ -73,10 +73,14 @@ services:
         calls:
             - [setStopwatch, ['@?debug.stopwatch']]
 
-    Pimcore\Targeting\DataProvider\GeoIp: ~
+    Pimcore\Targeting\DataProvider\GeoIp:
+        calls:
+            - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]
+
     Pimcore\Targeting\DataProvider\Device:
-        arguments:
-            $cache: '@pimcore.cache.core.pool'
+        calls:
+            - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]
+            - [setCachePool, ['@Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface']]
 
     Pimcore\Targeting\DataProvider\Piwik:
         calls:

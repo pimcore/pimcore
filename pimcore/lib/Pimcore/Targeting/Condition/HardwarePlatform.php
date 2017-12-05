@@ -63,15 +63,19 @@ class HardwarePlatform extends AbstractVariableCondition implements DataProvider
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        /** @var DeviceDetector $dd */
-        $dd = $visitorInfo->get(Device::PROVIDER_KEY);
+        $device = $visitorInfo->get(Device::PROVIDER_KEY);
 
-        if (!$dd || $dd->isBot()) {
+        if (!$device || empty($device) || true === ($device['is_bot'] ?? false)) {
             return false;
         }
 
-        $platform = $dd->getDeviceName();
-        if ($platform === $this->platform) {
+        $deviceInfo = $device['device'] ?? null;
+        if (!$deviceInfo) {
+            return false;
+        }
+
+        $platform = $deviceInfo['type'] ?? null;
+        if ($platform && $platform === $this->platform) {
             $this->setMatchedVariable('platform', $platform);
 
             return true;
