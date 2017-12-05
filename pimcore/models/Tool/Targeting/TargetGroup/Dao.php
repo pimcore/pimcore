@@ -48,6 +48,21 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    public function getByName(string $name = null)
+    {
+        if (null !== $name) {
+            $this->model->setName($name);
+        }
+
+        $data = $this->db->fetchAll('SELECT id FROM targeting_target_groups WHERE name = ?', [$this->model->getName()]);
+
+        if (count($data) === 1) {
+            $this->getById($data[0]['id']);
+        } else {
+            throw new \Exception(sprintf('Target Group with name %s doesn\'t exist or isn\'t unique', $this->model->getName()));
+        }
+    }
+
     public function save()
     {
         if ($this->model->getId()) {

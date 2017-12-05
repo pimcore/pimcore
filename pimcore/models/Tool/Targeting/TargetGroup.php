@@ -67,6 +67,19 @@ class TargetGroup extends Model\AbstractModel
         }
     }
 
+    public static function getByName($name)
+    {
+        try {
+            $target = new self();
+            $target->setName($name);
+            $target->getDao()->getByName();
+
+            return $target;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     /**
      * @param $id
      *
