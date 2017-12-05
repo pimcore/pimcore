@@ -15,8 +15,6 @@
 namespace Pimcore\Log;
 
 use Pimcore\Config;
-use Pimcore\Logger;
-use Pimcore\Tool;
 
 class Maintenance
 {

@@ -164,15 +164,14 @@ class DataObjectHelperController extends AdminController
             $availableColumns = $this->getDefaultGridFields(false, $class, 'grid', false, $fields, $context, null);
             $availableColumns = json_decode(json_encode($availableColumns), true);
 
-
             foreach ($availableColumns as &$column) {
                 $fieldConfig=[
-                    "key" => $column["key"],
-                    "label" => $column["label"],
-                    "type" => $column["type"]
+                    'key' => $column['key'],
+                    'label' => $column['label'],
+                    'type' => $column['type']
                 ];
 
-                $column["fieldConfig"] = $fieldConfig;
+                $column['fieldConfig'] = $fieldConfig;
             }
 
             $config = [];
@@ -1054,7 +1053,7 @@ class DataObjectHelperController extends AdminController
     protected function updateImportConfigShares($importConfig, $configData)
     {
         $user = $this->getUser();
-        if (!$importConfig || $user->isAllowed("share_configurations")) {
+        if (!$importConfig || $user->isAllowed('share_configurations')) {
             // nothing to do
             return;
         }
@@ -1095,7 +1094,7 @@ class DataObjectHelperController extends AdminController
     protected function updateGridConfigShares($gridConfig, $metadata)
     {
         $user = $this->getUser();
-        if (!$gridConfig || !$user->isAllowed("share_permissions")) {
+        if (!$gridConfig || !$user->isAllowed('share_permissions')) {
             // nothing to do
             return;
         }

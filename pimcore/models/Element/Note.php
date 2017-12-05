@@ -17,10 +17,9 @@
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\Model;
 use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ElementEvent;
-use Symfony\Component\CssSelector\Node\ElementNode;
+use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Note\Dao getDao()
@@ -133,7 +132,7 @@ class Note extends Model\AbstractModel
         $isUpdate = $this->getId() ? true : false;
         $this->getDao()->save();
 
-        if(!$isUpdate){
+        if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(ElementEvents::POST_ADD, new ElementEvent($this));
         }
     }

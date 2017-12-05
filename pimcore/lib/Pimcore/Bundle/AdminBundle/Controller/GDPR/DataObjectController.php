@@ -24,11 +24,11 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
  * Class DataObjectController
  *
  * @Route("/data-object")
+ *
  * @package GDPRDataExtractorBundle\Controller
  */
 class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
 {
-
     /**
      * @param FilterControllerEvent $event
      */
@@ -46,8 +46,8 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
      * @param Request $request
      * @Route("/search-data-objects")
      */
-    public function searchDataObjectsAction(Request $request, DataObjects $service) {
-
+    public function searchDataObjectsAction(Request $request, DataObjects $service)
+    {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $result = $service->searchData(
@@ -61,25 +61,19 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
         );
 
         return $this->json($result);
-
     }
 
     /**
      * @param Request $request
      * @Route("/export")
      */
-    public function exportDataObjectAction(Request $request, DataObjects $service) {
-
-        $object = AbstractObject::getById($request->get("id"));
+    public function exportDataObjectAction(Request $request, DataObjects $service)
+    {
+        $object = AbstractObject::getById($request->get('id'));
         $exportResult = $service->doExportData($object);
         $jsonResponse = $this->json($exportResult);
         $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-data-object-' . $object->getId() . '.json"');
 
         return $jsonResponse;
     }
-
-
-
-
-
 }

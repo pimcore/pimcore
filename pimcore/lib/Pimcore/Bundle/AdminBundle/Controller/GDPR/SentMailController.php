@@ -23,11 +23,11 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
  * Class SentMailController
  *
  * @Route("/sent-mail")
+ *
  * @package GDPRDataExtractorBundle\Controller
  */
 class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
 {
-
     /**
      * @param FilterControllerEvent $event
      */
@@ -45,8 +45,9 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
      * @param Request $request
      * @Route("/export")
      */
-    public function exportDataObjectAction(Request $request) {
-        $sentMail = Log::getById($request->get("id"));
+    public function exportDataObjectAction(Request $request)
+    {
+        $sentMail = Log::getById($request->get('id'));
 
         $sentMailArray = (array)$sentMail;
         $sentMailArray['htmlBody'] = $sentMail->getHtmlLog();
@@ -57,5 +58,4 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
 
         return $jsonResponse;
     }
-
 }

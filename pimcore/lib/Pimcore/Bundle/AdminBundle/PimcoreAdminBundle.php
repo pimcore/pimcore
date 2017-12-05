@@ -42,4 +42,3 @@ class PimcoreAdminBundle extends Bundle
         $extension->addSecurityListenerFactory(new PreAuthenticatedAdminSessionFactory());
     }
 }
-
