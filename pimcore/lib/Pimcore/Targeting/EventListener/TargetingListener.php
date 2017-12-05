@@ -21,6 +21,7 @@ use Pimcore\Analytics\Piwik\Event\TrackingDataEvent;
 use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Event\Analytics\PiwikEvents;
 use Pimcore\Event\Targeting\TargetingEvent;
@@ -43,9 +44,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class TargetingListener implements EventSubscriberInterface
 {
     use StopwatchTrait;
-
     use PimcoreContextAwareTrait;
     use EnabledTrait;
+    use ResponseInjectionTrait;
 
     /**
      * @var VisitorInfoResolver
@@ -80,62 +81,16 @@ class TargetingListener implements EventSubscriberInterface
         $this->requestHelper       = $requestHelper;
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getSubscribedEvents()
     {
         return [
-            PiwikEvents::CODE_TRACKING_DATA => 'onPiwikTrackingData',
-            TargetingEvents::PRE_RESOLVE    => 'onPreResolve',
-
             // needs to run before ElementListener to make sure there's a
             // resolved VisitorInfo when the document is loaded
             KernelEvents::REQUEST           => ['onKernelRequest', 7],
-            KernelEvents::RESPONSE          => ['onKernelResponse', -115]
+            KernelEvents::RESPONSE          => ['onKernelResponse', -115],
+            PiwikEvents::CODE_TRACKING_DATA => 'onPiwikTrackingData',
+            TargetingEvents::PRE_RESOLVE    => 'onPreResolve',
         ];
-    }
-
-    public function onPiwikTrackingData(TrackingDataEvent $event)
-    {
-        if (!$this->enabled) {
-            return;
-        }
-
-        // TODO always inject targeting independent of Piwik
-        // TODO find a nicer way to check for nested options
-        $parts = [
-            '<script type="text/javascript" src="/pimcore/static6/js/frontend/targeting_id.js"></script>'
-        ];
-
-        // enable targeting logging in debug mode
-        if (\Pimcore::inDebugMode()) {
-            array_unshift($parts, <<<EOF
-<script type="text/javascript">
-window.pimcore = window.pimcore || {};
-window.pimcore.targeting = window.pimcore.targeting || {};
-window.pimcore.targeting.options = window.pimcore.targeting.options || {};
-window.pimcore.targeting.options.log = false;
-</script>
-EOF
-            );
-        }
-
-        $event->getBlock(Tracker::BLOCK_BEFORE_SCRIPT_TAG)->append($parts);
-        $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
-            '_paq.push([ function() { pimcore.targeting.api.setVisitorId(this.getVisitorId()); } ]);'
-        );
-    }
-
-    public function onPreResolve(TargetingEvent $event)
-    {
-        $this->startStopwatch('Targeting:loadStoredAssignments', 'targeting');
-
-        /** @var AssignTargetGroup $assignTargetGroupHandler */
-        $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
-        $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
-
-        $this->stopStopwatch('Targeting:loadStoredAssignments');
     }
 
     public function onKernelRequest(GetResponseEvent $event)
@@ -174,6 +129,17 @@ EOF
         }
     }
 
+    public function onPreResolve(TargetingEvent $event)
+    {
+        $this->startStopwatch('Targeting:loadStoredAssignments', 'targeting');
+
+        /** @var AssignTargetGroup $assignTargetGroupHandler */
+        $assignTargetGroupHandler = $this->actionHandler->getActionHandler('assign_target_group');
+        $assignTargetGroupHandler->loadStoredAssignments($event->getVisitorInfo()); // load previously assigned target groups
+
+        $this->stopStopwatch('Targeting:loadStoredAssignments');
+    }
+
     public function onKernelResponse(FilterResponseEvent $event)
     {
         if (!$this->enabled) {
@@ -194,6 +160,10 @@ EOF
             $this->handleResponseActions($visitorInfo, $response);
 
             $this->stopStopwatch('Targeting:responseActions');
+
+            if ($this->visitorInfoResolver->isTargetingConfigured()) {
+                $this->injectTargetingCode($response);
+            }
         }
 
         // check if the visitor info influences the response
@@ -201,6 +171,41 @@ EOF
             // set response to private as soon as we apply personalization
             $response->setPrivate();
         }
+    }
+
+    public function onPiwikTrackingData(TrackingDataEvent $event)
+    {
+        if (!$this->enabled) {
+            return;
+        }
+
+        $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
+            '_paq.push([ function() { pimcore.targeting.api.setVisitorId(this.getVisitorId()); } ]);'
+        );
+    }
+
+    private function injectTargetingCode(Response $response)
+    {
+        $parts = [];
+
+        // enable targeting logging in debug mode
+        if (\Pimcore::inDebugMode()) {
+            $parts[] = <<<EOF
+<script type="text/javascript">
+window.pimcore = window.pimcore || {};
+window.pimcore.targeting = window.pimcore.targeting || {};
+window.pimcore.targeting.options = window.pimcore.targeting.options || {};
+window.pimcore.targeting.options.log = true;
+</script>
+EOF;
+        }
+
+        $parts[] = '<script type="text/javascript" src="/pimcore/static6/js/frontend/targeting.js"></script>';
+
+        $this->injectBeforeHeadEnd(
+            $response,
+            implode("\n", $parts)
+        );
     }
 
     private function handleResponseActions(VisitorInfo $visitorInfo, Response $response)
