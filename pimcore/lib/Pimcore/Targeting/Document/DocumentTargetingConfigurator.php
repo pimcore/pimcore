@@ -17,7 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Document;
 
+use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
@@ -31,6 +33,16 @@ class DocumentTargetingConfigurator
     private $visitorInfoStorage;
 
     /**
+     * @var RequestHelper
+     */
+    private $requestHelper;
+
+    /**
+     * @var UserLoader
+     */
+    private $userLoader;
+
+    /**
      * @var CoreHandlerInterface
      */
     private $cache;
@@ -42,10 +54,14 @@ class DocumentTargetingConfigurator
 
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
+        RequestHelper $requestHelper,
+        UserLoader $userLoader,
         CoreHandlerInterface $cache
     )
     {
         $this->visitorInfoStorage = $visitorInfoStorage;
+        $this->requestHelper      = $requestHelper;
+        $this->userLoader         = $userLoader;
         $this->cache              = $cache;
     }
 
@@ -66,6 +82,10 @@ class DocumentTargetingConfigurator
             return;
         }
 
+        if ($this->isConfiguredByAdminParam($document)) {
+            return;
+        }
+
         $matchingTargetGroups = $this->getMatchingTargetGroups($document);
         if (count($matchingTargetGroups) > 0) {
             $targetGroup = $matchingTargetGroups[0];
@@ -73,6 +93,47 @@ class DocumentTargetingConfigurator
             $this->targetGroupMapping[$document->getId()] = $targetGroup;
             $document->setUseTargetGroup($targetGroup->getId());
         }
+    }
+
+    /**
+     * Handle _ptg admin param here only if there's a valid user session
+     *
+     * @param TargetingDocumentInterface $document
+     *
+     * @return bool
+     */
+    private function isConfiguredByAdminParam(TargetingDocumentInterface $document): bool
+    {
+        if (!$this->requestHelper->hasMasterRequest()) {
+            return false;
+        }
+
+        $request = $this->requestHelper->getMasterRequest();
+        if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
+            return false;
+        }
+
+        // IMPORTANT: check there is an authenticated admin user before allowing
+        // to set target groups via parameter
+        $user = $this->userLoader->getUser();
+        if (!$user) {
+            return false;
+        }
+
+        // ptg = pimcore target group = will be used from the admin UI to show target specific data
+        // in editmode
+        if ($ptg = $request->get('_ptg')) {
+            $targetGroup = TargetGroup::getById((int)$ptg);
+
+            if ($targetGroup) {
+                $this->targetGroupMapping[$document->getId()] = $targetGroup;
+                $document->setUseTargetGroup($targetGroup->getId());
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
