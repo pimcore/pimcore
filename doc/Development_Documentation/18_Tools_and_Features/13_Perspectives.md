@@ -78,7 +78,7 @@ The custom view definition would look like that:
 ]
 ```
 
-Let's update the `website/config/perspectives.php` by the new perspective.
+Let's update the `/app/config/pimcore/perspectives.php` by the new perspective.
 
 ```php
 "catalog_management" => [
