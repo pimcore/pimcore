@@ -80,7 +80,7 @@ class GeoIp implements DataProviderInterface
 
     private function isPublicIp(string $ip): bool
     {
-        $result = filter_var($ip, FILTER_VALIDATE_IP);
+        $result = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
 
         return $result === $ip;
     }
