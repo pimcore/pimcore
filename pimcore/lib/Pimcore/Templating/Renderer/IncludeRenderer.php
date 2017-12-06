@@ -110,7 +110,7 @@ class IncludeRenderer
 
                 // TODO is this enough for cache or should we disable caching completely?
                 if ($include instanceof TargetingDocumentInterface && $include->getUseTargetGroup()) {
-                    $params['target_group'] = $include->getUseTargetGroup();
+                    $cacheParams['target_group'] = $include->getUseTargetGroup();
                 }
 
                 $cacheKey = 'tag_inc__' . md5(serialize($cacheParams));
