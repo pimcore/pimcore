@@ -69,7 +69,7 @@ class ApplicationLoggerProcessor
         }
 
         $relatedObject     = $record['context']['relatedObject'] ?? null;
-        $relatedObjectType = null;
+        $relatedObjectType = $record['context']['relatedObjectType'] ?? null;
 
         if (null !== $relatedObject && is_object($relatedObject)) {
             if ($relatedObject instanceof AbstractObject) {
