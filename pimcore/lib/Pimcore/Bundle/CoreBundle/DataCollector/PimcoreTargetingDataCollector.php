@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,12 +18,17 @@
 namespace Pimcore\Bundle\CoreBundle\DataCollector;
 
 use Pimcore\Http\Request\Resolver\DocumentResolver;
+use Pimcore\Model\Document;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class PimcoreTargetingDataCollector extends DataCollector
 {
@@ -30,29 +38,45 @@ class PimcoreTargetingDataCollector extends DataCollector
     private $visitorInfoStorage;
 
     /**
-     * @var DocumentTargetingConfigurator
+     * @var TargetingStorageInterface
      */
-    private $targetingConfigurator;
+    private $targetingStorage;
 
     /**
      * @var DocumentResolver
      */
     private $documentResolver;
 
+    /**
+     * @var DocumentTargetingConfigurator
+     */
+    private $targetingConfigurator;
+
+    /**
+     * @var Stopwatch
+     */
+    private $stopwatch;
+
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
+        TargetingStorageInterface $targetingStorage,
+        DocumentResolver $documentResolver,
         DocumentTargetingConfigurator $targetingConfigurator,
-        DocumentResolver $documentResolver
+        Stopwatch $stopwatch = null
     )
     {
         $this->visitorInfoStorage    = $visitorInfoStorage;
-        $this->targetingConfigurator = $targetingConfigurator;
+        $this->targetingStorage      = $targetingStorage;
         $this->documentResolver      = $documentResolver;
+        $this->targetingConfigurator = $targetingConfigurator;
+        $this->stopwatch             = $stopwatch;
     }
 
-    /**
-     * @inheritDoc
-     */
+    public function getName()
+    {
+        return 'pimcore_targeting';
+    }
+
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         $this->data = [];
@@ -61,66 +85,144 @@ class PimcoreTargetingDataCollector extends DataCollector
             return;
         }
 
+        $document    = $this->documentResolver->getDocument($request);
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
 
+        $this->collectVisitorInfo($visitorInfo);
+        $this->collectStorage($visitorInfo);
         $this->collectMatchedRules($visitorInfo);
-        $this->collectAssignedTargetGroups($visitorInfo);
-        $this->collectDocumentTargetGroup($request);
+        $this->collectTargetGroups($visitorInfo);
+        $this->collectDocumentTargetGroup($document);
+        $this->collectDocumentTargetGroupMapping();
+
+        $this->data = $this->cloneVar($this->data);
+    }
+
+    private function collectVisitorInfo(VisitorInfo $visitorInfo)
+    {
+        $data = [];
+        foreach ($visitorInfo->getData() as $key => $value) {
+            if (is_object($value)) {
+                $data[$key] = get_class($value);
+            } else {
+                $data[$key] = $value;
+            }
+        }
+
+        $this->data['visitor_info'] = [
+            'visitorId' => $visitorInfo->getVisitorId(),
+            'sessionId' => $visitorInfo->getSessionId(),
+            'actions'   => $visitorInfo->getActions(),
+            'data'      => $data,
+        ];
+    }
+
+    private function collectStorage(VisitorInfo $visitorInfo)
+    {
+        $this->data['storage'] = [];
+
+        foreach (TargetingStorageInterface::VALID_SCOPES as $scope) {
+            $this->data['storage'][$scope] = array_merge([
+                'created_at' => $this->targetingStorage->getCreatedAt($visitorInfo, $scope),
+                'updated_at' => $this->targetingStorage->getCreatedAt($visitorInfo, $scope),
+            ], $this->targetingStorage->all($visitorInfo, $scope));
+        }
     }
 
     private function collectMatchedRules(VisitorInfo $visitorInfo)
     {
         $rules = [];
         foreach ($visitorInfo->getMatchingTargetingRules() as $rule) {
+            $duration = null;
+            if (null !== $this->stopwatch) {
+                try {
+                    $event    = $this->stopwatch->getEvent(sprintf('Targeting:match:%s', $rule->getName()));
+                    $duration = $event->getDuration();
+                } catch (\Throwable $e) {
+                    // noop
+                }
+            }
+
             $rules[] = [
-                'id'   => $rule->getId(),
-                'name' => $rule->getName()
+                'id'         => $rule->getId(),
+                'name'       => $rule->getName(),
+                'duration'   => $duration,
+                'conditions' => $rule->getConditions(),
+                'actions'    => $rule->getActions(),
             ];
         }
 
         $this->data['rules'] = $rules;
     }
 
-    private function collectAssignedTargetGroups(VisitorInfo $visitorInfo)
+    private function collectTargetGroups(VisitorInfo $visitorInfo)
     {
         $targetGroups = [];
 
         foreach ($visitorInfo->getTargetGroupAssignments() as $assignment) {
             $targetGroups[] = [
-                'id'    => $assignment->getTargetGroup()->getId(),
-                'name'  => $assignment->getTargetGroup()->getName(),
-                'count' => $assignment->getCount()
+                'id'        => $assignment->getTargetGroup()->getId(),
+                'name'      => $assignment->getTargetGroup()->getName(),
+                'threshold' => $assignment->getTargetGroup()->getThreshold(),
+                'count'     => $assignment->getCount(),
             ];
         }
 
         $this->data['target_groups'] = $targetGroups;
     }
 
-    private function collectDocumentTargetGroup(Request $request)
+    private function collectDocumentTargetGroup(Document $document = null)
     {
-        $document = $this->documentResolver->getDocument($request);
-        if (!$document) {
+        if (!$document instanceof TargetingDocumentInterface) {
             return;
         }
 
-        $targetGroup = $this->targetingConfigurator->getConfiguredTargetGroup($document);
-
-        if (!$targetGroup) {
+        $targetGroupId = $document->getUseTargetGroup();
+        if (!$targetGroupId) {
             return;
         }
 
-        $this->data['document_target_group'] = [
-            'id'   => $targetGroup->getId(),
-            'name' => $targetGroup->getName()
-        ];
+        $targetGroup = TargetGroup::getById($targetGroupId);
+        if ($targetGroup) {
+            $this->data['document_target_group'] = [
+                'id'   => $targetGroup->getId(),
+                'name' => $targetGroup->getName()
+            ];
+        }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getName()
+    private function collectDocumentTargetGroupMapping()
     {
-        return 'pimcore_targeting';
+        $resolvedMapping = $this->targetingConfigurator->getResolvedTargetGroupMapping();
+        $mapping         = [];
+
+        /** @var TargetGroup $targetGroup */
+        foreach ($resolvedMapping as $documentId => $targetGroup) {
+            $document = Document::getById($documentId);
+
+            $mapping[] = [
+                'document'    => [
+                    'id'   => $document->getId(),
+                    'path' => $document->getRealFullPath(),
+                ],
+                'targetGroup' => [
+                    'id'   => $targetGroup->getId(),
+                    'name' => $targetGroup->getName(),
+                ],
+            ];
+        }
+
+        $this->data['document_target_groups'] = $mapping;
+    }
+
+    public function getVisitorInfo()
+    {
+        return $this->data['visitor_info'];
+    }
+
+    public function getStorage()
+    {
+        return $this->data['storage'];
     }
 
     public function getRules()
@@ -135,11 +237,16 @@ class PimcoreTargetingDataCollector extends DataCollector
 
     public function getDocumentTargetGroup()
     {
-        return $this->data['document_target_group'];
+        return $this->data['document_target_group'] ?? null;
+    }
+
+    public function getDocumentTargetGroups()
+    {
+        return $this->data['document_target_groups'];
     }
 
     public function hasData(): bool
     {
-        return count($this->getRules()) > 0 || count($this->getTargetGroups()) > 0;
+        return !empty($this->data);
     }
 }

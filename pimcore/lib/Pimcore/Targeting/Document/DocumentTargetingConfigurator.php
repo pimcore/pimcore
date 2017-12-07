@@ -148,6 +148,11 @@ class DocumentTargetingConfigurator
         }
     }
 
+    public function getResolvedTargetGroupMapping(): array
+    {
+        return $this->targetGroupMapping;
+    }
+
     /**
      * Resolve all target groups which were matched and which are valid for
      * the document
