@@ -361,11 +361,11 @@ class Thumbnail
             $removeAttributes = array_merge($removeAttributes, ['width', 'height']);
         } else {
             if ($this->getWidth()) {
-                $attributes['width'] = 'width="'.$this->getWidth().'"';
+                $attributes['width'] = $this->getWidth();
             }
 
             if ($this->getHeight()) {
-                $attributes['height'] = 'height="'.$this->getHeight().'"';
+                $attributes['height'] = $this->getHeight();
             }
         }
 
@@ -432,22 +432,22 @@ class Thumbnail
 
             //only include attributes with characters a-z and dashes in their name.
             if (preg_match('/^[a-z-]+$/i', $key)) {
-                $attributes[$key] = $key . '="' . htmlspecialchars($value) . '"';
+                $attributes[$key] = $value;
 
                 // do not include all attributes
                 if (!in_array($key, ['width', 'height', 'alt'])) {
-                    $pictureAttribs[$key] = $key . '="' . htmlspecialchars($value) . '"';
+                    $pictureAttribs[$key] = $value;
                 }
 
                 // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
                 if (in_array($key, ['alt'])) {
-                    $pictureAttribs['data-' . $key] = 'data-' . $key . '="' . htmlspecialchars($value) . '"';
+                    $pictureAttribs['data-' . $key] = $value;
                 }
             }
         }
 
         $path = $this->getPath(true);
-        $attributes['src'] = 'src="'. $path .'"';
+        $attributes['src'] = $path;
 
         $thumbConfig = $this->getConfig();
 
@@ -460,7 +460,7 @@ class Thumbnail
                 $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . ' ' . $highRes . 'x';
                 $srcSetValues[] = $srcsetEntry;
             }
-            $attributes['srcset'] = 'srcset="'. implode(', ', $srcSetValues) .'"';
+            $attributes['srcset'] = implode(', ', $srcSetValues);
         }
 
         foreach ($removeAttributes as $attribute) {
@@ -468,8 +468,17 @@ class Thumbnail
             unset($pictureAttribs[$attribute]);
         }
 
+        $isSvgPreview = false;
+        if(isset($options['svgPlaceholder']) && $options['svgPlaceholder'] && file_exists($this->getAsset()->getSvgPreviewFileSystemPath())) {
+            $isSvgPreview = true;
+            $attributes['data-src'] = $attributes['src'];
+            $attributes['data-srcset'] = $attributes['srcset'];
+            $attributes['src'] = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($this->getAsset()->getSvgPreviewFileSystemPath()));
+            unset($attributes['srcset']);
+        }
+
         // build html tag
-        $htmlImgTag = '<img '.implode(' ', $attributes).' />';
+        $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
 
         // $this->getConfig() can be empty, the original image is returned
         if ($this->getConfig() && $this->getConfig()->hasMedias()) {
@@ -477,7 +486,7 @@ class Thumbnail
             // mobile first => fallback image is the smallest possible image
             $fallBackImageThumb = null;
 
-            $html = '<picture ' . implode(' ', $pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
+            $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
 
             // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
@@ -511,8 +520,15 @@ class Thumbnail
             $attrCleanedForPicture = $attributes;
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
-            $attrCleanedForPicture['src'] = 'src="' . (string) $fallBackImageThumb . '"';
-            $htmlImgTagForpicture = '<img '.implode(' ', $attrCleanedForPicture).' />';
+            if(isset($attrCleanedForPicture['srcset'])) {
+                unset($attrCleanedForPicture['srcset']);
+            }
+            if($isSvgPreview) {
+                unset($attrCleanedForPicture['data-src']);
+                unset($attrCleanedForPicture['data-srcset']);
+            }
+            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
+            $htmlImgTagForpicture = '<img ' . array_to_html_attribute_string($attrCleanedForPicture) .' />';
 
             $html .= $htmlImgTagForpicture . "\n";
 

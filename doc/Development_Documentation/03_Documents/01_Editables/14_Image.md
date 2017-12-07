@@ -36,6 +36,7 @@ The biggest advantages of using that instead of (for example) the href editable:
 | `dropClass`                    | string  | This option can be used to add multiple alternative drop-targets and context menus on custom HTML elements in your code. <br /><br />Just add the class specified here also to custom HTML elements and they will get a drop target too. |
 | `deferred`                     | bool    | Set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                         |
 | `class`                        | string  | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                                       |
+| `svgPlaceholder`               | bool    | Put's a small SVG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`. (requires https://github.com/technopagan/sqip)                                                                    |
 
 You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
 
