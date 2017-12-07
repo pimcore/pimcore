@@ -11,3 +11,4 @@ services:
     Pimcore\Targeting\EventListener\PiwikVisitorIdListener: ~
     Pimcore\Targeting\EventListener\DocumentTargetGroupListener: ~
     Pimcore\Targeting\EventListener\FullPageCacheCookieCleanupListener: ~
+    Pimcore\Targeting\EventListener\VisitedPagesCountListener: ~

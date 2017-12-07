@@ -169,6 +169,7 @@ pimcore:
             device: Pimcore\Targeting\DataProvider\Device
             piwik: Pimcore\Targeting\DataProvider\Piwik
             targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
+            visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
         conditions:
             url: Pimcore\Targeting\Condition\Url
             browser: Pimcore\Targeting\Condition\Browser
@@ -181,11 +182,11 @@ pimcore:
             geopoint: Pimcore\Targeting\Condition\GeoPoint
             timeonsite: Pimcore\Targeting\Condition\TimeOnSite
             visitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
-            visitedpagesbefore: Pimcore\Targeting\Condition\Piwik\VisitedPagesBefore
+            visitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
             target_group: Pimcore\Targeting\Condition\TargetGroup
             # the following are kept for compatibility but are deprecated (typo in condition name)
             vistitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
-            vistitedpagesbefore: Pimcore\Targeting\Condition\Piwik\VisitedPagesBefore
+            vistitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
             persona: Pimcore\Targeting\Condition\TargetGroup
         action_handlers:
             assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup

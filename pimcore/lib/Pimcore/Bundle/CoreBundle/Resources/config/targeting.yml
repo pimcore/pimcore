@@ -88,6 +88,9 @@ services:
 
     Pimcore\Targeting\DataProvider\TargetingStorage: ~
 
+    Pimcore\Targeting\Service\VisitedPagesCounter: ~
+    Pimcore\Targeting\DataProvider\VisitedPagesCounter: ~
+
 
     #
     # CONDITIONS

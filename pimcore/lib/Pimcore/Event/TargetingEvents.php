@@ -76,4 +76,15 @@ final class TargetingEvents
      * @var string
      */
     const ASSIGN_DOCUMENT_TARGET_GROUP = 'pimcore.targeting.assign_document_target_group';
+
+    /**
+     * Fired after a condition was used which depends on the count of visited
+     * pages. Will be used by VisitedPagesCountListener to update the page count
+     * if there are conditions depending on it.
+     *
+     * @Event("Symfony\Component\EventDispatcher\Event")
+     *
+     * @var string
+     */
+    const VISITED_PAGES_COUNT_MATCH = 'pimcore.targeting.visited_pages_count_match';
 }
