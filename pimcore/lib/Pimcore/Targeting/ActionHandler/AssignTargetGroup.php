@@ -130,7 +130,7 @@ class AssignTargetGroup implements ActionHandlerInterface
 
         // only assign if count reached the threshold if threshold is > 1
         if ($threshold <= 1 || $count >= $threshold) {
-            $visitorInfo->assignTargetGroup($targetGroup, $count);
+            $visitorInfo->assignTargetGroup($targetGroup, $count, true);
         }
     }
 }
