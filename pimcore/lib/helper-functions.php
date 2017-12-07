@@ -197,6 +197,25 @@ function array_toquerystring($args)
 }
 
 /**
+ * @param $array
+ * @return string
+ */
+function array_to_html_attribute_string($array) {
+
+    $data = '';
+    foreach($array as $key => $value) {
+        if(is_scalar($value)) {
+            if(!empty($data)) {
+                $data .= ' ';
+            }
+            $data .= $key . '="' . htmlspecialchars($value) . '""';
+        }
+    }
+
+    return $data;
+}
+
+/**
  * @param string $var
  */
 function urlencode_ignore_slash($var)

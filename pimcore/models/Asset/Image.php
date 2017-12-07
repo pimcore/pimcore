@@ -17,8 +17,10 @@
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -69,11 +71,60 @@ class Image extends Model\Asset
                 // so that the thumbnail check doesn't fail in Asset\Image\Thumbnail\Processor::process();
                 // we need the @ in front of touch because of some stream wrapper (eg. s3) which don't support touch()
                 @touch($path, $this->getModificationDate());
+
+                $this->generateSvgPreview();
             } catch (\Exception $e) {
                 Logger::error('Problem while creating system-thumbnails for image ' . $this->getRealFullPath());
                 Logger::error($e);
             }
         }
+    }
+
+    /**
+     *
+     */
+    public function generateSvgPreview() {
+        // SQIP SVG Previews
+        if($sqipBin = \Pimcore\Tool\Console::getExecutable('sqip')) {
+            // primitive isn't able to process PJPEG so we have to generate a PNG
+            $sqipConfig = Image\Thumbnail\Config::getPreviewConfig();
+            $sqipConfig->setFormat('png');
+            $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
+            $svgPath = $this->getSvgPreviewFileSystemPath();
+            \Pimcore\Tool\Console::exec($sqipBin . " -o " . $svgPath . " ". $pngPath);
+            unlink($pngPath);
+
+            return $svgPath;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSvgPreviewPath() {
+        $fsPath = $this->getSvgPreviewFileSystemPath();
+        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
+        $path = urlencode_ignore_slash($path);
+
+        $event = new GenericEvent($this, [
+            'filesystemPath' => $fsPath,
+            'frontendPath' => $path
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+        $path = $event->getArgument('frontendPath');
+
+        return $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSvgPreviewFileSystemPath() {
+        $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
+        $svgPath = preg_replace("/\.p?jpe?g$/", ".svg", $path);
+        return $svgPath;
     }
 
     public function delete()

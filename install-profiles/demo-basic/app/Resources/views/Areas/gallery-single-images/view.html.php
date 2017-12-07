@@ -19,7 +19,8 @@
                 <?php } ?>
 
                     <?= $this->image("image", [
-                        "thumbnail" => "galleryThumbnail"
+                        "thumbnail" => "galleryThumbnail",
+                        'svgPlaceholder' => true
                     ]); ?>
 
                 <?php if(!$this->editmode) { ?>
