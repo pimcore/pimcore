@@ -27,7 +27,7 @@ interface VariableConditionInterface
      *
      * It's important to store/return these variables in a deterministic way (e.g. same
      * array key order) as the hash of their serialized contents is compared against
-     * a stored hash to dermine if the rule actions need to be evaluated.
+     * a stored hash to determine if the rule actions need to be evaluated.
      *
      * @return array
      */

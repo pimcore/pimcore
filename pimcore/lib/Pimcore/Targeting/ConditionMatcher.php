@@ -18,10 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Targeting;
 
 use Pimcore\Targeting\Condition\ConditionInterface;
+use Pimcore\Targeting\Condition\EventDispatchingConditionInterface;
 use Pimcore\Targeting\Condition\VariableConditionInterface;
 use Pimcore\Targeting\ConditionMatcher\ExpressionBuilder;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ConditionMatcher implements ConditionMatcherInterface
@@ -35,6 +37,11 @@ class ConditionMatcher implements ConditionMatcherInterface
      * @var DataLoaderInterface
      */
     private $dataLoader;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @var ExpressionLanguage
@@ -54,12 +61,14 @@ class ConditionMatcher implements ConditionMatcherInterface
     public function __construct(
         ConditionFactoryInterface $conditionFactory,
         DataLoaderInterface $dataLoader,
+        EventDispatcherInterface $eventDispatcher,
         ExpressionLanguage $expressionLanguage,
         LoggerInterface $logger
     )
     {
         $this->conditionFactory   = $conditionFactory;
         $this->dataLoader         = $dataLoader;
+        $this->eventDispatcher    = $eventDispatcher;
         $this->expressionLanguage = $expressionLanguage;
         $this->logger             = $logger;
     }
@@ -125,10 +134,18 @@ class ConditionMatcher implements ConditionMatcherInterface
             $this->dataLoader->loadDataFromProviders($visitorInfo, $condition->getDataProviderKeys());
         }
 
+        if ($condition instanceof EventDispatchingConditionInterface) {
+            $condition->preMatch($visitorInfo, $this->eventDispatcher);
+        }
+
         $result = $condition->match($visitorInfo);
 
         if ($collectVariables) {
             $this->collectConditionVariables($config, $condition);
+        }
+
+        if ($condition instanceof EventDispatchingConditionInterface) {
+            $condition->postMatch($visitorInfo, $this->eventDispatcher);
         }
 
         return $result;
