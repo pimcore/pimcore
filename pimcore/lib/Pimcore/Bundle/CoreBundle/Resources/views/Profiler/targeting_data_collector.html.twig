@@ -24,16 +24,23 @@
                     <span class="sf-toolbar-status">{{ collector.rules|length }}</span>
                 </div>
 
-                <div class="sf-toolbar-info-piece">
-                    <h5 style="display: table-caption; margin-bottom: 5px; font-size: 13px">Target Groups</h5>
-                </div>
-
-                {% for targetGroup in collector.targetGroups %}
+                {% if collector.targetGroups is not empty %}
                     <div class="sf-toolbar-info-piece">
-                        <b>{{ targetGroup.name }}</b>
-                        <span class="sf-toolbar-status">{{ targetGroup.count }}</span>
+                        <h5 style="display: table-caption; margin-bottom: 5px; font-size: 13px">Target Groups</h5>
                     </div>
-                {% endfor %}
+
+                    {% for targetGroup in collector.targetGroups %}
+                        <div class="sf-toolbar-info-piece">
+                            <b>{{ targetGroup.name }}</b>
+                            <span class="sf-toolbar-status">{{ targetGroup.count }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="sf-toolbar-info-piece">
+                        <b>Target Groups</b>
+                        <span class="sf-toolbar-status">0</span>
+                    </div>
+                {% endif %}
             </div>
         {% endset %}
 
