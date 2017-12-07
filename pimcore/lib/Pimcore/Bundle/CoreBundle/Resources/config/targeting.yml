@@ -20,7 +20,7 @@ services:
 
     Pimcore\Targeting\Storage\CookieStorage:
         arguments:
-            $saveHandler: '@Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler'
+            $saveHandler: '@Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler'
 
     # Session Storage. If this is used, the pimcore.targeting.session.enabled entry
     # must be set to true to load the session configurator.
