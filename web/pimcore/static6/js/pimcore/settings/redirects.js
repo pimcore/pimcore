@@ -61,14 +61,15 @@ pimcore.settings.redirects = Class.create({
             url,
             [
                 {name: 'id'},
+                {name: 'type', allowBlank: false},
                 {name: 'source', allowBlank: false},
-                {name: 'sourceEntireUrl'},
                 {name: 'sourceSite'},
-                {name: 'passThroughParameters'},
                 {name: 'target', allowBlank: false},
                 {name: 'targetSite'},
                 {name: 'statusCode'},
                 {name: 'priority', type:'int'},
+                {name: 'regex'},
+                {name: 'passThroughParameters'},
                 {name: 'active'},
                 {name: 'expiry', type: "date", convert: function (v, r) {
                     if(v && !(v instanceof Date)) {
@@ -121,8 +122,28 @@ pimcore.settings.redirects = Class.create({
         });
 
         var typesColumns = [
+            {
+                header: t("type"),
+                width: 70,
+                sortable: true,
+                dataIndex: 'type',
+                editor: new Ext.form.ComboBox({
+                    store: [
+                        ["entire_uri", t('redirects_type_entire_uri') + ': https://example.com/test?key=value'],
+                        ["path_query", t('redirects_type_path_query') + ': /test?key=value'],
+                        ["path", t('redirects_type_path') + ': /test']
+                    ],
+                    mode: "local",
+                    typeAhead: false,
+                    editable: false,
+                    listConfig: {
+                        minWidth: 350
+                    },
+                    forceSelection: true,
+                    triggerAction: "all"
+                })
+            },
             {header: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
-            sourceEntireUrlCheck,
             {header: t("source_site"), flex: 200, sortable:true, dataIndex: "sourceSite",
                 editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
@@ -137,7 +158,6 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            passThroughParametersCheck,
             {header: t("target"), flex: 200, sortable: false, dataIndex: 'target',
                 editor: new Ext.form.TextField({}),
                 tdCls: "input_drop_target"
@@ -192,7 +212,21 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            activeCheck,
+            new Ext.grid.column.Check({
+                header: t("regex"),
+                dataIndex: "regex",
+                width: 70
+            }),
+            new Ext.grid.column.Check({
+                header: t("pass_through_params"),
+                dataIndex: "passThroughParameters",
+                width: 70
+            }),
+            new Ext.grid.column.Check({
+                header: t("active"),
+                dataIndex: "active",
+                width: 70
+            }),
             {
                 header: t("expiry"),
                 width: 150, sortable:true, dataIndex: "expiry",
