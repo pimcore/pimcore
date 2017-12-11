@@ -115,6 +115,9 @@ class Admin
         } catch (\Exception $e) {
             // use default settings
             $dialect = new \stdClass();
+            $dialect->delimiter = ';';
+            $dialect->quotechar = '"';
+            $dialect->escapechar = '\\';
         }
 
         // validity check
