@@ -10,7 +10,7 @@ See following examples for how Order Agent can be used:
 <?php
 
 // load order item
-$orderItem = Object_OnlineShopOrderItem::getById( $this->getParam('id') );
+$orderItem = DataObject\OnlineShopOrderItem::getById( $this->getParam('id') );
 $order = $orderItem->getOrder();
 
 // create new order agent
@@ -32,7 +32,7 @@ $log->save();
 <?php
 
 // load order
-$order = Object_OnlineShopOrder::getById( $this->getParam('id') );
+$order = DataObject\OnlineShopOrder::getById( $this->getParam('id') );
 
 // create new order agent
 $orderManager = Factory::getInstance()->getOrderManager();
