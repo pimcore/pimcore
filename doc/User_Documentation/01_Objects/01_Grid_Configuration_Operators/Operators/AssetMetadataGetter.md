@@ -1,7 +1,3 @@
----
-title: AssetMetadataGetter
----
-
 # AssetMetadata Getter
 
 ![Setting](../../../img/gridconfig/operator_assetmetadata_symbol.png)
