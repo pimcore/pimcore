@@ -398,7 +398,6 @@ pimcore.settings.redirects = Class.create({
     },
 
     openWizard: function () {
-
         this.wizardForm = new Ext.form.FormPanel({
             bodyStyle: "padding:10px;",
             layout: 'hbox',
@@ -430,7 +429,7 @@ pimcore.settings.redirects = Class.create({
 
         this.wizardWindow = new Ext.Window({
             width: 650,
-            modal:true,
+            modal: true,
             items: [this.wizardForm],
             buttons: [{
                 text: t("save"),
@@ -443,48 +442,54 @@ pimcore.settings.redirects = Class.create({
     },
 
     saveWizard: function () {
-
-        var source = "";
-        var sourceEntireUrl = false;
-        var priority = 1;
         var values = this.wizardForm.getForm().getFieldValues();
         var pattern = preg_quote(values.pattern);
-        pattern = str_replace("@","\\@",pattern);
+        pattern = str_replace("@", "\\@", pattern);
 
-        if(values.mode == "begin") {
-            source = "@^" + pattern + "@";
-        } else if (values.mode == "exact") {
-            source = "@^" + pattern + "$@";
-        } else if (values.mode == "contain") {
-            source = "@" + pattern + "@i";
-        } else if (values.mode == "begin_end_slash") {
-            if(pattern.charAt(0) != "/") {
+        var record = {
+            type: 'entire_uri',
+            source: '',
+            priority: 1,
+            regex: false,
+            active: true
+        };
+
+        if (values.mode === "begin") {
+            record.type = 'path';
+            record.source = "@^" + pattern + "@";
+            record.regex = true;
+        } else if (values.mode === "exact") {
+            record.type = 'path';
+            record.source = pattern;
+        } else if (values.mode === "contain") {
+            record.type = 'path_query';
+            record.source = "@" + pattern + "@i";
+            record.regex = true;
+        } else if (values.mode === "begin_end_slash") {
+            if (pattern.charAt(0) !== "/") {
                 pattern = "/" + pattern;
             }
-            source = "@^" + pattern + "[\\/]?$@i";
-        } else if (values.mode == "domain") {
-            if(values.pattern.indexOf("http") >= 0) {
+
+            record.type = 'path';
+            record.source = "@^" + pattern + "[\\/]?$@i";
+            record.regex = true;
+        } else if (values.mode === "domain") {
+            if (values.pattern.indexOf("http") >= 0) {
                 pattern = parse_url(values.pattern, "host");
             } else {
                 pattern = values.pattern;
             }
             pattern = preg_quote(pattern);
-            source = "@https?://" + pattern + "@";
-            sourceEntireUrl = true;
-            priority = 99;
+
+            record.type = 'entire_uri';
+            record.source = "@https?://" + pattern + "@";
+            record.regex = true;
+            record.priority = 99;
         }
 
-        var u = {
-            source: source,
-            sourceEntireUrl: sourceEntireUrl,
-            active: true,
-            priority: priority
-        };
-        this.grid.store.insert(0, u);
-
-		this.updateRows();
+        this.grid.store.insert(0, record);
+        this.updateRows();
 
         this.wizardWindow.close();
     }
-
 });
