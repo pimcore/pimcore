@@ -21,7 +21,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_videothumbnails");
+        tabPanel.setActiveItem("pimcore_videothumbnails");
     },
 
     getTabPanel: function () {
