@@ -253,6 +253,17 @@ pimcore.object.helpers.grid = Class.create({
                         operatorColumnConfig["renderer"] = fc.renderer;
                     }
 
+
+                    operatorColumnConfig.getEditor = function() {
+                        return new pimcore.object.helpers.gridCellEditor({
+                            fieldInfo: {
+                                layout: {
+                                    noteditable: true
+                                }
+                            }
+                        });
+                    }.bind(this);
+
                     gridColumns.push(operatorColumnConfig);
 
                 } else {
