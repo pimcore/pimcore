@@ -5,7 +5,10 @@ services:
         public: false
 
     # resolvers and operator/value factories will be injected from compiler pass
-    Pimcore\DataObject\GridColumnConfig\Service: ~
+    # TODO refactor how the service is used and change to private. Currently it is
+    # used in a static method fetching the service from the container.
+    Pimcore\DataObject\GridColumnConfig\Service:
+        public: true
 
     #
     # OPERATOR FACTORIES
