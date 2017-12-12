@@ -24,9 +24,9 @@ if(!$this->document instanceof \Pimcore\Model\Document\Page) {
 }
 
 // get the document which should be used to start in navigation | default home
-$navStartNode = $this->document->getProperty("navigationRoot");
-if(!$navStartNode instanceof \Pimcore\Model\Document\Page) {
-    $navStartNode = \Pimcore\Model\Document\Page::getById(1);
+$mainNavStartNode = $this->document->getProperty("navigationRoot");
+if(!$mainNavStartNode instanceof \Pimcore\Model\Document\Page) {
+    $mainNavStartNode = \Pimcore\Model\Document\Page::getById(1);
 }
 
 // this returns us the navigation container we can use to render the navigation
