@@ -1,0 +1,245 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # resolvers and operator/value factories will be injected from compiler pass
+    # TODO refactor how the service is used and change to private. Currently it is
+    # used in a static method fetching the service from the container.
+    Pimcore\DataObject\GridColumnConfig\Service:
+        public: true
+
+    #
+    # OPERATOR FACTORIES
+    #
+
+    pimcore.data_object.grid_column_config.operator.factory.anonymizer:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Anonymizer
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Anonymizer }
+
+    pimcore.data_object.grid_column_config.operator.factory.any_getter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\AnyGetter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: AnyGetter }
+
+    pimcore.data_object.grid_column_config.operator.factory.arithmetic:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Arithmetic
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Arithmetic }
+
+    pimcore.data_object.grid_column_config.operator.factory.asset_metadata_getter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\AssetMetadataGetter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: AssetMetadataGetter }
+
+    pimcore.data_object.grid_column_config.operator.factory.base64:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Base64
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Base64 }
+
+    pimcore.data_object.grid_column_config.operator.factory.boolean:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Boolean
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Boolean }
+
+    pimcore.data_object.grid_column_config.operator.factory.boolean_formatter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\BooleanFormatter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: BooleanFormatter }
+
+    pimcore.data_object.grid_column_config.operator.factory.case_converter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\CaseConverter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: CaseConverter }
+
+    pimcore.data_object.grid_column_config.operator.factory.char_counter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\CharCounter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: CharCounter }
+
+    pimcore.data_object.grid_column_config.operator.factory.concatenator:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Concatenator
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Concatenator }
+
+    pimcore.data_object.grid_column_config.operator.factory.element_counter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\ElementCounter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: ElementCounter }
+
+    pimcore.data_object.grid_column_config.operator.factory.field_collection_getter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\FieldCollectionGetter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: FieldCollectionGetter }
+
+    pimcore.data_object.grid_column_config.operator.factory.is_equal:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\IsEqual
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: IsEqual }
+
+    pimcore.data_object.grid_column_config.operator.factory.json:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\JSON
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: JSON }
+
+    pimcore.data_object.grid_column_config.operator.factory.lf_expander:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\LFExpanderFactory
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: LFExpander }
+
+    pimcore.data_object.grid_column_config.operator.factory.locale_switcher:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\LocaleSwitcherFactory
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: LocaleSwitcher }
+
+    pimcore.data_object.grid_column_config.operator.factory.merge:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Merge
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Merge }
+
+    pimcore.data_object.grid_column_config.operator.factory.object_brick_getter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: ObjectBrickGetter }
+
+    pimcore.data_object.grid_column_config.operator.factory.object_field_getter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\ObjectFieldGetter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: ObjectFieldGetter }
+
+    pimcore.data_object.grid_column_config.operator.factory.php:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\PHP
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: PHP }
+
+    pimcore.data_object.grid_column_config.operator.factory.php_code:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\PHPCode
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: PHPCode }
+
+    pimcore.data_object.grid_column_config.operator.factory.required_by:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\RequiredBy
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: RequiredBy }
+
+    pimcore.data_object.grid_column_config.operator.factory.string_contains:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\StringContains
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: StringContains }
+
+    pimcore.data_object.grid_column_config.operator.factory.string_replace:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\StringReplace
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: StringReplace }
+
+    pimcore.data_object.grid_column_config.operator.factory.substring:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Substring
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Substring }
+
+    pimcore.data_object.grid_column_config.operator.factory.text:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Text
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Text }
+
+    pimcore.data_object.grid_column_config.operator.factory.translate_value:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\TranslateValueFactory
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: TranslateValue }
+
+    pimcore.data_object.grid_column_config.operator.factory.trimmer:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Trimmer
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Trimmer }
+
+
+    #
+    # VALUE FACTORIES
+    #
+
+    pimcore.data_object.grid_column_config.value.factory.default:
+        class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Value\DefaultValue
+        tags:
+            - { name: pimcore.data_object.grid_column_config.value_factory, id: DefaultValue }
+
+    pimcore.data_object.grid_column_config.value.factory.date:
+        class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Value\Date
+        tags:
+            - { name: pimcore.data_object.grid_column_config.value_factory, id: Date }
+
+    pimcore.data_object.grid_column_config.value.factory.datetime:
+        class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Value\DateTime
+        tags:
+            - { name: pimcore.data_object.grid_column_config.value_factory, id: DateTime }
+
+    pimcore.data_object.grid_column_config.value.factory.href:
+        class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Value\Href
+        tags:
+            - { name: pimcore.data_object.grid_column_config.value_factory, id: Href }
+
+    pimcore.data_object.grid_column_config.value.factory.objects:
+        class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Value\Objects
+        tags:
+            - { name: pimcore.data_object.grid_column_config.value_factory, id: Objects }

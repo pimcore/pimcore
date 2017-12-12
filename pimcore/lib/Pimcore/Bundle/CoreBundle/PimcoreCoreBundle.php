@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineMigrationsParametersPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ImportLocatorsPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreContextResolverAwarePass;
@@ -71,6 +70,5 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new SessionConfiguratorPass());
         $container->addCompilerPass(new WebDebugToolbarListenerPass());
         $container->addCompilerPass(new DoctrineMigrationsParametersPass());
-        $container->addCompilerPass(new ImportLocatorsPass());
     }
 }

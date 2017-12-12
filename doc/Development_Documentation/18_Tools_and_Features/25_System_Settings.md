@@ -47,12 +47,12 @@ To check anywhere in your own code if you are working in debug-mode, you can mak
 
 ### DEV-Mode
 The development mode enables some debugging features. This is useful if you're developing on the core of Pimcore or when 
-creating a plugin. Please don't activate it in production systems!
+creating a bundle. Please don't activate it in production systems!
 
 What exactly does the dev mode:
 * Loading the source javascript files (uncompressed & commented)
 * Disables some caches (Webservice Cache, ...)
-* extensive logging into logfiles
+* extensive logging into log files
 * ... and some more little things
 
 
