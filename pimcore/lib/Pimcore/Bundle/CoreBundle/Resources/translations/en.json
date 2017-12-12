@@ -1760,5 +1760,8 @@
   "gdpr_dataSource_pimcoreUsers": "Pimcore Backend User Data",
   "no_configuration": "No Configuration",
   "no_configuration_message": "No column configuration is set. Do you really want to continue?",
-  "share_configurations": "Share configurations"
+  "share_configurations": "Share configurations",
+  "enable_inheritance": "Enable Inheritance",
+  "object_settings": "Object Settings",
+  "csv_settings": "CSV Settings"
 }

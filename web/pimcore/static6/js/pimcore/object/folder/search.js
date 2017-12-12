@@ -320,20 +320,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 text: t("export_csv"),
                 iconCls: "pimcore_icon_export",
                 handler: function () {
-
-                    Ext.MessageBox.show({
-                        title: t('warning'),
-                        msg: t('csv_object_export_warning'),
-                        buttons: Ext.Msg.OKCANCEL,
-                        fn: function (btn) {
-                            if (btn == 'ok') {
-                                this.exportPrepare();
-                            }
-                        }.bind(this),
-                        icon: Ext.MessageBox.WARNING
-                    });
-
-
+                    pimcore.helpers.csvExportWarning(function(settings) {
+                        this.exportPrepare(settings);
+                    }.bind(this));
                 }.bind(this)
             }, "-",
                 this.columnConfigButton,

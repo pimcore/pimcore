@@ -434,7 +434,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     },
 
 
-    exportPrepare: function(){
+    exportPrepare: function(settings){
         var jobs = [];
 
         var filters = "";
@@ -460,6 +460,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             ids.push(selectedRows[i].data.id);
         }
 
+        settings = Ext.encode(settings);
+
         var params = {
             filter: filters,
             condition: condition,
@@ -468,7 +470,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             objecttype: this.objecttype,
             language: this.gridLanguage,
             "ids[]": ids,
-            "fields[]": fieldKeys
+            "fields[]": fieldKeys,
+            settings: settings
         };
 
 
@@ -479,14 +482,14 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 var rdata = Ext.decode(response.responseText);
 
                 if (rdata.success && rdata.jobs) {
-                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true);
+                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings);
                 }
 
             }.bind(this)
         });
     },
 
-    exportProcess: function (jobs, fileHandle, fields, initial) {
+    exportProcess: function (jobs, fileHandle, fields, initial, settings) {
 
         if(initial){
 
@@ -538,6 +541,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         this.exportParameters["fields[]"] = fields;
         this.exportParameters.classId = this.classId;
         this.exportParameters.initial = initial ? 1 : 0;
+        this.exportParameters['settings'] = settings;
 
         Ext.Ajax.request({
             url: "/admin/object-helper/do-export",

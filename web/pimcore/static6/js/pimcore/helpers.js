@@ -17,7 +17,7 @@ pimcore.registerNS("pimcore.helpers.x");
 
 pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
 
-    if(!ExtJS) {
+    if (!ExtJS) {
         ExtJS = Ext;
     }
 
@@ -30,46 +30,46 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
             alt: false,
             fn: top.pimcore.helpers.handleCtrlS
         }, {
-            key:116,
+            key: 116,
             fn: top.pimcore.helpers.handleF5
         }, {
-            key:"sa",
+            key: "sa",
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
-            ctrl:true,
-            shift:true,
+            ctrl: true,
+            shift: true,
             alt: false
         }, {
-            key:"of",
+            key: "of",
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "object"),
-            ctrl:true,
-            shift:true,
+            ctrl: true,
+            shift: true,
             alt: false
-        },  {
-            key:"c",
+        }, {
+            key: "c",
             fn: top.pimcore.helpers.openClassEditor,
-            ctrl:true,
-            shift:true
+            ctrl: true,
+            shift: true
         }, {
-            key:"l",
+            key: "l",
             fn: top.pimcore.helpers.openInTree,
-            ctrl:true,
-            shift:true
+            ctrl: true,
+            shift: true
         }, {
-            key:"i",
+            key: "i",
             fn: top.pimcore.helpers.showMetaInfo,
             ctrl: false,
-            shift:false,
+            shift: false,
             alt: true
         }, {
-            key:"d",
+            key: "d",
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
-            ctrl:true,
-            shift:true
+            ctrl: true,
+            shift: true
         }]
     });
 };
 
-pimcore.helpers.openClassEditor = function() {
+pimcore.helpers.openClassEditor = function () {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("classes")) {
         var toolbar = pimcore.globalmanager.get("layout_toolbar");
@@ -77,9 +77,9 @@ pimcore.helpers.openClassEditor = function() {
     }
 };
 
-pimcore.helpers.openWelcomePage = function(keyCode, e) {
+pimcore.helpers.openWelcomePage = function (keyCode, e) {
 
-    if(e["stopEvent"]) {
+    if (e["stopEvent"]) {
         e.stopEvent();
     }
 
@@ -123,7 +123,7 @@ pimcore.helpers.closeAsset = function (id) {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + id;
         var panel = Ext.getCmp(tabId);
-        if(panel) {
+        if (panel) {
             panel.close();
         } else {
             console.log("to close element not found, doing nothing.");
@@ -161,7 +161,7 @@ pimcore.helpers.closeDocument = function (id) {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "document_" + id;
         var panel = Ext.getCmp(tabId);
-        if(panel) {
+        if (panel) {
             panel.close();
         } else {
             console.log("to close element not found, doing nothing.");
@@ -179,7 +179,7 @@ pimcore.helpers.closeDocument = function (id) {
 pimcore.helpers.openObject = function (id, type, options) {
     if (pimcore.globalmanager.exists("object_" + id) == false) {
 
-        if(type != "folder" && type != "variant" && type != "object") {
+        if (type != "folder" && type != "variant" && type != "object") {
             type = "object";
         }
 
@@ -204,7 +204,7 @@ pimcore.helpers.closeObject = function (id) {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + id;
         var panel = Ext.getCmp(tabId);
-        if(panel) {
+        if (panel) {
             panel.close();
         } else {
             console.log("to close element not found, doing nothing.");
@@ -260,7 +260,7 @@ pimcore.helpers.updateObjectStyle = function (id, treeData) {
     }
 };
 
-pimcore.helpers.getHistory = function() {
+pimcore.helpers.getHistory = function () {
     var history = localStorage.getItem("pimcore_element_history");
     if (!history) {
         history = [];
@@ -270,13 +270,13 @@ pimcore.helpers.getHistory = function() {
     return history;
 };
 
-pimcore.helpers.recordElement = function(id, type, name) {
+pimcore.helpers.recordElement = function (id, type, name) {
 
     var history = pimcore.helpers.getHistory();
 
     var newDate = new Date();
 
-    for(var i = history.length-1; i >= 0; i--){
+    for (var i = history.length - 1; i >= 0; i--) {
         var item = history[i];
         if (item.type == type && item.id == id) {
             history.splice(i, 1);
@@ -299,14 +299,16 @@ pimcore.helpers.recordElement = function(id, type, name) {
 
     try {
         var historyPanel = pimcore.globalmanager.get("element_history");
-        if(historyPanel) {
-            var thePair = {"id" : id,
+        if (historyPanel) {
+            var thePair = {
+                "id": id,
                 "type": type,
                 "name": name,
-                "time": newDate };
+                "time": newDate
+            };
 
             var storeCount = historyPanel.store.getCount();
-            for(var i = storeCount - 1; i >= 0; i--) {
+            for (var i = storeCount - 1; i >= 0; i--) {
 
                 var record = historyPanel.store.getAt(i);
                 var data = record.data;
@@ -326,7 +328,7 @@ pimcore.helpers.recordElement = function(id, type, name) {
 };
 
 pimcore.helpers.openElement = function (id, type, subtype) {
-    if(typeof subtype != "undefined") {
+    if (typeof subtype != "undefined") {
         if (type == "document") {
             pimcore.helpers.openDocument(id, subtype);
         }
@@ -341,11 +343,11 @@ pimcore.helpers.openElement = function (id, type, subtype) {
             url: "/admin/element/get-subtype",
             params: {
                 id: id,
-                type:  type
+                type: type
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
-                if(res.success) {
+                if (res.success) {
                     pimcore.helpers.openElement(res.id, res.type, res.subtype);
                 } else {
                     Ext.MessageBox.alert(t("error"), t("element_not_found"));
@@ -357,9 +359,9 @@ pimcore.helpers.openElement = function (id, type, subtype) {
 
 pimcore.helpers.getElementTypeByObject = function (object) {
     var type = null;
-    if(object instanceof pimcore.document.document) {
+    if (object instanceof pimcore.document.document) {
         type = "document";
-    } else if (object instanceof  pimcore.asset.asset) {
+    } else if (object instanceof pimcore.asset.asset) {
         type = "asset";
     } else if (object instanceof pimcore.object.abstract) {
         type = "object";
@@ -457,7 +459,7 @@ pimcore.helpers.getValidFilenameCache = {};
 
 pimcore.helpers.getValidFilename = function (value, type) {
 
-    if(pimcore.helpers.getValidFilenameCache[value + type]) {
+    if (pimcore.helpers.getValidFilenameCache[value + type]) {
         return pimcore.helpers.getValidFilenameCache[value + type];
     }
 
@@ -488,7 +490,8 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
     if (errorText != null && errorText != undefined) {
 
         if (t(errorText) != "~" + errorText + "~") {
-            errorText = t(errorText);}
+            errorText = t(errorText);
+        }
 
         text = text + '<br /><hr />' +
             '<span style="font-size:12px">'
@@ -570,13 +573,13 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
 
 pimcore.helpers.showNotification = function (title, text, type, errorText, hideDelay) {
     // icon types: info,error,success
-    if(type == "error"){
+    if (type == "error") {
 
-        if(errorText != null && errorText != undefined){
+        if (errorText != null && errorText != undefined) {
             text = text + '<br /><hr /><br />' +
-            '<pre style="font-size:11px;word-wrap: break-word;">'
-            + strip_tags(errorText) +
-            "</pre>";
+                '<pre style="font-size:11px;word-wrap: break-word;">'
+                + strip_tags(errorText) +
+                "</pre>";
         }
 
         var errWin = new Ext.Window({
@@ -629,14 +632,14 @@ pimcore.helpers.handleCtrlS = function (keyCode, e) {
         // for document
         var el = activeTab.initialConfig;
         if (el.document) {
-            if(el.document.data.published) {
+            if (el.document.data.published) {
                 el.document.publish();
             } else {
                 el.document.unpublish();
             }
         }
         else if (el.object) {
-            if(el.object.data.general.o_published) {
+            if (el.object.data.general.o_published) {
                 el.object.publish();
             } else {
                 el.object.unpublish();
@@ -686,7 +689,6 @@ pimcore.helpers.openInTree = function (keyCode, e) {
 };
 
 
-
 pimcore.helpers.handleF5 = function (keyCode, e) {
 
     e.stopEvent();
@@ -716,7 +718,7 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
     var lockDetails = "<br /><br />";
     lockDetails += "<b>" + t("path") + ": <i>" + data.editlock.cpath + "</i></b><br />";
     lockDetails += "<b>" + t("type") + ": </b>" + t(ctype) + "<br />";
-    if(data.editlock.user) {
+    if (data.editlock.user) {
         lockDetails += "<b>" + t("user") + ":</b> " + data.editlock.user.name + "<br />";
     }
     lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate, "Y-m-d H:i");
@@ -729,7 +731,7 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
                     url: "/admin/element/unlock-element",
                     params: {
                         id: lock[0],
-                        type:  lock[1]
+                        type: lock[1]
                     },
                     success: function () {
                         pimcore.helpers.openElement(lock[0], lock[1], lock[2]);
@@ -746,11 +748,12 @@ pimcore.helpers.closeAllUnmodified = function () {
     var tabs = Ext.getCmp("pimcore_panel_tabs").items;
     if (tabs.getCount() > 0) {
         tabs.each(function (item, index, length) {
-            if(item.title.indexOf("*") > -1) {
+            if (item.title.indexOf("*") > -1) {
                 unmodifiedElements.push(item);
             }
         });
-    };
+    }
+    ;
 
     pimcore.helpers.closeAllElements(unmodifiedElements);
 };
@@ -758,13 +761,13 @@ pimcore.helpers.closeAllUnmodified = function () {
 pimcore.helpers.closeAllElements = function (except, tabPanel) {
 
     var exceptions = [];
-    if(except instanceof Ext.Panel) {
+    if (except instanceof Ext.Panel) {
         exceptions.push(except);
     } else if (except instanceof Array) {
         exceptions = except;
     }
 
-    if(typeof tabPanel == "undefined") {
+    if (typeof tabPanel == "undefined") {
         tabPanel = Ext.getCmp("pimcore_panel_tabs");
     }
 
@@ -772,10 +775,10 @@ pimcore.helpers.closeAllElements = function (except, tabPanel) {
     if (tabs.getCount() > 0) {
         tabs.each(function (item, index, length) {
             window.setTimeout(function () {
-                if(!in_array(item, exceptions)) {
+                if (!in_array(item, exceptions)) {
                     tabPanel.remove(item);
                 }
-            }, 100*index);
+            }, 100 * index);
         });
     }
 };
@@ -801,7 +804,7 @@ pimcore.helpers.activateMaintenance = function () {
     });
 
     var button = Ext.get("pimcore_menu_maintenance");
-    if(!button.isVisible()) {
+    if (!button.isVisible()) {
         pimcore.helpers.showMaintenanceDisableButton();
     }
 };
@@ -827,7 +830,7 @@ pimcore.helpers.download = function (url) {
     pimcore.settings.showCloseConfirmation = false;
     window.setTimeout(function () {
         pimcore.settings.showCloseConfirmation = true;
-    },1000);
+    }, 1000);
 
     location.href = url;
 };
@@ -840,7 +843,7 @@ pimcore.helpers.getFileExtension = function (filename) {
 
 pimcore.helpers.getOpenTab = function () {
     var openTabs = localStorage.getItem("pimcore_opentabs");
-    if(!openTabs) {
+    if (!openTabs) {
         openTabs = [];
     } else {
         // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
@@ -857,7 +860,7 @@ pimcore.helpers.clearOpenTab = function () {
 pimcore.helpers.rememberOpenTab = function (item, forceOpenTab) {
     var openTabs = pimcore.helpers.getOpenTab();
 
-    if(!in_array(item, openTabs)) {
+    if (!in_array(item, openTabs)) {
         openTabs.push(item);
     }
 
@@ -877,7 +880,7 @@ pimcore.helpers.forgetOpenTab = function (item) {
 
     var openTabs = pimcore.helpers.getOpenTab();
 
-    if(in_array(item, openTabs)) {
+    if (in_array(item, openTabs)) {
         var pos = array_search(item, openTabs);
         openTabs.splice(pos, 1);
     }
@@ -886,7 +889,7 @@ pimcore.helpers.forgetOpenTab = function (item) {
     localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs));
 };
 
-pimcore.helpers.forceOpenMemorizedTabsOnce = function() {
+pimcore.helpers.forceOpenMemorizedTabsOnce = function () {
     if (localStorage.getItem("pimcore_opentabs_forceopenonce")) {
         localStorage.removeItem("pimcore_opentabs_forceopenonce");
         return true;
@@ -898,18 +901,27 @@ pimcore.helpers.openMemorizedTabs = function () {
     var openTabs = pimcore.helpers.getOpenTab();
     var openedTabs = [];
 
-    for(var i=0; i < openTabs.length; i++) {
-        if(!empty(openTabs[i])) {
-            if(!in_array(openTabs[i], openedTabs)) {
+    for (var i = 0; i < openTabs.length; i++) {
+        if (!empty(openTabs[i])) {
+            if (!in_array(openTabs[i], openedTabs)) {
                 var parts = openTabs[i].split("_");
                 window.setTimeout(function (parts) {
-                    if(parts[1] && parts[2]) {
-                        if(parts[0] == "asset") {
-                            pimcore.helpers.openAsset(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
-                        } else if(parts[0] == "document") {
-                            pimcore.helpers.openDocument(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
-                        } else if(parts[0] == "object") {
-                            pimcore.helpers.openObject(parts[1], parts[2], { ignoreForHistory: true, ignoreNotFoundError: true});
+                    if (parts[1] && parts[2]) {
+                        if (parts[0] == "asset") {
+                            pimcore.helpers.openAsset(parts[1], parts[2], {
+                                ignoreForHistory: true,
+                                ignoreNotFoundError: true
+                            });
+                        } else if (parts[0] == "document") {
+                            pimcore.helpers.openDocument(parts[1], parts[2], {
+                                ignoreForHistory: true,
+                                ignoreNotFoundError: true
+                            });
+                        } else if (parts[0] == "object") {
+                            pimcore.helpers.openObject(parts[1], parts[2], {
+                                ignoreForHistory: true,
+                                ignoreNotFoundError: true
+                            });
                         }
                     }
                 }.bind(this, parts), 200);
@@ -921,12 +933,14 @@ pimcore.helpers.openMemorizedTabs = function () {
 
 pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure) {
 
-    if(typeof success != "function") {
-        var success = function () {};
+    if (typeof success != "function") {
+        var success = function () {
+        };
     }
 
-    if(typeof failure != "function") {
-        var failure = function () {};
+    if (typeof failure != "function") {
+        var failure = function () {
+        };
     }
 
     var url = '/admin/asset/add-asset-compatibility?parent' + ucfirst(parentType) + '=' + parent;
@@ -935,7 +949,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
         autoHeight: true,
         title: t('add_assets'),
         closeAction: 'close',
-        width:400,
+        width: 400,
         modal: true
     });
 
@@ -981,19 +995,21 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
 
 pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
 
-    if(typeof success != "function") {
-        success = function () {};
+    if (typeof success != "function") {
+        success = function () {
+        };
     }
 
-    if(typeof failure != "function") {
-        failure = function () {};
+    if (typeof failure != "function") {
+        failure = function () {
+        };
     }
 
-    if(typeof filename != "string") {
+    if (typeof filename != "string") {
         filename = "Filedata";
     }
 
-    if(empty(filename)) {
+    if (empty(filename)) {
         filename = "Filedata";
     }
 
@@ -1001,7 +1017,7 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
         autoHeight: true,
         title: t('upload'),
         closeAction: 'close',
-        width:400,
+        width: 400,
         modal: true
     });
 
@@ -1051,9 +1067,9 @@ pimcore.helpers.getClassForIcon = function (icon) {
 
     var styleContainerId = "pimcore_dynamic_class_for_icon";
     var styleContainer = Ext.get(styleContainerId);
-    if(!styleContainer) {
+    if (!styleContainer) {
         styleContainer = Ext.getBody().insertHtml("beforeEnd", '<style type="text/css" id="' + styleContainerId
-        + '"></style>', true);
+            + '"></style>', true);
     }
 
     var content = styleContainer.dom.innerHTML;
@@ -1067,13 +1083,13 @@ pimcore.helpers.getClassForIcon = function (icon) {
 
 pimcore.helpers.openElementByIdDialog = function (type, keyCode, e) {
 
-    if(e["stopEvent"]) {
+    if (e["stopEvent"]) {
         e.stopEvent();
     }
 
     Ext.MessageBox.prompt(t('open_' + type + '_by_id'), t('please_enter_the_id_of_the_' + type),
         function (button, value, object) {
-            if(button == "ok" && !Ext.isEmpty(value)) {
+            if (button == "ok" && !Ext.isEmpty(value)) {
                 pimcore.helpers.openElement(value, type);
             }
         });
@@ -1083,7 +1099,7 @@ pimcore.helpers.openDocumentByPath = function (path) {
     pimcore.helpers.openElement(path, "document");
 };
 
-pimcore.helpers.sanitizeAllowedTypes = function(data, name) {
+pimcore.helpers.sanitizeAllowedTypes = function (data, name) {
     if (data[name]) {
         var newList = [];
         for (i = 0; i < data[name].length; i++) {
@@ -1098,7 +1114,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
 
     var cb = callback;
 
-    if(pimcore.settings.htmltoimage) {
+    if (pimcore.settings.htmltoimage) {
         Ext.Ajax.request({
             url: '/admin/page/generate-screenshot',
             ignoreErrors: true,
@@ -1106,7 +1122,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
                 id: id
             },
             success: function () {
-                if(typeof cb == "function") {
+                if (typeof cb == "function") {
                     cb();
                 }
             }
@@ -1119,11 +1135,11 @@ pimcore.helpers.treeNodeThumbnailLastClose = 0;
 
 pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, index, e, eOpts) {
 
-    if(typeof record.data["thumbnail"] != "undefined" ||
+    if (typeof record.data["thumbnail"] != "undefined" ||
         typeof record.data["thumbnails"] != "undefined") {
 
         // only display thumbnails when dnd is not active
-        if(Ext.dd.DragDropMgr.dragCurrent) {
+        if (Ext.dd.DragDropMgr.dragCurrent) {
             return;
         }
 
@@ -1131,9 +1147,9 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
         var uriPrefix = window.location.protocol + "//" + window.location.host;
 
         var thumbnails = record.data["thumbnails"];
-        if(thumbnails && thumbnails.length) {
+        if (thumbnails && thumbnails.length) {
             imageHtml += '<div class="thumbnails">';
-            for(var i=0; i<thumbnails.length; i++) {
+            for (var i = 0; i < thumbnails.length; i++) {
                 imageHtml += '<div class="thumb small"><img src="' + uriPrefix + thumbnails[i]
                     + '" onload="this.parentNode.className += \' complete\';" /></div>';
             }
@@ -1141,35 +1157,35 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
         }
 
         var thumbnail = record.data["thumbnail"];
-        if(thumbnail) {
+        if (thumbnail) {
             imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail
                 + '" onload="this.parentNode.className += \' complete\';" /></div>';
         }
 
-        if(imageHtml) {
+        if (imageHtml) {
             var treeEl = Ext.get("pimcore_panel_tree_" + this.position);
             var position = treeEl.getOffsetsTo(Ext.getBody());
             position = position[0];
 
-            if(this.position == "right") {
+            if (this.position == "right") {
                 position = position - 420;
             } else {
                 position = treeEl.getWidth() + position;
             }
 
             var container = Ext.get("pimcore_tree_preview");
-            if(!container) {
-                container  = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
+            if (!container) {
+                container = Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview"></div>');
                 container = Ext.get(container);
                 container.addCls("hidden");
             }
 
             // check for an existing iframe
             var existingIframe = container.query("iframe")[0];
-            if(existingIframe) {
+            if (existingIframe) {
                 // stop loading the existing iframe (images, etc.)
                 var existingIframeWin = existingIframe.contentWindow;
-                if(typeof existingIframeWin["stop"] == "function") {
+                if (typeof existingIframeWin["stop"] == "function") {
                     existingIframeWin.stop();
                 } else if (typeof existingIframeWin.document["execCommand"] == "function") {
                     existingIframeWin.document.execCommand('Stop');
@@ -1209,9 +1225,9 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
             container.applyStyles(styles);
 
             var date = new Date();
-            if(pimcore.helpers.treeNodeThumbnailLastClose === 0 || (date.getTime() - pimcore.helpers.treeNodeThumbnailLastClose) > 300) {
+            if (pimcore.helpers.treeNodeThumbnailLastClose === 0 || (date.getTime() - pimcore.helpers.treeNodeThumbnailLastClose) > 300) {
                 // open deferred
-                pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function() {
+                pimcore.helpers.treeNodeThumbnailTimeout = window.setTimeout(function () {
                     container.removeCls("hidden");
                 }, 500);
             } else {
@@ -1224,14 +1240,14 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
 
 pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
 
-    if(pimcore.helpers.treeNodeThumbnailTimeout) {
+    if (pimcore.helpers.treeNodeThumbnailTimeout) {
         clearTimeout(pimcore.helpers.treeNodeThumbnailTimeout);
         pimcore.helpers.treeNodeThumbnailTimeout = null;
     }
 
     var container = Ext.get("pimcore_tree_preview");
-    if(container) {
-        if(!container.hasCls("hidden")) {
+    if (container) {
+        if (!container.hasCls("hidden")) {
             var date = new Date();
             pimcore.helpers.treeNodeThumbnailLastClose = date.getTime();
         }
@@ -1239,7 +1255,7 @@ pimcore.helpers.treeNodeThumbnailPreviewHide = function () {
     }
 };
 
-pimcore.helpers.showUser = function(specificUser) {
+pimcore.helpers.showUser = function (specificUser) {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("users")) {
         var panel = null;
@@ -1267,25 +1283,24 @@ pimcore.helpers.insertTextAtCursorPosition = function (text) {
 
     // now check if the focus is inside an iframe
     try {
-        while(focusedElement.tagName.toLowerCase() == "iframe") {
+        while (focusedElement.tagName.toLowerCase() == "iframe") {
             win = window[focusedElement.getAttribute("name")];
             doc = win.document;
             focusedElement = doc.activeElement;
         }
-    } catch(e) {
+    } catch (e) {
         console.log(e);
     }
 
     var elTagName = focusedElement.tagName.toLowerCase();
 
-    if(elTagName == "input" || elTagName == "textarea") {
+    if (elTagName == "input" || elTagName == "textarea") {
         insertTextToFormElementAtCursor(focusedElement, text);
-    } else if(elTagName == "div" && focusedElement.getAttribute("contenteditable")) {
+    } else if (elTagName == "div" && focusedElement.getAttribute("contenteditable")) {
         insertTextToContenteditableAtCursor(text, win, doc);
     }
 
 };
-
 
 
 pimcore.helpers.getMainTabMenuItems = function () {
@@ -1317,7 +1332,7 @@ pimcore.helpers.getMainTabMenuItems = function () {
         iconCls: "",
         handler: function (item) {
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            pimcore.helpers.closeAllElements(null,tabPanel);
+            pimcore.helpers.closeAllElements(null, tabPanel);
             // clear the opentab store, so that also non existing elements are flushed
             pimcore.helpers.clearOpenTab();
         }.bind(this)
@@ -1325,7 +1340,6 @@ pimcore.helpers.getMainTabMenuItems = function () {
 
     return items;
 };
-
 
 
 //pimcore.helpers.handleTabRightClick = function (tabPanel, el, index) {
@@ -1381,18 +1395,21 @@ pimcore.helpers.getMainTabMenuItems = function () {
 
 pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackProgress, callbackFailure) {
 
-    if(typeof callbackSuccess != "function") {
-        callbackSuccess = function () {};
+    if (typeof callbackSuccess != "function") {
+        callbackSuccess = function () {
+        };
     }
-    if(typeof callbackProgress != "function") {
-        callbackProgress = function () {};
+    if (typeof callbackProgress != "function") {
+        callbackProgress = function () {
+        };
     }
-    if(typeof callbackFailure != "function") {
-        callbackFailure = function () {};
+    if (typeof callbackFailure != "function") {
+        callbackFailure = function () {
+        };
     }
 
-    if(file["size"]) {
-        if(file["size"] > pimcore.settings["upload_max_filesize"]) {
+    if (file["size"]) {
+        if (file["size"] > pimcore.settings["upload_max_filesize"]) {
             callbackSuccess();
             pimcore.helpers.showNotification(t("error"), t("file_is_bigger_that_upload_limit") + " " + file.name, "error");
             return;
@@ -1404,12 +1421,11 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     data.append("filename", file.name);
 
     jQuery.ajax({
-        xhr: function()
-        {
+        xhr: function () {
             var xhr = new window.XMLHttpRequest();
 
             //Upload progress
-            xhr.upload.addEventListener("progress", function(evt){
+            xhr.upload.addEventListener("progress", function (evt) {
                 callbackProgress(evt);
             }, false);
 
@@ -1425,7 +1441,6 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     });
 
 };
-
 
 
 pimcore.helpers.searchAndMove = function (parentId, callback, type) {
@@ -1448,8 +1463,8 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
 
         var jobs = [];
 
-        if(selection && selection.length > 0) {
-            for(var i=0; i<selection.length; i++) {
+        if (selection && selection.length > 0) {
+            for (var i = 0; i < selection.length; i++) {
                 var params;
                 if (type == "object") {
                     params = {
@@ -1480,10 +1495,10 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
         });
 
         this.addChildWindow = new Ext.Window({
-            layout:'fit',
-            width:500,
+            layout: 'fit',
+            width: 500,
             bodyStyle: "padding: 10px;",
-            closable:false,
+            closable: false,
             plain: true,
             modal: true,
             items: [this.addChildProgressBar]
@@ -1494,21 +1509,21 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
         var pj = new pimcore.tool.paralleljobs({
             success: function (callbackFunction) {
 
-                if(this.addChildWindow) {
+                if (this.addChildWindow) {
                     this.addChildWindow.close();
                 }
 
                 this.deleteProgressBar = null;
                 this.addChildWindow = null;
 
-                if(typeof callbackFunction == "function") {
+                if (typeof callbackFunction == "function") {
                     callbackFunction();
                 }
 
                 try {
                     var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.object.id);
                     if (node) {
-                        tree.getStore().load( {
+                        tree.getStore().load({
                             node: node
                         });
                     }
@@ -1517,7 +1532,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
                 }
             }.bind(this, callback),
             update: function (currentStep, steps, percent) {
-                if(this.addChildProgressBar) {
+                if (this.addChildProgressBar) {
                     var status = currentStep / steps;
                     this.addChildProgressBar.updateProgress(status, percent + "%");
                 }
@@ -1596,7 +1611,7 @@ pimcore.helpers.sendTestEmail = function () {
                     message: t("send_test_email_success"),
                     buttons: Ext.Msg.YESNO,
                     icon: Ext.Msg.QUESTION,
-                    fn: function(btn) {
+                    fn: function (btn) {
                         win.enable();
                         if (btn === 'no') {
                             win.close();
@@ -1654,7 +1669,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
-                if(el.getValue().match(/^www\./)) {
+                if (el.getValue().match(/^www\./)) {
                     el.setValue("http://" + el.getValue());
                     internalTypeField.setValue(null);
                     linkTypeField.setValue("direct");
@@ -1669,16 +1684,16 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         new Ext.dd.DropZone(el.getEl(), {
             reference: this,
             ddGroup: "element",
-            getTargetFromEvent: function(e) {
+            getTargetFromEvent: function (e) {
                 return fieldPath.getEl();
             },
 
-            onNodeOver : function(target, dd, e, data) {
+            onNodeOver: function (target, dd, e, data) {
                 data = data.records[0].data;
                 return data.type != "folder" ? Ext.dd.DropZone.prototype.dropAllowed : Ext.dd.DropZone.prototype.dropNotAllowed;
             }.bind(this),
 
-            onNodeDrop : function (target, dd, e, data) {
+            onNodeDrop: function (target, dd, e, data) {
                 var record = data.records[0];
                 if (record.data.type != "folder" && (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object")) {
                     internalTypeField.setValue(record.data.elementType);
@@ -1695,14 +1710,14 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         itemId: "form",
         items: [
             {
-                xtype:'tabpanel',
+                xtype: 'tabpanel',
                 deferredRender: false,
-                defaults:{autoHeight:true, bodyStyle:'padding:10px'},
+                defaults: {autoHeight: true, bodyStyle: 'padding:10px'},
                 border: false,
                 items: [
                     {
-                        title:t('basic'),
-                        layout:'vbox',
+                        title: t('basic'),
+                        layout: 'vbox',
                         border: false,
                         defaultType: 'textfield',
                         items: [
@@ -1732,13 +1747,13 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                                 return true;
                                             }
                                         }, {
-                                            type: ["asset","document","object"]
+                                            type: ["asset", "document", "object"]
                                         });
                                     }
                                 }]
                             },
                             {
-                                xtype:'fieldset',
+                                xtype: 'fieldset',
                                 layout: 'vbox',
                                 title: t('properties'),
                                 collapsible: false,
@@ -1747,7 +1762,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                 defaults: {
                                     width: 250
                                 },
-                                items :[
+                                items: [
                                     {
                                         xtype: "combo",
                                         fieldLabel: t('target'),
@@ -1755,7 +1770,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                         triggerAction: 'all',
                                         editable: true,
                                         mode: "local",
-                                        store: ["","_blank","_self","_top","_parent"],
+                                        store: ["", "_blank", "_self", "_top", "_parent"],
                                         value: data.target,
                                         width: 300
                                     },
@@ -1780,7 +1795,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                     },
                     {
                         title: t('advanced'),
-                        layout:'form',
+                        layout: 'form',
                         defaultType: 'textfield',
                         border: false,
                         items: [
@@ -1820,14 +1835,14 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         buttons: [
             {
                 text: t("empty"),
-                listeners:  {
+                listeners: {
                     "click": callback["empty"]
                 },
                 iconCls: "pimcore_icon_empty"
             },
             {
                 text: t("cancel"),
-                listeners:  {
+                listeners: {
                     "click": callback["cancel"]
                 },
                 iconCls: "pimcore_icon_cancel"
@@ -1871,7 +1886,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
-                if((el.getValue().indexOf("youtu.be") >= 0 || el.getValue().indexOf("youtube.com") >= 0) && el.getValue().indexOf("http") >= 0) {
+                if ((el.getValue().indexOf("youtu.be") >= 0 || el.getValue().indexOf("youtube.com") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("youtube");
                 } else if (el.getValue().indexOf("vimeo") >= 0 && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("vimeo");
@@ -1901,11 +1916,11 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         new Ext.dd.DropZone(el.getEl(), {
             reference: this,
             ddGroup: "element",
-            getTargetFromEvent: function(e) {
+            getTargetFromEvent: function (e) {
                 return el.getEl();
             },
 
-            onNodeOver : function(target, dd, e, data) {
+            onNodeOver: function (target, dd, e, data) {
                 data = data.records[0].data;
                 if (target && target.getId() == poster.getId()) {
                     if (data.elementType == "asset" && data.type == "image") {
@@ -1919,11 +1934,11 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
                 return Ext.dd.DropZone.prototype.dropNotAllowed;
             }.bind(this),
 
-            onNodeDrop : function (target, dd, e, data) {
-                if(target) {
+            onNodeDrop: function (target, dd, e, data) {
+                if (target) {
                     data = data.records[0].data;
 
-                    if(target.getId() == fieldPath.getId()) {
+                    if (target.getId() == fieldPath.getId()) {
                         if (data.elementType == "asset" && data.type == "video") {
                             fieldPath.setValue(data.path);
                             form.getComponent("type").setValue("asset");
@@ -1968,7 +1983,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         var labelEl = form.getComponent("pathContainer").getComponent("path").labelEl;
         labelEl.update(t("path"));
 
-        if(type != "asset") {
+        if (type != "asset") {
             searchButton.disable();
 
             poster.hide();
@@ -1983,15 +1998,15 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             form.getComponent("description").show();
         }
 
-        if(type == "youtube") {
+        if (type == "youtube") {
             labelEl.update("ID");
         }
 
-        if(type == "vimeo") {
+        if (type == "vimeo") {
             labelEl.update("ID");
         }
-        
-        if(type == "dailymotion") {
+
+        if (type == "dailymotion") {
             labelEl.update("ID");
         }
     };
@@ -2008,7 +2023,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             editable: false,
             width: 270,
             mode: "local",
-            store: ["asset","youtube","vimeo","dailymotion"],
+            store: ["asset", "youtube", "vimeo", "dailymotion"],
             value: data.type,
             listeners: {
                 select: function (combo) {
@@ -2022,14 +2037,14 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             border: false,
             itemId: "pathContainer",
             items: [fieldPath, searchButton]
-        }, poster,{
+        }, poster, {
             xtype: "textfield",
             name: "title",
             itemId: "title",
             fieldLabel: t('title'),
             width: 420,
             value: data.title
-        },{
+        }, {
             xtype: "textarea",
             itemId: "description",
             name: "description",
@@ -2042,7 +2057,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             {
                 text: t("cancel"),
                 iconCls: "pimcore_icon_cancel",
-                listeners:  {
+                listeners: {
                     "click": callback["cancel"]
                 }
             },
@@ -2099,7 +2114,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                     handler: function () {
                         addItem("link");
                     }
-                },"-",{
+                }, "-", {
                     text: t("textfield"),
                     iconCls: "pimcore_icon_input",
                     handler: function () {
@@ -2146,7 +2161,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                     var normalizedData = [];
 
                     // when only one item is in the form
-                    if(typeof data["name"] == "string") {
+                    if (typeof data["name"] == "string") {
                         data = {
                             name: [data["name"]],
                             type: [data["type"]],
@@ -2154,8 +2169,8 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                         };
                     }
 
-                    if(data && data["name"] && data["name"].length > 0) {
-                        for(var i=0; i<data["name"].length; i++) {
+                    if (data && data["name"] && data["name"].length > 0) {
+                        for (var i = 0; i < data["name"].length; i++) {
                             normalizedData.push({
                                 name: data["name"][i],
                                 value: data["value"][i],
@@ -2171,9 +2186,9 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             }],
             listeners: {
                 afterrender: function (id) {
-                    if(this.hotspotMetaData && this.hotspotMetaData[id]) {
+                    if (this.hotspotMetaData && this.hotspotMetaData[id]) {
                         var data = this.hotspotMetaData[id];
-                        for(var i=0; i<data.length; i++) {
+                        for (var i = 0; i < data.length; i++) {
                             addItem(data[i]["type"], data[i]);
                         }
                     }
@@ -2186,14 +2201,14 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             var id = "item-" + uniqid();
             var valueField;
 
-            if(!data || !data["name"]) {
+            if (!data || !data["name"]) {
                 data = {
                     name: "",
                     value: ""
                 };
             }
 
-            if(type == "textfield") {
+            if (type == "textfield") {
                 valueField = {
                     xtype: "textfield",
                     name: "value",
@@ -2201,7 +2216,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                     width: 500,
                     value: data["value"]
                 };
-            } else if(type == "textarea") {
+            } else if (type == "textarea") {
                 valueField = {
                     xtype: "textarea",
                     name: "value",
@@ -2209,14 +2224,14 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                     width: 500,
                     value: data["value"]
                 };
-            } else if(type == "checkbox") {
+            } else if (type == "checkbox") {
                 valueField = {
                     xtype: "checkbox",
                     name: "value",
                     fieldLabel: t("value"),
                     checked: data["value"]
                 };
-            } else if(type == "object") {
+            } else if (type == "object") {
                 valueField = {
                     xtype: "textfield",
                     fieldCls: "pimcore_droptarget_input",
@@ -2229,21 +2244,21 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                             new Ext.dd.DropZone(el.getEl(), {
                                 reference: this,
                                 ddGroup: "element",
-                                getTargetFromEvent: function(e) {
+                                getTargetFromEvent: function (e) {
                                     return this.getEl();
                                 }.bind(el),
 
-                                onNodeOver : function (target, dd, e, data) {
+                                onNodeOver: function (target, dd, e, data) {
                                     var data = data.records[0].data;
-                                    if(data.elementType == "object") {
+                                    if (data.elementType == "object") {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                     return Ext.dd.DropZone.prototype.dropNotAllowed;
                                 },
 
-                                onNodeDrop : function (target, dd, e, data) {
+                                onNodeDrop: function (target, dd, e, data) {
                                     var data = data.records[0].data;
-                                    if(data.elementType == "object") {
+                                    if (data.elementType == "object") {
                                         var id = target.getId();
                                         var textfield = Ext.getCmp(id);
                                         textfield.setValue(data.path);
@@ -2256,7 +2271,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                         }.bind(this)
                     }
                 };
-            } else if(type == "asset") {
+            } else if (type == "asset") {
                 valueField = {
                     xtype: "textfield",
                     fieldCls: "pimcore_droptarget_input",
@@ -2269,21 +2284,21 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                             new Ext.dd.DropZone(el.getEl(), {
                                 reference: this,
                                 ddGroup: "element",
-                                getTargetFromEvent: function(e) {
+                                getTargetFromEvent: function (e) {
                                     return this.getEl();
                                 }.bind(el),
 
-                                onNodeOver : function (target, dd, e, data) {
+                                onNodeOver: function (target, dd, e, data) {
                                     var data = data.records[0].data;
-                                    if(data.elementType == "asset") {
+                                    if (data.elementType == "asset") {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                     return Ext.dd.DropZone.prototype.dropNotAllowed;
                                 },
 
-                                onNodeDrop : function (target, dd, e, data) {
+                                onNodeDrop: function (target, dd, e, data) {
                                     var data = data.records[0].data;
-                                    if(data.elementType == "asset") {
+                                    if (data.elementType == "asset") {
                                         var id = target.getId();
                                         var textfield = Ext.getCmp(id);
                                         textfield.setValue(data.path);
@@ -2296,9 +2311,9 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                         }.bind(this)
                     }
                 };
-            } else if(type == "document" || type == "link") {
+            } else if (type == "document" || type == "link") {
 
-                if(type == "link") {
+                if (type == "link") {
                     data["name"] = "link";
                 }
 
@@ -2314,21 +2329,21 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                             new Ext.dd.DropZone(el.getEl(), {
                                 reference: this,
                                 ddGroup: "element",
-                                getTargetFromEvent: function(e) {
+                                getTargetFromEvent: function (e) {
                                     return this.getEl();
                                 }.bind(el),
 
-                                onNodeOver : function (target, dd, e, data) {
+                                onNodeOver: function (target, dd, e, data) {
                                     var data = data.records[0].data;
-                                    if(data.elementType == "document") {
+                                    if (data.elementType == "document") {
                                         return Ext.dd.DropZone.prototype.dropAllowed;
                                     }
                                     return Ext.dd.DropZone.prototype.dropNotAllowed;
                                 },
 
-                                onNodeDrop : function (target, dd, e, data) {
+                                onNodeDrop: function (target, dd, e, data) {
                                     var data = data.records[0].data;
-                                    if(data.elementType == "document") {
+                                    if (data.elementType == "document") {
                                         var id = target.getId();
                                         var textfield = Ext.getCmp(id);
                                         textfield.setValue(data.path);
@@ -2382,7 +2397,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
         hotspotMetaDataWin.show();
     }.bind(this);
 
-    var updateHotspotStyle = function(hotspotEl, config) {
+    var updateHotspotStyle = function (hotspotEl, config) {
         var imgEl = Ext.get(this.metaDataWindow.getComponent("pageContainer").body.query("img")[0]);
         var originalWidth = imgEl.getWidth();
         var originalHeight = imgEl.getHeight();
@@ -2391,10 +2406,10 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
         var absoluteImgY = imgEl.dom.y;
 
         var newStyle = {
-            top: (absoluteImgY + originalHeight * (config["top"]/100)) + "px",
-            left: (absoluteImgX + originalWidth * (config["left"]/100)) + "px",
-            width: (originalWidth * (config["width"]/100)) + "px",
-            height: (originalHeight * (config["height"]/100)) + "px"
+            top: (absoluteImgY + originalHeight * (config["top"] / 100)) + "px",
+            left: (absoluteImgX + originalWidth * (config["left"] / 100)) + "px",
+            width: (originalWidth * (config["width"] / 100)) + "px",
+            height: (originalHeight * (config["height"] / 100)) + "px"
         };
         hotspotEl.applyStyles(newStyle);
     }.bind(this);
@@ -2445,10 +2460,10 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             height: "50px"
         });
 
-        if(typeof config == "object") {
+        if (typeof config == "object") {
             updateHotspotStyle(hotspotEl, config);
 
-            if(config["data"]) {
+            if (config["data"]) {
                 this.hotspotMetaData[hotspotId] = config["data"];
             }
         }
@@ -2484,19 +2499,19 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
         return hotspotId;
     }.bind(this);
 
-    var editTextVersion = function(config){
+    var editTextVersion = function (config) {
 
         var text = null;
         if (this.data.texts) {
             text = this.data.texts[this.currentPage];
         }
-        if(!text){
+        if (!text) {
             text = this.requestTextForCurrentPage();
         }
         this.textArea = new Ext.form.TextArea(
             {
                 fieldLabel: t("pimcore_lable_text"),
-                name : "text",
+                name: "text",
                 value: text
             });
 
@@ -2515,10 +2530,10 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             iconCls: "pimcore_icon_text",
             title: t('pimcore_icon_edit_pdf_text'),
             layout: "fit",
-            closeAction:'close',
+            closeAction: 'close',
             plain: true,
-            items : [panel],
-            scrollable : false,
+            items: [panel],
+            scrollable: false,
             modal: true,
             buttons: [
                 {
@@ -2597,17 +2612,17 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
                             var div = Ext.get(el.query(".page")[0]);
                             var img = Ext.get(el.query("img")[0]);
 
-                            if((img.getHeight() > 100 && img.getWidth() > 100) || checks > 300 || !div || !img) {
+                            if ((img.getHeight() > 100 && img.getWidth() > 100) || checks > 300 || !div || !img) {
                                 window.clearInterval(detailInterval);
                             }
 
-                            if(img.getHeight() > 100 && img.getWidth() > 100) {
+                            if (img.getHeight() > 100 && img.getWidth() > 100) {
                                 div.applyStyles({
                                     width: img.getWidth() + "px",
                                     height: img.getHeight() + "px",
                                     visibility: "visible",
-                                    "margin-left": ((el.getWidth()-img.getWidth())/2) + "px",
-                                    "margin-top": ((el.getHeight()-img.getHeight())/2) + "px"
+                                    "margin-left": ((el.getWidth() - img.getWidth()) / 2) + "px",
+                                    "margin-top": ((el.getHeight() - img.getHeight()) / 2) + "px"
                                 });
 
 
@@ -2628,8 +2643,8 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 
                     // add hotspots
                     var hotspots = this.hotspotStore[this.currentPage];
-                    if(hotspots) {
-                        for(var i=0; i<hotspots.length; i++) {
+                    if (hotspots) {
+                        for (var i = 0; i < hotspots.length; i++) {
                             addHotspot(hotspots[i]);
                         }
                     }
@@ -2652,30 +2667,30 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
     this.hotspotMetaData = {};
     this.textStore = {};
     this.chapterStore = {};
-    if(this.data["hotspots"]) {
+    if (this.data["hotspots"]) {
         this.hotspotStore = this.data["hotspots"];
     }
 
-    if(this.data["texts"]){
+    if (this.data["texts"]) {
         this.textStore = this.data["texts"];
     }
 
-    if(this.data["chapters"]){
+    if (this.data["chapters"]) {
         this.chapterStore = this.data["chapters"];
     }
 
 
     this.currentPage = null;
 
-    for(var i=1; i<=this.data.pageCount; i++) {
+    for (var i = 1; i <= this.data.pageCount; i++) {
         thumbUrl = "/admin/asset/get-document-thumbnail?id="
-        + this.data.id + "&width=400&height=400&contain=true&page=" + i;
+            + this.data.id + "&width=400&height=400&contain=true&page=" + i;
 
 
         pages.push({
             style: "margin-bottom: 10px; text-align: center; cursor:pointer; ",
             bodyStyle: "min-height: 150px;",
-            html: '<span id="' + this.getName() + '-page-' + i + '" style="font-size:35px; line-height: 150px;" data-src="' + thumbUrl + '">' + i + '</span>' , // blank gif image
+            html: '<span id="' + this.getName() + '-page-' + i + '" style="font-size:35px; line-height: 150px;" data-src="' + thumbUrl + '">' + i + '</span>', // blank gif image
             listeners: {
                 afterrender: function (page, el) {
                     // unfortunately the panel element has no click event, so we have to add it to the image
@@ -2697,17 +2712,17 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 
     var loadingInterval = window.setInterval(function () {
 
-        if(!this.pagesContainer || !this.pagesContainer.body || !this.pagesContainer.body.dom) {
+        if (!this.pagesContainer || !this.pagesContainer.body || !this.pagesContainer.body.dom) {
             clearInterval(loadingInterval);
         } else {
             var el;
             var scroll = this.pagesContainer.body.getScroll();
             var startPage = Math.floor(scroll.top / 162); // 162 is the height of one thumbnail incl. border and margin
-            for(var i=startPage; i<(startPage+5); i++) {
+            for (var i = startPage; i < (startPage + 5); i++) {
                 el = Ext.get(this.getName() + "-page-" + i);
-                if(el) {
+                if (el) {
                     // el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
-                    el.parent().update('<div class="pdf-image-wrapper"><img src="' + el.getAttribute("data-src") + '" height="150" /><div class="nr ' + (this.hasMetaData(i) ? 'hasMetadata'  : '') +'" style="font-size:35px; line-height:150px; position: absolute;top:0px;width: 100%;">' + i + '</div></div>');
+                    el.parent().update('<div class="pdf-image-wrapper"><img src="' + el.getAttribute("data-src") + '" height="150" /><div class="nr ' + (this.hasMetaData(i) ? 'hasMetadata' : '') + '" style="font-size:35px; line-height:150px; position: absolute;top:0px;width: 100%;">' + i + '</div></div>');
                 }
             }
         }
@@ -2757,7 +2772,7 @@ pimcore.helpers.showAbout = function () {
 
     var win = new Ext.Window({
         title: t("about"),
-        width:500,
+        width: 500,
         height: 300,
         bodyStyle: "padding: 10px;",
         modal: true,
@@ -2767,7 +2782,7 @@ pimcore.helpers.showAbout = function () {
     win.show();
 };
 
-pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridConfigId, searchType, global) {
+pimcore.helpers.markColumnConfigAsFavourite = function (objectId, classId, gridConfigId, searchType, global) {
 
     try {
 
@@ -2782,7 +2797,7 @@ pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridCo
                 global: global ? 1 : 0
             },
             success: function (response) {
-                try{
+                try {
                     var rdata = Ext.decode(response.responseText);
 
                     if (rdata && rdata.success) {
@@ -2794,9 +2809,9 @@ pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridCo
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"),
-                            "error",t(rdata.message));
+                            "error", t(rdata.message));
                     }
-                } catch(e){
+                } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
                 }
             }.bind(this),
@@ -2811,14 +2826,14 @@ pimcore.helpers.markColumnConfigAsFavourite = function(objectId, classId, gridCo
 };
 
 
-pimcore.helpers.removeOtherConfigs = function(objectId, classId, gridConfigId, searchType) {
+pimcore.helpers.removeOtherConfigs = function (objectId, classId, gridConfigId, searchType) {
     Ext.MessageBox.show({
-        title:t('apply_to_all_objects'),
+        title: t('apply_to_all_objects'),
         msg: t('apply_to_all_objects_msg'),
-        buttons: Ext.Msg.YESNO ,
-        icon: Ext.MessageBox.INFO ,
-        fn: function(btn) {
-            if  (btn == "yes") {
+        buttons: Ext.Msg.YESNO,
+        icon: Ext.MessageBox.INFO,
+        fn: function (btn) {
+            if (btn == "yes") {
                 Ext.Ajax.request({
                         url: '/admin/object-helper/grid-config-apply-to-all',
                         method: "post",
@@ -2836,7 +2851,7 @@ pimcore.helpers.removeOtherConfigs = function(objectId, classId, gridConfigId, s
     });
 };
 
-pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, searchType, button, callback, settings) {
+pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings) {
 
 
     try {
@@ -2853,7 +2868,7 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
             method: "post",
             params: data,
             success: function (response) {
-                try{
+                try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
                         if (button) {
@@ -2866,9 +2881,9 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"),
-                            "error",t(rdata.message));
+                            "error", t(rdata.message));
                     }
-                } catch(e){
+                } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
                 }
             }.bind(this),
@@ -2891,7 +2906,7 @@ pimcore.helpers.openGenericIframeWindow = function (id, src, iconCls, title) {
     }
 };
 
-pimcore.helpers.hideRedundantSeparators = function(menu) {
+pimcore.helpers.hideRedundantSeparators = function (menu) {
     var showSeparator = false;
 
     for (var i = 0; i < menu.items.length; i++) {
@@ -2908,7 +2923,7 @@ pimcore.helpers.hideRedundantSeparators = function(menu) {
     }
 };
 
-pimcore.helpers.initMenuTooltips = function(){
+pimcore.helpers.initMenuTooltips = function () {
 
     var items = $("[data-menu-tooltip]:not(.initialized)");
     $('#pimcore_navigation li:not(:has(>svg))').addClass('compatibility');
@@ -2932,23 +2947,23 @@ pimcore.helpers.initMenuTooltips = function(){
     items.addClass("initialized", "true");
 };
 
-pimcore.helpers.requestNicePathDataGridDecorator = function(gridView, targets) {
-    targets.each(function(record){
+pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) {
+    targets.each(function (record) {
         var el = gridView.getRow(record);
         if (el) {
             el = Ext.fly(el);
             el.addCls("grid_nicepath_requested");
         }
-    },this);
+    }, this);
 
 };
 
-pimcore.helpers.requestNicePathData = function(source, targets, config, fieldConfig, context, decorator, responseHandler) {
+pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
     if (typeof targets === "undefined" || !fieldConfig.pathFormatterClass) {
         return;
     }
 
-    if (!targets.getCount() > 0 ) {
+    if (!targets.getCount() > 0) {
         return;
     }
 
@@ -2959,10 +2974,10 @@ pimcore.helpers.requestNicePathData = function(source, targets, config, fieldCon
 
     var elementData = {};
 
-    targets.each(function(record){
+    targets.each(function (record) {
         var recordId = record.data[config.idProperty];
         elementData[recordId] = record.data;
-    },this);
+    }, this);
 
     if (decorator) {
         decorator(targets);
@@ -2997,7 +3012,7 @@ pimcore.helpers.requestNicePathData = function(source, targets, config, fieldCon
 };
 
 
-pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, responseData) {
+pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, responseData) {
     config = config || {};
     Ext.applyIf(config, {
         idProperty: "id",
@@ -3008,7 +3023,7 @@ pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, resp
     store.each(function (record, id) {
         var recordId = record.data[config.idProperty];
         if (typeof responseData[recordId] != "undefined") {
-            record.set(config.pathProperty, responseData[recordId], { dirty: false });
+            record.set(config.pathProperty, responseData[recordId], {dirty: false});
 
             var el = gridView.getRow(record);
             if (el) {
@@ -3025,9 +3040,103 @@ pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, resp
 
 pimcore.helpers.isValidPassword = function (pass) {
     var passRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
-    if(!pass.match(passRegExp)) {
+    if (!pass.match(passRegExp)) {
         return false;
     }
     return true;
+};
+
+pimcore.helpers.csvExportWarning = function (callback) {
+
+    var iconComponent = new Ext.Component({
+        cls: "x-message-box-warning x-dlg-icon"
+    });
+
+    var textContainer =  Ext.Component({
+        html: t('csv_object_export_warning')
+    });
+
+    var promptContainer = new Ext.container.Container({
+        flex: 1,
+        layout: {
+            type: 'vbox',
+            align: 'stretch'
+        },
+        padding: '0px 0px 0px 10px',
+        items: [textContainer]
+    });
+
+    var topContainer = new Ext.container.Container({
+            layout: 'hbox',
+            padding: 10,
+            style: {
+                overflow: 'hidden'
+            },
+            items: [iconComponent, promptContainer]
+        }
+    );
+
+    var enableInheritance = new Ext.form.Checkbox({
+        fieldLabel: t('enable_inheritance'),
+        name: 'enableInheritance',
+        inputValue: true,
+        labelWidth: 200
+    });
+
+    var objectSettingsContainer = new Ext.form.FieldSet({
+        title: t('object_settings'),
+        items: [
+            enableInheritance
+        ]
+    });
+
+    var delimiter = new Ext.form.TextField({
+        fieldLabel: t('delimiter'),
+        name: 'delimiter',
+        maxLength: 1,
+        labelWidth: 200,
+        value: ';'
+    });
+
+
+    var csvSettingsContainer = new Ext.form.FieldSet({
+        title: t('csv_settings'),
+        items: [
+            delimiter
+        ]
+    });
+
+    var formPanel = new Ext.form.FormPanel({
+        bodyStyle: 'padding:10px',
+        items: [objectSettingsContainer, csvSettingsContainer]
+    });
+
+
+    var window = new Ext.Window({
+        modal: true,
+        title: t('export_csv'),
+        width: 600,
+        height: 450,
+        bodyStyle: "padding: 10px; background:#fff;",
+        buttonAlign: "center",
+        shadow: false,
+        closable: true,
+        items: [topContainer, formPanel],
+        buttons: [{
+            text: t("OK"),
+            handler: function () {
+                callback(formPanel.getValues());
+                window.close();
+            }.bind(this)
+            },
+            {
+                text: t("cancel"),
+                handler: function () {
+                    window.close();
+                }
+            }
+        ]
+    });
+    window.show();
 };
 

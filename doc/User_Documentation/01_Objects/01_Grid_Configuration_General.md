@@ -1,7 +1,8 @@
-# Grid Configuration
+# Grid Configuration & CSV Export
 
 You can use the object grid configurator button to adapt the grid to your needs,
 i.e. add additional columns, change the column order or column width.
+The chosen column configuration will also be applied for the CSV Export.
 
 ![Configurator Button](../img/gridconfig/configurator_button.png)
 
@@ -28,3 +29,12 @@ You can define a preferred config on folder level. If there is another object wi
 to apply the setting to all folders or just leave it as it is.
 
 ![Confirm overwrite all](../img/gridconfig/apply_overwrite_all.png)
+
+## CSV Export Settings
+
+By default, [Inheritance](../../Development_Documentation/05_Objects/01_Object_Classes/05_Class_Settings/01_Inheritance.md) will be disabled.
+If you want to enable it or adjust CSV settings do this via the settings dialog.
+
+![Configurator Button Expanded](../img/gridconfig/csv_export_settings.png)
+
+

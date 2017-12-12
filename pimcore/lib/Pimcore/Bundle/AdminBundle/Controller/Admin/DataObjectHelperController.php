@@ -1780,6 +1780,12 @@ class DataObjectHelperController extends AdminController
     {
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $ids = $request->get('ids');
+        $settings = $request->get('settings');
+        $settings = json_decode($settings, true);
+        $delimiter = $settings['delimiter'] ? $settings['delimiter'] : ';';
+
+        $enableInheritance = $settings['enableInheritance'];
+        DataObject\Concrete::setGetInheritedValues($enableInheritance);
 
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
         $className = $class->getName();
@@ -1805,10 +1811,10 @@ class DataObjectHelperController extends AdminController
         foreach ($csv as $line) {
             if ($addTitles && $firstLine) {
                 $firstLine = false;
-                $line = implode(';', $line) . "\r\n";
+                $line = implode($delimiter, $line) . "\r\n";
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode(';', array_map([$this, 'encodeFunc'], $line))."\r\n");
+                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line))."\r\n");
             }
         }
 
@@ -1896,8 +1902,6 @@ class DataObjectHelperController extends AdminController
 
         $objects = [];
         Logger::debug('objects in list:' . count($list->getObjects()));
-        //add inherited values to objects
-        DataObject\AbstractObject::setGetInheritedValues(true);
 
         $helperDefinitions = DataObject\Service::getHelperDefinitions();
 
