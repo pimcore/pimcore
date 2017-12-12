@@ -96,6 +96,59 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             items.push("->");
         }
 
+        if (this.additionalConfig.gallery) {
+            items.push(
+                {
+                    xtype: "button",
+                    tooltip: t("to_left"),
+                    overflowText: t('to_left'),
+                    iconCls: "pimcore_icon_left",
+                    handler: function(image) {
+                        this.move(-1, image.container);
+                    }.bind(this.additionalConfig.callback, this)
+                }
+            );
+
+            items.push(
+                {
+                    xtype: "button",
+                    tooltip: t("to_right"),
+                    overflowText: t('to_right'),
+                    iconCls: "pimcore_icon_right",
+                    handler: function(image) {
+                        this.move(+1, image.container);
+                    }.bind(this.additionalConfig.callback, this)
+                }
+            );
+
+            items.push(
+                {
+                    xtype: "button",
+                    tooltip: t("add"),
+                    overflowText: t('add'),
+                    iconCls: "pimcore_icon_plus",
+                    handler: function(image) {
+                        this.add(image.container);
+                    }.bind(this.additionalConfig.callback, this)
+                }
+            );
+
+            items.push(
+                {
+                    xtype: "button",
+                    tooltip: t("delete"),
+                    overflowText: t('delete'),
+                    iconCls: "pimcore_icon_delete",
+                    handler: function(image) {
+                        this.delete(image.container);
+                    }.bind(this.additionalConfig.callback, this)
+                }
+            );
+
+
+
+        }
+
         items.push(
             {
                 xtype: "button",
@@ -132,7 +185,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         items.push({
             xtype: "button",
             iconCls: "pimcore_icon_delete",
-            overflowText: t('delete'),
+            overflowText: t('empty'),
             handler: this.empty.bind(this)
         });
 
@@ -266,7 +319,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
         this.showPreview();
     },
-
 
     getFileInfo: function (path) {
         if (!this.fileinfo) {
@@ -439,6 +491,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     getCellEditValue: function () {
         return this.getValue();
+    },
+
+    setContainer: function(container) {
+        this.container = container;
     }
 
 });
