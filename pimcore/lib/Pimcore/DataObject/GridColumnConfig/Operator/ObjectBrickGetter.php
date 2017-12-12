@@ -22,25 +22,19 @@ use Pimcore\Model\Element\ElementInterface;
 
 class ObjectBrickGetter extends AbstractOperator
 {
-    /**
-     * ObjectBrickGetter constructor.
-     *
-     * @param $config
-     * @param null $context
-     */
-    public function __construct($config, $context = null)
+    private $brickAttr;
+    private $brickType;
+    private $attr;
+
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->attr = $config->attr;
         $this->brickType = $config->brickType;
         $this->brickAttr = $config->brickAttr;
     }
 
-    /**
-     * @param ElementInterface $element
-     *
-     * @return \stdClass
-     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -48,7 +42,7 @@ class ObjectBrickGetter extends AbstractOperator
         $result->isEmpty = true;
 
         if (!$this->attr) {
-            return;
+            return null;
         }
 
         $bricksGetter = 'get' . ucfirst($this->attr);

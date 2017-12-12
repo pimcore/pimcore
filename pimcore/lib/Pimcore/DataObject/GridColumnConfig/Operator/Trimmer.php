@@ -22,11 +22,13 @@ class Trimmer extends AbstractOperator
     const LEFT = 1;
     const RIGHT = 2;
     const BOTH  = 3;
-    protected $trim;
 
-    public function __construct($config, $context = null)
+    private $trim;
+
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->trim = $config->trim;
     }
 

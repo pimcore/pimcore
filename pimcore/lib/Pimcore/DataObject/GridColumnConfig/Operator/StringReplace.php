@@ -21,14 +21,11 @@ class StringReplace extends AbstractOperator
 {
     private $search;
 
-    /**
-     * @var
-     */
     private $replace;
 
     private $insensitive;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 

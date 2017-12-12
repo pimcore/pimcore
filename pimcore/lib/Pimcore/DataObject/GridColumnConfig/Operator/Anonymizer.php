@@ -19,9 +19,15 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class Anonymizer extends AbstractOperator
 {
-    public function __construct($config, $context = null)
+    /**
+     * @var string
+     */
+    private $mode;
+
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->mode = $config->mode;
     }
 
@@ -39,9 +45,9 @@ class Anonymizer extends AbstractOperator
             $childValues = $childResult->value;
 
             if ($childValues) {
-                if ($this->mode == 'md5') {
+                if ($this->mode === 'md5') {
                     $childValues = md5($childValues);
-                } elseif ($this->mode == 'bcrypt') {
+                } elseif ($this->mode === 'bcrypt') {
                     $childValues = password_hash($childValues, PASSWORD_BCRYPT);
                 }
                 $resultItems[] = $childValues;
@@ -57,37 +63,5 @@ class Anonymizer extends AbstractOperator
         }
 
         return $result;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFlatten()
-    {
-        return $this->flatten;
-    }
-
-    /**
-     * @param mixed $flatten
-     */
-    public function setFlatten($flatten)
-    {
-        $this->flatten = $flatten;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getUnique()
-    {
-        return $this->unique;
-    }
-
-    /**
-     * @param mixed $unique
-     */
-    public function setUnique($unique)
-    {
-        $this->unique = $unique;
     }
 }

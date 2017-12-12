@@ -22,14 +22,11 @@ use Pimcore\Model\DataObject\Data\Hotspotimage;
 
 class AssetMetadataGetter extends AbstractOperator
 {
-    /**
-     * @var
-     */
     private $metaField;
 
     private $locale;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
@@ -102,14 +99,6 @@ class AssetMetadataGetter extends AbstractOperator
 
             return $metaValue;
         }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**

@@ -19,11 +19,15 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class JSON extends AbstractOperator
 {
-    protected $capitalization;
+    /**
+     * @var string
+     */
+    private $mode;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->mode = $config->mode;
     }
 
@@ -67,9 +71,9 @@ class JSON extends AbstractOperator
             $result->$valueArray;
         }
 
-        if ($this->mode == 'e') {
+        if ($this->mode === 'e') {
             $result->value = json_encode($result->value);
-        } elseif ($this->mode == 'd') {
+        } elseif ($this->mode === 'd') {
             $result->value = json_decode($result->value, true);
         }
 

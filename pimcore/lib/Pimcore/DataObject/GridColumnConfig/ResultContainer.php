@@ -23,53 +23,31 @@ class ResultContainer
     public $value;
     public $isEmpty;
 
-    public function __construct()
-    {
-    }
-
-    /**
-     * @return mixed
-     */
     public function getLabel()
     {
         return $this->label;
     }
 
-    /**
-     * @param mixed $label
-     */
     public function setLabel($label)
     {
         $this->label = $label;
     }
 
-    /**
-     * @return mixed
-     */
     public function getValue()
     {
         return $this->value;
     }
 
-    /**
-     * @param mixed $value
-     */
     public function setValue($value)
     {
         $this->value = $value;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getisEmpty()
+    public function getIsEmpty()
     {
         return $this->isEmpty;
     }
 
-    /**
-     * @param mixed $isEmpty
-     */
     public function setIsEmpty($isEmpty)
     {
         $this->isEmpty = $isEmpty;

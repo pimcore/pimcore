@@ -22,13 +22,14 @@ use Pimcore\Model\Element\Service;
 
 class RequiredBy extends AbstractOperator
 {
-    protected $elementType;
+    private $elementType;
 
-    protected $onlyCount;
+    private $onlyCount;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->elementType = $config->elementType;
         $this->onlyCount = $config->onlyCount;
     }

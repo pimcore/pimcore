@@ -19,27 +19,22 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class AnyGetter extends AbstractOperator
 {
-    /**
-     * @var
-     */
-    protected $attribute;
+    private $attribute;
 
-    /**
-     * @var
-     */
-    protected $param1;
+    private $param1;
 
-    protected $isArrayType;
+    private $isArrayType;
 
-    protected $forwardAttribute;
+    private $forwardAttribute;
 
-    protected $forwardParam1;
+    private $forwardParam1;
 
-    protected $returnLastResult;
+    private $returnLastResult;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->attribute = $config->attribute;
         $this->param1 = $config->param1;
         $this->isArrayType = $config->isArrayType;

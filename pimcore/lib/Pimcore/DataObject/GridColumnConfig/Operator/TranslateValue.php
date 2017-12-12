@@ -17,14 +17,22 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 class TranslateValue extends AbstractOperator
 {
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
     private $prefix;
 
-    public function __construct($config, $context = null)
+    public function __construct(TranslatorInterface $translator, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
+        $this->translator = $translator;
         $this->prefix = $config->prefix;
     }
 
@@ -32,11 +40,9 @@ class TranslateValue extends AbstractOperator
     {
         $childs = $this->getChilds();
         if ($childs[0]) {
-            $translate = \Pimcore::getContainer()->get('translator');
-
             $value = $childs[0]->getLabeledValue($element);
             if ($value->value) {
-                $value->value = $translate->trans($this->prefix . $value->value, []);
+                $value->value = $this->translator->trans($this->prefix . $value->value, []);
             }
 
             return $value;

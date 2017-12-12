@@ -19,11 +19,6 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class CharCounter extends AbstractOperator
 {
-    public function __construct($config, $context = null)
-    {
-        parent::__construct($config, $context);
-    }
-
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

@@ -19,41 +19,69 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class PHPCode extends AbstractOperator
 {
-    public function __construct($config, $context = null)
-    {
-        parent::__construct($config, $context);
-        $this->config = $config;
-        $this->phpClass = $config->phpClass;
-    }
-
-    public function getLabeledValue($element)
-    {
-        // this is just a placeholder
-    }
+    /**
+     * @var \stdClass
+     */
+    private $config;
 
     /**
-     * @return mixed
+     * @var string
      */
-    public function getPhpClass()
+    private $phpClass;
+
+    /**
+     * @var OperatorInterface
+     */
+    private $instance;
+
+    public function __construct(\stdClass $config, $context = null)
+    {
+        parent::__construct($config, $context);
+
+        $this->config   = $config;
+        $this->phpClass = (string)$config->phpClass;
+    }
+
+    public function getPhpClass(): string
     {
         return $this->phpClass;
     }
 
-    /**
-     * @param mixed $phpClass
-     */
-    public function setPhpClass($phpClass)
+    public function setPhpClass(string $phpClass)
     {
         $this->phpClass = $phpClass;
+        $this->instance = null;
     }
 
-    public function getRealInstance()
+    public function getLabel()
+    {
+        return $this->getInstance()->getLabel();
+    }
+
+    public function getLabeledValue($element)
+    {
+        return $this->getInstance()->getLabeledValue($element);
+    }
+
+    private function getInstance(): OperatorInterface
+    {
+        if (null === $this->instance) {
+            $this->instance = $this->buildInstance();
+        }
+
+        return $this->instance;
+    }
+
+    private function buildInstance(): OperatorInterface
     {
         $phpClass = $this->getPhpClass();
+
         if ($phpClass && class_exists($phpClass)) {
             $operatorInstance = new $phpClass($this->config, $this->context);
 
             return $operatorInstance;
+        } else {
+            throw new \Exception('PHPCode operator class does not exist: ' . $phpClass);
         }
     }
 }

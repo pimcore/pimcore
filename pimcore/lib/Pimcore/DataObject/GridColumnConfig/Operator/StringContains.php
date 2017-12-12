@@ -21,14 +21,9 @@ class StringContains extends AbstractOperator
 {
     private $search;
 
-    /**
-     * @var
-     */
-    private $replace;
-
     private $insensitive;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
@@ -112,22 +107,6 @@ class StringContains extends AbstractOperator
     public function setSearch($search)
     {
         $this->search = $search;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getReplace()
-    {
-        return $this->replace;
-    }
-
-    /**
-     * @param mixed $replace
-     */
-    public function setReplace($replace)
-    {
-        $this->replace = $replace;
     }
 
     /**

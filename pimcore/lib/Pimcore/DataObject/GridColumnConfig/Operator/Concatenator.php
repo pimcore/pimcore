@@ -19,12 +19,13 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class Concatenator extends AbstractOperator
 {
-    protected $glue;
-    protected $forceValue;
+    private $glue;
+    private $forceValue;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->glue = $config->glue;
         $this->forceValue = $config->forceValue;
     }

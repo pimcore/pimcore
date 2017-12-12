@@ -21,11 +21,21 @@ use Pimcore\Localization\Locale;
 
 class LocaleSwitcher extends AbstractOperator
 {
-    protected $locale;
+    /**
+     * @var Locale
+     */
+    private $localeService;
 
-    public function __construct($config, $context = null)
+    /**
+     * @var string
+     */
+    private $locale;
+
+    public function __construct(Locale $localeService, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
+        $this->localeService = $localeService;
         $this->locale = $config->locale;
     }
 
@@ -40,15 +50,14 @@ class LocaleSwitcher extends AbstractOperator
             return $result;
         } else {
             $c = $childs[0];
-            $container = \Pimcore::getContainer();
-            $localeService = $container->get(Locale::class);
-            $currentLocale = $localeService->getLocale();
 
-            $localeService->setLocale($this->locale);
+            $currentLocale = $this->localeService->getLocale();
+
+            $this->localeService->setLocale($this->locale);
 
             $result = $c->getLabeledValue($element);
 
-            $localeService->setLocale($currentLocale);
+            $this->localeService->setLocale($currentLocale);
         }
 
         return $result;

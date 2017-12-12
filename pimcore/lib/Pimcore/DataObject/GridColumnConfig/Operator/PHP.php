@@ -17,13 +17,16 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Tool\Serialize;
+
 class PHP extends AbstractOperator
 {
-    protected $capitalization;
+    private $mode;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->mode = $config->mode;
     }
 
@@ -67,10 +70,10 @@ class PHP extends AbstractOperator
             $result->$valueArray;
         }
 
-        if ($this->mode == 's') {
-            $result->value = \Pimcore\Tool\Serialize::serialize($result->value);
-        } elseif ($this->mode == 'u') {
-            $result->value = \Pimcore\Tool\Serialize::unserialize($result->value);
+        if ($this->mode === 's') {
+            $result->value = Serialize::serialize($result->value);
+        } elseif ($this->mode === 'u') {
+            $result->value = Serialize::unserialize($result->value);
         }
 
         return $result;

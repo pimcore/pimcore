@@ -23,11 +23,20 @@ use Pimcore\Tool;
 
 class LFExpander extends AbstractOperator
 {
+    /**
+     * @var Locale
+     */
+    private $localeService;
+
+    private $locales;
+    private $asArray;
     private $prefix;
 
-    public function __construct($config, $context = null)
+    public function __construct(Locale $localeService, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
+        $this->localeService = $localeService;
 
         $this->prefix = $config->prefix;
         $this->locales = $config->locales;
@@ -43,13 +52,12 @@ class LFExpander extends AbstractOperator
                 $result->label = $this->label;
                 $resultValues = [];
 
-                $container = \Pimcore::getContainer();
-                $localeService = $container->get(Locale::class);
-                $currentLocale = $localeService->getLocale();
+                $currentLocale = $this->localeService->getLocale();
 
                 $validLanguages = $this->getValidLanguages();
                 foreach ($validLanguages as $validLanguage) {
-                    $localeService->setLocale($validLanguage);
+                    $this->localeService->setLocale($validLanguage);
+
                     $childValue = $childs[0]->getLabeledValue($element);
                     if ($childValue && $childValue->value) {
                         $resultValues[]= $childValue;
@@ -58,7 +66,7 @@ class LFExpander extends AbstractOperator
                     }
                 }
 
-                $localeService->setLocale($currentLocale);
+                $this->localeService->setLocale($currentLocale);
 
                 $result->value = $resultValues;
 

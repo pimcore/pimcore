@@ -19,9 +19,13 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class Merge extends AbstractOperator
 {
-    public function __construct($config, $context = null)
+    private $flatten;
+    private $unique;
+
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->flatten = $config->flatten;
         $this->unique = $config->unique;
     }

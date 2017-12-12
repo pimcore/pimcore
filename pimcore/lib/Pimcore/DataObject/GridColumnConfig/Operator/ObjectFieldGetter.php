@@ -22,13 +22,13 @@ use Pimcore\Model\Element\ElementInterface;
 
 class ObjectFieldGetter extends AbstractOperator
 {
-    protected $attribute;
+    private $attribute;
+    private $forwardAttribute;
 
-    protected $forwardAttribute;
-
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->attribute = $config->attribute;
         $this->forwardAttribute = $config->forwardAttribute;
     }

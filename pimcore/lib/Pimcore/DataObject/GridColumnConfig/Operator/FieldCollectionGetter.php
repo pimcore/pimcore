@@ -22,25 +22,19 @@ use Pimcore\Model\Element\ElementInterface;
 
 class FieldCollectionGetter extends AbstractOperator
 {
-    /**
-     * FieldCollectionGetter constructor.
-     *
-     * @param $config
-     * @param null $context
-     */
-    public function __construct($config, $context = null)
+    private $attr;
+    private $idx;
+    private $colAttr;
+
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->attr = $config->attr;
         $this->idx = $config->idx;
         $this->colAttr = $config->colAttr;
     }
 
-    /**
-     * @param ElementInterface $element
-     *
-     * @return \stdClass
-     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
@@ -48,6 +42,7 @@ class FieldCollectionGetter extends AbstractOperator
         $result->isEmpty = true;
 
         $getter = 'get' . ucfirst($this->attr);
+
         /** @var $fc Fieldcollection */
         $fc = $element->$getter();
 

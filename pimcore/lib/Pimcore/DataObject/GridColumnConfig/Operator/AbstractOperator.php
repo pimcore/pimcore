@@ -17,26 +17,34 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
-use Pimcore\DataObject\GridColumnConfig\AbstractConfigElement;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 
-abstract class AbstractOperator extends AbstractConfigElement
+abstract class AbstractOperator implements OperatorInterface
 {
     /**
-     * @var ConfigElementInterface
+     * @var string
+     */
+    protected $label;
+
+    /**
+     * @var mixed
+     */
+    protected $context;
+
+    /**
+     * @var ConfigElementInterface[]
      */
     protected $childs;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         $this->label = $config->label;
         $this->childs = $config->childs;
         $this->context = $context;
-        $this->renderer = $config->renderer;
     }
 
     /**
-     * @return ConfigElementInterface
+     * @return ConfigElementInterface[]
      */
     public function getChilds()
     {
@@ -51,33 +59,21 @@ abstract class AbstractOperator extends AbstractConfigElement
         return false;
     }
 
-    /**
-     * @return null
-     */
     public function getContext()
     {
         return $this->context;
     }
 
-    /**
-     * @param null $context
-     */
     public function setContext($context)
     {
         $this->context = $context;
     }
 
-    /**
-     * @return mixed
-     */
     public function getLabel()
     {
         return $this->label;
     }
 
-    /**
-     * @param mixed $label
-     */
     public function setLabel($label)
     {
         $this->label = $label;

@@ -19,11 +19,13 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class IsEqual extends AbstractOperator
 {
-    protected $capitalization;
+    private $capitalization;
+    private $skipNull;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->capitalization = $config->capitalization;
         $this->skipNull = $config->skipNull;
     }

@@ -23,7 +23,7 @@ class Boolean extends AbstractOperator
 
     private $operator;
 
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
