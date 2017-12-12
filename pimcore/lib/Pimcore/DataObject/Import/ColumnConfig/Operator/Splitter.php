@@ -15,26 +15,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
+namespace Pimcore\DataObject\Import\ColumnConfig\Operator;
 
-use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
+use Pimcore\DataObject\Import\ColumnConfig\AbstractConfigElement;
 
-class Unserialize extends AbstractOperator
+class Splitter extends AbstractOperator
 {
     /**
-     * @param $element Concrete
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return null|\stdClass
+     * @var string
      */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    private $glue;
+
+    public function __construct(\stdClass $config, $context = null)
+    {
+        parent::__construct($config, $context);
+
+        $this->glue = $config->glue;
+    }
+
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         $originalCellData = $rowData[$colIndex];
-        $celldata = unserialize($rowData[$colIndex]);
-        $rowData[$colIndex] = $celldata;
 
         $childs = $this->getChilds();
 
@@ -42,9 +43,16 @@ class Unserialize extends AbstractOperator
             return;
         } else {
             /** @var $child AbstractConfigElement */
+            $dataParts = explode($this->glue, $originalCellData);
+
             for ($i = 0; $i < count($childs); $i++) {
                 $child = $childs[$i];
-                $child->process($element, $target, $rowData, $colIndex, $context);
+
+                if (isset($dataParts[$i])) {
+                    $rowData[$colIndex] = $dataParts[$i];
+
+                    $child->process($element, $target, $rowData, $colIndex, $context);
+                }
             }
         }
 

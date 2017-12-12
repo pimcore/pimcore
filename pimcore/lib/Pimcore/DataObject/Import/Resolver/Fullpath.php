@@ -15,51 +15,49 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\ImportResolver;
+namespace Pimcore\DataObject\Import\Resolver;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\FactoryInterface;
 
 class Fullpath extends AbstractResolver
 {
     /**
-     * constructor.
+     * @var FactoryInterface
      */
-    public function __construct($config)
+    private $modelFactory;
+
+    public function __construct(FactoryInterface $modelFactory)
     {
-        parent::__construct($config);
-        $this->createOnDemand = $config->resolverSettings->createOnDemand;
-        $this->createParents = $config->resolverSettings->createParents;
+        $this->modelFactory = $modelFactory;
     }
 
-    /**
-     * @param $parentId
-     * @param $rowData
-     *
-     * @return static
-     *
-     * @throws \Exception
-     */
-    public function resolve($parentId, $rowData)
+    public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $fullpath = $rowData[$this->getIdColumn()];
-        $object = DataObject::getByPath($fullpath);
-        if (!$object && $this->createOnDemand) {
-            $keyParts = explode('/', $fullpath);
+        $createOnDemand = $config->resolverSettings->createOnDemand;
+        $createParents  = $config->resolverSettings->createParents;
+
+        $fullpath = $rowData[$this->getIdColumn($config)];
+        $object   = DataObject::getByPath($fullpath);
+
+        if (!$object && $createOnDemand) {
+            $keyParts  = explode('/', $fullpath);
             $objectKey = $keyParts[count($keyParts) - 1];
             array_pop($keyParts);
 
             $parentPath = implode('/', $keyParts);
 
             $parent = DataObject::getByPath($parentPath);
-            if (!$parent && $this->createOnDemand) {
+            if (!$parent && $createParents) {
                 $parent = DataObject\Service::createFolderByPath($parentPath);
             }
 
-            $classId = $this->config->classId;
+            $classId         = $config->classId;
             $classDefinition = ClassDefinition::getById($classId);
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
-            $object = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+            $className       = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+
+            $object = $this->modelFactory->build($className);
             $object->setKey($objectKey);
             $object->setParent($parent);
             $object->setPublished(1);
@@ -72,7 +70,7 @@ class Fullpath extends AbstractResolver
         }
 
         if (!$object) {
-            throw new \Exception('failed to resolve object key ' . $objectKey);
+            throw new \Exception('failed to resolve object ' . $fullpath);
         }
 
         return $object;

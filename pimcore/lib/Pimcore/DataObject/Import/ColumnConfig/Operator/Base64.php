@@ -15,30 +15,29 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\ImportColumnConfig\Operator;
+namespace Pimcore\DataObject\Import\ColumnConfig\Operator;
 
-use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\ImportColumnConfig\AbstractConfigElement;
+use Pimcore\DataObject\Import\ColumnConfig\AbstractConfigElement;
 
 class Base64 extends AbstractOperator
 {
-    public function __construct($config, $context = null)
+    /**
+     * @var string
+     */
+    private $mode;
+
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->mode = $config->mode;
     }
 
-    /**
-     * @param $element Concrete
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return null|\stdClass
-     */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         $originalCellData = $rowData[$colIndex];
+
+        $celldata = '';
         if ($this->mode == 'd') {
             $celldata = base64_decode($originalCellData);
         } elseif ($this->mode == 'e') {

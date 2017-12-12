@@ -9,7 +9,7 @@ Sample implementation:
 ```php
 <?php
 
-use Pimcore\Model\DataObject\ImportResolver\AbstractResolver;
+use Pimcore\DataObject\Import\Resolver\AbstractResolver;
 
 class MyCodeResolver extends AbstractResolver
 {

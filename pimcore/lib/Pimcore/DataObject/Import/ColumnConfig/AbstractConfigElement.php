@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -15,43 +18,53 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\ImportColumnConfig;
+namespace Pimcore\DataObject\Import\ColumnConfig;
 
 abstract class AbstractConfigElement implements ConfigElementInterface
 {
     /**
-     * @var
+     * @var string
      */
     protected $attribute;
+
     /**
-     * @var
+     * @var string
      */
     protected $label;
 
     /**
-     * @var null
+     * @var mixed|null
      */
     protected $context;
 
-    /**
-     * AbstractConfigElement constructor.
-     *
-     * @param $config
-     * @param null $context
-     */
-    public function __construct($config, $context = null)
+    public function __construct(\stdClass $config, $context = null)
     {
         $this->attribute = $config->attribute;
-        $this->label = $config->label;
-
-        $this->context = $context;
+        $this->label     = $config->label;
+        $this->context   = $context;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param mixed|null $context
+     */
+    public function setContext($context = null)
+    {
+        $this->context = $context;
     }
 }
