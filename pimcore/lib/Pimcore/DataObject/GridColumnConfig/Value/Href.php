@@ -17,13 +17,8 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Value;
 
-class Href extends DefaultValue
+class Href extends AbstractValue
 {
-    public function __construct($config, $context = null)
-    {
-        parent::__construct($config, $context);
-    }
-
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

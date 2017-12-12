@@ -17,29 +17,10 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Value;
 
-class Objects extends DefaultValue
+use Pimcore\DataObject\GridColumnConfig\AbstractConfigElement;
+
+class Objects extends AbstractConfigElement implements ValueInterface
 {
-    /**
-     * @var
-     */
-    protected $format;
-
-    /**
-     * Objects constructor.
-     *
-     * @param $config
-     * @param null $context
-     */
-    public function __construct($config, $context = null)
-    {
-        parent::__construct($config, $context);
-    }
-
-    /**
-     * @param \Pimcore\Model\Element\ElementInterface $element
-     *
-     * @return \stdClass
-     */
     public function getLabeledValue($element)
     {
         $result = new \stdClass();

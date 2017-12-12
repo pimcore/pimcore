@@ -17,21 +17,24 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Value;
 
-use Pimcore\DataObject\GridColumnConfig\AbstractConfigElement;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Element\ElementInterface;
 
-class DefaultValue extends AbstractConfigElement
+class DefaultValue extends AbstractValue
 {
     /**
-     * @param \Pimcore\Model\Element\ElementInterface $element
+     * @param ElementInterface|Concrete $element
      *
-     * @return null|\stdClass
+     * {@inheritdoc}
      */
     public function getLabeledValue($element)
     {
+        /** @var Concrete $element */
+
         $attributeParts = explode('~', $this->attribute);
         $label = $this->label;
 

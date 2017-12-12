@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -8,15 +11,15 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @category   Pimcore
- * @package    Object
- *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\GridColumnConfig;
+namespace Pimcore\DataObject\GridColumnConfig\Value\Factory;
 
-abstract class AbstractConfigElement implements ConfigElementInterface
+use Pimcore\DataObject\GridColumnConfig\Value\ValueInterface;
+
+interface ValueFactoryInterface
 {
+    public function build(\stdClass $configElement, $context = null): ValueInterface;
 }

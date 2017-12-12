@@ -22,9 +22,14 @@ use Pimcore\Model\Element\ElementInterface;
 interface ConfigElementInterface
 {
     /**
-     * @param $element ElementInterface
+     * @return string
+     */
+    public function getLabel();
+
+    /**
+     * @param ElementInterface $element
      *
-     * @return mixed
+     * @return \stdClass|null
      */
     public function getLabeledValue($element);
 }

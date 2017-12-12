@@ -21,7 +21,10 @@ use Carbon\Carbon;
 
 class Date extends DefaultValue
 {
-    protected $format;
+    /**
+     * @var string|null
+     */
+    private $format;
 
     public function __construct($config, $context = null)
     {
