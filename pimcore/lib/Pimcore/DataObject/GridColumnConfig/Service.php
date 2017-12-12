@@ -41,8 +41,7 @@ class Service
     public function __construct(
         ContainerInterface $operatorFactories,
         ContainerInterface $valueFactories
-    )
-    {
+    ) {
         $this->operatorFactories = $operatorFactories;
         $this->valueFactories    = $valueFactories;
     }

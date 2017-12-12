@@ -18,7 +18,6 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\DataObject\Fieldcollection;
-use Pimcore\Model\Element\ElementInterface;
 
 class FieldCollectionGetter extends AbstractOperator
 {

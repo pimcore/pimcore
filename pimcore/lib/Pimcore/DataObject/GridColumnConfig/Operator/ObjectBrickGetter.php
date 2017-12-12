@@ -18,7 +18,6 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\DataObject\Objectbrick;
-use Pimcore\Model\Element\ElementInterface;
 
 class ObjectBrickGetter extends AbstractOperator
 {
