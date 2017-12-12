@@ -90,8 +90,7 @@ class ImportExportLocatorsPass implements CompilerPassInterface
         string $type,
         string $tag,
         string $argument
-    )
-    {
+    ) {
         $resolvers = $container->findTaggedServiceIds($tag);
         $mapping   = [];
 

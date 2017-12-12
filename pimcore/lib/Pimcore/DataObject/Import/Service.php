@@ -63,8 +63,7 @@ class Service
         ContainerInterface $resolvers,
         ContainerInterface $operatorFactories,
         ContainerInterface $valueFactories
-    )
-    {
+    ) {
         $this->db                = $db;
         $this->resolvers         = $resolvers;
         $this->operatorFactories = $operatorFactories;

@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\GridColumnConfig\Operator\Factory;
 
 use Pimcore\DataObject\GridColumnConfig\Operator\LFExpander;
-use Pimcore\DataObject\GridColumnConfig\Operator\LocaleSwitcher;
 use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\Localization\Locale;
 
