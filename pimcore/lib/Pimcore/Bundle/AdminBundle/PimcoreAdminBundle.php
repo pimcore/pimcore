@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle;
 
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\GDPRDataProviderPass;
+use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ImportLocatorsPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\SerializerPass;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface;
 use Pimcore\Bundle\AdminBundle\Security\Factory\PreAuthenticatedAdminSessionFactory;
@@ -36,6 +37,7 @@ class PimcoreAdminBundle extends Bundle
 
         $container->addCompilerPass(new SerializerPass());
         $container->addCompilerPass(new GDPRDataProviderPass());
+        $container->addCompilerPass(new ImportLocatorsPass());
 
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');

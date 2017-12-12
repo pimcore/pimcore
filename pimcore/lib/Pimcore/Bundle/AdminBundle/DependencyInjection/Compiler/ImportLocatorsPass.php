@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
+namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
 
 use Pimcore\DataObject\Import\Service;
 use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
@@ -34,7 +34,7 @@ class ImportLocatorsPass implements CompilerPassInterface
         $this->createLocatorForTaggedServices(
             $container,
             $importService,
-            'pimcore.import.resolver',
+            'pimcore.data_object.import.resolver',
             'import resolver',
             '$resolvers'
         );
@@ -42,7 +42,7 @@ class ImportLocatorsPass implements CompilerPassInterface
         $this->createLocatorForTaggedServices(
             $container,
             $importService,
-            'pimcore.import.operator_factory',
+            'pimcore.data_object.import.operator_factory',
             'import operator factory',
             '$operatorFactories'
         );
@@ -50,7 +50,7 @@ class ImportLocatorsPass implements CompilerPassInterface
         $this->createLocatorForTaggedServices(
             $container,
             $importService,
-            'pimcore.import.value_factory',
+            'pimcore.data_object.import.value_factory',
             'import value factory',
             '$valueFactories'
         );
