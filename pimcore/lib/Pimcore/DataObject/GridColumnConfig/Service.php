@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -17,60 +20,95 @@
 
 namespace Pimcore\DataObject\GridColumnConfig;
 
-use Pimcore\DataObject\GridColumnConfig\Operator\PHPCode;
+use Pimcore\DataObject\GridColumnConfig\Operator\Factory\OperatorFactoryInterface;
+use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
+use Pimcore\DataObject\GridColumnConfig\Value\Factory\ValueFactoryInterface;
+use Pimcore\DataObject\GridColumnConfig\Value\ValueInterface;
+use Psr\Container\ContainerInterface;
 
 class Service
 {
     /**
-     * @param $outputDataConfig
-     *
-     * @return ConfigElementInterface[]
+     * @var ContainerInterface
      */
-    public function buildOutputDataConfig($outputDataConfig, $context = null)
+    private $operatorFactories;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $valueFactories;
+
+    public function __construct(
+        ContainerInterface $operatorFactories,
+        ContainerInterface $valueFactories
+    )
     {
-        $config = [];
-        $config = $this->doBuildConfig($outputDataConfig, $config, $context);
+        $this->operatorFactories = $operatorFactories;
+        $this->valueFactories    = $valueFactories;
+    }
+
+    /**
+     * @param \stdClass[] $jsonConfigs
+     * @param mixed|null $context
+     *
+     * @return array
+     */
+    public function buildOutputDataConfig(array $jsonConfigs, $context = null): array
+    {
+        $config = $this->doBuildConfig($jsonConfigs, [], $context);
 
         return $config;
     }
 
     /**
-     * @param $jsonConfig
+     * @param \stdClass[] $jsonConfigs
      * @param $config
-     * @param null $context
+     * @param mixed|null $context
      *
-     * @return array
+     * @return ConfigElementInterface[]
      */
-    private function doBuildConfig($jsonConfig, $config, $context = null)
+    private function doBuildConfig(array $jsonConfigs, array $config, $context = null): array
     {
-        if (!empty($jsonConfig)) {
-            foreach ($jsonConfig as $configElement) {
-                if ($configElement->type == 'value') {
-                    $name = 'Pimcore\\DataObject\\GridColumnConfig\\Value\\' . ucfirst($configElement->class);
+        if (empty($jsonConfigs)) {
+            return $config;
+        }
 
-                    if (class_exists($name)) {
-                        $config[] = new $name($configElement, $context);
-                    }
-                } elseif ($configElement->type == 'operator') {
-                    $name = 'Pimcore\\DataObject\\GridColumnConfig\\Operator\\' . ucfirst($configElement->class);
-
-                    if (!empty($configElement->childs)) {
-                        $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
-                    }
-
-                    if (class_exists($name)) {
-                        $operatorInstance = new $name($configElement, $context);
-                        if ($operatorInstance instanceof PHPCode) {
-                            $operatorInstance = $operatorInstance->getRealInstance();
-                        }
-                        if ($operatorInstance) {
-                            $config[] = $operatorInstance;
-                        }
-                    }
+        foreach ($jsonConfigs as $configElement) {
+            if ('value' === $configElement->type) {
+                $config[] = $this->buildValue($configElement->class, $configElement, $context);
+            } elseif ('operator' === $configElement->type) {
+                if (!empty($configElement->childs)) {
+                    $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
                 }
+
+                $config[] = $this->buildOperator($configElement->class, $configElement, $context);
             }
         }
 
         return $config;
+    }
+
+    private function buildOperator(string $name, \stdClass $configElement, $context = null): OperatorInterface
+    {
+        if (!$this->operatorFactories->has($name)) {
+            throw new \InvalidArgumentException(sprintf('Operator "%s" is not supported', $name));
+        }
+
+        /** @var OperatorFactoryInterface $factory */
+        $factory = $this->operatorFactories->get($name);
+
+        return $factory->build($configElement, $context);
+    }
+
+    private function buildValue(string $name, \stdClass $configElement, $context = null): ValueInterface
+    {
+        if (!$this->valueFactories->has($name)) {
+            throw new \InvalidArgumentException(sprintf('Value "%s" is not supported', $name));
+        }
+
+        /** @var ValueFactoryInterface $factory */
+        $factory = $this->valueFactories->get($name);
+
+        return $factory->build($configElement, $context);
     }
 }
