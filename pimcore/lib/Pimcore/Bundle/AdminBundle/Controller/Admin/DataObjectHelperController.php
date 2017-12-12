@@ -632,6 +632,7 @@ class DataObjectHelperController extends AdminController
     {
         $count = 0;
         $availableFields = [];
+        $types = [];
 
         if (!$noSystemColumns) {
             $vis = $class->getPropertyVisibility();
