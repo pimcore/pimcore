@@ -18,11 +18,14 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\Import\ColumnConfig;
+namespace Pimcore\DataObject\Import;
 
 use DeepCopy\DeepCopy;
+use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\OperatorFactoryInterface;
-use Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\ValueFactoryInterface;
+use Pimcore\DataObject\Import\ColumnConfig\Operator\OperatorInterface;
+use Pimcore\DataObject\Import\ColumnConfig\Value\Factory\ValueFactoryInterface;
+use Pimcore\DataObject\Import\ColumnConfig\Value\ValueInterface;
 use Pimcore\DataObject\Import\Resolver\ResolverInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;

@@ -19,7 +19,6 @@ namespace Pimcore\DataObject\Import\ColumnConfig\Operator;
 
 use Pimcore\DataObject\Import\ColumnConfig\AbstractConfigElement;
 use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
-use Pimcore\DataObject\Import\ColumnConfig\OperatorInterface;
 
 abstract class AbstractOperator extends AbstractConfigElement implements OperatorInterface
 {

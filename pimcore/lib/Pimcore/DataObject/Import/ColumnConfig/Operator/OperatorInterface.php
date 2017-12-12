@@ -15,7 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject\Import\ColumnConfig;
+namespace Pimcore\DataObject\Import\ColumnConfig\Operator;
+
+use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
 
 interface OperatorInterface extends ConfigElementInterface
 {

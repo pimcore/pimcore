@@ -18,7 +18,6 @@
 namespace Pimcore\DataObject\Import\ColumnConfig\Value;
 
 use Pimcore\DataObject\Import\ColumnConfig\AbstractConfigElement;
-use Pimcore\DataObject\Import\ColumnConfig\ValueInterface;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;

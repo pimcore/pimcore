@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\Import\ColumnConfig\Operator\Factory;
 
-use Pimcore\DataObject\Import\ColumnConfig\OperatorInterface;
+use Pimcore\DataObject\Import\ColumnConfig\Operator\OperatorInterface;
 
 class DefaultOperatorFactory implements OperatorFactoryInterface
 {

@@ -17,8 +17,6 @@
 
 namespace Pimcore\DataObject\Import\ColumnConfig\Operator;
 
-use Pimcore\DataObject\Import\ColumnConfig\OperatorInterface;
-
 class PHPCode extends AbstractOperator
 {
     /**

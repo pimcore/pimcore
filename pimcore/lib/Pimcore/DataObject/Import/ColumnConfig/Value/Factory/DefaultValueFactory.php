@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\Import\ColumnConfig\Value\Factory;
 
-use Pimcore\DataObject\Import\ColumnConfig\ValueInterface;
+use Pimcore\DataObject\Import\ColumnConfig\Value\ValueInterface;
 
 class DefaultValueFactory implements ValueFactoryInterface
 {

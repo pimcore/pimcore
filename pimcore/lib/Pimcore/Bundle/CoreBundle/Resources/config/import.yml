@@ -5,7 +5,7 @@ services:
         public: false
 
     # resolvers and operator/value factories will be injected from compiler pass
-    Pimcore\DataObject\Import\ColumnConfig\Service: ~
+    Pimcore\DataObject\Import\Service: ~
 
     #
     # RESOLVERS
