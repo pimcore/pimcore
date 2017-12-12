@@ -80,18 +80,16 @@ class Image extends Model\Asset
         }
     }
 
-    /**
-     *
-     */
-    public function generateSvgPreview() {
+    public function generateSvgPreview()
+    {
         // SQIP SVG Previews
-        if($sqipBin = \Pimcore\Tool\Console::getExecutable('sqip')) {
+        if ($sqipBin = \Pimcore\Tool\Console::getExecutable('sqip')) {
             // primitive isn't able to process PJPEG so we have to generate a PNG
             $sqipConfig = Image\Thumbnail\Config::getPreviewConfig();
             $sqipConfig->setFormat('png');
             $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
             $svgPath = $this->getSvgPreviewFileSystemPath();
-            \Pimcore\Tool\Console::exec($sqipBin . " -o " . $svgPath . " ". $pngPath);
+            \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . $svgPath . ' '. $pngPath);
             unlink($pngPath);
 
             return $svgPath;
@@ -103,7 +101,8 @@ class Image extends Model\Asset
     /**
      * @return string
      */
-    public function getSvgPreviewPath() {
+    public function getSvgPreviewPath()
+    {
         $fsPath = $this->getSvgPreviewFileSystemPath();
         $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
         $path = urlencode_ignore_slash($path);
@@ -121,9 +120,11 @@ class Image extends Model\Asset
     /**
      * @return string
      */
-    public function getSvgPreviewFileSystemPath() {
+    public function getSvgPreviewFileSystemPath()
+    {
         $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
-        $svgPath = preg_replace("/\.p?jpe?g$/", ".svg", $path);
+        $svgPath = preg_replace("/\.p?jpe?g$/", '.svg', $path);
+
         return $svgPath;
     }
 

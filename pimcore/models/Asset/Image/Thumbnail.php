@@ -469,7 +469,7 @@ class Thumbnail
         }
 
         $isSvgPreview = false;
-        if(isset($options['svgPlaceholder']) && $options['svgPlaceholder'] && file_exists($this->getAsset()->getSvgPreviewFileSystemPath())) {
+        if (isset($options['svgPlaceholder']) && $options['svgPlaceholder'] && file_exists($this->getAsset()->getSvgPreviewFileSystemPath())) {
             $isSvgPreview = true;
             $attributes['data-src'] = $attributes['src'];
             $attributes['data-srcset'] = $attributes['srcset'];
@@ -520,10 +520,10 @@ class Thumbnail
             $attrCleanedForPicture = $attributes;
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
-            if(isset($attrCleanedForPicture['srcset'])) {
+            if (isset($attrCleanedForPicture['srcset'])) {
                 unset($attrCleanedForPicture['srcset']);
             }
-            if($isSvgPreview) {
+            if ($isSvgPreview) {
                 unset($attrCleanedForPicture['data-src']);
                 unset($attrCleanedForPicture['data-srcset']);
             }
