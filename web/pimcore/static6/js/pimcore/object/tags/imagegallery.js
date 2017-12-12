@@ -47,10 +47,43 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             }.bind(this, field.key)};
     },
 
-    getLayoutEdit: function () {
+    wrap: function(hotspotImageTag) {
 
+        hotspotImageEditPanel = hotspotImageTag.getLayoutEdit();
+
+        var fieldConfig = this.getDefaultFieldConfig();
+        var dragConf = {
+            __tag: hotspotImageTag,
+            width: fieldConfig.width,
+            height: fieldConfig.height,
+            items: [hotspotImageEditPanel],
+            anchor: '100%',
+            style: {
+                float: 'left'
+            },
+            draggable: {
+                moveOnDrag: false
+            }
+        };
+
+        var dragableComponent = Ext.create('Ext.panel.Panel', dragConf);
+        return dragableComponent;
+
+    },
+
+    getDefaultFieldConfig: function() {
         var itemWidth = this.fieldConfig.width ? this.fieldConfig.width : 150;
         var itemHeight = this.fieldConfig.height ? this.fieldConfig.height : 150;
+
+        var fieldConfig = {
+            width: itemWidth,
+            height: itemHeight,
+        };
+
+        return fieldConfig;
+    },
+
+    getLayoutEdit: function () {
 
         this.items= [];
 
@@ -58,37 +91,21 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             var data = {
                 id: 40 + i
             }
-            var fieldConfig = {
-                width: itemWidth,
-                height: itemHeight,
-                title: i
-            };
+            var fieldConfig = this.getDefaultFieldConfig();
+            fieldConfig.title = i;
 
             var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, {
                 condensed: true
             });
 
-            hotspotImageEditPanel = hotspotImage.getLayoutEdit();
-
-            var dragConf = {
-                width: fieldConfig.width,
-                height: fieldConfig.height,
-                items: [hotspotImageEditPanel],
-                anchor: '100%',
-                style: {
-                    float: 'left'
-                },
-                draggable: {
-                    moveOnDrag: false
-                }
-            };
-
-            var dragableComponent = Ext.create('Ext.panel.Panel', dragConf);
+            var dragableComponent = this.wrap(hotspotImage);
             this.items.push(dragableComponent);
         }
 
         var placeholderComponent = this.createPlaceholder(fieldConfig);
         this.items.push(placeholderComponent);
+
+        var defaultFieldConfig = this.getDefaultFieldConfig();
 
         var conf = {
             border: true,
@@ -99,8 +116,8 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             title: this.fieldConfig.title,
             items: this.items,
             proxyConfig: {
-                width: itemWidth,
-                height: itemHeight,
+                width: defaultFieldConfig.width,
+                height: defaultFieldConfig.height,
                 respectPlaceholder: true
             }
         };
@@ -150,13 +167,71 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             }]
         };
 
-        return Ext.create('Ext.panel.Panel', placeholderConf);
+
+
+        var placeHolder = Ext.create('Ext.panel.Panel', placeholderConf);
+
+        placeHolder.on("afterrender", function (el) {
+            // add drop zone
+            new Ext.dd.DropZone(el.getEl(), {
+                reference: this,
+                ddGroup: "element",
+                getTargetFromEvent: function (e) {
+                    return this.reference.component.getEl();
+                },
+
+                onNodeOver: function (target, dd, e, data) {
+
+                    var record = data.records[0];
+
+                    if (record.data.type == "image") {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    } else {
+                        return Ext.dd.DropZone.prototype.dropNotAllowed;
+                    }
+                },
+
+                onNodeDrop: function (target, dd, e, data) {
+
+                    var record = data.records[0];
+                    var data = {
+                        id: record.data.id
+                    }
+
+                    var fieldConfig = this.getDefaultFieldConfig();
+                    fieldConfig.title = record.data.path;
+
+                    var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, {
+                        condensed: true
+                    });
+                    var itemCount = this.component.items.length;
+
+                    var dragableComponent = this.wrap(hotspotImage);
+                    this.items.push(dragableComponent);
+                    this.component.insert(itemCount - 1 , dragableComponent);
+                }.bind(this)
+            });
+
+
+        }.bind(this));
+
+        return placeHolder;
     },
 
     getValue: function () {
-        //TODO
-        return {};
-        // return {id: this.data.id, hotspots: this.hotspots, marker: this.marker, crop: this.crop};
+
+        var value = [];
+
+        var itemCount = this.component.items.length;
+        for (var i = 0; i < itemCount; i++) {
+            var item = this.component.items.getAt(i);
+            var tag = item.__tag;
+            if (tag) {
+                value.push(tag.getValue());
+            }
+        }
+
+        return value
     },
 
     getCellEditValue: function () {
