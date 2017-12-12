@@ -5,29 +5,29 @@ services:
         public: false
 
     # resolvers and operator/value factories will be injected from compiler pass
-    Pimcore\Model\DataObject\ImportColumnConfig\Service: ~
+    Pimcore\DataObject\Import\ColumnConfig\Service: ~
 
     #
     # RESOLVERS
     #
 
-    Pimcore\Model\DataObject\ImportResolver\Id:
+    Pimcore\DataObject\Import\Resolver\Id:
         tags:
             - { name: pimcore.import.resolver, id: id }
 
-    Pimcore\Model\DataObject\ImportResolver\Code:
+    Pimcore\DataObject\Import\Resolver\Code:
         tags:
             - { name: pimcore.import.resolver, id: code }
 
-    Pimcore\Model\DataObject\ImportResolver\Filename:
+    Pimcore\DataObject\Import\Resolver\Filename:
         tags:
             - { name: pimcore.import.resolver, id: filename }
 
-    Pimcore\Model\DataObject\ImportResolver\Fullpath:
+    Pimcore\DataObject\Import\Resolver\Fullpath:
         tags:
             - { name: pimcore.import.resolver, id: fullpath }
 
-    Pimcore\Model\DataObject\ImportResolver\GetBy:
+    Pimcore\DataObject\Import\Resolver\GetBy:
         tags:
             - { name: pimcore.import.resolver, id: getBy }
 
@@ -37,54 +37,54 @@ services:
     #
 
     pimcore.import.operator.factory.base64:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\DefaultOperatorFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:
-            $className: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Base64
+            $className: Pimcore\DataObject\Import\ColumnConfig\Operator\Base64
         tags:
             - { name: pimcore.import.operator_factory, id: Base64 }
 
     pimcore.import.operator.factory.iterator:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\DefaultOperatorFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:
-            $className: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Iterator
+            $className: Pimcore\DataObject\Import\ColumnConfig\Operator\Iterator
         tags:
             - { name: pimcore.import.operator_factory, id: Iterator }
 
     pimcore.import.operator.factory.locale_switcher:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\LocaleSwitcherFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\LocaleSwitcherFactory
         tags:
             - { name: pimcore.import.operator_factory, id: LocaleSwitcher }
 
     pimcore.import.operator.factory.object_brick_setter:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\ObjectBrickSetterFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\ObjectBrickSetterFactory
         tags:
             - { name: pimcore.import.operator_factory, id: ObjectBrickSetter }
 
     pimcore.import.operator.factory.php_code:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\DefaultOperatorFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:
-            $className: Pimcore\Model\DataObject\ImportColumnConfig\Operator\PHPCode
+            $className: Pimcore\DataObject\Import\ColumnConfig\Operator\PHPCode
         tags:
             - { name: pimcore.import.operator_factory, id: PHPCode }
 
     pimcore.import.operator.factory.published:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\DefaultOperatorFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:
-            $className: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Published
+            $className: Pimcore\DataObject\Import\ColumnConfig\Operator\Published
         tags:
             - { name: pimcore.import.operator_factory, id: Published }
 
     pimcore.import.operator.factory.splitter:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\DefaultOperatorFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:
-            $className: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Splitter
+            $className: Pimcore\DataObject\Import\ColumnConfig\Operator\Splitter
         tags:
             - { name: pimcore.import.operator_factory, id: Splitter }
 
     pimcore.import.operator.factory.unserialize:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Factory\DefaultOperatorFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:
-            $className: Pimcore\Model\DataObject\ImportColumnConfig\Operator\Unserialize
+            $className: Pimcore\DataObject\Import\ColumnConfig\Operator\Unserialize
         tags:
             - { name: pimcore.import.operator_factory, id: Unserialize }
 
@@ -94,8 +94,8 @@ services:
     #
 
     pimcore.import.value.factory.default:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Value\Factory\DefaultValueFactory
+        class: Pimcore\DataObject\Import\ColumnConfig\Value\Factory\DefaultValueFactory
         arguments:
-            $className: Pimcore\Model\DataObject\ImportColumnConfig\Value\DefaultValue
+            $className: Pimcore\DataObject\Import\ColumnConfig\Value\DefaultValue
         tags:
             - { name: pimcore.import.value_factory, id: DefaultValue }

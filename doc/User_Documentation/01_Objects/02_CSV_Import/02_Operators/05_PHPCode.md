@@ -12,7 +12,7 @@ In addition,it replaces the short text.
 ```php
 <?php
 
-class MyImportCodeOperator extends \Pimcore\Model\DataObject\ImportColumnConfig\Operator\AbstractOperator
+class MyImportCodeOperator extends \Pimcore\DataObject\Import\ColumnConfig\Operator\AbstractOperator
 {
 
     /**

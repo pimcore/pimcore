@@ -16,6 +16,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
+use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
+use Pimcore\DataObject\Import\ColumnConfig\Service as ImportService;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectImportEvents;
 use Pimcore\Event\Model\DataObjectImportEvent;
@@ -23,7 +25,6 @@ use Pimcore\File;
 use Pimcore\Localization\Locale;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ImportColumnConfig\Service as ImportService;
 use Pimcore\Model\FactoryInterface;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\GridConfigFavourite;
@@ -37,7 +38,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -1350,7 +1350,7 @@ class DataObjectHelperController extends AdminController
 
             $attributes = $selectedGridColumn->attributes;
 
-            /** @var $config DataObject\ImportColumnConfig\ConfigElementInterface */
+            /** @var $config ConfigElementInterface */
             $config = $importService->buildInputDataConfig([$attributes]);
             if (!$config) {
                 continue;
