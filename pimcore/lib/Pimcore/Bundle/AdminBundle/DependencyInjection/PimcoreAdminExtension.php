@@ -40,6 +40,7 @@ class PimcoreAdminExtension extends Extension
         $loader->load('event_listeners.yml');
         $loader->load('serializer.yml');
         $loader->load('import.yml');
+        $loader->load('export.yml');
         $loader->load('aliases.yml');
 
         //Set Config for GDPR data providers to container parameters

@@ -18,6 +18,8 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache\Runtime;
+use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
+use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -411,7 +413,7 @@ class Service extends Model\Element\Service
     public static function expandGridColumnForExport($helperDefinitions, $key)
     {
         $config = self::getConfigForHelperDefinition($helperDefinitions, $key);
-        if ($config instanceof Model\DataObject\GridColumnConfig\Operator\AbstractOperator && $config->expandLocales()) {
+        if ($config instanceof \Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator && $config->expandLocales()) {
             return $config->getValidLanguages();
         }
 
@@ -422,7 +424,7 @@ class Service extends Model\Element\Service
      * @param $helperDefinitions
      * @param $key
      *
-     * @return mixed|null|GridColumnConfig\ConfigElementInterface|GridColumnConfig\ConfigElementInterface[]
+     * @return mixed|null|ConfigElementInterface|ConfigElementInterface[]
      */
     public static function getConfigForHelperDefinition($helperDefinitions, $key)
     {
@@ -433,9 +435,10 @@ class Service extends Model\Element\Service
             $definition = $helperDefinitions[$key];
             $attributes = json_decode(json_encode($definition->attributes));
 
-            /** @var $operator Model\DataObject\GridColumnConfig\Operator\AbstractOperator */
-            $service = \Pimcore::getContainer()->get('pimcore.object.gridcolumconfig');
+            // TODO refactor how the service is accessed into something non-static and inject the service there
+            $service = \Pimcore::getContainer()->get(GridColumnConfigService::class);
             $config = $service->buildOutputDataConfig([$attributes]);
+
             if (!$config) {
                 return null;
             }
