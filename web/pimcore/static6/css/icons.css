@@ -943,6 +943,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/stack_of_photos.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_imageGallery {
+    background: url(/pimcore/static6/img/flat-color-icons/gallery.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_numeric {
     background: url(/pimcore/static6/img/flat-color-icons/numerical_sorting_12.svg) center center no-repeat !important;
 }
