@@ -87,8 +87,7 @@ class Filename extends AbstractResolver
                 $object->setKey($objectKey);
             }
         } else {
-            // TODO is an assignment missing here?
-            $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+            $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
         }
 
         if (!$object) {
@@ -98,7 +97,7 @@ class Filename extends AbstractResolver
         return $object;
     }
 
-    private function getAlternativeObject(string $prefix, string $intendedPath, ElementInterface $parent, string $className): string
+    private function getAlternativeObject(string $prefix, string $intendedPath, ElementInterface $parent, string $className)
     {
         $counter   = 1;
         $objectKey = $intendedPath;
@@ -113,6 +112,6 @@ class Filename extends AbstractResolver
         $object->setParent($parent);
         $object->setKey($objectKey);
 
-        return $objectKey;
+        return $object;
     }
 }

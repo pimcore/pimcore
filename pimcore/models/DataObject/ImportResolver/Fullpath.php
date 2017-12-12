@@ -36,7 +36,7 @@ class Fullpath extends AbstractResolver
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
         $createOnDemand = $config->resolverSettings->createOnDemand;
-        $createParents  = $config->resolverSettings->createParents; // TODO can this be removed?
+        $createParents  = $config->resolverSettings->createParents;
 
         $fullpath = $rowData[$this->getIdColumn($config)];
         $object   = DataObject::getByPath($fullpath);
@@ -49,7 +49,7 @@ class Fullpath extends AbstractResolver
             $parentPath = implode('/', $keyParts);
 
             $parent = DataObject::getByPath($parentPath);
-            if (!$parent && $createOnDemand) {
+            if (!$parent && $createParents) {
                 $parent = DataObject\Service::createFolderByPath($parentPath);
             }
 

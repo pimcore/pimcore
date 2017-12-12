@@ -107,7 +107,7 @@ class DataObjectHelperController extends AdminController
      *
      * @return GridConfig\Listing
      */
-    public function getSharedGridColumnConfigs($user, $classId, $searchType)
+    public function getSharedGridColumnConfigs($user, $classId, $searchType = null)
     {
         $db = Db::get();
         $configListingConditionParts = [];
@@ -186,7 +186,7 @@ class DataObjectHelperController extends AdminController
             $gridConfig = GridConfig::getById($gridConfigId);
             $user = $this->getUser();
             if ($gridConfig && $gridConfig->getOwnerId() != $user->getId()) {
-                $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $gridConfig->getClassId()); // TODO parameter searchType is missing
+                $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $gridConfig->getClassId());
 
                 if ($sharedGridConfigs) {
                     $found = false;
@@ -1309,7 +1309,6 @@ class DataObjectHelperController extends AdminController
 
             $context = $eventData->getContext();
 
-            // TODO originalFile did not exist in populateObject and was removed. check!
             $object2 = $this->populateObject($importService, $localeService, $object2, $configData, $rowData, $context);
 
             $paramsBag['object1'] = $object1;
@@ -1601,7 +1600,6 @@ class DataObjectHelperController extends AdminController
 
             $context = $eventData->getContext();
 
-            // TODO originalFile did not exist in populateObject and was removed. check!
             $object = $this->populateObject($importService, $localeService, $object, $configData, $rowData, $context);
 
             $eventData->setObject($object);
