@@ -212,34 +212,34 @@ services:
     pimcore.data_object.grid_column_config.value.factory.default:
         class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
         arguments:
-            $className: Pimcore\DataObject\Import\ColumnConfig\Value\DefaultValue
+            $className: Pimcore\DataObject\GridColumnConfig\Value\DefaultValue
         tags:
             - { name: pimcore.data_object.grid_column_config.value_factory, id: DefaultValue }
 
     pimcore.data_object.grid_column_config.value.factory.date:
         class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
         arguments:
-            $className: Pimcore\DataObject\Import\ColumnConfig\Value\Date
+            $className: Pimcore\DataObject\GridColumnConfig\Value\Date
         tags:
             - { name: pimcore.data_object.grid_column_config.value_factory, id: Date }
 
     pimcore.data_object.grid_column_config.value.factory.datetime:
         class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
         arguments:
-            $className: Pimcore\DataObject\Import\ColumnConfig\Value\DateTime
+            $className: Pimcore\DataObject\GridColumnConfig\Value\DateTime
         tags:
             - { name: pimcore.data_object.grid_column_config.value_factory, id: DateTime }
 
     pimcore.data_object.grid_column_config.value.factory.href:
         class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
         arguments:
-            $className: Pimcore\DataObject\Import\ColumnConfig\Value\Href
+            $className: Pimcore\DataObject\GridColumnConfig\Value\Href
         tags:
             - { name: pimcore.data_object.grid_column_config.value_factory, id: Href }
 
     pimcore.data_object.grid_column_config.value.factory.objects:
         class: Pimcore\DataObject\GridColumnConfig\Value\Factory\DefaultValueFactory
         arguments:
-            $className: Pimcore\DataObject\Import\ColumnConfig\Value\Objects
+            $className: Pimcore\DataObject\GridColumnConfig\Value\Objects
         tags:
             - { name: pimcore.data_object.grid_column_config.value_factory, id: Objects }
