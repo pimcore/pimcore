@@ -411,7 +411,7 @@ class Service extends Model\Element\Service
     public static function expandGridColumnForExport($helperDefinitions, $key)
     {
         $config = self::getConfigForHelperDefinition($helperDefinitions, $key);
-        if ($config instanceof Model\DataObject\GridColumnConfig\Operator\AbstractOperator && $config->expandLocales()) {
+        if ($config instanceof \Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator && $config->expandLocales()) {
             return $config->getValidLanguages();
         }
 
@@ -422,7 +422,7 @@ class Service extends Model\Element\Service
      * @param $helperDefinitions
      * @param $key
      *
-     * @return mixed|null|GridColumnConfig\ConfigElementInterface|GridColumnConfig\ConfigElementInterface[]
+     * @return mixed|null|Pimcore\DataObject\GridColumnConfig\ConfigElementInterface|Pimcore\DataObject\GridColumnConfig\ConfigElementInterface[]
      */
     public static function getConfigForHelperDefinition($helperDefinitions, $key)
     {
@@ -433,7 +433,7 @@ class Service extends Model\Element\Service
             $definition = $helperDefinitions[$key];
             $attributes = json_decode(json_encode($definition->attributes));
 
-            /** @var $operator Model\DataObject\GridColumnConfig\Operator\AbstractOperator */
+            /** @var $operator \Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator */
             $service = \Pimcore::getContainer()->get('pimcore.object.gridcolumconfig');
             $config = $service->buildOutputDataConfig([$attributes]);
             if (!$config) {

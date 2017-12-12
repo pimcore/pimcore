@@ -12,8 +12,8 @@ Sample implementation.
 
 namespace AppBundle\Operator;
 
-use Pimcore\Model\DataObject\GridColumnConfig\Operator\AbstractOperator;
-use Pimcore\Model\DataObject\GridColumnConfig\ResultContainer;
+use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
+use Pimcore\DataObject\GridColumnConfig\ResultContainer;
 
 class OperatorSample extends AbstractOperator
 {

@@ -47,7 +47,7 @@ services:
     # GRID CONFIG
     #
     pimcore.object.gridcolumconfig:
-        class: Pimcore\Model\DataObject\GridColumnConfig\Service
+        class: Pimcore\DataObject\GridColumnConfig\Service
         public: true
 
 
