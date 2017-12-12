@@ -1765,5 +1765,7 @@
   "object_settings": "Object Settings",
   "csv_settings": "CSV Settings",
   "imageGallery": "Image Gallery",
-  "drop_me_here": "Drag an item from the tree and drop it here"
+  "drop_me_here": "Drag an item from the tree and drop it here",
+  "to_left": "Move left",
+  "to_right": "Move right"
 }

@@ -144,7 +144,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     /**
      * @param int $width
      */
-    public function setWidth(int $width)
+    public function setWidth($width)
     {
         $this->width = $width;
     }
@@ -152,7 +152,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     /**
      * @return int
      */
-    public function getHeight(): int
+    public function getHeight()
     {
         return $this->height;
     }
@@ -160,7 +160,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     /**
      * @param int $height
      */
-    public function setHeight(int $height)
+    public function setHeight($height)
     {
         $this->height = $height;
     }
@@ -168,7 +168,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     /**
      * @return string
      */
-    public function getUploadPath(): string
+    public function getUploadPath()
     {
         return $this->uploadPath;
     }
@@ -176,12 +176,10 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     /**
      * @param string $uploadPath
      */
-    public function setUploadPath(string $uploadPath)
+    public function setUploadPath($uploadPath)
     {
         $this->uploadPath = $uploadPath;
     }
-
-
 
     /**
      * @see DataObject\ClassDefinition\Data::getDataForResource
@@ -194,29 +192,29 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        //TODO
-        if ($data instanceof DataObject\Data\Hotspotimage) {
-            $imageId = null;
-            if ($data->getImage()) {
-                $imageId = $data->getImage()->getId();
+        if ($data instanceof DataObject\Data\ImageGallery) {
+            $ids = [];
+            $fd = new Hotspotimage();
+
+            foreach ($data as $key =>  $item) {
+                $itemData = $fd->getDataForResource($item, $object, $params);
+                $ids[]= $itemData['__image'];
+                $hotspots[]= $itemData['__hotspots'];
             }
 
-            $metaData = [
-                'hotspots' => $data->getHotspots(),
-                'marker' => $data->getMarker(),
-                'crop' => $data->getCrop()
-            ];
-
-            $metaData = Serialize::serialize($metaData);
+            $ids = implode(',', $ids);
+            if (count($ids) > 0) {
+                $ids = ',' . $ids . ',';
+            }
 
             return [
-                $this->getName() . '__image' => $imageId,
-                $this->getName() . '__hotspots' => $metaData
+                $this->getName() . '__images' => $ids,
+                $this->getName() . '__hotspots' => Serialize::serialize($hotspots)
             ];
         }
 
         return [
-            $this->getName() . '__image' => null,
+            $this->getName() . '__images' => null,
             $this->getName() . '__hotspots' => null
         ];
     }
@@ -232,54 +230,41 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        //TODO
-        $imageId = $data[$this->getName() . '__image'];
-        $image = Asset::getById($imageId);
-        if ($image) {
-            $metaData = $data[$this->getName() . '__hotspots'];
 
-            // check if the data is JSON (backward compatibility)
-            $md = json_decode($metaData, true);
-            if (!$md) {
-                $md = Serialize::unserialize($metaData);
-            } else {
-                if (is_array($md) && count($md)) {
-                    $md['hotspots'] = $md;
-                }
-            }
-
-            $hotspots = empty($md['hotspots']) ? null : $md['hotspots'];
-            $marker = empty($md['marker']) ? null : $md['marker'];
-            $crop = empty($md['crop']) ? null : $md['crop'];
-
-            $rewritePath = function ($data) {
-                if (!is_array($data)) {
-                    return [];
-                }
-
-                foreach ($data as &$element) {
-                    if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
-                        foreach ($element['data'] as &$metaData) {
-                            // this is for backward compatibility (Array vs. MarkerHotspotItem)
-                            if (is_array($metaData)) {
-                                $metaData = new Element\Data\MarkerHotspotItem($metaData);
-                            }
-                        }
-                    }
-                }
-
-                return $data;
-            };
-
-            $hotspots = $rewritePath($hotspots);
-            $marker = $rewritePath($marker);
-
-            $value = new DataObject\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
-
-            return $value;
+        if (!is_array($data)) {
+            return new DataObject\Data\ImageGallery(null);
         }
 
-        return null;
+        $images = $data[$this->getName() . '__images'];
+        $hotspots = $data[$this->getName() . '__hotspots'];
+        $hotspots = Serialize::unserialize($hotspots);
+
+        if (!$images) {
+            return new DataObject\Data\ImageGallery(null);
+        }
+
+        $resultItems = array();
+
+
+        $fd = new Hotspotimage();
+
+        $images = explode(',' , $images);
+        for ($i = 1; $i < count($images) - 1; $i++) {
+            $imageId = $images[$i];
+            $hotspotData = $hotspots[$i - 1];
+
+            $itemData = array(
+                $fd->getName() . '__image' => $imageId,
+                $fd->getName() . '__hotspots' => $hotspotData
+            );
+
+
+            $itemResult = $fd->getDataFromResource($itemData, $object, $params);
+            $resultItems[] = $itemResult;
+
+        }
+
+        return new DataObject\Data\ImageGallery($resultItems);
     }
 
     /**
@@ -307,46 +292,15 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        //TODO
-        if ($data instanceof DataObject\Data\Hotspotimage) {
-            $imageId = null;
-            if ($data->getImage()) {
-                $imageId = $data->getImage()->getId();
+        $result = array();
+        if ($data instanceof  DataObject\Data\ImageGallery) {
+            $fd = new Hotspotimage();
+            foreach ($data as $item) {
+                $itemData = $fd->getDataForEditmode($item);
+                $result[] = $itemData;
             }
-
-            $rewritePath = function ($data) {
-                if (!is_array($data)) {
-                    return [];
-                }
-
-                foreach ($data as &$element) {
-                    if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
-                        foreach ($element['data'] as &$metaData) {
-                            if ($metaData['value'] instanceof Element\ElementInterface) {
-                                $metaData['value'] = $metaData['value']->getRealFullPath();
-                            }
-                        }
-                    }
-                }
-
-                return $data;
-            };
-
-            $marker = $rewritePath($data->getMarker());
-            $hotspots = $rewritePath($data->getHotspots());
-
-            $marker = object2array($marker);
-            $hotspots = object2array($hotspots);
-
-            return [
-                'id' => $imageId,
-                'hotspots' => $hotspots,
-                'marker' => $marker,
-                'crop' => $data->getCrop()
-            ];
         }
-
-        return null;
+        return $result;
     }
 
     /**
@@ -360,36 +314,19 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        //TODO
-        $rewritePath = function ($data) {
-            if (!is_array($data)) {
-                return [];
+        $resultItems = [];
+
+        if (is_array($data)) {
+            $fd = new Hotspotimage();
+            foreach ($data as $item) {
+                $resultItem = $fd->getDataFromEditmode($item);
+                $resultItems[] = $resultItem;
             }
-
-            foreach ($data as &$element) {
-                if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
-                    foreach ($element['data'] as &$metaData) {
-                        $metaData = new Element\Data\MarkerHotspotItem($metaData);
-                        if (in_array($metaData['type'], ['object', 'asset', 'document'])) {
-                            $el = Element\Service::getElementByPath($metaData['type'], $metaData->getValue());
-                            $metaData['value'] = $el;
-                        }
-                    }
-                }
-            }
-
-            return $data;
-        };
-
-        if (array_key_exists('marker', $data) && is_array($data['marker']) && count($data['marker']) > 0) {
-            $data['marker'] = $rewritePath($data['marker']);
         }
 
-        if (array_key_exists('hotspots', $data) && is_array($data['hotspots']) && count($data['hotspots']) > 0) {
-            $data['hotspots'] = $rewritePath($data['hotspots']);
-        }
+        $result = new DataObject\Data\ImageGallery($resultItems);
 
-        return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'], $data['marker'], $data['crop']);
+        return $result;
     }
 
     /**
@@ -400,6 +337,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
+        //TODO
         return $this->getDataFromEditmode($data, $object, $params);
     }
 

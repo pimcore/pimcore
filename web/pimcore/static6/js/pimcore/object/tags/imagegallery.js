@@ -19,35 +19,37 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
     initialize: function (data, fieldConfig) {
         if (data) {
-            this.data = {};
+            this.data = data;
         } else {
-            this.data = {};
+            this.data = [];
         }
+        this.dirty = false;
         this.fieldConfig = fieldConfig;
+        this.hotspotConfig = {
+            condensed: true,
+            gallery: true,
+            callback: this
+        };
     },
 
+    getGridColumnConfig: function (field) {
 
-    getGridColumnConfig: function(field) {
-
-        return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
-            getEditor:this.getWindowCellEditor.bind(this, field),
+        return {
+            header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
-                //TODO
-
-                // if (value && value.id) {
-                //     return '<img src="/admin/asset/get-image-thumbnail?id=' + value.id
-                //         + '&width=88&height=88&frame=true" />';
-                // }
-            }.bind(this, field.key)};
+                return t("not_supported");
+            }.bind(this, field.key)
+        };
     },
 
-    wrap: function(hotspotImageTag) {
+    wrap: function (hotspotImageTag) {
 
         hotspotImageEditPanel = hotspotImageTag.getLayoutEdit();
 
@@ -67,11 +69,12 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         };
 
         var dragableComponent = Ext.create('Ext.panel.Panel', dragConf);
+        hotspotImageTag.setContainer(dragableComponent);
         return dragableComponent;
 
     },
 
-    getDefaultFieldConfig: function() {
+    getDefaultFieldConfig: function () {
         var itemWidth = this.fieldConfig.width ? this.fieldConfig.width : 150;
         var itemHeight = this.fieldConfig.height ? this.fieldConfig.height : 150;
 
@@ -83,29 +86,80 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         return fieldConfig;
     },
 
-    getLayoutEdit: function () {
-
-        this.items= [];
+    getFakeItems: function () {
+        var items = [];
 
         for (var i = 0; i < 15; i++) {
             var data = {
                 id: 40 + i
             }
+
             var fieldConfig = this.getDefaultFieldConfig();
-            fieldConfig.title = i;
-
-            var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, {
-                condensed: true
-            });
-
+            var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, this.hotspotConfig);
             var dragableComponent = this.wrap(hotspotImage);
-            this.items.push(dragableComponent);
+            items.push(dragableComponent);
         }
+        return items;
+    },
+
+    getLayoutEdit: function () {
+
+        var items = [];
+
+        for (var i = 0; i < this.data.length; i++) {
+            var itemData = this.data[i];
+            var fieldConfig = this.getDefaultFieldConfig();
+            var hotspotImage = new pimcore.object.tags.hotspotimage(itemData, fieldConfig, this.hotspotConfig);
+            var dragableComponent = this.wrap(hotspotImage);
+            items.push(dragableComponent);
+
+        }
+        // var items = this.getFakeItems();
+
+        var fieldConfig = this.getDefaultFieldConfig();
 
         var placeholderComponent = this.createPlaceholder(fieldConfig);
-        this.items.push(placeholderComponent);
+        items.push(placeholderComponent);
 
         var defaultFieldConfig = this.getDefaultFieldConfig();
+
+        var toolbarCfg = {
+            region: "north",
+            border: false,
+            items: [
+                {
+                    xtype: "tbtext",
+                    text: "<b>" + this.fieldConfig.title + "</b>"
+                },
+                {
+                    xtype: "button",
+                    tooltip: t("add"),
+                    overflowText: t('add'),
+                    iconCls: "pimcore_icon_add",
+
+                    handler: function () {
+                        this.add(null);
+                    }.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    overflowText: t('empty'),
+                    handler: function() {
+                        Ext.suspendLayouts();
+                        while (this.component.items.length > 1) {
+                            var item = this.component.items.getAt(0);
+                            this.component.remove(item);
+                            this.dirty = true;
+                        }
+                        Ext.resumeLayouts();
+                        this.component.updateLayout();
+                    }.bind(this)
+                }
+            ]
+        };
+
+        var toolbar = new Ext.Toolbar(toolbarCfg);
 
         var conf = {
             border: true,
@@ -113,28 +167,27 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 type: 'column',
                 columns: 1
             },
-            title: this.fieldConfig.title,
-            items: this.items,
+            // title: this.fieldConfig.title,
+            items: items,
             proxyConfig: {
                 width: defaultFieldConfig.width,
                 height: defaultFieldConfig.height,
-                respectPlaceholder: true
-            }
+                respectPlaceholder: true,
+                callback: this
+            },
+            componentCls: "object_field",
+            style: {
+                margin: '0 0 10px 0',
+            },
+            tbar: toolbar
         };
 
         this.component = new pimcore.object.helpers.ImageGalleryPanel(conf);
 
-        // setTimeout(function() {
-        //     // var item = this.items1[5];
-        //     // this.component.remove(item);
-        //     // this.component.updateLayout();
-        //
-        // }.bind(this), 5000);
-
         return this.component;
     },
 
-    createPlaceholder: function(fieldConfig) {
+    createPlaceholder: function (fieldConfig) {
         var placeholderConf = {
             width: fieldConfig.width,
             height: fieldConfig.height,
@@ -146,27 +199,26 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 borderColor: 'lightGray',
                 borderStyle: 'dashed'
             },
-            layout : {
-                type : 'table',
-                columns : 1,
-                tableAttrs : {
-                    style : {
-                        width : '100%',
-                        height : '100%'
+            layout: {
+                type: 'table',
+                columns: 1,
+                tableAttrs: {
+                    style: {
+                        width: '100%',
+                        height: '100%'
                     }
                 },
-                tdAttrs : {
-                    align : 'center',
-                    valign : 'middle',
+                tdAttrs: {
+                    align: 'center',
+                    valign: 'middle',
                 },
             },
-            items : [{
+            items: [{
                 xtype: 'label',
                 layout: 'fit',
                 text: t('drop_me_here')
             }]
         };
-
 
 
         var placeHolder = Ext.create('Ext.panel.Panel', placeholderConf);
@@ -193,6 +245,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
                 onNodeDrop: function (target, dd, e, data) {
 
+                    this.dirty = true;
                     var record = data.records[0];
                     var data = {
                         id: record.data.id
@@ -201,14 +254,11 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                     var fieldConfig = this.getDefaultFieldConfig();
                     fieldConfig.title = record.data.path;
 
-                    var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, {
-                        condensed: true
-                    });
+                    var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, this.hotspotConfig);
                     var itemCount = this.component.items.length;
 
                     var dragableComponent = this.wrap(hotspotImage);
-                    this.items.push(dragableComponent);
-                    this.component.insert(itemCount - 1 , dragableComponent);
+                    this.component.insert(itemCount - 1, dragableComponent);
                 }.bind(this)
             });
 
@@ -231,16 +281,81 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        return value
+        return value;
     },
 
     getCellEditValue: function () {
-        //TODO
         return this.getValue();
     },
 
-    isDirty: function() {
-        //TODO
-        return true;
+    isDirty: function () {
+        if (this.dirty) {
+            return true;
+        }
+        var itemCount = this.component.items.length;
+        for (var i = 0; i < itemCount; i++) {
+            var item = this.component.items.getAt(i);
+            var tag = item.__tag;
+            if (tag) {
+                if (tag.isDirty()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    },
+
+    move: function (direction, item) {
+
+        if (direction == 1) {
+            if (this.component.items.getAt(this.component.items.length - 2) != item) {
+                this.component.moveAfter(item, item.nextSibling());
+            }
+        } else {
+            if (this.component.items.getAt(0) != item) {
+                this.component.moveBefore(item, item.previousSibling());
+            }
+        }
+        this.dirty = true;
+    },
+
+    add: function (me) {
+
+        this.dirty = true;
+        var pos = 0;
+
+        var itemCount = this.component.items.length;
+        if (me) {
+
+
+            for (var i = 0; i < itemCount; i++) {
+                var item = this.component.items.getAt(i);
+                if (item == me) {
+                    pos = i;
+                    break;
+                }
+            }
+        } else {
+            pos = itemCount - 2;
+        }
+
+        var hotspotImage = new pimcore.object.tags.hotspotimage({}, this.getDefaultFieldConfig(), this.hotspotConfig);
+        var itemCount = this.component.items.length;
+
+        var dragableComponent = this.wrap(hotspotImage);
+        this.component.insert(pos + 1, dragableComponent);
+    },
+
+    delete: function (item) {
+        this.dirty = true;
+        this.component.remove(item);
+    },
+
+    notifyDrop: function() {
+        console.log("notifydrop");
+        this.dirty = true;
     }
+
+
 });

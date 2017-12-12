@@ -18,7 +18,7 @@ Ext.define('pimcore.object.helpers.ImageGalleryPanel', {
     ],
 
     cls: 'x-portal',
-    bodyCls: 'x-portal-body',
+    // bodyCls: 'x-portal-body',
 
     manageHeight: true,
 

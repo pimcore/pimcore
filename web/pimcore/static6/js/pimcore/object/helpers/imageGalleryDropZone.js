@@ -158,6 +158,10 @@ Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
                 parent.add(panel);
             }
 
+            if (this.proxyConfig.callback) {
+                this.proxyConfig.callback.notifyDrop();
+            }
+
             Ext.resumeLayouts(true);
 
             this.portal.fireEvent('drop', dropEvent);
