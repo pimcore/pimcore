@@ -209,7 +209,7 @@ function array_to_html_attribute_string($array)
             if (!empty($data)) {
                 $data .= ' ';
             }
-            $data .= $key . '="' . htmlspecialchars($value) . '""';
+            $data .= $key . '="' . htmlspecialchars($value) . '"';
         }
     }
 
