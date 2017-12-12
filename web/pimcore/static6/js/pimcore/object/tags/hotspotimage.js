@@ -22,7 +22,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     fileinfo: null,
     previewItems: [],
 
-    initialize: function (data, fieldConfig) {
+    initialize: function (data, fieldConfig, additionalConfig) {
         this.hotspots = [];
         this.marker = [];
         this.crop = [];
@@ -30,7 +30,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         if (fieldConfig.predefinedDataTemplates) {
             try {
                 this.predefinedDataTemplates = Ext.decode(fieldConfig.predefinedDataTemplates);
-            } catch(e) {
+            } catch (e) {
                 console.log(e);
             }
         }
@@ -46,17 +46,19 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
         }
         this.fieldConfig = fieldConfig;
+        this.additionalConfig = additionalConfig || {};
     },
 
 
-    getGridColumnConfig: function(field) {
+    getGridColumnConfig: function (field) {
 
-        return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
-            getEditor:this.getWindowCellEditor.bind(this, field),
+        return {
+            header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
 
@@ -64,7 +66,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     return '<img src="/admin/asset/get-image-thumbnail?id=' + value.id
                         + '&width=88&height=88&frame=true" />';
                 }
-            }.bind(this, field.key)};
+            }.bind(this, field.key)
+        };
     },
 
     getLayoutEdit: function () {
@@ -76,55 +79,103 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             this.fieldConfig.height = 300;
         }
 
-        var conf = {
-            width: this.fieldConfig.width,
-            height: this.fieldConfig.height,
-            border: true,
-            style: "padding-bottom: 10px",
-            componentCls: "object_field",
-            tbar: [{
+        var items = [];
+        if (!this.additionalConfig.condensed) {
+            items.push({
                 xtype: "tbspacer",
                 width: 20,
                 height: 16,
                 cls: "pimcore_icon_droptarget"
-            },
-                {
-                    xtype: "tbtext",
-                    text: "<b>" + this.fieldConfig.title + "</b>"
-                },"->",{
-                    xtype: "button",
-                    tooltip: t("crop"),
-                    iconCls: "pimcore_icon_image_region",
-                    handler: this.openCropWindow.bind(this)
-                },{
-                    xtype: "button",
-                    tooltip: t("add_marker_or_hotspots"),
-                    iconCls: "pimcore_icon_marker pimcore_icon_overlay_edit",
-                    handler: this.openHotspotWindow.bind(this)
-                },{
-                    xtype: "button",
-                    tooltip: t("clear_marker_or_hotspots"),
-                    iconCls: "pimcore_icon_marker pimcore_icon_overlay_delete",
-                    handler: this.clearData.bind(this)
-                },{
-                    xtype: "button",
-                    iconCls: "pimcore_icon_open",
-                    handler: this.openImage.bind(this)
-                }, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },{
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                },{
-                    xtype: "button",
-                    iconCls: "pimcore_icon_upload",
-                    cls: "pimcore_inline_upload",
-                    handler: this.uploadDialog.bind(this)
-                }]
+            });
+
+            items.push({
+                xtype: "tbtext",
+                text: "<b>" + this.fieldConfig.title + "</b>"
+            });
+
+            items.push("->");
+        }
+
+        items.push(
+            {
+                xtype: "button",
+                tooltip: t("crop"),
+                overflowText: t('crop'),
+                iconCls: "pimcore_icon_image_region",
+                handler: this.openCropWindow.bind(this)
+            }
+        );
+
+        items.push({
+            xtype: "button",
+            tooltip: t("add_marker_or_hotspots"),
+            overflowText: t('add_marker_or_hotspots'),
+            iconCls: "pimcore_icon_marker pimcore_icon_overlay_edit",
+            handler: this.openHotspotWindow.bind(this)
+        });
+
+        items.push({
+            xtype: "button",
+            tooltip: t("clear_marker_or_hotspots"),
+            overflowText: t('clear_marker_or_hotspots'),
+            iconCls: "pimcore_icon_marker pimcore_icon_overlay_delete",
+            handler: this.clearData.bind(this)
+        });
+
+        items.push({
+            xtype: "button",
+            iconCls: "pimcore_icon_open",
+            overflowText: t('open'),
+            handler: this.openImage.bind(this)
+        });
+
+        items.push({
+            xtype: "button",
+            iconCls: "pimcore_icon_delete",
+            overflowText: t('delete'),
+            handler: this.empty.bind(this)
+        });
+
+        items.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                overflowText: t('search'),
+                handler: this.openSearchEditor.bind(this)
+            }
+        );
+
+        items.push({
+            xtype: "button",
+            iconCls: "pimcore_icon_upload",
+            overflowText: t('upload'),
+            cls: "pimcore_inline_upload",
+            handler: this.uploadDialog.bind(this)
+        });
+
+        var toolbarCfg = {
+            region: "north",
+            border: false,
+            items: items
         };
+
+        if (this.additionalConfig.condensed) {
+            toolbarCfg.overflowHandler = 'menu';
+        }
+        var toolbar = new Ext.Toolbar(toolbarCfg);
+
+
+        var conf = {
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
+            border: true,
+
+            componentCls: "object_field",
+            tbar: toolbar
+        };
+
+        if (!this.additionalConfig.condensed) {
+            conf.style = "padding-bottom: 10px;";
+        }
 
         this.component = new Ext.Panel(conf);
         this.createImagePanel();
@@ -132,10 +183,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         return this.component;
     },
 
-    createImagePanel: function() {
+    createImagePanel: function () {
         this.panel = new Ext.Panel({
             width: this.fieldConfig.width,
-            height: this.fieldConfig.height-27,
+            height: this.fieldConfig.height - 27,
             cls: "pimcore_droptarget_image",
             bodyCls: "pimcore_droptarget_image pimcore_image_container",
             bodyStyle: "text-align: center; "
@@ -146,11 +197,11 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             new Ext.dd.DropZone(el.getEl(), {
                 reference: this,
                 ddGroup: "element",
-                getTargetFromEvent: function(e) {
+                getTargetFromEvent: function (e) {
                     return this.reference.component.getEl();
                 },
 
-                onNodeOver : function(target, dd, e, data) {
+                onNodeOver: function (target, dd, e, data) {
 
                     var record = data.records[0];
 
@@ -162,7 +213,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     }
                 },
 
-                onNodeDrop : this.onNodeDrop.bind(this)
+                onNodeDrop: this.onNodeDrop.bind(this)
             });
 
 
@@ -182,20 +233,20 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     updateImage: function () {
         // 5px padding (-10)
-        var body =  this.getBody();
+        var body = this.getBody();
 
         var width = null;
         var height = null;
 
-        if(this.panel) {
+        if (this.panel) {
             this.originalWidth = this.panel.getWidth();
             this.originalHeight = this.panel.getHeight();
 
-            width = this.panel.getWidth()-10;
-            height = this.panel.getHeight()-10;
+            width = this.panel.getWidth() - 10;
+            height = this.panel.getHeight() - 10;
         } else {
-            width = body.getWidth()-10;
-            height = body.getHeight()-10;
+            width = body.getWidth() - 10;
+            height = body.getHeight() - 10;
         }
 
         var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width
@@ -217,7 +268,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
 
-    getFileInfo: function(path) {
+    getFileInfo: function (path) {
         if (!this.fileinfo) {
             Ext.Ajax.request({
                 url: path,
@@ -252,8 +303,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
 
-    openHotspotWindow: function() {
-        if(this.data) {
+    openHotspotWindow: function () {
+        if (this.data) {
             var editor = new pimcore.element.tag.imagehotspotmarkereditor(
                 this.data.id,
                 {
@@ -277,14 +328,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         }
     },
 
-    clearData: function() {
+    clearData: function () {
         this.doClearData();
         this.updateImage();
         pimcore.helpers.showNotification(t("success"), t("hotspots_cleared"), "success");
 
     },
 
-    doClearData: function() {
+    doClearData: function () {
         this.hotspots = [];
         this.marker = [];
         this.crop = [];
@@ -307,7 +358,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         return {id: this.data.id, hotspots: this.hotspots, marker: this.marker, crop: this.crop};
     },
 
-    showPreview: function() {
+    showPreview: function () {
         if (this.fileinfo) {
             var i;
             var originalWidth = this.originalWidth;
@@ -316,63 +367,66 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             var addX = (originalWidth - this.fileinfo.width) / 2;
             var addY = (originalHeight - this.fileinfo.height) / 2;
 
-            for(i = 0; i < this.previewItems.length; i++) {
-                if(Ext.get(this.previewItems[i])) {
+            for (i = 0; i < this.previewItems.length; i++) {
+                if (Ext.get(this.previewItems[i])) {
                     Ext.get(this.previewItems[i]).remove();
                 }
             }
             this.previewItems = [];
 
 
-            for (i = 0; i < this.hotspots.length; i++) {
-                var hotspotId = "hotspotId-" + uniqid();
-                this.panel.body.insertHtml("beforeEnd", '<div id="' + hotspotId + '" class="pimcore_image_hotspot"></div>');
-                this.previewItems.push(hotspotId);
+            if (this.hotspots) {
+                for (i = 0; i < this.hotspots.length; i++) {
+                    var hotspotId = "hotspotId-" + uniqid();
+                    this.panel.body.insertHtml("beforeEnd", '<div id="' + hotspotId + '" class="pimcore_image_hotspot"></div>');
+                    this.previewItems.push(hotspotId);
 
-                var hotspotEl = Ext.get(hotspotId);
-                var config = this.hotspots[i];
+                    var hotspotEl = Ext.get(hotspotId);
+                    var config = this.hotspots[i];
 
-                //calculate absolute size based in image-size
-                var absoluteHeight = config["height"] * this.fileinfo.height / 100;
-                var absoluteWidth = config["width"] * this.fileinfo.width / 100;
-                var absoluteTop = config["top"] * this.fileinfo.height / 100;
-                var absoluteLeft = config["left"] * this.fileinfo.width / 100;
+                    //calculate absolute size based in image-size
+                    var absoluteHeight = config["height"] * this.fileinfo.height / 100;
+                    var absoluteWidth = config["width"] * this.fileinfo.width / 100;
+                    var absoluteTop = config["top"] * this.fileinfo.height / 100;
+                    var absoluteLeft = config["left"] * this.fileinfo.width / 100;
 
-                hotspotEl.applyStyles({
-                    top: (absoluteTop + addY) + "px",
-                    left: (absoluteLeft + addX) + "px",
-                    height: (absoluteHeight) + "px",
-                    width: (absoluteWidth) + "px"
-                });
+                    hotspotEl.applyStyles({
+                        top: (absoluteTop + addY) + "px",
+                        left: (absoluteLeft + addX) + "px",
+                        height: (absoluteHeight) + "px",
+                        width: (absoluteWidth) + "px"
+                    });
 
-                this.addHotspotInfo(hotspotEl, config);
+                    this.addHotspotInfo(hotspotEl, config);
+                }
             }
+            if (this.marker) {
+                for (i = 0; i < this.marker.length; i++) {
+                    var markerId = "marker-" + uniqid();
+                    this.panel.body.insertHtml("beforeEnd", '<div id="' + markerId + '" class="pimcore_image_marker"></div>');
+                    this.previewItems.push(markerId);
+                    var markerEl = Ext.get(markerId);
 
-            for (i = 0; i < this.marker.length; i++) {
-                var markerId = "marker-" + uniqid();
-                this.panel.body.insertHtml("beforeEnd", '<div id="' + markerId + '" class="pimcore_image_marker"></div>');
-                this.previewItems.push(markerId);
-                var markerEl = Ext.get(markerId);
+                    var config = this.marker[i];
+                    var top = config["top"] / 100;
+                    var left = config["left"] / 100;
 
-                var config = this.marker[i];
-                var top = config["top"]/100;
-                var left = config["left"]/100;
+                    left = ((left * this.fileinfo.width) + addX) / originalWidth;
+                    top = ((top * this.fileinfo.height) + addY) / originalHeight;
 
-                left = ((left * this.fileinfo.width) + addX) / originalWidth;
-                top = ((top * this.fileinfo.height) + addY) / originalHeight;
+                    markerEl.applyStyles({
+                        top: ((originalHeight * top) - 35) + "px",
+                        left: ((originalWidth * left) - 12) + "px"
+                    });
 
-                markerEl.applyStyles({
-                    top: ((originalHeight * top) - 35) + "px",
-                    left: ((originalWidth * left) - 12)+ "px"
-                });
-
-                this.addHotspotInfo(markerEl, config);
+                    this.addHotspotInfo(markerEl, config);
+                }
             }
         }
     },
 
-    addHotspotInfo: function(element, config) {
-        if(config["name"]) {
+    addHotspotInfo: function (element, config) {
+        if (config["name"]) {
             element.dom.setAttribute("title", config["name"]);
         }
 
