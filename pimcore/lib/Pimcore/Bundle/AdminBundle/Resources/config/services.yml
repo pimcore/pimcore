@@ -43,13 +43,6 @@ services:
 
     Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~
 
-    #
-    # GRID CONFIG
-    #
-    pimcore.object.gridcolumconfig:
-        class: Pimcore\DataObject\GridColumnConfig\Service
-        public: true
-
 
     #
     # GDPR Services
