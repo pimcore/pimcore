@@ -1,6 +1,6 @@
 # Trimmer
 
-![Setting](../../../img/gridconfig/operator_trimmer_symbol.png)
+![Symbol](../../../img/gridconfig/operator_trimmer_symbol.png)
 
 Trim the given string on the left, right or both sides.
 

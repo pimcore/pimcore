@@ -37,6 +37,8 @@ This can be changed by defining an alternative renderer. In the following exampl
 * [LFExpander](./Operators/LFExpander.md)
 * [LocaleSwitcher](./Operators/LocaleSwitcher.md)
 * [Merge](./Operators/Merge.md)
+* [ObjectBrickGetter](./Operators/ObjectBrickGetter.md)
+* [ObjectFieldGetter](./Operators/ObjectFieldGetter.md)
 * [PHP Serialize/Unserialize](./Operators/PHP.md)
 * [PHPCode](./Operators/PHPCode.md)
 * [RequiredBy](./Operators/RequiredBy.md)

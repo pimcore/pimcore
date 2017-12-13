@@ -1,6 +1,6 @@
 # String Contains
 
-![Setting](../../../img/gridconfig/operator_stringcontains_symbol.png)
+![Symbol](../../../img/gridconfig/operator_stringcontains_symbol.png)
 
 As the name says.
 

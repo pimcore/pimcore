@@ -1,6 +1,6 @@
 # Anonymizer
 
-![Setting](../../../img/gridconfig/operator_anonymizer_symbol.png)
+![Symbol](../../../img/gridconfig/operator_anonymizer_symbol.png)
 
 Allows you to create a hash code of your value.
 

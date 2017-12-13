@@ -1,8 +1,8 @@
 # LFExpander
 
-Not directly meant for the grid view but will create a seperate column for all selected locales in the CSV Export.
+![Symbol](../../../img/gridconfig/operator_lfexpander_symbol.png)
 
-![Setting](../../../img/gridconfig/operator_lfexpander_symbol.png)
+Not directly meant for the grid view but will create a seperate column for all selected locales in the CSV Export.
 
 Sample Config: 
     

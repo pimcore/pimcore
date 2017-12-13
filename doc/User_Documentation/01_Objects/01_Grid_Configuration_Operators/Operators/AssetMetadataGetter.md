@@ -1,6 +1,6 @@
 # AssetMetadata Getter
 
-![Setting](../../../img/gridconfig/operator_assetmetadata_symbol.png)
+![Symbol](../../../img/gridconfig/operator_assetmetadata_symbol.png)
 
 Retrieve the metadata of the referenced asset.
 

@@ -1,6 +1,6 @@
 # AnyGetter
 
-![Setting](../../../img/gridconfig/operator_anygetter_symbol.png)
+![Symbol](../../../img/gridconfig/operator_anygetter_symbol.png)
 
 The AnyGetter aims to allow you to get virtually everyting.
 
