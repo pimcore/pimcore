@@ -10,7 +10,7 @@ Sample Config:
 
 ![Setting](../../../img/gridconfig/operator_lfexpander_sample1.png)
 
-The option "As array:" will only create a column with the number of locales, which have already been translated (can be used for data completeness reports).
+The option "as array" collects all localized values and returns the result as array whereas without this option it will simply return the child value for the current locale if used in the grid view context.
 
 
 
