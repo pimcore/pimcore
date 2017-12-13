@@ -17,9 +17,12 @@ use Pimcore\DataObject\GridColumnConfig\ResultContainer;
 
 class OperatorSample extends AbstractOperator
 {
-    public function __construct($config, $context = null)
+    private $additionalData;
+    
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
+
         $this->additionalData = $config->additionalData;
     }
 
@@ -29,6 +32,7 @@ class OperatorSample extends AbstractOperator
 
         $result = new ResultContainer();
         $result->setValue($element->getId() . " huhu " .  count($childs) . " " . $this->additionalData);
+
         return $result;
     }
 }
