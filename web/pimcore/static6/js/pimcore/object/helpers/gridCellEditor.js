@@ -63,7 +63,21 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
             xtype: "form",
             border: false,
             items: [tag.getLayoutEdit()],
-            bodyStyle: "padding: 10px;",
+            bodyStyle: "padding: 10px;"
+        });
+        this.editWin = new Ext.Window({
+            modal: false,
+            title: t("edit") + " " + title,
+            items: [formPanel],
+            bodyStyle: "background: #fff;",
+            width: 700,
+            maxHeight: 600,
+            autoScroll: true,
+            listeners:{
+                close:function(){
+                    this.cancelEdit(false);
+                }.bind(this)
+            },
             buttons: [
                 {
                     text: t("save"),
@@ -84,19 +98,6 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
                     }.bind(this)
                 }
             ]
-        });
-        this.editWin = new Ext.Window({
-            modal: false,
-            title: t("edit") + " " + title,
-            items: [formPanel],
-            bodyStyle: "background: #fff;",
-            width: 700,
-            maxHeight: 600,
-            listeners:{
-                close:function(){
-                    this.cancelEdit(false);
-                }.bind(this)
-            }
         });
         this.editWin.show();
         this.editWin.updateLayout();
