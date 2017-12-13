@@ -1,6 +1,6 @@
 # Required By
 
-![Setting](../../../img/gridconfig/operator_requiredby_symbol.png)
+![Symbol](../../../img/gridconfig/operator_requiredby_symbol.png)
 
 Resolves all "required by" dependencies.
 

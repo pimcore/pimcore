@@ -1,6 +1,6 @@
 # PHP Serialize / Unserialize
 
-![Setting](../../../img/gridconfig/operator_php_symbol.png)
+![Symbol](../../../img/gridconfig/operator_php_symbol.png)
 
 Apply the serialize or unserialize method.
 

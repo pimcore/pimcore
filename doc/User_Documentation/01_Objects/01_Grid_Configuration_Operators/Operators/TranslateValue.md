@@ -1,6 +1,6 @@
 # Translate Value
 
-![Setting](../../../img/gridconfig/operator_translatevalue_symbol.png)
+![Symbol](../../../img/gridconfig/operator_translatevalue_symbol.png)
 
 Suppose that the value of the title field is `sometitle`. The operator will do a website translation for the `xyz.sometitle` translation key. 
 
