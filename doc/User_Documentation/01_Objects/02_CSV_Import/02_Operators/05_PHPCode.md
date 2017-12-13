@@ -12,35 +12,18 @@ In addition,it replaces the short text.
 ```php
 <?php
 
-class MyImportCodeOperator extends \Pimcore\DataObject\Import\ColumnConfig\Operator\AbstractOperator
+use Pimcore\DataObject\Import\ColumnConfig\Operator\AbstractOperator;
+
+class MyImportCodeOperator extends AbstractOperator
 {
-
-    /**
-     * MyImportCodeOperator constructor.
-     * @param $config
-     */
-    public function __construct($config)
-    {
-        parent::__construct($config);
-        $this->params = $config->resolverSettings->params;
-    }
-
-    /**
-     * @param $element
-     * @param $target
-     * @param $rowData
-     * @param $rowIndex
-     *
-     * @return mixed
-     */
-    public function process($element, &$target, &$rowData, $colIndex, &$context = [])
+    public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         $colData = $rowData[$colIndex];
+
         $target->setPublished($colData > 1510931949);
         if (!$target->getPublished()) {
             $target->setShortText("not available anymore", "en");
         }
-
     }
 }
 ```
