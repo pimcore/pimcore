@@ -1,5 +1,11 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 156 (2017-12-13)
+
+The experimental `GridColumnConfig` feature was revamped to register and build its operators via DI instead of predefined
+namespaces (see [PR#2333](https://github.com/pimcore/pimcore/pull/2333)). If you already implemented custom operators
+please make sure you update them to the new structure.
+
 ## Build 149 (2017-11-14)
 
 The Piwik integration which was recently added was refactored to always use a full URI including the protocol for the Piwik
