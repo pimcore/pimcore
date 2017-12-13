@@ -49,8 +49,6 @@ Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
 
         var currentPosition = 0;
 
-        // TODO note that the last one is reserved for the placeholder
-
         var itemLength = items.length;
         for(var len = itemLength; currentPosition < len; currentPosition++){
             var cur = items[currentPosition];
@@ -81,8 +79,6 @@ Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
                     pos = false;
                     break;
                 }
-
-
             }
         }
         
@@ -102,7 +98,7 @@ Ext.define('pimcore.object.helpers.ImageGalleryDropZone', {
             if (match) {
                 var parent = p.el.dom.parentNode;
                 dd.panelProxy.moveProxy(parent, p.el.dom);
-                // console.log("current position = " + currentPosition +  " pos= " + pos);
+
                 if (currentPosition < pos) {
                     pos--;
                 }

@@ -143,6 +143,13 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 },
                 {
                     xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: function () {
+                        this.openSearchEditor();
+                    }.bind(this)
+                },
+                {
+                    xtype: "button",
                     iconCls: "pimcore_icon_delete",
                     overflowText: t('empty'),
                     handler: function() {
@@ -342,9 +349,20 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
         var hotspotImage = new pimcore.object.tags.hotspotimage({}, this.getDefaultFieldConfig(), this.hotspotConfig);
         var itemCount = this.component.items.length;
-
         var dragableComponent = this.wrap(hotspotImage);
         this.component.insert(pos + 1, dragableComponent);
+    },
+
+    addDataFromSelector: function (item) {
+
+        if (item) {
+            this.dirty = true;
+            var hotspotImage = new pimcore.object.tags.hotspotimage({id: item.id}, this.getDefaultFieldConfig(), this.hotspotConfig);
+            var itemCount = this.component.items.length;
+            var dragableComponent = this.wrap(hotspotImage);
+            this.component.insert(this.component.items.length - 1, dragableComponent);
+
+        }
     },
 
     delete: function (item) {
@@ -353,9 +371,20 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
     },
 
     notifyDrop: function() {
-        console.log("notifydrop");
         this.dirty = true;
-    }
+    },
+
+    openSearchEditor: function () {
+        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
+                type: ["asset"],
+                subtype: {
+                    asset: ["image"]
+                }
+            },
+            {
+                context: Ext.apply({scope: "objectEditor"}, this.getContext())
+            });
+    },
 
 
 });
