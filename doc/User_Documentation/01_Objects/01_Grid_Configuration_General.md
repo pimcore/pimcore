@@ -1,5 +1,7 @@
 # Grid Configuration & CSV Export
 
+> Anhanced features like operator support, saving & sharing, grid config favourites are experimental and subject to change without notice. 
+
 You can use the object grid configurator button to adapt the grid to your needs,
 i.e. add additional columns, change the column order or column width.
 The chosen column configuration will also be applied for the CSV Export.
