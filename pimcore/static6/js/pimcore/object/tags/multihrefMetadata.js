@@ -141,7 +141,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         fieldInfo: fieldInfo
                     });
                 }.bind(this, this.fieldConfig.columns[i]);
-            } else if(this.fieldConfig.columns[i].type == "bool") {
+            } else if(this.fieldConfig.columns[i].type === "bool" || this.fieldConfig.columns[i].type === "columnbool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
@@ -160,6 +160,24 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         renderer: renderer
                     });
                     continue;
+                }
+
+                if (!readOnly && this.fieldConfig.columns[i].type === "columnbool") {
+                    editor.addListener('change', function(el, newValue) {
+                        window.gridPanel = el.up('gridpanel');
+                        window.el = el;
+                        var gridPanel = el.up('gridpanel');
+                        var columnKey = el.up().column.dataIndex;
+                        if(newValue) {
+                            gridPanel.getStore().each(function(record){
+                                if (!!record.get(columnKey)) {
+                                    // note, we don't need to check for the row here as the editor fires another change
+                                    // on blur, which updates the underlying record without a subsequent event being fired.
+                                    record.set(columnKey, false);
+                                }
+                            });
+                        }
+                    });
                 }
 
             }
@@ -578,10 +596,10 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         }
 
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-            type: allowedTypes,
-            subtype: allowedSubtypes,
-            specific: allowedSpecific
-        },
+                type: allowedTypes,
+                subtype: allowedSubtypes,
+                specific: allowedSpecific
+            },
             {
                 context: this.getContext()
             });
@@ -774,10 +792,10 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         }
 
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-            type: allowedTypes,
-            subtype: allowedSubtypes,
-            specific: allowedSpecific
-        },
+                type: allowedTypes,
+                subtype: allowedSubtypes,
+                specific: allowedSpecific
+            },
             {
                 context: Ext.apply({scope: "objectEditor"}, this.getContext())
             });
