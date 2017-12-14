@@ -456,10 +456,12 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     {
         $result = [];
         $data = $this->getDataFromObjectParam($object, $params);
+        $fd = new Hotspotimage();
+        $fd->setName('image');
 
         if ($data instanceof DataObject\Data\ImageGallery) {
             foreach ($data as $item) {
-                $dataForResource = $this->getDataForResource($item, $object, $params);
+                $dataForResource = $fd->getDataForResource($item, $object, $params);
 
                 if ($dataForResource) {
                     if ($dataForResource['image__hotspots']) {
