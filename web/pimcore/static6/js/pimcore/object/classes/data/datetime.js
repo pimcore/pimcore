@@ -111,7 +111,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
             forceSelection: true,
             editable: false,
             fieldLabel: t("column_type"),
-            value: this.datax.columnType ? this.datax.columnType : 'bigint(20)',
+            value: this.datax.columnType != "bigint(20)" && this.datax.columnType != "datetime" ? 'bigint(20)' : this.datax.columnType ,
             store: new Ext.data.ArrayStore({
                 fields: [
                     'id',

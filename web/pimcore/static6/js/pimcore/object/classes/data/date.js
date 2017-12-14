@@ -73,7 +73,7 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
 
         this.component = new Ext.form.DateField(date);
 
-        var columnTypeData = [["bigint(20)", "BIGINT"], ["datetime", "DATETIME"]];
+        var columnTypeData = [["bigint(20)", "BIGINT"], ["date", "DATE"]];
 
         this.columnTypeField = new Ext.form.ComboBox({
             name: "columnType",
@@ -82,7 +82,7 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
             forceSelection: true,
             editable: false,
             fieldLabel: t("column_type"),
-            value: this.datax.columnType ? this.datax.columnType : 'bigint(20)',
+            value: this.datax.columnType != "bigint(20)" && this.datax.columnType != "date" ? 'bigint(20)' : this.datax.columnType ,
             store: new Ext.data.ArrayStore({
                 fields: [
                     'id',

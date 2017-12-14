@@ -73,8 +73,8 @@ class Date extends Model\DataObject\ClassDefinition\Data
     {
         if ($data) {
             $result = $data->getTimestamp();
-            if ($this->getColumnType() == 'datetime') {
-                $result = date('Y-m-d H:i:s', $result);
+            if ($this->getColumnType() == 'date') {
+                $result = date('Y-m-d', $result);
             }
 
             return $result;
@@ -418,16 +418,15 @@ class Date extends Model\DataObject\ClassDefinition\Data
     public function getFilterConditionExt($value, $operator, $params = []) {
         $timestamp = $value;
 
-        if ($this->getColumnType() == 'datetime') {
+        if ($this->getColumnType() == 'date') {
             $value = date('Y-m-d', $value);
         }
 
         if ($operator == '=') {
             $db = Db::get();
 
-            if ($this->getColumnType() == 'datetime') {
-                $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
-                $condition = 'DATE(' . $brickPrefix . '`' . $params["name"] . '`) = '. $db->quote($value);
+            if ($this->getColumnType() == 'date') {
+                $condition = '`' . $params["name"] . ' = '. $db->quote($value);
                 return $condition;
             } else
             {
