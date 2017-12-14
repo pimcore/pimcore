@@ -45,6 +45,13 @@ services:
 
 
     #
+    # REDIRECTS
+    #
+
+    Pimcore\Routing\Redirect\Csv: ~
+
+
+    #
     # GDPR Services
     #
 

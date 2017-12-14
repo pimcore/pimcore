@@ -125,11 +125,11 @@ class Redirect extends AbstractModel
      *
      * @return Redirect
      */
-    public static function getById($id)
+    public static function getById($id, bool $throwOnInvalid = false)
     {
         $redirect = new self();
         $redirect->setId(intval($id));
-        $redirect->getDao()->getById();
+        $redirect->getDao()->getById(null, $throwOnInvalid);
 
         return $redirect;
     }

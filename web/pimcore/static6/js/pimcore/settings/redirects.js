@@ -53,6 +53,7 @@ pimcore.settings.redirects = Class.create({
     },
 
     getRowEditor: function () {
+        var that = this;
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         var url = '/admin/settings/redirects?';
@@ -84,6 +85,7 @@ pimcore.settings.redirects = Class.create({
             ],
             itemsPerPage
         );
+
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         this.filterField = new Ext.form.TextField({
@@ -300,7 +302,95 @@ pimcore.settings.redirects = Class.create({
                         text: t("add_beginner_mode"),
                         handler: this.openWizard.bind(this)
                     }]
-                }, "->", {
+                },
+                {
+                    text: t("export_csv"),
+                    iconCls: "pimcore_icon_export",
+                    handler: function () {
+                        pimcore.helpers.download('/admin/redirects/csv-export');
+                    }
+                },
+                {
+                    text: t("import_csv"),
+                    iconCls: "pimcore_icon_import",
+                    handler: function () {
+                        pimcore.helpers.uploadDialog(
+                            '/admin/redirects/csv-import', 'redirects',
+                            function (res) {
+                                that.store.reload();
+
+                                var json;
+
+                                try {
+                                    json = Ext.decode(res.response.responseText);
+                                } catch (e) {
+                                    console.error(e);
+                                }
+
+                                if (json && json.data) {
+                                    var stats = json.data;
+
+                                    var icon = 'pimcore_icon_success';
+                                    if (stats.errored > 0) {
+                                        icon = 'pimcore_icon_warning';
+                                    }
+
+                                    var message = '';
+
+                                    message += '<table class="pimcore_stats_table">';
+                                    message += '<tr><th>' + t('redirects_import_total') + '</th><td class="pimcore_stats_table--number">' + stats.total + '</td></tr>';
+                                    message += '<tr><th>' + t('redirects_import_created') + '</th><td class="pimcore_stats_table--number">' + stats.created + '</td></tr>';
+                                    message += '<tr><th>' + t('redirects_import_updated') + '</th><td  class="pimcore_stats_table--number">' + stats.updated + '</td></tr>';
+
+                                    if (stats.errored > 0) {
+                                        message += '<tr><th>' + t('redirects_import_errored') + '</th><td class="pimcore_stats_table--number">' + stats.errored + '</td></tr>';
+                                    }
+
+                                    message += '</table>';
+
+                                    if (stats.errors && Object.keys(stats.errors).length > 0) {
+                                        message += '<h4 style="margin-top: 15px; margin-bottom: 0; color: red">' + t('redirects_import_errors') + '</h4>';
+                                        message += '<table class="pimcore_stats_table">';
+
+                                        var errorKeys = Object.keys(stats.errors);
+                                        for (var i = 0; i < errorKeys.length; i++) {
+                                            message += '<tr><td>' + t('redirects_import_error_line') + ' ' + errorKeys[i] + ':</td><td>' + stats.errors[errorKeys[i]] + '</td></tr>';
+                                        }
+
+                                        message += '</table>';
+                                    }
+
+                                    var win = new Ext.Window({
+                                        modal: true,
+                                        iconCls: icon,
+                                        title: t('redirects_csv_import'),
+                                        width: 400,
+                                        maxHeight: 500,
+                                        html: message,
+                                        autoScroll: true,
+                                        bodyStyle: "padding: 10px; background:#fff;",
+                                        buttonAlign: "center",
+                                        shadow: false,
+                                        closable: false,
+                                        buttons: [{
+                                            text: t("OK"),
+                                            handler: function () {
+                                                win.close();
+                                            }
+                                        }]
+                                    });
+
+                                    win.show();
+                                }
+                            },
+                            function () {
+                                Ext.MessageBox.alert(t("error"), t("error"));
+                            }
+                        )
+                    }
+                },
+                "->",
+                {
                     text: t("filter") + "/" + t("search"),
                     xtype: "tbtext",
                     style: "margin: 0 10px 0 0;"
