@@ -140,32 +140,34 @@ pimcore.object.helpers.gridcolumnconfig = {
         }
     },
 
-    buildColumnConfigMenu: function () {
+    buildColumnConfigMenu: function (onlyConfigs) {
         var menu = this.columnConfigButton.getMenu();
         menu.removeAll();
 
-        menu.add({
-            text: t('save_as_copy'),
-            iconCls: "pimcore_icon_save",
-            handler: this.saveConfig.bind(this, true)
-        });
+        if (!onlyConfigs) {
+            menu.add({
+                text: t('save_as_copy'),
+                iconCls: "pimcore_icon_save",
+                handler: this.saveConfig.bind(this, true)
+            });
 
-        menu.add({
-            text: t('set_as_favourite'),
-            iconCls: "pimcore_icon_favourite",
-            handler: function () {
-                pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true);
-            }.bind(this)
-        });
+            menu.add({
+                text: t('set_as_favourite'),
+                iconCls: "pimcore_icon_favourite",
+                handler: function () {
+                    pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true);
+                }.bind(this)
+            });
 
-        menu.add({
-            text: t('remove_config'),
-            iconCls: "pimcore_icon_delete",
-            disabled: !this.settings.gridConfigId || this.settings.isShared,
-            handler: this.deleteGridConfig.bind(this)
-        });
+            menu.add({
+                text: t('remove_config'),
+                iconCls: "pimcore_icon_delete",
+                disabled: !this.settings.gridConfigId || this.settings.isShared,
+                handler: this.deleteGridConfig.bind(this)
+            });
 
-        menu.add('-');
+            menu.add('-');
+        }
 
         var disabled = false;
         var text = t('predefined');
