@@ -943,6 +943,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/stack_of_photos.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_imageGallery {
+    background: url(/pimcore/static6/img/flat-color-icons/gallery.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_numeric {
     background: url(/pimcore/static6/img/flat-color-icons/numerical_sorting_12.svg) center center no-repeat !important;
 }
@@ -1163,4 +1167,18 @@
 
 .pimcore_icon_gdpr  {
     background: url(/pimcore/static6/img/flat-color-icons/feedback.svg) left center no-repeat !important;
+}
+
+.pimcore_icon_right {
+    background: url(/pimcore/static6/img/flat-color-icons/go.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_left {
+    background: url(/pimcore/static6/img/flat-color-icons/go.svg) center center no-repeat !important;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: "FlipH";
+    -ms-filter: "FlipH";
 }
