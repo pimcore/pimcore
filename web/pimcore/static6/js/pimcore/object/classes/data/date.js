@@ -14,20 +14,20 @@
 pimcore.registerNS("pimcore.object.classes.data.date");
 pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data, {
 
-    type:"date",
+    type: "date",
     /**
      * define where this datatype is allowed
      */
-    allowIn:{
-        object:true,
-        objectbrick:true,
-        fieldcollection:true,
-        localizedfield:true,
-        classificationstore : true,
+    allowIn: {
+        object: true,
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true,
+        classificationstore: true,
         block: true
     },
 
-    initialize:function (treeNode, initData) {
+    initialize: function (treeNode, initData) {
         this.type = "date";
 
         this.initData(initData);
@@ -35,34 +35,34 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
         this.treeNode = treeNode;
     },
 
-    getTypeName:function () {
+    getTypeName: function () {
         return t("date");
     },
 
-    getGroup:function () {
+    getGroup: function () {
         return "date";
     },
 
-    getIconClass:function () {
+    getIconClass: function () {
         return "pimcore_icon_date";
     },
 
-    getLayout:function ($super) {
+    getLayout: function ($super) {
 
 
         $super();
 
         var date = {
-            fieldLabel:t("default_value"),
-            name:"defaultValue",
-            cls:"object_field",
+            fieldLabel: t("default_value"),
+            name: "defaultValue",
+            cls: "object_field",
             width: 300,
             disabled: this.datax.useCurrentDate
         };
 
         if (this.datax.defaultValue) {
             var tmpDate;
-            if(typeof this.datax.defaultValue === 'object'){
+            if (typeof this.datax.defaultValue === 'object') {
                 tmpDate = this.datax.defaultValue;
             } else {
                 tmpDate = new Date(this.datax.defaultValue * 1000);
@@ -73,32 +73,54 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
 
         this.component = new Ext.form.DateField(date);
 
+        var columnTypeData = [["bigint(20)", "BIGINT"], ["datetime", "DATETIME"]];
+
+        this.columnTypeField = new Ext.form.ComboBox({
+            name: "columnType",
+            mode: 'local',
+            autoSelect: true,
+            forceSelection: true,
+            editable: false,
+            fieldLabel: t("column_type"),
+            value: this.datax.columnType ? this.datax.columnType : 'bigint(20)',
+            store: new Ext.data.ArrayStore({
+                fields: [
+                    'id',
+                    'label'
+                ],
+                data: columnTypeData
+            }),
+            triggerAction: 'all',
+            valueField: 'id',
+            displayField: 'label'
+        });
+
 
         this.specificPanel.removeAll();
         this.specificPanel.add([
             this.component,
             {
-                xtype:"checkbox",
-                fieldLabel:t("use_current_date"),
-                name:"useCurrentDate",
+                xtype: "checkbox",
+                fieldLabel: t("use_current_date"),
+                name: "useCurrentDate",
                 checked: this.datax.useCurrentDate,
-                listeners:{
-                    change:this.toggleDefaultDate.bind(this)
+                listeners: {
+                    change: this.toggleDefaultDate.bind(this)
                 },
                 disabled: this.isInCustomLayoutEditor()
             }, {
                 xtype: "panel",
                 bodyStyle: "padding-top: 3px",
                 style: "margin-bottom: 10px",
-                html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
-            }
-
+                html: '<span class="object_field_setting_warning">' + t('default_value_warning') + '</span>'
+            },
+            this.columnTypeField
         ]);
 
         return this.layout;
     },
 
-    toggleDefaultDate:function (checkbox, checked) {
+    toggleDefaultDate: function (checkbox, checked) {
         if (checked) {
             this.component.setValue(null);
             this.component.setDisabled(true);
@@ -107,10 +129,15 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
         }
     },
 
-    applySpecialData: function(source) {
+    applyData: function ($super) {
+        $super();
+        this.datax.queryColumnType = this.datax.columnType;
+    },
+
+    applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {
-                this.datax =  {};
+                this.datax = {};
             }
             Ext.apply(this.datax,
                 {

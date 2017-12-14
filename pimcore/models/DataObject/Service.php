@@ -847,7 +847,16 @@ class Service extends Model\Element\Service
                     // custom field
                     $db = \Pimcore\Db::get();
                     $brickPrefix = '';
-                    if (!$brickField instanceof  Model\DataObject\ClassDefinition\Data\Checkbox) {
+
+                    $ommitPrefix = false;
+
+                    if ($brickField instanceof  Model\DataObject\ClassDefinition\Data\Checkbox
+                            || (($brickField instanceof Model\DataObject\ClassDefinition\Data\Date || $brickField instanceof  Model\DataObject\ClassDefinition\Data\Datetime) && $brickField->getColumnType() == 'datetime')
+                    ) {
+                        $ommitPrefix = true;
+                    }
+
+                    if (!$ommitPrefix) {
                         $brickPrefix =  $db->quoteIdentifier($brickType) . '.';
                     }
                     if (is_array($filter['value'])) {
@@ -877,8 +886,8 @@ class Service extends Model\Element\Service
                     // system field
                     if ($filterField == 'fullpath') {
                         $conditionPartsFilters[] = 'concat(o_path, o_key) ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
-                    } else if ($filterField == 'key') {
-                            $conditionPartsFilters[] = 'o_key ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
+                    } elseif ($filterField == 'key') {
+                        $conditionPartsFilters[] = 'o_key ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
                     } else {
                         if ($filter['type'] == 'date' && $operator == '=') {
                             //if the equal operator is chosen with the date type, condition has to be changed

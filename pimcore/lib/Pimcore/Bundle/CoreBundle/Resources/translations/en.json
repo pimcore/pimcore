@@ -1767,5 +1767,6 @@
   "imageGallery": "Image Gallery",
   "drop_me_here": "Drag an item from the tree and drop it here",
   "to_left": "Move left",
-  "to_right": "Move right"
+  "to_right": "Move right",
+  "column_type": "Column Type"
 }
