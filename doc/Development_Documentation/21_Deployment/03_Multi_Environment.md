@@ -33,15 +33,43 @@ var/config/system.php
 > **Note:** If you put your configurations into `app/config/pimcore/` they might not writable by the Pimcore backend UI. 
 > This can be especially useful when having automated building environments and don't want the user to allow changing settings.  
 
-If you add a new environment which is not an existing one by default (those are `dev`, `test` and `prod`), you need to
-manually create a YAML config file for the project. If you set environment before installation, this is needed to be done
-before installation. For instance, for a `staging` environment, you will need to add a `app/config/config_staging.yml` file
-with the following content:
+## Set a new Environment name
 
-```yaml
-imports:
-    - { resource: config.yml }
+If you add a new environment which is not an existing one by default (those are `dev`, `test` and `prod`), you need to
+manually create a YAML config file for the project in two places (you can start by copying config_dev.yml for instance in each of those):
 ```
+app/config/pimcore/
+pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/
+```
+
+If you use some specific bundles, you need to activate them in the method `app\AppKernel.php`.
+For instance for an new environment called `staging` (copied from `dev` environment YAML config) you should add in the method `registerBundlesToCollection`:
+```
+// environment specific bundles
+if (in_array($this->getEnvironment(), ['staging'])) {
+	$collection->addBundles([
+		new DebugBundle(),
+		new WebProfilerBundle(),
+		new SensioDistributionBundle()
+	], 80);
+	// add generator bundle only if installed
+	if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
+		$collection->addBundle(
+			new SensioGeneratorBundle(),
+			80, // priority
+			['dev'] // will use the dev config files of the bundle
+		);
+		// PimcoreGeneratorBundle depends on SensioGeneratorBundle
+		$collection->addBundle(
+			new PimcoreGeneratorBundle(),
+			60,
+			['dev']
+		);
+	}
+}
+```
+
+If you set `PIMCORE_ENVIRONMENT` to a new environment name before installation, all those steps need to be done before running the installation.
 
 ## Set the Environment
 
