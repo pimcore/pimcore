@@ -23,7 +23,7 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false,
+        classificationstore: false,
         block: true
     },
 
@@ -33,8 +33,8 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
-                                        "visibleGridView","visibleSearch","style"];
+        this.availableSettingsFields = ["name", "title", "tooltip", "mandatory", "noteditable", "invisible",
+            "visibleGridView", "visibleSearch", "style"];
 
         this.treeNode = treeNode;
     },
@@ -61,40 +61,38 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
                 name: "ratioX",
                 value: this.datax.ratioX
             },
-            {
-                xtype: "numberfield",
-                fieldLabel: t("ratio") + " Y",
-                name: "ratioY",
-                value: this.datax.ratioY
-            },
-            {
-                xtype: "textarea",
-                name: "predefinedDataTemplates",
-                height: 300,
-                width: "100%",
-                value: this.datax.predefinedDataTemplates,
-                validator: function(value) {
-                    try {
-                        Ext.decode(value);
-                        return true;
-                    } catch(e) {
-                        return false;
-                    }
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("ratio") + " Y",
+                    name: "ratioY",
+                    value: this.datax.ratioY
                 },
-                fieldLabel: t("predefined_hotspot_data_templates")
-            }
-
-
+                {
+                    xtype: "textarea",
+                    name: "predefinedDataTemplates",
+                    height: 300,
+                    width: "100%",
+                    value: this.datax.predefinedDataTemplates,
+                    validator: function (value) {
+                        try {
+                            Ext.decode(value);
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    },
+                    fieldLabel: t("predefined_hotspot_data_templates")
+                }
             ]
         });
 
         return this.layout;
     },
 
-    applySpecialData: function(source) {
+    applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {
-                this.datax =  {};
+                this.datax = {};
             }
             Ext.apply(this.datax,
                 {
