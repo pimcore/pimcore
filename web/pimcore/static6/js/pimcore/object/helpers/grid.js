@@ -226,6 +226,9 @@ pimcore.object.helpers.grid = Class.create({
             } else if(field.key == "filename") {
                 gridColumns.push({header: t("filename"), width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: 'filename', hidden: !showKey});
+            } else if(field.key == "key") {
+                gridColumns.push({header: t("key"), width: this.getColumnWidth(field, 200), sortable: true,
+                    dataIndex: 'key', hidden: !showKey, filter: 'string'});
             } else if(field.key == "classname") {
                 gridColumns.push({header: t("class"), width: this.getColumnWidth(field, 200), sortable: true,
                     dataIndex: 'classname',renderer: function(v){return ts(v);}/*, hidden: true*/});

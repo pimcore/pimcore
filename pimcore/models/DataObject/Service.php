@@ -877,6 +877,8 @@ class Service extends Model\Element\Service
                     // system field
                     if ($filterField == 'fullpath') {
                         $conditionPartsFilters[] = 'concat(o_path, o_key) ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
+                    } else if ($filterField == 'key') {
+                            $conditionPartsFilters[] = 'o_key ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
                     } else {
                         if ($filter['type'] == 'date' && $operator == '=') {
                             //if the equal operator is chosen with the date type, condition has to be changed

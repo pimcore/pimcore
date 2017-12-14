@@ -1656,6 +1656,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $className = $class->getName();
 
             $colMappings = [
+                'key' => 'o_key',
                 'filename' => 'o_key',
                 'fullpath' => ['o_path', 'o_key'],
                 'id' => 'oo_id',

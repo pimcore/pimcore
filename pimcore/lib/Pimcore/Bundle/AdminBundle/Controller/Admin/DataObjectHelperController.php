@@ -48,7 +48,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectHelperController extends AdminController
 {
-    const SYSTEM_COLUMNS =  ['id', 'fullpath', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
+    const SYSTEM_COLUMNS =  ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 
     /**
      * @Route("/load-object-data")
@@ -149,7 +149,6 @@ class DataObjectHelperController extends AdminController
      * @param ImportService $importService
      *
      * @return JsonResponse
-     *
      * @throws \Exception
      */
     public function importExportConfigAction(Request $request, ImportService $importService)
@@ -1243,7 +1242,8 @@ class DataObjectHelperController extends AdminController
         Locale $localeService,
         FactoryInterface $modelFactory,
         EventDispatcherInterface $eventDispatcher
-    ) {
+    )
+    {
         try {
             $importId = $request->get('importId');
 
@@ -1333,7 +1333,8 @@ class DataObjectHelperController extends AdminController
         $configData,
         $rowData,
         $context
-    ) {
+    )
+    {
         $selectedGridColumns = $configData->selectedGridColumns;
 
         $colIndex = -1;
@@ -1527,7 +1528,6 @@ class DataObjectHelperController extends AdminController
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
-     *
      * @throws \Exception
      */
     public function importProcessAction(
@@ -1535,7 +1535,8 @@ class DataObjectHelperController extends AdminController
         ImportService $importService,
         Locale $localeService,
         EventDispatcherInterface $eventDispatcher
-    ) {
+    )
+    {
         $parentId = $request->get('parentId');
         $additionalData = $request->get('additionalData');
         $job = $request->get('job');
