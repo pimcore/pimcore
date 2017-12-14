@@ -1103,6 +1103,7 @@
   "objectsMetadata_type_number": "Number",
   "objectsMetadata_type_text": "Text",
   "objectsMetadata_type_bool": "Bool",
+  "objectsMetadata_type_columnbool": "Column Bool",
   "objectsMetadata_type_select": "Select",
   "objectsMetadata_type_multiselect": "Multiselect",
   "objectsMetadata": "Objects with Metadata",
