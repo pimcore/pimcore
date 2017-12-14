@@ -164,7 +164,7 @@ class DataObjectHelperController extends AdminController
             $fields = $class->getFieldDefinitions();
             $context = ['purpose' => 'gridconfig', 'class' => $class];
 
-            $availableColumns = $this->getDefaultGridFields(false, $class, 'grid', false, $fields, $context, null);
+            $availableColumns = $this->getDefaultGridFields(false, $class, 'grid', false, $fields, $context, null, []);
             $availableColumns = json_decode(json_encode($availableColumns), true);
 
             foreach ($availableColumns as &$column) {
@@ -481,7 +481,8 @@ class DataObjectHelperController extends AdminController
                 $request->get('no_brick_columns'),
                 $fields,
                 $context,
-                $objectId);
+                $objectId,
+                $types);
         } else {
             $savedColumns = $gridConfig['columns'];
             foreach ($savedColumns as $key => $sc) {
@@ -628,11 +629,10 @@ class DataObjectHelperController extends AdminController
      *
      * @return array
      */
-    public function getDefaultGridFields($noSystemColumns, $class, $gridType, $noBrickColumns, $fields, $context, $objectId)
+    public function getDefaultGridFields($noSystemColumns, $class, $gridType, $noBrickColumns, $fields, $context, $objectId, $types = [])
     {
         $count = 0;
         $availableFields = [];
-        $types = [];
 
         if (!$noSystemColumns) {
             $vis = $class->getPropertyVisibility();
