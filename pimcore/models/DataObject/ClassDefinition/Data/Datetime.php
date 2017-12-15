@@ -92,7 +92,6 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
-
             if ($this->getColumnType() == 'datetime') {
                 $data = strtotime($data);
                 if ($data === false) {
@@ -415,7 +414,8 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
      *
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = []) {
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
         $timestamp = $value;
 
         if ($this->getColumnType() == 'datetime') {
@@ -427,14 +427,14 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
 
             if ($this->getColumnType() == 'datetime') {
                 $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
-                $condition = 'DATE(' . $brickPrefix . '`' . $params["name"] . '`) = '. $db->quote($value);
-                return $condition;
-            } else
-                {
+                $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = '. $db->quote($value);
 
+                return $condition;
+            } else {
                 $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
                 $filterField = $params['name'] ? $params['name'] : $this->getName();
                 $condition = '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
+
                 return $condition;
             }
         }

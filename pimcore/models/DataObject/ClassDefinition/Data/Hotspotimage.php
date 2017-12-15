@@ -600,11 +600,11 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         $data = $this->getDataFromObjectParam($object, $params);
         $this->doRewriteIds($object, $idMapping, $params, $data);
 
-
         return $data;
     }
 
-    public function doRewriteIds($object, $idMapping, $params, $data) {
+    public function doRewriteIds($object, $idMapping, $params, $data)
+    {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage()) {
             $id = $data->getImage()->getId();
             if (array_key_exists('asset', $idMapping) and array_key_exists($id, $idMapping['asset'])) {
@@ -623,9 +623,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                 $data->setMarker($this->rewriteIdsInDataEntries($data->getMarker(), $idMapping));
             }
         }
+
         return $data;
     }
-
 
     /**
      * @param $dataArray
