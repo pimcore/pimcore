@@ -254,6 +254,10 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
                     this.dirty = true;
                     var record = data.records[0];
+                    if (record.data.type != "image") {
+                        return;
+                    }
+
                     var data = {
                         id: record.data.id
                     }
@@ -384,7 +388,6 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             {
                 context: Ext.apply({scope: "objectEditor"}, this.getContext())
             });
-    },
-
+    }
 
 });
