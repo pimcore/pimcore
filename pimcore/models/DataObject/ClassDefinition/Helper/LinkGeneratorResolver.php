@@ -23,6 +23,10 @@ class LinkGeneratorResolver
 {
     public static $generatorCache = [];
 
+    /**
+     * @param $generatorClass
+     * @return LinkGeneratorInterface
+     */
     public static function resolveGenerator($generatorClass)
     {
         if ($generatorClass) {
