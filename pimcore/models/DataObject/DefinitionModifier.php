@@ -14,7 +14,6 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 
