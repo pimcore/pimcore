@@ -50,28 +50,41 @@ pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/
 If you use some specific bundles, you need to activate them in `app\AppKernel.php`.
 For instance for an new environment called `staging` (copied from `dev` environment YAML config) you should add in the method `registerBundlesToCollection`:
 ```
-// environment specific bundles
-if (in_array($this->getEnvironment(), ['staging'])) {
-	$collection->addBundles([
-		new DebugBundle(),
-		new WebProfilerBundle(),
-		new SensioDistributionBundle()
-	], 80);
-	// add generator bundle only if installed
-	if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
-		$collection->addBundle(
-			new SensioGeneratorBundle(),
-			80, // priority
-			['dev'] // will use the dev config files of the bundle
-		);
-		// PimcoreGeneratorBundle depends on SensioGeneratorBundle
-		$collection->addBundle(
-			new PimcoreGeneratorBundle(),
-			60,
-			['dev']
-		);
+use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
+use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
+use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
+use Symfony\Bundle\DebugBundle\DebugBundle;
+use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+...
+	public function registerBundlesToCollection(BundleCollection $collection)
+	{
+		//...
+		
+		// environment specific bundles
+		if (in_array($this->getEnvironment(), ['staging'])) {
+			$collection->addBundles([
+				new DebugBundle(),
+				new WebProfilerBundle(),
+				new SensioDistributionBundle()
+			], 80);
+			// add generator bundle only if installed
+			if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
+				$collection->addBundle(
+					new SensioGeneratorBundle(),
+					80, // priority
+					['dev'] // will use the dev config files of the bundle
+				);
+				// PimcoreGeneratorBundle depends on SensioGeneratorBundle
+				$collection->addBundle(
+					new PimcoreGeneratorBundle(),
+					60,
+					['dev']
+				);
+			}
+		}
+
+		//...
 	}
-}
 ```
 
 If you set `PIMCORE_ENVIRONMENT` to a new environment name before installation, all those steps need to be done before running the installation.
