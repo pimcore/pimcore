@@ -35,14 +35,19 @@ var/config/system.php
 
 ## Set a new Environment name
 
-If you add a new environment which is not an existing one by default (those are `dev`, `test` and `prod`), you need to
-manually create a YAML config file for the project in two places (you can start by copying config_dev.yml for instance in each of those):
+You can need to configure a new environment name different than the existing ones, which respect Symfony convention: `dev`, `test` and `prod`.
+
+> **Note:** The default `test` environment should only be used for running test suite (like Travis).
+> It use the session.storage.mock_file which fakes sessions (as consequence, the administrator cannot log in Pimcore for instance)
+
+To configure a new environment, you need to manually create a YAML config file for the project in two places (you can start by copying config_dev.yml for instance in each of those):
+
 ```
 app/config/pimcore/
 pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/
 ```
 
-If you use some specific bundles, you need to activate them in the method `app\AppKernel.php`.
+If you use some specific bundles, you need to activate them in `app\AppKernel.php`.
 For instance for an new environment called `staging` (copied from `dev` environment YAML config) you should add in the method `registerBundlesToCollection`:
 ```
 // environment specific bundles
