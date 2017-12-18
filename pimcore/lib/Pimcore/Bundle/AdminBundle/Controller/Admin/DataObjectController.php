@@ -618,7 +618,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param $allowedView
      * @param $allowedEdit
      */
-    public function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
+    protected function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
     {
         if ($layout->{'fieldtype'} == 'localizedfields' || $layout->{'fieldtype'} == 'classificationstore') {
             if (is_array($allowedView) && count($allowedView) > 0) {
@@ -670,7 +670,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return mixed
      */
-    public function filterLocalizedFields(DataObject\AbstractObject $object, $objectData)
+    protected function filterLocalizedFields(DataObject\AbstractObject $object, $objectData)
     {
         if (!($object instanceof DataObject\Concrete)) {
             return $objectData;
@@ -1306,7 +1306,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return JsonResponse
      */
-    public function performFieldcollectionModificationCheck(Request $request, DataObject\Concrete $object, $originalModificationDate, $data)
+    protected function performFieldcollectionModificationCheck(Request $request, DataObject\Concrete $object, $originalModificationDate, $data)
     {
         $modificationDate = $request->get('modificationDate');
         if ($modificationDate != $originalModificationDate) {
