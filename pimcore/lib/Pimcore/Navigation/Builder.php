@@ -266,9 +266,7 @@ class Builder
 
                 /** @var DocumentPage $page */
                 $page = new $this->pageClass();
-                if ($child instanceof Document\Folder) {
-                    $page->setUri('#');
-                } else {
+                if (!$child instanceof Document\Folder) {
                     $page->setUri($path . $child->getProperty('navigation_parameters') . $child->getProperty('navigation_anchor'));
                 }
                 $page->setLabel($child->getProperty('navigation_name'));
