@@ -883,6 +883,10 @@ class SettingsController extends AdminController
                     }
                 }
 
+                if (!$data['regex'] && $data['source']) {
+                    $data['source'] = str_replace('+', ' ', $data['source']);
+                }
+
                 $redirect->setValues($data);
 
                 $redirect->save();
@@ -906,6 +910,10 @@ class SettingsController extends AdminController
                     if ($doc = Document::getByPath($data['target'])) {
                         $data['target'] = $doc->getId();
                     }
+                }
+
+                if (!$data['regex'] && $data['source']) {
+                    $data['source'] = str_replace('+', ' ', $data['source']);
                 }
 
                 $redirect->setValues($data);

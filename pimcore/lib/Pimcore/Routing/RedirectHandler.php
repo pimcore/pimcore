@@ -122,7 +122,8 @@ class RedirectHandler implements LoggerAwareInterface
         if ($redirect->isRegex()) {
             $doesMatch = (bool)@preg_match($redirect->getSource(), $matchPart, $matches);
         } else {
-            $doesMatch = $redirect->getSource() === $matchPart;
+            $source    = str_replace('+', ' ', $redirect->getSource()); // see #2202
+            $doesMatch = $source === $matchPart;
         }
 
         if (!$doesMatch) {

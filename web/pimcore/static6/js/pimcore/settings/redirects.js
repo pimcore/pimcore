@@ -533,8 +533,7 @@ pimcore.settings.redirects = Class.create({
 
     saveWizard: function () {
         var values = this.wizardForm.getForm().getFieldValues();
-        var pattern = preg_quote(values.pattern);
-        pattern = str_replace("@", "\\@", pattern);
+        var pattern = values.pattern;
 
         var record = {
             type: 'entire_uri',
@@ -544,16 +543,23 @@ pimcore.settings.redirects = Class.create({
             active: true
         };
 
+        var escapeRegex = function(pattern) {
+            pattern = preg_quote(pattern);
+            pattern = str_replace("@", "\\@", pattern);
+
+            return pattern;
+        };
+
         if (values.mode === "begin") {
             record.type = 'path';
-            record.source = "@^" + pattern + "@";
+            record.source = "@^" + escapeRegex(pattern) + "@";
             record.regex = true;
         } else if (values.mode === "exact") {
             record.type = 'path';
-            record.source = pattern;
+            record.source = pattern.replace('+', ' ');
         } else if (values.mode === "contain") {
             record.type = 'path_query';
-            record.source = "@" + pattern + "@i";
+            record.source = "@" + escapeRegex(pattern) + "@i";
             record.regex = true;
         } else if (values.mode === "begin_end_slash") {
             if (pattern.charAt(0) !== "/") {
@@ -561,7 +567,7 @@ pimcore.settings.redirects = Class.create({
             }
 
             record.type = 'path';
-            record.source = "@^" + pattern + "[\\/]?$@i";
+            record.source = "@^" + escapeRegex(pattern) + "[\\/]?$@i";
             record.regex = true;
         } else if (values.mode === "domain") {
             if (values.pattern.indexOf("http") >= 0) {
