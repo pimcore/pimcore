@@ -422,7 +422,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0 && $objectId) {
+        if (is_numeric($requestedGridConfigId) && $requestedGridConfigId > 0) {
             $db = Db::get();
             $configListingConditionParts = [];
             $configListingConditionParts[] = 'ownerId = ' . $userId;
