@@ -143,10 +143,12 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
     {
         $strategyName = $config['documents']['editables']['naming_strategy'];
 
-        $container->setAlias(
-            'pimcore.document.tag.naming.strategy',
-            sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
-        );
+        $container
+            ->setAlias(
+                'pimcore.document.tag.naming.strategy',
+                sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
+            )
+            ->setPublic(true);
     }
 
     /**
