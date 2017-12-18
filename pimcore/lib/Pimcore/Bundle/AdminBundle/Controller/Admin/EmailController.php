@@ -418,6 +418,11 @@ class EmailController extends DocumentControllerBase
             foreach ($emailLog->getBccAsArray() as $entry) {
                 $mail->addBcc($entry['email']);
             }
+
+            foreach ($emailLog->getReplyToAsArray() as $entry) {
+                $mail->addReplyTo($entry['email']);
+            }
+
             $mail->setSubject($emailLog->getSubject());
             $mail->send();
             $success = true;

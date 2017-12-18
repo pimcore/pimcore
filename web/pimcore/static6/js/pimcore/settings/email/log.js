@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.settings.email.log");
+pimcore.registerNS('pimcore.settings.email.log');
 pimcore.settings.email.log = Class.create({
 
     filterField: null,
@@ -21,11 +21,11 @@ pimcore.settings.email.log = Class.create({
 
         this.filterField = new Ext.form.TextField({
             width: 200,
-            style: "margin: 0 10px 0 0;",
+            style: 'margin: 0 10px 0 0;',
             enableKeyEvents: true,
             value: this.preconfiguredFilter,
             listeners: {
-                "keydown" : function (field, key) {
+                'keydown' : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
                         var proxy = this.store.getProxy();
@@ -37,21 +37,21 @@ pimcore.settings.email.log = Class.create({
         });
 
         if(!this.document) {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            var tabPanel = Ext.getCmp('pimcore_panel_tabs');
             tabPanel.add(this.getLayout());
             tabPanel.setActiveTab(this.getLayout());
 
             pimcore.layout.refresh();
 
-            this.getLayout().on("destroy", function () {
-                pimcore.globalmanager.remove("sent_emails");
+            this.getLayout().on('destroy', function () {
+                pimcore.globalmanager.remove('sent_emails');
             }.bind(this));
         }
     },
 
     activate: function () {
         // this is only for standalone mode (without document set)
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        var tabPanel = Ext.getCmp('pimcore_panel_tabs');
         tabPanel.activate(this.getLayout());
     },
 
@@ -67,10 +67,10 @@ pimcore.settings.email.log = Class.create({
             this.layout = new Ext.Panel({
                 title: t('email_logs'),
                 border: false,
-                layout: "fit",
+                layout: 'fit',
                 items: [this.grid],
                 closable: this.document ? false : true,
-                iconCls: "pimcore_icon_email pimcore_icon_overlay_go",
+                iconCls: 'pimcore_icon_email pimcore_icon_overlay_go',
                 listeners: {
                     activate: function() {
                         this.store.load();
@@ -89,85 +89,94 @@ pimcore.settings.email.log = Class.create({
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
 
-        var gridColumns = [{
-            header: "ID",
-            dataIndex: "id",
-            flex: 40,
-            hidden: true
-        },{
-            header: "Document Id",
-            dataIndex: "documentId",
-            flex: 130,
-            hidden: true
-        },
+        var gridColumns = [
+            {
+                header: 'ID',
+                dataIndex: 'id',
+                flex: 40,
+                hidden: true
+            },{
+                header: 'Document Id',
+                dataIndex: 'documentId',
+                flex: 130,
+                hidden: true
+            },
             {
                 header: t('email_log_sent_Date'),
-                dataIndex: "sentDate",
+                dataIndex: 'sentDate',
                 width: 150,
                 flex: false,
                 sortable: false,
                 renderer: function (d) {
                     var date = new Date(intval(d) * 1000);
-                    return Ext.Date.format(date, "Y-m-d H:i:s");
+                    return Ext.Date.format(date, 'Y-m-d H:i:s');
                 }
             },
             {
                 header: t('email_log_from'),
                 sortable: false,
-                dataIndex: "from",
+                dataIndex: 'from',
                 flex: 120
+            },
+            {
+                header: t('email_reply_to'),
+                sortable: false,
+                dataIndex: 'replyTo',
+                flex: 120,
+                hidden: true
             },
             {
                 header: t('email_log_to'),
                 sortable: false,
-                dataIndex: "to",
+                dataIndex: 'to',
                 flex: 120
             },
             {
                 header: t('email_log_cc'),
                 sortable: false,
-                dataIndex: "cc",
+                dataIndex: 'cc',
                 flex: 120
             },
             {
                 header: t('email_log_bcc'),
                 sortable: false,
-                dataIndex: "bcc",
+                dataIndex: 'bcc',
                 flex: 120
             },
             {
                 header: t('email_log_subject'),
                 sortable: false,
-                dataIndex: "subject",
+                dataIndex: 'subject',
                 flex: 220
             },
             {
                 xtype: 'actioncolumn',
                 sortable: false,
                 width: 50,
-                dataIndex: "emailLogExistsHtml",
+                dataIndex: 'emailLogExistsHtml',
+                menuText: t('email_log_html'),
                 header: t('email_log_html'),
                 items : [{
                     tooltip: t('email_log_show_html_email'),
-                    icon: "/pimcore/static6/img/flat-color-icons/feedback.svg",
+                    icon: '/pimcore/static6/img/flat-color-icons/feedback.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var iframe = new Ext.Window({
-                            title: t("email_log_iframe_title_html"),
+                            title: t('email_log_iframe_title_html'),
                             width: iFrameSettings.width,
                             height: iFrameSettings.height,
                             layout: 'fit',
                             items : [{
-                                xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log?id=" + rec.get('id')
-                                + "&type=html"}
+                                xtype : 'box',
+                                autoEl: {tag: 'iframe', src: '/admin/email/show-email-log?id=' + rec.get('id')
+                                + '&type=html'}
                             }]
                         });
                         iframe.show();
                     }.bind(this),
                     getClass: function(v, meta, rec) {
                         if(!rec.get('emailLogExistsHtml')){
-                            return "pimcore_hidden";
+                            return 'pimcore_hidden';
                         }
                     }
                 }]
@@ -176,21 +185,22 @@ pimcore.settings.email.log = Class.create({
                 xtype: 'actioncolumn',
                 sortable: false,
                 width: 50,
-                dataIndex: "emailLogExistsText",
+                dataIndex: 'emailLogExistsText',
+                menuText: t('email_log_text'),
                 header: t('email_log_text'),
                 hidden: true,
                 items : [{
                     tooltip: t('email_log_show_text_email'),
-                    icon: "/pimcore/static6/img/flat-color-icons/text.svg",
+                    icon: '/pimcore/static6/img/flat-color-icons/text.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var iframe = new Ext.Window({
-                            title: t("email_log_iframe_title_text"),
+                            title: t('email_log_iframe_title_text'),
                             width: iFrameSettings.width,
                             height: iFrameSettings.height,
                             layout: 'fit',
                             items : [{
-                                xtype : "box",
+                                xtype : 'box',
                                 autoEl: {tag: 'iframe', src: "/admin/email/show-email-log?id=" + rec.get('id')
                                 + "&type=text"}
                             }]
@@ -198,8 +208,8 @@ pimcore.settings.email.log = Class.create({
                         iframe.show();
                     }.bind(this),
                     getClass: function(v, meta, rec) {
-                        if(!rec.get('emailLogExistsText')){
-                            return "pimcore_hidden";
+                        if(!rec.get('emailLogExistsText')) {
+                            return 'pimcore_hidden';
                         }
                     }
                 }]
@@ -208,12 +218,13 @@ pimcore.settings.email.log = Class.create({
                 xtype: 'actioncolumn',
                 sortable: false,
                 width: 120,
-                dataIndex: "params",
+                dataIndex: 'params',
                 hidden: false,
+                menuText: t('email_log_params'),
                 header: t('email_log_params'),
                 items : [{
                     tooltip: t('email_log_show_text_params'),
-                    icon: "/pimcore/static6/img/flat-color-icons/info.svg",
+                    icon: '/pimcore/static6/img/flat-color-icons/info.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
 
@@ -227,7 +238,6 @@ pimcore.settings.email.log = Class.create({
                                 autoDestroy: true
                             }
                         });
-
 
                         this.tree =  Ext.create('Ext.tree.Panel', {
                             expanded: true,
@@ -265,8 +275,6 @@ pimcore.settings.email.log = Class.create({
                                             }
                                         }
                                     }
-
-
                                 }]
                         });
 
@@ -276,7 +284,7 @@ pimcore.settings.email.log = Class.create({
                             height: 700,
                             title: t('email_log_params'),
                             items: [this.tree],
-                            layout: "fit"
+                            layout: 'fit'
                         });
                         this.window.show();
 
@@ -285,12 +293,13 @@ pimcore.settings.email.log = Class.create({
             },
             {
                 xtype:'actioncolumn',
-                width:30,
+                width: 30,
+                menuText: t('email_log_resend'),
                 items:[
                     {
-                        tooltip:t('email_log_resend'),
-                        icon:"/pimcore/static6/img/flat-color-icons/email.svg",
-                        handler:function (grid, rowIndex) {
+                        tooltip: t('email_log_resend'),
+                        icon: '/pimcore/static6/img/flat-color-icons/email.svg',
+                        handler: function (grid, rowIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
                             Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'),
                                 function(btn){
@@ -308,7 +317,7 @@ pimcore.settings.email.log = Class.create({
                                                 }
                                             },
                                             failure: function () {
-                                                alert("Could not resend email");
+                                                alert('Could not resend email');
                                             },
                                             params: { id : rec.get('id') }
                                         });
@@ -317,7 +326,7 @@ pimcore.settings.email.log = Class.create({
                         }.bind(this),
                         getClass: function(v, meta, rec) {
                             if(!rec.get('emailLogExistsHtml') && !rec.get('emailLogExistsText') ){
-                                return "pimcore_hidden";
+                                return 'pimcore_hidden';
                             }
                         }
                     }
@@ -326,9 +335,10 @@ pimcore.settings.email.log = Class.create({
             {
                 xtype: 'actioncolumn',
                 width: 30,
+                menuText: t('delete'),
                 items: [{
                     tooltip: t('delete'),
-                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                    icon: '/pimcore/static6/img/flat-color-icons/delete.svg',
                     handler: function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
                         Ext.Ajax.request({
@@ -336,11 +346,11 @@ pimcore.settings.email.log = Class.create({
                             success: function(response){
                                 var data = Ext.decode( response.responseText );
                                 if(!data.success){
-                                    alert("Could not delete email log");
+                                    alert('Could not delete email log');
                                 }
                             },
                             failure: function () {
-                                alert("Could not delete email log");
+                                alert('Could not delete email log');
                             },
                             params: { id : rec.get('id') }
                         });
@@ -348,13 +358,11 @@ pimcore.settings.email.log = Class.create({
                     }.bind(this)
                 }]
             }
-
         ];
 
         var storeFields = ["id","documentId","subject","emailLogExistsHtml","params","sentDate","params",
             "modificationDate","requestUri","from","to","cc","bcc","emailLogExistsHtml",
             "emailLogExistsText"];
-
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             '/admin/email/email-logs?',
@@ -364,7 +372,7 @@ pimcore.settings.email.log = Class.create({
 
         if(this.document) {
             var proxy = this.store.getProxy();
-            proxy.extraParams["documentId"] = this.document.id;
+            proxy.extraParams['documentId'] = this.document.id;
         }
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
@@ -372,11 +380,11 @@ pimcore.settings.email.log = Class.create({
         var toolbar = Ext.create('Ext.Toolbar', {
             cls: 'main-toolbar',
             items: [
-                "->",
+                '->',
                 {
-                    text: t("filter") + "/" + t("search"),
-                    xtype: "tbtext",
-                    style: "margin: 0 10px 0 0;"
+                    text: t('filter') + '/' + t('search'),
+                    xtype: 'tbtext',
+                    style: 'margin: 0 10px 0 0;'
                 },this.filterField
             ]
         });
