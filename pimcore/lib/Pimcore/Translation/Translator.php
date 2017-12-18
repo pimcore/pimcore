@@ -166,7 +166,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
     private function getCaseInsensitiveFromCatalogue(MessageCatalogueInterface $catalogue, $term, $id, $domain)
     {
-        $normalizedId = strtolower($id);
+        $normalizedId = mb_strtolower($id);
 
         // nothing to do - we already looked up that key
         if ($normalizedId === $id) {
@@ -258,7 +258,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
                         // store as case insensitive if configured
                         if ($this->caseInsensitive) {
-                            $translationKey = strtolower($translationKey);
+                            $translationKey = mb_strtolower($translationKey);
                         }
 
                         $data[$translationKey] = $translationTerm;
