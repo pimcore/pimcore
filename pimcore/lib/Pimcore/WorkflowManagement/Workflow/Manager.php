@@ -602,7 +602,7 @@ class Manager
             ]));
 
             // allow event subscribers to modify actionConfig
-            $actionConfig = $event->getArgument("actionConfig");
+            $actionConfig = $event->getArgument('actionConfig');
 
             //todo add some support to stop the action given the result from the event
 

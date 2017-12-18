@@ -113,8 +113,7 @@ class RedirectHandler implements LoggerAwareInterface
         RedirectUrlPartResolver $partResolver,
         Config\Config $config,
         Site $sourceSite = null
-    )
-    {
+    ) {
         if (empty($redirect->getType())) {
             return null;
         }

@@ -2125,7 +2125,7 @@ class DataObjectHelperController extends AdminController
      */
     public function generateLink(Request $request)
     {
-        $id = $request->get("id");
+        $id = $request->get('id');
         $object = DataObject\Concrete::getById($id);
         if (!$object) {
             return $this->json(['success' => false]);
@@ -2135,9 +2135,8 @@ class DataObjectHelperController extends AdminController
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($class->getLinkGeneratorReference());
         $link = $generator->generate($object, []);
 
-        return $this->json(['success' => true, "link" => $link]);
+        return $this->json(['success' => true, 'link' => $link]);
     }
-
 
     /**
      * @Route("/batch")

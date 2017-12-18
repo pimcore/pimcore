@@ -418,8 +418,6 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
 
         $code .= "\t" . '$data->setContextualData("fieldcollection", $this->getFieldname(), $this->getIndex(), null, null, null, $definition);' . "\n";
 
-
-
         $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this, $data);' . "\n";
         $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";

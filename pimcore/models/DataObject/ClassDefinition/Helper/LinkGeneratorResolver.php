@@ -25,6 +25,7 @@ class LinkGeneratorResolver
 
     /**
      * @param $generatorClass
+     *
      * @return LinkGeneratorInterface
      */
     public static function resolveGenerator($generatorClass)
