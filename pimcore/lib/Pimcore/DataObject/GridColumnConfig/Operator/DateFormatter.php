@@ -35,7 +35,6 @@ class DateFormatter extends AbstractOperator
 
     public function getLabeledValue($element)
     {
-
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = null;
@@ -81,10 +80,10 @@ class DateFormatter extends AbstractOperator
         }
 
         return $result;
-
     }
 
-    public function format($theValue) {
+    public function format($theValue)
+    {
         if ($theValue) {
             if (is_integer($theValue)) {
                 $theValue = Carbon::createFromTimestamp($theValue);
@@ -103,7 +102,7 @@ class DateFormatter extends AbstractOperator
                 }
             }
         }
-        return $theValue;
 
+        return $theValue;
     }
 }
