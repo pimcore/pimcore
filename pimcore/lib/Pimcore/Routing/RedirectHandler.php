@@ -243,7 +243,14 @@ class RedirectHandler implements LoggerAwareInterface
      */
     private function getFilteredRedirects($override = false)
     {
-        return array_filter($this->getRedirects(), function (Redirect $redirect) use ($override) {
+        $now = time();
+
+        return array_filter($this->getRedirects(), function (Redirect $redirect) use ($override, $now) {
+            // this is the case when maintenance did't deactivate the redirect yet but it is already expired
+            if (!empty($redirect->getExpiry()) && $redirect->getExpiry() < $now) {
+                return false;
+            }
+
             if ($override) {
                 // if override is true the priority has to be 99 which means that overriding is ok
                 return (int)$redirect->getPriority() === 99;
