@@ -243,6 +243,10 @@ class Email extends Model\Document\PageSnippet
      */
     public function getReplyToAsArray()
     {
+        if(empty($this->getReplyTo())) {
+            return null;
+        }
+
         $emailAddresses = preg_split('/,|;/', $this->getReplyTo());
         return $emailAddresses;
     }
