@@ -116,7 +116,7 @@ class ImageGallery implements \Iterator
     /**
      * @return Hotspotimage[]
      */
-    public function getItems(): array
+    public function getItems()
     {
         return $this->items;
     }
@@ -124,7 +124,7 @@ class ImageGallery implements \Iterator
     /**
      * @param Hotspotimage[] $items
      */
-    public function setItems(array $items)
+    public function setItems($items)
     {
         if (!is_array($items)) {
             $items = [];
