@@ -217,7 +217,7 @@ swiftmailer:
     mailers:
         pimcore_mailer:
             transport: '%pimcore_system_config.email.method%'
-            delivery_addresses: ['%pimcore_system_config.email.debug.emailAddresses%']
+            delivery_addresses: ['%pimcore_system_config.email.debug.emailaddresses%']
             host:      '%pimcore_system_config.email.smtp.host%'
             username:  '%pimcore_system_config.email.smtp.auth.username%'
             password:  '%pimcore_system_config.email.smtp.auth.password%'
@@ -226,7 +226,7 @@ swiftmailer:
             auth_mode: '%pimcore_system_config.email.smtp.auth.method%'
         newsletter_mailer:
             transport: '%pimcore_system_config.newsletter.method%'
-            delivery_addresses: ['%pimcore_system_config.email.debug.emailAddresses%']
+            delivery_addresses: ['%pimcore_system_config.email.debug.emailaddresses%']
             host:      '%pimcore_system_config.newsletter.smtp.host%'
             username:  '%pimcore_system_config.newsletter.smtp.auth.username%'
             password:  '%pimcore_system_config.newsletter.smtp.auth.password%'
