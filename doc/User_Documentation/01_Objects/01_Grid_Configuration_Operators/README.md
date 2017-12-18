@@ -30,6 +30,7 @@ This can be changed by defining an alternative renderer. In the following exampl
 * [CaseConverter](./Operators/CaseConverter.md)
 * [CharCounter](./Operators/CharCounter.md)
 * [Concatenator](./Operators/Concatenator.md)
+* [DateFormatter](./Operators/DateFormatter.md)
 * [ElementCounter](./Operators/ElementCounter.md)
 * [FieldCollectionGetter](./Operators/FieldCollectionGetter.md)
 * [IsEqual](./Operators/IsEqual.md)
