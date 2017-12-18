@@ -465,6 +465,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/high_priority.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_warning {
+    background: url(/pimcore/static6/img/flat-color-icons/warning.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_view {
     background: url(/pimcore/static6/img/flat-color-icons/close_up_mode.svg) center center no-repeat !important;
 }

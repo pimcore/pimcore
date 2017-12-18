@@ -1533,3 +1533,15 @@ span.warning {
 .pimcore_import_operator_ignore {
     color: gray !important;
 }
+
+.pimcore_stats_table th,
+.pimcore_stats_table td
+{
+    vertical-align: top;
+    text-align: left;
+}
+
+.pimcore_stats_table td.pimcore_stats_table--number
+{
+    text-align: right;
+}

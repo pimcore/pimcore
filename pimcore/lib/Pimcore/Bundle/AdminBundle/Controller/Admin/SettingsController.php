@@ -866,9 +866,12 @@ class SettingsController extends AdminController
 
             if ($request->get('xaction') == 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
-                $id = $data['id'];
-                $redirect = Redirect::getById($id);
-                $redirect->delete();
+
+                $id = $data['id'] ?? null;
+                if ($id) {
+                    $redirect = Redirect::getById($id);
+                    $redirect->delete();
+                }
 
                 return $this->json(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
@@ -881,6 +884,10 @@ class SettingsController extends AdminController
                     if ($doc = Document::getByPath($data['target'])) {
                         $data['target'] = $doc->getId();
                     }
+                }
+
+                if (!$data['regex'] && $data['source']) {
+                    $data['source'] = str_replace('+', ' ', $data['source']);
                 }
 
                 $redirect->setValues($data);
@@ -906,6 +913,10 @@ class SettingsController extends AdminController
                     if ($doc = Document::getByPath($data['target'])) {
                         $data['target'] = $doc->getId();
                     }
+                }
+
+                if (!$data['regex'] && $data['source']) {
+                    $data['source'] = str_replace('+', ' ', $data['source']);
                 }
 
                 $redirect->setValues($data);
