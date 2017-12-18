@@ -115,6 +115,10 @@ class RedirectHandler implements LoggerAwareInterface
         Site $sourceSite = null
     )
     {
+        if (empty($redirect->getType())) {
+            return null;
+        }
+
         $matchPart = $partResolver->getRequestUriPart($redirect->getType());
         $matches   = [];
 
