@@ -33,6 +33,14 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
     use LoggerAwareTrait;
 
     /**
+     * {@inheritdoc}
+     */
+    public function supports(Request $request)
+    {
+        return true;
+    }
+
+    /**
      * @inheritDoc
      */
     public function start(Request $request, AuthenticationException $authException = null)
