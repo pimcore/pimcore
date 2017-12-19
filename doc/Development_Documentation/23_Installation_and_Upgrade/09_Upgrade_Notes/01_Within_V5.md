@@ -1,5 +1,11 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Pimcore 5.1
+
+* The default priority of bundles enabled via extension manager was changed from `0` to `10` to make sure
+  those bundles are loaded before the `AppBundle` is loaded. Please make sure this works for your application
+  and set a manual priority otherwise. See https://github.com/pimcore/pimcore/pull/2328 for details.
+
 ## Build 156 (2017-12-13)
 
 The experimental `GridColumnConfig` feature was revamped to register and build its operators via DI instead of predefined
