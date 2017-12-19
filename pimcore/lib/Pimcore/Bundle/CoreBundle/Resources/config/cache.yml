@@ -23,6 +23,7 @@ services:
     # and set in PimcoreExtension
 
     pimcore.cache.core.handler:
+        public: true
         class: Pimcore\Cache\Core\EventDispatchingCoreHandler
         arguments:
             - '@pimcore.cache.core.pool'

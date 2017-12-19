@@ -32,6 +32,7 @@ security:
 
                 # optional: to keep logins of other firewalls (like admin)
                 invalidate_session: false
+            logout_on_user_change: true
 
     # ROLE_ADMIN inherits ROLE_USER (is allowed everything a user is allowed)
     role_hierarchy:

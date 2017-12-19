@@ -15,7 +15,10 @@ services:
     pimcore.document.tag.naming.strategy.nested:
         class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
 
-    pimcore.document.tag.block_state_stack: '@Pimcore\Document\Tag\Block\BlockStateStack'
+    pimcore.document.tag.block_state_stack:
+        alias: Pimcore\Document\Tag\Block\BlockStateStack
+        public: true
+
     Pimcore\Document\Tag\Block\BlockStateStack: ~
 
     # get default tag handler when type hinting against interface
@@ -24,6 +27,7 @@ services:
     # delegating tag handler holds a collection of tag handlers it delegates to (e.g. default and legacy)
     pimcore.document.tag.handler:
         class: Pimcore\Document\Tag\DelegatingTagHandler
+        public: true
         calls:
             - [addHandler, ['@Pimcore\Document\Tag\TagHandler']]
 

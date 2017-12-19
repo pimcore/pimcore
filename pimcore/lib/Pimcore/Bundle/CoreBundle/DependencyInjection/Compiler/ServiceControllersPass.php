@@ -48,7 +48,11 @@ class ServiceControllersPass implements CompilerPassInterface
 
         // find all services extending Controller or AbstractController
         foreach ($container->getDefinitions() as $id => $definition) {
-            if ($definition->isAbstract() || !$definition->getClass()) {
+            if ($definition->isAbstract() || !$definition->getClass() || $definition->isDeprecated()) {
+                continue;
+            }
+
+            if (!$definition->isPublic() || $definition->isPrivate()) {
                 continue;
             }
 
