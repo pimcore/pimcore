@@ -50,7 +50,7 @@ class ClassificationstoreController extends AdminController
         $config = Classificationstore\CollectionConfig::getById($id);
         $config->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -71,7 +71,7 @@ class ClassificationstoreController extends AdminController
 
         $config->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -92,7 +92,7 @@ class ClassificationstoreController extends AdminController
 
         $config->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -109,7 +109,7 @@ class ClassificationstoreController extends AdminController
         $config = Classificationstore\GroupConfig::getById($id);
         $config->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -133,7 +133,7 @@ class ClassificationstoreController extends AdminController
             $config->save();
         }
 
-        return $this->json(['success' => !$alreadyExist, 'id' => $config->getName()]);
+        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
     }
 
     /**
@@ -159,7 +159,7 @@ class ClassificationstoreController extends AdminController
             throw new \Exception('Store with the given name exists');
         }
 
-        return $this->json(['success' => true, 'storeId' => $config->getId()]);
+        return $this->adminJson(['success' => true, 'storeId' => $config->getId()]);
     }
 
     /**
@@ -183,7 +183,7 @@ class ClassificationstoreController extends AdminController
             $config->save();
         }
 
-        return $this->json(['success' => !$alreadyExist, 'id' => $config->getName()]);
+        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
     }
 
     /**
@@ -217,7 +217,7 @@ class ClassificationstoreController extends AdminController
             $contents[] = $itemConfig;
         }
 
-        return $this->json($contents);
+        return $this->adminJson($contents);
     }
 
     /**
@@ -240,7 +240,7 @@ class ClassificationstoreController extends AdminController
             'sorter' => (int) $config->getSorter()
         ];
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**
@@ -268,7 +268,7 @@ class ClassificationstoreController extends AdminController
 
             $config->save();
 
-            return $this->json(['success' => true, 'data' => $config]);
+            return $this->adminJson(['success' => true, 'data' => $config]);
         } else {
             $start = 0;
             $limit = $request->get('limit') ? $request->get('limit') : 15;
@@ -384,7 +384,7 @@ class ClassificationstoreController extends AdminController
             $rootElement['success'] = true;
             $rootElement['total'] = $list->getTotalCount();
 
-            return $this->json($rootElement);
+            return $this->adminJson($rootElement);
         }
     }
 
@@ -413,7 +413,7 @@ class ClassificationstoreController extends AdminController
 
             $config->save();
 
-            return $this->json(['success' => true, 'data' => $config]);
+            return $this->adminJson(['success' => true, 'data' => $config]);
         } else {
             $start = 0;
             $limit = 15;
@@ -520,7 +520,7 @@ class ClassificationstoreController extends AdminController
             $rootElement['success'] = true;
             $rootElement['total'] = $list->getTotalCount();
 
-            return $this->json($rootElement);
+            return $this->adminJson($rootElement);
         }
     }
 
@@ -556,7 +556,7 @@ class ClassificationstoreController extends AdminController
                 $row['id'] = $config->getColId() . '-' . $config->getGroupId();
             }
 
-            return $this->json(['success' => true, 'data' => $data]);
+            return $this->adminJson(['success' => true, 'data' => $data]);
         } else {
             $mapping = ['groupName' => 'name', 'groupDescription' => 'description'];
 
@@ -643,7 +643,7 @@ class ClassificationstoreController extends AdminController
             $rootElement['success'] = true;
             $rootElement['total'] = $list->getTotalCount();
 
-            return $this->json($rootElement);
+            return $this->adminJson($rootElement);
         }
     }
 
@@ -659,7 +659,7 @@ class ClassificationstoreController extends AdminController
         $list = new Classificationstore\StoreConfig\Listing();
         $list = $list->load();
 
-        return $this->json($list);
+        return $this->adminJson($list);
     }
 
     /**
@@ -772,7 +772,7 @@ class ClassificationstoreController extends AdminController
         $rootElement['success'] = true;
         $rootElement['total'] = $list->getTotalCount();
 
-        return $this->json($rootElement);
+        return $this->adminJson($rootElement);
     }
 
     /**
@@ -802,7 +802,7 @@ class ClassificationstoreController extends AdminController
             $config->save();
             $data['id'] = $config->getGroupId() . '-' . $config->getKeyId();
 
-            return $this->json(['success' => true, 'data' => $data]);
+            return $this->adminJson(['success' => true, 'data' => $data]);
         } else {
             $mapping = ['keyName' => 'name', 'keyDescription' => 'description'];
 
@@ -907,7 +907,7 @@ class ClassificationstoreController extends AdminController
             $rootElement['success'] = true;
             $rootElement['total'] = $list->getTotalCount();
 
-            return $this->json($rootElement);
+            return $this->adminJson($rootElement);
         }
     }
 
@@ -1014,7 +1014,7 @@ class ClassificationstoreController extends AdminController
             }
         }
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**
@@ -1090,7 +1090,7 @@ class ClassificationstoreController extends AdminController
             $data[$groupId]['keys'] = $keyList;
         }
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**
@@ -1121,7 +1121,7 @@ class ClassificationstoreController extends AdminController
             $config->save();
             $item = $this->getConfigItem($config);
 
-            return $this->json(['success' => true, 'data' => $item]);
+            return $this->adminJson(['success' => true, 'data' => $item]);
         } else {
             $storeId = $request->get('storeId');
             $frameName = $request->get('frameName');
@@ -1262,7 +1262,7 @@ class ClassificationstoreController extends AdminController
             $rootElement['success'] = true;
             $rootElement['total'] = $list->getTotalCount();
 
-            return $this->json($rootElement);
+            return $this->adminJson($rootElement);
         }
     }
 
@@ -1333,7 +1333,7 @@ class ClassificationstoreController extends AdminController
             $config->save();
         }
 
-        return $this->json(['success' => !$alreadyExist, 'id' => $config->getName()]);
+        return $this->adminJson(['success' => !$alreadyExist, 'id' => $config->getName()]);
     }
 
     /**
@@ -1352,7 +1352,7 @@ class ClassificationstoreController extends AdminController
         $config->setEnabled(false);
         $config->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1391,7 +1391,7 @@ class ClassificationstoreController extends AdminController
         $config->setDescription($description);
         $config->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1426,7 +1426,7 @@ class ClassificationstoreController extends AdminController
             $result[] = $resultItem;
         }
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
@@ -1476,6 +1476,6 @@ class ClassificationstoreController extends AdminController
 
         $page = (int) $result[0]['page'] ;
 
-        return $this->json(['success' => true, 'page' => $page]);
+        return $this->adminJson(['success' => true, 'page' => $page]);
     }
 }

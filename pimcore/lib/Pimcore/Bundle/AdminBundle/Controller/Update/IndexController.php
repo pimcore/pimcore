@@ -40,7 +40,7 @@ class IndexController extends AdminController implements EventedControllerInterf
     {
         $debug = \Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => (bool) $debug
         ]);
     }
@@ -54,7 +54,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     public function checkComposerInstalledAction(Request $request)
     {
-        return $this->json([
+        return $this->adminJson([
             'success' => Update::isComposerAvailable()
         ]);
     }
@@ -68,7 +68,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     public function checkFilePermissionsAction(Request $request)
     {
-        return $this->json([
+        return $this->adminJson([
             'success' => Update::isWriteable()
         ]);
     }
@@ -84,7 +84,7 @@ class IndexController extends AdminController implements EventedControllerInterf
     {
         $availableUpdates = Update::getAvailableUpdates();
 
-        return $this->json($availableUpdates);
+        return $this->adminJson($availableUpdates);
     }
 
     /**
@@ -98,7 +98,7 @@ class IndexController extends AdminController implements EventedControllerInterf
     {
         $jobs = Update::getJobs($request->get('toRevision'));
 
-        return $this->json($jobs);
+        return $this->adminJson($jobs);
     }
 
     /**
@@ -114,7 +114,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             Update::downloadData($request->get('revision'), $request->get('url'));
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**

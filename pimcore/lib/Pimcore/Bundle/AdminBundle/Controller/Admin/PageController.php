@@ -44,7 +44,7 @@ class PageController extends DocumentControllerBase
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->json([
+            return $this->adminJson([
                 'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
@@ -89,10 +89,10 @@ class PageController extends DocumentControllerBase
         $data = $event->getArgument('data');
 
         if ($page->isAllowed('view')) {
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -206,14 +206,14 @@ class PageController extends DocumentControllerBase
                         $page->save();
                         $this->saveToSession($page);
 
-                        return $this->json(['success' => true]);
+                        return $this->adminJson(['success' => true]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
                         Logger::err($e);
 
-                        return $this->json(['success' => false, 'message'=>$e->getMessage()]);
+                        return $this->adminJson(['success' => false, 'message' =>$e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed('save')) {
@@ -223,11 +223,11 @@ class PageController extends DocumentControllerBase
                             $page->saveVersion();
                             $this->saveToSession($page);
 
-                            return $this->json(['success' => true]);
+                            return $this->adminJson(['success' => true]);
                         } catch (\Exception $e) {
                             Logger::err($e);
 
-                            return $this->json(['success' => false, 'message'=>$e->getMessage()]);
+                            return $this->adminJson(['success' => false, 'message' =>$e->getMessage()]);
                         }
                     }
                 }
@@ -235,12 +235,12 @@ class PageController extends DocumentControllerBase
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -256,7 +256,7 @@ class PageController extends DocumentControllerBase
         $list->setCondition('type = ?', ['page']);
         $data = $list->loadIdPathList();
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'data' => $data
         ]);
@@ -284,7 +284,7 @@ class PageController extends DocumentControllerBase
             File::put($file, $data);
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -334,7 +334,7 @@ class PageController extends DocumentControllerBase
             }
         }
 
-        return $this->json(['success' => $success]);
+        return $this->adminJson(['success' => $success]);
     }
 
     /**
@@ -375,7 +375,7 @@ class PageController extends DocumentControllerBase
             $success = false;
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success
         ]);
     }
@@ -409,7 +409,7 @@ class PageController extends DocumentControllerBase
 
         $this->saveToSession($doc, true);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }

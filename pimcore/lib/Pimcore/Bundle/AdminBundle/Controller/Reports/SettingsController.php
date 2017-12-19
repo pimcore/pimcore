@@ -48,7 +48,7 @@ class SettingsController extends ReportsControllerBase
             'config' => []
         ];
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -81,6 +81,6 @@ class SettingsController extends ReportsControllerBase
 
         $configWriter->write($values);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 }

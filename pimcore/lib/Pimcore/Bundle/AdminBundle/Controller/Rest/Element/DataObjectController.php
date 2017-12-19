@@ -142,7 +142,7 @@ class DataObjectController extends AbstractElementController
             $data['profiling'] = $this->getProfilingData($profileName);
         }
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**

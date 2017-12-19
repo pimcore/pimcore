@@ -69,7 +69,7 @@ class DataObjectHelperController extends AdminController
             $result['success'] = false;
         }
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
@@ -211,7 +211,7 @@ class DataObjectHelperController extends AdminController
         $importConfigData = $importService->createFromExportConfig($gridConfig);
         $selectedGridColumns = $importConfigData->selectedGridColumns;
 
-        return $this->json([ 'success' => true, 'selectedGridColumns' => $selectedGridColumns]);
+        return $this->adminJson(['success' => true, 'selectedGridColumns' => $selectedGridColumns]);
     }
 
     /**
@@ -275,7 +275,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        return $this->json([ 'success' => true, 'data' => $result]);
+        return $this->adminJson(['success' => true, 'data' => $result]);
     }
 
     /**
@@ -302,7 +302,7 @@ class DataObjectHelperController extends AdminController
             $success = true;
         }
 
-        return $this->json(['deleteSuccess' => $success]);
+        return $this->adminJson(['deleteSuccess' => $success]);
     }
 
     /**
@@ -332,7 +332,7 @@ class DataObjectHelperController extends AdminController
         $newGridConfig = $this->doGetGridColumnConfig($request, true);
         $newGridConfig['deleteSuccess'] = $success;
 
-        return $this->json($newGridConfig);
+        return $this->adminJson($newGridConfig);
     }
 
     /**
@@ -346,7 +346,7 @@ class DataObjectHelperController extends AdminController
     {
         $result =  $this->doGetGridColumnConfig($request);
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
@@ -780,7 +780,7 @@ class DataObjectHelperController extends AdminController
             $session->set('helpercolumns', $helperColumns);
         }, 'pimcore_gridconfig');
 
-        return $this->json(['success' => true, 'columns' => $newData]);
+        return $this->adminJson(['success' => true, 'columns' => $newData]);
     }
 
     /**
@@ -807,9 +807,9 @@ class DataObjectHelperController extends AdminController
                 ' and searchType = ' . $db->quote($searchType)
                 . ' and objectId != ' . $objectId . ' and objectId != 0');
 
-            return $this->json(['success' => true]);
+            return $this->adminJson(['success' => true]);
         } else {
-            return $this->json(['success' => false, 'message' => 'missing_permission']);
+            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
     }
 
@@ -866,9 +866,9 @@ class DataObjectHelperController extends AdminController
                 $favourite->delete();
             }
 
-            return $this->json(['success' => true, 'spezializedConfigs' => $specializedConfigs]);
+            return $this->adminJson(['success' => true, 'spezializedConfigs' => $specializedConfigs]);
         } else {
-            return $this->json(['success' => false, 'message' => 'missing_permission']);
+            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
     }
 
@@ -955,13 +955,13 @@ class DataObjectHelperController extends AdminController
 
             $this->updateImportConfigShares($importConfig, $configData);
 
-            return $this->json(['success' => true,
-                        'importConfigId' => $importConfig->getId(),
-                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId)
+            return $this->adminJson(['success'          => true,
+                                     'importConfigId'   => $importConfig->getId(),
+                                     'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId)
                     ]
                 );
         } catch (\Exception $e) {
-            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -1035,18 +1035,18 @@ class DataObjectHelperController extends AdminController
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
                 $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getAdminUser()->getId());
 
-                return $this->json(['success' => true,
-                    'settings' => $settings,
-                    'availableConfigs' => $availableConfigs,
-                    'sharedConfigs' => $sharedConfigs,
+                return $this->adminJson(['success'          => true,
+                                         'settings'         => $settings,
+                                         'availableConfigs' => $availableConfigs,
+                                         'sharedConfigs'    => $sharedConfigs,
                     ]
                     );
             } catch (\Exception $e) {
-                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
         }
 
-        return $this->json(['success' => false, 'message' => 'missing_permission']);
+        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
     }
 
     /**
@@ -1219,7 +1219,7 @@ class DataObjectHelperController extends AdminController
             Logger::error($e);
         }
 
-        $response = $this->json([
+        $response = $this->adminJson([
             'success' => true
         ]);
 
@@ -1393,7 +1393,7 @@ class DataObjectHelperController extends AdminController
         $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId . '_original';
         File::put($importFileOriginal, $data);
 
-        $response = $this->json([
+        $response = $this->adminJson([
             'success' => true
         ]);
 
@@ -1498,7 +1498,7 @@ class DataObjectHelperController extends AdminController
 
         $dialect->lineterminator =  bin2hex($dialect->lineterminator);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success,
             'config' => [
                 'importConfigId' => $importConfigId,
@@ -1613,9 +1613,9 @@ class DataObjectHelperController extends AdminController
                 $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
             }
 
-            return $this->json(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
+            return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
         } catch (\Exception $e) {
-            return $this->json(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
         }
     }
 
@@ -1764,7 +1764,7 @@ class DataObjectHelperController extends AdminController
         $fileHandle = uniqid('export-');
         file_put_contents($this->getCsvFile($fileHandle), '');
 
-        return $this->json(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
+        return $this->adminJson(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
 
     /**
@@ -1819,7 +1819,7 @@ class DataObjectHelperController extends AdminController
 
         fclose($fp);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     public function encodeFunc($value)
@@ -2113,7 +2113,7 @@ class DataObjectHelperController extends AdminController
 
         $jobs = $list->loadIdList();
 
-        return $this->json(['success' => true, 'jobs' => $jobs]);
+        return $this->adminJson(['success' => true, 'jobs' => $jobs]);
     }
 
     /**
@@ -2128,14 +2128,14 @@ class DataObjectHelperController extends AdminController
         $id = $request->get('id');
         $object = DataObject\Concrete::getById($id);
         if (!$object) {
-            return $this->json(['success' => false]);
+            return $this->adminJson(['success' => false]);
         }
 
         $class = $object->getClass();
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($class->getLinkGeneratorReference());
         $link = $generator->generate($object, []);
 
-        return $this->json(['success' => true, 'link' => $link]);
+        return $this->adminJson(['success' => true, 'link' => $link]);
     }
 
     /**
@@ -2265,19 +2265,19 @@ class DataObjectHelperController extends AdminController
                     $object->save();
                     $success = true;
                 } catch (\Exception $e) {
-                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
                 Logger::debug('DataObjectController::batchAction => There is no object left to update.');
 
-                return $this->json(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
+                return $this->adminJson(['success' => false, 'message' => 'DataObjectController::batchAction => There is no object left to update.']);
             }
         } catch (\Exception $e) {
             Logger::err($e);
 
-            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
 
-        return $this->json(['success' => $success]);
+        return $this->adminJson(['success' => $success]);
     }
 }

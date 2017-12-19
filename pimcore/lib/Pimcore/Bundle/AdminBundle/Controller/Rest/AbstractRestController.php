@@ -116,7 +116,7 @@ abstract class AbstractRestController extends AdminController
      */
     protected function createSuccessResponse($data = null, $wrapInDataProperty = true, $status = Response::HTTP_OK)
     {
-        return $this->json(
+        return $this->adminJson(
             $this->createSuccessData($data, $wrapInDataProperty),
             $status
         );
@@ -144,7 +144,7 @@ abstract class AbstractRestController extends AdminController
      */
     protected function createErrorResponse($data = null, $status = Response::HTTP_BAD_REQUEST)
     {
-        return $this->json(
+        return $this->adminJson(
             $this->createErrorData($data),
             $status
         );

@@ -137,7 +137,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             $wfConfig['message'] = $e->getMessage();
         }
 
-        return $this->json($wfConfig);
+        return $this->adminJson($wfConfig);
     }
 
     /**
@@ -176,7 +176,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             ];
         }
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**

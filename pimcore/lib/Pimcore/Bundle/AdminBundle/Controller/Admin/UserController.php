@@ -56,7 +56,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             }
         }
 
-        return $this->json($users);
+        return $this->adminJson($users);
     }
 
     /**
@@ -177,12 +177,12 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             }
 
-            return $this->json([
+            return $this->adminJson([
                 'success' => true,
                 'id' => $user->getId()
             ]);
         } catch (\Exception $e) {
-            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -276,7 +276,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             }
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -361,7 +361,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $user->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -376,7 +376,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function getAction(Request $request)
     {
         if (intval($request->get('id')) < 1) {
-            return $this->json(['success' => false]);
+            return $this->adminJson(['success' => false]);
         }
 
         $user = User::getById(intval($request->get('id')));
@@ -441,7 +441,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $conf = \Pimcore\Config::getSystemConfig();
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'wsenabled' => $conf->webservice->enabled,
             'user' => $userData,
@@ -476,7 +476,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $minimalUserData['permissionInfo']['documents'] = $user->isAllowed('documents');
         $minimalUserData['permissionInfo']['objects'] = $user->isAllowed('objects');
 
-        return $this->json($minimalUserData);
+        return $this->adminJson($minimalUserData);
     }
 
     /**
@@ -495,10 +495,10 @@ class UserController extends AdminController implements EventedControllerInterfa
             } else {
                 Logger::warn('prevented save current user, because ids do not match. ');
 
-                return $this->json(false);
+                return $this->adminJson(false);
             }
         } else {
-            return $this->json(false);
+            return $this->adminJson(false);
         }
     }
 
@@ -548,21 +548,21 @@ class UserController extends AdminController implements EventedControllerInterfa
                     if ($oldPasswordCheck && $values['new_password'] == $values['retype_password']) {
                         $values['password'] = Tool\Authentication::getPasswordHash($user->getName(), $values['new_password']);
                     } else {
-                        return $this->json(['success' => false, 'message' => 'password_cannot_be_changed']);
+                        return $this->adminJson(['success' => false, 'message' => 'password_cannot_be_changed']);
                     }
                 }
 
                 $user->setValues($values);
                 $user->save();
 
-                return $this->json(['success' => true]);
+                return $this->adminJson(['success' => true]);
             } else {
                 Logger::warn('prevented save current user, because ids do not match. ');
 
-                return $this->json(false);
+                return $this->adminJson(false);
             }
         } else {
-            return $this->json(false);
+            return $this->adminJson(false);
         }
     }
 
@@ -618,7 +618,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             }
         }
 
-        return $this->json($roles);
+        return $this->adminJson($roles);
     }
 
     /**
@@ -688,7 +688,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'role' => $role,
             'permissions' => $role->generatePermissionList(),
@@ -731,7 +731,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
 
-        $response = $this->json(['success' => true]);
+        $response = $this->adminJson(['success' => true]);
         $response->headers->set('Content-Type', 'text/html');
 
         return $response;
@@ -787,7 +787,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
             $link = $request->getScheme() . '://' . $request->getHttpHost() . '/admin/login/login?username=' . $user->getName() . '&token=' . $token;
 
-            return $this->json([
+            return $this->adminJson([
                 'link' => $link
             ]);
         }
@@ -825,7 +825,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'users' => $users
         ]);
@@ -880,7 +880,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             ];
         }
 
-        return $this->json(['success' => true, 'total' => count($users), 'data' => $users]);
+        return $this->adminJson(['success' => true, 'total' => count($users), 'data' => $users]);
     }
 
     /**
@@ -903,6 +903,6 @@ class UserController extends AdminController implements EventedControllerInterfa
             ];
         }
 
-        return $this->json(['success' => true, 'total' => count($roles), 'data' => $roles]);
+        return $this->adminJson(['success' => true, 'total' => count($roles), 'data' => $roles]);
     }
 }

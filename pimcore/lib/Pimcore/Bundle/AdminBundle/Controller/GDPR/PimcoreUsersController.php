@@ -60,7 +60,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
             $allParams['sort']
         );
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
@@ -74,7 +74,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     {
         $userData = $pimcoreUsers->getExportData(intval($request->get('id')));
 
-        $jsonResponse = $this->json($userData);
+        $jsonResponse = $this->adminJson($userData);
         $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-userdata-' . $userData['id'] . '.json"');
 
         return $jsonResponse;

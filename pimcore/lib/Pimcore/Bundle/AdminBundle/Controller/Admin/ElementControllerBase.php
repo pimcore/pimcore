@@ -52,10 +52,10 @@ class ElementControllerBase extends AdminController
         if (in_array($type, $allowedTypes)) {
             $root = Service::getElementById($type, $id);
             if ($root->isAllowed('list')) {
-                return $this->json($this->getTreeNodeConfig($root));
+                return $this->adminJson($this->getTreeNodeConfig($root));
             }
         }
 
-        return $this->json(['success' => false, 'message' => 'missing_permission']);
+        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
     }
 }

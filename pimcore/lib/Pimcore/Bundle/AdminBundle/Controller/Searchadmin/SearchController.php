@@ -333,6 +333,6 @@ class SearchController extends AdminController
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 }

@@ -172,7 +172,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @return JsonResponse
      */
-    protected function json($data, $status = 200, $headers = [], $context = [], bool $useAdminSerializer = true)
+    protected function adminJson($data, $status = 200, $headers = [], $context = [], bool $useAdminSerializer = true)
     {
         $json = $this->encodeJson($data, $context, JsonResponse::DEFAULT_ENCODING_OPTIONS, $useAdminSerializer);
 

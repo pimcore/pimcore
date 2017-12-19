@@ -51,7 +51,7 @@ class TargetingController extends AdminController implements EventedControllerIn
             ];
         }
 
-        return $this->json($targets);
+        return $this->adminJson($targets);
     }
 
     /**
@@ -67,7 +67,7 @@ class TargetingController extends AdminController implements EventedControllerIn
         $target->setName($request->get('name'));
         $target->save();
 
-        return $this->json(['success' => true, 'id' => $target->getId()]);
+        return $this->adminJson(['success' => true, 'id' => $target->getId()]);
     }
 
     /**
@@ -87,7 +87,7 @@ class TargetingController extends AdminController implements EventedControllerIn
             $success = true;
         }
 
-        return $this->json(['success' => $success]);
+        return $this->adminJson(['success' => $success]);
     }
 
     /**
@@ -108,7 +108,7 @@ class TargetingController extends AdminController implements EventedControllerIn
             }
         }
 
-        return $this->json($target);
+        return $this->adminJson($target);
     }
 
     /**
@@ -145,7 +145,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
         $target->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /* PERSONAS */
@@ -178,7 +178,7 @@ class TargetingController extends AdminController implements EventedControllerIn
             ];
         }
 
-        return $this->json($personas);
+        return $this->adminJson($personas);
     }
 
     /**
@@ -194,7 +194,7 @@ class TargetingController extends AdminController implements EventedControllerIn
         $persona->setName($request->get('name'));
         $persona->save();
 
-        return $this->json(['success' => true, 'id' => $persona->getId()]);
+        return $this->adminJson(['success' => true, 'id' => $persona->getId()]);
     }
 
     /**
@@ -214,7 +214,7 @@ class TargetingController extends AdminController implements EventedControllerIn
             $success = true;
         }
 
-        return $this->json(['success' => $success]);
+        return $this->adminJson(['success' => $success]);
     }
 
     /**
@@ -228,7 +228,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     {
         $persona = Targeting\Persona::getById($request->get('id'));
 
-        return $this->json($persona);
+        return $this->adminJson($persona);
     }
 
     /**
@@ -248,7 +248,7 @@ class TargetingController extends AdminController implements EventedControllerIn
         $persona->setConditions($data['conditions']);
         $persona->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**

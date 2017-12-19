@@ -53,7 +53,7 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
         $sentMailArray['htmlBody'] = $sentMail->getHtmlLog();
         $sentMailArray['textBody'] = $sentMail->getTextLog();
 
-        $jsonResponse = $this->json($sentMailArray);
+        $jsonResponse = $this->adminJson($sentMailArray);
         $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"');
 
         return $jsonResponse;

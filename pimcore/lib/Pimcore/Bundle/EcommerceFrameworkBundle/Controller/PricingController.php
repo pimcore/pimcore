@@ -78,7 +78,7 @@ class PricingController extends AdminController implements EventedControllerInte
             ];
         }
 
-        return $this->json($json);
+        return $this->adminJson($json);
     }
 
     /**
@@ -117,7 +117,7 @@ class PricingController extends AdminController implements EventedControllerInte
                 $json['actions'][] = json_decode($action->toJSON());
             }
 
-            return $this->json($json);
+            return $this->adminJson($json);
         }
     }
 
@@ -148,7 +148,7 @@ class PricingController extends AdminController implements EventedControllerInte
         }
 
         // send respone
-        return $this->json($return);
+        return $this->adminJson($return);
     }
 
     /**
@@ -175,7 +175,7 @@ class PricingController extends AdminController implements EventedControllerInte
         }
 
         // send respone
-        return $this->json($return);
+        return $this->adminJson($return);
     }
 
     /**
@@ -266,7 +266,7 @@ class PricingController extends AdminController implements EventedControllerInte
         }
 
         // send respone
-        return $this->json($return);
+        return $this->adminJson($return);
     }
 
     /**
@@ -293,7 +293,7 @@ class PricingController extends AdminController implements EventedControllerInte
         $return['success'] = true;
 
         // send respone
-        return $this->json($return);
+        return $this->adminJson($return);
     }
 
     /**
@@ -305,7 +305,7 @@ class PricingController extends AdminController implements EventedControllerInte
     {
         $pricingManager = Factory::getInstance()->getPricingManager();
 
-        return $this->json([
+        return $this->adminJson([
             'condition' => array_keys($pricingManager->getConditionMapping()),
             'action'    => array_keys($pricingManager->getActionMapping())
         ]);
