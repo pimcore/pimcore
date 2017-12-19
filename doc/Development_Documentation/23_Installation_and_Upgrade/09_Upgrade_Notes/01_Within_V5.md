@@ -2,23 +2,44 @@
 
 ## Pimcore 5.1
 
-* **Extensions:** The default priority of bundles enabled via extension manager was changed from `0` to `10` to make sure
-  those bundles are loaded before the `AppBundle` is loaded. Please make sure this works for your application
-  and set a manual priority otherwise. See https://github.com/pimcore/pimcore/pull/2328 for details.
+**Admin Controllers**: As preparation for Symfony 4 we had to refactor some of our implementations to make sure they will
+be compatible with Symfony 4. Unfortunately this also concerns 3 methods which the `AdminController` overwrites from the
+standard symfony controller: `json()`, `getUser()` on the `AdminController` and `createNotFoundException` on the
+`AbstractRestController`.
 
-* **E-Commerce:** Due to performance reasons, we needed to change the way how index service attributes are handled. They are
-  now built at runtime instead of handling each attribute as service. To achieve this, config service definition now relies
-  on the method `setAttributeFactory` being called creating a service instance. If your config definition uses `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig`
-  as parent definition you should be set, otherwise you'll need to make sure your service definition includes the method
-  call:
+If you implement any controller which inherits from Pimcore's `AdminController` please make sure to update the following
+method calls to ensure the same functionality:
 
-  ```yaml
-  services:
-      AppBundle\IndexService\Config\CustomConfig:
-          # [...]
-          calls:
-              - [setAttributeFactory, ['@Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory']]
-  ```
+Controllers inheriting from `Pimcore\Bundle\AdminBundle\Controller\AdminController`:
+
+| Old call           | New call                | Note                                                                                                                                                                                                                   |
+|--------------------|-------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `$this->json()`    | `$this->adminJson()`    | You can still use `json()` as it is a standard Symfony controller method, but please be aware that it uses the Symfony Serializer instead of Pimcore's admin serializer and the results may differ from `adminJson()`. |
+| `$this->getUser()` | `$this->getAdminUser()` | You can still use `getUser()`, but please be aware that the returned user is a `Pimcore\Bundle\AdminBundle\Security\User\User` and not the `Pimcore\Model\User` which is returned in `getAdminUser()`.                 |
+
+Controllers inheriting from `Pimcore\Bundle\AdminBundle\Controller\Rest\AbstractRestController`:
+
+| Old call                           | New call                                    | Note |
+|------------------------------------|---------------------------------------------|------|
+| `$this->createNotFoundException()` | `$this-> createNotFoundResponseException()` |      |
+
+**Extensions:** The default priority of bundles enabled via extension manager was changed from `0` to `10` to make sure
+those bundles are loaded before the `AppBundle` is loaded. Please make sure this works for your application
+and set a manual priority otherwise. See https://github.com/pimcore/pimcore/pull/2328 for details.
+
+**E-Commerce:** Due to performance reasons, we needed to change the way how index service attributes are handled. They are
+now built at runtime instead of handling each attribute as service. To achieve this, config service definition now relies
+on the method `setAttributeFactory` being called creating a service instance. If your config definition uses `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig`
+as parent definition you should be set, otherwise you'll need to make sure your service definition includes the method
+call:
+
+```yaml
+services:
+    AppBundle\IndexService\Config\CustomConfig:
+        # [...]
+        calls:
+            - [setAttributeFactory, ['@Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory']]
+```
 
 ## Build 156 (2017-12-13)
 
