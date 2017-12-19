@@ -363,7 +363,8 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $container->setParameter('pimcore_ecommerce.index_service.default_tenant', $config['default_tenant']);
 
-        $attributeFactory = new AttributeFactory();
+        $getterIds      = [];
+        $interpreterIds = [];
 
         foreach ($config['tenants'] ?? [] as $tenant => $tenantConfig) {
             if (!$tenantConfig['enabled']) {
@@ -373,10 +374,25 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $configId = sprintf('pimcore_ecommerce.index_service.%s.config', $tenant);
             $workerId = sprintf('pimcore_ecommerce.index_service.%s.worker', $tenant);
 
+            $attributes = $tenantConfig['attributes'];
+
+            // collect configured getters and interpreters and
+            // create a locator service for each which will be used
+            // from attribute factory
+            foreach ($attributes as $attribute) {
+                if ($attribute['getter_id']) {
+                    $getterIds[$attribute['getter_id']] = $attribute['getter_id'];
+                }
+
+                if ($attribute['interpreter_id']) {
+                    $interpreterIds[$attribute['interpreter_id']] = $attribute['interpreter_id'];
+                }
+            }
+
             $config = new ChildDefinition($tenantConfig['config_id']);
             $config->setArguments([
                 '$tenantName'       => $tenant,
-                '$attributes'       => $attributeFactory->createAttributes($tenantConfig['attributes']),
+                '$attributes'       => $attributes,
                 '$searchAttributes' => $tenantConfig['search_attributes'],
                 '$filterTypes'      => []
             ]);
@@ -392,6 +408,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $container->setDefinition($configId, $config);
             $container->setDefinition($workerId, $worker);
         }
+
+        $this->setupServiceLocator($container, 'index_service.getters', $getterIds);
+        $this->setupServiceLocator($container, 'index_service.interpreters', $interpreterIds);
     }
 
     private function registerFilterServiceConfig(ContainerBuilder $container, array $config)

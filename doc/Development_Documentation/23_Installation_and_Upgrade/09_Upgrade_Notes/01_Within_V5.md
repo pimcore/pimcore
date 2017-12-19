@@ -2,9 +2,23 @@
 
 ## Pimcore 5.1
 
-* The default priority of bundles enabled via extension manager was changed from `0` to `10` to make sure
+* **Extensions:** The default priority of bundles enabled via extension manager was changed from `0` to `10` to make sure
   those bundles are loaded before the `AppBundle` is loaded. Please make sure this works for your application
   and set a manual priority otherwise. See https://github.com/pimcore/pimcore/pull/2328 for details.
+
+* **E-Commerce:** Due to performance reasons, we needed to change the way how index service attributes are handled. They are
+  now built at runtime instead of handling each attribute as service. To achieve this, config service definition now relies
+  on the method `setAttributeFactory` being called creating a service instance. If your config definition uses `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig`
+  as parent definition you should be set, otherwise you'll need to make sure your service definition includes the method
+  call:
+
+  ```yaml
+  services:
+      AppBundle\IndexService\Config\CustomConfig:
+          # [...]
+          calls:
+              - [setAttributeFactory, ['@Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory']]
+  ```
 
 ## Build 156 (2017-12-13)
 

@@ -8,6 +8,11 @@ services:
     # CONFIGURATIONS
     #
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory:
+        arguments:
+            $getters: '@pimcore_ecommerce.locator.index_service.getters'
+            $interpreters: '@pimcore_ecommerce.locator.index_service.interpreters'
+
     # abstract configuration definition - arguments will be injected from configuration values
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig:
         abstract: true
@@ -19,6 +24,8 @@ services:
             $searchAttributes: []
             $filterTypes: []
             $options: []
+        calls:
+            - [setAttributeFactory, ['@Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory']]
 
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
