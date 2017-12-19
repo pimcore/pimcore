@@ -88,7 +88,7 @@ class RedirectsController extends AdminController
 
         $result = $csv->import($file->getRealPath());
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'data'    => $result
         ]);

@@ -191,7 +191,7 @@ class PiwikController extends ReportsControllerBase
         $siteConfig = $siteConfigProvider->getSiteId($configKey);
         $siteId     = $sitesManager->addSite($siteConfig);
 
-        return $this->json([
+        return $this->adminJson([
             'site_id' => $siteId
         ]);
     }
@@ -216,7 +216,7 @@ class PiwikController extends ReportsControllerBase
         $siteConfig = $siteConfigProvider->getSiteId($configKey);
         $siteId     = $sitesManager->updateSite($siteConfig);
 
-        return $this->json([
+        return $this->adminJson([
             'site_id' => $siteId
         ]);
     }
@@ -234,6 +234,6 @@ class PiwikController extends ReportsControllerBase
      */
     private function jsonResponse($data, int $status = JsonResponse::HTTP_OK, array $headers = [], array $context = []): JsonResponse
     {
-        return $this->json($data, $status, $headers, $context, false);
+        return $this->adminJson($data, $status, $headers, $context, false);
     }
 }

@@ -43,7 +43,7 @@ class EmailController extends DocumentControllerBase
 
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->json([
+            return $this->adminJson([
                 'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
@@ -78,10 +78,10 @@ class EmailController extends DocumentControllerBase
         $data = $event->getArgument('data');
 
         if ($email->isAllowed('view')) {
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -100,7 +100,7 @@ class EmailController extends DocumentControllerBase
                 $page = Document\Email::getById($request->get('id'));
 
                 $page = $this->getLatestVersion($page);
-                $page->setUserModification($this->getUser()->getId());
+                $page->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $page->setPublished(false);
@@ -116,11 +116,11 @@ class EmailController extends DocumentControllerBase
                         $page->save();
                         $this->saveToSession($page);
 
-                        return $this->json(['success' => true]);
+                        return $this->adminJson(['success' => true]);
                     } catch (\Exception $e) {
                         Logger::err($e);
 
-                        return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed('save')) {
@@ -130,7 +130,7 @@ class EmailController extends DocumentControllerBase
                             $page->saveVersion();
                             $this->saveToSession($page);
 
-                            return $this->json(['success' => true]);
+                            return $this->adminJson(['success' => true]);
                         } catch (\Exception $e) {
                             if ($e instanceof Element\ValidationException) {
                                 throw $e;
@@ -138,7 +138,7 @@ class EmailController extends DocumentControllerBase
 
                             Logger::err($e);
 
-                            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                         }
                     }
                 }
@@ -146,12 +146,12 @@ class EmailController extends DocumentControllerBase
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -177,7 +177,7 @@ class EmailController extends DocumentControllerBase
      */
     public function emailLogsAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -222,7 +222,7 @@ class EmailController extends DocumentControllerBase
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'data' => $jsonData,
             'success' => true,
             'total' => $list->getTotalCount()
@@ -240,7 +240,7 @@ class EmailController extends DocumentControllerBase
      */
     public function showEmailLogAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -262,7 +262,7 @@ class EmailController extends DocumentControllerBase
                 $this->enhanceLoggingData($entry);
             }
 
-            return $this->json($params);
+            return $this->adminJson($params);
         } else {
             return new Response('No Type specified');
         }
@@ -357,7 +357,7 @@ class EmailController extends DocumentControllerBase
      */
     public function deleteEmailLogAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -368,7 +368,7 @@ class EmailController extends DocumentControllerBase
             $success = true;
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success,
         ]);
     }
@@ -384,7 +384,7 @@ class EmailController extends DocumentControllerBase
      */
     public function resendEmailAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -423,7 +423,7 @@ class EmailController extends DocumentControllerBase
             $success = true;
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success,
         ]);
     }
@@ -439,7 +439,7 @@ class EmailController extends DocumentControllerBase
      */
     public function sendTestEmailAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -456,7 +456,7 @@ class EmailController extends DocumentControllerBase
 
         $mail->send();
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
         ]);
     }
@@ -472,7 +472,7 @@ class EmailController extends DocumentControllerBase
      */
     public function blacklistAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -491,13 +491,13 @@ class EmailController extends DocumentControllerBase
                 $address = Tool\Email\Blacklist::getByAddress($data['address']);
                 $address->delete();
 
-                return $this->json(['success' => true, 'data' => []]);
+                return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 $address = Tool\Email\Blacklist::getByAddress($data['address']);
                 $address->setValues($data);
                 $address->save();
 
-                return $this->json(['data' => $address, 'success' => true]);
+                return $this->adminJson(['data' => $address, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 unset($data['id']);
 
@@ -505,7 +505,7 @@ class EmailController extends DocumentControllerBase
                 $address->setValues($data);
                 $address->save();
 
-                return $this->json(['data' => $address, 'success' => true]);
+                return $this->adminJson(['data' => $address, 'success' => true]);
             }
         } else {
             // get list of routes
@@ -529,13 +529,13 @@ class EmailController extends DocumentControllerBase
 
             $data = $list->load();
 
-            return $this->json([
+            return $this->adminJson([
                 'success' => true,
                 'data' => $data,
                 'total' => $list->getTotalCount()
             ]);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 }

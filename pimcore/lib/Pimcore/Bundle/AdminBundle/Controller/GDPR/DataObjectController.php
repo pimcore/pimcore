@@ -60,7 +60,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
             $allParams['sort']
         );
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
@@ -71,7 +71,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     {
         $object = AbstractObject::getById($request->get('id'));
         $exportResult = $service->doExportData($object);
-        $jsonResponse = $this->json($exportResult);
+        $jsonResponse = $this->adminJson($exportResult);
         $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-data-object-' . $object->getId() . '.json"');
 
         return $jsonResponse;

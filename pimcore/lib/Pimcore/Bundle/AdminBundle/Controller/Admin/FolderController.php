@@ -39,7 +39,7 @@ class FolderController extends DocumentControllerBase
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->json([
+            return $this->adminJson([
                 'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
@@ -67,10 +67,10 @@ class FolderController extends DocumentControllerBase
         $data = $event->getArgument('data');
 
         if ($folder->isAllowed('view')) {
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -88,24 +88,24 @@ class FolderController extends DocumentControllerBase
             if ($request->get('id')) {
                 $folder = Document\Folder::getById($request->get('id'));
                 $folder->setModificationDate(time());
-                $folder->setUserModification($this->getUser()->getId());
+                $folder->setUserModification($this->getAdminUser()->getId());
 
                 if ($folder->isAllowed('publish')) {
                     $this->setValuesToDocument($request, $folder);
                     $folder->save();
 
-                    return $this->json(['success' => true]);
+                    return $this->adminJson(['success' => true]);
                 }
             }
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**

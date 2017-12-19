@@ -39,7 +39,7 @@ class SettingsController extends ReportsControllerBase
         // special piwik handling - as the piwik settings tab is on the same page as the other settings
         // we need to check here if we want to include the piwik config in the response
         $config = $this->getConfig()->toArray();
-        if (!$this->getUser()->isAllowed('piwik_settings') && isset($config['piwik'])) {
+        if (!$this->getAdminUser()->isAllowed('piwik_settings') && isset($config['piwik'])) {
             unset($config['piwik']);
         }
 
@@ -48,7 +48,7 @@ class SettingsController extends ReportsControllerBase
             'config' => []
         ];
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -71,7 +71,7 @@ class SettingsController extends ReportsControllerBase
         // special piwik handling - if the user is not allowed to save piwik settings
         // force override the settings to write with the current config and ignore the
         // submitted values
-        if (!$this->getUser()->isAllowed('piwik_settings')) {
+        if (!$this->getAdminUser()->isAllowed('piwik_settings')) {
             $currentConfig = Config::getReportConfig()->toArray();
             $piwikConfig   = $currentConfig['piwik'] ?? [];
 
@@ -81,6 +81,6 @@ class SettingsController extends ReportsControllerBase
 
         $configWriter->write($values);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 }

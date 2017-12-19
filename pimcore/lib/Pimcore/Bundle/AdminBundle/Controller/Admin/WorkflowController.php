@@ -137,7 +137,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             $wfConfig['message'] = $e->getMessage();
         }
 
-        return $this->json($wfConfig);
+        return $this->adminJson($wfConfig);
     }
 
     /**
@@ -176,7 +176,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             ];
         }
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**
@@ -187,7 +187,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     protected function getWorkflowManager()
     {
         if (!$this->manager) {
-            $this->manager = Workflow\Manager\Factory::getManager($this->element, $this->getUser());
+            $this->manager = Workflow\Manager\Factory::getManager($this->element, $this->getAdminUser());
         }
 
         return $this->manager;
@@ -271,7 +271,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
         //get the latest available version of the element -
         $this->element = $this->getLatestVersion($this->element);
-        $this->element->setUserModification($this->getUser()->getId());
+        $this->element->setUserModification($this->getAdminUser()->getId());
     }
 
     /**

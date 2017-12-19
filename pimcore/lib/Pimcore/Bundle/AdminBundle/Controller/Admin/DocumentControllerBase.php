@@ -181,7 +181,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             Session::writeClose();
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -215,7 +215,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             $session->remove($key);
         }, 'pimcore_documents');
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -264,7 +264,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             $doc->saveVersion();
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**

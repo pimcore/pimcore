@@ -58,7 +58,7 @@ class TranslationController extends AdminController
         if ($admin) {
             $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages());
         } else {
-            $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite, $this->getUser()->getAllowedLanguagesForEditingWebsiteTranslations());
+            $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite, $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations());
         }
 
         $result =[
@@ -79,7 +79,7 @@ class TranslationController extends AdminController
             $result['delta'] = base64_encode(json_encode($enrichedDelta));
         }
 
-        $response = $this->json($result);
+        $response = $this->adminJson($result);
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set('Content-Type', 'text/html');
@@ -145,7 +145,7 @@ class TranslationController extends AdminController
                 $languages = Tool\Admin::getLanguages();
             } else {
                 $t = new Translation\Website();
-                $languages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+                $languages = $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
             }
 
             foreach ($languages as $language) {
@@ -168,7 +168,7 @@ class TranslationController extends AdminController
         if ($admin) {
             $languages = Tool\Admin::getLanguages();
         } else {
-            $languages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+            $languages = $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
         }
 
         //add language columns which have no translations yet
@@ -259,7 +259,7 @@ class TranslationController extends AdminController
             }
         }
 
-        return $this->json(null);
+        return $this->adminJson(null);
     }
 
     /**
@@ -294,7 +294,7 @@ class TranslationController extends AdminController
                 $t = $class::getByKey($data['key']);
                 $t->delete();
 
-                return $this->json(['success' => true, 'data' => []]);
+                return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 $t = $class::getByKey($data['key']);
 
@@ -317,7 +317,7 @@ class TranslationController extends AdminController
                     $t->getTranslations()
                 );
 
-                return $this->json(['data' => $return, 'success' => true]);
+                return $this->adminJson(['data' => $return, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 try {
                     $t = $class::getByKey($data['key']);
@@ -340,7 +340,7 @@ class TranslationController extends AdminController
                     'modificationDate' => $t->getModificationDate(),
                 ], $t->getTranslations());
 
-                return $this->json(['data' => $return, 'success' => true]);
+                return $this->adminJson(['data' => $return, 'success' => true]);
             }
         } else {
             // get list of types
@@ -350,7 +350,7 @@ class TranslationController extends AdminController
                 $list = new Translation\Website\Listing();
             }
 
-            $validLanguages = $admin ? Tool\Admin::getLanguages() : $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+            $validLanguages = $admin ? Tool\Admin::getLanguages() : $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
 
             $list->setOrder('asc');
             $list->setOrderKey($tableName . '.key', false);
@@ -397,7 +397,7 @@ class TranslationController extends AdminController
                     'modificationDate' => $t->getModificationDate()]);
             }
 
-            return $this->json(['data' => $translations, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $translations, 'success' => true, 'total' => $list->getTotalCount()]);
         }
     }
 
@@ -457,7 +457,7 @@ class TranslationController extends AdminController
     {
         $joins = [];
         $conditions = [];
-        $validLanguages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+        $validLanguages = $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
 
         $db = \Pimcore\Db::get();
         $conditionFilters = [];
@@ -555,10 +555,10 @@ class TranslationController extends AdminController
 
             \Pimcore\Cache::clearTags(['translator', 'translate']);
 
-            return $this->json(['success' => true]);
+            return $this->adminJson(['success' => true]);
         }
 
-        return $this->json(['success' => false]);
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -644,7 +644,7 @@ class TranslationController extends AdminController
             ]];
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'jobs' => $jobs,
             'id' => $exportId
@@ -804,7 +804,7 @@ class TranslationController extends AdminController
 
         $xliff->asXML($exportFile);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -856,7 +856,7 @@ class TranslationController extends AdminController
             ]];
         }
 
-        $response = $this->json([
+        $response = $this->adminJson([
             'success' => true,
             'jobs' => $jobs,
             'id' => $id
@@ -895,7 +895,7 @@ class TranslationController extends AdminController
         if (!Tool::isValidLanguage($target)) {
             $target = \Locale::getPrimaryLanguage($target);
             if (!Tool::isValidLanguage($target)) {
-                return $this->json([
+                return $this->adminJson([
                     'success' => false
                 ]);
             }
@@ -964,7 +964,7 @@ class TranslationController extends AdminController
             Logger::error('Could not resolve element ' . $file['original']);
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -1291,7 +1291,7 @@ class TranslationController extends AdminController
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -1379,7 +1379,7 @@ class TranslationController extends AdminController
             $t->save();
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -1393,12 +1393,12 @@ class TranslationController extends AdminController
      */
     public function getWebsiteTranslationLanguagesAction(Request $request)
     {
-        return $this->json([
-            'view' => $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations(),
+        return $this->adminJson([
+            'view' => $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations(),
 
             //when no view language is defined, all languages are editable. if one view language is defined, it
             //may be possible that no edit language is set intentionally
-            'edit' => $this->getUser()->getAllowedLanguagesForEditingWebsiteTranslations()
+            'edit' => $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations()
         ]);
     }
 }

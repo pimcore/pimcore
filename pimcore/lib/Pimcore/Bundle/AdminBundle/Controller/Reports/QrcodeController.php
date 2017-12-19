@@ -50,7 +50,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
             ];
         }
 
-        return $this->json($codes);
+        return $this->adminJson($codes);
     }
 
     /**
@@ -74,7 +74,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
             $success = true;
         }
 
-        return $this->json(['success' => $success, 'id' => $code->getName()]);
+        return $this->adminJson(['success' => $success, 'id' => $code->getName()]);
     }
 
     /**
@@ -89,7 +89,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
         $code = Qrcode\Config::getByName($request->get('name'));
         $code->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -103,7 +103,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     {
         $code = Qrcode\Config::getByName($request->get('name'));
 
-        return $this->json($code);
+        return $this->adminJson($code);
     }
 
     /**
@@ -127,7 +127,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
         $code->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**

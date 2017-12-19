@@ -58,7 +58,7 @@ class SettingsController extends AdminController
                 $metadata = Metadata\Predefined::getById($id);
                 $metadata->delete();
 
-                return $this->json(['success' => true, 'data' => []]);
+                return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 $data = $this->decodeJson($request->get('data'));
 
@@ -69,14 +69,14 @@ class SettingsController extends AdminController
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem && $existingItem->getId() != $metadata->getId()) {
-                    return $this->json(['message' => 'rule_violation', 'success' => false]);
+                    return $this->adminJson(['message' => 'rule_violation', 'success' => false]);
                 }
 
                 $metadata->minimize();
                 $metadata->save();
                 $metadata->expand();
 
-                return $this->json(['data' => $metadata, 'success' => true]);
+                return $this->adminJson(['data' => $metadata, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -88,12 +88,12 @@ class SettingsController extends AdminController
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem) {
-                    return $this->json(['message' => 'rule_violation', 'success' => false]);
+                    return $this->adminJson(['message' => 'rule_violation', 'success' => false]);
                 }
 
                 $metadata->save();
 
-                return $this->json(['data' => $metadata, 'success' => true]);
+                return $this->adminJson(['data' => $metadata, 'success' => true]);
             }
         } else {
             // get list of types
@@ -123,7 +123,7 @@ class SettingsController extends AdminController
                 }
             }
 
-            return $this->json(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
         }
     }
 
@@ -146,7 +146,7 @@ class SettingsController extends AdminController
             $result[] = $item;
         }
 
-        return $this->json(['data' => $result, 'success' => true]);
+        return $this->adminJson(['data' => $result, 'success' => true]);
     }
 
     /**
@@ -167,7 +167,7 @@ class SettingsController extends AdminController
                 $property = Property\Predefined::getById($id);
                 $property->delete();
 
-                return $this->json(['success' => true, 'data' => []]);
+                return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 $data = $this->decodeJson($request->get('data'));
 
@@ -177,7 +177,7 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->json(['data' => $property, 'success' => true]);
+                return $this->adminJson(['data' => $property, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -188,7 +188,7 @@ class SettingsController extends AdminController
 
                 $property->save();
 
-                return $this->json(['data' => $property, 'success' => true]);
+                return $this->adminJson(['data' => $property, 'success' => true]);
             }
         } else {
             // get list of types
@@ -222,7 +222,7 @@ class SettingsController extends AdminController
                 }
             }
 
-            return $this->json(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
         }
     }
 
@@ -353,7 +353,7 @@ class SettingsController extends AdminController
             ]
         ];
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -539,7 +539,7 @@ class SettingsController extends AdminController
             'ip' => $values['general.debug_ip'],
         ]));
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -599,7 +599,7 @@ class SettingsController extends AdminController
             'values' => $valueArray
         ];
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -632,7 +632,7 @@ class SettingsController extends AdminController
         $configFile = \Pimcore\Config::locateConfigFile('web2print.php');
         File::putPhpFile($configFile, to_php_data_file_format($values));
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -670,7 +670,7 @@ class SettingsController extends AdminController
             \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR);
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -692,7 +692,7 @@ class SettingsController extends AdminController
 
         \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -718,7 +718,7 @@ class SettingsController extends AdminController
 
         \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -749,7 +749,7 @@ class SettingsController extends AdminController
                 $route = Staticroute::getById($id);
                 $route->delete();
 
-                return $this->json(['success' => true, 'data' => []]);
+                return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 // save routes
                 $route = Staticroute::getById($data['id']);
@@ -757,7 +757,7 @@ class SettingsController extends AdminController
 
                 $route->save();
 
-                return $this->json(['data' => $route, 'success' => true]);
+                return $this->adminJson(['data' => $route, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 unset($data['id']);
 
@@ -767,7 +767,7 @@ class SettingsController extends AdminController
 
                 $route->save();
 
-                return $this->json(['data' => $route, 'success' => true]);
+                return $this->adminJson(['data' => $route, 'success' => true]);
             }
         } else {
             // get list of routes
@@ -803,10 +803,10 @@ class SettingsController extends AdminController
                 $routes[] = $route;
             }
 
-            return $this->json(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -819,12 +819,12 @@ class SettingsController extends AdminController
     public function getAvailableLanguagesAction(Request $request)
     {
         if ($languages = Tool::getValidLanguages()) {
-            return $this->json($languages);
+            return $this->adminJson($languages);
         }
 
         $t = new Model\Translation\Website();
 
-        return $this->json($t->getAvailableLanguages());
+        return $this->adminJson($t->getAvailableLanguages());
     }
 
     /**
@@ -849,7 +849,7 @@ class SettingsController extends AdminController
             }
         }
 
-        return $this->json($langs);
+        return $this->adminJson($langs);
     }
 
     /**
@@ -873,7 +873,7 @@ class SettingsController extends AdminController
                     $redirect->delete();
                 }
 
-                return $this->json(['success' => true, 'data' => []]);
+                return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 $data = $this->decodeJson($request->get('data'));
 
@@ -901,7 +901,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                return $this->json(['data' => $redirect, 'success' => true]);
+                return $this->adminJson(['data' => $redirect, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -930,7 +930,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                return $this->json(['data' => $redirect, 'success' => true]);
+                return $this->adminJson(['data' => $redirect, 'success' => true]);
             }
         } else {
             // get list of routes
@@ -964,10 +964,10 @@ class SettingsController extends AdminController
                 $redirects[] = $redirect;
             }
 
-            return $this->json(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -990,7 +990,7 @@ class SettingsController extends AdminController
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
 
-                return $this->json(['success' => true, 'data' => []]);
+                return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 $data = $this->decodeJson($request->get('data'));
 
@@ -1015,7 +1015,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                return $this->json(['data' => $glossary, 'success' => true]);
+                return $this->adminJson(['data' => $glossary, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -1041,7 +1041,7 @@ class SettingsController extends AdminController
                     }
                 }
 
-                return $this->json(['data' => $glossary, 'success' => true]);
+                return $this->adminJson(['data' => $glossary, 'success' => true]);
             }
         } else {
             // get list of glossaries
@@ -1075,10 +1075,10 @@ class SettingsController extends AdminController
                 $glossaries[] = $glossary;
             }
 
-            return $this->json(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
+            return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -1117,7 +1117,7 @@ class SettingsController extends AdminController
             }
         }
 
-        return $this->json($sites);
+        return $this->adminJson($sites);
     }
 
     /**
@@ -1145,7 +1145,7 @@ class SettingsController extends AdminController
 
         $result = ['data' => $options, 'success' => true, 'total' => count($options)];
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
@@ -1192,7 +1192,7 @@ class SettingsController extends AdminController
             ];
         }
 
-        return $this->json($thumbnails);
+        return $this->adminJson($thumbnails);
     }
 
     /**
@@ -1218,7 +1218,7 @@ class SettingsController extends AdminController
             $success = true;
         }
 
-        return $this->json(['success' => $success, 'id' => $pipe->getName()]);
+        return $this->adminJson(['success' => $success, 'id' => $pipe->getName()]);
     }
 
     /**
@@ -1235,7 +1235,7 @@ class SettingsController extends AdminController
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
         $pipe->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1251,7 +1251,7 @@ class SettingsController extends AdminController
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->json($pipe);
+        return $this->adminJson($pipe);
     }
 
     /**
@@ -1291,7 +1291,7 @@ class SettingsController extends AdminController
 
         $this->deleteThumbnailTmpFiles($pipe);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1337,7 +1337,7 @@ class SettingsController extends AdminController
             ];
         }
 
-        return $this->json($thumbnails);
+        return $this->adminJson($thumbnails);
     }
 
     /**
@@ -1363,7 +1363,7 @@ class SettingsController extends AdminController
             $success = true;
         }
 
-        return $this->json(['success' => $success, 'id' => $pipe->getName()]);
+        return $this->adminJson(['success' => $success, 'id' => $pipe->getName()]);
     }
 
     /**
@@ -1380,7 +1380,7 @@ class SettingsController extends AdminController
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
         $pipe->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1396,7 +1396,7 @@ class SettingsController extends AdminController
 
         $pipe = Asset\Video\Thumbnail\Config::getByName($request->get('name'));
 
-        return $this->json($pipe);
+        return $this->adminJson($pipe);
     }
 
     /**
@@ -1438,7 +1438,7 @@ class SettingsController extends AdminController
 
         $this->deleteVideoThumbnailTmpFiles($pipe);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1464,7 +1464,7 @@ class SettingsController extends AdminController
             // save data
             \Pimcore\File::put($robotsPath, $request->get('data'));
 
-            return $this->json([
+            return $this->adminJson([
                 'success' => true
             ]);
         } else {
@@ -1474,7 +1474,7 @@ class SettingsController extends AdminController
                 $data = file_get_contents($robotsPath);
             }
 
-            return $this->json([
+            return $this->adminJson([
                 'success' => true,
                 'data' => $data,
                 'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt')
@@ -1505,7 +1505,7 @@ class SettingsController extends AdminController
             ];
         }
 
-        return $this->json($tags);
+        return $this->adminJson($tags);
     }
 
     /**
@@ -1531,7 +1531,7 @@ class SettingsController extends AdminController
             $success = true;
         }
 
-        return $this->json(['success' => $success, 'id' => $tag->getName()]);
+        return $this->adminJson(['success' => $success, 'id' => $tag->getName()]);
     }
 
     /**
@@ -1548,7 +1548,7 @@ class SettingsController extends AdminController
         $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
         $tag->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1564,7 +1564,7 @@ class SettingsController extends AdminController
 
         $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
 
-        return $this->json($tag);
+        return $this->adminJson($tag);
     }
 
     /**
@@ -1617,7 +1617,7 @@ class SettingsController extends AdminController
 
         $tag->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1648,7 +1648,7 @@ class SettingsController extends AdminController
                     $setting = WebsiteSetting::getById($id);
                     $setting->delete();
 
-                    return $this->json(['success' => true, 'data' => []]);
+                    return $this->adminJson(['success' => true, 'data' => []]);
                 } elseif ($request->get('xaction') == 'update') {
                     // save routes
                     $setting = WebsiteSetting::getById($data['id']);
@@ -1671,7 +1671,7 @@ class SettingsController extends AdminController
 
                     $data = $this->getWebsiteSettingForEditMode($setting);
 
-                    return $this->json(['data' => $data, 'success' => true]);
+                    return $this->adminJson(['data' => $data, 'success' => true]);
                 } elseif ($request->get('xaction') == 'create') {
                     unset($data['id']);
 
@@ -1681,7 +1681,7 @@ class SettingsController extends AdminController
 
                     $setting->save();
 
-                    return $this->json(['data' => $setting, 'success' => true]);
+                    return $this->adminJson(['data' => $setting, 'success' => true]);
                 }
             } else {
                 // get list of routes
@@ -1713,13 +1713,13 @@ class SettingsController extends AdminController
                     $settings[] = $resultItem;
                 }
 
-                return $this->json(['data' => $settings, 'success' => true, 'total' => $totalCount]);
+                return $this->adminJson(['data' => $settings, 'success' => true, 'total' => $totalCount]);
             }
         } catch (\Exception $e) {
             throw $e;
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -1782,7 +1782,7 @@ class SettingsController extends AdminController
 
         $result = ['data' => $options, 'success' => true, 'total' => count($options)];
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
