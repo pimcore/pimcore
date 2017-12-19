@@ -1144,35 +1144,12 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function addNewDataField($fieldNameToAddAfter, DataObject\ClassDefinition\Data $fieldToAdd, DataObject\ClassDefinition\Layout $layoutComponent = null)
     {
-        $found = false;
-        $index = null;
-
         if (null === $layoutComponent) {
             $layoutComponent = $this->getLayoutDefinitions();
         }
 
-        $children = $layoutComponent->getChildren();
-
-        //try to find field
-        foreach ($children as $index => $child) {
-            if ($child->getName() == $fieldNameToAddAfter) {
-                $found = true;
-                break;
-            }
-        }
-
-        if ($found) {
-            //if found, insert toAdd after index
-            array_splice($children, $index + 1, 0, [$fieldToAdd]);
-            $layoutComponent->setChildren($children);
-        } else {
-            //if not found, call recursive
-            foreach ($children as $index => $child) {
-                if ($child instanceof ClassDefinition\Layout && $child->getChildren()) {
-                    $this->addNewDataField($fieldNameToAddAfter, $fieldToAdd, $child);
-                }
-            }
-        }
+        $definitionModifier = new DefinitionModifier();
+        $definitionModifier->appendFields($layoutComponent, $fieldNameToAddAfter, $fieldToAdd);
     }
 
     /**
@@ -1184,35 +1161,11 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function removeExistingDataField($fieldNameToRemove, DataObject\ClassDefinition\Layout $layoutComponent = null)
     {
-        $found = false;
-        $index = null;
-
         if (null === $layoutComponent) {
             $layoutComponent = $this->getLayoutDefinitions();
         }
 
-        $children = $layoutComponent->getChildren();
-
-        //try to find field
-        foreach ($children as $index => $child) {
-            if ($child->getName() == $fieldNameToRemove) {
-                $found = true;
-                break;
-            }
-        }
-
-        if ($found) {
-            //if found, insert toAdd after index
-            unset($children[$index]);
-            unset($this->fieldDefinitions[$fieldNameToRemove]);
-            $layoutComponent->setChildren(array_values($children));
-        } else {
-            //if not found, call recursive
-            foreach ($children as $index => $child) {
-                if ($child instanceof ClassDefinition\Layout && $child->getChildren()) {
-                    $this->removeExistingDataField($fieldNameToRemove, $child);
-                }
-            }
-        }
+        $definitionModifier = new DefinitionModifier();
+        $definitionModifier->removeField($layoutComponent, $fieldNameToRemove);
     }
 }
