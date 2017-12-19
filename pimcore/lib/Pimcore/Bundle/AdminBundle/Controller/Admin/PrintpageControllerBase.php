@@ -100,7 +100,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             $page = Document\Printpage::getById($request->get('id'));
 
             $page = $this->getLatestVersion($page);
-            $page->setUserModification($this->getUser()->getId());
+            $page->setUserModification($this->getAdminUser()->getId());
 
             // save to session
             $key = 'document_' . $request->get('id');
@@ -332,7 +332,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     private function getStoredProcessingOptions($documentId)
     {
-        $filename = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getUser()->getId() . '.psf';
+        $filename = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf';
         if (file_exists($filename)) {
             return \Pimcore\Tool\Serialize::unserialize(file_get_contents($filename));
         } else {
@@ -346,7 +346,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     private function saveProcessingOptions($documentId, $options)
     {
-        file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getUser()->getId() . '.psf', \Pimcore\Tool\Serialize::serialize($options));
+        file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf', \Pimcore\Tool\Serialize::serialize($options));
     }
 
     /**

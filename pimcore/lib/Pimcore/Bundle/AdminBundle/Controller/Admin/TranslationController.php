@@ -58,7 +58,7 @@ class TranslationController extends AdminController
         if ($admin) {
             $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages());
         } else {
-            $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite, $this->getUser()->getAllowedLanguagesForEditingWebsiteTranslations());
+            $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite, $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations());
         }
 
         $result =[
@@ -145,7 +145,7 @@ class TranslationController extends AdminController
                 $languages = Tool\Admin::getLanguages();
             } else {
                 $t = new Translation\Website();
-                $languages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+                $languages = $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
             }
 
             foreach ($languages as $language) {
@@ -168,7 +168,7 @@ class TranslationController extends AdminController
         if ($admin) {
             $languages = Tool\Admin::getLanguages();
         } else {
-            $languages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+            $languages = $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
         }
 
         //add language columns which have no translations yet
@@ -350,7 +350,7 @@ class TranslationController extends AdminController
                 $list = new Translation\Website\Listing();
             }
 
-            $validLanguages = $admin ? Tool\Admin::getLanguages() : $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+            $validLanguages = $admin ? Tool\Admin::getLanguages() : $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
 
             $list->setOrder('asc');
             $list->setOrderKey($tableName . '.key', false);
@@ -457,7 +457,7 @@ class TranslationController extends AdminController
     {
         $joins = [];
         $conditions = [];
-        $validLanguages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+        $validLanguages = $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
 
         $db = \Pimcore\Db::get();
         $conditionFilters = [];
@@ -1394,11 +1394,11 @@ class TranslationController extends AdminController
     public function getWebsiteTranslationLanguagesAction(Request $request)
     {
         return $this->json([
-            'view' => $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations(),
+            'view' => $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations(),
 
             //when no view language is defined, all languages are editable. if one view language is defined, it
             //may be possible that no edit language is set intentionally
-            'edit' => $this->getUser()->getAllowedLanguagesForEditingWebsiteTranslations()
+            'edit' => $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations()
         ]);
     }
 }

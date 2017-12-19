@@ -162,7 +162,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
                         if ($type == 'user') {
                             $user->setAdmin(false);
-                            if ($this->getUser()->isAdmin()) {
+                            if ($this->getAdminUser()->isAdmin()) {
                                 $user->setAdmin($rObject->getAdmin());
                             }
                             $user->setActive($rObject->getActive());
@@ -236,7 +236,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         // only admins are allowed to delete admins and folders
         // because a folder might contain an admin user, so it is simply not allowed for users with the "users" permission
-        if (($user instanceof User\Folder && !$this->getUser()->isAdmin()) || ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin())) {
+        if (($user instanceof User\Folder && !$this->getAdminUser()->isAdmin()) || ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin())) {
             throw new \Exception('You are not allowed to delete this user');
         } else {
             if ($user instanceof User\Role\Folder) {
@@ -294,7 +294,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $user = User\AbstractUser::getById(intval($request->get('id')));
 
-        if ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin()) {
+        if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
         }
 
@@ -319,7 +319,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
             // only admins are allowed to create admin users
             // if the logged in user isn't an admin, set admin always to false
-            if (!$this->getUser()->isAdmin() && $user instanceof User) {
+            if (!$this->getAdminUser()->isAdmin() && $user instanceof User) {
                 if ($user instanceof User) {
                     $user->setAdmin(false);
                 }
@@ -381,7 +381,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $user = User::getById(intval($request->get('id')));
 
-        if ($user->isAdmin() && !$this->getUser()->isAdmin()) {
+        if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
         }
 
@@ -488,7 +488,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function uploadCurrentUserImageAction(Request $request)
     {
-        $user = $this->getUser();
+        $user = $this->getAdminUser();
         if ($user != null) {
             if ($user->getId() == $request->get('id')) {
                 $this->uploadImageAction();
@@ -513,7 +513,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     {
         $this->protectCsrf($request);
 
-        $user = $this->getUser();
+        $user = $this->getAdminUser();
         if ($user != null) {
             if ($user->getId() == $request->get('id')) {
                 $values = $this->decodeJson($request->get('data'), true);
@@ -575,7 +575,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function getCurrentUserAction(Request $request)
     {
-        $user = $this->getUser();
+        $user = $this->getAdminUser();
 
         $list = new User\Permission\Definition\Listing();
         $definitions = $list->load();
@@ -712,17 +712,17 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function uploadImageAction(Request $request)
     {
         if ($request->get('id')) {
-            if ($this->getUser()->getId() != $request->get('id')) {
+            if ($this->getAdminUser()->getId() != $request->get('id')) {
                 $this->checkPermission('users');
             }
             $id = $request->get('id');
         } else {
-            $id = $this->getUser()->getId();
+            $id = $this->getAdminUser()->getId();
         }
 
         $userObj = User::getById($id);
 
-        if ($userObj->isAdmin() && !$this->getUser()->isAdmin()) {
+        if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
         }
 
@@ -747,12 +747,12 @@ class UserController extends AdminController implements EventedControllerInterfa
     public function getImageAction(Request $request)
     {
         if ($request->get('id')) {
-            if ($this->getUser()->getId() != $request->get('id')) {
+            if ($this->getAdminUser()->getId() != $request->get('id')) {
                 $this->checkPermission('users');
             }
             $id = $request->get('id');
         } else {
-            $id = $this->getUser()->getId();
+            $id = $this->getAdminUser()->getId();
         }
 
         /** @var User $userObj */
@@ -778,7 +778,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     {
         $user = User::getById($request->get('id'));
 
-        if ($user->isAdmin() && !$this->getUser()->isAdmin()) {
+        if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to login as an admin user');
         }
 
@@ -868,7 +868,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         // get available user
         $list = new \Pimcore\Model\User\Listing();
-        $list->setCondition('type = "user" and id != ' . $this->getUser()->getId());
+        $list->setCondition('type = "user" and id != ' . $this->getAdminUser()->getId());
 
         $list->load();
         $userList = $list->getUsers();

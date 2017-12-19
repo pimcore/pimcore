@@ -54,7 +54,7 @@ class SearchController extends AdminController
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
-        $user = $this->getUser();
+        $user = $this->getAdminUser();
 
         $query = $allParams['query'];
         if ($query == '*') {

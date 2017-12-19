@@ -163,11 +163,11 @@ class AssetController extends ElementControllerBase implements EventedController
 
             // get assets
             $childsList = new Asset\Listing();
-            if ($this->getUser()->isAdmin()) {
+            if ($this->getAdminUser()->isAdmin()) {
                 $childsList->setCondition('parentId = ? ', $asset->getId());
             } else {
-                $userIds = $this->getUser()->getRoles();
-                $userIds[] = $this->getUser()->getId();
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
                 $childsList->setCondition('parentId = ? and
                     (
                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -193,7 +193,7 @@ class AssetController extends ElementControllerBase implements EventedController
             return $this->json([
                 'offset' => $offset,
                 'limit' => $limit,
-                'total' => $asset->getChildAmount($this->getUser()),
+                'total' => $asset->getChildAmount($this->getAdminUser()),
                 'nodes' => $assets
             ]);
         } else {
@@ -321,8 +321,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $asset = Asset::create($parentId, [
                 'filename' => $filename,
                 'sourcePath' => $sourcePath,
-                'userOwner' => $this->getUser()->getId(),
-                'userModification' => $this->getUser()->getId()
+                'userOwner' => $this->getAdminUser()->getId(),
+                'userModification' => $this->getAdminUser()->getId()
             ]);
             $success = true;
 
@@ -391,7 +391,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $stream = fopen($_FILES['Filedata']['tmp_name'], 'r+');
         $asset->setStream($stream);
         $asset->setCustomSetting('thumbnails', null);
-        $asset->setUserModification($this->getUser()->getId());
+        $asset->setUserModification($this->getAdminUser()->getId());
         $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
         if ($newFilename != $asset->getFilename()) {
             $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
@@ -435,8 +435,8 @@ class AssetController extends ElementControllerBase implements EventedController
                 $asset = Asset::create($request->get('parentId'), [
                     'filename' => $request->get('name'),
                     'type' => 'folder',
-                    'userOwner' => $this->getUser()->getId(),
-                    'userModification' => $this->getUser()->getId()
+                    'userOwner' => $this->getAdminUser()->getId(),
+                    'userModification' => $this->getAdminUser()->getId()
                 ]);
                 $success = true;
             }
@@ -742,7 +742,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $asset = Asset::getById($request->get('id'));
         if ($asset->isAllowed('settings')) {
-            $asset->setUserModification($this->getUser()->getId());
+            $asset->setUserModification($this->getAdminUser()->getId());
 
             // if the position is changed the path must be changed || also from the childs
             if ($request->get('parentId')) {
@@ -914,7 +914,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         $asset->setData($request->get('data'));
                     }
 
-                    $asset->setUserModification($this->getUser()->getId());
+                    $asset->setUserModification($this->getAdminUser()->getId());
 
                     try {
                         $asset->save();
@@ -959,7 +959,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $currentAsset = Asset::getById($asset->getId());
         if ($currentAsset->isAllowed('publish')) {
             try {
-                $asset->setUserModification($this->getUser()->getId());
+                $asset->setUserModification($this->getAdminUser()->getId());
                 $asset->save();
 
                 return $this->json(['success' => true]);
@@ -1410,7 +1410,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $asset->setData(Tool::getHttpData($request->get('url')));
-        $asset->setUserModification($this->getUser()->getId());
+        $asset->setUserModification($this->getAdminUser()->getId());
         $asset->save();
 
         return $this->json(['success' => true]);
@@ -1441,9 +1441,9 @@ class AssetController extends ElementControllerBase implements EventedController
         $list = new Asset\Listing();
         $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%')) ." AND type != 'folder'";
 
-        if (!$this->getUser()->isAdmin()) {
-            $userIds = $this->getUser()->getRoles();
-            $userIds[] = $this->getUser()->getId();
+        if (!$this->getAdminUser()->isAdmin()) {
+            $userIds = $this->getAdminUser()->getRoles();
+            $userIds[] = $this->getAdminUser()->getId();
             $conditionFilters[] .= ' (
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
@@ -1655,9 +1655,9 @@ class AssetController extends ElementControllerBase implements EventedController
             $db = \Pimcore\Db::get();
             $conditionFilters = [];
             $conditionFilters[] .= 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
-            if (!$this->getUser()->isAdmin()) {
-                $userIds = $this->getUser()->getRoles();
-                $userIds[] = $this->getUser()->getId();
+            if (!$this->getAdminUser()->isAdmin()) {
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
                 $conditionFilters[] .= ' (
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
@@ -1722,9 +1722,9 @@ class AssetController extends ElementControllerBase implements EventedController
                 $db = \Pimcore\Db::get();
                 $conditionFilters = [];
                 $conditionFilters[] .= "type != 'folder' AND path LIKE " . $db->quote($parentPath . '/%');
-                if (!$this->getUser()->isAdmin()) {
-                    $userIds = $this->getUser()->getRoles();
-                    $userIds[] = $this->getUser()->getId();
+                if (!$this->getAdminUser()->isAdmin()) {
+                    $userIds = $this->getAdminUser()->getRoles();
+                    $userIds[] = $this->getAdminUser()->getId();
                     $conditionFilters[] .= ' (
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
@@ -1883,8 +1883,8 @@ class AssetController extends ElementControllerBase implements EventedController
                             $asset = Asset::create($parent->getId(), [
                                 'filename' => $filename,
                                 'sourcePath' => $tmpFile,
-                                'userOwner' => $this->getUser()->getId(),
-                                'userModification' => $this->getUser()->getId()
+                                'userOwner' => $this->getAdminUser()->getId(),
+                                'userModification' => $this->getAdminUser()->getId()
                             ]);
 
                             @unlink($tmpFile);
@@ -1979,8 +1979,8 @@ class AssetController extends ElementControllerBase implements EventedController
                     $asset = Asset::create($folder->getId(), [
                         'filename' => $filename,
                         'sourcePath' => $absolutePath,
-                        'userOwner' => $this->getUser()->getId(),
-                        'userModification' => $this->getUser()->getId()
+                        'userOwner' => $this->getAdminUser()->getId(),
+                        'userModification' => $this->getAdminUser()->getId()
                     ]);
                 } else {
                     Logger::debug('prevented creating asset because of missing permissions ');
@@ -2025,8 +2025,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $asset = Asset::create($parentId, [
                 'filename' => $filename,
                 'data' => $data,
-                'userOwner' => $this->getUser()->getId(),
-                'userModification' => $this->getUser()->getId()
+                'userOwner' => $this->getAdminUser()->getId(),
+                'userModification' => $this->getAdminUser()->getId()
             ]);
             $success = true;
         } else {
@@ -2163,9 +2163,9 @@ class AssetController extends ElementControllerBase implements EventedController
                 }
             }
 
-            if (!$this->getUser()->isAdmin()) {
-                $userIds = $this->getUser()->getRoles();
-                $userIds[] = $this->getUser()->getId();
+            if (!$this->getAdminUser()->isAdmin()) {
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
                 $conditionFilters[] .= ' (
                                                     (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
@@ -2241,7 +2241,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'getImageThumbnailAction', 'getVideoThumbnailAction', 'getDocumentThumbnailAction'
         ]);
 
-        $this->_assetService = new Asset\Service($this->getUser());
+        $this->_assetService = new Asset\Service($this->getAdminUser());
     }
 
     /**

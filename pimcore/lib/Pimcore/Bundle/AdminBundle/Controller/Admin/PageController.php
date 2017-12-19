@@ -135,7 +135,7 @@ class PageController extends DocumentControllerBase
                     $page = $this->getLatestVersion($page);
                 }
 
-                $page->setUserModification($this->getUser()->getId());
+                $page->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $page->setPublished(false);
@@ -150,7 +150,7 @@ class PageController extends DocumentControllerBase
                 }
 
                 // check for redirects
-                if ($this->getUser()->isAllowed('redirects') && $request->get('settings')) {
+                if ($this->getAdminUser()->isAllowed('redirects') && $request->get('settings')) {
                     if (is_array($settings)) {
                         $redirectList = new Redirect\Listing();
                         $redirectList->setCondition('target = ?', $page->getId());

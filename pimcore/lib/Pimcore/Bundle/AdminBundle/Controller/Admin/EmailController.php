@@ -100,7 +100,7 @@ class EmailController extends DocumentControllerBase
                 $page = Document\Email::getById($request->get('id'));
 
                 $page = $this->getLatestVersion($page);
-                $page->setUserModification($this->getUser()->getId());
+                $page->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $page->setPublished(false);
@@ -177,7 +177,7 @@ class EmailController extends DocumentControllerBase
      */
     public function emailLogsAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -240,7 +240,7 @@ class EmailController extends DocumentControllerBase
      */
     public function showEmailLogAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -357,7 +357,7 @@ class EmailController extends DocumentControllerBase
      */
     public function deleteEmailLogAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -384,7 +384,7 @@ class EmailController extends DocumentControllerBase
      */
     public function resendEmailAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -439,7 +439,7 @@ class EmailController extends DocumentControllerBase
      */
     public function sendTestEmailAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 
@@ -472,7 +472,7 @@ class EmailController extends DocumentControllerBase
      */
     public function blacklistAction(Request $request)
     {
-        if (!$this->getUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 

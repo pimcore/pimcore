@@ -185,15 +185,15 @@ class DataObjectHelperController extends AdminController
             $gridConfig->setConfig(json_encode($config));
         } else {
             $gridConfig = GridConfig::getById($gridConfigId);
-            $user = $this->getUser();
+            $user = $this->getAdminUser();
             if ($gridConfig && $gridConfig->getOwnerId() != $user->getId()) {
-                $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $gridConfig->getClassId());
+                $sharedGridConfigs = $this->getSharedGridColumnConfigs($this->getAdminUser(), $gridConfig->getClassId());
 
                 if ($sharedGridConfigs) {
                     $found = false;
                     /** @var $sharedConfig GridConfigShare */
                     foreach ($sharedGridConfigs as $sharedConfig) {
-                        if ($sharedConfig->getSharedWithUserId() == $this->getUser()->getId()) {
+                        if ($sharedConfig->getSharedWithUserId() == $this->getAdminUser()->getId()) {
                             $found = true;
                             break;
                         }
@@ -253,11 +253,11 @@ class DataObjectHelperController extends AdminController
     public function getExportConfigsAction(Request $request)
     {
         $classId = $request->get('classId');
-        $list = $this->getMyOwnGridColumnConfigs($this->getUser()->getId(), $classId, null);
+        $list = $this->getMyOwnGridColumnConfigs($this->getAdminUser()->getId(), $classId, null);
         if (!is_array($list)) {
             $list = [];
         }
-        $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getUser(), $classId, null));
+        $list = array_merge($list, $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, null));
         $result = [];
 
         $result[] = [
@@ -294,7 +294,7 @@ class DataObjectHelperController extends AdminController
         }
         $success = false;
         if ($config) {
-            if ($config->getOwnerId() != $this->getUser()->getId()) {
+            if ($config->getOwnerId() != $this->getAdminUser()->getId()) {
                 throw new \Exception("don't mess with someone elses grid config");
             }
 
@@ -321,7 +321,7 @@ class DataObjectHelperController extends AdminController
         }
         $success = false;
         if ($gridConfig) {
-            if ($gridConfig->getOwnerId() != $this->getUser()->getId()) {
+            if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
                 throw new \Exception("don't mess with someone elses grid config");
             }
 
@@ -395,7 +395,7 @@ class DataObjectHelperController extends AdminController
             $types = explode(',', $request->get('types'));
         }
 
-        $userId = $this->getUser()->getId();
+        $userId = $this->getAdminUser()->getId();
 
         $requestedGridConfigId = $isDelete ? null : $request->get('gridConfigId');
 
@@ -439,9 +439,9 @@ class DataObjectHelperController extends AdminController
 
             if ($savedGridConfig) {
                 try {
-                    $userIds = [$this->getUser()->getId()];
-                    if ($this->getUser()->getRoles()) {
-                        $userIds = array_merge($userIds, $this->getUser()->getRoles());
+                    $userIds = [$this->getAdminUser()->getId()];
+                    if ($this->getAdminUser()->getRoles()) {
+                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     }
                     $userIds = implode(',', $userIds);
                     $shared = $savedGridConfig->isShareGlobally() || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
@@ -450,7 +450,7 @@ class DataObjectHelperController extends AdminController
                 } catch (\Exception $e) {
                 }
 
-                if (!$shared && $savedGridConfig->getOwnerId() != $this->getUser()->getId()) {
+                if (!$shared && $savedGridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
                     throw new \Exception('you are neither the onwner of this config nor it is shared with you');
                 }
                 $gridConfigId = $savedGridConfig->getId();
@@ -598,7 +598,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $availableConfigs = $this->getMyOwnGridColumnConfigs($userId, $class->getId(), $searchType);
-        $sharedConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $class->getId(), $searchType);
+        $sharedConfigs = $this->getSharedGridColumnConfigs($this->getAdminUser(), $class->getId(), $searchType);
         $settings = $this->getShareSettings((int) $gridConfigId);
         $settings['gridConfigId'] = (int)  $gridConfigId;
         $settings['gridConfigName'] = $gridConfigName;
@@ -799,7 +799,7 @@ class DataObjectHelperController extends AdminController
             $classId = $request->get('classId');
             $gridConfigId = $request->get('gridConfigId');
             $searchType = $request->get('searchType');
-            $user = $this->getUser();
+            $user = $this->getAdminUser();
             $db = Db::get();
             $db->query('delete from gridconfig_favourites where '
                 . 'ownerId = ' . $user->getId()
@@ -830,7 +830,7 @@ class DataObjectHelperController extends AdminController
             $gridConfigId = $request->get('gridConfigId');
             $searchType = $request->get('searchType');
             $global = $request->get('global');
-            $user = $this->getUser();
+            $user = $this->getAdminUser();
 
             $favourite = new GridConfigFavourite();
             $favourite->setOwnerId($user->getId());
@@ -929,7 +929,7 @@ class DataObjectHelperController extends AdminController
                 } catch (\Exception $e) {
                 }
             }
-            if ($importConfig && $importConfig->getOwnerId() != $this->getUser()->getId()) {
+            if ($importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()) {
                 throw new \Exception("don't mess around with somebody elses configuration");
             }
 
@@ -937,7 +937,7 @@ class DataObjectHelperController extends AdminController
                 $importConfig = new ImportConfig();
                 $importConfig->setName(date('c'));
                 $importConfig->setClassId($classId);
-                $importConfig->setOwnerId($this->getUser()->getId());
+                $importConfig->setOwnerId($this->getAdminUser()->getId());
             }
 
             if ($configData) {
@@ -946,7 +946,7 @@ class DataObjectHelperController extends AdminController
                 $description = $configData['shareSettings']['configDescription'];
                 $importConfig->setName($name);
                 $importConfig->setDescription($description);
-                $importConfig->setShareGlobally($configData['shareSettings']['shareGlobally'] && $this->getUser()->isAdmin());
+                $importConfig->setShareGlobally($configData['shareSettings']['shareGlobally'] && $this->getAdminUser()->isAdmin());
             }
 
             $configDataEncoded = json_encode($configData);
@@ -957,7 +957,7 @@ class DataObjectHelperController extends AdminController
 
             return $this->json(['success' => true,
                         'importConfigId' => $importConfig->getId(),
-                    'availableConfigs' => $this->getImportConfigs($importService, $this->getUser(), $classId)
+                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId)
                     ]
                 );
         } catch (\Exception $e) {
@@ -998,7 +998,7 @@ class DataObjectHelperController extends AdminController
                     } catch (\Exception $e) {
                     }
                 }
-                if ($gridConfig && $gridConfig->getOwnerId() != $this->getUser()->getId()) {
+                if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
                     throw new \Exception("don't mess around with somebody elses configuration");
                 }
 
@@ -1010,30 +1010,30 @@ class DataObjectHelperController extends AdminController
                     $gridConfig->setClassId($classId);
                     $gridConfig->setSearchType($searchType);
 
-                    $gridConfig->setOwnerId($this->getUser()->getId());
+                    $gridConfig->setOwnerId($this->getAdminUser()->getId());
                 }
 
                 if ($metadata) {
                     $gridConfig->setName($metadata['gridConfigName']);
                     $gridConfig->setDescription($metadata['gridConfigDescription']);
-                    $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getUser()->isAdmin());
+                    $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
                 }
 
                 $gridConfigData = json_encode($gridConfigData);
                 $gridConfig->setConfig($gridConfigData);
                 $gridConfig->save();
 
-                $userId = $this->getUser()->getId();
+                $userId = $this->getAdminUser()->getId();
 
                 $availableConfigs = $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType);
-                $sharedConfigs = $this->getSharedGridColumnConfigs($this->getUser(), $classId, $searchType);
+                $sharedConfigs = $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, $searchType);
 
                 $settings= $this->getShareSettings($gridConfig->getId());
                 $settings['gridConfigId'] = (int) $gridConfig->getId();
                 $settings['gridConfigName'] = $gridConfig->getName();
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
-                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getUser()->getId());
+                $settings['isShared'] = !$gridConfig || ($gridConfig->getOwnerId() != $this->getAdminUser()->getId());
 
                 return $this->json(['success' => true,
                     'settings' => $settings,
@@ -1057,13 +1057,13 @@ class DataObjectHelperController extends AdminController
      */
     protected function updateImportConfigShares($importConfig, $configData)
     {
-        $user = $this->getUser();
+        $user = $this->getAdminUser();
         if (!$importConfig || $user->isAllowed('share_configurations')) {
             // nothing to do
             return;
         }
 
-        if ($importConfig->getOwnerId() != $this->getUser()->getId()) {
+        if ($importConfig->getOwnerId() != $this->getAdminUser()->getId()) {
             throw new \Exception("don't mess with someone elses grid config");
         }
         $combinedShares = [];
@@ -1098,13 +1098,13 @@ class DataObjectHelperController extends AdminController
      */
     protected function updateGridConfigShares($gridConfig, $metadata)
     {
-        $user = $this->getUser();
+        $user = $this->getAdminUser();
         if (!$gridConfig || !$user->isAllowed('share_permissions')) {
             // nothing to do
             return;
         }
 
-        if ($gridConfig->getOwnerId() != $this->getUser()->getId()) {
+        if ($gridConfig->getOwnerId() != $this->getAdminUser()->getId()) {
             throw new \Exception("don't mess with someone elses grid config");
         }
         $combinedShares = [];
@@ -1494,7 +1494,7 @@ class DataObjectHelperController extends AdminController
             $shareSettings = $configData['shareSettings'];
         }
 
-        $availableConfigs = $this->getImportConfigs($importService, $this->getUser(), $classId);
+        $availableConfigs = $this->getImportConfigs($importService, $this->getAdminUser(), $classId);
 
         $dialect->lineterminator =  bin2hex($dialect->lineterminator);
 
@@ -1512,7 +1512,7 @@ class DataObjectHelperController extends AdminController
                 'rows' => $rows,
                 'cols' => $cols,
                 'classId' => $classId,
-                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getUser()->getId()
+                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()
             ],
             'availableConfigs' => $availableConfigs
         ]);
@@ -2261,7 +2261,7 @@ class DataObjectHelperController extends AdminController
                 try {
                     // don't check for mandatory fields here
                     $object->setOmitMandatoryCheck(true);
-                    $object->setUserModification($this->getUser()->getId());
+                    $object->setUserModification($this->getAdminUser()->getId());
                     $object->save();
                     $success = true;
                 } catch (\Exception $e) {

@@ -100,7 +100,7 @@ class SnippetController extends DocumentControllerBase
                 $snippet = Document\Snippet::getById($request->get('id'));
                 $snippet = $this->getLatestVersion($snippet);
 
-                $snippet->setUserModification($this->getUser()->getId());
+                $snippet->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $snippet->setPublished(false);

@@ -338,7 +338,7 @@ class PortalController extends AdminController implements EventedControllerInter
                 'type' => $doc->getType(),
                 'path' => $doc->getRealFullPath(),
                 'date' => $doc->getModificationDate(),
-                'condition' => "userModification = '".$this->getUser()->getId()."'"
+                'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
             ];
         }
 
@@ -369,7 +369,7 @@ class PortalController extends AdminController implements EventedControllerInter
                 'type' => $doc->getType(),
                 'path' => $doc->getRealFullPath(),
                 'date' => $doc->getModificationDate(),
-                'condition' => "userModification = '".$this->getUser()->getId()."'"
+                'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
             ];
         }
 
@@ -389,7 +389,7 @@ class PortalController extends AdminController implements EventedControllerInter
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'o_modificationDate',
-            'condition' => "o_userModification = '".$this->getUser()->getId()."'"
+            'condition' => "o_userModification = '".$this->getAdminUser()->getId()."'"
         ]);
 
         $response = [];
@@ -490,7 +490,7 @@ class PortalController extends AdminController implements EventedControllerInter
             return;
         }
 
-        $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getUser());
+        $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getAdminUser());
     }
 
     /**

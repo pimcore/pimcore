@@ -44,7 +44,7 @@ class InfoController extends AbstractRestController
     {
         // serialize user to JSON and de-serialize to drop sensitive properties
         // TODO implement JsonSerializable on model when applicable - currently it breaks admin responses
-        $userData = $this->decodeJson($this->encodeJson($this->getUser()));
+        $userData = $this->decodeJson($this->encodeJson($this->getAdminUser()));
         foreach (['password', 'apiKey'] as $property) {
             unset($userData[$property]);
         }

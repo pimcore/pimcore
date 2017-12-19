@@ -179,7 +179,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
             $children = $list->getTotalCount();
 
             if ($children <= 100) {
-                Recyclebin\Item::create($element, $this->getUser());
+                Recyclebin\Item::create($element, $this->getAdminUser());
             }
 
             return $this->json(['success' => true]);

@@ -98,9 +98,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
             // custom views end
 
-            if (!$this->getUser()->isAdmin()) {
-                $userIds = $this->getUser()->getRoles();
-                $userIds[] = $this->getUser()->getId();
+            if (!$this->getAdminUser()->isAdmin()) {
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
                 $condition .= ' AND (
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
@@ -129,7 +129,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $total = $cv
                 ? $childsList->count()
                 : $object->getChildAmount([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
-                    DataObject\AbstractObject::OBJECT_TYPE_VARIANT], $this->getUser());
+                    DataObject\AbstractObject::OBJECT_TYPE_VARIANT], $this->getAdminUser());
         }
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
@@ -739,7 +739,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
             // grid-config
-            $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getUser()->getId() . '.psf';
+            $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getAdminUser()->getId() . '.psf';
             if (is_file($configFile)) {
                 $gridConfig = Tool\Serialize::unserialize(file_get_contents($configFile));
                 if ($gridConfig) {
@@ -816,8 +816,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $object->setParentId($request->get('parentId'));
                 $object->setKey($request->get('key'));
                 $object->setCreationDate(time());
-                $object->setUserOwner($this->getUser()->getId());
-                $object->setUserModification($this->getUser()->getId());
+                $object->setUserOwner($this->getAdminUser()->getId());
+                $object->setUserModification($this->getAdminUser()->getId());
                 $object->setPublished(false);
 
                 if ($request->get('objecttype') == DataObject\AbstractObject::OBJECT_TYPE_OBJECT
@@ -872,15 +872,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $folder = DataObject\Folder::create([
                     'o_parentId' => $request->get('parentId'),
                     'o_creationDate' => time(),
-                    'o_userOwner' => $this->getUser()->getId(),
-                    'o_userModification' => $this->getUser()->getId(),
+                    'o_userOwner' => $this->getAdminUser()->getId(),
+                    'o_userModification' => $this->getAdminUser()->getId(),
                     'o_key' => $request->get('key'),
                     'o_published' => true
                 ]);
 
                 $folder->setCreationDate(time());
-                $folder->setUserOwner($this->getUser()->getId());
-                $folder->setUserModification($this->getUser()->getId());
+                $folder->setUserOwner($this->getAdminUser()->getId());
+                $folder->setUserModification($this->getAdminUser()->getId());
 
                 try {
                     $folder->save();
@@ -1104,7 +1104,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             if ($allowUpdate) {
                 $object->setModificationDate(time());
-                $object->setUserModification($this->getUser()->getId());
+                $object->setUserModification($this->getAdminUser()->getId());
 
                 try {
                     $object->save();
@@ -1152,7 +1152,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             // set the latest available version for editmode
             $object = $this->getLatestVersion($object);
-            $object->setUserModification($this->getUser()->getId());
+            $object->setUserModification($this->getAdminUser()->getId());
 
             // data
             if ($request->get('data')) {
@@ -1349,7 +1349,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 // general settings
                 $general = $this->decodeJson($request->get('general'));
                 $object->setValues($general);
-                $object->setUserModification($this->getUser()->getId());
+                $object->setUserModification($this->getAdminUser()->getId());
 
                 $object = $this->assignPropertiesFromEditmode($request, $object);
 
@@ -1422,7 +1422,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $currentObject = DataObject::getById($object->getId());
         if ($currentObject->isAllowed('publish')) {
             $object->setPublished(true);
-            $object->setUserModification($this->getUser()->getId());
+            $object->setUserModification($this->getAdminUser()->getId());
             try {
                 $object->save();
                 $treeData = [];
@@ -1732,9 +1732,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $conditionFilters[] = '(o_path = ' . $quotedPath . ' OR o_path LIKE ' . $quotedWildcardPath . ')';
             }
 
-            if (!$this->getUser()->isAdmin()) {
-                $userIds = $this->getUser()->getRoles();
-                $userIds[] = $this->getUser()->getId();
+            if (!$this->getAdminUser()->isAdmin()) {
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
                 $conditionFilters[] .= ' (
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
@@ -1753,7 +1753,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
                 }
             }
-            if ($request->get('condition') && $this->getUser()->isAdmin()) {
+            if ($request->get('condition') && $this->getAdminUser()->isAdmin()) {
                 $conditionFilters[] = '(' . $request->get('condition') . ')';
             }
 
@@ -1946,7 +1946,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $object = DataObject\Service::rewriteIds($object, $rewriteConfig);
 
-        $object->setUserModification($this->getUser()->getId());
+        $object->setUserModification($this->getAdminUser()->getId());
         $object->save();
 
         // write the store back to the session
@@ -2096,7 +2096,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         if ($currentData[$i]->getId() == $object->getId()) {
                             unset($currentData[$i]);
                             $owner->$setter($currentData);
-                            $owner->setUserModification($this->getUser()->getId());
+                            $owner->setUserModification($this->getAdminUser()->getId());
                             $owner->save();
                             Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
                             break;
@@ -2114,7 +2114,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $currentData[] = $object;
 
                 $owner->$setter($currentData);
-                $owner->setUserModification($this->getUser()->getId());
+                $owner->setUserModification($this->getAdminUser()->getId());
                 $owner->save();
                 Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: added [ ' . $object->getId() . " ] to [ $ownerFieldName ]");
             }
@@ -2200,7 +2200,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         // check permissions
         $this->checkPermission('objects');
 
-        $this->_objectService = new DataObject\Service($this->getUser());
+        $this->_objectService = new DataObject\Service($this->getAdminUser());
     }
 
     /**

@@ -95,7 +95,7 @@ class HardlinkController extends DocumentControllerBase
                 $this->setValuesToDocument($request, $link);
 
                 $link->setModificationDate(time());
-                $link->setUserModification($this->getUser()->getId());
+                $link->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $link->setPublished(false);

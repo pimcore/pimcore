@@ -407,7 +407,7 @@ class ElementController extends AdminController
                 $element = Asset\Service::rewriteIds($element, $rewriteConfig);
             }
 
-            $element->setUserModification($this->getUser()->getId());
+            $element->setUserModification($this->getAdminUser()->getId());
             $element->save();
 
             $success = true;

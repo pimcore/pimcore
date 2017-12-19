@@ -35,7 +35,7 @@ class LogController extends AdminController implements EventedControllerInterfac
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-        if (!$this->getUser()->isAllowed('application_logging')) {
+        if (!$this->getAdminUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
         }
     }

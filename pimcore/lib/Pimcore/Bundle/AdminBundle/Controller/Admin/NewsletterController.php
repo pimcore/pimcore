@@ -99,7 +99,7 @@ class NewsletterController extends DocumentControllerBase
                 $page = Document\Newsletter::getById($request->get('id'));
 
                 $page = $this->getLatestVersion($page);
-                $page->setUserModification($this->getUser()->getId());
+                $page->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $page->setPublished(false);

@@ -668,7 +668,7 @@ class MiscController extends AdminController
      */
     public function phpinfoAction(Request $request)
     {
-        if (!$this->getUser()->isAdmin()) {
+        if (!$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Permission denied');
         }
 

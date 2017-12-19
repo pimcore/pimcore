@@ -95,7 +95,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         if ($request->get('createAllowed')) {
             $tmpClasses = [];
             foreach ($classes as $class) {
-                if ($this->getUser()->isAllowed($class->getId(), 'class')) {
+                if ($this->getAdminUser()->isAllowed($class->getId(), 'class')) {
                     $tmpClasses[] = $class;
                 }
             }
@@ -226,7 +226,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $class = DataObject\ClassDefinition::create(
             ['name' => $this->correctClassname($request->get('name')),
-                'userOwner' => $this->getUser()->getId()]
+                'userOwner' => $this->getAdminUser()->getId()]
         );
 
         $class->save();
@@ -245,7 +245,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::create(
             ['name' => $request->get('name'),
-                'userOwner' => $this->getUser()->getId(),
+                'userOwner' => $this->getAdminUser()->getId(),
                 'classId' => $request->get('classId')]
         );
 
@@ -374,7 +374,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $class->setLayoutDefinitions($layout);
 
-            $class->setUserModification($this->getUser()->getId());
+            $class->setUserModification($this->getAdminUser()->getId());
             $class->setModificationDate(time());
 
             $propertyVisibility = [];
@@ -1087,7 +1087,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 $currentLayoutId = $request->get('layoutId', null);
 
-                $user = $this->getUser();
+                $user = $this->getAdminUser();
                 if ($currentLayoutId == -1 && $user->isAdmin()) {
                     DataObject\Service::createSuperLayout($layout);
                     $objectData['layout'] = $layout;

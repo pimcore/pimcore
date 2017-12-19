@@ -99,11 +99,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
 
             $list = new Document\Listing();
-            if ($this->getUser()->isAdmin()) {
+            if ($this->getAdminUser()->isAdmin()) {
                 $list->setCondition('parentId = ? ', $document->getId());
             } else {
-                $userIds = $this->getUser()->getRoles();
-                $userIds[] = $this->getUser()->getId();
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
                 $list->setCondition('parentId = ? and
                                         (
                                         (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -133,7 +133,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return $this->json([
                 'offset' => $offset,
                 'limit' => $limit,
-                'total' => $document->getChildAmount($this->getUser()),
+                'total' => $document->getChildAmount($this->getAdminUser()),
                 'nodes' => $documents
             ]);
         } else {
@@ -160,8 +160,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             if (!Document\Service::pathExists($intendedPath)) {
                 $createValues = [
-                    'userOwner' => $this->getUser()->getId(),
-                    'userModification' => $this->getUser()->getId(),
+                    'userOwner' => $this->getAdminUser()->getId(),
+                    'userModification' => $this->getAdminUser()->getId(),
                     'published' => false
                 ];
 
@@ -500,7 +500,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     }
                 }
 
-                $document->setUserModification($this->getUser()->getId());
+                $document->setUserModification($this->getAdminUser()->getId());
                 try {
                     $document->save();
                     $success = true;
@@ -517,7 +517,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             //just rename
             try {
                 $document->setKey($request->get('key'));
-                $document->setUserModification($this->getUser()->getId());
+                $document->setUserModification($this->getAdminUser()->getId());
                 $document->save();
                 $success = true;
             } catch (\Exception $e) {
@@ -578,7 +578,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $docTypes = [];
             foreach ($list->getDocTypes() as $type) {
-                if ($this->getUser()->isAllowed($type->getId(), 'docType')) {
+                if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
                     $docTypes[] = $type;
                 }
             }
@@ -661,7 +661,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             try {
                 $document->setKey($currentDocument->getKey());
                 $document->setPath($currentDocument->getRealPath());
-                $document->setUserModification($this->getUser()->getId());
+                $document->setUserModification($this->getAdminUser()->getId());
 
                 $document->save();
             } catch (\Exception $e) {
@@ -840,7 +840,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'enableInheritance' => ($request->get('enableInheritance') == 'true') ? true : false
             ]);
 
-            $document->setUserModification($this->getUser()->getId());
+            $document->setUserModification($this->getAdminUser()->getId());
             $document->save();
         }
 
@@ -1461,7 +1461,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         // check permissions
         $this->checkActionPermission($event, 'documents', ['docTypesAction']);
 
-        $this->_documentService = new Document\Service($this->getUser());
+        $this->_documentService = new Document\Service($this->getAdminUser());
     }
 
     /**

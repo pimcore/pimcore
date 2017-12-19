@@ -53,7 +53,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @return UserProxy|User
      */
-    protected function getUser($proxyUser = false)
+    protected function getAdminUser($proxyUser = false)
     {
         $resolver = $this->get(TokenStorageUserResolver::class);
 
@@ -73,11 +73,11 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function checkPermission($permission)
     {
-        if (!$this->getUser() || !$this->getUser()->isAllowed($permission)) {
+        if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
             $this->get('monolog.logger.security')->error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
-                    'user'       => $this->getUser()->getName(),
+                    'user'       => $this->getAdminUser()->getName(),
                     'permission' => $permission
                 ]
             );

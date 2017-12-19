@@ -38,7 +38,7 @@ class PricingController extends AdminController implements EventedControllerInte
     public function onKernelController(FilterControllerEvent $event)
     {
         // permission check
-        $access = $this->getUser()->isAllowed('bundle_ecommerce_pricing_rules');
+        $access = $this->getAdminUser()->isAllowed('bundle_ecommerce_pricing_rules');
         if (!$access) {
             throw new \Exception('this function requires "bundle_ecommerce_pricing_rules" permission!');
         }

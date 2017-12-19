@@ -88,7 +88,7 @@ class FolderController extends DocumentControllerBase
             if ($request->get('id')) {
                 $folder = Document\Folder::getById($request->get('id'));
                 $folder->setModificationDate(time());
-                $folder->setUserModification($this->getUser()->getId());
+                $folder->setUserModification($this->getAdminUser()->getId());
 
                 if ($folder->isAllowed('publish')) {
                     $this->setValuesToDocument($request, $folder);
