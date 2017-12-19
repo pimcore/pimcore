@@ -346,16 +346,21 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         }
 
         var user = pimcore.globalmanager.get("user");
+
+        this.settings = Ext.apply(this.settings, this.settingsForm.getForm().getFieldValues());
+
         if (this.showSaveAndShareTab && user.isAllowed("share_configurations")) {
-            this.settings = Ext.apply(this.settings, this.settingsForm.getForm().getFieldValues());
+
             if (this.settings.sharedUserIds != null) {
                 this.settings.sharedUserIds = this.settings.sharedUserIds.join();
             }
             if (this.settings.sharedRoleIds != null) {
                 this.settings.sharedRoleIds = this.settings.sharedRoleIds.join();
             }
-
             this.settings.shareGlobally = this.shareGlobally ? this.shareGlobally.getValue() : false;
+        } else {
+            delete this.settings.sharedUserIds;
+            delete this.settings.sharedRoleIds;
         }
 
         if (!operatorFound) {
@@ -850,12 +855,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             };
 
             groupNodes.push(groupNode);
-
-
-
-
         }
-
 
         var tree = new Ext.tree.TreePanel({
             title: t('operators'),

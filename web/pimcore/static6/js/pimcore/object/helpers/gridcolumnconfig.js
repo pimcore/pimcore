@@ -32,7 +32,7 @@ pimcore.object.helpers.gridcolumnconfig = {
 
         var descriptionField = new Ext.form.TextArea({
             fieldLabel: t('description'),
-            height: 400,
+            // height: 200,
             value: this.settings.gridConfigDescription
         });
 
