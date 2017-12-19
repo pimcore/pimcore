@@ -847,7 +847,7 @@ DROP TABLE IF EXISTS `quantityvalue_units`;
 CREATE TABLE `quantityvalue_units` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `group` varchar(50) DEFAULT NULL,
-  `abbreviation` varchar(10) NOT NULL,
+  `abbreviation` varchar(20) NOT NULL,
   `longname` varchar(250) DEFAULT NULL,
   `baseunit` varchar(10) DEFAULT NULL,
   `factor` double DEFAULT NULL,
