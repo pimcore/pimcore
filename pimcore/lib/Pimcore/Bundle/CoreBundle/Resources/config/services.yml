@@ -74,6 +74,15 @@ services:
 
 
     #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\CoreBundle\Command\:
+        resource: '../../Command'
+        exclude: '../../Command/Bundle/Helper'
+
+    #
     # HTTP/REST clients
     #
 
