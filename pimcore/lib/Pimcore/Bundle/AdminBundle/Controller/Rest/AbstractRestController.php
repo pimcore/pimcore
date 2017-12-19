@@ -153,7 +153,7 @@ abstract class AbstractRestController extends AdminController
     /**
      * @inheritDoc
      */
-    protected function createNotFoundException($message = null, \Exception $previous = null)
+    protected function createNotFoundResponseException($message = null, \Exception $previous = null)
     {
         return new ResponseException($this->createErrorResponse(
             $message ?: Response::$statusTexts[Response::HTTP_NOT_FOUND],

@@ -43,7 +43,7 @@ class ImageController extends AbstractRestController
 
         $config = Config::getByName($id);
         if (!$config instanceof Config) {
-            throw $this->createNotFoundException(sprintf('Thumbnail "%s" doesn\'t exist', htmlentities($id)));
+            throw $this->createNotFoundResponseException(sprintf('Thumbnail "%s" doesn\'t exist', htmlentities($id)));
         }
 
         $data = $config->getForWebserviceExport();
