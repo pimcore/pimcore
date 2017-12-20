@@ -105,20 +105,11 @@ class PimcoreTargetingDataCollector extends DataCollector
 
     private function collectVisitorInfo(VisitorInfo $visitorInfo)
     {
-        $data = [];
-        foreach ($visitorInfo->getData() as $key => $value) {
-            if (is_object($value)) {
-                $data[$key] = get_class($value);
-            } else {
-                $data[$key] = $value;
-            }
-        }
-
         $this->data['visitor_info'] = [
             'visitorId' => $visitorInfo->getVisitorId(),
             'sessionId' => $visitorInfo->getSessionId(),
             'actions'   => $visitorInfo->getActions(),
-            'data'      => $data,
+            'data'      => $visitorInfo->getData(),
         ];
     }
 
