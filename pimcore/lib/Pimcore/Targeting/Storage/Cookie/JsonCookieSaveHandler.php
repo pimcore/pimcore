@@ -17,6 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Storage\Cookie;
 
+/**
+ * NOTE: using this save handler is inherently insecure and can open vulnerabilities by injecting malicious data into the
+ * client cookie. Use only for testing!
+ */
 class JsonCookieSaveHandler extends AbstractCookieSaveHandler
 {
     /**

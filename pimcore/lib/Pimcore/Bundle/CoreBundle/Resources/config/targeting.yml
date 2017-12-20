@@ -13,10 +13,13 @@ services:
     #
 
     # Cookie
-    Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
     Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler:
         arguments:
             $secret: '%kernel.secret%'
+
+    # NOTE: using this save handler is inherently insecure and can open vulnerabilities by injecting malicious data into the
+    # client cookie. Use only for testing!
+    Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
 
     Pimcore\Targeting\Storage\CookieStorage:
         arguments:

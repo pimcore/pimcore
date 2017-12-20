@@ -25,6 +25,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * Stores data as cookie in the client's browser
+ *
+ * NOTE: using this storage without signed cookies is inherently insecure and can open vulnerabilities by injecting
+ * malicious data into the client cookie. Use only for testing!
+ */
 class CookieStorage implements TargetingStorageInterface
 {
     use TimestampsTrait;
