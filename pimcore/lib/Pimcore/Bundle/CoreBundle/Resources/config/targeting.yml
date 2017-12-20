@@ -127,4 +127,5 @@ services:
     # DOCUMENT HANDLING
     #
 
-    Pimcore\Targeting\Document\DocumentTargetingConfigurator: ~
+    Pimcore\Targeting\Document\DocumentTargetingConfigurator:
+        public: true
