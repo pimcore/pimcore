@@ -687,13 +687,6 @@ pimcore.settings.targeting.conditions = (function () {
         })
     };
 
-    // BC aliases
-    var aliases = {
-        vistitedpagebefore: 'visitedpagebefore',
-        vistitedpagesbefore: 'visitedpagesbefore',
-        persona: 'target_group'
-    };
-
     return {
         register: function (name, condition) {
             conditions[name] = condition;
@@ -706,10 +699,6 @@ pimcore.settings.targeting.conditions = (function () {
         },
 
         get: function (name) {
-            if ('undefined' === typeof conditions[name] && 'undefined' !== typeof aliases[name]) {
-                name = aliases[name];
-            }
-
             if ('undefined' === typeof conditions[name]) {
                 throw new Error('Condition ' + name + ' is not defined', name);
             }
