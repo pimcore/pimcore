@@ -98,6 +98,11 @@ class PimcoreTargetingDataCollector extends DataCollector
         $this->data = $this->cloneVar($this->data);
     }
 
+    public function reset()
+    {
+        $this->data = [];
+    }
+
     private function collectVisitorInfo(VisitorInfo $visitorInfo)
     {
         $data = [];
