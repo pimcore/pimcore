@@ -137,4 +137,5 @@ services:
 
     pimcore.custom_report.adapter.factories:
         class: Symfony\Component\DependencyInjection\ServiceLocator
+        public: true
         tags: ['container.service_locator']
