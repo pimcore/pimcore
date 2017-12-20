@@ -101,10 +101,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerFactoryConfiguration(ContainerBuilder $container, array $config)
     {
-        $container->setAlias(
-            self::SERVICE_ID_FACTORY,
-            $config['factory_id']
-        );
+        $container
+            ->setAlias(
+                self::SERVICE_ID_FACTORY,
+                $config['factory_id']
+            )
+            ->setPublic(true);
 
         $container->setParameter(
             'pimcore_ecommerce.factory.strict_tenants',
@@ -114,10 +116,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerEnvironmentConfiguration(ContainerBuilder $container, array $config)
     {
-        $container->setAlias(
-            self::SERVICE_ID_ENVIRONMENT,
-            $config['environment_id']
-        );
+        $container
+            ->setAlias(
+                self::SERVICE_ID_ENVIRONMENT,
+                $config['environment_id']
+            )
+            ->setPublic(true);
 
         $container->setParameter('pimcore_ecommerce.environment.options', $config['options']);
     }
@@ -208,10 +212,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerPricingManagerConfiguration(ContainerBuilder $container, array $config)
     {
-        $container->setAlias(
-            self::SERVICE_ID_PRICING_MANAGER,
-            $config['pricing_manager_id']
-        );
+        $container
+            ->setAlias(
+                self::SERVICE_ID_PRICING_MANAGER,
+                $config['pricing_manager_id']
+            )
+            ->setPublic(true);
 
         $container->setParameter('pimcore_ecommerce.pricing_manager.enabled', $config['enabled']);
         $container->setParameter('pimcore_ecommerce.pricing_manager.condition_mapping', $config['conditions']);
@@ -325,7 +331,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerPaymentManagerConfiguration(ContainerBuilder $container, array $config)
     {
-        $container->setAlias(self::SERVICE_ID_PAYMENT_MANAGER, $config['payment_manager_id']);
+        $container
+            ->setAlias(
+                self::SERVICE_ID_PAYMENT_MANAGER,
+                $config['payment_manager_id']
+            )
+            ->setPublic(true);
 
         $mapping = [];
 
@@ -356,10 +367,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerIndexServiceConfig(ContainerBuilder $container, array $config)
     {
-        $container->setAlias(
-            self::SERVICE_ID_INDEX_SERVICE,
-            $config['index_service_id']
-        );
+        $container
+            ->setAlias(
+                self::SERVICE_ID_INDEX_SERVICE,
+                $config['index_service_id']
+            )
+            ->setPublic(true);
 
         $container->setParameter('pimcore_ecommerce.index_service.default_tenant', $config['default_tenant']);
 
@@ -462,28 +475,34 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $config['voucher_service_options']
         );
 
-        $container->setAlias(
-            self::SERVICE_ID_VOUCHER_SERVICE,
-            $config['voucher_service_id']
-        );
+        $container
+            ->setAlias(
+                self::SERVICE_ID_VOUCHER_SERVICE,
+                $config['voucher_service_id']
+            )
+            ->setPublic(true);
 
         $container->setParameter(
             'pimcore_ecommerce.voucher_service.token_manager.mapping',
             $config['token_managers']['mapping']
         );
 
-        $container->setAlias(
+        $container
+            ->setAlias(
             self::SERVICE_ID_TOKEN_MANAGER_FACTORY,
-            $config['token_managers']['factory_id']
-        );
+                $config['token_managers']['factory_id']
+            )
+            ->setPublic(true);
     }
 
     private function registerOfferToolConfig(ContainerBuilder $container, array $config)
     {
-        $container->setAlias(
-            self::SERVICE_ID_OFFER_TOOL,
-            $config['service_id']
-        );
+        $container
+            ->setAlias(
+                self::SERVICE_ID_OFFER_TOOL,
+                $config['service_id']
+            )
+            ->setPublic(true);
 
         $container->setParameter(
             'pimcore_ecommerce.offer_tool.order_storage.offer_class',
@@ -503,10 +522,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerTrackingManagerConfiguration(ContainerBuilder $container, array $config)
     {
-        $container->setAlias(
-            self::SERVICE_ID_TRACKING_MANAGER,
-            $config['tracking_manager_id']
-        );
+        $container
+            ->setAlias(
+                self::SERVICE_ID_TRACKING_MANAGER,
+                $config['tracking_manager_id']
+            )
+            ->setPublic(true);
 
         foreach ($config['trackers'] as $name => $trackerConfig) {
             if (!$trackerConfig['enabled']) {
