@@ -129,7 +129,8 @@ class Device implements DataProviderInterface
         if ($dd->isBot()) {
             return [
                 'user_agent' => $dd->getUserAgent(),
-                'bot'        => $dd->getBot()
+                'bot'        => $dd->getBot(),
+                'is_bot'     => true,
             ];
         }
 
