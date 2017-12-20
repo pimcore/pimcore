@@ -165,29 +165,29 @@ pimcore:
 
     targeting:
         data_providers:
-            geoip: Pimcore\Targeting\DataProvider\GeoIp
             device: Pimcore\Targeting\DataProvider\Device
+            geoip: Pimcore\Targeting\DataProvider\GeoIp
             piwik: Pimcore\Targeting\DataProvider\Piwik
             targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
             visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
         conditions:
-            url: Pimcore\Targeting\Condition\Url
             browser: Pimcore\Targeting\Condition\Browser
             country: Pimcore\Targeting\Condition\Country
+            geopoint: Pimcore\Targeting\Condition\GeoPoint
+            hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
             language: Pimcore\Targeting\Condition\Language
+            operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
             referringsite: Pimcore\Targeting\Condition\ReferringSite
             searchengine: Pimcore\Targeting\Condition\SearchEngine
-            hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
-            operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
-            geopoint: Pimcore\Targeting\Condition\GeoPoint
+            target_group: Pimcore\Targeting\Condition\TargetGroup
             timeonsite: Pimcore\Targeting\Condition\TimeOnSite
+            url: Pimcore\Targeting\Condition\Url
             visitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
             visitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
-            target_group: Pimcore\Targeting\Condition\TargetGroup
         action_handlers:
             assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
-            redirect: Pimcore\Targeting\ActionHandler\Redirect
             codesnippet: Pimcore\Targeting\ActionHandler\CodeSnippet
+            redirect: Pimcore\Targeting\ActionHandler\Redirect
 
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

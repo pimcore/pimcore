@@ -156,6 +156,8 @@ pimcore.settings.targeting.rules.item = Class.create({
             });
         });
 
+        this.sortAddMenu(addMenu);
+
         this.conditionsContainer = new Ext.Panel({
             title: t("conditions"),
             autoScroll: true,
@@ -193,6 +195,8 @@ pimcore.settings.targeting.rules.item = Class.create({
             });
         });
 
+        this.sortAddMenu(addMenu);
+
         this.actionsContainer = new Ext.Panel({
             title: t("actions"),
             autoScroll: true,
@@ -205,6 +209,23 @@ pimcore.settings.targeting.rules.item = Class.create({
         });
 
         return this.actionsContainer;
+    },
+
+    sortAddMenu: function(menu) {
+        menu.sort(function(a, b) {
+            var nameA = a.text.toUpperCase();
+            var nameB = b.text.toUpperCase();
+
+            if (nameA < nameB) {
+                return -1;
+            }
+
+            if (nameA > nameB) {
+                return 1;
+            }
+
+            return 0;
+        });
     },
 
     addCondition: function (condition, data) {
