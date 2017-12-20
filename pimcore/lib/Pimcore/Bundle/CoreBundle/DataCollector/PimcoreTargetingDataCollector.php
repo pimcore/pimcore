@@ -128,8 +128,8 @@ class PimcoreTargetingDataCollector extends DataCollector
 
         foreach (TargetingStorageInterface::VALID_SCOPES as $scope) {
             $this->data['storage'][$scope] = array_merge([
-                'created_at' => $this->targetingStorage->getCreatedAt($visitorInfo, $scope),
-                'updated_at' => $this->targetingStorage->getCreatedAt($visitorInfo, $scope),
+                'created' => $this->targetingStorage->getCreatedAt($visitorInfo, $scope)->format('c'),
+                'updated' => $this->targetingStorage->getCreatedAt($visitorInfo, $scope)->format('c'),
             ], $this->targetingStorage->all($visitorInfo, $scope));
         }
     }
