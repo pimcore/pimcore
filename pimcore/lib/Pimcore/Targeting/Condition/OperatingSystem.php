@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use DeviceDetector\DeviceDetector;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -35,19 +34,15 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
      * @var array
      */
     protected static $osMapping = [
-        'macos'   => 'MAC',
-        'windows' => 'WIN',
-        'linux'   => 'LIN',
-        'android' => 'AND',
-        'ios'     => 'IOS'
+        'MAC' => 'macos',
+        'WIN' => 'windows',
+        'LIN' => 'linux',
+        'AND' => 'android',
+        'IOS' => 'ios',
     ];
 
     public function __construct(string $system = null)
     {
-        if (!empty($system) && isset(static::$osMapping[$system])) {
-            $system = static::$osMapping[$system];
-        }
-
         $this->system = $system;
     }
 
@@ -92,12 +87,29 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
         }
 
         $os = $osInfo['short_name'] ?? null;
-        if ($os && ('all' === $this->system || $os === $this->system)) {
+        if (!empty($os) && isset(static::$osMapping[$os])) {
+            $os = static::$osMapping[$os];
+        }
+
+        if ($this->matchesOperatingSystem($os)) {
             $this->setMatchedVariable('os', $os);
 
             return true;
         }
 
         return false;
+    }
+
+    private function matchesOperatingSystem(string $os = null): bool
+    {
+        if (empty($os)) {
+            return false;
+        }
+
+        if ('all' === $this->system) {
+            return true;
+        }
+
+        return $os === $this->system;
     }
 }

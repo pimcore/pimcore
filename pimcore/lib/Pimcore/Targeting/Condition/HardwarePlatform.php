@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use DeviceDetector\DeviceDetector;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -28,6 +27,18 @@ class HardwarePlatform extends AbstractVariableCondition implements DataProvider
      * @var null|string
      */
     private $platform;
+
+    /**
+     * Mapping from admin UI values to DeviceDetector results. If value
+     * is an array, in_array is used to determine match.
+     *
+     * @var array
+     */
+    protected static $deviceMapping = [
+        'smartphone'    => 'mobile',
+        'phablet'       => 'mobile',
+        'feature phone' => 'mobile',
+    ];
 
     public function __construct(string $platform = null)
     {
@@ -75,12 +86,29 @@ class HardwarePlatform extends AbstractVariableCondition implements DataProvider
         }
 
         $platform = $deviceInfo['type'] ?? null;
-        if ($platform && ('all' === $this->platform || $platform === $this->platform)) {
+        if (!empty($platform) && isset(static::$deviceMapping[$platform])) {
+            $platform = static::$deviceMapping[$platform];
+        }
+
+        if ($this->matchesPlatform($platform)) {
             $this->setMatchedVariable('platform', $platform);
 
             return true;
         }
 
         return false;
+    }
+
+    private function matchesPlatform(string $platform = null): bool
+    {
+        if (empty($platform)) {
+            return false;
+        }
+
+        if ('all' === $this->platform) {
+            return true;
+        }
+
+        return $platform === $this->platform;
     }
 }
