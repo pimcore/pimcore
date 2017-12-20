@@ -12,3 +12,4 @@ services:
     Pimcore\Targeting\EventListener\DocumentTargetGroupListener: ~
     Pimcore\Targeting\EventListener\FullPageCacheCookieCleanupListener: ~
     Pimcore\Targeting\EventListener\VisitedPagesCountListener: ~
+    Pimcore\Targeting\EventListener\MaintenanceListener: ~
