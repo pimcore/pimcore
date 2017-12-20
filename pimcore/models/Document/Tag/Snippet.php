@@ -102,8 +102,9 @@ class Snippet extends Model\Document\Tag
      */
     public function frontend()
     {
-        // TODO inject area handler via DI when tags are built through container
-        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+        // TODO inject services via DI when tags are built through container
+        $container  = \Pimcore::getContainer();
+        $tagHandler = $container->get('pimcore.document.tag.handler');
 
         if (!$tagHandler->supports($this->view)) {
             return null;
