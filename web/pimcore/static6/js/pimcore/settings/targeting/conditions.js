@@ -19,7 +19,7 @@ pimcore.settings.targeting.conditions = (function () {
     var conditions = {
         url: Class.create(pimcore.settings.targeting.condition.abstract, {
             getName: function () {
-                return "URL (RegExp)";
+                return t('targeting_condition_url_pattern');
             },
 
             getPanel: function (panel, data) {
@@ -33,7 +33,7 @@ pimcore.settings.targeting.conditions = (function () {
                     tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "textfield",
-                        fieldLabel: "URL (RegExp)",
+                        fieldLabel: t('targeting_condition_url_pattern'),
                         name: "url",
                         value: data.url,
                         width: 500
@@ -483,23 +483,45 @@ pimcore.settings.targeting.conditions = (function () {
             getPanel: function (panel, data) {
                 var id = Ext.id();
 
+                var warningIconHtml = '<span style="display: inline-block; height: 16px; width: 16px" class="pimcore_icon_warning">&nbsp;</span> ';
+
+                var items = [
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: t('targeting_condition_url_pattern'),
+                        name: "url",
+                        value: data.url,
+                        width: 450
+                    },
+                    {
+                        xtype: "hidden",
+                        name: "type",
+                        value: "visitedpagebefore"
+                    },
+                    {
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        value: warningIconHtml + t('targeting_condition_visited_page_before_piwik_data_warning'),
+                        cls: "pimcore_extra_label"
+                    }
+                ];
+
+                if ('undefined' === typeof pimcore.settings.piwik || !pimcore.settings.piwik.configured || !pimcore.settings.piwik.report_token_configured) {
+                    items.push({
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        value: warningIconHtml + t('targeting_condition_visited_page_before_piwik_not_configured_warning'),
+                        cls: "pimcore_extra_label"
+                    });
+                }
+
                 return new Ext.form.FormPanel({
                     id: id,
                     forceLayout: true,
                     style: "margin: 10px 0 0 0",
                     bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
                     tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
-                    items: [{
-                        xtype: 'textfield',
-                        fieldLabel: "URL",
-                        name: "url",
-                        value: data.url,
-                        width: 450
-                    }, {
-                        xtype: "hidden",
-                        name: "type",
-                        value: "visitedpagebefore"
-                    }]
+                    items: items
                 });
             }
         }),

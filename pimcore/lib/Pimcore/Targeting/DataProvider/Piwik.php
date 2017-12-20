@@ -98,6 +98,11 @@ class Piwik implements DataProviderInterface
             return null;
         }
 
+        // piwik is not configured properly
+        if (!$this->config->isConfigured() || empty($this->config->getReportToken())) {
+            return null;
+        }
+
         $siteId      = $this->siteIdProvider->getForRequest($visitorInfo->getRequest());
         $piwikSiteId = $this->config->getPiwikSiteId($siteId->getConfigKey());
 

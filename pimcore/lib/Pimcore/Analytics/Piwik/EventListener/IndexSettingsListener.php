@@ -73,7 +73,10 @@ class IndexSettingsListener implements EventSubscriberInterface
         $config = $this->configProvider->getConfig();
 
         $settings = [
-            'iframe_configured' => $config->isIframeIntegrationConfigured(),
+            'configured'              => $config->isConfigured(),
+            'iframe_configured'       => $config->isIframeIntegrationConfigured(),
+            'report_token_configured' => !empty($config->getReportToken()),
+            'api_token_configured'    => !empty($config->getApiToken()),
         ];
 
         $settings = $this->addReportSettings($settings);
