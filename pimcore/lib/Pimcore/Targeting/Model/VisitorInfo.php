@@ -165,7 +165,9 @@ class VisitorInfo implements \IteratorAggregate
 
     public function addMatchingTargetingRule(Rule $targetingRule)
     {
-        $this->matchingTargetingRules[] = $targetingRule;
+        if (!in_array($targetingRule, $this->matchingTargetingRules, true)) {
+            $this->matchingTargetingRules[] = $targetingRule;
+        }
     }
 
     /**
