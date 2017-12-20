@@ -665,7 +665,7 @@ pimcore.settings.targeting.conditions = (function () {
                     tbar: pimcore.settings.targeting.conditions.getTopBar(this, id, panel, data),
                     items: [{
                         xtype: "combo",
-                        name: "target_group",
+                        name: "targetGroup",
                         displayField: 'text',
                         valueField: "id",
                         store: pimcore.globalmanager.get("target_group_store"),
@@ -674,7 +674,7 @@ pimcore.settings.targeting.conditions = (function () {
                         triggerAction: 'all',
                         listWidth: 200,
                         mode: "local",
-                        value: data.target_group,
+                        value: data.targetGroup,
                         emptyText: t("select_a_target_group"),
                         fieldLabel: t("target_group")
                     }, {
