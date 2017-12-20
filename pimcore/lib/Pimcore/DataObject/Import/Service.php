@@ -303,6 +303,7 @@ class Service
                             $newChild->dataType = $child['dataType'];
                             $newChild->label = $child['label'];
                             $newChild->class = 'DefaultValue';
+                            $newChild->type = "value";
 
                             $lfImportColumn->attributes->childs = [$newChild];
                             $importColumns[] = $lfImportColumn;
