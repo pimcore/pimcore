@@ -67,6 +67,10 @@ class Block extends Model\Object\ClassDefinition\Data
      */
     public $columnType = "longtext";
 
+    /**
+     * @var string
+     */
+    public $styleElement = "";
 
     /**
      * Type for the generated phpdoc
@@ -681,5 +685,23 @@ class Block extends Model\Object\ClassDefinition\Data
     public function setCollapsible($collapsible)
     {
         $this->collapsible = $collapsible;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStyleElement()
+    {
+        return $this->styleElement;
+    }
+
+    /**
+     * @param string $styleElement
+     * @return $this
+     */
+    public function setStyleElement($styleElement)
+    {
+        $this->styleElement = $styleElement;
+        return $this;
     }
 }
