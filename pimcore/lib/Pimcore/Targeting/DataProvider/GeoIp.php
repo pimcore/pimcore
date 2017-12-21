@@ -65,17 +65,25 @@ class GeoIp implements DataProviderInterface
             return;
         }
 
-        $result = null;
-
-        $ip = $visitorInfo->getRequest()->getClientIp();
-        if ($this->isPublicIp($ip)) {
-            $result = $this->loadData($ip);
-        }
+        $result = $this->loadData($visitorInfo);
 
         $visitorInfo->set(
             self::PROVIDER_KEY,
             $result
         );
+    }
+
+    public function loadData(VisitorInfo $visitorInfo)
+    {
+        $result = null;
+
+        $ip = $visitorInfo->getRequest()->getClientIp();
+
+        if ($this->isPublicIp($ip)) {
+            $result = $this->resolveIp($ip);
+        }
+
+        return $result;
     }
 
     private function isPublicIp(string $ip): bool
@@ -85,10 +93,10 @@ class GeoIp implements DataProviderInterface
         return $result === $ip;
     }
 
-    private function loadData(string $ip)
+    private function resolveIp(string $ip)
     {
         if (null === $this->cache) {
-            return $this->doLoadData($ip);
+            return $this->doResolveIp($ip);
         }
 
         $cacheKey = implode('_', ['targeting', self::PROVIDER_KEY, sha1($ip)]);
@@ -97,7 +105,7 @@ class GeoIp implements DataProviderInterface
             return $result;
         }
 
-        $result = $this->doLoadData($ip);
+        $result = $this->doResolveIp($ip);
         if (!$result) {
             return $result;
         }
@@ -107,7 +115,7 @@ class GeoIp implements DataProviderInterface
         return $result;
     }
 
-    private function doLoadData(string $ip)
+    private function doResolveIp(string $ip)
     {
         $city = null;
 

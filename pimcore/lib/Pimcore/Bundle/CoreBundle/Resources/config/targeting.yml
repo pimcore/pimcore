@@ -80,6 +80,8 @@ services:
         calls:
             - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]
 
+    Pimcore\Targeting\DataProvider\GeoLocation: ~
+
     Pimcore\Targeting\DataProvider\Device:
         calls:
             - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]

@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use GeoIp2\Model\City;
 use Location\Coordinate;
 use Location\Distance\Haversine;
-use Pimcore\Targeting\DataProvider\GeoIp;
+use Pimcore\Targeting\DataProvider\GeoLocation;
 use Pimcore\Targeting\DataProviderDependentInterface;
+use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
 use Pimcore\Targeting\Model\VisitorInfo;
 
 class GeoPoint extends AbstractVariableCondition implements DataProviderDependentInterface
@@ -54,9 +54,9 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
     public static function fromConfig(array $config)
     {
         return new static(
-            $config['latitude'] ?? null,
-            $config['longitude'] ?? null,
-            $config['radius'] ?? null
+            $config['latitude'] ? (float)$config['latitude'] : null,
+            $config['longitude'] ? (float)$config['longitude'] : null,
+            $config['radius'] ? (int)$config['radius'] : null
         );
     }
 
@@ -65,7 +65,7 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
      */
     public function getDataProviderKeys(): array
     {
-        return [GeoIp::PROVIDER_KEY];
+        return [GeoLocation::PROVIDER_KEY];
     }
 
     /**
@@ -81,21 +81,22 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        $city = $visitorInfo->get(GeoIp::PROVIDER_KEY);
+        /** @var GeoLocationModel $location */
+        $location = $visitorInfo->get(GeoLocation::PROVIDER_KEY);
 
-        if (!$city || empty($city['location']['latitude']) || empty($city['location']['longitude'])) {
+        if (!$location) {
             return false;
         }
 
         $distance = $this->calculateDistance(
-            (float)$this->latitude, (float)$this->longitude,
-            (float)$city['location']['latitude'], (float)$city['location']['longitude']
+            $this->latitude, $this->longitude,
+            $location->getLatitude(), $location->getLongitude()
         );
 
         if ($distance < ($this->radius * 1000)) {
             $this->setMatchedVariables([
-                'latitude'  => (float)$city['location']['latitude'],
-                'longitude' => (float)$city['location']['longitude']
+                'latitude'  => $location->getLatitude(),
+                'longitude' => $location->getLongitude(),
             ]);
 
             return true;

@@ -64,7 +64,7 @@
         },
 
         featureDetect: (function () {
-            // tests are taken from to modernizr (MIT license)
+            // most tests come from to modernizr (MIT license)
             // https://github.com/Modernizr/Modernizr/tree/master/feature-detects
             var tests = {
                 localStorage: function () {
@@ -95,6 +95,10 @@
 
                 json: function () {
                     return 'JSON' in window && 'parse' in JSON && 'stringify' in JSON;
+                },
+
+                geolocation: function () {
+                    return 'geolocation' in navigator;
                 }
             };
 
@@ -312,7 +316,35 @@
         return User;
     }());
 
-    var dataProviders = {};
+    var dataProviders = {
+        geolocation: function () {
+            util.logger.canLog('info') && console.info('[TARGETING] Loading geolocation');
+
+            if (!util.featureDetect('geolocation') || !util.featureDetect('json') || !util.featureDetect('sessionStorage')) {
+                return;
+            }
+
+            var cookieName = '_pc_tgl';
+
+            var location;
+            if (location = sessionStorage.getItem(cookieName)) {
+                Cookie.set(cookieName, location);
+            } else {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var serialized = JSON.stringify({
+                        lat: position.coords.latitude,
+                        long: position.coords.longitude,
+                        alt: position.coords.altitude
+                    });
+
+                    Cookie.set(cookieName, serialized);
+                    sessionStorage.setItem(cookieName, serialized); // store to session storage for further usage
+                }, function (error) {
+                    util.logger.canLog('error') && console.error('[TARGETING] Failed to load geolocation', error);
+                });
+            }
+        }
+    };
 
     window.pimcore.targeting.options = util.merge({
         log: false,

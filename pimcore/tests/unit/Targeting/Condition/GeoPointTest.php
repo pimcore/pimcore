@@ -20,6 +20,8 @@ namespace Pimcore\Tests\Unit\Targeting\Condition;
 use GeoIp2\Model\City;
 use Pimcore\Targeting\Condition\GeoPoint;
 use Pimcore\Targeting\DataProvider\GeoIp;
+use Pimcore\Targeting\DataProvider\GeoLocation;
+use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -149,26 +151,16 @@ class GeoPointTest extends TestCase
 
     private function createVisitorInfo(string $point): VisitorInfo
     {
-        $city = $this->createCityData($point);
-
-        // create visitor info and set city data as GeoIP provider key
-        $visitorInfo = new VisitorInfo(new Request());
-        $visitorInfo->set(GeoIp::PROVIDER_KEY, $city);
-
-        return $visitorInfo;
-    }
-
-    private function createCityData(string $point): array
-    {
         if (!isset($this->points[$point])) {
             throw new \InvalidArgumentException(sprintf('Point "%s" is not defined', $point));
         }
 
-        return [
-            'location' => [
-                'latitude'  => $this->points[$point][0],
-                'longitude' => $this->points[$point][1]
-            ]
-        ];
+        $geoLocation = new GeoLocationModel($this->points[$point][0], $this->points[$point][1]);
+
+        // create visitor info and set geolocation as GeoLocation provider key
+        $visitorInfo = new VisitorInfo(new Request());
+        $visitorInfo->set(GeoLocation::PROVIDER_KEY, $geoLocation);
+
+        return $visitorInfo;
     }
 }

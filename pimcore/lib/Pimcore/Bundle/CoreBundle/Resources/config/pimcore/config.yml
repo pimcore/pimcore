@@ -167,6 +167,7 @@ pimcore:
         data_providers:
             device: Pimcore\Targeting\DataProvider\Device
             geoip: Pimcore\Targeting\DataProvider\GeoIp
+            geolocation: Pimcore\Targeting\DataProvider\GeoLocation
             piwik: Pimcore\Targeting\DataProvider\Piwik
             targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
             visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
