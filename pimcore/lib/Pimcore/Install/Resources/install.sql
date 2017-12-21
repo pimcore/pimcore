@@ -512,17 +512,6 @@ CREATE TABLE `tags_assignment` (
   KEY `tagid` (`tagid`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `targeting_personas`;
-CREATE TABLE `targeting_personas` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `description` text,
-  `conditions` longtext,
-  `threshold` int(11) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `targeting_rules`;
 CREATE TABLE `targeting_rules` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -530,10 +519,35 @@ CREATE TABLE `targeting_rules` (
   `description` text,
   `scope` varchar(50) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
+  `prio` smallint(5) unsigned NOT NULL DEFAULT '0',
   `conditions` longtext,
   `actions` longtext,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `targeting_storage`;
+CREATE TABLE `targeting_storage` (
+  `visitorId` varchar(100) NOT NULL,
+  `scope` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `value` text,
+  `creationDate` datetime DEFAULT NULL,
+  `modificationDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`visitorId`,`scope`,`name`),
+  KEY `targeting_storage_scope_index` (`scope`),
+  KEY `targeting_storage_name_index` (`name`),
+  KEY `targeting_storage_visitorId_index` (`visitorId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `targeting_target_groups`;
+CREATE TABLE `targeting_target_groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
+  `threshold` int(11) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tmp_store`;
 CREATE TABLE `tmp_store` (
