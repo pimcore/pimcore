@@ -71,6 +71,14 @@ pimcore.object.classes.data.block = Class.create(pimcore.object.classes.data.dat
                 fieldLabel: t("disallow_reorder"),
                 name: "disallowReorder",
                 checked: this.datax.disallowReorder
+            },
+            {
+                xtype: "textfield",
+                fieldLabel: t("css_style") + " (float: left; margin:10px; ...)",
+                name: "styleElement",
+                itemId: "styleElement",
+                value: this.datax.styleElement,
+                width: 740
             }
         ]);
 
