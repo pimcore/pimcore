@@ -4,8 +4,8 @@ namespace Pimcore\Tests\Cache;
 
 use Pimcore\Cache\Pool\Doctrine;
 use Pimcore\Cache\Pool\Redis;
-use Pimcore\Cache\Pool\Redis\ConnectionFactory;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
+use Pimcore\Storage\Redis\ConnectionFactory;
 use Pimcore\Tests\Util\TestHelper;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;

@@ -45,6 +45,13 @@ services:
             - [setAttributeFactory, ['@Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory']]
 ```
 
+**Targeting/Personalization**: The targeting/personalization engine was completely revamped and now uses server side targeting
+instead of the frontend targeting which was used in earlier versions. The new targeting integration is **incompatible**
+with the previous one and will break existing targeting setups. If you are currently using targeting please do **NOT**
+update to Pimcore 5.1 until there is a migration guide for targeting setups. **NOTE**: the targeting feature is **experimental**
+and may be subject to change in later versions.
+  
+
 ## Build 156 (2017-12-13)
 
 The experimental `GridColumnConfig` feature was revamped to register and build its operators via DI instead of predefined

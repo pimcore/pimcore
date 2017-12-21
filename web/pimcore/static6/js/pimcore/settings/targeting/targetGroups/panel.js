@@ -11,23 +11,22 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.settings.targeting.personas.panel");
-pimcore.settings.targeting.personas.panel= Class.create({
+pimcore.registerNS("pimcore.settings.targeting.targetGroups.panel");
+pimcore.settings.targeting.targetGroups.panel= Class.create({
 
     initialize: function() {
-        this.treeDataUrl = '/admin/reports/targeting/persona-list';
+        this.treeDataUrl = '/admin/targeting/target-group/list';
     },
-
 
     getLayout: function () {
 
         if (this.layout == null) {
             this.layout = new Ext.Panel({
-                title: t('personas'),
+                title: t('target_groups'),
                 layout: "border",
                 closable: true,
                 border: false,
-                iconCls: "pimcore_icon_personas",
+                iconCls: "pimcore_icon_target_groups",
                 items: [this.getTree(), this.getTabPanel()]
             });
         }
@@ -65,9 +64,9 @@ pimcore.settings.targeting.personas.panel= Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_persona"),
+                            text: t("add_target_group"),
                             iconCls: "pimcore_icon_add",
-                            handler: this.addPersona.bind(this)
+                            handler: this.addTargetGroup.bind(this)
                         }
                     ]
                 }
@@ -89,7 +88,7 @@ pimcore.settings.targeting.personas.panel= Class.create({
             'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
                 //newChildNode.data.expanded = true;
                 newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_personas";
+                newChildNode.data.iconCls = "pimcore_icon_target_groups";
             }
         };
         return treeNodeListeners;
@@ -104,29 +103,29 @@ pimcore.settings.targeting.personas.panel= Class.create({
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_delete",
-            handler: this.deletePersona.bind(this, tree, record)
+            handler: this.deleteTargetGroup.bind(this, tree, record)
         }));
 
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     },
 
-    addPersona: function () {
-        Ext.MessageBox.prompt(t('add_persona'), t('enter_the_name_of_the_new_persona'),
-                                                this.addPersonaComplete.bind(this), null, null, "");
+    addTargetGroup: function () {
+        Ext.MessageBox.prompt(t('add_target_group'), t('enter_the_name_of_the_new_target_group'),
+                                                this.addTargetGroupComplete.bind(this), null, null, "");
     },
 
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
-        this.openPersona(record.data);
+        this.openTargetGroup(record.data);
     },
 
 
-    addPersonaComplete: function (button, value, object) {
+    addTargetGroupComplete: function (button, value, object) {
 
         if (button == "ok" && value.length > 2) {
             Ext.Ajax.request({
-                url: "/admin/reports/targeting/persona-add",
+                url: "/admin/targeting/target-group/add",
                 params: {
                     name: value
                 },
@@ -136,11 +135,11 @@ pimcore.settings.targeting.personas.panel= Class.create({
                     this.tree.getStore().reload();
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_persona'), t('problem_creating_new_persona'));
+                        Ext.Msg.alert(t('add_target_group'), t('problem_creating_new_target_group'));
                     } else {
-                        this.openPersona(intval(data.id));
+                        this.openTargetGroup(intval(data.id));
 
-                        pimcore.globalmanager.get("personas").reload();
+                        pimcore.globalmanager.get("target_group_store").reload();
                     }
                 }.bind(this)
             });
@@ -148,45 +147,45 @@ pimcore.settings.targeting.personas.panel= Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_persona'), t('naming_requirements_3chars'));
+            Ext.Msg.alert(t('add_target_group'), t('naming_requirements_3chars'));
         }
     },
 
-    deletePersona: function (tree, record) {
+    deleteTargetGroup: function (tree, record) {
         Ext.Ajax.request({
-            url: "/admin/reports/targeting/persona-delete",
+            url: "/admin/targeting/target-group/delete",
             params: {
                 id: record.data.id
             },
             success: function () {
                 this.tree.getStore().load();
 
-                pimcore.globalmanager.get("personas").reload();
+                pimcore.globalmanager.get("target_group_store").reload();
             }.bind(this)
         });
     },
 
-    openPersona: function (node) {
+    openTargetGroup: function (node) {
 
         if(!is_numeric(node)) {
             node = node.id;
         }
 
 
-        var existingPanel = Ext.getCmp("pimcore_personas_panel_" + node);
+        var existingPanel = Ext.getCmp("pimcore_target_groups_panel_" + node);
         if(existingPanel) {
             this.panel.setActiveItem(existingPanel);
             return;
         }
 
         Ext.Ajax.request({
-            url: "/admin/reports/targeting/persona-get",
+            url: "/admin/targeting/target-group/get",
             params: {
                 id: node
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
-                var item = new pimcore.settings.targeting.personas.item(this, res);
+                var item = new pimcore.settings.targeting.targetGroups.item(this, res);
             }.bind(this)
         });
 

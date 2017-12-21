@@ -15,6 +15,7 @@
 namespace Pimcore\Templating\Helper;
 
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Component\Templating\Helper\Helper;
 
@@ -26,11 +27,17 @@ class Action extends Helper
     protected $actionRenderer;
 
     /**
-     * @param ActionRenderer $actionRenderer
+     * @var DocumentTargetingConfigurator
      */
-    public function __construct(ActionRenderer $actionRenderer)
+    private $targetingConfigurator;
+
+    public function __construct(
+        ActionRenderer $actionRenderer,
+        DocumentTargetingConfigurator $targetingConfigurator
+    )
     {
-        $this->actionRenderer = $actionRenderer;
+        $this->actionRenderer        = $actionRenderer;
+        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
@@ -55,6 +62,9 @@ class Action extends Helper
     {
         $document = isset($attributes['document']) ? $attributes['document'] : null;
         if ($document && $document instanceof PageSnippet) {
+            // apply best matching target group (if any)
+            $this->targetingConfigurator->configureTargetGroup($document);
+
             $attributes = $this->actionRenderer->addDocumentAttributes($document, $attributes);
         }
 

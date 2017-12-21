@@ -21,10 +21,15 @@ use Pimcore\Model;
 use Pimcore\Model\Tool;
 
 /**
- * @method \Pimcore\Model\Tool\Targeting\Rule\Dao getDao()
+ * @method Rule\Dao getDao()
  */
 class Rule extends Model\AbstractModel
 {
+    const SCOPE_HIT = 'hit';
+    const SCOPE_SESSION = 'session';
+    const SCOPE_SESSION_WITH_VARIABLES = 'session_with_variables';
+    const SCOPE_VISITOR = 'visitor';
+
     /**
      * @var int
      */
@@ -43,7 +48,7 @@ class Rule extends Model\AbstractModel
     /**
      * @var string
      */
-    public $scope = 'hit';
+    public $scope = self::SCOPE_HIT;
 
     /**
      * @var bool
@@ -51,14 +56,19 @@ class Rule extends Model\AbstractModel
     public $active = true;
 
     /**
+     * @var int
+     */
+    public $prio = 0;
+
+    /**
      * @var array
      */
     public $conditions = [];
 
     /**
-     * @var Model\Tool\Targeting\Rule\Actions
+     * @var array
      */
-    public $actions;
+    public $actions = [];
 
     /**
      * @param $target
@@ -200,31 +210,27 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param $actions
+     * @param array $actions
      *
      * @return $this
      */
     public function setActions($actions)
     {
         if (!$actions) {
-            $actions = new Tool\Targeting\Rule\Actions();
+            $actions = [];
         }
+
         $this->actions = $actions;
 
         return $this;
     }
 
     /**
-     * @return Tool\Targeting\Rule\Actions
+     * @return array
      */
-    public function getActions()
+    public function getActions(): array
     {
-        // this is to be backward compatible (was Tool\Targeting\Actions)
-        if ($this->actions instanceof Tool\Targeting\Rule\Actions) {
-            return $this->actions;
-        }
-
-        return new Tool\Targeting\Rule\Actions();
+        return $this->actions;
     }
 
     /**
@@ -237,6 +243,7 @@ class Rule extends Model\AbstractModel
         if (!$conditions) {
             $conditions = [];
         }
+
         $this->conditions = $conditions;
 
         return $this;
@@ -282,5 +289,21 @@ class Rule extends Model\AbstractModel
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPrio(): int
+    {
+        return $this->prio;
+    }
+
+    /**
+     * @param int $prio
+     */
+    public function setPrio(int $prio)
+    {
+        $this->prio = $prio;
     }
 }

@@ -24,8 +24,8 @@ pimcore.document.edit = Class.create({
         var link =  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
             + pimcore.settings.language+'&_dc=' + date.getTime();
 
-        if(this.persona && this.persona.getValue()) {
-            link += "&_ptp=" + this.persona.getValue();
+        if(this.targetGroup && this.targetGroup.getValue()) {
+            link += "&_ptg=" + this.targetGroup.getValue();
         }
 
         return link;
@@ -45,7 +45,7 @@ pimcore.document.edit = Class.create({
                 Ext.Ajax.request({
                     url: "/admin/page/clear-editable-data",
                     params: {
-                        persona: this["persona"] ? this.persona.getValue() : "",
+                        targetGroup: this["targetGroup"] ? this.targetGroup.getValue() : "",
                         id: this.document.id
                     },
                     success: function () {
@@ -87,54 +87,7 @@ pimcore.document.edit = Class.create({
                 handler: cleanupFunction.bind(this)
             }];
 
-            // add persona selection to toolbar
-            if(this.document.getType() == "page" && pimcore.globalmanager.get("personas").getCount() > 0) {
-
-                this.persona = new Ext.form.ComboBox({
-                    displayField:'text',
-                    valueField: "id",
-                    store: {
-                        xtype: "jsonstore",
-                        proxy: {
-                            type: 'ajax',
-                            url: "/admin/reports/targeting/persona-list?add-default=true"
-                        },
-                        fields: ["id", "text"]
-                    },
-                    editable: false,
-                    triggerAction: 'all',
-                    width: 240,
-                    listeners: {
-                        select: function (el) {
-                            if(this.document.isDirty()) {
-                                Ext.Msg.confirm(t('warning'), t('you_have_unsaved_changes')
-                                    + "<br />" + t("continue") + "?",
-                                    function(btn){
-                                        if (btn == 'yes'){
-                                            this.reload(true);
-                                        }
-                                    }.bind(this)
-                                );
-                            } else {
-                                this.reload(true);
-                            }
-                        }.bind(this)
-                    }
-                });
-
-
-                lbar.push("->", {
-                    tooltip: t("edit_content_for_persona"),
-                    iconCls: "pimcore_icon_personas",
-                    arrowVisible: false,
-                    menuAlign: "tl",
-                    menu: [this.persona]
-                }, {
-                    tooltip: t("clear_content_of_selected_persona"),
-                    iconCls: "pimcore_icon_cleanup",
-                    handler: cleanupFunction.bind(this)
-                });
-            }
+            this.addTargetingPanel(lbar, cleanupFunction);
 
             // edit panel configuration
             var config = {
@@ -178,6 +131,61 @@ pimcore.document.edit = Class.create({
 
         return this.layout;
 
+    },
+
+    addTargetingPanel: function(lbar, cleanupFunction) {
+        if (!Ext.Array.contains(['page', 'snippet'], this.document.getType())) {
+            return;
+        }
+
+        if (pimcore.globalmanager.get("target_group_store").getCount() === 0) {
+            return;
+        }
+
+        // add target group selection to toolbar
+        this.targetGroup = new Ext.form.ComboBox({
+            displayField:'text',
+            valueField: "id",
+            store: {
+                xtype: "jsonstore",
+                proxy: {
+                    type: 'ajax',
+                    url: "/admin/targeting/target-group/list?add-default=true"
+                },
+                fields: ["id", "text"]
+            },
+            editable: false,
+            triggerAction: 'all',
+            width: 240,
+            listeners: {
+                select: function (el) {
+                    if(this.document.isDirty()) {
+                        Ext.Msg.confirm(t('warning'), t('you_have_unsaved_changes')
+                            + "<br />" + t("continue") + "?",
+                            function(btn){
+                                if (btn === 'yes'){
+                                    this.reload(true);
+                                }
+                            }.bind(this)
+                        );
+                    } else {
+                        this.reload(true);
+                    }
+                }.bind(this)
+            }
+        });
+
+        lbar.push("->", {
+            tooltip: t("edit_content_for_target_group"),
+            iconCls: "pimcore_icon_target_groups",
+            arrowVisible: false,
+            menuAlign: "tl",
+            menu: [this.targetGroup]
+        }, {
+            tooltip: t("clear_content_of_selected_target_group"),
+            iconCls: "pimcore_icon_cleanup",
+            handler: cleanupFunction.bind(this)
+        });
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {

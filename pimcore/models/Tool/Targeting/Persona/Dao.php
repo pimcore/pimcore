@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
 /**
+ * @deprecated Use TargetGroup\Dao instead. Will be removed in Pimcore 6.
+ *
  * @property \Pimcore\Model\Tool\Targeting\Persona $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -36,10 +38,9 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM targeting_personas WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM targeting_target_groups WHERE id = ?', $this->model->getId());
 
         if ($data['id']) {
-            $data['conditions'] = Serialize::unserialize($data['conditions']);
             $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
 
             $this->assignVariablesToModel($data);
@@ -69,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete('targeting_personas', ['id' => $this->model->getId()]);
+        $this->db->delete('targeting_target_groups', ['id' => $this->model->getId()]);
     }
 
     /**
@@ -82,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = [];
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('targeting_personas'))) {
+                if (in_array($key, $this->getValidTableColumns('targeting_target_groups'))) {
                     if (is_array($value) || is_object($value)) {
                         $value = Serialize::serialize($value);
                     }
@@ -93,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update('targeting_personas', $data, ['id' => $this->model->getId()]);
+            $this->db->update('targeting_target_groups', $data, ['id' => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -106,7 +107,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert('targeting_personas', []);
+        $this->db->insert('targeting_target_groups', []);
 
         $this->model->setId($this->db->lastInsertId());
 

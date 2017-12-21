@@ -324,7 +324,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                         ]
                     }, {
                         xtype:'fieldset',
-                        title: t('associate_target_group') + " (" + t("personas") + ")",
+                        title: t('assign_target_groups'),
                         collapsible: true,
                         autoHeight:true,
                         defaults: {
@@ -333,15 +333,14 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                         defaultType: 'textfield',
                         items :[
                             Ext.create('Ext.ux.form.MultiSelect', {
-                                fieldLabel: t('visitors_of_this_page_will_be_automatically_associated_with_the_selected_personas'),
-
-                                store: pimcore.globalmanager.get("personas"),
+                                fieldLabel: t('visitors_of_this_page_will_be_automatically_associated_with_the_selected_target_groups'),
+                                store: pimcore.globalmanager.get("target_group_store"),
                                 displayField: "text",
                                 valueField: "id",
-                                name: 'personas',
+                                name: 'targetGroupIds',
                                 width: 700,
                                 //listWidth: 200,
-                                value: this.document.data["personas"],
+                                value: this.document.data["targetGroupIds"],
                                 minHeight: 100
                             })
                         ]

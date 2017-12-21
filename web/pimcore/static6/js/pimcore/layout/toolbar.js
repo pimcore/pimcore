@@ -520,11 +520,11 @@ pimcore.layout.toolbar = Class.create({
                         items: [{
                             text: t("global_targeting_rules"),
                             iconCls: "pimcore_icon_targeting",
-                            handler: this.showTargeting
+                            handler: this.showTargetingRules
                         }, {
-                            text: t('target_group') + " (" + t("personas") + ")",
-                            iconCls: "pimcore_icon_personas",
-                            handler: this.showPersonas
+                            text: t('target_groups'),
+                            iconCls: "pimcore_icon_target_groups",
+                            handler: this.showTargetGroups
                         }]
                     }
                 });
@@ -1326,7 +1326,7 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    showTargeting: function () {
+    showTargetingRules: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         try {
             tabPanel.setActiveTab(pimcore.globalmanager.get("targeting").getLayout());
@@ -1346,20 +1346,20 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    showPersonas: function () {
+    showTargetGroups: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         try {
-            tabPanel.setActiveTab(pimcore.globalmanager.get("personasPanel").getLayout());
+            tabPanel.setActiveTab(pimcore.globalmanager.get("targetGroupsPanel").getLayout());
         }
         catch (e) {
-            var personas = new pimcore.settings.targeting.personas.panel();
-            pimcore.globalmanager.add("personasPanel", personas);
+            var targetGroups = new pimcore.settings.targeting.targetGroups.panel();
+            pimcore.globalmanager.add("targetGroupsPanel", targetGroups);
 
-            tabPanel.add(personas.getLayout());
-            tabPanel.setActiveTab(personas.getLayout());
+            tabPanel.add(targetGroups.getLayout());
+            tabPanel.setActiveTab(targetGroups.getLayout());
 
-            personas.getLayout().on("destroy", function () {
-                pimcore.globalmanager.remove("personasPanel");
+            targetGroups.getLayout().on("destroy", function () {
+                pimcore.globalmanager.remove("targetGroupsPanel");
             }.bind(this));
 
             pimcore.layout.refresh();

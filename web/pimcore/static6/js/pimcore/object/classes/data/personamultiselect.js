@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @deprecated Use pimcore.object.classes.data.targetGroupMultiselect instead. Will be removed in Pimcore 6.
+ */
 pimcore.registerNS("pimcore.object.classes.data.personamultiselect");
 pimcore.object.classes.data.personamultiselect = Class.create(pimcore.object.classes.data.multiselect, {
 

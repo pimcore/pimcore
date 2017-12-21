@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @deprecated Use pimcore.object.classes.data.targetGroup instead. Will be removed in Pimcore 6.
+ */
 pimcore.registerNS("pimcore.object.classes.data.persona");
 pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.data, {
 
@@ -19,13 +22,13 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
      * define where this datatype is allowed
      */
     allowIn: {
-        object: true, 
+        object: true,
         objectbrick: true,
         fieldcollection: true,
         localizedfield: false,
         classificationstore : false,
         block: true
-    },        
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "persona";

@@ -22,7 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Document\Snippet\Dao getDao()
  */
-class Snippet extends Model\Document\PageSnippet
+class Snippet extends TargetingDocument
 {
     /**
      * Static type of the document

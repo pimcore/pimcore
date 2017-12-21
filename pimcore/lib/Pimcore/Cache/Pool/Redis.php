@@ -15,7 +15,7 @@
 namespace Pimcore\Cache\Pool;
 
 use Pimcore\Cache\Pool\Exception\CacheException;
-use Pimcore\Cache\Pool\Redis\Connection;
+use Pimcore\Storage\Redis\Connection;
 
 /**
  * Redis2 item pool with tagging and LUA support.
