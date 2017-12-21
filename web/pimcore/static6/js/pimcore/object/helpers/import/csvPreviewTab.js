@@ -105,7 +105,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
         }
 
-        var dataGrid = new Ext.grid.Panel({
+        this.dataGrid = new Ext.grid.Panel({
             store: dataStore,
             columns: dataGridCols,
             viewConfig: {
@@ -114,17 +114,18 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
             autoScroll: true
         });
 
-        var headRecord = dataStore.getAt(0);
+
         this.hasHeadline = new Ext.form.field.Checkbox(
             {
                 xtype: "checkbox",
                 name: "hasHeadRow",
                 fieldLabel: t("importFileHasHeadRow"),
                 listeners: {
-                    change: function (headRecord, dataGrid, checkbox, checked) {
-                        var settingsForm = this.callback.resolverSettingsPanel.setSkipHeaderRow(checked);
-                        dataGrid.getView().refresh();
-                    }.bind(this, headRecord, dataGrid)
+                    change: function (checkbox, checked) {
+                        this.callback.resolverSettingsPanel.setSkipHeaderRow(checked);
+                        this.config.resolverSettings.skipHeadRow = checked;
+                        this.dataGrid.getView().refresh();
+                    }.bind(this)
                 },
                 value: this.config.resolverSettings.skipHeadRow
             });
@@ -141,7 +142,13 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
             bodyStyle: "padding: 10px;"
         });
 
-        this.previewPanel.add([formPanel, dataGrid]);
+        this.previewPanel.add([formPanel, this.dataGrid]);
+    },
+
+    setFirstLineHeadline: function (value) {
+        this.hasHeadline.setValue(value);
+        this.dataGrid.getView().refresh();
     }
+
 
 });

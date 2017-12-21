@@ -503,7 +503,6 @@ pimcore.object.helpers.import.configDialog = Class.create({
                         if (configsCombo.getValue()) {
                             this.getFileInfo(true, configsCombo.getValue());
                             this.loadWindow.close();
-                            this.tabPanel.setActiveTab(this.columnConfigPanel.getPanel());
                         }
                     }.bind(this, configsCombo)
                 }
