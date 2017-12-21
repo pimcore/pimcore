@@ -12,7 +12,7 @@ Pimcore provides 2 possible ways of working with custom entities namely Doctrine
 
 ## Option 1: Use Doctrine ORM
 Pimcore comes already with the Doctrine bundle, so you can easily create your own entities. 
-Please check <http://symfony.com/doc/current/doctrine.html> for more details.  
+Please check <http://symfony.com/doc/3.4/doctrine.html> for more details.  
 
 ## Option 2: Working with Pimcore Data Access Objects (Dao)
 
