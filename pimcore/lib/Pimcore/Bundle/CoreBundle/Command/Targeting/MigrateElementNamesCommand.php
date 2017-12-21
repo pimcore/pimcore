@@ -53,8 +53,7 @@ class MigrateElementNamesCommand extends AbstractCommand
     public function __construct(
         Db\Connection $db,
         NamingStrategyInterface $namingStrategy
-    )
-    {
+    ) {
         $this->db             = $db;
         $this->namingStrategy = $namingStrategy;
 

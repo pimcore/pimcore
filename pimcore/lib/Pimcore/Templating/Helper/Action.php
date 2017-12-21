@@ -34,8 +34,7 @@ class Action extends Helper
     public function __construct(
         ActionRenderer $actionRenderer,
         DocumentTargetingConfigurator $targetingConfigurator
-    )
-    {
+    ) {
         $this->actionRenderer        = $actionRenderer;
         $this->targetingConfigurator = $targetingConfigurator;
     }

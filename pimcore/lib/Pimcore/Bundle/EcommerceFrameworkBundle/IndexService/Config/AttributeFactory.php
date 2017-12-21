@@ -39,8 +39,7 @@ class AttributeFactory
     public function __construct(
         ContainerInterface $getters,
         ContainerInterface $interpreters
-    )
-    {
+    ) {
         $this->getters      = $getters;
         $this->interpreters = $interpreters;
     }

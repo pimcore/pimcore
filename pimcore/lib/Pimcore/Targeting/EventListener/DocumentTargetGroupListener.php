@@ -55,8 +55,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         DocumentResolver $documentResolver,
         ActionHandlerInterface $actionHandler,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->documentResolver = $documentResolver;
         $this->actionHandler    = $actionHandler;
         $this->eventDispatcher  = $eventDispatcher;

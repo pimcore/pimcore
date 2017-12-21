@@ -82,8 +82,7 @@ class VisitorInfoResolver
         ActionHandlerInterface $actionHandler,
         Connection $db,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->targetingStorage   = $targetingStorage;
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->conditionMatcher   = $conditionMatcher;

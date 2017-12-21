@@ -64,8 +64,7 @@ class ConditionMatcher implements ConditionMatcherInterface
         EventDispatcherInterface $eventDispatcher,
         ExpressionLanguage $expressionLanguage,
         LoggerInterface $logger
-    )
-    {
+    ) {
         $this->conditionFactory   = $conditionFactory;
         $this->dataLoader         = $dataLoader;
         $this->eventDispatcher    = $eventDispatcher;

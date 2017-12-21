@@ -60,8 +60,7 @@ class FallbackStorage implements TargetingStorageInterface
         TargetingStorageInterface $fallbackStorage,
         LoggerInterface $logger,
         array $options = []
-    )
-    {
+    ) {
         $this->primaryStorage  = $primaryStorage;
         $this->fallbackStorage = $fallbackStorage;
         $this->logger          = $logger;

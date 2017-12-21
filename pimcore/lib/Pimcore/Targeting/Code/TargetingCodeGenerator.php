@@ -54,8 +54,7 @@ class TargetingCodeGenerator
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine
-    )
-    {
+    ) {
         $this->eventDispatcher  = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
     }

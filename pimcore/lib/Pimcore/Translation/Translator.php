@@ -346,16 +346,17 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
                 $fallbackValue = '';
 
-                if($catalogue->has($id, $domain)) {
+                if ($catalogue->has($id, $domain)) {
                     $fallbackValue = $catalogue->get($id, $domain);
                 }
 
-                if($this->caseInsensitive && (empty($fallbackValue) || $fallbackValue == $id)) {
+                if ($this->caseInsensitive && (empty($fallbackValue) || $fallbackValue == $id)) {
                     $fallbackValue = $this->getCaseInsensitiveFromCatalogue($catalogue, $fallbackValue, $id, $domain);
                 }
-                if($fallbackValue) {
+                if ($fallbackValue) {
                     // update fallback value in original catalogue otherwise multiple calls to the same id will not work
                     $this->getCatalogue($locale)->set($id, $fallbackValue, $domain);
+
                     return $fallbackValue;
                 }
             }

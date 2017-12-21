@@ -44,8 +44,7 @@ class GeoLocation implements DataProviderInterface
     public function __construct(
         GeoIp $geoIpProvider,
         LoggerInterface $logger
-    )
-    {
+    ) {
         $this->geoIpDataProvider = $geoIpProvider;
         $this->logger            = $logger;
     }

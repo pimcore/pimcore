@@ -46,8 +46,7 @@ class TargetingCodeEvent extends Event
         string $template,
         array $blocks,
         array $data
-    )
-    {
+    ) {
         $this->template = $template;
         $this->blocks   = $blocks;
         $this->data     = $data;

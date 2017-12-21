@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Model\DataObject;
 
-use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\DefinitionModifier;
 use Pimcore\Tests\Test\ModelTestCase;
@@ -19,9 +18,10 @@ class DefinitionModifierTest extends ModelTestCase
 
     /**
      * @param string $dataName
+     *
      * @return ClassDefinition\Data\Input
      */
-    private function getDataToAdd($dataName = (self::DATA_NAME_PREFIX . '1')) : ClassDefinition\Data\Input
+    private function getDataToAdd($dataName = (self::DATA_NAME_PREFIX . '1')): ClassDefinition\Data\Input
     {
         $input = new ClassDefinition\Data\Input();
         $input->setName($dataName);
@@ -32,7 +32,7 @@ class DefinitionModifierTest extends ModelTestCase
     /**
      * @return array
      */
-    private function getDatasToAdd() : array
+    private function getDatasToAdd(): array
     {
         $datas = [];
         for ($i = 0; $i < self::LOOP_COUNT; $i++) {
@@ -44,9 +44,10 @@ class DefinitionModifierTest extends ModelTestCase
 
     /**
      * @param string $panelName
+     *
      * @return ClassDefinition\Layout\Panel
      */
-    private function getPanelToAdd($panelName = (self::PANEL_NAME_PREFIX . '1')) : ClassDefinition\Layout\Panel
+    private function getPanelToAdd($panelName = (self::PANEL_NAME_PREFIX . '1')): ClassDefinition\Layout\Panel
     {
         $panel = new ClassDefinition\Layout\Panel();
         $panel->setName($panelName);
@@ -57,7 +58,7 @@ class DefinitionModifierTest extends ModelTestCase
     /**
      * @return array
      */
-    private function getPanelsToAdd() : array
+    private function getPanelsToAdd(): array
     {
         $panels = [];
         for ($i = 0; $i < 2; $i++) {
@@ -69,13 +70,14 @@ class DefinitionModifierTest extends ModelTestCase
 
     /**
      * @param string $type
+     *
      * @return string
      */
-    private function getNameOfExistingPanel(string $type) : string
+    private function getNameOfExistingPanel(string $type): string
     {
         if ($type === self::_CLASS) {
             return 'MyLayout';
-        } else if ($type === self::_FIELDCOLLECTION) {
+        } elseif ($type === self::_FIELDCOLLECTION) {
             return 'Layout';
         } else {
             return 'Layout';
@@ -84,24 +86,26 @@ class DefinitionModifierTest extends ModelTestCase
 
     /**
      * @param string $type
+     *
      * @return string
      */
-    private function getNameOfExistingData(string $type) : string
+    private function getNameOfExistingData(string $type): string
     {
         if ($type === self::_CLASS) {
             return 'date';
-        } else if ($type === self::_FIELDCOLLECTION) {
+        } elseif ($type === self::_FIELDCOLLECTION) {
             return 'fieldinput1';
         } else {
             return 'brickinput';
         }
     }
 
-    private function getNameOfNonExistant() : string {
+    private function getNameOfNonExistant(): string
+    {
         return 'doestNotExist';
     }
 
-    private function getLayoutDefinitionOfClass() : ClassDefinition\Layout
+    private function getLayoutDefinitionOfClass(): ClassDefinition\Layout
     {
         $object = ClassDefinition::getByName('unittest');
         /** @var ClassDefinition\Layout\Panel $panel */
@@ -110,7 +114,7 @@ class DefinitionModifierTest extends ModelTestCase
         return $panel;
     }
 
-    private function getLayoutDefinitionOfFieldcollection() : ClassDefinition\Layout
+    private function getLayoutDefinitionOfFieldcollection(): ClassDefinition\Layout
     {
         $fieldcollection = \Pimcore\Model\DataObject\Fieldcollection\Definition::getByKey('unittestfieldcollection');
         /** @var ClassDefinition\Layout\Panel $panel */
@@ -119,7 +123,7 @@ class DefinitionModifierTest extends ModelTestCase
         return $panel;
     }
 
-    private function getLayoutDefinitionOfObjectbrick() : ClassDefinition\Layout
+    private function getLayoutDefinitionOfObjectbrick(): ClassDefinition\Layout
     {
         $objectbrick = \Pimcore\Model\DataObject\Objectbrick\Definition::getByKey('unittestBrick');
         /** @var ClassDefinition\Layout\Panel $panel */
@@ -131,9 +135,10 @@ class DefinitionModifierTest extends ModelTestCase
     /**
      * @param string $type
      * @param bool $collectGarbage
+     *
      * @return ClassDefinition\Layout
      */
-    private function getDefinitionByType(string $type, bool $collectGarbage = true) : ClassDefinition\Layout
+    private function getDefinitionByType(string $type, bool $collectGarbage = true): ClassDefinition\Layout
     {
         if ($collectGarbage) {
             \Pimcore::collectGarbage();
@@ -141,7 +146,7 @@ class DefinitionModifierTest extends ModelTestCase
 
         if ($type === self::_CLASS) {
             return $this->getLayoutDefinitionOfClass();
-        } else if ($type === self::_FIELDCOLLECTION) {
+        } elseif ($type === self::_FIELDCOLLECTION) {
             return $this->getLayoutDefinitionOfFieldcollection();
         } else {
             return $this->getLayoutDefinitionOfObjectbrick();
@@ -163,7 +168,7 @@ class DefinitionModifierTest extends ModelTestCase
             $panelIndex = $this->findElement($this->getDefinitionByType($type), $this->getNameOfExistingPanel($type));
             $this->assertTrue($panelIndex >= 0);
             $result = $definitionAppender->$function($this->getDefinitionByType($type), $this->getNameOfExistingPanel($type), $this->getDataToAdd());
-            $this->assertTrue($result,  'panel to data at \'' . $type . '\'');
+            $this->assertTrue($result, 'panel to data at \'' . $type . '\'');
             $assert($this->getDefinitionByType($type, false), $this->getNameOfExistingPanel($type), [$this->getDataToAdd()], $panelIndex);
             $result = $definitionAppender->$function($this->getDefinitionByType($type), $this->getNameOfExistingPanel($type), $this->getDatasToAdd());
             $this->assertTrue($result, 'panel to datas at \'' . $type . '\'');
@@ -189,7 +194,7 @@ class DefinitionModifierTest extends ModelTestCase
 
             // #### data to panel ####
             $result = $definitionAppender->$function($this->getDefinitionByType($type), $this->getNameOfExistingData($type), $this->getPanelToAdd());
-            $this->assertTrue($result  === !$isInsert, 'data to panel at \'' . $type . '\'');
+            $this->assertTrue($result === !$isInsert, 'data to panel at \'' . $type . '\'');
             $assert($this->getDefinitionByType($type, false), $this->getNameOfExistingData($type), [$this->getPanelToAdd()], $dataIndex);
             $result = $definitionAppender->$function($this->getDefinitionByType($type), $this->getNameOfExistingData($type), $this->getPanelsToAdd());
             $this->assertTrue($result === !$isInsert, 'data to panels at \'' . $type . '\'');
@@ -211,6 +216,7 @@ class DefinitionModifierTest extends ModelTestCase
      * @param ClassDefinition\Layout $layoutDefinition
      * @param string $name
      * @param bool $returnObject
+     *
      * @return bool|ClassDefinition\Layout
      */
     private function findElement(ClassDefinition\Layout $layoutDefinition, string $name, bool $returnObject = false)
@@ -220,6 +226,7 @@ class DefinitionModifierTest extends ModelTestCase
         $index = -1;
         /**
          * try to find field
+         *
          * @var ClassDefinition\Layout $child
          */
         foreach ($children as $index => $child) {
@@ -241,10 +248,10 @@ class DefinitionModifierTest extends ModelTestCase
                     }
                 }
             }
+
             return $returnObject ? null : -1;
         }
     }
-
 
     public function testAppendingFields()
     {
@@ -290,7 +297,7 @@ class DefinitionModifierTest extends ModelTestCase
                 $idx = $elementIndex;
             }
             /** @var ClassDefinition\Layout\Panel|ClassDefinition\Data\Input $lastElement */
-            $lastElement = $fields[count($fields)-1];
+            $lastElement = $fields[count($fields) - 1];
             $this->assertTrue($this->findElement($layoutDefinition, $name) > $this->findElement($layoutDefinition, $lastElement->getName()),
                 'prepending assertion - last element is located before the given element');
         };
@@ -298,7 +305,8 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('prependFields', $callable);
     }
 
-    public function testReplacingField() {
+    public function testReplacingField()
+    {
         $callable = function () {
             $args = func_get_args();
             $layoutDefinition = $args[0];
@@ -319,7 +327,8 @@ class DefinitionModifierTest extends ModelTestCase
         $this->doForEachType('replaceField', $callable);
     }
 
-    public function testRemovingField() {
+    public function testRemovingField()
+    {
         $callable = function () {
             $args = func_get_args();
             $layoutDefinition = $args[0];

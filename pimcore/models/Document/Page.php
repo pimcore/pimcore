@@ -19,7 +19,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Db;
 use Pimcore\Logger;
-use Pimcore\Model;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
@@ -325,7 +324,7 @@ class Page extends TargetingDocument
      */
     public function setTargetGroups(array $targetGroups)
     {
-        $ids = array_map(function($targetGroup) {
+        $ids = array_map(function ($targetGroup) {
             if (is_numeric($targetGroup)) {
                 return (int)$targetGroup;
             } elseif ($targetGroup instanceof TargetGroup) {
@@ -335,7 +334,7 @@ class Page extends TargetingDocument
             return null;
         }, $targetGroups);
 
-        $ids = array_filter($ids, function($id) {
+        $ids = array_filter($ids, function ($id) {
             return null !== $id && $id > 0;
         });
 
@@ -351,7 +350,7 @@ class Page extends TargetingDocument
     {
         $ids = explode(',', $this->targetGroupIds);
 
-        $targetGroups = array_map(function($id) {
+        $targetGroups = array_map(function ($id) {
             $id = trim($id);
             if (!empty($id)) {
                 $targetGroup = TargetGroup::getById($id);

@@ -23,7 +23,6 @@ use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 class Piwik implements DataProviderInterface
 {
@@ -56,8 +55,7 @@ class Piwik implements DataProviderInterface
         SiteIdProvider $siteIdProvider,
         VisitorClient $visitorClient,
         LoggerInterface $logger
-    )
-    {
+    ) {
         $this->config         = $config;
         $this->siteIdProvider = $siteIdProvider;
         $this->visitorClient  = $visitorClient;

@@ -63,8 +63,7 @@ class PimcoreTargetingDataCollector extends DataCollector
         DocumentResolver $documentResolver,
         DocumentTargetingConfigurator $targetingConfigurator,
         Stopwatch $stopwatch = null
-    )
-    {
+    ) {
         $this->visitorInfoStorage    = $visitorInfoStorage;
         $this->targetingStorage      = $targetingStorage;
         $this->documentResolver      = $documentResolver;

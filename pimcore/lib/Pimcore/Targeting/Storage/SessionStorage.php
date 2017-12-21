@@ -43,7 +43,7 @@ class SessionStorage implements TargetingStorageInterface
         ];
 
         // filter internal values
-        $result = array_filter( $bag->all(), function ($key) use ($blacklist) {
+        $result = array_filter($bag->all(), function ($key) use ($blacklist) {
             return !in_array($key, $blacklist, true);
         }, ARRAY_FILTER_USE_KEY);
 
@@ -191,8 +191,7 @@ class SessionStorage implements TargetingStorageInterface
         NamespacedAttributeBag $bag,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    )
-    {
+    ) {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {

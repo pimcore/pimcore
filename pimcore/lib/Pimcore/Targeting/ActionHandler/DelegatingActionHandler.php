@@ -38,8 +38,7 @@ class DelegatingActionHandler implements ActionHandlerInterface
     public function __construct(
         ContainerInterface $actionHandlers,
         DataLoaderInterface $dataLoader
-    )
-    {
+    ) {
         $this->actionHandlers = $actionHandlers;
         $this->dataLoader     = $dataLoader;
     }

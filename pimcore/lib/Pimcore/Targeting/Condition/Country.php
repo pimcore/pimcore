@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use GeoIp2\Model\City;
 use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;

@@ -77,8 +77,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         RequestHelper $requestHelper,
         UserLoader $userLoader,
         DocumentTargetingConfigurator $targetingConfigurator
-    )
-    {
+    ) {
         $this->documentResolver      = $documentResolver;
         $this->editmodeResolver      = $editmodeResolver;
         $this->requestHelper         = $requestHelper;

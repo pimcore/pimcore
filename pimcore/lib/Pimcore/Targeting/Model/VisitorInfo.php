@@ -192,7 +192,7 @@ class VisitorInfo implements \IteratorAggregate
         $assignments = array_values($this->targetGroupAssignments);
 
         // sort reverse (highest count first)
-        usort($assignments, function(TargetGroupAssignment $a, TargetGroupAssignment $b) {
+        usort($assignments, function (TargetGroupAssignment $a, TargetGroupAssignment $b) {
             $aCount = $a->getCount();
             $bCount = $b->getCount();
 
@@ -256,7 +256,7 @@ class VisitorInfo implements \IteratorAggregate
     public function getAssignedTargetGroups(): array
     {
         if (null === $this->targetGroups) {
-            $this->targetGroups = array_map(function(TargetGroupAssignment $assignment) {
+            $this->targetGroups = array_map(function (TargetGroupAssignment $assignment) {
                 return $assignment->getTargetGroup();
             }, $this->getTargetGroupAssignments());
         }

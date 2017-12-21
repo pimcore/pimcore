@@ -17,9 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Targeting\Condition;
 
-use GeoIp2\Model\City;
 use Pimcore\Targeting\Condition\GeoPoint;
-use Pimcore\Targeting\DataProvider\GeoIp;
 use Pimcore\Targeting\DataProvider\GeoLocation;
 use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
 use Pimcore\Targeting\Model\VisitorInfo;

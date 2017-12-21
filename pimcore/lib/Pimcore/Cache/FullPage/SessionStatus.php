@@ -41,8 +41,7 @@ class SessionStatus
     public function __construct(
         string $symfonyMetadataStorageKey,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->symfonyMetadataStorageKey = $symfonyMetadataStorageKey;
         $this->eventDispatcher           = $eventDispatcher;
     }

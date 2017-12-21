@@ -222,8 +222,7 @@ class RedisStorage implements TargetingStorageInterface
         int $currentCreatedAt,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    )
-    {
+    ) {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (0 === $currentCreatedAt) {

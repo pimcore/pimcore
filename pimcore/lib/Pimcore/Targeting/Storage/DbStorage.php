@@ -313,8 +313,7 @@ EOF;
         string $scope,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    )
-    {
+    ) {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         $query = <<<EOF

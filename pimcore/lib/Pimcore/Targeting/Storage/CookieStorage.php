@@ -78,8 +78,7 @@ class CookieStorage implements TargetingStorageInterface
         CookieSaveHandlerInterface $saveHandler,
         RequestStack $requestHelper,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->saveHandler     = $saveHandler;
         $this->requestStack    = $requestHelper;
         $this->eventDispatcher = $eventDispatcher;
@@ -238,7 +237,6 @@ class CookieStorage implements TargetingStorageInterface
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
     ) {
-
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!isset($this->data[$scope][self::STORAGE_KEY_CREATED_AT])) {

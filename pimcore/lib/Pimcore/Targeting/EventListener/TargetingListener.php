@@ -77,8 +77,7 @@ class TargetingListener implements EventSubscriberInterface
         VisitorInfoStorageInterface $visitorInfoStorage,
         RequestHelper $requestHelper,
         TargetingCodeGenerator $codeGenerator
-    )
-    {
+    ) {
         $this->visitorInfoResolver = $visitorInfoResolver;
         $this->actionHandler       = $actionHandler;
         $this->visitorInfoStorage  = $visitorInfoStorage;

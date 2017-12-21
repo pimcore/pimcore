@@ -40,8 +40,7 @@ class AssignTargetGroup implements ActionHandlerInterface
     public function __construct(
         ConditionMatcherInterface $conditionMatcher,
         TargetingStorageInterface $storage
-    )
-    {
+    ) {
         $this->conditionMatcher = $conditionMatcher;
         $this->storage          = $storage;
     }

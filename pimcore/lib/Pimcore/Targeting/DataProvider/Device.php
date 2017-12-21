@@ -114,7 +114,6 @@ class Device implements DataProviderInterface
             }
 
             $dd->parse();
-
         } catch (\Throwable $e) {
             $this->logger->error($e);
 

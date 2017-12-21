@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting;
 
-use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Targeting\Model\VisitorInfo;
 
 interface ConditionMatcherInterface

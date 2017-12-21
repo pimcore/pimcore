@@ -42,8 +42,7 @@ class ConditionFactory implements ConditionFactoryInterface
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         array $conditions
-    )
-    {
+    ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->conditions      = $conditions;
     }

@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
-use DeviceDetector\DeviceDetector;
 use Pimcore\Targeting\DataProvider\Device;
 use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;

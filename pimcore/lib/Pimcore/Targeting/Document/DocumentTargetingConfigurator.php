@@ -57,8 +57,7 @@ class DocumentTargetingConfigurator
         RequestHelper $requestHelper,
         UserLoader $userLoader,
         CoreHandlerInterface $cache
-    )
-    {
+    ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->requestHelper      = $requestHelper;
         $this->userLoader         = $userLoader;
