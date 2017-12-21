@@ -235,7 +235,7 @@ this problem, you can reconfigure the session storage to be in a location on the
 ```yaml
 framework:
     session:
-        # http://symfony.com/doc/current/session/sessions_directory.html
+        # http://symfony.com/doc/3.4/session/sessions_directory.html
         save_path: /tmp/pimcore/var/sessions"
 ```
 

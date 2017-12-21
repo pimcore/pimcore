@@ -63,7 +63,7 @@ pimcore:
 
 By default, the cache will reuse the Doctrine connection and write to your DB's `cache` and `cache_tags` tables. You can override
 the used connection by setting `connection` setting to a known Doctrine connection (see
-[DoctrineBundle Reference](http://symfony.com/doc/current/reference/configuration/doctrine.html#doctrine-dbal-configuration)
+[DoctrineBundle Reference](http://symfony.com/doc/3.4/reference/configuration/doctrine.html#doctrine-dbal-configuration)
 for further information).
  
 If you enable the `redis` cache configuration, the Redis cache will be used instead of the Doctrine one, even if Doctrine
