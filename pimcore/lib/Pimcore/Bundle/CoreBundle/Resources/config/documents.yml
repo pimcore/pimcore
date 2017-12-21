@@ -9,6 +9,8 @@ services:
 
     # the used naming strategy will be aliased to "pimcore.document.tag.naming.strategy" by the extension based on
     # the pimcore.documents.editables.naming_strategy config value
+    Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface: '@pimcore.document.tag.naming.strategy'
+
     pimcore.document.tag.naming.strategy.legacy:
         class: Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy
 

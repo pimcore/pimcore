@@ -50,12 +50,22 @@ class MigrateElementNamesCommand extends AbstractCommand
      */
     private $runCommand = true;
 
+    public function __construct(
+        Db\Connection $db,
+        NamingStrategyInterface $namingStrategy
+    )
+    {
+        $this->db             = $db;
+        $this->namingStrategy = $namingStrategy;
+
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
             ->setName('pimcore:targeting:migrate-element-names')
             ->setDescription('Migrates targeting element names to new prefixed format. Works only with nested naming strategy.')
-            ->setHidden(true) // hidden so far as this command should only be used when really needed
             ->addOption(
                 'document', 'd',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
@@ -79,6 +89,9 @@ class MigrateElementNamesCommand extends AbstractCommand
         $helper = $this->getHelper('question');
 
         $this->output->writeln('<error>WARNING:</error> This command is potentially dangerous. Please use with caution and make sure you have a proper backup!');
+        $this->output->writeln('Use the <comment>--dry-run</comment> option to preview what would be done.');
+        $this->io->newLine();
+
         $question = new ConfirmationQuestion('Do you want to continue? (y/n) ', false);
 
         $this->runCommand = $helper->ask($input, $output, $question);
@@ -91,9 +104,6 @@ class MigrateElementNamesCommand extends AbstractCommand
         if (!$this->runCommand) {
             return 0;
         }
-
-        $this->db             = $this->getContainer()->get('database_connection');
-        $this->namingStrategy = $this->getContainer()->get(NamingStrategyInterface::class);
 
         if (!$this->namingStrategy instanceof NestedNamingStrategy) {
             $this->io->error('Migration is only supported for the nested naming strategy');
