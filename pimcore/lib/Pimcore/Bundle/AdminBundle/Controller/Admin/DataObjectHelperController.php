@@ -1596,6 +1596,7 @@ class DataObjectHelperController extends AdminController
             $configData->classId = $request->get('classId');
             $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
+            /** @var  $object DataObject\Concrete */
             $object = $resolver->resolve($configData, $parentId, $rowData);
 
             $context = $eventData->getContext();
@@ -1607,6 +1608,7 @@ class DataObjectHelperController extends AdminController
 
             $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
 
+            $object->setUserModification($this->getUser());
             $object->save();
 
             if ($job >= $importJobTotal) {
