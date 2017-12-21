@@ -2,6 +2,10 @@
 
 ## Pimcore 5.1
 
+**Symfony 3.4**: Pimcore 5.1 uses Symfony 3.4 as dependency. Please have a look at [Symfony's release notes](https://symfony.com/blog/symfony-3-4-0-released)
+for 3.4 and fix any potential Symfony related deprecations in your code before upgrading. After upgrading please make sure
+to fix any new deprecations marked by Symfony 3.4 to be ready for future Symfony versions. 
+
 **Admin Controllers**: As preparation for Symfony 4 we had to refactor some of our implementations to make sure they will
 be compatible with Symfony 4. Unfortunately this also concerns 3 methods which the `AdminController` overwrites from the
 standard symfony controller: `json()`, `getUser()` on the `AdminController` and `createNotFoundException` on the
