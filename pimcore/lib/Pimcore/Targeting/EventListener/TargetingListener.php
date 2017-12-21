@@ -158,7 +158,7 @@ class TargetingListener implements EventSubscriberInterface
             $this->stopStopwatch('Targeting:responseActions');
 
             if ($this->visitorInfoResolver->isTargetingConfigured()) {
-                $this->injectTargetingCode($response);
+                $this->injectTargetingCode($response, $visitorInfo);
             }
         }
 
@@ -169,26 +169,37 @@ class TargetingListener implements EventSubscriberInterface
         }
     }
 
-    private function injectTargetingCode(Response $response)
+    private function injectTargetingCode(Response $response, VisitorInfo $visitorInfo)
     {
         if (!$this->isHtmlResponse($response)) {
             return;
         }
 
-        $parts = [];
+        $parts = [
+            '<script type="text/javascript">'
+        ];
 
-        // enable targeting logging in debug mode
-        if (\Pimcore::inDebugMode()) {
-            $parts[] = <<<EOF
-<script type="text/javascript">
+        $parts[] = <<<EOF
 window.pimcore = window.pimcore || {};
 window.pimcore.targeting = window.pimcore.targeting || {};
 window.pimcore.targeting.options = window.pimcore.targeting.options || {};
-window.pimcore.targeting.options.log = true;
-</script>
 EOF;
+
+        // inject keys of needed data providers (determined by conditions/actions/data providers)
+        $frontendDataProviders = $visitorInfo->getFrontendDataProviders();
+        if (count($frontendDataProviders) > 0) {
+            $parts[] = sprintf(
+                'window.pimcore.targeting.dataProviderKeys = %s;',
+                json_encode($frontendDataProviders)
+            );
         }
 
+        // enable targeting logging in debug mode
+        if (\Pimcore::inDebugMode()) {
+            $parts[] = 'window.pimcore.targeting.options.log = true;';
+        }
+
+        $parts[] = '</script>';
         $parts[] = '<script type="text/javascript" src="/pimcore/static6/js/frontend/targeting.js"></script>';
 
         $this->injectBeforeHeadEnd(

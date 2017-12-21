@@ -83,6 +83,13 @@ class VisitorInfo implements \IteratorAggregate
     private $actions = [];
 
     /**
+     * List of frontend data providers which are expected to provide data
+     *
+     * @var array
+     */
+    private $frontendDataProviders = [];
+
+    /**
      * @var Response
      */
     private $response;
@@ -255,6 +262,26 @@ class VisitorInfo implements \IteratorAggregate
         }
 
         return $this->targetGroups;
+    }
+
+    public function getFrontendDataProviders(): array
+    {
+        return $this->frontendDataProviders;
+    }
+
+    public function setFrontendDataProviders(array $providers)
+    {
+        $this->frontendDataProviders = [];
+        foreach ($providers as $provider) {
+            $this->addFrontendDataProvider($provider);
+        }
+    }
+
+    public function addFrontendDataProvider(string $key)
+    {
+        if (!in_array($key, $this->frontendDataProviders, true)) {
+            $this->frontendDataProviders[] = $key;
+        }
     }
 
     public function hasResponse(): bool

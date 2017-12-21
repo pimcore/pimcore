@@ -42,7 +42,7 @@
     };
 
     var util = {
-        merge: function() {
+        merge: function () {
             if (arguments.length === 0) {
                 return {};
             }
@@ -80,7 +80,7 @@
                     }
                 },
 
-                sessionStorage: function() {
+                sessionStorage: function () {
                     var v = 'test';
 
                     try {
@@ -114,7 +114,7 @@
         }()),
 
         logger: {
-            canLog: function(type) {
+            canLog: function (type) {
                 if (!window.pimcore.targeting.options.log) {
                     return false;
                 }
@@ -183,8 +183,8 @@
         }
     };
 
-    var User = (function() {
-        var generateVisitorId = function(length) {
+    var User = (function () {
+        var generateVisitorId = function (length) {
             var chars = '0123456789abcdef';
 
             var result = '';
@@ -312,10 +312,15 @@
         return User;
     }());
 
+    var dataProviders = {};
+
     window.pimcore.targeting.options = util.merge({
         log: false,
         sessionLength: 30
     }, window.pimcore.targeting.options || {});
+
+    // merge core data providers with custom ones
+    window.pimcore.targeting.dataProviders = util.merge(dataProviders, window.pimcore.targeting.dataProviders || {});
 
     var user = new User();
 
@@ -325,6 +330,19 @@
             user.save();
         }
     };
+
+    (function () {
+        if (window.pimcore.targeting.dataProviderKeys && window.pimcore.targeting.dataProviderKeys.length > 0) {
+            var dataProviderKeys = window.pimcore.targeting.dataProviderKeys;
+
+            for (var dp = 0; dp < dataProviderKeys.length; dp++) {
+                if (window.pimcore.targeting.dataProviders.hasOwnProperty(dataProviderKeys[dp])) {
+                    util.logger.canLog('info') && console.info("[TARGETING] Loading data from provider " + dataProviderKeys[dp]);
+                    window.pimcore.targeting.dataProviders[dataProviderKeys[dp]].apply(this);
+                }
+            }
+        }
+    }());
 
     util.contentLoaded(window, function () {
         // track page views
