@@ -119,7 +119,7 @@ pimcore.object.helpers.gridcolumnconfig = {
         this.buildColumnConfigMenu();
     },
 
-    addGridConfigMenuItems: function(menu, list) {
+    addGridConfigMenuItems: function(menu, list, onlyConfigs) {
         for (var i = 0; i < list.length; i++) {
             var disabled = false;
             var config = list[i];
@@ -127,7 +127,9 @@ pimcore.object.helpers.gridcolumnconfig = {
             if (config.id == this.settings.gridConfigId) {
                 text = this.settings.gridConfigName;
                 text = "<b>" + text + "</b>";
-                disabled = true;
+                if (!onlyConfigs) {
+                    disabled = true;
+                }
             }
             var menuConfig = {
                 text: text,
@@ -188,12 +190,12 @@ pimcore.object.helpers.gridcolumnconfig = {
         });
 
         if (this.availableConfigs && this.availableConfigs.length > 0) {
-            this.addGridConfigMenuItems(menu, this.availableConfigs);
+            this.addGridConfigMenuItems(menu, this.availableConfigs, onlyConfigs);
         }
 
         if (this.sharedConfigs && this.sharedConfigs.length > 0) {
             menu.add('-');
-            this.addGridConfigMenuItems(menu, this.sharedConfigs);
+            this.addGridConfigMenuItems(menu, this.sharedConfigs, onlyConfigs);
         }
     },
 
