@@ -1370,6 +1370,8 @@
     "web2print_port": "Port",
     "web2print_baseURL": "URL-Basis",
     "web2print_baseURL_txt": "URL-Basis für PDFreactor. Beim Erstellen von PDFs, wird dies jeder relativen URL in Druck-Vorlagen vorangestellt.",
+    "web2print_apiKey": "API Key",
+    "web2print_apiKey_txt": "Wenn PDFreactor einen API-Key benötigt, kann dieser hier hinterlegt werden.",
     "web2print_licence": "Lizenz",
     "web2print_wkhtmltopdf_settings": "Wkhtmltopdf Einstellungen",
     "web2print_wkhtmltopdf_binary": "wkhtmltopdf Binary",

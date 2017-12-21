@@ -132,6 +132,18 @@ pimcore.settings.web2print = Class.create({
                         emptyText: "http://my-domain.org",
                         cls: "pimcore_extra_label_bottom"
                     },{
+                        xtype: 'textfield',
+                        width: 650,
+                        fieldLabel: t("web2print_apiKey"),
+                        name: 'pdfreactorApiKey',
+                        value: this.getValue("pdfreactorApiKey")
+                    }, {
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        width: 600,
+                        value: t('web2print_apiKey_txt'),
+                        cls: "pimcore_extra_label_bottom"
+                    },{
                         xtype: 'textarea',
                         width: 650,
                         height: 200,

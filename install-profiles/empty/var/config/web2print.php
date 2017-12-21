@@ -10,6 +10,7 @@ return [
     "pdfreactorServer" => "localhost",
     "pdfreactorServerPort" => "9423",
     "pdfreactorBaseUrl" => "http://my.domain.com",
+    "pdfreactorApiKey" => "",
     "displayfield-1511-inputEl" => "BaseURL for PDFreactor. This is prefixed to each relative url in print templates when creating PDFs.",
     "pdfreactorLicence" => "",
     "wkhtmltopdfBin" => "wkhtmltopdf",
