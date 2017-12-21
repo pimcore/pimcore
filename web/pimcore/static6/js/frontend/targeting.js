@@ -1,6 +1,5 @@
 (function () {
-    window.pimcore = window.pimcore || {};
-    window.pimcore.targeting = window.pimcore.targeting || {};
+    window._ptg = window._ptg || {};
 
     var cookieNames = {
         visitorId: '_pc_vis',
@@ -119,7 +118,7 @@
 
         logger: {
             canLog: function (type) {
-                if (!window.pimcore.targeting.options.log) {
+                if (!_ptg.options.log) {
                     return false;
                 }
 
@@ -251,7 +250,7 @@
             var data = {};
 
             if (util.featureDetect('localStorage')) {
-                var storedData = localStorage.getItem("pimcore_targeting_userdata");
+                var storedData = localStorage.getItem("_ptg.user");
                 data = JSON.parse(storedData);
             }
 
@@ -277,7 +276,7 @@
             } else {
                 var lastActivity = this.data.activityLog.slice(-1)[0];
 
-                var sessionLength = window.pimcore.targeting.options.sessionLength;
+                var sessionLength = _ptg.options.sessionLength;
                 if (!sessionLength) {
                     sessionLength = 30;
                 }
@@ -294,7 +293,7 @@
 
         User.prototype.save = function () {
             if (util.featureDetect('localStorage')) {
-                localStorage.setItem("pimcore_targeting_userdata", JSON.stringify(this.data));
+                localStorage.setItem("_ptg.user", JSON.stringify(this.data));
             }
 
             // set visitor ID cookie
@@ -346,17 +345,17 @@
         }
     };
 
-    window.pimcore.targeting.options = util.merge({
+    _ptg.options = util.merge({
         log: false,
         sessionLength: 30
-    }, window.pimcore.targeting.options || {});
+    }, _ptg.options || {});
 
     // merge core data providers with custom ones
-    window.pimcore.targeting.dataProviders = util.merge(dataProviders, window.pimcore.targeting.dataProviders || {});
+    _ptg.dataProviders = util.merge(dataProviders, _ptg.dataProviders || {});
 
     var user = new User();
 
-    window.pimcore.targeting.api = {
+    _ptg.api = {
         setVisitorId: function (id) {
             user.setVisitorId(id);
             user.save();
@@ -364,13 +363,11 @@
     };
 
     (function () {
-        if (window.pimcore.targeting.dataProviderKeys && window.pimcore.targeting.dataProviderKeys.length > 0) {
-            var dataProviderKeys = window.pimcore.targeting.dataProviderKeys;
-
-            for (var dp = 0; dp < dataProviderKeys.length; dp++) {
-                if (window.pimcore.targeting.dataProviders.hasOwnProperty(dataProviderKeys[dp])) {
-                    util.logger.canLog('info') && console.info("[TARGETING] Loading data from provider " + dataProviderKeys[dp]);
-                    window.pimcore.targeting.dataProviders[dataProviderKeys[dp]].apply(this);
+        if (_ptg.dataProviderKeys && _ptg.dataProviderKeys.length > 0) {
+            for (var dp = 0; dp < _ptg.dataProviderKeys.length; dp++) {
+                if (_ptg.dataProviders.hasOwnProperty(_ptg.dataProviderKeys[dp])) {
+                    util.logger.canLog('info') && console.info("[TARGETING] Loading data from provider " + _ptg.dataProviderKeys[dp]);
+                    _ptg.dataProviders[_ptg.dataProviderKeys[dp]].apply(this);
                 }
             }
         }

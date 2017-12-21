@@ -20,6 +20,16 @@ namespace Pimcore\Event;
 final class TargetingEvents
 {
     /**
+     * Fired when the targeting code is rendered. Allows to add data to the targeting
+     * code or to change the template completely.
+     *
+     * @Event("Pimcore\Event\Targeting\TargetingCodeEvent")
+     *
+     * @var string
+     */
+    const TARGETING_CODE = 'pimcore.targeting.targeting_code^';
+
+    /**
      * Fired when the VisitorInfo object was built for a request before
      * any matching and action handling is applied.
      *

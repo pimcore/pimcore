@@ -134,3 +134,10 @@ services:
 
     Pimcore\Targeting\Document\DocumentTargetingConfigurator:
         public: true
+
+
+    #
+    # TARGETING CODE
+    #
+
+    Pimcore\Targeting\Code\TargetingCodeGenerator: ~

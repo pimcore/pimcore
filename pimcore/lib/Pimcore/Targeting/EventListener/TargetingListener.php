@@ -29,6 +29,7 @@ use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\AssignTargetGroup;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\ActionHandler\ResponseTransformingActionHandlerInterface;
+use Pimcore\Targeting\Code\TargetingCodeGenerator;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\VisitorInfoResolver;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
@@ -65,17 +66,24 @@ class TargetingListener implements EventSubscriberInterface
      */
     private $requestHelper;
 
+    /**
+     * @var TargetingCodeGenerator
+     */
+    private $codeGenerator;
+
     public function __construct(
         VisitorInfoResolver $visitorInfoResolver,
         ActionHandlerInterface $actionHandler,
         VisitorInfoStorageInterface $visitorInfoStorage,
-        RequestHelper $requestHelper
+        RequestHelper $requestHelper,
+        TargetingCodeGenerator $codeGenerator
     )
     {
         $this->visitorInfoResolver = $visitorInfoResolver;
         $this->actionHandler       = $actionHandler;
         $this->visitorInfoStorage  = $visitorInfoStorage;
         $this->requestHelper       = $requestHelper;
+        $this->codeGenerator       = $codeGenerator;
     }
 
     public static function getSubscribedEvents()
@@ -175,37 +183,12 @@ class TargetingListener implements EventSubscriberInterface
             return;
         }
 
-        $parts = [
-            '<script type="text/javascript">'
-        ];
-
-        $parts[] = <<<EOF
-window.pimcore = window.pimcore || {};
-window.pimcore.targeting = window.pimcore.targeting || {};
-window.pimcore.targeting.options = window.pimcore.targeting.options || {};
-EOF;
-
-        // inject keys of needed data providers (determined by conditions/actions/data providers)
-        $frontendDataProviders = $visitorInfo->getFrontendDataProviders();
-        if (count($frontendDataProviders) > 0) {
-            $parts[] = sprintf(
-                'window.pimcore.targeting.dataProviderKeys = %s;',
-                json_encode($frontendDataProviders)
-            );
+        $code = $this->codeGenerator->generateCode($visitorInfo);
+        if (empty($code)) {
+            return;
         }
 
-        // enable targeting logging in debug mode
-        if (\Pimcore::inDebugMode()) {
-            $parts[] = 'window.pimcore.targeting.options.log = true;';
-        }
-
-        $parts[] = '</script>';
-        $parts[] = '<script type="text/javascript" src="/pimcore/static6/js/frontend/targeting.js"></script>';
-
-        $this->injectBeforeHeadEnd(
-            $response,
-            implode("\n", $parts)
-        );
+        $this->injectBeforeHeadEnd($response, $code);
     }
 
     private function handleResponseActions(VisitorInfo $visitorInfo, Response $response)

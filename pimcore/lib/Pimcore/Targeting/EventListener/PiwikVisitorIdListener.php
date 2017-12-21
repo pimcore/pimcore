@@ -49,7 +49,7 @@ class PiwikVisitorIdListener implements EventSubscriberInterface
 
         // sets visitor ID to piwik's user ID
         $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
-            '_paq.push([ function() { pimcore.targeting.api.setVisitorId(this.getVisitorId()); } ]);'
+            '_paq.push([ function() { _ptg.api.setVisitorId(this.getVisitorId()); } ]);'
         );
     }
 }
