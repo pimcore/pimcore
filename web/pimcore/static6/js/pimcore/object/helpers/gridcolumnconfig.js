@@ -126,8 +126,8 @@ pimcore.object.helpers.gridcolumnconfig = {
             var text = config["name"];
             if (config.id == this.settings.gridConfigId) {
                 text = this.settings.gridConfigName;
-                text = "<b>" + text + "</b>";
                 if (!onlyConfigs) {
+                    text = "<b>" + text + "</b>";
                     disabled = true;
                 }
             }
@@ -173,7 +173,7 @@ pimcore.object.helpers.gridcolumnconfig = {
 
         var disabled = false;
         var text = t('predefined');
-        if (!this.settings.gridConfigId) {
+        if (!this.settings.gridConfigId && !onlyConfigs) {
             text = "<b>" + text + "</b>";
             disabled = true;
 
