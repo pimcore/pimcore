@@ -5,7 +5,7 @@
 In general the templates are located in: `/app/Resources/views/[Controller]/[action].html.(php|twig)` 
 (both controller as well as action without their suffix).  
 
-Pimcore uses an enhanced version of [Symfony's PHP templating engine](http://symfony.com/doc/current/templating/PHP.html).
+Pimcore uses an enhanced version of [Symfony's PHP templating engine](http://symfony.com/doc/3.4/templating/PHP.html).
 For historical reasons, Pimcore defaults to PHP as template language, but can easily reconfigured to use [Twig](./00_Twig.md)
 for templating.
 
@@ -25,7 +25,7 @@ However the default syntax is still available and ready to use.
 We've decided to implement the `$this` context for mainly 2 reasons: easier migration from Pimcore 4 and better IDE support
 since with the OOP approach we have the full power of auto-complete and code suggestions. 
 
-> It's recommended to have a look into [Symfony's Templating Component](http://symfony.com/doc/current/templating.html) 
+> It's recommended to have a look into [Symfony's Templating Component](http://symfony.com/doc/3.4/templating.html) 
 which covers much  more topics and goes a bit deeper into detail. 
 
 ### Pimcore Specialities and Examples
