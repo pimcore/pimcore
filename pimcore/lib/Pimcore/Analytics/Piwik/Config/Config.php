@@ -181,18 +181,18 @@ class Config
         return $this->normalizeStringValue($this->config->iframe_password);
     }
 
-    public function generateIframeUrl(): string
+    public function generateIframeUrl(array $parameters = []): string
     {
         if (!$this->isIframeIntegrationConfigured()) {
             throw new \RuntimeException('Iframe integration is not configured');
         }
 
-        $parameters = [
+        $parameters = array_merge([
             'module'   => 'Login',
             'action'   => 'logme',
             'login'    => $this->getIframeUsername(),
             'password' => $this->getIframePassword(),
-        ];
+        ], $parameters);
 
         return sprintf(
             '%s/index.php?%s',

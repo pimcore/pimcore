@@ -39,3 +39,10 @@ services:
     # auto-register all commands as services
     Pimcore\Bundle\EcommerceFrameworkBundle\Command\:
         resource: '../../Command'
+
+
+    #
+    # REPORTS
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Reports\Piwik\PiwikReportsProvider: ~
