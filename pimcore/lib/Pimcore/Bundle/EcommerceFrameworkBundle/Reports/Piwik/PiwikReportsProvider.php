@@ -45,6 +45,27 @@ class PiwikReportsProvider
      */
     private $translator;
 
+    /**
+     * Widgets taken into consideration for reporting menu
+     *
+     * @var array
+     */
+    private $reportingWidgets = [
+        'widgetEcommerceOverview',
+        'widgetEcommercegetEcommerceLog',
+        'widgetGoalsgetItemsSku',
+        'widgetGoalsgetVisitsUntilConversionforceView1viewDataTabletabledocumentationForGoalsPage1idGoalecommerceOrder', // yes, that's the real name in piwik...
+    ];
+
+    /**
+     * Widgets which will be linked as standalone widgets instead of full iframe if iframe integration is not configured
+     *
+     * @var array
+     */
+    private $widgetFallbackWidgets = [
+         'widgetEcommerceOverview',
+    ];
+
     public function __construct(
         SiteIdProvider $siteIdProvider,
         Config $config,
@@ -56,6 +77,26 @@ class PiwikReportsProvider
         $this->config         = $config;
         $this->widgetBroker   = $widgetBroker;
         $this->translator     = $translator;
+    }
+
+    public function getReportingWidgets(): array
+    {
+        return $this->reportingWidgets;
+    }
+
+    public function setReportingWidgets(array $reportingWidgets)
+    {
+        $this->reportingWidgets = $reportingWidgets;
+    }
+
+    public function getWidgetFallbackWidgets(): array
+    {
+        return $this->widgetFallbackWidgets;
+    }
+
+    public function setWidgetFallbackWidgets(array $widgetFallbackWidgets)
+    {
+        $this->widgetFallbackWidgets = $widgetFallbackWidgets;
     }
 
     public function getPiwikEcommerceReports(): array
@@ -72,7 +113,7 @@ class PiwikReportsProvider
                 continue;
             }
 
-            $entries = $this->getEcommerceWidgets($siteConfig);
+            $entries = $this->loadAvailableReports($siteConfig);
             if (empty($entries)) {
                 continue;
             }
@@ -87,25 +128,13 @@ class PiwikReportsProvider
         return $reports;
     }
 
-    private function getEcommerceWidgets(SiteId $siteConfig): array
+    private function loadAvailableReports(SiteId $siteConfig): array
     {
-        $widgets = $this->widgetBroker->getWidgetData($siteConfig->getConfigKey());
-
-        $whitelist = [
-            'widgetEcommerceOverview',
-            'widgetEcommercegetEcommerceLog',
-            'widgetGoalsgetItemsSku',
-            'widgetGoalsgetVisitsUntilConversionforceView1viewDataTabletabledocumentationForGoalsPage1idGoalecommerceOrder' // yes, that's the real name in piwik..
-        ];
-
-        $showAsWidgetWhitelist = [
-            'widgetEcommerceOverview'
-        ];
-
+        $widgets   = $this->widgetBroker->getWidgetData($siteConfig->getConfigKey());
         $canIframe = $this->config->isIframeIntegrationConfigured();
 
         $result = [];
-        foreach ($whitelist as $widgetId) {
+        foreach ($this->reportingWidgets as $widgetId) {
             if (isset($widgets[$widgetId])) {
                 $widgetConfig = $this->widgetBroker->getWidgetConfig($widgetId, $siteConfig->getConfigKey(), null, [
                     'period' => 'month'
@@ -114,13 +143,15 @@ class PiwikReportsProvider
                 $widgetData = $widgetConfig->getData();
 
                 $entry = [
-                    'title' => $widgetData['subcategory']['name']
+                    'id'        => $widgetId,
+                    'title'     => $widgetData['subcategory']['name'],
+                    'fullTitle' => $this->getFullTitle($widgetData),
                 ];
 
                 if ($canIframe) {
                     $entry['type'] = 'iframe';
                     $entry['url']  = $this->generateIframeUrl($siteConfig, $widgetData);
-                } elseif (in_array($widgetId, $showAsWidgetWhitelist)) {
+                } elseif (in_array($widgetId, $this->widgetFallbackWidgets)) {
                     $entry['type'] = 'widget';
                     $entry['url']  = $widgetConfig->getUrl();
                 } else {
@@ -132,6 +163,18 @@ class PiwikReportsProvider
         }
 
         return $result;
+    }
+
+    private function getFullTitle(array $widgetData): string
+    {
+        // avoid adding the category if it is already contained in the subcategory, e.g. avoid
+        // generating something like "Ecommerce Ecommerce Log" when subcategory is already named
+        // "Ecommerce Log"
+        if (0 === strpos($widgetData['subcategory']['name'], $widgetData['category']['name'])) {
+            return $widgetData['subcategory']['name'];
+        }
+
+        return $widgetData['category']['name'] . ' ' . $widgetData['subcategory']['name'];
     }
 
     private function generateIframeUrl(SiteId $siteConfig, array $widgetData)

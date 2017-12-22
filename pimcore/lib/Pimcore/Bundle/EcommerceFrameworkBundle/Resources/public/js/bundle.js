@@ -18,6 +18,8 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
 
     menuItems: null,
 
+    menuInitialized: false,
+
     getClassName: function () {
         return "pimcore.bundle.EcommerceFramework.bundle";
     },
@@ -27,6 +29,21 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
     },
 
     uninstall: function () {
+    },
+
+    initializeMenu: function (toolbar, menuItems) {
+        if (this.menuInitialized) {
+            return;
+        }
+
+        // add e-commerce framework main menu
+        this.navEl = Ext.get('pimcore_menu_ecommerce');
+        this.navEl.show();
+        this.navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
+
+        pimcore.helpers.initMenuTooltips();
+
+        this.menuInitialized = true;
     },
 
     pimcoreReady: function (params, broker) {
@@ -44,6 +61,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
             menuItems = new Ext.menu.Menu({cls: "pimcore_navigation_flyout"});
             toolbar.ecommerceMenu = menuItems;
         }
+
         var user = pimcore.globalmanager.get("user");
 
         var insertPoint = Ext.get("pimcore_menu_settings");
@@ -97,13 +115,77 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
             menuItems.add(item);
         }
 
-        // add e-commerce framework main menu
-        if (menuItems.items.length > 0) {
-            this.navEl = Ext.get('pimcore_menu_ecommerce');
-            this.navEl.show();
-            this.navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
-            pimcore.helpers.initMenuTooltips();
+        if (user.isAllowed('piwik_reports')) {
+            this.loadReportItems(toolbar, menuItems);
         }
+
+        if (menuItems.items.length > 0) {
+            this.initializeMenu(toolbar, menuItems);
+        }
+    },
+
+    loadReportItems: function (toolbar, menuItems) {
+        var that = this;
+
+        Ext.Ajax.request({
+            url: '/admin/ecommerceframework/reports/piwik/reports',
+            success: function (response) {
+                var json;
+
+                try {
+                    json = Ext.decode(response.responseText);
+
+                    if (!json.data) {
+                        return;
+                    }
+                } catch (e) {
+                    console.error(e);
+                    return;
+                }
+
+                var reportItems = [];
+                Ext.Array.each(json.data, function (siteConfig) {
+                    if (reportItems.length > 0) {
+                        reportItems.push(new Ext.menu.Separator({}));
+                    }
+
+                    var title = '';
+                    if ('default' !== siteConfig.id) {
+                        title = siteConfig.title + ' - ';
+                    }
+
+                    Ext.Array.each(siteConfig.entries, function (entry) {
+                        var entryTitle = title + entry.title;
+
+                        reportItems.push({
+                            text: title + entry.title,
+                            iconCls: 'pimcore_icon_reports',
+                            handler: function () {
+                                pimcore.helpers.openGenericIframeWindow(
+                                    ['ecommerce', siteConfig.id, entry.id].join('-'),
+                                    entry.url,
+                                    'pimcore_icon_reports',
+                                    title + entry.fullTitle
+                                );
+                            }
+                        });
+                    });
+                });
+
+                menuItems.add({
+                    text: t('reports'),
+                    iconCls: "pimcore_icon_reports",
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: reportItems
+                    }
+                });
+
+                that.initializeMenu(toolbar, menuItems);
+            }
+        });
     },
 
     postOpenObject: function (object, type) {
