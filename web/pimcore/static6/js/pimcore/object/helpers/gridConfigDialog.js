@@ -25,7 +25,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         this.showSaveAndShareTab = showSaveAndShareTab;
         this.isShared = settings && settings.isShared;
 
-        this.settings = settings;
+        this.settings = settings || {};
 
         if (!this.callback) {
             this.callback = function () {
@@ -347,7 +347,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         var user = pimcore.globalmanager.get("user");
 
-        this.settings = Ext.apply(this.settings, this.settingsForm.getForm().getFieldValues());
+        if (this.showSaveAndShareTab) {
+            this.settings = Ext.apply(this.settings, this.settingsForm.getForm().getFieldValues());
+        }
 
         if (this.showSaveAndShareTab && user.isAllowed("share_configurations")) {
 
