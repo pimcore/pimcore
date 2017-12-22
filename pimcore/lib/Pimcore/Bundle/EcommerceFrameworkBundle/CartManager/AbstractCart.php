@@ -600,7 +600,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
         $this->creationDate = $creationDate;
         if ($creationDate) {
-            $this->creationDateTimestamp = $creationDate->getTimezone();
+            $this->creationDateTimestamp = $creationDate->getTimestamp();
         } else {
             $this->creationDateTimestamp = null;
         }
