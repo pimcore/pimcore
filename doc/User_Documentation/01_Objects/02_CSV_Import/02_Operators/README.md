@@ -24,15 +24,15 @@ Operators can then be used to change the way how the data is processed.
 
 ## Overview 
 
+* [Operator Base64](./Base64.md)
 * [Operator Ignore](./Ignore.md)
-* [Operator Published](./Published.md)
+* [Operator Iterator](./Iterator.md)
 * [Operator Locale Switcher](./LocaleSwitcher.md)
 * [Operator Objectbrick Setter](./BrickSetter.md)
 * [Operator PHPCode](./PHPCode.md)
-* [Operator Iterator](./Iterator.md)
+* [Operator Published](./Published.md)
 * [Operator Splitter](./Splitter.md)
 * [Operator Unserialize](./Unserialize.md)
-* [Operator Base64](./Base64.md)
 * ...
 
 

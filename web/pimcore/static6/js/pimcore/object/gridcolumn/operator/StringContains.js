@@ -121,7 +121,7 @@ pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_stringreplace_settings'),
+            title: t('operator_stringcontains_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
