@@ -70,7 +70,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @var string
      */
-    public $styleElement = "";
+    public $styleElement = '';
 
     /**
      * Type for the generated phpdoc
@@ -814,11 +814,13 @@ class Block extends Model\DataObject\ClassDefinition\Data
 
     /**
      * @param string $styleElement
+     *
      * @return $this
      */
     public function setStyleElement($styleElement)
     {
         $this->styleElement = $styleElement;
+
         return $this;
     }
 }
