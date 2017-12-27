@@ -239,6 +239,12 @@
     border-bottom: 8px solid transparent;
 }
 
+#pimcore_tooltip.right:after {
+    left: 100%;
+    border-left: 8px solid #000000;
+    border-right: 0px solid #000000;
+}
+
 
 .pimcore_hidden {
     display:none !important;

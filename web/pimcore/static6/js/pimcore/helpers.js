@@ -2930,6 +2930,7 @@ pimcore.helpers.initMenuTooltips = function () {
 
     items.mouseenter(function (e) {
         $("#pimcore_tooltip").show();
+        $("#pimcore_tooltip").removeClass('right');
         $("#pimcore_tooltip").html($(this).data("menu-tooltip"));
 
         var closestEl = $(e.target).closest('[data-menu-tooltip]');
@@ -2937,7 +2938,7 @@ pimcore.helpers.initMenuTooltips = function () {
         var top = offset.top;
         top = top + (closestEl.height() / 2);
 
-        $("#pimcore_tooltip").css({top: top, left: 60});
+        $("#pimcore_tooltip").css({top: top, left: 60, right: 'auto'});
     });
 
     items.mouseleave(function () {
