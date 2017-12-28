@@ -40,15 +40,79 @@ You can need to configure a new environment name different than the existing one
 > **Note:** The default `test` environment should only be used for running test suite (like Travis).
 > It use the session.storage.mock_file which fakes sessions (as consequence, the administrator cannot log in Pimcore for instance)
 
-To configure a new environment, you need to manually create a YAML config file for the project in two places (you can start by copying config_dev.yml for instance in each of those):
+To configure a new environment, you need to manually create a YAML config file for the project in:
 
 ```
 app/config/pimcore/
-pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/
 ```
 
-If you use some specific bundles, you need to activate them in `app\AppKernel.php`.
-For instance for an new environment called `staging` (copied from `dev` environment YAML config) you should add in the method `registerBundlesToCollection`:
+As a starting point, you can inspire your new YAML config file from the existing YAML config files for dev and prod environment in `app/config/pimcore/` and `pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/`.
+
+For instance, the most minimal config, reproducting prod environment, will be:
+
+```
+imports:
+    - { resource: config.yml }
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: error
+            buffer_size: 2000
+            handler:      nested
+        nested:
+            type:  stream
+            path:  "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+        console:
+            type:  console
+```
+
+A config file, reproducting dev environment (and using specific bundles, see below how to register them) will be like this:
+
+```
+imports:
+    - { resource: config.yml }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        strict_requirements: true
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            channels: ["!event"]
+        console:
+            type:   console
+            channels: ["!event"]
+
+pimcore:
+    error_handling:
+        render_error_document: false
+
+    web_profiler:
+        toolbar:
+            excluded_routes: ~
+
+    translations:
+        # enables support for the pimcore_debug_translations magic parameter
+        # see https://pimcore.com/docs/5.0.x/Development_Tools_and_Details/Magic_Parameters.html
+        debugging:
+            enabled: true
+```
+
+If you use some specific bundles, you need to register them in `app\AppKernel.php`.
+For instance for an new environment called `staging` using web profiler, you should add in the method `registerBundlesToCollection`:
 ```
 use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
