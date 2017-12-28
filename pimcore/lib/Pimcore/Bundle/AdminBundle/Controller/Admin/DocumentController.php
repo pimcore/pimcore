@@ -24,6 +24,7 @@ use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +52,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $document = Document::getById($request->get('id'));
         $document = clone $document;
@@ -63,7 +64,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'data' => $data,
             'document' => $document
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');
 
         if ($document->isAllowed('view')) {
@@ -80,7 +81,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request)
+    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -126,7 +127,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'list' => $childsList,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
@@ -1177,14 +1178,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function seopanelTreeAction(Request $request)
+    public function seopanelTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -1203,7 +1204,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'list' => $list,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
@@ -1227,7 +1228,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'list' => $result,
             'context' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->adminJson($result['data']);

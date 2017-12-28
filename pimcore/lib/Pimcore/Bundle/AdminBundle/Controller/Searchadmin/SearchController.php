@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,14 +45,14 @@ class SearchController extends AdminController
      * @todo: $conditionClassnameParts could be undefined
      * @todo: $data could be undefined
      */
-    public function findAction(Request $request)
+    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
         $user = $this->getAdminUser();
@@ -293,7 +294,7 @@ class SearchController extends AdminController
             'list' => $searcherList,
             'context' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
         if (in_array('asset', $types)) {
@@ -302,7 +303,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
@@ -312,7 +313,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
@@ -322,7 +323,7 @@ class SearchController extends AdminController
                 'list' => $searcherList,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
@@ -360,7 +361,7 @@ class SearchController extends AdminController
             'list' => $result,
             'context' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->adminJson($result);

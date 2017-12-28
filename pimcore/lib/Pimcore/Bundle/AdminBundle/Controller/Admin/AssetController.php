@@ -23,6 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +52,7 @@ class AssetController extends ElementControllerBase implements EventedController
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
 
         // check for lock
@@ -127,7 +128,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'data' => $data,
             'asset' => $asset
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_GET_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');
 
         if ($asset->isAllowed('view')) {
@@ -144,7 +145,7 @@ class AssetController extends ElementControllerBase implements EventedController
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request)
+    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -187,7 +188,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $childsList,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
@@ -1433,14 +1434,14 @@ class AssetController extends ElementControllerBase implements EventedController
      *
      * @return JsonResponse
      */
-    public function getFolderContentPreviewAction(Request $request)
+    public function getFolderContentPreviewAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -1482,7 +1483,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'list' => $list,
             'context' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         $list = $beforeListLoadEvent->getArgument('list');
 
         $list->load();
@@ -1526,7 +1527,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'list' => $result,
             'context' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');
 
 		// Here we revert to assets key
@@ -2108,14 +2109,14 @@ class AssetController extends ElementControllerBase implements EventedController
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request)
+    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 		
@@ -2231,7 +2232,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $list,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $list = $beforeListLoadEvent->getArgument('list');
 
             $list->load();
@@ -2263,7 +2264,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $result,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
             $result = $afterListLoadEvent->getArgument('list');
 
             return $this->adminJson($result);

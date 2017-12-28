@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -287,7 +288,7 @@ class TagsController extends AdminController
      *
      * @return mixed
      */
-    private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object)
+    private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object, EventDispatcherInterface $eventDispatcher)
     {
         $childsList = new \Pimcore\Model\DataObject\Listing();
         $condition = 'o_path LIKE ?';
@@ -307,7 +308,7 @@ class TagsController extends AdminController
             'list' => $childsList,
             'context' => []
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         $childsList = $beforeListLoadEvent->getArgument('list');
 
         return $childsList->loadIdList();
@@ -318,7 +319,7 @@ class TagsController extends AdminController
      *
      * @return mixed
      */
-    private function getSubAssetIds(\Pimcore\Model\Asset $asset)
+    private function getSubAssetIds(\Pimcore\Model\Asset $asset, EventDispatcherInterface $eventDispatcher)
     {
         $childsList = new \Pimcore\Model\Asset\Listing();
         $condition = 'path LIKE ?';
@@ -338,7 +339,7 @@ class TagsController extends AdminController
             'list' => $childsList,
             'context' => []
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         $childsList = $beforeListLoadEvent->getArgument('list');
 
         return $childsList->loadIdList();
@@ -349,7 +350,7 @@ class TagsController extends AdminController
      *
      * @return mixed
      */
-    private function getSubDocumentIds(\Pimcore\Model\Document $document)
+    private function getSubDocumentIds(\Pimcore\Model\Document $document, EventDispatcherInterface $eventDispatcher)
     {
         $childsList = new \Pimcore\Model\Document\Listing();
         $condition = 'path LIKE ?';
@@ -369,7 +370,7 @@ class TagsController extends AdminController
             'list' => $childsList,
             'context' => []
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         $childsList = $beforeListLoadEvent->getArgument('list');
 
         return $childsList->loadIdList();

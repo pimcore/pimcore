@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -49,7 +50,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request)
+    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 		
@@ -122,7 +123,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'list' => $childsList,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
@@ -146,7 +147,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $event = new GenericEvent($this, [
             'objects' => $objects,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
         $objects = $event->getArgument('objects');
 
         if ($request->get('limit')) {
@@ -310,7 +311,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return JsonResponse
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'object')) {
@@ -431,7 +432,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'data' => $objectData,
                 'object' => $object,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
             return $this->adminJson($data);
@@ -1530,14 +1531,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request)
+    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 		
@@ -1807,7 +1808,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'list' => $list,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             $list = $beforeListLoadEvent->getArgument('list');
 
             $list->load();
@@ -1827,7 +1828,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'list' => $result,
                 'context' => $allParams
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
             $result = $afterListLoadEvent->getArgument('list');
 
             return $this->adminJson($result);
