@@ -102,6 +102,28 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
             cls:"object_field"
         });
 
+        var columnTypeData = [["bigint(20)", "BIGINT"], ["datetime", "DATETIME"]];
+
+        this.columnTypeField = new Ext.form.ComboBox({
+            name: "columnType",
+            mode: 'local',
+            autoSelect: true,
+            forceSelection: true,
+            editable: false,
+            fieldLabel: t("column_type"),
+            value: this.datax.columnType != "bigint(20)" && this.datax.columnType != "datetime" ? 'bigint(20)' : this.datax.columnType ,
+            store: new Ext.data.ArrayStore({
+                fields: [
+                    'id',
+                    'label'
+                ],
+                data: columnTypeData
+            }),
+            triggerAction: 'all',
+            valueField: 'id',
+            displayField: 'label'
+        });
+
 
         this.specificPanel.removeAll();
         this.specificPanel.add([
@@ -120,7 +142,8 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
                 xtype: "displayfield",
                 hideLabel:true,
                 html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
-            }
+            },
+            this.columnTypeField
         ]);
 
         return this.layout;
@@ -158,6 +181,11 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
             }
 
 
+    },
+
+    applyData: function ($super) {
+        $super();
+        this.datax.queryColumnType = this.datax.columnType;
     },
 
     applySpecialData: function(source) {

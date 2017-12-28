@@ -35,7 +35,8 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    protected function buildDataObjectsNode() {
+    protected function buildDataObjectsNode()
+    {
         $treeBuilder = new TreeBuilder();
 
         $gdprDataExtractor = $treeBuilder->root('gdpr_data_extractor');
@@ -51,21 +52,21 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('classes')
                     ->info('Configure which classes should be considered, array key is class name')
                     ->prototype('array')
-                        ->info("
+                        ->info('
     MY_CLASS_NAME: 
 		include: true
 		allowDelete: false
 		includeRelations:
 			- manualSegemens
 			- calculatedSegments
-                        ")
+                        ')
                         ->children()
-                            ->booleanNode("include")
-                                ->info("Set if class should be considered in export.")
+                            ->booleanNode('include')
+                                ->info('Set if class should be considered in export.')
                                 ->defaultTrue()
                             ->end()
-                            ->booleanNode("allowDelete")
-                                ->info("Allow delete of objects directly in preview grid.")
+                            ->booleanNode('allowDelete')
+                                ->info('Allow delete of objects directly in preview grid.')
                                 ->defaultFalse()
                             ->end()
                             ->arrayNode('includedRelations')
@@ -79,6 +80,7 @@ class Configuration implements ConfigurationInterface
         ;
 
         $gdprDataExtractor->append($dataObjects);
+
         return $gdprDataExtractor;
     }
 }

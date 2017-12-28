@@ -66,13 +66,13 @@ Pimcore uses by default an improved version of the Symfony PHP templating engine
 Symfony templates with all Symfony functionalities available. In addition to that, there are some Pimcore specific additions like the so called *editables*, 
 which add editable parts (placeholders) to the layout and some custom templating helpers. 
 
-We've improved the default [Symfony PHP engine](http://symfony.com/doc/current/templating/PHP.html), by adding the `$this` context, which is basically the same as using 
+We've improved the default [Symfony PHP engine](http://symfony.com/doc/3.4/templating/PHP.html), by adding the `$this` context, which is basically the same as using 
 the `$view` variable or local variables when using the default Symfony syntax. However the default syntax is still available and ready to use.  
 
 For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
-We can use Symfony`s [template inheritance and layout](http://symfony.com/doc/current/templating.html#template-inheritance-and-layouts) functionality 
+We can use Symfony`s [template inheritance and layout](http://symfony.com/doc/3.4/templating.html#template-inheritance-and-layouts) functionality 
 to wrap our content page with another template which contains the main navigation, a sidebar, … using the following code:
 
 ```php

@@ -1,4 +1,6 @@
-# Resolver Strategies
+# Resolver Strategies (Experimental)
+
+> This is an experimental feature and subject to change without notice.
 
 A resolver strategy allows you to define how an existing object is matched based on the CSV data or how a new one gets created.
 

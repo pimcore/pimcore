@@ -596,10 +596,13 @@ class Manager
         }
 
         try {
-            \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::ACTION_BEFORE, new WorkflowEvent($this, [
+            $event = \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::ACTION_BEFORE, new WorkflowEvent($this, [
                 'actionConfig' => $actionConfig,
                 'data' => $formData
             ]));
+
+            // allow event subscribers to modify actionConfig
+            $actionConfig = $event->getArgument('actionConfig');
 
             //todo add some support to stop the action given the result from the event
 

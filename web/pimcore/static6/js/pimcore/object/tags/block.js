@@ -253,7 +253,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         var blockElement = new Ext.Panel({
             pimcore_oIndex: oIndex,
             bodyStyle: "padding:10px;",
-            style: "margin: 10px 0 10px 0;",
+            style: "margin: 10px 0 10px 0;"  + this.fieldConfig.styleElement,
             manageHeight: false,
             border: false,
             items: [

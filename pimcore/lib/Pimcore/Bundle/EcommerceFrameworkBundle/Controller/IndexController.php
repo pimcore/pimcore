@@ -52,7 +52,7 @@ class IndexController extends AdminController
             }
         }
 
-        return $this->json(['data' => array_values($data)]);
+        return $this->adminJson(['data' => array_values($data)]);
     }
 
     /**
@@ -92,9 +92,9 @@ class IndexController extends AdminController
                 $data = $helper->getGroupByValuesForFilterGroup($columnGroup, $productList, $request->get('field'));
             }
 
-            return $this->json(['data' => array_values($data)]);
+            return $this->adminJson(['data' => array_values($data)]);
         } catch (\Exception $e) {
-            return $this->json(['message' => $e->getMessage()]);
+            return $this->adminJson(['message' => $e->getMessage()]);
         }
     }
 
@@ -147,7 +147,7 @@ class IndexController extends AdminController
 
         ksort($fields);
 
-        return $this->json(['data' => array_values($fields)]);
+        return $this->adminJson(['data' => array_values($fields)]);
     }
 
     /**
@@ -166,6 +166,6 @@ class IndexController extends AdminController
             }
         }
 
-        return $this->json(['data' => $data]);
+        return $this->adminJson(['data' => $data]);
     }
 }

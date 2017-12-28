@@ -25,7 +25,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         this.showSaveAndShareTab = showSaveAndShareTab;
         this.isShared = settings && settings.isShared;
 
-        this.settings = settings;
+        this.settings = settings || {};
 
         if (!this.callback) {
             this.callback = function () {
@@ -118,33 +118,37 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
     getSaveAndSharePanel: function () {
 
-        this.userStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: '/admin/user/get-users',
-                reader: {
-                    rootProperty: 'data',
-                    idProperty: 'id'
-                }
-            },
-            fields: ['id', 'label']
-        });
+        var user = pimcore.globalmanager.get("user");
+        if (user.isAllowed("share_configurations")) {
 
-        this.rolesStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            autoLoad: true,
-            proxy: {
-                type: 'ajax',
-                url: '/admin/user/get-roles',
-                reader: {
-                    rootProperty: 'data',
-                    idProperty: 'id'
-                }
-            },
-            fields: ['id', 'label']
-        });
+            this.userStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/user/get-users',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'id'
+                    }
+                },
+                fields: ['id', 'label']
+            });
+
+            this.rolesStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/user/get-roles',
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'id'
+                    }
+                },
+                fields: ['id', 'label']
+            });
+        }
 
         this.nameField = new Ext.form.TextField({
             fieldLabel: t('name'),
@@ -163,39 +167,41 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             value: this.settings ? this.settings.gridConfigDescription : ""
         });
 
-        this.userSharingField = Ext.create('Ext.form.field.Tag', {
-            name: "sharedUserIds",
-            width: '100%',
-            height: 100,
-            fieldLabel: t("shared_users"),
-            queryDelay: 0,
-            resizable: true,
-            queryMode: 'local',
-            minChars: 1,
-            store: this.userStore,
-            displayField: 'label',
-            valueField: 'id',
-            forceSelection: true,
-            filterPickList: true,
-            value: this.settings.sharedUserIds ? this.settings.sharedUserIds : ""
-        });
+        if (user.isAllowed("share_configurations")) {
+            this.userSharingField = Ext.create('Ext.form.field.Tag', {
+                name: "sharedUserIds",
+                width: '100%',
+                height: 100,
+                fieldLabel: t("shared_users"),
+                queryDelay: 0,
+                resizable: true,
+                queryMode: 'local',
+                minChars: 1,
+                store: this.userStore,
+                displayField: 'label',
+                valueField: 'id',
+                forceSelection: true,
+                filterPickList: true,
+                value: this.settings.sharedUserIds ? this.settings.sharedUserIds : ""
+            });
 
-        this.rolesSharingField = Ext.create('Ext.form.field.Tag', {
-            name: "sharedRoleIds",
-            width: '100%',
-            height: 100,
-            fieldLabel: t("shared_roles"),
-            queryDelay: 0,
-            resizable: true,
-            queryMode: 'local',
-            minChars: 1,
-            store: this.rolesStore,
-            displayField: 'label',
-            valueField: 'id',
-            forceSelection: true,
-            filterPickList: true,
-            value: this.settings.sharedRoleIds ? this.settings.sharedRoleIds : ""
-        });
+            this.rolesSharingField = Ext.create('Ext.form.field.Tag', {
+                name: "sharedRoleIds",
+                width: '100%',
+                height: 100,
+                fieldLabel: t("shared_roles"),
+                queryDelay: 0,
+                resizable: true,
+                queryMode: 'local',
+                minChars: 1,
+                store: this.rolesStore,
+                displayField: 'label',
+                valueField: 'id',
+                forceSelection: true,
+                filterPickList: true,
+                value: this.settings.sharedRoleIds ? this.settings.sharedRoleIds : ""
+            });
+        }
 
         var items = [this.nameField, this.descriptionField];
 
@@ -213,8 +219,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             items.push(this.shareGlobally);
         }
 
-        items.push(this.userSharingField);
-        items.push(this.rolesSharingField);
+        if (user.isAllowed("share_configurations")) {
+            items.push(this.userSharingField);
+            items.push(this.rolesSharingField);
+        }
 
         this.settingsForm = Ext.create('Ext.form.FormPanel', {
             defaults: {
@@ -337,16 +345,24 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             }.bind(this));
         }
 
+        var user = pimcore.globalmanager.get("user");
+
         if (this.showSaveAndShareTab) {
             this.settings = Ext.apply(this.settings, this.settingsForm.getForm().getFieldValues());
+        }
+
+        if (this.showSaveAndShareTab && user.isAllowed("share_configurations")) {
+
             if (this.settings.sharedUserIds != null) {
                 this.settings.sharedUserIds = this.settings.sharedUserIds.join();
             }
             if (this.settings.sharedRoleIds != null) {
                 this.settings.sharedRoleIds = this.settings.sharedRoleIds.join();
             }
-
             this.settings.shareGlobally = this.shareGlobally ? this.shareGlobally.getValue() : false;
+        } else {
+            delete this.settings.sharedUserIds;
+            delete this.settings.sharedRoleIds;
         }
 
         if (!operatorFound) {
@@ -841,12 +857,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             };
 
             groupNodes.push(groupNode);
-
-
-
-
         }
-
 
         var tree = new Ext.tree.TreePanel({
             title: t('operators'),

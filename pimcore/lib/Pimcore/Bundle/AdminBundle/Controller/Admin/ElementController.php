@@ -42,7 +42,7 @@ class ElementController extends AdminController
     {
         Element\Editlock::lock($request->get('id'), $request->get('type'));
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -56,7 +56,7 @@ class ElementController extends AdminController
     {
         Element\Editlock::unlock($request->get('id'), $request->get('type'));
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -77,7 +77,7 @@ class ElementController extends AdminController
             $response['idPath'] = Element\Service::getIdPath($element);
         }
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -112,14 +112,14 @@ class ElementController extends AdminController
                 $subtype = 'folder';
             }
 
-            return $this->json([
+            return $this->adminJson([
                 'subtype' => $subtype,
                 'id' => $el->getId(),
                 'type' => $type,
                 'success' => true
             ]);
         } else {
-            return $this->json([
+            return $this->adminJson([
                 'success' => false
             ]);
         }
@@ -300,7 +300,7 @@ class ElementController extends AdminController
             $notes[] = $e;
         }
 
-        return $this->json([
+        return $this->adminJson([
             'data' => $notes,
             'success' => true,
             'total' => $list->getTotalCount()
@@ -327,7 +327,7 @@ class ElementController extends AdminController
         $note->setType($request->get('type'));
         $note->save();
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -367,7 +367,7 @@ class ElementController extends AdminController
             $success = true;
         }
 
-        return $this->json([
+        return $this->adminJson([
             'data' => $results,
             'hasHidden' => $hasHidden,
             'success' => $success
@@ -407,7 +407,7 @@ class ElementController extends AdminController
                 $element = Asset\Service::rewriteIds($element, $rewriteConfig);
             }
 
-            $element->setUserModification($this->getUser()->getId());
+            $element->setUserModification($this->getAdminUser()->getId());
             $element->save();
 
             $success = true;
@@ -415,7 +415,7 @@ class ElementController extends AdminController
             $message = 'source-type and target-type do not match';
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success,
             'message' => $message
         ]);
@@ -438,7 +438,7 @@ class ElementController extends AdminController
             $success = true;
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success
         ]);
     }
@@ -471,7 +471,7 @@ class ElementController extends AdminController
         $data['typePath'] = $typePath;
         $data['fullpath'] = $element->getRealFullPath();
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**
@@ -490,7 +490,7 @@ class ElementController extends AdminController
         $version->setNote($data['note']);
         $version->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -561,7 +561,7 @@ class ElementController extends AdminController
             }
         }
 
-        return $this->json(['success' => true, 'data' => $result]);
+        return $this->adminJson(['success' => true, 'data' => $result]);
     }
 
     /**
@@ -600,7 +600,7 @@ class ElementController extends AdminController
                         }
                     }
 
-                    return $this->json(['versions' => $versions]);
+                    return $this->adminJson(['versions' => $versions]);
                 } else {
                     throw new \Exception('Permission denied, ' . $type . ' id [' . $id . ']');
                 }
@@ -622,7 +622,7 @@ class ElementController extends AdminController
         $version = Model\Version::getById($request->get('id'));
         $version->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -643,11 +643,11 @@ class ElementController extends AdminController
             if ($element instanceof Model\Element\ElementInterface) {
                 $dependencies = Model\Element\Service::getRequiresDependenciesForFrontend($element->getDependencies());
 
-                return $this->json($dependencies);
+                return $this->adminJson($dependencies);
             }
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -668,11 +668,11 @@ class ElementController extends AdminController
             if ($element instanceof Model\Element\ElementInterface) {
                 $dependencies = Model\Element\Service::getRequiredByDependenciesForFrontend($element->getDependencies());
 
-                return $this->json($dependencies);
+                return $this->adminJson($dependencies);
             }
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -705,7 +705,7 @@ class ElementController extends AdminController
             }
         }
 
-        return $this->json(['properties' => $properties]);
+        return $this->adminJson(['properties' => $properties]);
     }
 
     /**
@@ -733,7 +733,7 @@ class ElementController extends AdminController
 
         $result = Element\PermissionChecker::check($element, $userList);
 
-        return $this->json(
+        return $this->adminJson(
             [
                 'data' => $result,
                 'success' => true

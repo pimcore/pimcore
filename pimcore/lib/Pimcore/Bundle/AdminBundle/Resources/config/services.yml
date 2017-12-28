@@ -43,19 +43,12 @@ services:
 
     Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~
 
-    #
-    # GRID CONFIG
-    #
-    pimcore.object.gridcolumconfig:
-        class: Pimcore\Model\DataObject\GridColumnConfig\Service
-        public: true
 
     #
-    # IMPORT CONFIG
+    # REDIRECTS
     #
-    pimcore.object.importconfig:
-        class: Pimcore\Model\DataObject\ImportColumnConfig\Service
-        public: true
+
+    Pimcore\Routing\Redirect\Csv: ~
 
 
     #

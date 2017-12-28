@@ -426,6 +426,7 @@ pimcore.object.classes.data.multihrefMetadata = Class.create(pimcore.object.clas
                 text: t("objectsMetadata_type_text"),
                 select: t("objectsMetadata_type_select"),
                 bool: t("objectsMetadata_type_bool"),
+                columnbool: t("objectsMetadata_type_columnbool"),
                 multiselect: t("objectsMetadata_type_multiselect")
             };
 
@@ -441,8 +442,14 @@ pimcore.object.classes.data.multihrefMetadata = Class.create(pimcore.object.clas
                         'value',
                         'label'
                     ],
-                    data: [['number', types.number], ['text', types.text], ['select', types.select],
-                        ['bool', types.bool],  ['multiselect', types.multiselect]]
+                    data: [
+                        ['number', types.number],
+                        ['text', types.text],
+                        ['select', types.select],
+                        ['bool', types.bool],
+                        ['columnbool', types.columnbool],
+                        ['multiselect', types.multiselect]
+                    ]
                 }),
                 valueField: 'value',
                 displayField: 'label'

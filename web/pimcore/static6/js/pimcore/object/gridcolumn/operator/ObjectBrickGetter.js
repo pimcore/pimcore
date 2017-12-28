@@ -132,7 +132,7 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_fieldcollectiongetter_settings'),
+            title: t('operator_objectbrickgetter_settings'),
             layout: "fit",
             items: [this.configPanel]
         });

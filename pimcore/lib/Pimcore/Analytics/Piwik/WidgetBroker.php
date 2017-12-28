@@ -122,7 +122,7 @@ class WidgetBroker
         return $references;
     }
 
-    public function getWidgetConfig(string $widgetId, string $configKey, string $locale = null): WidgetConfig
+    public function getWidgetConfig(string $widgetId, string $configKey, string $locale = null, array $urlParams = []): WidgetConfig
     {
         $config  = $this->loadConfig();
         $locale  = $this->resolveLocale($locale);
@@ -133,7 +133,7 @@ class WidgetBroker
         }
 
         $widget = $widgets[$widgetId];
-        $url    = $this->generateWidgetUrl($config, $configKey, $widget, $locale);
+        $url    = $this->generateWidgetUrl($config, $configKey, $widget, $locale, $urlParams);
 
         return new WidgetConfig($widgetId, $widget['name'], $this->generateTitle($widget), $url, $widget);
     }
@@ -308,9 +308,9 @@ class WidgetBroker
         return $this->apiClient->get($params);
     }
 
-    private function generateWidgetUrl(Config $config, string $configKey, array $widget, string $locale = null): string
+    private function generateWidgetUrl(Config $config, string $configKey, array $widget, string $locale = null, array $urlParams = []): string
     {
-        $params = [
+        $params = array_merge([
             'module'      => 'Widgetize',
             'action'      => 'iframe',
             'widget'      => 1,
@@ -319,7 +319,7 @@ class WidgetBroker
             'disableLink' => 1,
             'idSite'      => $config->getPiwikSiteId($configKey),
             'token_auth'  => $config->getReportToken()
-        ];
+        ], $urlParams);
 
         $params['moduleToWidgetize'] = $widget['module'];
         $params['actionToWidgetize'] = $widget['action'];

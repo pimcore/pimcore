@@ -36,11 +36,15 @@ class Service
             $data['value'] = (bool) $value;
         } elseif (in_array($fc['fieldType'], ['date', 'datetime'])) {
             $data['type'] = 'date';
+
+            $dateTime = new \DateTime();
+
             if (empty($fc['timeformat']) || $fc['timeformat'] === 'milliseconds') {
-                $data['value'] = new \Pimcore\Date($value / 1000);
+                $dateTime->setTimestamp($value / 1000);
             } else {
-                $data['value'] = new \Pimcore\Date($value);
+                $dateTime->setTimestamp($value);
             }
+            $data['value'] = $dateTime;
         } elseif (false) { //TODO
 
             $data['type'] = 'document';
@@ -118,7 +122,7 @@ class Service
             foreach ($noteData as $row) {
                 if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
                     /**
-                     * @var \Pimcore\Date $date
+                     * @var \DateTime $date
                      */
                     $date = $row['value'];
                     $note->setDate($date->getTimestamp());

@@ -11,7 +11,6 @@
   - [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
 - [Updating Pimcore](07_Updating_Pimcore.md)
 - [Upgrade Notes](09_Upgrade_Notes/README.md)
-- [Version History](11_Version_History.md)
 
 ## Advanced Topics
 - [Cluster Setup](03_System_Setup_and_Hosting/07_Cluster_Setup.md)

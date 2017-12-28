@@ -18,12 +18,15 @@
 namespace Pimcore\Model\Document\Page;
 
 use Pimcore\Model;
+use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
  * @property \Pimcore\Model\Document\Page $model
  */
-class Dao extends Model\Document\PageSnippet\Dao
+class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface
 {
+    use Model\Document\Targeting\TargetingDocumentDaoTrait;
+
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
@@ -93,18 +96,10 @@ class Dao extends Model\Document\PageSnippet\Dao
     }
 
     /**
-     * @return bool
+     * @deprecated Use hasTargetGroupSpecificElements. Will be removed in Pimcore 6.
      */
     public function hasPersonaSpecificElements()
     {
-        $count = $this->db->fetchOne(
-            'SELECT count(*) FROM documents_elements WHERE documentId = ? AND name LIKE ?',
-            [
-                $this->model->getId(),
-                '%' . Model\Document\Page::PERSONA_ELEMENT_PREFIX_PREFIXPART . '%' . Model\Document\Page::PERSONA_ELEMENT_PREFIX_SUFFIXPART . '%'
-            ]
-        );
-
-        return $count != 0;
+        return $this->hasTargetGroupSpecificElements();
     }
 }

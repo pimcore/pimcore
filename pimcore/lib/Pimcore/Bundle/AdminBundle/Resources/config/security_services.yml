@@ -49,6 +49,7 @@ services:
             - { name: monolog.logger, channel: security }
 
     Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver:
+        public: true
         arguments:
             - '@security.token_storage'
 

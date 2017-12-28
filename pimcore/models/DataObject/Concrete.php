@@ -31,7 +31,7 @@ class Concrete extends AbstractObject
     /**
      * @var array
      */
-    public static $systemColumnNames = ['id', 'fullpath', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
+    public static $systemColumnNames = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 
     /**
      * @var bool

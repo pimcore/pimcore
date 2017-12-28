@@ -23,11 +23,11 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
  * Class PimcoreUsersController
  *
  * @Route("/pimcore-users")
+ *
  * @package GDPRDataExtractorBundle\Controller
  */
 class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
 {
-
     /**
      * @param FilterControllerEvent $event
      */
@@ -46,7 +46,8 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
      * @param PimcoreUsers $pimcoreUsers
      * @Route("/search-users")
      */
-    public function searchUsersAction(Request $request, PimcoreUsers $pimcoreUsers) {
+    public function searchUsersAction(Request $request, PimcoreUsers $pimcoreUsers)
+    {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $result = $pimcoreUsers->searchData(
@@ -59,23 +60,23 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
             $allParams['sort']
         );
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
      * @param Request $request
      * @param PimcoreUsers $pimcoreUsers
      * @Route("/export-user-data")
+     *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
-    public function exportUserDataAction(Request $request, PimcoreUsers $pimcoreUsers) {
-
+    public function exportUserDataAction(Request $request, PimcoreUsers $pimcoreUsers)
+    {
         $userData = $pimcoreUsers->getExportData(intval($request->get('id')));
 
-        $jsonResponse = $this->json($userData);
+        $jsonResponse = $this->adminJson($userData);
         $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-userdata-' . $userData['id'] . '.json"');
 
         return $jsonResponse;
     }
-
 }

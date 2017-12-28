@@ -166,7 +166,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
     private function getCaseInsensitiveFromCatalogue(MessageCatalogueInterface $catalogue, $term, $id, $domain)
     {
-        $normalizedId = strtolower($id);
+        $normalizedId = mb_strtolower($id);
 
         // nothing to do - we already looked up that key
         if ($normalizedId === $id) {
@@ -258,7 +258,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
                         // store as case insensitive if configured
                         if ($this->caseInsensitive) {
-                            $translationKey = strtolower($translationKey);
+                            $translationKey = mb_strtolower($translationKey);
                         }
 
                         $data[$translationKey] = $translationTerm;
@@ -343,11 +343,21 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
+
+                $fallbackValue = '';
+
                 if ($catalogue->has($id, $domain)) {
                     $fallbackValue = $catalogue->get($id, $domain);
-                    if ($fallbackValue) {
-                        return $fallbackValue;
-                    }
+                }
+
+                if ($this->caseInsensitive && (empty($fallbackValue) || $fallbackValue == $id)) {
+                    $fallbackValue = $this->getCaseInsensitiveFromCatalogue($catalogue, $fallbackValue, $id, $domain);
+                }
+                if ($fallbackValue) {
+                    // update fallback value in original catalogue otherwise multiple calls to the same id will not work
+                    $this->getCatalogue($locale)->set($id, $fallbackValue, $domain);
+
+                    return $fallbackValue;
                 }
             }
 

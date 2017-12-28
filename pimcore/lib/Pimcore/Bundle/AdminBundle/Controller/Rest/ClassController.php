@@ -52,7 +52,7 @@ class ClassController extends AbstractRestController
             $this->getLogger()->error($e);
         }
 
-        throw $this->createNotFoundException(sprintf('Class %d does not exist', $id), $e);
+        throw $this->createNotFoundResponseException(sprintf('Class %d does not exist', $id), $e);
     }
 
     /**
@@ -111,7 +111,7 @@ class ClassController extends AbstractRestController
             $this->getLogger()->error($e);
         }
 
-        throw $this->createNotFoundException($e ? $e->getMessage() : null, $e);
+        throw $this->createNotFoundResponseException($e ? $e->getMessage() : null, $e);
     }
 
     /**
@@ -171,7 +171,7 @@ class ClassController extends AbstractRestController
             $this->getLogger()->error($e);
         }
 
-        throw $this->createNotFoundException($e ? $e->getMessage() : null, $e);
+        throw $this->createNotFoundResponseException($e ? $e->getMessage() : null, $e);
     }
 
     /**

@@ -15,7 +15,9 @@
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Cache\Pool\Redis;
-use Pimcore\Cache\Pool\Redis\ConnectionFactory;
+use Pimcore\Storage\Redis\ConnectionFactory;
+use Pimcore\Targeting\Storage\CookieStorage;
+use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -94,6 +96,7 @@ class Configuration implements ConfigurationInterface
         $this->addNewsletterNode($rootNode);
         $this->addCustomReportsNode($rootNode);
         $this->addMigrationsNode($rootNode);
+        $this->addTargetingNode($rootNode);
 
         return $treeBuilder;
     }
@@ -631,6 +634,43 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                     ->end()
                                 ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addTargetingNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('targeting')
+                    ->canBeDisabled()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('storage_id')
+                            ->info('Service ID of the targeting storage which should be used. This ID will be aliased to ' . TargetingStorageInterface::class)
+                            ->defaultValue(CookieStorage::class)
+                            ->cannotBeEmpty()
+                        ->end()
+                        ->arrayNode('session')
+                            ->info('Enables HTTP session support by configuring session bags and the full page cache')
+                            ->canBeEnabled()
+                        ->end()
+                        ->arrayNode('data_providers')
+                            ->useAttributeAsKey('key')
+                                ->prototype('scalar')
+                            ->end()
+                        ->end()
+                        ->arrayNode('conditions')
+                            ->useAttributeAsKey('key')
+                                ->prototype('scalar')
+                            ->end()
+                        ->end()
+                        ->arrayNode('action_handlers')
+                            ->useAttributeAsKey('name')
+                                ->prototype('scalar')
                             ->end()
                         ->end()
                     ->end()

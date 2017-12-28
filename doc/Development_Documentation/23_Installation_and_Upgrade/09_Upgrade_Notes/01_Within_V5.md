@@ -1,5 +1,63 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Pimcore 5.1
+
+**Symfony 3.4**: Pimcore 5.1 uses Symfony 3.4 as dependency. Please have a look at [Symfony's release notes](https://symfony.com/blog/symfony-3-4-0-released)
+for 3.4 and fix any potential Symfony related deprecations in your code before upgrading. After upgrading please make sure
+to fix any new deprecations marked by Symfony 3.4 to be ready for future Symfony versions. 
+
+**Admin Controllers**: As preparation for Symfony 4 we had to refactor some of our implementations to make sure they will
+be compatible with Symfony 4. Unfortunately this also concerns 3 methods which the `AdminController` overwrites from the
+standard symfony controller: `json()`, `getUser()` on the `AdminController` and `createNotFoundException` on the
+`AbstractRestController`.
+
+If you implement any controller which inherits from Pimcore's `AdminController` please make sure to update the following
+method calls to ensure the same functionality:
+
+Controllers inheriting from `Pimcore\Bundle\AdminBundle\Controller\AdminController`:
+
+| Old call           | New call                | Note                                                                                                                                                                                                                   |
+|--------------------|-------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `$this->json()`    | `$this->adminJson()`    | You can still use `json()` as it is a standard Symfony controller method, but please be aware that it uses the Symfony Serializer instead of Pimcore's admin serializer and the results may differ from `adminJson()`. |
+| `$this->getUser()` | `$this->getAdminUser()` | You can still use `getUser()`, but please be aware that the returned user is a `Pimcore\Bundle\AdminBundle\Security\User\User` and not the `Pimcore\Model\User` which is returned in `getAdminUser()`.                 |
+
+Controllers inheriting from `Pimcore\Bundle\AdminBundle\Controller\Rest\AbstractRestController`:
+
+| Old call                           | New call                                    | Note |
+|------------------------------------|---------------------------------------------|------|
+| `$this->createNotFoundException()` | `$this-> createNotFoundResponseException()` |      |
+
+**Extensions:** The default priority of bundles enabled via extension manager was changed from `0` to `10` to make sure
+those bundles are loaded before the `AppBundle` is loaded. Please make sure this works for your application
+and set a manual priority otherwise. See https://github.com/pimcore/pimcore/pull/2328 for details.
+
+**E-Commerce:** Due to performance reasons, we needed to change the way how index service attributes are handled. They are
+now built at runtime instead of handling each attribute as service. To achieve this, config service definition now relies
+on the method `setAttributeFactory` being called creating a service instance. If your config definition uses `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig`
+as parent definition you should be set, otherwise you'll need to make sure your service definition includes the method
+call:
+
+```yaml
+services:
+    AppBundle\IndexService\Config\CustomConfig:
+        # [...]
+        calls:
+            - [setAttributeFactory, ['@Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory']]
+```
+
+**Targeting/Personalization**: The targeting/personalization engine was completely revamped and now uses server side targeting
+instead of the frontend targeting which was used in earlier versions. The new targeting integration is **incompatible**
+with the previous one and will break existing targeting setups. If you are currently using targeting please do **NOT**
+update to Pimcore 5.1 until there is a migration guide for targeting setups. **NOTE**: the targeting feature is **experimental**
+and may be subject to change in later versions.
+  
+
+## Build 156 (2017-12-13)
+
+The experimental `GridColumnConfig` feature was revamped to register and build its operators via DI instead of predefined
+namespaces (see [PR#2333](https://github.com/pimcore/pimcore/pull/2333)). If you already implemented custom operators
+please make sure you update them to the new structure.
+
 ## Build 149 (2017-11-14)
 
 The Piwik integration which was recently added was refactored to always use a full URI including the protocol for the Piwik

@@ -50,7 +50,7 @@ class ImportConfigListener implements EventSubscriberInterface
             $db->query('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
         }
 
-        $this->cleanupImportdConfigs('classId = ' . $classId);
+        $this->cleanupImportConfigs('classId = ' . $classId);
     }
 
     /**

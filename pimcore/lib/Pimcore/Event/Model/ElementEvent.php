@@ -54,5 +54,4 @@ class ElementEvent extends Event implements ElementEventInterface
     {
         $this->element = $element;
     }
-
 }

@@ -19,6 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Tool;
 
+/**
+ * @deprecated Use TargetGroup instead. Will be removed in Pimcore 6
+ */
 class Persona extends Model\DataObject\ClassDefinition\Data\Select
 {
     /**

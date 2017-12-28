@@ -516,6 +516,10 @@ pimcore.workflowmanagement.actionPanel = Class.create({
                     '<div class="action_error">' + data.message + '</div>',
                     '<div class="action_reason">' + data.reason + '</div>'
                 ].join(''));
+
+            this.getWorkflowFormPanel().scrollTo(0, 0);
+
+            this.getSubmitButton().setDisabled(false);
         }
 
     },

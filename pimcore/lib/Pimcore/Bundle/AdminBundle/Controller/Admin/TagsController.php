@@ -41,7 +41,7 @@ class TagsController extends AdminController
         $tag->setParentId(intval($request->get('parentId')));
         $tag->save();
 
-        return $this->json(['success' => true, 'id' => $tag->getId()]);
+        return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
     }
 
     /**
@@ -59,7 +59,7 @@ class TagsController extends AdminController
         if ($tag) {
             $tag->delete();
 
-            return $this->json(['success' => true]);
+            return $this->adminJson(['success' => true]);
         } else {
             throw new \Exception('Tag with ID ' . $request->get('id') . ' not found.');
         }
@@ -88,7 +88,7 @@ class TagsController extends AdminController
 
             $tag->save();
 
-            return $this->json(['success' => true]);
+            return $this->adminJson(['success' => true]);
         } else {
             throw new \Exception('Tag with ID ' . $request->get('id') . ' not found.');
         }
@@ -129,7 +129,7 @@ class TagsController extends AdminController
             $tags[] = $this->convertTagToArray($tag, $showSelection, $assignedTagIds, true);
         }
 
-        return $this->json($tags);
+        return $this->adminJson($tags);
     }
 
     /**
@@ -188,7 +188,7 @@ class TagsController extends AdminController
             }
         }
 
-        return $this->json($assignedTagArray);
+        return $this->adminJson($assignedTagArray);
     }
 
     /**
@@ -208,9 +208,9 @@ class TagsController extends AdminController
         if ($tag) {
             Tag::addTagToElement($assginmentCType, $assginmentCId, $tag);
 
-            return $this->json(['success' => true, 'id' => $tag->getId()]);
+            return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
         } else {
-            return $this->json(['success' => false]);
+            return $this->adminJson(['success' => false]);
         }
     }
 
@@ -231,9 +231,9 @@ class TagsController extends AdminController
         if ($tag) {
             Tag::removeTagFromElement($assginmentCType, $assginmentCId, $tag);
 
-            return $this->json(['success' => true, 'id' => $tag->getId()]);
+            return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
         } else {
-            return $this->json(['success' => false]);
+            return $this->adminJson(['success' => false]);
         }
     }
 
@@ -279,7 +279,7 @@ class TagsController extends AdminController
             $offset += $size;
         }
 
-        return $this->json(['success' => true, 'idLists' => $idListParts, 'totalCount' => count($idList)]);
+        return $this->adminJson(['success' => true, 'idLists' => $idListParts, 'totalCount' => count($idList)]);
     }
 
     /**
@@ -291,9 +291,9 @@ class TagsController extends AdminController
     {
         $childsList = new \Pimcore\Model\DataObject\Listing();
         $condition = 'o_path LIKE ?';
-        if (!$this->getUser()->isAdmin()) {
-            $userIds = $this->getUser()->getRoles();
-            $userIds[] = $this->getUser()->getId();
+        if (!$this->getAdminUser()->isAdmin()) {
+            $userIds = $this->getAdminUser()->getRoles();
+            $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
                 (SELECT `view` FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
@@ -322,9 +322,9 @@ class TagsController extends AdminController
     {
         $childsList = new \Pimcore\Model\Asset\Listing();
         $condition = 'path LIKE ?';
-        if (!$this->getUser()->isAdmin()) {
-            $userIds = $this->getUser()->getRoles();
-            $userIds[] = $this->getUser()->getId();
+        if (!$this->getAdminUser()->isAdmin()) {
+            $userIds = $this->getAdminUser()->getRoles();
+            $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
                 (SELECT `view` FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
@@ -353,9 +353,9 @@ class TagsController extends AdminController
     {
         $childsList = new \Pimcore\Model\Document\Listing();
         $condition = 'path LIKE ?';
-        if (!$this->getUser()->isAdmin()) {
-            $userIds = $this->getUser()->getRoles();
-            $userIds[] = $this->getUser()->getId();
+        if (!$this->getAdminUser()->isAdmin()) {
+            $userIds = $this->getAdminUser()->getRoles();
+            $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
                 (SELECT `view` FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
@@ -391,6 +391,6 @@ class TagsController extends AdminController
 
         Tag::batchAssignTagsToElement($cType, $elementIds, $assignedTags, $doCleanupTags);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 }

@@ -20,6 +20,8 @@ namespace Pimcore\Model\Tool\Targeting\Persona\Listing;
 use Pimcore\Model;
 
 /**
+ * @deprecated Use TargetGroup\Listing\Dao instead. Will be removed in Pimcore 6.
+ *
  * @property \Pimcore\Model\Tool\Targeting\Persona\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -31,7 +33,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $personasData = $this->db->fetchCol('SELECT id FROM targeting_personas' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $personasData = $this->db->fetchCol('SELECT id FROM targeting_target_groups' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $personas = [];
         foreach ($personasData as $personaData) {

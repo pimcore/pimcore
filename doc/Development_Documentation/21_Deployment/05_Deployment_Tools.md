@@ -54,10 +54,9 @@ To get a list of all available commands use `./bin/console list`.
 
 | Command                                              | Description                                                                                     |
 |------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| classmap-generator                                   | Generate class maps to improve performance                                                      |
-| mysql-tools                                          | Optimize and warmup mysql database                                                              |
-| search-backend-reindex                               | Re-indexes the backend search of pimcore                                                        |
-| update                                               | Update Pimcore to the desired version/build                                                     |
+| pimcore:mysql-tools                                  | Optimize and warm up mysql database                                                              |
+| pimcore:search-backend-reindex                       | Re-indexes the backend search of Pimcore                                                        |
+| pimcore:update                                       | Update Pimcore to the desired version/build                                                     |
 | pimcore:cache:clear                                  | Clear Pimcore core caches                                                                                    |
 | cache:clear                                          | Clear Symfony caches                                                                                    |
 | pimcore:cache:warming                                | Warm up caches                                                                                  |
@@ -65,9 +64,9 @@ To get a list of all available commands use `./bin/console list`.
 | definition:import:class                              | Import Class definition from a JSON export                                                      |
 | definition:import:fieldcollection                    | Import FieldCollection definition from a JSON export                                            |
 | definition:import:objectbrick                        | Import ObjectBrick definition from a JSON export                                                |
-| deployment:classes-rebuild                           | rebuilds classes and db structure based on updated `var/classes/definition_*.php` files |
+| deployment:classes-rebuild                           | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files |
 | thumbnails:image                                     | Generate image thumbnails, useful to pre-generate thumbnails in the background                  |
-| thumbnails:optimize-images                           | Optimize filesize of all images in `web/var/tmp`                       |
+| thumbnails:optimize-images                           | Optimize file size of all images in `web/var/tmp`                       |
 | thumbnails:video                                     | Generate video thumbnails, useful to pre-generate thumbnails in the background                  |
 
 Find more about the Pimcore Console on the [dedicated page](../19_Development_Tools_and_Details/11_Console_CLI.md).

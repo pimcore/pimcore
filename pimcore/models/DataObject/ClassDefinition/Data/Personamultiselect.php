@@ -19,6 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Tool;
 
+/**
+ * @deprecated Use TargetGroupMultiselect instead. Will be removed in Pimcore 6
+ */
 class Personamultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
 {
     /**

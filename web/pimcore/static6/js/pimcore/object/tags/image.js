@@ -162,10 +162,11 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     onNodeDrop: function (target, dd, e, data) {
 
-        this.empty(true);
-
         var record = data.records[0];
+
         if (record.data.type == "image") {
+            this.empty(true);
+
             if (this.data.id != record.data.id) {
                 this.dirty = true;
             }

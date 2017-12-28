@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Targeting\Session\SessionConfigurator:
+        tags:
+            - { name: pimcore.session.configurator }

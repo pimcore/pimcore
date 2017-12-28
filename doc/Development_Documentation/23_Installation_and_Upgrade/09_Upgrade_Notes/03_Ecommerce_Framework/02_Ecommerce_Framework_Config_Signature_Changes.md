@@ -34,7 +34,7 @@ Most changes to signatures are some sort of:
 
 * Constructor now gets a list of dependent services/values instead of a `Config` object
 * If `options` can be passed in a config section, they're passed as `$options` array to the constructor and validated
-  with Symfony's [OptionsResolver](http://symfony.com/doc/current/components/options_resolver.html) component in most cases. Most implementations specifc a custom method to configure
+  with Symfony's [OptionsResolver](http://symfony.com/doc/3.4/components/options_resolver.html) component in most cases. Most implementations specifc a custom method to configure
   the options resolver, so you can easily adapt the resolver configuration in child classes.
 * If a component relies on tenant aware components, a component specific `locator` is passed which is able to resolve the
   desired component at runtime. E.g. a `CheckoutManager` has a dependency on an `IOrderManagerLocator` which exposes a

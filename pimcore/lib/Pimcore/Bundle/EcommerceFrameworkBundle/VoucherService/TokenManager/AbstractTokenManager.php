@@ -129,7 +129,7 @@ abstract class AbstractTokenManager implements ITokenManager
      */
     public function exportCsv(array $params)
     {
-       $translator = \Pimcore::getContainer()->get("pimcore.translator");
+        $translator = \Pimcore::getContainer()->get('pimcore.translator');
 
         $stream = fopen('php://temp', 'w+');
         fputcsv($stream, [

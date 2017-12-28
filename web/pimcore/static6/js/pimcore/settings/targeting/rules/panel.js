@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.settings.targeting.rules.panel");
 pimcore.settings.targeting.rules.panel= Class.create({
 
     initialize: function() {
-        this.treeDataUrl = '/admin/reports/targeting/rule-list';
+        this.treeDataUrl = '/admin/targeting/rule/list';
     },
 
 
@@ -28,7 +28,10 @@ pimcore.settings.targeting.rules.panel= Class.create({
                 closable: true,
                 border: false,
                 iconCls: "pimcore_icon_targeting",
-                items: [this.getTree(), this.getTabPanel()]
+                items: [
+                    this.getTree(),
+                    this.getTabPanel()
+                ]
             });
         }
 
@@ -37,6 +40,38 @@ pimcore.settings.targeting.rules.panel= Class.create({
 
     getTree: function () {
         if (!this.tree) {
+            this.saveButton = new Ext.Button({
+                // save button
+                hidden: true,
+                text: t("save_order"),
+                iconCls: "pimcore_icon_save",
+                handler: function () {
+                    // this
+                    var button = this;
+
+                    // get current order
+                    var prio = 0;
+                    var rules = {};
+
+                    this.ownerCt.ownerCt.getRootNode().eachChild(function (rule) {
+                        prio++;
+                        rules[rule.id] = prio;
+                    });
+
+                    // save order
+                    Ext.Ajax.request({
+                        url: "/admin/targeting/rule/order",
+                        params: {
+                            rules: Ext.encode(rules)
+                        },
+                        method: "post",
+                        success: function () {
+                            button.hide();
+                        }
+                    });
+                }
+            });
+
             var store = Ext.create('Ext.data.TreeStore', {
                 autoLoad: false,
                 autoSync: true,
@@ -52,15 +87,21 @@ pimcore.settings.targeting.rules.panel= Class.create({
             this.tree = new Ext.tree.TreePanel({
                 store: store,
                 region: "west",
-                autoScroll:true,
-                animate:false,
+                useArrows: true,
+                autoScroll: true,
+                animate: true,
                 containerScroll: true,
                 width: 200,
                 split: true,
+                rootVisible: false,
                 root: {
                     id: '0'
                 },
-                rootVisible: false,
+                viewConfig: {
+                    plugins: {
+                        ptype: 'treeviewdragdrop'
+                    }
+                },
                 tbar: Ext.create('Ext.Toolbar', {
                     cls: 'main-toolbar',
                     items: [
@@ -68,7 +109,8 @@ pimcore.settings.targeting.rules.panel= Class.create({
                             text: t("add_target"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addTarget.bind(this)
-                        }
+                        },
+                        this.saveButton
                     ]
                 }),
                 listeners: this.getTreeNodeListeners()
@@ -79,11 +121,13 @@ pimcore.settings.targeting.rules.panel= Class.create({
         return this.tree;
     },
 
-
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
             "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
+            "itemmove": function(tree, oldParent, newParent, index, eOpts ) {
+                this.saveButton.show();
+            }.bind(this),
             "render": function () {
                 this.getRootNode().expand();
             },
@@ -93,9 +137,9 @@ pimcore.settings.targeting.rules.panel= Class.create({
                 newChildNode.data.iconCls = "pimcore_icon_targeting";
             }
         };
+
         return treeNodeListeners;
     },
-
 
     addTarget: function () {
         Ext.MessageBox.prompt(t('add_target'), t('enter_the_name_of_the_new_target'),
@@ -107,7 +151,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
         var regresult = value.match(/[a-zA-Z0-9_\-]+/);
         if (button == "ok" && value.length > 2 && regresult == value) {
             Ext.Ajax.request({
-                url: "/admin/reports/targeting/rule-add",
+                url: "/admin/targeting/rule/add",
                 params: {
                     name: value
                 },
@@ -140,7 +184,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
 
     deleteTarget: function (tree, record) {
         Ext.Ajax.request({
-            url: "/admin/reports/targeting/rule-delete",
+            url: "/admin/targeting/rule/delete",
             params: {
                 id: record.data.id
             },
@@ -179,7 +223,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/reports/targeting/rule-get",
+            url: "/admin/targeting/rule/get",
             params: {
                 id: node
             },

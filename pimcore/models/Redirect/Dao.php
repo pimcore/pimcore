@@ -28,15 +28,27 @@ class Dao extends Model\Dao\AbstractDao
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
      * @param int $id
+     * @param bool $throwOnInvalid
+     *
+     * @throws \Exception
      */
-    public function getById($id = null)
+    public function getById($id = null, bool $throwOnInvalid = false)
     {
         if ($id != null) {
             $this->model->setId($id);
         }
 
         $data = $this->db->fetchRow('SELECT * FROM redirects WHERE id = ?', $this->model->getId());
-        $this->assignVariablesToModel($data);
+
+        if ($throwOnInvalid) {
+            if ($data['id']) {
+                $this->assignVariablesToModel($data);
+            } else {
+                throw new \Exception(sprintf('Redirect with ID %d doesn\'t exist', $this->model->getId()));
+            }
+        } else {
+            $this->assignVariablesToModel($data);
+        }
     }
 
     /**
