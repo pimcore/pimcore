@@ -192,6 +192,10 @@ class DeviceDetector
         $typeForced = null;
         if (isset($_REQUEST['forceDeviceType']) && $_REQUEST['forceDeviceType']) {
             $typeForced = $_REQUEST['forceDeviceType'];
+            // check if cookie exists and differs from request device type -> request has priority
+            if (isset($_COOKIE['forceDeviceType']) && $_COOKIE['forceDeviceType'] != $_REQUEST['forceDeviceType']) {
+                unset($_COOKIE['forceDeviceType']);
+            }
         }
 
         if (isset($_COOKIE['forceDeviceType']) && $_COOKIE['forceDeviceType']) {
