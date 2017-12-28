@@ -108,6 +108,12 @@ class TargetingListener implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
+        // only apply targeting for GET requests
+        // this may revised in later versions
+        if ('GET' !== $request->getMethod()) {
+            return;
+        }
+
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
         }
