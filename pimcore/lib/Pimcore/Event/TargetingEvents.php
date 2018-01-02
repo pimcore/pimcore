@@ -27,7 +27,7 @@ final class TargetingEvents
      *
      * @var string
      */
-    const TARGETING_CODE = 'pimcore.targeting.targeting_code^';
+    const TARGETING_CODE = 'pimcore.targeting.targeting_code';
 
     /**
      * Fired when the VisitorInfo object was built for a request before
