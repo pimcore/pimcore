@@ -71,8 +71,7 @@ class PiwikReportsProvider
         Config $config,
         WidgetBroker $widgetBroker,
         TranslatorInterface $translator
-    )
-    {
+    ) {
         $this->siteIdProvider = $siteIdProvider;
         $this->config         = $config;
         $this->widgetBroker   = $widgetBroker;
