@@ -1315,6 +1315,7 @@
   "loading_texts": "Loading Texts",
   "element_tag_configuration": "Tag Configuration",
   "element_tag_all_tags": "All Tags",
+  "element_tag_filtered_tags": "Filtered Tags",
   "rename_tag": "Rename Tag",
   "enter_new_name_of_the_tag": "Enter new name of the Tag",
   "assigned_tags": "Assigned Tags",

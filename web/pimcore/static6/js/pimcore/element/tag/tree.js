@@ -200,7 +200,9 @@ pimcore.element.tag.tree = Class.create({
             }
         }.bind(this));
 
-        this.tree.getRootNode().expand(true);
+        var rootNode = this.tree.getRootNode()
+        rootNode.set('text', currentFilterValue ? t('element_tag_filtered_tags') : t('element_tag_all_tags'));
+        rootNode.expand(true);
     },
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
