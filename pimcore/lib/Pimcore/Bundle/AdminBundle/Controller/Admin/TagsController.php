@@ -145,6 +145,7 @@ class TagsController extends AdminController
             'text' => $tag->getName(),
             'path' => $tag->getNamePath(),
             'expandable' => $tag->hasChildren(),
+            'leaf' => !$tag->hasChildren(),
             'iconCls' => 'pimcore_icon_element_tags',
             'qtipCfg' => [
                 'title' => 'ID: ' . $tag->getId()
