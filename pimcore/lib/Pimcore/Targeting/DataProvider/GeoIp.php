@@ -23,6 +23,9 @@ use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Loads geolocation from GeoIP (IP to geo database).
+ */
 class GeoIp implements DataProviderInterface
 {
     const PROVIDER_KEY = 'geoip';

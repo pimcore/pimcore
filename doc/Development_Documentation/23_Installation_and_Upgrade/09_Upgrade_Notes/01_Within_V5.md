@@ -47,10 +47,19 @@ services:
 
 **Targeting/Personalization**: The targeting/personalization engine was completely revamped and now uses server side targeting
 instead of the frontend targeting which was used in earlier versions. The new targeting integration is **incompatible**
-with the previous one and will break existing targeting setups. If you are currently using targeting please do **NOT**
-update to Pimcore 5.1 until there is a migration guide for targeting setups. **NOTE**: the targeting feature is **experimental**
+with the previous one and will break existing targeting setups. **NOTE**: the targeting feature is **experimental**
 and may be subject to change in later versions.
-  
+
+If you are already using targeting, be aware that you'll need to re-create all of your targeting rules from scratch based 
+on the new engine.
+
+You can find updated documentation in [Targeting and Personalization](../../18_Tools_and_Features/37_Targeting_and_Personalization)
+and in [Migrating from the existing Targeting Engine](../../18_Tools_and_Features/37_Targeting_and_Personalization/30_Migrating_from_the_existing_Targeting_Engine.md).
+
+<div class="alert alert-danger">
+Make sure to delete any old rules <strong>BEFORE</strong> running the update as otherwise your site may break.
+</div>
+
 
 ## Build 156 (2017-12-13)
 
