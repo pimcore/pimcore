@@ -321,7 +321,7 @@ $navigation = $this->navigation()->buildNavigation($this->document, $navStartNod
                 "prefix" => $this->document->getFullPath()
             ], "news", true);
 
-            $uri = new Pimcore\Navigation\Page\Uri([
+            $uri = new Pimcore\Navigation\Page\Document([
                 "label" => $news->getTitle(),
                 "id" => "object-" . $news->getId(),
                 "uri" => $detailLink
