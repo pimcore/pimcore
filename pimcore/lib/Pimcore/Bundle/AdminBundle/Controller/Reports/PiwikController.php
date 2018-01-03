@@ -25,6 +25,7 @@ use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -149,18 +150,26 @@ class PiwikController extends ReportsControllerBase
     /**
      * @Route("/portal-widgets/{configKey}/{widgetId}")
      *
+     * @param Request $request
      * @param WidgetBroker $widgetBroker
      * @param string $configKey
      * @param string $widgetId
      *
      * @return JsonResponse
      */
-    public function portalWidgetAction(WidgetBroker $widgetBroker, string $configKey, string $widgetId)
+    public function portalWidgetAction(Request $request, WidgetBroker $widgetBroker, string $configKey, string $widgetId)
     {
         $this->checkPermission('piwik_reports');
 
+        $params = [];
+        foreach (['date', 'period'] as $param) {
+            if ($request->get($param)) {
+                $params[$param] = urlencode($request->get($param));
+            }
+        }
+
         try {
-            $widgetConfig = $widgetBroker->getWidgetConfig($widgetId, $configKey);
+            $widgetConfig = $widgetBroker->getWidgetConfig($widgetId, $configKey, null, $params);
         } catch (\InvalidArgumentException $e) {
             return $this->json([
                 'success' => false,
