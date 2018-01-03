@@ -85,14 +85,17 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
                 this.getRootNode().expand();
             },
             'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                var classes = ['pimcore_icon_target_groups'];
+                var classes = [];
+                var iconClasses = ['pimcore_icon_target_groups'];
+
                 if (!newChildNode.data.active) {
-                    classes.push('pimcore_icon_disabled');
+                    classes.push('pimcore_unpublished');
                 }
 
                 //newChildNode.data.expanded = true;
                 newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = classes.join(' ');
+                newChildNode.data.cls = classes.join(' ');
+                newChildNode.data.iconCls = iconClasses.join(' ');
             }
         };
         return treeNodeListeners;
