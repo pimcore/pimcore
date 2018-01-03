@@ -47,9 +47,11 @@ class PiwikVisitorIdListener implements EventSubscriberInterface
             return;
         }
 
+        $snippet = <<<'EOF'
+_paq.push([function() { 'undefined' !== typeof window._ptg && _ptg.api.setVisitorId(this.getVisitorId()); }]);
+EOF;
+
         // sets visitor ID to piwik's user ID
-        $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append(
-            '_paq.push([ function() { _ptg.api.setVisitorId(this.getVisitorId()); } ]);'
-        );
+        $event->getBlock(Tracker::BLOCK_AFTER_TRACK)->append($snippet);
     }
 }
