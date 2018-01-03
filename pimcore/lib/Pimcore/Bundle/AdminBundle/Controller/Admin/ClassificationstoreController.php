@@ -299,10 +299,12 @@ class ClassificationstoreController extends AdminController
                 $order = 'DESC';
             }
 
+            $storeIdFromDefinition = 0;
             $allowedCollectionIds = [];
             if ($request->get('oid')) {
                 $object = DataObject\Concrete::getById($request->get('oid'));
                 $class = $object->getClass();
+                /** @var  $fd DataObject\ClassDefinition\Data\Classificationstore */
                 $fd = $class->getFieldDefinition($request->get('fieldname'));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
 
@@ -317,6 +319,8 @@ class ClassificationstoreController extends AdminController
                         }
                     }
                 }
+
+                $storeIdFromDefinition = $fd->getStoreId();
             }
 
             $list = new Classificationstore\CollectionConfig\Listing();
@@ -334,7 +338,10 @@ class ClassificationstoreController extends AdminController
                 $conditionParts[] = '(name LIKE ' . $db->quote('%' . $searchfilter . '%') . ' OR description LIKE ' . $db->quote('%'. $searchfilter . '%') . ')';
             }
 
-            $conditionParts[] = ' (storeId = ' . $request->get('storeId') . ')';
+            $storeId = $request->get('storeId');
+            $storeId = $storeId ? $storeId : $storeIdFromDefinition;
+
+            $conditionParts[] = ' (storeId = ' . $storeId . ')';
 
             if ($request->get('filter')) {
                 $filterString = $request->get('filter');
