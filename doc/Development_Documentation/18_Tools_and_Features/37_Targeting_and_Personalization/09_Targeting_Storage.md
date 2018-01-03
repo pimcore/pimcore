@@ -36,17 +36,22 @@ which is registered as service. Details how to handle data varies heavily on the
 ## Core Storage Implementations
 
 Pimcore implements different storage engines which each has its pros and cons. In general it is recommended to start with
-the default implementation (JWT signed cookie) and choose the engine to use based on requirements.
+the default implementation - **JWT signed cookie** - and subsequently choose the engine which fits your requirements best.
 
 In the future more storage implementations are planned which combine features of multiple engines together, e.g. a storage
 handling multiple backends which are selected depending on if the visitor already has a visitor ID or not.
  
 
-### Cookie
+### Cookie (default)
 
 Stores data in a cookie in the user's browser. Can either be used with a plaintext cookie or with a JWT signed one to make
 sure the cookie data isn't being tampered with. The cookie storage delegates the actual cookie write/read operation to a
-`CookieSaveHandler` which can either save the cookie data as plain text JSON or as JSON Web Token signed cookie.
+`CookieSaveHandler` which does the actual cookie work. Below is an overview of save handlers:
+
+| Handler         | Description                                                                                                                                                                                                                       | Notes                 |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------|
+| `JWT` (default) | Stores cookie data as JWT signed JSON using the `kernel.secret` parameter to sign and verify the data. This is done to make sure the data can't be altered on the client side to inject malicious data into the targeting engine. |                       |
+| `JSON`          | Stores cookie data as JSON string.                                                                                                                                                                                                | Use only for testing! |
 
 To change the save handler, override the [service definition](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/targeting.yml#L24)
 and set your own handler.
@@ -55,6 +60,9 @@ and set your own handler.
 Note that using plain text cookie data is inherently insecure and can open vulnerabilities by injecting malicious data into
 the client cookie. Use only for testing!
 </div>
+
+Default session scope timeout: The cookie is set as session cookie - the browser is expected to expire it when closing the
+page.
 
 Pros
 
@@ -72,6 +80,8 @@ Cons
 
 Stores data in the database.
 
+Default session scope timeout: 30 minutes
+
 Pros
 
 * Easy to use as no additional config is needed
@@ -87,6 +97,8 @@ Cons
 Stores data in a redis DB. To use this storage, define a service using the storage implementation as class and add connection
 details to the service definition. An example is shipped with the [core service definitions](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/targeting.yml#L35).
 
+Default session scope timeout: 30 minutes
+
 Pros
 
 * Can efficiently handle large amounts of data
@@ -101,6 +113,8 @@ Cons
 ### Session
 
 Stores data in the session.
+
+Default session scope timeout: PHP session timeout
 
 To use the session storage, an additional config entry is needed as the session listeners are disabled by default for 
 performance reasons:
