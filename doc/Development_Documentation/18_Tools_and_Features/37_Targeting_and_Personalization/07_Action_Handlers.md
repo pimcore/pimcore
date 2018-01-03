@@ -20,7 +20,7 @@ As example, we'll implement a simple `Log` action handler which will log each ma
 The action handler is a normal service which can depend on other services (as we do with the logger here).
 
 <div class="alert alert-warning">
-You can't rely on a visitor ID being set or a being passed. The visitor ID might be inexistent on the first 
+You can't rely on a visitor ID being set or a rule being passed. The visitor ID might be inexistent on the first 
 request to the site and action handlers might be executed from outside the matching engine without passing a rule. Always
 check those values before using them!
 </div> 

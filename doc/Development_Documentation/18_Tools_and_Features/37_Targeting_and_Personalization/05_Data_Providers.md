@@ -128,5 +128,5 @@ As you can see, instead of creating a new `DateTime` instance, the condition now
 storage on the `VisitorInfo`. The targeting engine takes care of loading every provider the condition depends on before
 starting to match. 
 
-The the `DataProviderDependentInterface` can not only be used from conditions, but also from action handlers and other 
+The `DataProviderDependentInterface` can not only be used from conditions, but also from action handlers and other 
 data providers (a data provider can depend on another data providers' data).
