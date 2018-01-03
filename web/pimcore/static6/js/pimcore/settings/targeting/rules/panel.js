@@ -132,9 +132,17 @@ pimcore.settings.targeting.rules.panel= Class.create({
                 this.getRootNode().expand();
             },
             'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
+                var classes = [];
+                var iconClasses = ['pimcore_icon_targeting'];
+
+                if (!newChildNode.data.active) {
+                    classes.push('pimcore_unpublished');
+                }
+
                 //newChildNode.data.expanded = true;
                 newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_targeting";
+                newChildNode.data.cls = classes.join(' ');
+                newChildNode.data.iconCls = iconClasses.join(' ');
             }
         };
 

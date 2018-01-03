@@ -87,6 +87,7 @@ pimcore.settings.targeting.targetGroups.item = Class.create({
             },
             method: "post",
             success: function () {
+                this.parent.getTree().getStore().load();
                 pimcore.helpers.showNotification(t("success"), t("item_saved_successfully"), "success");
             }.bind(this)
         });
