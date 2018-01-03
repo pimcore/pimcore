@@ -449,6 +449,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/businessman.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_targeting.pimcore_icon_disabled {
+    background: url(/pimcore/static6/img/flat-color-icons/businessman_disabled.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_versions {
     background: url(/pimcore/static6/img/flat-color-icons/org_unit.svg) center center no-repeat !important;
 }
@@ -716,6 +720,16 @@
 .pimcore_icon_persona,
 .pimcore_icon_personamultiselect {
     background: url(/pimcore/static6/img/flat-color-icons/manager.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_target_group.pimcore_icon_disabled,
+.pimcore_icon_target_groups.pimcore_icon_disabled,
+.pimcore_icon_targetGroup.pimcore_icon_disabled,
+.pimcore_icon_targetGroupMultiselect.pimcore_icon_disabled,
+.pimcore_icon_personas.pimcore_icon_disabled,
+.pimcore_icon_persona.pimcore_icon_disabled,
+.pimcore_icon_personamultiselect.pimcore_icon_disabled {
+    background: url(/pimcore/static6/img/flat-color-icons/manager_disabled.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_highlight {

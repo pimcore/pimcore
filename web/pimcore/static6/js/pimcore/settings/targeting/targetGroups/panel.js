@@ -77,7 +77,6 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
         return this.tree;
     },
 
-
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
@@ -86,9 +85,14 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
                 this.getRootNode().expand();
             },
             'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
+                var classes = ['pimcore_icon_target_groups'];
+                if (!newChildNode.data.active) {
+                    classes.push('pimcore_icon_disabled');
+                }
+
                 //newChildNode.data.expanded = true;
                 newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_target_groups";
+                newChildNode.data.iconCls = classes.join(' ');
             }
         };
         return treeNodeListeners;
