@@ -121,12 +121,12 @@ class TranslationController extends AdminController
         $list->setOrder('asc');
         $list->setOrderKey($tableName . '.key', false);
 
-        $condition = $this->getGridFilterCondition($request, $tableName);
+        $condition = $this->getGridFilterCondition($request, $tableName, false, $admin);
         if ($condition) {
             $list->setCondition($condition);
         }
 
-        $filters = $this->getGridFilterCondition($request, $tableName, true);
+        $filters = $this->getGridFilterCondition($request, $tableName, true, $admin);
 
         if ($filters) {
             $joins = array_merge($joins, $filters['joins']);
@@ -376,8 +376,8 @@ class TranslationController extends AdminController
             $list->setLimit($request->get('limit'));
             $list->setOffset($request->get('start'));
 
-            $condition = $this->getGridFilterCondition($request, $tableName);
-            $filters = $this->getGridFilterCondition($request, $tableName, true);
+            $condition = $this->getGridFilterCondition($request, $tableName, false, $admin);
+            $filters = $this->getGridFilterCondition($request, $tableName, true, $admin);
 
             if ($filters) {
                 $joins = array_merge($joins, $filters['joins']);
@@ -453,11 +453,11 @@ class TranslationController extends AdminController
      *
      * @return array|null|string
      */
-    protected function getGridFilterCondition(Request $request, $tableName, $languageMode = false)
+    protected function getGridFilterCondition(Request $request, $tableName, $languageMode = false, $admin = false)
     {
         $joins = [];
         $conditions = [];
-        $validLanguages = $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+        $validLanguages = $admin ? Tool\Admin::getLanguages() : $this->getAdminUser()->getAllowedLanguagesForViewingWebsiteTranslations();
 
         $db = \Pimcore\Db::get();
         $conditionFilters = [];
