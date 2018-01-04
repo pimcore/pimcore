@@ -1718,7 +1718,7 @@ INSERT INTO `documents_elements` VALUES ('69','teasers','block','a:2:{i:0;s:1:\"
 INSERT INTO `documents_elements` VALUES ('69','teasers:1.teaser','snippet','16');
 INSERT INTO `documents_elements` VALUES ('69','teasers:2.teaser','snippet','17');
 INSERT INTO `documents_elements` VALUES ('70','content','areablock','a:2:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:7:\"wysiwyg\";}i:1;a:2:{s:3:\"key\";s:1:\"2\";s:4:\"type\";s:5:\"image\";}}');
-INSERT INTO `documents_elements` VALUES ('70','content:1.content','wysiwyg','<p>Please visit our&nbsp;<a href=\"http://pimcore.org/demo\">PIM, E-Commerce &amp; Asset Management demo</a> to see it in action.&nbsp;</p>\n');
+INSERT INTO `documents_elements` VALUES ('70','content:1.content','wysiwyg','<p>Please visit our&nbsp;<a href=\"https://demo-advanced.pimcore.org\">PIM, E-Commerce &amp; Asset Management demo</a> to see it in action.&nbsp;</p>\n');
 INSERT INTO `documents_elements` VALUES ('70','content:2.image','image','a:9:{s:2:\"id\";i:70;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
 INSERT INTO `documents_elements` VALUES ('70','headDescription','input','');
 INSERT INTO `documents_elements` VALUES ('70','headline','input','Product Information Management');
@@ -1726,7 +1726,7 @@ INSERT INTO `documents_elements` VALUES ('70','headTitle','input','');
 INSERT INTO `documents_elements` VALUES ('70','leadcontent1','wysiwyg','');
 INSERT INTO `documents_elements` VALUES ('70','leadcontent2','wysiwyg','');
 INSERT INTO `documents_elements` VALUES ('71','content','areablock','a:2:{i:0;a:2:{s:3:\"key\";s:1:\"1\";s:4:\"type\";s:7:\"wysiwyg\";}i:1;a:2:{s:3:\"key\";s:1:\"2\";s:4:\"type\";s:5:\"image\";}}');
-INSERT INTO `documents_elements` VALUES ('71','content:1.content','wysiwyg','<p>Please visit our&nbsp;<a href=\"http://pimcore.org/demo\">PIM, E-Commerce &amp; Asset Management demo</a> to see it in action.&nbsp;</p>\n');
+INSERT INTO `documents_elements` VALUES ('71','content:1.content','wysiwyg','<p>Please visit our&nbsp;<a href=\"https://demo-advanced.pimcore.org\">PIM, E-Commerce &amp; Asset Management demo</a> to see it in action.&nbsp;</p>\n');
 INSERT INTO `documents_elements` VALUES ('71','content:2.image','image','a:9:{s:2:\"id\";i:69;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
 INSERT INTO `documents_elements` VALUES ('71','headDescription','input','');
 INSERT INTO `documents_elements` VALUES ('71','headline','input','E-Commerce');
