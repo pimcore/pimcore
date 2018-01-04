@@ -696,6 +696,7 @@
   "available_versions": "Available Versions",
   "controller_and_view_settings": "Controller and View Settings",
   "email_from": "From",
+  "email_reply_to": "Reply To",
   "email_subject": "Subject",
   "email_to": "To",
   "email_cc": "CC",

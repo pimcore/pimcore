@@ -49,7 +49,7 @@ class Mail
             }
             $debugInformation .= '</td></tr>';
 
-            foreach (['To', 'Cc', 'Bcc'] as $key) {
+            foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
                 $getterName = 'get' . $key;
                 $addresses = $mail->$getterName();
 
@@ -68,7 +68,7 @@ class Mail
             }
 
             //generating text debug info
-            foreach (['To', 'Cc', 'Bcc'] as $key) {
+            foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
                 $getterName = 'get' . $key;
                 $addresses = $mail->$getterName();
 
@@ -185,7 +185,7 @@ CSS;
             $emailLog->setBodyText($text->getBody());
         }
 
-        foreach (['To', 'Cc', 'Bcc'] as $key) {
+        foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
             $addresses = isset($recipients[$key]) ? $recipients[$key] : null;
 
             if ($addresses) {
