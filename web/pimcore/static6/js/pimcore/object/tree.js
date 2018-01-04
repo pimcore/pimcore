@@ -80,7 +80,6 @@ pimcore.object.tree = Class.create({
         var store = Ext.create('pimcore.data.PagingTreeStore', {
             autoLoad: true,
             autoSync: false,
-            //model: 'pimcore.data.PagingTreeModel',
             proxy: {
                 type: 'ajax',
                 url: "/admin/object/tree-get-childs-by-id",
