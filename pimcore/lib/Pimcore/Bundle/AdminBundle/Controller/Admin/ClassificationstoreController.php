@@ -304,7 +304,7 @@ class ClassificationstoreController extends AdminController
             if ($request->get('oid')) {
                 $object = DataObject\Concrete::getById($request->get('oid'));
                 $class = $object->getClass();
-                /** @var  $fd DataObject\ClassDefinition\Data\Classificationstore */
+                /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
                 $fd = $class->getFieldDefinition($request->get('fieldname'));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
 
