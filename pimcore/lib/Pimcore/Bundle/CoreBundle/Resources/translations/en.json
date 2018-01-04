@@ -1636,7 +1636,7 @@
   "piwik_widget_widget": "Widget",
   "piwik_widget_site": "Site",
   "piwik_widget_period": "Period",
-  "piwik_widget_date": "Date",
+  "piwik_widget_date": "End Date",
   "piwik_settings": "Piwik Settings",
   "piwik_reports": "Piwik Reports",
   "piwik_period_day": "Day",
