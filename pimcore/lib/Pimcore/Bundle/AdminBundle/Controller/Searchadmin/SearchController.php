@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,14 +45,14 @@ class SearchController extends AdminController
      * @todo: $conditionClassnameParts could be undefined
      * @todo: $data could be undefined
      */
-    public function findAction(Request $request)
+    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
         $user = $this->getAdminUser();
@@ -272,7 +273,7 @@ class SearchController extends AdminController
         //$searcherList->setOrder("desc");
         //$searcherList->setOrderKey("modificationdate");
 
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
@@ -291,10 +292,40 @@ class SearchController extends AdminController
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $searcherList,
-            'context' => $allParams['context']
+            'context' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         $searcherList = $beforeListLoadEvent->getArgument('list');
+
+        if (in_array('asset', $types)) {
+		    // Global asset list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $searcherList,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $searcherList = $beforeListLoadEvent->getArgument('list');
+        }
+
+        if (in_array('document', $types)) {
+		    // Global document list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $searcherList,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $searcherList = $beforeListLoadEvent->getArgument('list');
+        }
+
+        if (in_array('object', $types)) {
+		    // Global object list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $searcherList,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $searcherList = $beforeListLoadEvent->getArgument('list');
+        }
 
         $hits = $searcherList->load();
 
@@ -328,9 +359,9 @@ class SearchController extends AdminController
 
         $afterListLoadEvent = new GenericEvent($this, [
             'list' => $result,
-            'context' => $allParams['context']
+            'context' => $allParams
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->adminJson($result);

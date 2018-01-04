@@ -24,6 +24,7 @@ use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +52,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $document = Document::getById($request->get('id'));
         $document = clone $document;
@@ -63,7 +64,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'data' => $data,
             'document' => $document
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');
 
         if ($document->isAllowed('view')) {
@@ -80,22 +81,24 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request)
+    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $document = Document::getById($request->get('node'));
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
+        $document = Document::getById($allParams['node']);
 
         $documents = [];
         $cv = false;
         if ($document->hasChildren()) {
-            $limit = intval($request->get('limit'));
-            if (!$request->get('limit')) {
+            $limit = intval($allParams['limit']);
+            if (!$allParams['limit']) {
                 $limit = 100000000;
             }
 
-            $offset = intval($request->get('start'));
+            $offset = intval($allParams['start']);
 
-            if ($request->get('view')) {
-                $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get('view'));
+            if ($allParams['view']) {
+                $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
             }
 
             $list = new Document\Listing();
@@ -119,6 +122,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $list->setOffset($offset);
 
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $list);
+
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $childsList,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $childsList = $beforeListLoadEvent->getArgument('list');
+
             $childsList = $list->load();
 
             foreach ($childsList as $childDocument) {
@@ -129,7 +140,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        if ($request->get('limit')) {
+        if ($allParams['limit']) {
             return $this->adminJson([
                 'offset' => $offset,
                 'limit' => $limit,
@@ -1167,11 +1178,20 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function seopanelTreeAction(Request $request)
+    public function seopanelTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
+        $filterPrepareEvent = new GenericEvent($this, [
+            'requestParams' => $allParams
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+
+        $allParams = $filterPrepareEvent->getArgument('requestParams');
+
         $this->checkPermission('seo_document_editor');
 
-        $document = Document::getById($request->get('node'));
+        $document = Document::getById($allParams['node']);
 
         $documents = [];
         if ($document->hasChildren()) {
@@ -1179,6 +1199,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $list->setCondition('parentId = ?', $document->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
+
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $list,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
 
@@ -1195,7 +1222,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        return $this->adminJson($documents);
+        $result = ['data' => $documents, 'success' => true, 'total' => count($documents)];
+
+        $afterListLoadEvent = new GenericEvent($this, [
+            'list' => $result,
+            'context' => $allParams
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $result = $afterListLoadEvent->getArgument('list');
+
+        return $this->adminJson($result['data']);
     }
 
     /**
