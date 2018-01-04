@@ -89,9 +89,6 @@ pimcore.element.tag.tree = Class.create({
                 };
             }
 
-
-            // ---->
-
             this.filterField = new Ext.form.field.Text(
                 {
                     width: 340,
@@ -115,7 +112,6 @@ pimcore.element.tag.tree = Class.create({
                     text: t("filter"),
                     handler: this.updateTagFilter.bind(this)
                 }];
-            // ----<
 
             this.tree = Ext.create('Ext.tree.Panel', {
                 store: store,
