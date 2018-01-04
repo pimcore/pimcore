@@ -91,15 +91,13 @@ class AssignTargetGroup implements ActionHandlerInterface
 
         foreach ($data as $targetGroupId => $count) {
             $targetGroup = TargetGroup::getById($targetGroupId);
-            if (!$targetGroup || !$targetGroup->getActive()) {
-                return;
+            if ($targetGroup && $targetGroup->getActive()) {
+                $this->assignToVisitor($visitorInfo, $targetGroup, $count);
             }
-
-            $this->assignToVisitor($visitorInfo, $targetGroup, $count);
         }
     }
 
-    private function storeAssignments(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $weight): int
+    protected function storeAssignments(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $weight): int
     {
         $data = $this->storage->get(
             $visitorInfo,
@@ -123,7 +121,7 @@ class AssignTargetGroup implements ActionHandlerInterface
         return $count;
     }
 
-    private function assignToVisitor(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $count)
+    protected function assignToVisitor(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $count)
     {
         $threshold = (int)$targetGroup->getThreshold();
 
