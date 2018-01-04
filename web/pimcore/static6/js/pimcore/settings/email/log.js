@@ -91,18 +91,18 @@ pimcore.settings.email.log = Class.create({
 
         var gridColumns = [
             {
-                header: 'ID',
+                text: 'ID',
                 dataIndex: 'id',
                 flex: 40,
                 hidden: true
             },{
-                header: 'Document Id',
+                text: 'Document Id',
                 dataIndex: 'documentId',
                 flex: 130,
                 hidden: true
             },
             {
-                header: t('email_log_sent_Date'),
+                text: t('email_log_sent_Date'),
                 dataIndex: 'sentDate',
                 width: 150,
                 flex: false,
@@ -113,38 +113,38 @@ pimcore.settings.email.log = Class.create({
                 }
             },
             {
-                header: t('email_log_from'),
+                text: t('email_log_from'),
                 sortable: false,
                 dataIndex: 'from',
                 flex: 120
             },
             {
-                header: t('email_reply_to'),
+                text: t('email_reply_to'),
                 sortable: false,
                 dataIndex: 'replyTo',
                 flex: 120,
                 hidden: true
             },
             {
-                header: t('email_log_to'),
+                text: t('email_log_to'),
                 sortable: false,
                 dataIndex: 'to',
                 flex: 120
             },
             {
-                header: t('email_log_cc'),
+                text: t('email_log_cc'),
                 sortable: false,
                 dataIndex: 'cc',
                 flex: 120
             },
             {
-                header: t('email_log_bcc'),
+                text: t('email_log_bcc'),
                 sortable: false,
                 dataIndex: 'bcc',
                 flex: 120
             },
             {
-                header: t('email_log_subject'),
+                text: t('email_log_subject'),
                 sortable: false,
                 dataIndex: 'subject',
                 flex: 220
@@ -155,7 +155,7 @@ pimcore.settings.email.log = Class.create({
                 width: 50,
                 dataIndex: 'emailLogExistsHtml',
                 menuText: t('email_log_html'),
-                header: t('email_log_html'),
+                text: t('email_log_html'),
                 items : [{
                     tooltip: t('email_log_show_html_email'),
                     icon: '/pimcore/static6/img/flat-color-icons/feedback.svg',
@@ -187,7 +187,7 @@ pimcore.settings.email.log = Class.create({
                 width: 50,
                 dataIndex: 'emailLogExistsText',
                 menuText: t('email_log_text'),
-                header: t('email_log_text'),
+                text: t('email_log_text'),
                 hidden: true,
                 items : [{
                     tooltip: t('email_log_show_text_email'),
@@ -221,7 +221,7 @@ pimcore.settings.email.log = Class.create({
                 dataIndex: 'params',
                 hidden: false,
                 menuText: t('email_log_params'),
-                header: t('email_log_params'),
+                text: t('email_log_params'),
                 items : [{
                     tooltip: t('email_log_show_text_params'),
                     icon: '/pimcore/static6/img/flat-color-icons/info.svg',
@@ -247,12 +247,12 @@ pimcore.settings.email.log = Class.create({
                             columnLines: true,
                             columns:[
                                 new Ext.tree.Column({
-                                    header: t('email_log_property'),
+                                    text: t('email_log_property'),
                                     dataIndex: 'key',
                                     width: 230
                                 }),
                                 {
-                                    header: t('email_log_data'),
+                                    text: t('email_log_data'),
                                     width: 370,
                                     dataIndex: 'data',
                                     renderer: function(value, metadata, record) {

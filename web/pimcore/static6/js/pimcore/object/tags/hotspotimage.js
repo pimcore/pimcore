@@ -53,7 +53,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     getGridColumnConfig: function (field) {
 
         return {
-            header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);

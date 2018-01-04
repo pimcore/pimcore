@@ -75,11 +75,11 @@ pimcore.settings.translation.xliff = Class.create({
                     sortable: false
                 },
                 items: [
-                    {header: 'ID', dataIndex: 'id', width: 50},
-                    {header: t("path"), dataIndex: 'path', flex: 200},
-                    {header: t("type"), dataIndex: 'type', width: 100},
+                    {text: 'ID', dataIndex: 'id', width: 50},
+                    {text: t("path"), dataIndex: 'path', flex: 200},
+                    {text: t("type"), dataIndex: 'type', width: 100},
                     Ext.create('Ext.grid.column.Check', {
-                        header: t("children"),
+                        text: t("children"),
                         dataIndex: "children",
                         width: 50
                     }),

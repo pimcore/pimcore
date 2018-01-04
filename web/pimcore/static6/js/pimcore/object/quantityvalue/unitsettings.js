@@ -88,14 +88,14 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         ];
 
         var typesColumns = [
-            {flex: 1, dataIndex: 'id', header: t("id"), hidden: true, editor: new Ext.form.TextField({}), filter: 'string'},
-            {flex: 1, dataIndex: 'abbreviation', header: t("abbreviation"), editor: new Ext.form.TextField({}), filter: 'string'},
-            {flex: 2, dataIndex: 'longname', header: t("longname"), editor: new Ext.form.TextField({}), filter: 'string'},
-            {flex: 1, dataIndex: 'group', header: t("group"), editor: new Ext.form.TextField({}), filter: 'string', hidden: true},
-            {flex: 1, dataIndex: 'baseunit', header: t("baseunit"), editor: new Ext.form.TextField({}), hidden: true},
-            {flex: 1, dataIndex: 'factor', header: t("conversionFactor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
-            {flex: 1, dataIndex: 'conversionOffset', header: t("conversionOffset"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
-            {flex: 1, dataIndex: 'reference', header: t("reference"), editor: new Ext.form.TextField({}), hidden: true, filter: 'string'}
+            {flex: 1, dataIndex: 'id', text: t("id"), hidden: true, editor: new Ext.form.TextField({}), filter: 'string'},
+            {flex: 1, dataIndex: 'abbreviation', text: t("abbreviation"), editor: new Ext.form.TextField({}), filter: 'string'},
+            {flex: 2, dataIndex: 'longname', text: t("longname"), editor: new Ext.form.TextField({}), filter: 'string'},
+            {flex: 1, dataIndex: 'group', text: t("group"), editor: new Ext.form.TextField({}), filter: 'string', hidden: true},
+            {flex: 1, dataIndex: 'baseunit', text: t("baseunit"), editor: new Ext.form.TextField({}), hidden: true},
+            {flex: 1, dataIndex: 'factor', text: t("conversionFactor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
+            {flex: 1, dataIndex: 'conversionOffset', text: t("conversionOffset"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
+            {flex: 1, dataIndex: 'reference', text: t("reference"), editor: new Ext.form.TextField({}), hidden: true, filter: 'string'}
         ];
 
         typesColumns.push({

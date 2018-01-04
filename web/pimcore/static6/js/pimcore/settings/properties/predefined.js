@@ -93,14 +93,14 @@ pimcore.settings.properties.predefined = Class.create({
         });
 
         var inheritableCheck = new Ext.grid.column.Check({
-            header: t("inheritable"),
+            text: t("inheritable"),
             dataIndex: "inheritable",
             width: 50
         });
 
         var propertiesColumns = [
-            {header: t("name"), flex: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
-            {header: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}),
+            {text: t("name"), flex: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
+            {text: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}),
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                                     if(empty(value)) {
                                         return "";
@@ -108,17 +108,17 @@ pimcore.settings.properties.predefined = Class.create({
                                     return nl2br(value);
                                }
             },
-            {header: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
-            {header: t("type"), flex: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
+            {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
+            {text: t("type"), flex: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
                 store: ["text","document","asset","object","bool","select"]
 
             })},
-            {header: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
-            {header: t("configuration"), flex: 50, sortable: false, dataIndex: 'config',
+            {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
+            {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config',
                                                                 editor: new Ext.form.TextField({})},
-            {header: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype', editor: new Ext.form.ComboBox({
+            {text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype', editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
                 store: ["document","asset","object"]
@@ -154,7 +154,7 @@ pimcore.settings.properties.predefined = Class.create({
                     }.bind(this)
                 }]
             },
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {
@@ -165,7 +165,7 @@ pimcore.settings.properties.predefined = Class.create({
                     }
                 }
             },
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {

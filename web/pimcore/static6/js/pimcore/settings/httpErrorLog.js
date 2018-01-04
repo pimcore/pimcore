@@ -70,10 +70,10 @@ pimcore.settings.httpErrorLog = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var typesColumns = [
-            {header: "Code", width: 60, sortable: true, dataIndex: 'code'},
-            {header: t("path"), width: 400, sortable: true, dataIndex: 'uri'},
-            {header: t("amount"), width: 60, sortable: true, dataIndex: 'count'},
-            {header: t("date"), width: 200, sortable: true, dataIndex: 'date',
+            {text: "Code", width: 60, sortable: true, dataIndex: 'code'},
+            {text: t("path"), width: 400, sortable: true, dataIndex: 'uri'},
+            {text: t("amount"), width: 60, sortable: true, dataIndex: 'count'},
+            {text: t("date"), width: 200, sortable: true, dataIndex: 'date',
                                                                     renderer: function(d) {
                 var date = new Date(d * 1000);
                 return Ext.Date.format(date, "Y-m-d H:i:s");

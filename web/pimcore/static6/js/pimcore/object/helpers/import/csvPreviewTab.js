@@ -61,7 +61,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
         var dataGridCols = [];
         dataGridCols.push({
-            header: t("row"), sortable: false, dataIndex: "rowId", flex: 1, filter: 'numeric',
+            text: t("row"), sortable: false, dataIndex: "rowId", flex: 1, filter: 'numeric',
             renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                 if (!this.hasHeadline.getValue() || rowIndex > 0) {
                     return value;
@@ -96,7 +96,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
         for (var i = 0; i < data.dataFields.length - 1; i++) {
             dataGridCols.push({
-                header: t("field") + " " + i,
+                text: t("field") + " " + i,
                 sortable: false,
                 dataIndex: data.dataFields[i],
                 flex: 1,

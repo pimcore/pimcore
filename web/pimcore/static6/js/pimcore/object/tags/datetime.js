@@ -35,7 +35,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig:function (field) {
         return {
-            header:ts(field.label),
+            text:ts(field.label),
             width:150,
             sortable:true,
             dataIndex:field.key,

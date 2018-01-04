@@ -74,16 +74,16 @@ pimcore.settings.translation.translationmerger = Class.create({
                 store: this.store,
                 plugins: ['gridfilters'],
                 columns: [
-                    {header: t("language"), sortable: true, dataIndex: 'lgname', editable: false},
+                    {text: t("language"), sortable: true, dataIndex: 'lgname', editable: false},
                     {
-                        header: "&nbsp;", sortable: true, dataIndex: 'icon', editable: false, width: 40,
+                        text: "&nbsp;", sortable: true, dataIndex: 'icon', editable: false, width: 40,
                         renderer: function (data) {
                             return '<img src="' + data + '" width="100%" height="auto" alt="" />';
                         }
                     },
-                    {header: t("key"), sortable: true, dataIndex: 'key', editable: false, flex: 150, filter: 'string'},
+                    {text: t("key"), sortable: true, dataIndex: 'key', editable: false, flex: 150, filter: 'string'},
                     {
-                        header: t("translation_merger_csv"),
+                        text: t("translation_merger_csv"),
                         sortable: true,
                         dataIndex: 'csv',
                         editable: false,
@@ -159,7 +159,7 @@ pimcore.settings.translation.translationmerger = Class.create({
                     },
 
                     {
-                        header: t("translation_merger_current"),
+                        text: t("translation_merger_current"),
                         sortable: true,
                         dataIndex: 'current',
                         editable: false,

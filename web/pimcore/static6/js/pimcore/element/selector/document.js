@@ -144,12 +144,12 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 width: 300,
                 store: this.selectionStore,
                 columns: [
-                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+                    {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                             return '<div class="pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                         }
                     },
-                    {header: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
+                    {text: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true
@@ -189,17 +189,17 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
     getResultPanel: function () {
         if (!this.resultPanel) {
             var columns = [
-                {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+                {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return '<div class="pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
-                {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
-                {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
-                {header: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
-                {header: t("title"), flex: 200, sortable: false, dataIndex: 'title', hidden: false},
-                {header: t("description"), width: 200, sortable: false, dataIndex: 'description', hidden: true},
-                {header: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true}
+                {text: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
+                {text: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
+                {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
+                {text: t("title"), flex: 200, sortable: false, dataIndex: 'title', hidden: false},
+                {text: t("description"), width: 200, sortable: false, dataIndex: 'description', hidden: true},
+                {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true}
             ];
 
             this.pagingtoolbar = this.getPagingToolbar(t("no_documents_found"));

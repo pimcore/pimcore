@@ -165,7 +165,7 @@ pimcore.asset.metadata = Class.create({
                 columns: {
                     items: [
                         {
-                            header: t("type"),
+                            text: t("type"),
                             dataIndex: 'type',
                             editable: false,
                             width: 40,
@@ -173,7 +173,7 @@ pimcore.asset.metadata = Class.create({
                             sortable: true
                         },
                         {
-                            header: t("name"),
+                            text: t("name"),
                             dataIndex: 'name',
                             getEditor: function() {
                                 return new Ext.form.TextField({
@@ -184,7 +184,7 @@ pimcore.asset.metadata = Class.create({
                             width: 230
                         },
                         {
-                            header: t('language'),
+                            text: t('language'),
                             sortable: true,
                             dataIndex: "language",
                             getEditor: function() {
@@ -201,7 +201,7 @@ pimcore.asset.metadata = Class.create({
                         },
                         {
                             //id: "value_col",
-                            header: t("value"),
+                            text: t("value"),
                             dataIndex: 'data',
                             getEditor: this.getCellEditor.bind(this),
                             editable: true,

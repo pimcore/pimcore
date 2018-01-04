@@ -161,7 +161,7 @@ pimcore.element.properties = Class.create({
             });
 
             var checkColumn = Ext.create('Ext.grid.column.Check', {
-                header: t("inheritable"),
+                text: t("inheritable"),
                 dataIndex: 'inheritable',
                 listeners: {
                     beforecheckchange: function (el, rowIndex, checked, eOpts) {
@@ -231,7 +231,7 @@ pimcore.element.properties = Class.create({
                 stripeRows: true,
                 columns: [
                     {
-                        header: t("type"),
+                        text: t("type"),
                         dataIndex: 'type',
                         editable: false,
                         width: 40,
@@ -239,14 +239,14 @@ pimcore.element.properties = Class.create({
                         sortable: true
                     },
                     {
-                        header: t('inherited'),
+                        text: t('inherited'),
                         dataIndex: 'inherited',
                         editable: false,
                         hidden: true,
                         sortable: true
                     },
                     {
-                        header: t("name"),
+                        text: t("name"),
                         dataIndex: 'name',
                         getEditor: function() {
                             return new Ext.form.TextField({
@@ -257,7 +257,7 @@ pimcore.element.properties = Class.create({
                         width: 230
                     },
                     {
-                        header: t("description"),
+                        text: t("description"),
                         dataIndex: 'description',
                         editable: false,
                         sortable: true,
@@ -265,7 +265,7 @@ pimcore.element.properties = Class.create({
                     },
                     {
                         //id: "property_value_col",
-                        header: t("value"),
+                        text: t("value"),
                         dataIndex: 'data',
                         flex: 1,
                         getEditor: this.getCellEditor.bind(this),

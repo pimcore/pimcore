@@ -38,9 +38,9 @@ pimcore.settings.user.user.objectrelations = Class.create({
         this.objectDependenciesGrid = new Ext.grid.GridPanel({
             store: this.objectDependenciesStore,
             columns: [
-                {header: "ID", sortable: true, dataIndex: 'id'},
-                {header: t("path"), sortable: true, dataIndex: 'path', flex: 1},
-                {header: t("subtype"), sortable: true, dataIndex: 'subtype'}
+                {text: "ID", sortable: true, dataIndex: 'id'},
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
             ],
             columnLines: true,
             stripeRows: true,

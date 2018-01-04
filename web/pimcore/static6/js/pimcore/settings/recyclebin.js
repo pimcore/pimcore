@@ -95,13 +95,13 @@ pimcore.settings.recyclebin = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var typesColumns = [
-            {header: t("type"), width: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
+            {text: t("type"), width: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
                 return '<img src="/pimcore/static6/img/flat-color-icons/' + d + '.svg" style="height: 16px" />';
             }},
-            {header: t("path"), flex: 200, sortable: true, dataIndex: 'path', filter: 'string'},
-            {header: t("amount"), flex: 60, sortable: true, dataIndex: 'amount'},
-            {header: t("deletedby"), flex:80,sortable: true, dataIndex: 'deletedby', filter: 'string'},
-            {header: t("date"), flex: 140, sortable: true, dataIndex: 'date',
+            {text: t("path"), flex: 200, sortable: true, dataIndex: 'path', filter: 'string'},
+            {text: t("amount"), flex: 60, sortable: true, dataIndex: 'amount'},
+            {text: t("deletedby"), flex:80,sortable: true, dataIndex: 'deletedby', filter: 'string'},
+            {text: t("date"), flex: 140, sortable: true, dataIndex: 'date',
                 renderer: function(d) {
                     var date = new Date(d * 1000);
                     return Ext.Date.format(date, "Y-m-d H:i:s");

@@ -106,26 +106,26 @@ pimcore.settings.redirects = Class.create({
         });
 
         var sourceEntireUrlCheck = new Ext.grid.column.Check({
-            header: t("source_entire_url"),
+            text: t("source_entire_url"),
             dataIndex: "sourceEntireUrl",
             width: 70
         });
 
         var activeCheck = new Ext.grid.column.Check({
-            header: t("active"),
+            text: t("active"),
             dataIndex: "active",
             width: 70
         });
 
         var passThroughParametersCheck = new Ext.grid.column.Check({
-            header: t("pass_through_params"),
+            text: t("pass_through_params"),
             dataIndex: "passThroughParameters",
             width: 70
         });
 
         var typesColumns = [
             {
-                header: t("type"),
+                text: t("type"),
                 width: 70,
                 sortable: true,
                 dataIndex: 'type',
@@ -145,8 +145,8 @@ pimcore.settings.redirects = Class.create({
                     triggerAction: "all"
                 })
             },
-            {header: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
-            {header: t("source_site"), flex: 200, sortable:true, dataIndex: "sourceSite",
+            {text: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
+            {text: t("source_site"), flex: 200, sortable:true, dataIndex: "sourceSite",
                 editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
@@ -160,11 +160,11 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {header: t("target"), flex: 200, sortable: false, dataIndex: 'target',
+            {text: t("target"), flex: 200, sortable: false, dataIndex: 'target',
                 editor: new Ext.form.TextField({}),
                 tdCls: "input_drop_target"
             },
-            {header: t("target_site"), flex: 200, sortable:true, dataIndex: "targetSite",
+            {text: t("target_site"), flex: 200, sortable:true, dataIndex: "targetSite",
                 editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
@@ -178,7 +178,7 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {header: t("type"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
+            {text: t("type"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [
                     ["301", "Moved Permanently (301)"],
                     ["307", "Temporary Redirect (307)"],
@@ -193,7 +193,7 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            {header: t("priority"), width: 60, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
+            {text: t("priority"), width: 60, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
                 store: [
                     [1, "1 - " + t("lowest")],
                     [2, 2],
@@ -215,22 +215,22 @@ pimcore.settings.redirects = Class.create({
                 triggerAction: "all"
             })},
             new Ext.grid.column.Check({
-                header: t("regex"),
+                text: t("regex"),
                 dataIndex: "regex",
                 width: 70
             }),
             new Ext.grid.column.Check({
-                header: t("pass_through_params"),
+                text: t("pass_through_params"),
                 dataIndex: "passThroughParameters",
                 width: 70
             }),
             new Ext.grid.column.Check({
-                header: t("active"),
+                text: t("active"),
                 dataIndex: "active",
                 width: 70
             }),
             {
-                header: t("expiry"),
+                text: t("expiry"),
                 width: 150, sortable:true, dataIndex: "expiry",
                 editor: {
                     xtype: 'datefield',
@@ -243,7 +243,7 @@ pimcore.settings.redirects = Class.create({
                         }
                     }
             },
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 width: 150,
                 renderer: function(d) {
@@ -255,7 +255,7 @@ pimcore.settings.redirects = Class.create({
                     }
                 }
             },
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
                 width: 150,
                 renderer: function(d) {

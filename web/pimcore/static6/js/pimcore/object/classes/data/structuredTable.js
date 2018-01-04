@@ -145,11 +145,11 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
 
         var typesColumns = [
-            {header: t("position"), width: 100, sortable: true, dataIndex: 'position',
+            {text: t("position"), width: 100, sortable: true, dataIndex: 'position',
                                     editor: new Ext.form.NumberField({})},
-            {header: t("key"), flex: 50, sortable: true, dataIndex: 'key',
+            {text: t("key"), flex: 50, sortable: true, dataIndex: 'key',
                                     editor: keyTextField},
-            {header: t("label"), flex: 150, sortable: true, dataIndex: 'label',
+            {text: t("label"), flex: 150, sortable: true, dataIndex: 'label',
                                     editor: new Ext.form.TextField({})}
         ];
 
@@ -178,15 +178,15 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), flex: 30, sortable: true, dataIndex: 'type',
+            typesColumns.push({text: t("type"), flex: 30, sortable: true, dataIndex: 'type',
                                         editor: typeComboBox, renderer: function(value) {
                 return types[value];
             }});
 
-            typesColumns.push({header: t("length"), width: 40, sortable: true, dataIndex: 'length',
+            typesColumns.push({text: t("length"), width: 40, sortable: true, dataIndex: 'length',
                 editor: new Ext.form.NumberField({})});
 
-            typesColumns.push({header: t("width"), width: 40, sortable: true, dataIndex: 'width',
+            typesColumns.push({text: t("width"), width: 40, sortable: true, dataIndex: 'width',
                                         editor: new Ext.form.NumberField({})});
 
         }

@@ -114,11 +114,11 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             columnLines: true,
             columns: [
                 {
-                    header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                    text: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
                     width: 200
                 },
                 {
-                    header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                    text: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
                     width: 200
                 },
                 {

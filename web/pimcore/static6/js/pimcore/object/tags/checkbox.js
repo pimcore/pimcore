@@ -30,7 +30,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig:function (field) {
         var columnConfig = {
-            header:ts(field.label),
+            text:ts(field.label),
             dataIndex:field.key,
             renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
                 var key = field.key;

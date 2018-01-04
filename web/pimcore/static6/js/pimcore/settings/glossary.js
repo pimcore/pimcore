@@ -112,25 +112,25 @@ pimcore.settings.glossary = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var casesensitiveCheck = new Ext.grid.column.Check({
-            header: t("casesensitive"),
+            text: t("casesensitive"),
             dataIndex: "casesensitive",
             width: 50
         });
 
         var exactmatchCheck = new Ext.grid.column.Check({
-            header: t("exactmatch"),
+            text: t("exactmatch"),
             dataIndex: "exactmatch",
             width: 50
         });
 
         var typesColumns = [
-            {header: t("text"), flex: 200, sortable: true, dataIndex: 'text', editor: new Ext.form.TextField({})},
-            {header: t("link"), flex: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}),
+            {text: t("text"), flex: 200, sortable: true, dataIndex: 'text', editor: new Ext.form.TextField({})},
+            {text: t("link"), flex: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}),
                                 tdCls: "pimcore_droptarget_input"},
-            {header: t("abbr"), flex: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
-            {header: t("acronym"), flex: 200, sortable: true, dataIndex: 'acronym',
+            {text: t("abbr"), flex: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
+            {text: t("acronym"), flex: 200, sortable: true, dataIndex: 'acronym',
                                 editor: new Ext.form.TextField({})},
-            {header: t("language"), flex: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
+            {text: t("language"), flex: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
                 store: this.languages,
                 mode: "local",
                 editable: false,
@@ -138,7 +138,7 @@ pimcore.settings.glossary = Class.create({
             })},
             casesensitiveCheck,
             exactmatchCheck,
-            {header: t("site"), flex: 200, sortable:true, dataIndex: "site", editor: new Ext.form.ComboBox({
+            {text: t("site"), flex: 200, sortable:true, dataIndex: "site", editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
                 displayField: "domain",
@@ -151,7 +151,7 @@ pimcore.settings.glossary = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {
@@ -162,7 +162,7 @@ pimcore.settings.glossary = Class.create({
                     }
                 }
             },
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {

@@ -58,11 +58,11 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
         });
 
         var columns = [
-            {header: 'ID', width: 60, sortable: true, dataIndex: 'id', hidden: false},
-            {header: t("username"), flex: 100, sortable: true, dataIndex: 'username'},
-            {header: t("firstname"), flex: 200, sortable: true, dataIndex: 'firstname'},
-            {header: t("lastname"), flex: 200, sortable: true, dataIndex: 'lastname'},
-            {header: t("email"), flex: 200, sortable: true, dataIndex: 'email'},
+            {text: 'ID', width: 60, sortable: true, dataIndex: 'id', hidden: false},
+            {text: t("username"), flex: 100, sortable: true, dataIndex: 'username'},
+            {text: t("firstname"), flex: 200, sortable: true, dataIndex: 'firstname'},
+            {text: t("lastname"), flex: 200, sortable: true, dataIndex: 'lastname'},
+            {text: t("email"), flex: 200, sortable: true, dataIndex: 'email'},
             {
                 xtype: 'actioncolumn',
                 menuText: t('gdpr_dataSource_export'),

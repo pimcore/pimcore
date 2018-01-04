@@ -87,7 +87,7 @@ pimcore.settings.translations = Class.create({
         ];
 
         var typesColumns = [
-            {header: t("key"), sortable: true, dataIndex: 'key', editable: false, filter: 'string'}
+            {text: t("key"), sortable: true, dataIndex: 'key', editable: false, filter: 'string'}
         ];
 
         for (var i = 0; i < languages.length; i++) {
@@ -95,7 +95,7 @@ pimcore.settings.translations = Class.create({
             //TODO do we really need the id attribute?
             var columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
-                header: pimcore.available_languages[languages[i]],
+                text: pimcore.available_languages[languages[i]],
                 sortable: true,
                 dataIndex: languages[i],
                 filter: 'string',
@@ -117,10 +117,10 @@ pimcore.settings.translations = Class.create({
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         };
-        typesColumns.push({header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false
+        typesColumns.push({text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false
             ,renderer: dateRenderer, filter: 'date'
         });
-        typesColumns.push({header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
+        typesColumns.push({text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
             ,renderer: dateRenderer, filter: 'date'
         })
         ;

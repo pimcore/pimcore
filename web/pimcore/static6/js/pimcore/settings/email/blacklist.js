@@ -88,8 +88,8 @@ pimcore.settings.email.blacklist = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var typesColumns = [
-            {header:t("email_address"), flex:50, sortable:true, dataIndex:'address', editable: false},
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+            {text:t("email_address"), flex:50, sortable:true, dataIndex:'address', editable: false},
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: false,
                 width: 150,
                 renderer: function(d) {
@@ -101,7 +101,7 @@ pimcore.settings.email.blacklist = Class.create({
                     }
                 }
             },
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
                 width: 150,
                 renderer: function(d) {

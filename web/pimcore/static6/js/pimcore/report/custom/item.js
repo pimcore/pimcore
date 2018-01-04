@@ -43,19 +43,19 @@ pimcore.report.custom.item = Class.create({
         });
 
         var checkDisplay = new Ext.grid.column.Check({
-            header: t("display"),
+            text: t("display"),
             dataIndex: "display",
             width: 50
         });
 
         var checkExport = new Ext.grid.column.Check({
-            header: t("export"),
+            text: t("export"),
             dataIndex: "export",
             width: 50
         });
 
         var checkOrder = new Ext.grid.column.Check({
-            header: t("order"),
+            text: t("order"),
             dataIndex: "order",
             width: 50
         });
@@ -90,12 +90,12 @@ pimcore.report.custom.item = Class.create({
                 this.cellEditing
             ],
             columns: [
-                {header: t("name"), sortable: false, dataIndex: 'name', editable: false, width: 200},
+                {text: t("name"), sortable: false, dataIndex: 'name', editable: false, width: 200},
                 checkDisplay,
                 checkExport,
                 checkOrder,
                 {
-                    header: t("filter_type"),
+                    text: t("filter_type"),
                     width: 100,
                     sortable: false,
                     dataIndex: 'filter',
@@ -116,7 +116,7 @@ pimcore.report.custom.item = Class.create({
                     })
                 },
                 {
-                    header: t("display_type"),
+                    text: t("display_type"),
                     width: 100,
                     sortable: false,
                     dataIndex: 'displayType',
@@ -147,7 +147,7 @@ pimcore.report.custom.item = Class.create({
                     }
                 },
                 {
-                    header: t("custom_report_filter_drilldown"),
+                    text: t("custom_report_filter_drilldown"),
                     width: 100,
                     sortable: false,
                     dataIndex: 'filter_drilldown',
@@ -167,7 +167,7 @@ pimcore.report.custom.item = Class.create({
                     })
                 },
                 {
-                    header: t("width"),
+                    text: t("width"),
                     sortable: false,
                     dataIndex: 'width',
                     editable: true,
@@ -177,7 +177,7 @@ pimcore.report.custom.item = Class.create({
                     })
                 },
                 {
-                    header: t("label"),
+                    text: t("label"),
                     sortable: false,
                     dataIndex: 'label',
                     editable: true,
@@ -185,7 +185,7 @@ pimcore.report.custom.item = Class.create({
                     editor: new Ext.form.TextField({})
                 },
                 {
-                    header: t("action"), width: 160, sortable: true, dataIndex: 'columnAction',
+                    text: t("action"), width: 160, sortable: true, dataIndex: 'columnAction',
                     editor: new Ext.form.ComboBox({
                         store: actionStore,
                         valueField: "key",

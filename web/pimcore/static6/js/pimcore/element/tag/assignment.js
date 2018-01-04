@@ -79,7 +79,7 @@ pimcore.element.tag.assignment = Class.create({
                 columns: {
                     items: [
                         {
-                            header: t("name"),
+                            text: t("name"),
                             dataIndex: 'path',
                             sortable: true,
                             width: 400

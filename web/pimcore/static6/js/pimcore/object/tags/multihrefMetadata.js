@@ -89,8 +89,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         //var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         var columns = [];
-        columns.push({header: 'ID', dataIndex: 'id', width: 50});
-        columns.push({header: t('reference'), dataIndex: 'path', flex: 1});
+        columns.push({text: 'ID', dataIndex: 'id', width: 50});
+        columns.push({text: t('reference'), dataIndex: 'path', flex: 1});
 
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
@@ -154,7 +154,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
                 if(readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
-                        header: ts(this.fieldConfig.columns[i].label),
+                        text: ts(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
@@ -183,7 +183,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             }
 
             var columnConfig = {
-                header: ts(this.fieldConfig.columns[i].label),
+                text: ts(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
@@ -201,8 +201,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         }
 
 
-        columns.push({header: t("type"), dataIndex: 'type', width: 100});
-        columns.push({header: t("subtype"), dataIndex: 'subtype', width: 100});
+        columns.push({text: t("type"), dataIndex: 'type', width: 100});
+        columns.push({text: t("subtype"), dataIndex: 'subtype', width: 100});
 
 
         if(!readOnly) {
@@ -847,7 +847,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);

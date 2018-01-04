@@ -116,17 +116,17 @@ pimcore.settings.metadata.predefined = Class.create({
 
         var metadataColumns = [
             {
-                header: t("type"),
+                text: t("type"),
                 dataIndex: 'type',
                 editable: false,
                 width: 40,
                 renderer: this.getTypeRenderer.bind(this),
                 sortable: true
             },
-            {header: t("name"), width: 200, sortable: true, dataIndex: 'name',
+            {text: t("name"), width: 200, sortable: true, dataIndex: 'name',
                 getEditor: function() { return new Ext.form.TextField({}); }
             },
-            {header: t("description"), sortable: true, dataIndex: 'description',
+            {text: t("description"), sortable: true, dataIndex: 'description',
                 getEditor: function() { return new Ext.form.TextArea({}); },
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                                 if(empty(value)) {
@@ -135,7 +135,7 @@ pimcore.settings.metadata.predefined = Class.create({
                                 return nl2br(value);
                            }
             },
-            {header: t("type"), width: 90, sortable: true,
+            {text: t("type"), width: 90, sortable: true,
                 dataIndex: 'type',
                 getEditor: function() {
                     return new Ext.form.ComboBox({
@@ -154,7 +154,7 @@ pimcore.settings.metadata.predefined = Class.create({
                     })
                 }
             },
-            {header: t("value"),
+            {text: t("value"),
                 flex: 510,
                 sortable: true,
                 dataIndex: 'data',
@@ -162,14 +162,14 @@ pimcore.settings.metadata.predefined = Class.create({
                 getEditor: this.getCellEditor.bind(this),
                 renderer: this.getCellRenderer.bind(this)
             },
-            {header: t("configuration"),
+            {text: t("configuration"),
                 width: 100,
                 sortable: false,
                 dataIndex: 'config',
                 getEditor: function() { return new Ext.form.TextField({}); }
             },
             {
-                header: t('language'),
+                text: t('language'),
                 sortable: true,
                 dataIndex: "language",
                 getEditor: function() {
@@ -184,7 +184,7 @@ pimcore.settings.metadata.predefined = Class.create({
                 width: 70
             },
             {
-                header: t("target_subtype"), width: 80, sortable: true, dataIndex: 'targetSubtype',
+                text: t("target_subtype"), width: 80, sortable: true, dataIndex: 'targetSubtype',
                 getEditor: function() {
                     return new Ext.form.ComboBox({
                         editable: true,
@@ -204,7 +204,7 @@ pimcore.settings.metadata.predefined = Class.create({
                     }.bind(this)
                 }]
             },
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {
@@ -214,7 +214,7 @@ pimcore.settings.metadata.predefined = Class.create({
                     return "";
                 }
             },
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {

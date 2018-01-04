@@ -60,7 +60,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function (field) {
         return {
-            header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -118,10 +118,10 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     sortable: false
                 },
                 items: [
-                    {header: 'ID', dataIndex: 'id', width: 50},
-                    {header: t("reference"), dataIndex: 'path', flex: 200},
-                    {header: t("type"), dataIndex: 'type', width: 100},
-                    {header: t("subtype"), dataIndex: 'subtype', width: 100},
+                    {text: 'ID', dataIndex: 'id', width: 50},
+                    {text: t("reference"), dataIndex: 'path', flex: 200},
+                    {text: t("type"), dataIndex: 'type', width: 100},
+                    {text: t("subtype"), dataIndex: 'subtype', width: 100},
                     {
                         xtype: 'actioncolumn',
                         menuText: t('up'),
@@ -339,10 +339,10 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
             columns: [
-                {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {header: t("reference"), dataIndex: 'path', width: 200, sortable: false},
-                {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
-                {header: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
+                {text: 'ID', dataIndex: 'id', width: 50, sortable: false},
+                {text: t("reference"), dataIndex: 'path', width: 200, sortable: false},
+                {text: t("type"), dataIndex: 'type', width: 100, sortable: false},
+                {text: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
                 {
                     xtype: 'actioncolumn',
                     menuText: t('open'),

@@ -49,13 +49,13 @@ pimcore.settings.user.websiteTranslationSettings = Class.create({
         );
 
         var editColumn = new Ext.grid.column.Check({
-            header: t("edit"),
+            text: t("edit"),
             dataIndex: "edit",
             width: 50,
             flex: 1
         });
         var viewColumn = new Ext.grid.column.Check({
-            header: t("view"),
+            text: t("view"),
             dataIndex: "view",
             width: 50,
             flex: 1
@@ -72,11 +72,11 @@ pimcore.settings.user.websiteTranslationSettings = Class.create({
             width: 500,
             columns: [
                 {
-                    header: t("language"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                    text: t("language"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
                     width: 200
                 },
                 {
-                    header: t("abbreviation"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                    text: t("abbreviation"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
                     width: 200
                 },
                 viewColumn,

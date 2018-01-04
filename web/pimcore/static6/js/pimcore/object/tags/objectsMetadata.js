@@ -89,7 +89,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         var columns = [];
-        columns.push({header: 'ID', dataIndex: 'id', width: 50});
+        columns.push({text: 'ID', dataIndex: 'id', width: 50});
 
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(visibleFields[i])) {
@@ -176,7 +176,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
                 if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
-                        header: ts(this.fieldConfig.columns[i].label),
+                        text: ts(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
@@ -187,7 +187,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             }
 
             var columnConfig = {
-                header: ts(this.fieldConfig.columns[i].label),
+                text: ts(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
@@ -551,7 +551,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);

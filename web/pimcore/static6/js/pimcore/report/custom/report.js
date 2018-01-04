@@ -58,7 +58,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
 
             gridColConfig = {
-                header: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
+                text: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
                 hidden: !colConfig["display"],
                 sortable: colConfig["order"],
                 dataIndex: colConfig["name"]

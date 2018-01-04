@@ -121,10 +121,10 @@ pimcore.element.dependencies = Class.create({
         this.requiresGrid = new Ext.grid.GridPanel({
             store: this.requiresStore,
             columns: [
-                {header: "ID", sortable: true, dataIndex: 'id'},
-                {header: t("path"), sortable: true, dataIndex: 'path', flex: 1},
-                {header: t("type"), sortable: true, dataIndex: 'type'},
-                {header: t("subtype"), sortable: true, dataIndex: 'subtype'}
+                {text: "ID", sortable: true, dataIndex: 'id'},
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
+                {text: t("type"), sortable: true, dataIndex: 'type'},
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
             ],
             collapsible: true,
             columnLines: true,
@@ -171,10 +171,10 @@ pimcore.element.dependencies = Class.create({
         this.requiredByGrid = Ext.create('Ext.grid.Panel', {
             store: this.requiredByStore,
             columns: [
-                {header: "ID", sortable: true, dataIndex: 'id'},
-                {header: t("path"), sortable: true, dataIndex: 'path', flex: 1},
-                {header: t("type"), sortable: true, dataIndex: 'type'},
-                {header: t("subtype"), sortable: true, dataIndex: 'subtype'}
+                {text: "ID", sortable: true, dataIndex: 'id'},
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
+                {text: t("type"), sortable: true, dataIndex: 'type'},
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
             ],
             collapsible: true,
             autoExpandColumn: "path",

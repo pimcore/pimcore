@@ -52,10 +52,10 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                     sortable: false
                 },
                 items: [
-                    {header: 'ID', dataIndex: 'id', width: 50},
-                    {header: t("path"), dataIndex: 'path', flex: 200},
-                    {header: t("type"), dataIndex: 'type', width: 100},
-                    {header: t("subtype"), dataIndex: 'subtype', width: 100},
+                    {text: 'ID', dataIndex: 'id', width: 50},
+                    {text: t("path"), dataIndex: 'path', flex: 200},
+                    {text: t("type"), dataIndex: 'type', width: 100},
+                    {text: t("subtype"), dataIndex: 'subtype', width: 100},
                     {
                         xtype: 'actioncolumn',
                         menuText: t('up'),

@@ -57,7 +57,7 @@ pimcore.settings.document.doctypes = Class.create({
         this.store = pimcore.globalmanager.get("document_types_store");
 
         var legacyCheck = new Ext.grid.column.Check({
-            header: t("legacy_mode"),
+            text: t("legacy_mode"),
             dataIndex: "legacy",
             hidden: !pimcore.settings.isLegacyModeAvailable,
             width: 90
@@ -65,14 +65,14 @@ pimcore.settings.document.doctypes = Class.create({
 
         var typesColumns = [
             {
-                header: t("name"),
+                text: t("name"),
                 flex: 100,
                 sortable: true,
                 dataIndex: 'name',
                 editor: new Ext.form.TextField({})
             },
             {
-                header: t("bundle_optional"),
+                text: t("bundle_optional"),
                 flex: 50,
                 sortable: true,
                 dataIndex: 'module',
@@ -94,7 +94,7 @@ pimcore.settings.document.doctypes = Class.create({
                 })
             },
             {
-                header: t("controller"),
+                text: t("controller"),
                 flex: 50,
                 sortable: true,
                 dataIndex: 'controller',
@@ -131,7 +131,7 @@ pimcore.settings.document.doctypes = Class.create({
                 })
             },
             {
-                header: t("action"),
+                text: t("action"),
                 flex: 50,
                 sortable: true,
                 dataIndex: 'action',
@@ -168,7 +168,7 @@ pimcore.settings.document.doctypes = Class.create({
                 })
             },
             {
-                header: t("template"),
+                text: t("template"),
                 flex: 50,
                 sortable: true,
                 dataIndex: 'template',
@@ -201,7 +201,7 @@ pimcore.settings.document.doctypes = Class.create({
                 })
             },
             {
-                header: t("type"),
+                text: t("type"),
                 flex: 50,
                 sortable: true,
                 dataIndex: 'type',
@@ -212,7 +212,7 @@ pimcore.settings.document.doctypes = Class.create({
                 })
             },
             {
-                header: t("priority"),
+                text: t("priority"),
                 flex: 50,
                 sortable: true,
                 dataIndex: 'priority',
@@ -225,7 +225,7 @@ pimcore.settings.document.doctypes = Class.create({
             },
             legacyCheck,
             {
-                header: t("creationDate"),
+                text: t("creationDate"),
                 sortable: true,
                 dataIndex: 'creationDate',
                 editable: false,
@@ -241,7 +241,7 @@ pimcore.settings.document.doctypes = Class.create({
                 }
             },
             {
-                header: t("modificationDate"),
+                text: t("modificationDate"),
                 sortable: true,
                 dataIndex: 'modificationDate',
                 editable: false,

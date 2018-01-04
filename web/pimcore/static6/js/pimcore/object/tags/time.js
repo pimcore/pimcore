@@ -81,7 +81,7 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key);
 
         return {
-            header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            text: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
             getEditor:this.getWindowCellEditor.bind(this, field)
         };
     },

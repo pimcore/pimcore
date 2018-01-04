@@ -89,7 +89,7 @@ pimcore.element.history = Class.create({
                             ]
                         },
                         {
-                            header:t("name"),
+                            text:t("name"),
                             dataIndex:'name',
                             flex:500,
                             align:'left',
@@ -99,7 +99,7 @@ pimcore.element.history = Class.create({
 
                         ,
                         {
-                            header:t("type"),
+                            text:t("type"),
                             dataIndex:'type',
                             flex:80,
                             align:'left',
@@ -108,7 +108,7 @@ pimcore.element.history = Class.create({
                         }
                         ,
                         {
-                            header:t("id"),
+                            text:t("id"),
                             dataIndex:'id',
                             flex:80,
                             align:'left',
@@ -117,7 +117,7 @@ pimcore.element.history = Class.create({
                         }
                         ,
                         {
-                            header:t("time"),
+                            text:t("time"),
                             dataIndex:'time',
                             filter: 'date',
                             type: 'date',

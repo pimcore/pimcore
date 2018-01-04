@@ -116,8 +116,8 @@ pimcore.report.analytics.elementexplorer = Class.create(pimcore.report.abstract,
                 xtype: "grid",
                 store: this.store,
                 columns: [
-                    {dataIndex: 'dimension',id: "dimension", header: t("dimension"), flex: 1},
-                    {dataIndex: 'metric',header: t("metric")}
+                    {dataIndex: 'dimension',id: "dimension", text: t("dimension"), flex: 1},
+                    {dataIndex: 'metric',text: t("metric")}
                 ],
                 stripeRows: true
             }]

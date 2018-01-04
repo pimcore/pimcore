@@ -64,17 +64,17 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
         });
 
         var columns = [
-            {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+            {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="'
                         + t(record.data.subtype) + '">&nbsp;</div>';
                 }
             },
-            {header: 'ID', width: 60, sortable: true, dataIndex: 'id', hidden: false},
-            {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
-            {header: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
-            {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
-            {header: t("class"), width: 200, sortable: true, dataIndex: 'classname'},
+            {text: 'ID', width: 60, sortable: true, dataIndex: 'id', hidden: false},
+            {text: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
+            {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
+            {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
+            {text: t("class"), width: 200, sortable: true, dataIndex: 'classname'},
             {
                 xtype: 'actioncolumn',
                 menuText: t('gdpr_dataSource_export'),

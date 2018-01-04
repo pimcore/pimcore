@@ -103,7 +103,7 @@ pimcore.settings.website = Class.create({
 
         var typesColumns = [
             {
-                header: t("type"),
+                text: t("type"),
                 dataIndex: 'type',
                 editable: false,
                 width: 40,
@@ -111,7 +111,7 @@ pimcore.settings.website = Class.create({
                 sortable: true
             },
             {
-                header: t("name"),
+                text: t("name"),
                 dataIndex: 'name',
                 width: 200,
                 editable: true,
@@ -119,7 +119,7 @@ pimcore.settings.website = Class.create({
                 sortable: true
             },
             {
-                header: t("value"),
+                text: t("value"),
                 dataIndex: 'data',
                 flex: 10,
                 getEditor: this.getCellEditor.bind(this),
@@ -129,7 +129,7 @@ pimcore.settings.website = Class.create({
                     "mousedown": this.cellMousedown.bind(this)
                 }
             },
-            {header: t("site"), width: 250, sortable:true, dataIndex: "siteId",
+            {text: t("site"), width: 250, sortable:true, dataIndex: "siteId",
                 editor: new Ext.form.ComboBox({
                         store: pimcore.globalmanager.get("sites"),
                         valueField: "id",
@@ -148,7 +148,7 @@ pimcore.settings.website = Class.create({
                 }
             }
             ,
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {
@@ -160,7 +160,7 @@ pimcore.settings.website = Class.create({
                 }
             }
             ,
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {
                     if (d !== undefined) {

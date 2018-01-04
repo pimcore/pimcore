@@ -32,7 +32,7 @@ pimcore.settings.user.workspace.asset = Class.create({
         var storeFields = ["path"];
 
         var typesColumns = [
-            {header: t("path"), width: 200, sortable: false, dataIndex: 'path',
+            {text: t("path"), width: 200, sortable: false, dataIndex: 'path',
                         editor: new Ext.form.TextField({}),
                         tdCls: "pimcore_property_droptarget"
             }
@@ -43,7 +43,7 @@ pimcore.settings.user.workspace.asset = Class.create({
 
             // columns
             check = new Ext.grid.column.Check({
-                header: t(availableRights[i]),
+                text: t(availableRights[i]),
                 dataIndex: availableRights[i],
                 width: 50,
                 flex: 1

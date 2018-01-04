@@ -109,9 +109,9 @@ pimcore.element.notes = Class.create({
             });
 
             var columns = [
-                {header: "ID", sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60},
-                {header: t("type"), sortable: true, dataIndex: 'type', filter: 'string', flex: 60},
-                {header: t("element"), sortable: false, dataIndex: 'cpath', flex: 200,
+                {text: "ID", sortable: true, dataIndex: 'id', hidden: true, filter: 'numeric', flex: 60},
+                {text: t("type"), sortable: true, dataIndex: 'type', filter: 'string', flex: 60},
+                {text: t("element"), sortable: false, dataIndex: 'cpath', flex: 200,
                     hidden: this.inElementContext,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                         if(record.get("cid")) {
@@ -120,21 +120,21 @@ pimcore.element.notes = Class.create({
                         return "";
                     }
                 },
-                {header: t("title"), sortable: true, dataIndex: 'title', filter: 'string', flex: 200},
-                {header: t("description"), sortable: true, dataIndex: 'description', filter: 'string'},
-                {header: t("fields"), sortable: false, dataIndex: 'data', renderer: function(v) {
+                {text: t("title"), sortable: true, dataIndex: 'title', filter: 'string', flex: 200},
+                {text: t("description"), sortable: true, dataIndex: 'description', filter: 'string'},
+                {text: t("fields"), sortable: false, dataIndex: 'data', renderer: function(v) {
                     if(v) {
                         return v.length;
                     }
                     return "";
                 }},
-                {header: t("user"), sortable: true, dataIndex: 'user', flex: 100, filter: 'string', renderer: function(v) {
+                {text: t("user"), sortable: true, dataIndex: 'user', flex: 100, filter: 'string', renderer: function(v) {
                     if(v && v["name"]) {
                         return v["name"];
                     }
                     return "";
                 }},
-                {header: t("date"), sortable: true, dataIndex: 'date', flex: 100, filter: 'date', renderer: function(d) {
+                {text: t("date"), sortable: true, dataIndex: 'date', flex: 100, filter: 'date', renderer: function(d) {
                     var date = new Date(d * 1000);
                     return Ext.Date.format(date, "Y-m-d H:i:s");
                 }}
@@ -250,13 +250,13 @@ pimcore.element.notes = Class.create({
             store: keyValueStore,
             title: t("details_for_selected_event") + " (" + rec.get("id") + ")",
             columns: [
-                {header: t("name"), sortable: true, dataIndex: 'name', flex: 60},
-                {header: t("type"), sortable: true, dataIndex: 'type', flex: 30,
+                {text: t("name"), sortable: true, dataIndex: 'name', flex: 60},
+                {text: t("type"), sortable: true, dataIndex: 'type', flex: 30,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                         return t(value);
                     }
                 },
-                {header: t("value"), sortable: true, dataIndex: 'data', flex: 60,
+                {text: t("value"), sortable: true, dataIndex: 'data', flex: 60,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                         if(record.get("type") == "document" || record.get("type") == "asset"
                             || record.get("type") == "object") {
