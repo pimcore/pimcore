@@ -14,7 +14,6 @@
 pimcore.registerNS("pimcore.element.history");
 pimcore.element.history = Class.create({
 
-
     initialize:function () {
         this.getTabPanel();
     },
@@ -57,13 +56,14 @@ pimcore.element.history = Class.create({
                 data: storeValues
             });
 
-
             this.resultpanel = Ext.create('Ext.grid.Panel', {
                 store:this.store,
                 trackMouseOver:true,
                 disableSelection:true,
                 autoScroll:true,
-
+                plugins: [
+                    'gridfilters'
+                ],
                 columns:[
                         {
                             hideable: false,
@@ -92,7 +92,8 @@ pimcore.element.history = Class.create({
                             dataIndex:'name',
                             flex:500,
                             align:'left',
-                            sortable:true
+                            sortable:true,
+                            filter: 'string'
                         }
 
                         ,
@@ -101,7 +102,8 @@ pimcore.element.history = Class.create({
                             dataIndex:'type',
                             flex:80,
                             align:'left',
-                            sortable:true
+                            sortable:true,
+                            filter: 'list'
                         }
                         ,
                         {
@@ -109,12 +111,15 @@ pimcore.element.history = Class.create({
                             dataIndex:'id',
                             flex:80,
                             align:'left',
-                            sortable:true
+                            sortable:true,
+                            filter: 'number'
                         }
                         ,
                         {
                             header:t("time"),
                             dataIndex:'time',
+                            filter: 'date',
+                            type: 'date',
                             flex:220,
                             align:'left',
                             sortable:true
