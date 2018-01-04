@@ -105,8 +105,9 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         });
 
         gridColumns.push({
-            header: t("open"),
             xtype: 'actioncolumn',
+            text: t("open"),
+            menuText: t("open"),
             width: 40,
             items: [
                 {
@@ -135,8 +136,9 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
 
         gridColumns.push({
-            hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('remove'),
+            hideable: false,
             width: 30,
             items: [
                 {
@@ -304,8 +306,9 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         );
 
         gridColumns.push({
-            hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('remove'),
+            hideable: false,
             width: 30,
             items: [
                 {

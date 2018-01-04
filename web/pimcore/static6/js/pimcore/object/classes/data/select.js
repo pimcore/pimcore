@@ -23,7 +23,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true,
+        classificationstore: true,
         block: true
     },
 
@@ -49,14 +49,14 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
     getLayout: function ($super) {
 
-        if(typeof this.datax.options != "object") {
+        if (typeof this.datax.options != "object") {
             this.datax.options = [];
         }
 
         this.valueStore = new Ext.data.Store({
 
             fields: ["key", "value"],
-            proxy:{
+            proxy: {
                 type: 'memory'
             },
             data: this.datax.options
@@ -99,12 +99,12 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     this.selectionModel.select(idx);
                 }.bind(this)
             },
-            {
-                xtype: "button",
-                iconCls: "pimcore_icon_edit",
-                handler: this.showoptioneditor.bind(this)
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_edit",
+                    handler: this.showoptioneditor.bind(this)
 
-            }],
+                }],
             disabled: this.isInCustomLayoutEditor(),
             style: "margin-top: 10px",
             store: this.valueStore,
@@ -112,18 +112,23 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             clicksToEdit: 1,
             columnLines: true,
             columns: [
-                {header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
-                    width: 200},
-                {header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
-                    width: 200},
                 {
-                    xtype:'actioncolumn',
-                    width:40,
-                    items:[
+                    header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                    width: 200
+                },
+                {
+                    header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                    width: 200
+                },
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('up'),
+                    width: 40,
+                    items: [
                         {
-                            tooltip:t('up'),
-                            icon:"/pimcore/static6/img/flat-color-icons/up.svg",
-                            handler:function (grid, rowIndex) {
+                            tooltip: t('up'),
+                            icon: "/pimcore/static6/img/flat-color-icons/up.svg",
+                            handler: function (grid, rowIndex) {
                                 if (rowIndex > 0) {
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
@@ -136,13 +141,14 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     ]
                 },
                 {
-                    xtype:'actioncolumn',
-                    width:40,
-                    items:[
+                    xtype: 'actioncolumn',
+                    menuText: t('down'),
+                    width: 40,
+                    items: [
                         {
-                            tooltip:t('down'),
-                            icon:"/pimcore/static6/img/flat-color-icons/down.svg",
-                            handler:function (grid, rowIndex) {
+                            tooltip: t('down'),
+                            icon: "/pimcore/static6/img/flat-color-icons/down.svg",
+                            handler: function (grid, rowIndex) {
                                 if (rowIndex < (grid.getStore().getCount() - 1)) {
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
@@ -155,6 +161,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 },
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('remove'),
                     width: 40,
                     items: [
                         {
@@ -169,7 +176,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             ],
             autoHeight: true,
             plugins: [
-                this.cellEditing ]
+                this.cellEditing]
         });
 
 
@@ -178,8 +185,8 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
             var dropTargetEl = this.valueGrid.getEl();
             var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                ddGroup    : 'objectclassselect',
-                getTargetFromEvent: function(e) {
+                ddGroup: 'objectclassselect',
+                getTargetFromEvent: function (e) {
                     return this.valueGrid.getEl().dom;
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
@@ -193,7 +200,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     return Ext.dd.DropZone.prototype.dropNotAllowed;
 
                 }.bind(this),
-                onNodeDrop : function(target, dd, e, data) {
+                onNodeDrop: function (target, dd, e, data) {
                     try {
                         if (data["grid"] && data["grid"] == this.valueGrid) {
                             var rowIndex = this.valueGrid.getView().findRowIndex(e.target);
@@ -217,7 +224,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
         this.specificPanel.removeAll();
 
-        var items  = [];
+        var items = [];
 
 
         items.push({
@@ -283,10 +290,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         this.datax.options = options;
     },
 
-    applySpecialData: function(source) {
+    applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {
-                this.datax =  {};
+                this.datax = {};
             }
             Ext.apply(this.datax,
                 {
@@ -298,7 +305,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         }
     },
 
-    showoptioneditor: function() {
+    showoptioneditor: function () {
         var editor = new pimcore.object.helpers.optionEditor(this.valueStore);
         editor.edit();
     }

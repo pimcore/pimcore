@@ -40,7 +40,8 @@ pimcore.object.helpers.import.reportTab = Class.create({
             var dataGridCols = [];
             dataGridCols.push({header: t("row"), sortable: true, dataIndex: "rowId", width: 80, filter: 'numeric'});
             dataGridCols.push({
-                    header: t("preview"),
+                    text: t("preview"),
+                    menuText: t("preview"),
                     xtype: 'actioncolumn',
                     width: 80,
                     tooltip: t('preview'),
@@ -67,7 +68,8 @@ pimcore.object.helpers.import.reportTab = Class.create({
             dataGridCols.push(
                 {
                     xtype: 'actioncolumn',
-                    header: t("open"),
+                    text: t("open"),
+                    menuText: t("open"),
                     tooltip: t('open'),
                     width: 80,
                     items: [

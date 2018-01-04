@@ -175,6 +175,7 @@ pimcore.settings.glossary = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('delete'),
                 width: 30,
                 items: [{
                     tooltip: t('delete'),

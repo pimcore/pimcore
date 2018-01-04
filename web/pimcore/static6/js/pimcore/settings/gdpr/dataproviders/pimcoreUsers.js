@@ -65,6 +65,7 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
             {header: t("email"), flex: 200, sortable: true, dataIndex: 'email'},
             {
                 xtype: 'actioncolumn',
+                menuText: t('gdpr_dataSource_export'),
                 width: 40,
                 items: [
                     {
@@ -79,6 +80,7 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('remove'),
                 width: 40,
                 items: [
                     {

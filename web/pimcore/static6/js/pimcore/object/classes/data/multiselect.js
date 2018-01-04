@@ -23,7 +23,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true,
+        classificationstore: true,
         block: true
     },
 
@@ -33,8 +33,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
-            "visibleGridView","visibleSearch","style"];
+        this.availableSettingsFields = ["name", "title", "tooltip", "mandatory", "noteditable", "invisible",
+            "visibleGridView", "visibleSearch", "style"];
 
         this.treeNode = treeNode;
     },
@@ -53,7 +53,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
 
     getLayout: function ($super) {
 
-        if(typeof this.datax.options != "object") {
+        if (typeof this.datax.options != "object") {
             this.datax.options = [];
         }
 
@@ -76,7 +76,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     }
                 ]
             },
-            plugins: [ this.cellEditing ],
+            plugins: [this.cellEditing],
             tbar: [{
                 xtype: "tbtext",
                 text: t("selection_options")
@@ -100,12 +100,12 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     this.selectionModel.select(idx);
                 }.bind(this)
             },
-            {
-                xtype: "button",
-                iconCls: "pimcore_icon_edit",
-                handler: this.showoptioneditor.bind(this)
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_edit",
+                    handler: this.showoptioneditor.bind(this)
 
-            }
+                }
             ],
             style: "margin-top: 10px",
             store: this.valueStore,
@@ -113,18 +113,23 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             selModel: Ext.create('Ext.selection.RowModel', {}),
             columnLines: true,
             columns: [
-                {header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
-                    width: 200},
-                {header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
-                    width: 200},
                 {
-                    xtype:'actioncolumn',
-                    width:30,
-                    items:[
+                    header: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                    width: 200
+                },
+                {
+                    header: t("value"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                    width: 200
+                },
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('up'),
+                    width: 30,
+                    items: [
                         {
-                            tooltip:t('up'),
-                            icon:"/pimcore/static6/img/flat-color-icons/up.svg",
-                            handler:function (grid, rowIndex) {
+                            tooltip: t('up'),
+                            icon: "/pimcore/static6/img/flat-color-icons/up.svg",
+                            handler: function (grid, rowIndex) {
                                 if (rowIndex > 0) {
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
@@ -137,13 +142,14 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     ]
                 },
                 {
-                    xtype:'actioncolumn',
-                    width:30,
-                    items:[
+                    xtype: 'actioncolumn',
+                    menuText: t('down'),
+                    width: 30,
+                    items: [
                         {
-                            tooltip:t('down'),
-                            icon:"/pimcore/static6/img/flat-color-icons/down.svg",
-                            handler:function (grid, rowIndex) {
+                            tooltip: t('down'),
+                            icon: "/pimcore/static6/img/flat-color-icons/down.svg",
+                            handler: function (grid, rowIndex) {
                                 if (rowIndex < (grid.getStore().getCount() - 1)) {
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
@@ -157,6 +163,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 },
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('remove'),
                     width: 30,
                     items: [
                         {
@@ -172,25 +179,26 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             autoHeight: true
         });
 
-        this.selectionModel = this.valueGrid.getSelectionModel();;
+        this.selectionModel = this.valueGrid.getSelectionModel();
+        ;
         this.valueGrid.on("afterrender", function () {
 
             var dropTargetEl = this.valueGrid.getEl();
             var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                ddGroup    : 'objectclassmultiselect',
-                getTargetFromEvent: function(e) {
+                ddGroup: 'objectclassmultiselect',
+                getTargetFromEvent: function (e) {
                     return this.valueGrid.getEl().dom;
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
-                    if(data["grid"] && data["grid"] == this.valueGrid) {
+                    if (data["grid"] && data["grid"] == this.valueGrid) {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
                     return Ext.dd.DropZone.prototype.dropNotAllowed;
                 }.bind(this),
-                onNodeDrop : function(target, dd, e, data) {
-                    if(data["grid"] && data["grid"] == this.valueGrid) {
+                onNodeDrop: function (target, dd, e, data) {
+                    if (data["grid"] && data["grid"] == this.valueGrid) {
                         var rowIndex = this.valueGrid.getView().findRowIndex(e.target);
-                        if(rowIndex !== false) {
+                        if (rowIndex !== false) {
                             var store = this.valueGrid.getStore();
                             var rec = store.getAt(data.rowIndex);
                             store.removeAt(data.rowIndex);
@@ -262,10 +270,10 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         this.datax.options = options;
     },
 
-    applySpecialData: function(source) {
+    applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {
-                this.datax =  {};
+                this.datax = {};
             }
             Ext.apply(this.datax,
                 {
@@ -277,7 +285,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         }
     },
 
-    showoptioneditor: function() {
+    showoptioneditor: function () {
         var editor = new pimcore.object.helpers.optionEditor(this.valueStore);
         editor.edit();
     }

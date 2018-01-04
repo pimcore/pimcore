@@ -279,6 +279,7 @@ pimcore.element.properties = Class.create({
                     checkColumn,
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('open'),
                         width: 40,
                         items: [{
                             tooltip: t('open'),
@@ -305,6 +306,7 @@ pimcore.element.properties = Class.create({
                     },
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('delete'),
                         width: 40,
                         items: [{
                             tooltip: t('delete'),

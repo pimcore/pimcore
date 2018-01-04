@@ -96,7 +96,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
             if (colConfig["columnAction"]) {
                 this.gridColumns.push({
-                    header: t("open"),
+                    text: t("open"),
+                    menuText: t("open"),
                     xtype: 'actioncolumn',
                     width: 40,
                     items: [

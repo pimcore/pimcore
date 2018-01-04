@@ -127,6 +127,7 @@ pimcore.settings.translations = Class.create({
 
         typesColumns.push({
             xtype: 'actioncolumn',
+            menuText: t('delete'),
             width: 30,
             items: [{
                 tooltip: t('delete'),

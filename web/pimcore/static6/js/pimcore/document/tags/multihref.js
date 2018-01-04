@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.document.tags.multihref");
 pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function (id, name, options, data, inherited) {
         this.id = id;
         this.name = name;
 
@@ -24,7 +24,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         this.setupWrapper();
 
         var modelName = 'DocumentsMultihrefEntry';
-        if(!Ext.ClassManager.isCreated(modelName) ) {
+        if (!Ext.ClassManager.isCreated(modelName)) {
             Ext.define(modelName, {
                 extend: 'Ext.data.Model',
                 idProperty: 'rowId',
@@ -57,13 +57,14 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {header: t("subtype"), dataIndex: 'subtype', width: 100},
                     {
-                        xtype:'actioncolumn',
-                        width:30,
-                        items:[
+                        xtype: 'actioncolumn',
+                        menuText: t('up'),
+                        width: 30,
+                        items: [
                             {
-                                tooltip:t('up'),
-                                icon:"/pimcore/static6/img/flat-color-icons/up.svg",
-                                handler:function (grid, rowIndex) {
+                                tooltip: t('up'),
+                                icon: "/pimcore/static6/img/flat-color-icons/up.svg",
+                                handler: function (grid, rowIndex) {
                                     if (rowIndex > 0) {
                                         var rec = grid.getStore().getAt(rowIndex);
                                         grid.getStore().removeAt(rowIndex);
@@ -74,13 +75,14 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         ]
                     },
                     {
-                        xtype:'actioncolumn',
-                        width:30,
-                        items:[
+                        xtype: 'actioncolumn',
+                        menuText: t('down'),
+                        width: 30,
+                        items: [
                             {
-                                tooltip:t('down'),
-                                icon:"/pimcore/static6/img/flat-color-icons/down.svg",
-                                handler:function (grid, rowIndex) {
+                                tooltip: t('down'),
+                                icon: "/pimcore/static6/img/flat-color-icons/down.svg",
+                                handler: function (grid, rowIndex) {
                                     if (rowIndex < (grid.getStore().getCount() - 1)) {
                                         var rec = grid.getStore().getAt(rowIndex);
                                         grid.getStore().removeAt(rowIndex);
@@ -92,6 +94,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                     },
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('open'),
                         width: 30,
                         items: [{
                             tooltip: t('open'),
@@ -108,6 +111,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                     },
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('remove'),
                         width: 30,
                         items: [{
                             tooltip: t('remove'),
@@ -151,14 +155,14 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         };
 
         // height specifics
-        if(typeof this.options.height != "undefined") {
+        if (typeof this.options.height != "undefined") {
             elementConfig.height = this.options.height;
         } else {
             elementConfig.autoHeight = true;
         }
 
         // width specifics
-        if(typeof this.options.width != "undefined") {
+        if (typeof this.options.width != "undefined") {
             elementConfig.width = this.options.width;
         }
 
@@ -182,7 +186,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         pimcore.helpers.assetSingleUploadDialog(this.options["uploadPath"], "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);
-                if(data["id"]) {
+                if (data["id"]) {
                     this.store.add({
                         id: data["id"],
                         path: data["fullpath"],
@@ -196,7 +200,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         }.bind(this));
     },
 
-    onNodeOver: function(target, dd, e, data) {
+    onNodeOver: function (target, dd, e, data) {
         var record = data.records[0];
 
         record = this.getCustomPimcoreDropData(record);
@@ -211,7 +215,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
     onNodeDrop: function (target, dd, e, data) {
         var record = data.records[0];
 
-        if(!this.dndAllowed(this.getCustomPimcoreDropData(record))){
+        if (!this.dndAllowed(this.getCustomPimcoreDropData(record))) {
             return false;
         }
 
@@ -246,7 +250,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
     },
 
-    dndAllowed: function(data) {
+    dndAllowed: function (data) {
 
         var i;
         var found;
@@ -268,10 +272,10 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                 if (type == data.data.elementType) {
                     found = true;
 
-                    if(this.options.subtypes[type] && this.options.subtypes[type].length) {
+                    if (this.options.subtypes[type] && this.options.subtypes[type].length) {
                         checkSubType = true;
                     }
-                    if(data.data.elementType == "object" && this.options.classes) {
+                    if (data.data.elementType == "object" && this.options.classes) {
                         checkClass = true;
                     }
                     break;
@@ -316,7 +320,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         return true;
     },
 
-    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 
         var menu = new Ext.menu.Menu();
 
@@ -368,12 +372,12 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
     openSearchEditor: function () {
 
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-            type: this.options.types,
-            subtype: this.options.subtypes,
-            specific: {
-                classes: this.options["classes"]
-            }
-        },
+                type: this.options.types,
+                subtype: this.options.subtypes,
+                specific: {
+                    classes: this.options["classes"]
+                }
+            },
             {
                 context: this.getContext()
             });
@@ -433,7 +437,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
     getValue: function () {
         var tmData = [];
 
-        var data = this.store.queryBy(function(record, id) {
+        var data = this.store.queryBy(function (record, id) {
             return true;
         });
 

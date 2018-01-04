@@ -208,6 +208,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('up'),
                 width: 40,
                 items: [
                     {
@@ -225,6 +226,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             });
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('down'),
                 width: 40,
                 items: [
                     {
@@ -244,6 +246,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
         columns.push({
             xtype: 'actioncolumn',
+            menuText: t('open'),
             width: 40,
             items: [
                 {
@@ -265,6 +268,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('remove'),
                 width: 40,
                 items: [
                     {

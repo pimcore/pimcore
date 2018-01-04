@@ -212,6 +212,7 @@ pimcore.report.custom.item = Class.create({
                     filter: 'string'
                 }, {
                     xtype: 'actioncolumn',
+                    menuText: t('up'),
                     width: 30,
                     items: [
                         {
@@ -229,6 +230,7 @@ pimcore.report.custom.item = Class.create({
                 },
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('down'),
                     width: 30,
                     items: [
                         {

@@ -101,6 +101,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         typesColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('delete'),
             width: 30,
             items: [{
                 tooltip: t('delete'),

@@ -86,6 +86,7 @@ pimcore.element.tag.assignment = Class.create({
                         },
                         {
                             xtype: 'actioncolumn',
+                            menuText: t('delete'),
                             width: 40,
                             items: [{
                                 tooltip: t('delete'),

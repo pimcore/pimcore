@@ -115,6 +115,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     {header: t("type"), dataIndex: 'type', flex: 100},
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('open'),
                         width: 30,
                         items: [
                             {
@@ -129,6 +130,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     },
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('remove'),
                         width: 30,
                         items: [
                             {

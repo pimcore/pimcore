@@ -110,6 +110,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('open'),
             width: 30,
             items: [
                 {
@@ -125,6 +126,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('remove'),
             width: 30,
             items: [
                 {

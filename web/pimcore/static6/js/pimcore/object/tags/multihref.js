@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.object.tags.multihref");
 pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     type: "multihref",
-    dataChanged:false,
+    dataChanged: false,
     idProperty: "rowId",
 
     initialize: function (data, fieldConfig) {
@@ -28,7 +28,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         }
 
         var modelName = 'ObjectsMultihrefEntry';
-        if(!Ext.ClassManager.isCreated(modelName) ) {
+        if (!Ext.ClassManager.isCreated(modelName)) {
             Ext.define(modelName, {
                 extend: 'Ext.data.Model',
                 idProperty: this.idProperty,
@@ -44,10 +44,10 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         this.store = new Ext.data.ArrayStore({
             data: this.data,
             listeners: {
-                add:function() {
+                add: function () {
                     this.dataChanged = true;
                 }.bind(this),
-                remove: function() {
+                remove: function () {
                     this.dataChanged = true;
                 }.bind(this),
                 clear: function () {
@@ -58,13 +58,14 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         });
     },
 
-    getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+    getGridColumnConfig: function (field) {
+        return {
+            header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if(record.data.inheritedFields[key]
+                if (record.data.inheritedFields[key]
                     && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += " grid_value_inherited";
                 }
@@ -81,10 +82,11 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 } else {
                     return "";
                 }
-            }.bind(this, field.key)};
+            }.bind(this, field.key)
+        };
     },
 
-    getLayoutEdit: function() {
+    getLayoutEdit: function () {
 
         var autoHeight = false;
         if (intval(this.fieldConfig.height) < 15) {
@@ -106,7 +108,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     dragroup: 'element'
                 },
                 listeners: {
-                    refresh: function(gridview) {
+                    refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
@@ -121,13 +123,14 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {header: t("subtype"), dataIndex: 'subtype', width: 100},
                     {
-                        xtype:'actioncolumn',
-                        width:40,
-                        items:[
+                        xtype: 'actioncolumn',
+                        menuText: t('up'),
+                        width: 40,
+                        items: [
                             {
-                                tooltip:t('up'),
-                                icon:"/pimcore/static6/img/flat-color-icons/up.svg",
-                                handler:function (grid, rowIndex) {
+                                tooltip: t('up'),
+                                icon: "/pimcore/static6/img/flat-color-icons/up.svg",
+                                handler: function (grid, rowIndex) {
                                     if (rowIndex > 0) {
                                         var rec = grid.getStore().getAt(rowIndex);
                                         grid.getStore().removeAt(rowIndex);
@@ -138,13 +141,14 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         ]
                     },
                     {
-                        xtype:'actioncolumn',
-                        width:40,
-                        items:[
+                        xtype: 'actioncolumn',
+                        menuText: t('down'),
+                        width: 40,
+                        items: [
                             {
-                                tooltip:t('down'),
-                                icon:"/pimcore/static6/img/flat-color-icons/down.svg",
-                                handler:function (grid, rowIndex) {
+                                tooltip: t('down'),
+                                icon: "/pimcore/static6/img/flat-color-icons/down.svg",
+                                handler: function (grid, rowIndex) {
                                     if (rowIndex < (grid.getStore().getCount() - 1)) {
                                         var rec = grid.getStore().getAt(rowIndex);
                                         grid.getStore().removeAt(rowIndex);
@@ -156,6 +160,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     },
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('open'),
                         width: 40,
                         items: [{
                             tooltip: t('open'),
@@ -172,6 +177,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     },
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('remove'),
                         width: 40,
                         items: [{
                             tooltip: t('remove'),
@@ -202,8 +208,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
             var dropTargetEl = this.component.getEl();
             var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                ddGroup    : 'element',
-                getTargetFromEvent: function(e) {
+                ddGroup: 'element',
+                getTargetFromEvent: function (e) {
                     return this.component.getEl().dom;
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
@@ -223,7 +229,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         console.log(e);
                     }
                 }.bind(this),
-                onNodeDrop : function(target, dd, e, data) {
+                onNodeDrop: function (target, dd, e, data) {
                     try {
                         var record = data.records[0];
                         var data = record.data;
@@ -282,7 +288,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getEditToolbarItems: function() {
+    getEditToolbarItems: function () {
 
         var toolbarItems = [
             {
@@ -320,13 +326,12 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         return toolbarItems;
     },
 
-    isFromTree: function(ddSource) {
+    isFromTree: function (ddSource) {
         var klass = Ext.getClass(ddSource);
         var className = klass.getName();
         var fromTree = className == "Ext.tree.ViewDragZone";
         return fromTree;
     },
-
 
 
     getLayoutShow: function () {
@@ -340,6 +345,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 {header: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('open'),
                     width: 40,
                     items: [{
                         tooltip: t('open'),
@@ -378,7 +384,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.assetUploadPath, "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);
-                if(data["id"]) {
+                if (data["id"]) {
                     this.store.add({
                         id: data["id"],
                         path: data["fullpath"],
@@ -392,7 +398,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         }.bind(this));
     },
 
-    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 
         var menu = new Ext.menu.Menu();
         var data = record;
@@ -447,7 +453,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     allowedSpecific.classes.push(this.fieldConfig.classes[i].classes);
                 }
             } else {
-                allowedSubtypes.object = ["object","folder","variant"];
+                allowedSubtypes.object = ["object", "folder", "variant"];
             }
         }
         if (this.fieldConfig.assetsAllowed) {
@@ -470,10 +476,10 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         }
 
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-            type: allowedTypes,
-            subtype: allowedSubtypes,
-            specific: allowedSpecific
-        },
+                type: allowedTypes,
+                subtype: allowedSubtypes,
+                specific: allowedSpecific
+            },
             {
                 context: Ext.apply({scope: "objectEditor"}, this.getContext())
             });
@@ -483,9 +489,9 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     elementAlreadyExists: function (id, type) {
 
         // check max amount in field
-        if(this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1) {
-            if(this.store.getCount() >= this.fieldConfig.maxItems) {
-                Ext.Msg.alert(t("error"),t("limit_reached"));
+        if (this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1) {
+            if (this.store.getCount() >= this.fieldConfig.maxItems) {
+                Ext.Msg.alert(t("error"), t("limit_reached"));
                 return true;
             }
         }
@@ -546,10 +552,10 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     isInvalidMandatory: function () {
 
-        var data = this.store.queryBy(function(record, id) {
+        var data = this.store.queryBy(function (record, id) {
             return true;
         });
-        if(data.items.length < 1){
+        if (data.items.length < 1) {
             return true;
         }
         return false;
@@ -559,7 +565,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
         var tmData = [];
 
-        var data = this.store.queryBy(function(record, id) {
+        var data = this.store.queryBy(function (record, id) {
             return true;
         });
 
@@ -575,13 +581,13 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         return this.fieldConfig.name;
     },
 
-    dndAllowed: function(data, fromTree) {
+    dndAllowed: function (data, fromTree) {
 
         var i;
 
         // check if data is a treenode, if not check if the source is the same grid because of the reordering
         if (!fromTree) {
-            if(data["grid"] && data["grid"] == this.component) {
+            if (data["grid"] && data["grid"] == this.component) {
                 return true;
             }
             return false;
@@ -642,15 +648,15 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty: function () {
+        if (!this.isRendered()) {
             return false;
         }
 
         return this.dataChanged;
     },
 
-    requestNicePathData: function(targets) {
+    requestNicePathData: function (targets) {
         pimcore.helpers.requestNicePathData(
             {
                 type: "object",

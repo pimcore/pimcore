@@ -174,6 +174,7 @@ pimcore.settings.website = Class.create({
             ,
             {
                 xtype:'actioncolumn',
+                menuText:t('empty'),
                 width:40,
                 tooltip:t('empty'),
                 icon: "/pimcore/static6/img/flat-color-icons/full_trash.svg",
@@ -185,6 +186,7 @@ pimcore.settings.website = Class.create({
             ,
             {
                 xtype:'actioncolumn',
+                menuText: t('delete'),
                 width:40,
                 tooltip:t('delete'),
                 icon:"/pimcore/static6/img/flat-color-icons/delete.svg",

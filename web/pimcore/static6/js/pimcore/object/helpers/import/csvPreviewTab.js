@@ -70,7 +70,8 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
         });
 
         dataGridCols.push({
-                header: t("preview"),
+                text: t("preview"),
+                menuText: t("preview"),
                 xtype: 'actioncolumn',
                 width: 80,
                 tooltip: t('preview'),

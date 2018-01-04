@@ -144,6 +144,7 @@ pimcore.element.notes = Class.create({
                 columns.push(
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('click_to_open'),
                         width: 30,
                         items: [{
                             tooltip: t('click_to_open'),
@@ -161,6 +162,7 @@ pimcore.element.notes = Class.create({
 
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('details'),
                 width: 30,
                 items: [{
                     tooltip: t('details'),
@@ -273,6 +275,7 @@ pimcore.element.notes = Class.create({
                 },
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('open'),
                     width: 30,
                     items: [{
                         tooltip: t('open'),

@@ -115,6 +115,7 @@ pimcore.settings.email.blacklist = Class.create({
             },
             {
                 xtype:'actioncolumn',
+                menuText:t('delete'),
                 width:30,
                 items:[
                     {

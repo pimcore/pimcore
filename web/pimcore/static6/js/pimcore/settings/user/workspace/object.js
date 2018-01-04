@@ -64,7 +64,8 @@ pimcore.settings.user.workspace.object = Class.create({
 
         typesColumns.push({
             xtype: 'actioncolumn',
-            header: t('special_settings'),
+            text: t('special_settings'),
+            menuText: t('special_settings'),
             width: 40,
             items: [{
                 tooltip: t('special_settings_tooltip'),
@@ -89,6 +90,7 @@ pimcore.settings.user.workspace.object = Class.create({
 
         typesColumns.push({
             xtype: 'actioncolumn',
+            menuText: t('delete'),
             width: 40,
             items: [{
                 tooltip: t('delete'),

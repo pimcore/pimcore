@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.object.tags.objects");
 pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
     type: "objects",
-    dataChanged:false,
+    dataChanged: false,
     idProperty: "id",
     pathProperty: "path",
 
@@ -29,10 +29,10 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         this.store = new Ext.data.ArrayStore({
             data: this.data,
             listeners: {
-                add:function() {
+                add: function () {
                     this.dataChanged = true;
                 }.bind(this),
-                remove: function() {
+                remove: function () {
                     this.dataChanged = true;
                 }.bind(this),
                 clear: function () {
@@ -47,48 +47,50 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         });
     },
 
-    getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
-            function (key, value, metaData, record) {
-                this.applyPermissionStyle(key, value, metaData, record);
+    getGridColumnConfig: function (field) {
+        return {
+            header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
+                function (key, value, metaData, record) {
+                    this.applyPermissionStyle(key, value, metaData, record);
 
-                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                    metaData.tdCls += " grid_value_inherited";
-                }
-
-                if (value && value.length > 0) {
-
-                    // only show 10 relations in the grid
-                    var maxAmount = 10;
-                    if(value.length > maxAmount) {
-                        value.splice(maxAmount, (value.length - maxAmount) );
-                        value.push("...");
+                    if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                        metaData.tdCls += " grid_value_inherited";
                     }
 
-                    return value.join("<br />");
-                }
-            }.bind(this, field.key)};
-    },    
+                    if (value && value.length > 0) {
 
-    openParentSearchEditor: function(){
+                        // only show 10 relations in the grid
+                        var maxAmount = 10;
+                        if (value.length > maxAmount) {
+                            value.splice(maxAmount, (value.length - maxAmount));
+                            value.push("...");
+                        }
+
+                        return value.join("<br />");
+                    }
+                }.bind(this, field.key)
+        };
+    },
+
+    openParentSearchEditor: function () {
         pimcore.helpers.itemselector(false, function (selection) {
-                    this.parentField.setValue(selection.fullpath);
-                    this.parentIdField.setValue(selection.id);
-                }.bind(this), {
-                    type: ["object"],
-                    subtype: {
-                        object: ["object", "folder"]
-                    },
-                    specific: {
-                        classes: null
-                    }
+                this.parentField.setValue(selection.fullpath);
+                this.parentIdField.setValue(selection.id);
+            }.bind(this), {
+                type: ["object"],
+                subtype: {
+                    object: ["object", "folder"]
                 },
+                specific: {
+                    classes: null
+                }
+            },
             {
                 context: this.getContext()
             });
     },
 
-    create: function(className) {
+    create: function (className) {
 
         this.window = new Ext.Window({
             width: 500,
@@ -110,7 +112,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             name: 'parent',
             fieldLabel: t('parent_element'),
             width: 300,
-            disabled:true
+            disabled: true
         });
 
         this.parentChooseButton = new Ext.Button({
@@ -150,7 +152,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
     },
 
-    addCreateObject: function(className) {
+    addCreateObject: function (className) {
 
         var name = this.nameField.getValue();
 
@@ -179,7 +181,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     parentId: parentId,
                     key: pimcore.helpers.getValidFilename(name, "object")
                 },
-                success: function(response) {
+                success: function (response) {
                     var data = Ext.decode(response.responseText);
                     if (data.success) {
                         this.store.add({
@@ -190,7 +192,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                         pimcore.helpers.openElement(data.id, "object", "object");
                         this.window.close();
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",data.message);
+                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error", data.message);
                     }
 
                 }.bind(this)
@@ -209,7 +211,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             allowedClasses = [];
             for (i = 0; i < this.fieldConfig.classes.length; i++) {
-                if(this.fieldConfig.classes[i].classes) {
+                if (this.fieldConfig.classes[i].classes) {
                     allowedClasses.push(this.fieldConfig.classes[i].classes);
                 }
             }
@@ -281,84 +283,88 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     dragroup: 'element'
                 },
                 listeners: {
-                    drop: function(node, data, dropRec, dropPosition) {
+                    drop: function (node, data, dropRec, dropPosition) {
                         var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
                         //Ext.example.msg('Drag from left to right', 'Dropped ' + data.records[0].get('name') + dropOn);
                     },
-                    refresh: function(gridview) {
+                    refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
             },
             selModel: Ext.create('Ext.selection.RowModel', {}),
 
-                columns: [
-                    {header: 'ID', dataIndex: 'id', width: 50}
-                    ,
-                    {header: t("reference"), dataIndex: 'path', flex: 200},
-                    {header: t("type"), dataIndex: 'type', width: 100},
-                    {
-                        xtype:'actioncolumn',
-                        width:40,
-                        items:[
-                            {
-                                tooltip:t('up'),
-                                icon:"/pimcore/static6/img/flat-color-icons/up.svg",
-                                handler:function (grid, rowIndex) {
-                                    if (rowIndex > 0) {
-                                        var rec = grid.getStore().getAt(rowIndex);
-                                        grid.getStore().removeAt(rowIndex);
-                                        grid.getStore().insert(rowIndex - 1, [rec]);
-                                    }
-                                }.bind(this)
-                            }
-                        ]
-                    },
-                    {
-                        xtype:'actioncolumn',
-                        width:40,
-                        items:[
-                            {
-                                tooltip:t('down'),
-                                icon:"/pimcore/static6/img/flat-color-icons/down.svg",
-                                handler:function (grid, rowIndex) {
-                                    if (rowIndex < (grid.getStore().getCount() - 1)) {
-                                        var rec = grid.getStore().getAt(rowIndex);
-                                        grid.getStore().removeAt(rowIndex);
-                                        grid.getStore().insert(rowIndex + 1, [rec]);
-                                    }
-                                }.bind(this)
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'actioncolumn',
-                        width: 40,
-                        items: [
-                            {
-                                tooltip: t('open'),
-                                icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
-                                handler: function (grid, rowIndex) {
-                                    var data = grid.getStore().getAt(rowIndex);
-                                    pimcore.helpers.openObject(data.data.id, "object");
-                                }.bind(this)
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'actioncolumn',
-                        width: 40,
-                        items: [
-                            {
-                                tooltip: t('remove'),
-                                icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
-                                handler: function (grid, rowIndex) {
+            columns: [
+                {header: 'ID', dataIndex: 'id', width: 50}
+                ,
+                {header: t("reference"), dataIndex: 'path', flex: 200},
+                {header: t("type"), dataIndex: 'type', width: 100},
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('up'),
+                    width: 40,
+                    items: [
+                        {
+                            tooltip: t('up'),
+                            icon: "/pimcore/static6/img/flat-color-icons/up.svg",
+                            handler: function (grid, rowIndex) {
+                                if (rowIndex > 0) {
+                                    var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
-                                }.bind(this)
-                            }
-                        ]
-                    }
-                ],
+                                    grid.getStore().insert(rowIndex - 1, [rec]);
+                                }
+                            }.bind(this)
+                        }
+                    ]
+                },
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('down'),
+                    width: 40,
+                    items: [
+                        {
+                            tooltip: t('down'),
+                            icon: "/pimcore/static6/img/flat-color-icons/down.svg",
+                            handler: function (grid, rowIndex) {
+                                if (rowIndex < (grid.getStore().getCount() - 1)) {
+                                    var rec = grid.getStore().getAt(rowIndex);
+                                    grid.getStore().removeAt(rowIndex);
+                                    grid.getStore().insert(rowIndex + 1, [rec]);
+                                }
+                            }.bind(this)
+                        }
+                    ]
+                },
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('open'),
+                    width: 40,
+                    items: [
+                        {
+                            tooltip: t('open'),
+                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            handler: function (grid, rowIndex) {
+                                var data = grid.getStore().getAt(rowIndex);
+                                pimcore.helpers.openObject(data.data.id, "object");
+                            }.bind(this)
+                        }
+                    ]
+                },
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('remove'),
+                    width: 40,
+                    items: [
+                        {
+                            tooltip: t('remove'),
+                            icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                            handler: function (grid, rowIndex) {
+                                grid.getStore().removeAt(rowIndex);
+                            }.bind(this)
+                        }
+                    ]
+                }
+            ],
 
             componentCls: cls,
             autoExpandColumn: 'path',
@@ -379,8 +385,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
             var dropTargetEl = this.component.getEl();
             var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                ddGroup    : 'element',
-                getTargetFromEvent: function(e) {
+                ddGroup: 'element',
+                getTargetFromEvent: function (e) {
                     return this.component.getEl().dom;
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
@@ -395,12 +401,12 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                         } else {
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
                         }
-                    }  catch (e) {
+                    } catch (e) {
                         console.log(e);
                         return Ext.dd.DropZone.prototype.dropNotAllowed;
                     }
                 }.bind(this),
-                onNodeDrop : function(target, dd, e, data) {
+                onNodeDrop: function (target, dd, e, data) {
 
                     try {
                         var record = data.records[0];
@@ -410,9 +416,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                         var toBeRequested = new Ext.util.Collection();
 
                         if (this.dndAllowed(data, fromTree)) {
-                            if(data["grid"] && data["grid"] == this.component) {
+                            if (data["grid"] && data["grid"] == this.component) {
                                 var rowIndex = this.component.getView().findRowIndex(e.target);
-                                if(rowIndex !== false) {
+                                if (rowIndex !== false) {
                                     var rec = this.store.getAt(data.rowIndex);
                                     this.store.removeAt(data.rowIndex);
                                     toBeRequested.add(this.store.insert(rowIndex, [rec]));
@@ -445,7 +451,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getEditToolbarItems: function() {
+    getEditToolbarItems: function () {
         var toolbarItems = [
             {
                 xtype: "tbspacer",
@@ -474,7 +480,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         return toolbarItems;
     },
 
-    isFromTree: function(ddSource) {
+    isFromTree: function (ddSource) {
         var klass = Ext.getClass(ddSource);
         var className = klass.getName();
         var fromTree = className == "Ext.tree.ViewDragZone";
@@ -497,6 +503,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('open'),
                     width: 40,
                     sortable: false,
                     items: [
@@ -513,7 +520,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             ],
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
-            autoHeight:autoHeight,
+            autoHeight: autoHeight,
             border: true,
             cls: "object_field",
             autoExpandColumn: 'path',
@@ -532,7 +539,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     }
     ,
 
-    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
@@ -577,14 +584,14 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         }
 
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-            type: ["object"],
-            subtype: {
-                object: ["object", "folder","variant"]
+                type: ["object"],
+                subtype: {
+                    object: ["object", "folder", "variant"]
+                },
+                specific: {
+                    classes: allowedClasses
+                }
             },
-            specific: { 
-                classes: allowedClasses
-            }
-        },
             {
                 context: Ext.apply({scope: "objectEditor"}, this.getContext())
             });
@@ -604,7 +611,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
     isInvalidMandatory: function () {
 
-        var data = this.store.queryBy(function(record, id) {
+        var data = this.store.queryBy(function (record, id) {
             return true;
         });
         if (data.items.length < 1) {
@@ -639,9 +646,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     objectAlreadyExists: function (id) {
 
         // check max amount in field
-        if(this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1) {
-            if(this.store.getCount() >= this.fieldConfig.maxItems) {
-                Ext.Msg.alert(t("error"),t("limit_reached"));
+        if (this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1) {
+            if (this.store.getCount() >= this.fieldConfig.maxItems) {
+                Ext.Msg.alert(t("error"), t("limit_reached"));
                 return true;
             }
         }
@@ -660,7 +667,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         var tmData = [];
 
-        var data = this.store.queryBy(function(record, id) {
+        var data = this.store.queryBy(function (record, id) {
             return true;
         });
 
@@ -678,11 +685,11 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     ,
 
 
-    dndAllowed: function(data, fromTree) {
+    dndAllowed: function (data, fromTree) {
 
         // check if data is a treenode, if not allow drop because of the reordering
         if (!fromTree) {
-            if(data["grid"] && data["grid"] == this.component) {
+            if (data["grid"] && data["grid"] == this.component) {
                 return true;
             }
             return false;
@@ -709,15 +716,15 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         return isAllowedClass;
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty: function () {
+        if (!this.isRendered()) {
             return false;
         }
-        
+
         return this.dataChanged;
     },
 
-    requestNicePathData: function(targets) {
+    requestNicePathData: function (targets) {
         targets = this.normalizeTargetData(targets);
 
         pimcore.helpers.requestNicePathData(
@@ -737,12 +744,12 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         );
     },
 
-    normalizeTargetData: function(targets) {
+    normalizeTargetData: function (targets) {
         if (!targets) {
             return targets;
         }
 
-        targets.each(function(record){
+        targets.each(function (record) {
             var type = record.data.type;
             record.data.type = "object";
             record.data.subtype = type;

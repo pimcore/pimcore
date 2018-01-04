@@ -91,7 +91,8 @@ pimcore.settings.translation.translationmerger = Class.create({
                         filter: 'string'
                     },
                     {
-                        header: t("action"),
+                        text: t("action"),
+                        menuText: t("action"),
                         xtype: 'actioncolumn',
                         width: 80,
                         tooltip: t('action'),

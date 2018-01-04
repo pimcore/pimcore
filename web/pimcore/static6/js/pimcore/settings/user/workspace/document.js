@@ -59,6 +59,7 @@ pimcore.settings.user.workspace.document = Class.create({
 
         typesColumns.push({
             xtype: 'actioncolumn',
+            menuText: t('delete'),
             width: 40,
             items: [{
                 tooltip: t('delete'),

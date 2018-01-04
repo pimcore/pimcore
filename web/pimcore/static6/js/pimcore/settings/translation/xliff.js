@@ -85,6 +85,7 @@ pimcore.settings.translation.xliff = Class.create({
                     }),
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('remove'),
                         width: 30,
                         items: [{
                             tooltip: t('remove'),

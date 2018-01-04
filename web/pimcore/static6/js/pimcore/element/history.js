@@ -68,6 +68,7 @@ pimcore.element.history = Class.create({
                         {
                             hideable: false,
                             xtype: 'actioncolumn',
+                            menuText: t('open'),
                             width: 30,
                             items: [
                                 {

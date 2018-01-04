@@ -59,6 +59,7 @@ pimcore.settings.user.editorSettings = Class.create({
                     width: 200},
                 {
                     xtype:'actioncolumn',
+                    menuText:t('up'),
                     width:40,
                     items:[
                         {
@@ -77,6 +78,7 @@ pimcore.settings.user.editorSettings = Class.create({
                 },
                 {
                     xtype:'actioncolumn',
+                    menuText:t('down'),
                     width:40,
                     items:[
                         {

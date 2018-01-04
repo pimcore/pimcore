@@ -82,6 +82,7 @@ pimcore.settings.translation.word = Class.create({
                     }),
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('remove'),
                         width: 30,
                         items: [{
                             tooltip: t('remove'),

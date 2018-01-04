@@ -80,6 +80,7 @@ pimcore.settings.httpErrorLog = Class.create({
             }},
             {
                 xtype: 'actioncolumn',
+                menuText: t('open'),
                 width: 30,
                 items: [{
                     tooltip: t('open'),

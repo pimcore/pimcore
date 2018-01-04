@@ -102,7 +102,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 sortable: false,
                 width: 50,
                 dataIndex: "emailLogExistsHtml",
-                header: t('email_log_html'),
+                text: t('email_log_html'),
+                menuText: t('email_log_html'),
                 items : [{
                     tooltip: t('email_log_show_html_email'),
                     icon: "/pimcore/static6/img/flat-color-icons/feedback.svg",
@@ -133,7 +134,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 sortable: false,
                 width: 50,
                 dataIndex: "emailLogExistsText",
-                header: t('email_log_text'),
+                text: t('email_log_text'),
+                menuText: t('email_log_text'),
                 hidden: true,
                 items : [{
                     tooltip: t('email_log_show_text_email'),
@@ -166,7 +168,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 width: 120,
                 dataIndex: "params",
                 hidden: false,
-                header: t('email_log_params'),
+                text: t('email_log_params'),
+                menuText: t('email_log_params'),
                 items : [{
                     tooltip: t('email_log_show_text_params'),
                     icon: "/pimcore/static6/img/flat-color-icons/info.svg",
@@ -241,6 +244,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('gdpr_dataSource_export'),
                 width: 40,
                 items: [
                     {
@@ -255,6 +259,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('delete'),
                 width: 30,
                 items: [{
                     tooltip: t('delete'),

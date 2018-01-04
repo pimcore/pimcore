@@ -208,6 +208,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         if (!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('up'),
                 width: 40,
                 items: [
                     {
@@ -225,6 +226,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             });
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('down'),
                 width: 40,
                 items: [
                     {
@@ -244,6 +246,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         columns.push({
             xtype: 'actioncolumn',
+            menuText: t('open'),
             width: 40,
             items: [
                 {
@@ -260,6 +263,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         if (!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('remove'),
                 width: 40,
                 items: [
                     {

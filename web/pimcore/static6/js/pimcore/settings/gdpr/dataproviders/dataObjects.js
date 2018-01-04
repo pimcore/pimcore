@@ -77,6 +77,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
             {header: t("class"), width: 200, sortable: true, dataIndex: 'classname'},
             {
                 xtype: 'actioncolumn',
+                menuText: t('gdpr_dataSource_export'),
                 width: 40,
                 items: [
                     {
@@ -91,6 +92,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('open'),
                 width: 40,
                 items: [
                     {
@@ -105,6 +107,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('remove'),
                 width: 40,
                 items: [
                     {

@@ -126,6 +126,7 @@ pimcore.settings.properties.predefined = Class.create({
             inheritableCheck,
             {
                 xtype: 'actioncolumn',
+                menuText: t('delete'),
                 width: 30,
                 items: [{
                     tooltip: t('delete'),
@@ -136,6 +137,7 @@ pimcore.settings.properties.predefined = Class.create({
                 }]
             },{
                 xtype: 'actioncolumn',
+                menuText: t('translate'),
                 width: 30,
                 items: [{
                     tooltip: t('translate'),

@@ -154,6 +154,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t("classificationstore_detailed_configuration"),
             width: 30,
             items: [
                 {
@@ -190,6 +191,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('remove'),
             width: 30,
             items: [
                 {

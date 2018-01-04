@@ -213,6 +213,7 @@ pimcore.asset.metadata = Class.create({
                         },
                         {
                             xtype: 'actioncolumn',
+                            menuText: t('open'),
                             width: 40,
                             items: [{
                                 tooltip: t('open'),
@@ -234,6 +235,7 @@ pimcore.asset.metadata = Class.create({
                         },
                         {
                             xtype: 'actioncolumn',
+                            menuText: t('delete'),
                             width: 40,
                             items: [{
                                 tooltip: t('delete'),
