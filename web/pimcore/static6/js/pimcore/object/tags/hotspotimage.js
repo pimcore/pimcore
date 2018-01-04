@@ -25,7 +25,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     initialize: function (data, fieldConfig, additionalConfig) {
         this.hotspots = [];
         this.marker = [];
-        this.crop = [];
+        this.crop = {};
         this.predefinedDataTemplates = {};
         if (fieldConfig.predefinedDataTemplates) {
             try {
@@ -103,7 +103,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     tooltip: t("to_left"),
                     overflowText: t('to_left'),
                     iconCls: "pimcore_icon_left",
-                    handler: function(image) {
+                    handler: function (image) {
                         this.move(-1, image.container);
                     }.bind(this.additionalConfig.callback, this)
                 }
@@ -115,7 +115,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     tooltip: t("to_right"),
                     overflowText: t('to_right'),
                     iconCls: "pimcore_icon_right",
-                    handler: function(image) {
+                    handler: function (image) {
                         this.move(+1, image.container);
                     }.bind(this.additionalConfig.callback, this)
                 }
@@ -127,7 +127,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     tooltip: t("add"),
                     overflowText: t('add'),
                     iconCls: "pimcore_icon_plus",
-                    handler: function(image) {
+                    handler: function (image) {
                         this.add(image.container);
                     }.bind(this.additionalConfig.callback, this)
                 }
@@ -139,12 +139,11 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     tooltip: t("delete"),
                     overflowText: t('delete'),
                     iconCls: "pimcore_icon_delete",
-                    handler: function(image) {
+                    handler: function (image) {
                         this.delete(image.container);
                     }.bind(this.additionalConfig.callback, this)
                 }
             );
-
 
 
         }
@@ -186,7 +185,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             xtype: "button",
             iconCls: "pimcore_icon_delete",
             overflowText: t('empty'),
-            handler: this.empty.bind(this)
+            handler: this.empty.bind(this, false)
         });
 
         items.push({
@@ -387,28 +386,62 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     },
 
+    hasData: function () {
+        return typeof this.hotspots !== "undefined" && this.hotspots.length
+            || typeof this.marker !== "undefined" && this.marker.length
+            || typeof this.crop !== "undefined" && !this.isEmptyObject(this.crop)
+    },
+
+    isEmptyObject: function (myObject) {
+        for (var key in myObject) {
+            if (myObject.hasOwnProperty(key)) {
+                return false;
+            }
+        }
+
+        return true
+    },
+
     doClearData: function () {
         this.hotspots = [];
         this.marker = [];
-        this.crop = [];
+        this.crop = {};
         this.dirty = true;
     },
 
-    empty: function (nodeDrop) {
+    empty: function (replacement) {
         this.data = {};
         this.fileinfo = null;
 
-        if (!nodeDrop) {
+        if (replacement && this.hasData()) {
+
+            Ext.MessageBox.show({
+                title: t('clear_hotspots_title'),
+                msg: t('clear_hotspots_msg'),
+                buttons: Ext.Msg.YESNO,
+                icon: Ext.MessageBox.INFO,
+                modal: true,
+                fn: function (btn) {
+                    if (btn == "yes") {
+                        this.doClearData();
+                        this.updateImage();
+                    }
+                }.bind(this)
+            });
+        } else {
             this.doClearData();
         }
+
         this.dirty = true;
         this.component.removeAll();
         this.createImagePanel();
-    },
+    }
+    ,
 
     getValue: function () {
         return {id: this.data.id, hotspots: this.hotspots, marker: this.marker, crop: this.crop};
-    },
+    }
+    ,
 
     showPreview: function () {
         if (this.fileinfo) {
@@ -475,7 +508,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 }
             }
         }
-    },
+    }
+    ,
 
     addHotspotInfo: function (element, config) {
         if (config["name"]) {
@@ -487,14 +521,17 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         };
 
         element.addListener('click', functionCallback.bind(this), false);
-    },
+    }
+    ,
 
     getCellEditValue: function () {
         return this.getValue();
-    },
+    }
+    ,
 
-    setContainer: function(container) {
+    setContainer: function (container) {
         this.container = container;
     }
 
-});
+})
+;

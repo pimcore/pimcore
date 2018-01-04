@@ -192,7 +192,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     uploadDialog: function () {
         pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
             try {
-                this.empty();
+                this.empty(true);
 
                 var data = Ext.decode(res.response.responseText);
                 if (data["id"] && data["type"] == "image") {
@@ -208,7 +208,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     addDataFromSelector: function (item) {
 
-        this.empty();
+        this.empty(true);
 
         if (item) {
             if (!this.data || this.data.id != item.id) {
