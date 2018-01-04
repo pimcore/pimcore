@@ -53,7 +53,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
-		
+
         $object = DataObject\AbstractObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
@@ -1541,7 +1541,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
-		
+
         $requestedLanguage = $allParams['language'];
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
@@ -1822,7 +1822,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
 
-			$result = ['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()];
+            $result = ['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()];
 
             $afterListLoadEvent = new GenericEvent($this, [
                 'list' => $result,

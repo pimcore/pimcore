@@ -1520,7 +1520,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         }
 
-		// We need to temporary use data key to be compatible with the ASSET_LIST_AFTER_LIST_LOAD global event
+        // We need to temporary use data key to be compatible with the ASSET_LIST_AFTER_LIST_LOAD global event
         $result = ['data' => $assets, 'success' => true, 'total' => $list->getTotalCount()];
 
         $afterListLoadEvent = new GenericEvent($this, [
@@ -1530,7 +1530,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');
 
-		// Here we revert to assets key
+        // Here we revert to assets key
         return $this->adminJson(['assets' => $result['data'], 'success' => $result['success'], 'total' => $result['total']]);
     }
 
@@ -2119,7 +2119,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
-		
+
         if ($allParams['data']) {
             if ($allParams['xaction'] == 'update') {
                 //TODO probably not needed
@@ -2258,7 +2258,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 }
             }
 
-			$result = ['data' => $assets, 'success' => true, 'total' => $list->getTotalCount()];
+            $result = ['data' => $assets, 'success' => true, 'total' => $list->getTotalCount()];
 
             $afterListLoadEvent = new GenericEvent($this, [
                 'list' => $result,

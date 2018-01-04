@@ -298,7 +298,7 @@ class SearchController extends AdminController
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
         if (in_array('asset', $types)) {
-		    // Global asset list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
+            // Global asset list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
                 'context' => $allParams
@@ -308,7 +308,7 @@ class SearchController extends AdminController
         }
 
         if (in_array('document', $types)) {
-		    // Global document list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
+            // Global document list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
                 'context' => $allParams
@@ -318,7 +318,7 @@ class SearchController extends AdminController
         }
 
         if (in_array('object', $types)) {
-		    // Global object list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
+            // Global object list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
                 'context' => $allParams

@@ -575,7 +575,7 @@ class Log extends Model\AbstractModel
         return $this->from;
     }
 
-     /**
+    /**
      * @param $replyTo
      *
      * @return $this
