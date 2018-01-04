@@ -166,11 +166,10 @@ pimcore.element.tag.tree = Class.create({
     updateTagFilter: function () {
 
         this.tree.getStore().clearFilter();
-        var currentFilterValue = this.filterField.getValue();
-
+        var currentFilterValue = this.filterField.getValue().toLowerCase();
 
         this.tree.getStore().filterBy(function (item) {
-            if (item.data.text.indexOf(currentFilterValue) !== -1) {
+            if (item.data.text.toLowerCase().indexOf(currentFilterValue) !== -1) {
                 return true;
             }
 

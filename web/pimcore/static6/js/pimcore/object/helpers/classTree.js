@@ -17,16 +17,73 @@ pimcore.object.helpers.classTree = Class.create({
     showFieldName: false,
 
     initialize: function (showFieldName) {
-        if(showFieldName) {
+        if (showFieldName) {
             this.showFieldName = showFieldName;
         }
     },
 
+    updateFilter: function (tree, filterField) {
 
-    getClassTree: function(url, classId, objectId) {
+        tree.getStore().clearFilter();
+        var currentFilterValue = filterField.getValue().toLowerCase();
+
+        tree.getStore().filterBy(function (item) {
+            if (item.data.text.toLowerCase().indexOf(currentFilterValue) !== -1) {
+                return true;
+            }
+
+            if (!item.data.leaf) {
+                if (item.data.root) {
+                    return true;
+                }
+
+                var childNodes = item.childNodes;
+                var hide = true;
+                if (childNodes) {
+                    var i;
+                    for (i = 0; i < childNodes.length; i++) {
+                        var childNode = childNodes[i];
+                        if (childNode.get("visible")) {
+                            hide = false;
+                            break;
+                        }
+                    }
+                }
+
+                return !hide;
+            }
+        }.bind(this));
+
+        var rootNode = tree.getRootNode()
+        rootNode.set('text', currentFilterValue ? t('element_tag_filtered_tags') : t('element_tag_all_tags'));
+        rootNode.expand(true);
+    },
+
+    getClassTree: function (url, classId, objectId) {
+
+        var filterField = new Ext.form.field.Text(
+            {
+                width: 200,
+                hideLabel: true,
+                enableKeyEvents: true
+            }
+        );
+
+        var filterButton = new Ext.button.Button({
+            iconCls: "pimcore_icon_search"
+        });
+
+        var headerConfig = {
+            title: t('class_definitions'),
+            items: [
+                filterField,
+                filterButton
+            ]
+        };
 
         var tree = new Ext.tree.TreePanel({
-            title: t('class_definitions'),
+
+            header: headerConfig,
             region: "center",
             autoScroll: true,
             rootVisible: false,
@@ -39,12 +96,12 @@ pimcore.object.helpers.classTree = Class.create({
                 isTarget: true
             },
             viewConfig: {
-                    plugins: {
-                        ptype: 'treeviewdragdrop',
-                        enableDrag: true,
-                        enableDrop: false,
-                        ddGroup: "columnconfigelement"
-                    }
+                plugins: {
+                    ptype: 'treeviewdragdrop',
+                    enableDrag: true,
+                    enableDrop: false,
+                    ddGroup: "columnconfigelement"
+                }
             }
         });
 
@@ -57,6 +114,9 @@ pimcore.object.helpers.classTree = Class.create({
             success: this.initLayoutFields.bind(this, tree)
         });
 
+        filterField.on("keyup", this.updateFilter.bind(this, tree, filterField));
+        filterButton.on("click", this.updateFilter.bind(this, tree, filterField));
+
         return tree;
     },
 
@@ -64,7 +124,7 @@ pimcore.object.helpers.classTree = Class.create({
         var data = Ext.decode(response.responseText);
 
         var keys = Object.keys(data);
-        for(var i = 0; i < keys.length; i++) {
+        for (var i = 0; i < keys.length; i++) {
             if (data[keys[i]]) {
                 if (data[keys[i]].childs) {
                     var attributePrefix = "";
@@ -72,7 +132,7 @@ pimcore.object.helpers.classTree = Class.create({
 
                     var brickField = null;
 
-                    if(data[keys[i]].nodeType == "objectbricks") {
+                    if (data[keys[i]].nodeType == "objectbricks") {
                         brickField = data[keys[i]].brickField;
                         text = ts(data[keys[i]].nodeLabel) + " " + t("columns");
                         attributePrefix = data[keys[i]].nodeLabel;
@@ -88,7 +148,7 @@ pimcore.object.helpers.classTree = Class.create({
                     for (var j = 0; j < data[keys[i]].childs.length; j++) {
                         baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, attributePrefix, brickField));
                     }
-                    if(data[keys[i]].nodeType == "object") {
+                    if (data[keys[i]].nodeType == "object") {
                         baseNode.expand();
                     } else {
                         // baseNode.collapse();
@@ -151,23 +211,23 @@ pimcore.object.helpers.classTree = Class.create({
 
     addDataChild: function (type, initData, attributePrefix, showFieldname, brickField) {
 
-        if(type != "objectbricks" && !initData.invisible) {
+        if (type != "objectbricks" && !initData.invisible) {
             var isLeaf = true;
             var draggable = true;
 
             // localizedfields can be a drop target
-            if(type == "localizedfields") {
+            if (type == "localizedfields") {
                 isLeaf = false;
                 draggable = false;
             }
 
             var key = initData.name;
-            if(attributePrefix) {
+            if (attributePrefix) {
                 key = attributePrefix + "~" + key;
             }
 
             var text = ts(initData.title);
-            if(showFieldname) {
+            if (showFieldname) {
                 text = text + " (" + key.replace("~", ".") + ")";
             }
             var newNode = {
@@ -185,7 +245,7 @@ pimcore.object.helpers.classTree = Class.create({
 
             newNode = this.appendChild(newNode);
 
-            if(this.rendered) {
+            if (this.rendered) {
                 this.expand();
             }
 
