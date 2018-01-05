@@ -564,14 +564,14 @@ class Config extends Model\AbstractModel
         $originalWidth = $asset->getWidth();
         $originalHeight = $asset->getHeight();
 
-        $dimensions = [];
+        $dimensions = [
+            'width' => $originalWidth,
+            'height' => $originalHeight
+        ];
+
         $transformations = $this->getItems();
         if (is_array($transformations) && count($transformations) > 0) {
             if ($originalWidth && $originalHeight) {
-                // this is the more accurate method than the other below
-                $dimensions['width'] = $originalWidth;
-                $dimensions['height'] = $originalHeight;
-
                 foreach ($transformations as $transformation) {
                     if (!empty($transformation)) {
                         $arg = $transformation['arguments'];
