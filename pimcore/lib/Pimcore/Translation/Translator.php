@@ -151,7 +151,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     private function getFromCatalogue(MessageCatalogueInterface $catalogue, $id, $domain, $locale)
     {
         $originalId = $id;
-        if($this->caseInsensitive) {
+        if ($this->caseInsensitive) {
             $id = mb_strtolower($id);
         }
 
@@ -270,7 +270,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     protected function checkForEmptyTranslation($id, $translated, $domain, $locale)
     {
         $normalizedId = $id;
-        if($this->caseInsensitive) {
+        if ($this->caseInsensitive) {
             $normalizedId = mb_strtolower($id);
         }
 
