@@ -4,7 +4,11 @@ imports:
     - { resource: services.yml }
     - { resource: 'local/' }
 
-#pimcore:
+pimcore:
+
+#### TRANSLATIONS
+#    translations:
+#        case_insensitive: true
 
 #### REDIS CACHE
 #    cache:
@@ -30,3 +34,26 @@ imports:
 #            'Pimcore\Model\Document\Page': 'AppBundle\Model\Document\Page'
 #            'Pimcore\Model\Document\Link': 'AppBundle\Model\Document\Link'
 #            'Pimcore\Model\Document\Listing': 'AppBundle\Model\Document\Listing'
+
+
+#### CUSTOM DOCUMENT EDITABLES
+#    documents:
+#        tags:
+#            map:
+#                markdown: \AppBundle\Model\Document\Tag\Markdown
+
+
+#### CUSTOM OBJECT DATA TYPES
+#    objects:
+#        class_definitions:
+#            data:
+#                map:
+#                  myDataType: \AppBundle\Model\DataObject\Data\MyDataType
+
+#### SYMFONY OVERRIDES
+framework:
+
+#### USE SESSION HANDLER CONFIGURED IN php.ini
+#    session:
+#        handler_id: null
+
