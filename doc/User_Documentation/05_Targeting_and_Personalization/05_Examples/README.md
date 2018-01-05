@@ -30,7 +30,7 @@ the target group is actually assigned to the visitors profile.
 
 
  
-###### Global Targeting Rules with simple Conditions & Actions
+##### Global Targeting Rules with simple Conditions & Actions
 
 Regular visits in a certain shopping category (e.g. football) indicate an interest in football. To track that information,
 add a global targeting rule with a URL condition and an action to assign the corresponding target group. 
@@ -47,7 +47,7 @@ can be identified - e.g. visitor is more interested in football that in basketba
 
 ### Guessing customer characteristics based on behaviour
 
-###### Global Targeting Rule with more complex Conditions
+##### Global Targeting Rule with more complex Conditions
 
 Similar to the category interest tracking, customer characteristics like favorite color or even gender can be guessed. 
 To do so, add for example a targeting rule that tracks product filtering for blue products and assigns corresponding 
@@ -58,7 +58,7 @@ target groups like the `profiling_blue-lover` rule does in the demo.
 
 ### Classify customers based on behaviour
 
-###### Identify regular customers
+##### Identify regular customers
 
 In addition to collecting customer characteristics, you also could classify customers based on number of orders they made. 
 For example once a new customer creates an additional order, it becomes a regular customer. See the `profiling_regular-customer`
@@ -78,7 +78,7 @@ These are only a few simple examples for visitor profiling with Pimcores targeti
 
 ### Personalize content using global targeting rules
 
-###### Redirect visitor to a certain landing page
+##### Redirect visitor to a certain landing page
 
 One example for content personalization is to redirect a visitor to a special landing page that is answering this questions. 
 In our demo the example `personalize_redirect-to-landingpage` redirects visitors with language german that visited 5 pages
@@ -89,7 +89,7 @@ on our website to a landing page.
 Of course this should happen not after every hit but only once per session, so scope is set to `session`. 
 
 
-###### Inject special content to mobile visitors
+##### Inject special content to mobile visitors
 
 Another use case could be, that special users (e.g. mobile users from a certain country) should see a slightly different
 layout. See the `personalize_device-mobile` rule of our demo how this can be archived by injecting additional CSS code 
