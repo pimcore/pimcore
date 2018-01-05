@@ -262,7 +262,7 @@ CSS;
             foreach ($parts as $key => $v) {
                 $v = trim($v);
                 // ignore absolute urls
-                if (strpos($v,'http://') === 0 || strpos($v,'https://') === 0 || strpos($v,'//') === 0) {
+                if (strpos($v, 'http://') === 0 || strpos($v, 'https://') === 0 || strpos($v, '//') === 0) {
                     continue;
                 }
                 $parts[$key] = $hostUrl.$v;
