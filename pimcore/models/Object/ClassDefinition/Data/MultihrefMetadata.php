@@ -758,7 +758,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
         if (is_array($data)) {
             foreach ($data as &$metaObject) {
-                $eo = $metaObject->getObject();
+                $eo = $metaObject->getElement();
                 if ($eo instanceof Element\ElementInterface) {
                     $id = $eo->getId();
                     $type = Element\Service::getElementType($eo);
