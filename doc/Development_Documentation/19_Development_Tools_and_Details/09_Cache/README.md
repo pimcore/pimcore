@@ -81,7 +81,7 @@ but those (array, filesystem) are mainly used for testing.
 
 ```
 maxmemory 1gb # depending on your data
-maxmemory-policy allkeys-lru
+maxmemory-policy volatile-lru
 save ""
 ```
 
