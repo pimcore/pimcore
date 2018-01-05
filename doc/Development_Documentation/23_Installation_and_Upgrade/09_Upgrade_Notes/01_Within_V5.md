@@ -1,5 +1,14 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 169 (2018-01-05)
+
+The install SQL dump shipped with the Pimcore 5.1 release was missing one column change in the `documents_page` table. The
+update script changes this as expected, but if you did a fresh install of Pimcore 5.1, please run the following SQL query:
+
+```sql
+ALTER TABLE `documents_page` CHANGE `personas` `targetGroupIds` VARCHAR(255);
+```
+
 ## Pimcore 5.1
 
 **Symfony 3.4**: Pimcore 5.1 uses Symfony 3.4 as dependency. Please have a look at [Symfony's release notes](https://symfony.com/blog/symfony-3-4-0-released)

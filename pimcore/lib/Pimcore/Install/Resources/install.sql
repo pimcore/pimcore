@@ -207,7 +207,7 @@ CREATE TABLE `documents_page` (
   `metaData` text,
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `personas` varchar(255) DEFAULT NULL,
+  `targetGroupIds` varchar(255) DEFAULT NULL,
   `legacy` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
