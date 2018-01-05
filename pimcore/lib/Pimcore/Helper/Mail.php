@@ -260,7 +260,12 @@ CSS;
         foreach ((array)$matches[1] as $i => $value) {
             $parts = explode(',', $value);
             foreach ($parts as $key => $v) {
-                $parts[$key] = $hostUrl.trim($v);
+                $v = trim($v);
+                // ignore absolute urls
+                if (strpos($v,'http://') === 0 || strpos($v,'https://') === 0 || strpos($v,'//') === 0) {
+                    continue;
+                }
+                $parts[$key] = $hostUrl.$v;
             }
             $s = ' srcset="'.implode(', ', $parts).'" ';
             if ($matches[0][$i]) {
