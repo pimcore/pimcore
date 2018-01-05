@@ -252,6 +252,8 @@ class CookieStorage implements TargetingStorageInterface
         $expiry = 0;
         if (self::SCOPE_VISITOR === $scope) {
             $expiry = new \DateTime('+1 year');
+        } elseif (self::SCOPE_SESSION === $scope) {
+            $expiry = new \DateTime('+30 minutes');
         }
 
         return $expiry;

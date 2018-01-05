@@ -124,7 +124,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
             ->set(self::CLAIM_TARGETING_DATA, $data);
 
         if (0 === $expire) {
-            $builder->setExpiration($time + (60 * 60)); // expire in 1h
+            $builder->setExpiration($time + (60 * 30)); // expire in 30 min
         } elseif (is_int($expire) && $expire > 0) {
             $builder->setExpiration($expire);
         } elseif ($expire instanceof \DateTimeInterface) {

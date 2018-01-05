@@ -61,8 +61,9 @@ Note that using plain text cookie data is inherently insecure and can open vulne
 the client cookie. Use only for testing!
 </div>
 
-Default session scope timeout: The cookie is set as session cookie - the browser is expected to expire it when closing the
-page.
+Default session scope timeout: 30 minutes. This is also enforced in the JWT handler by setting an expiration value for the
+signed data to the same timeout as the cookie. This means even if somebody changes the cookie lifetime on the client side
+the data will still expire when loaded on the backend.
 
 Pros
 
