@@ -355,6 +355,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
+
         return $this->getDataForEditmode($data, $object, $params);
     }
 
@@ -407,7 +408,6 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
         $key = 'concat(' . $db->quoteIdentifier($name  . '__rgb') .' ,'
             . $db->quoteIdentifier($name  . '__a') .')';
 
-
         if ($value === 'NULL') {
             if ($operator == '=') {
                 $operator = 'IS';
@@ -424,6 +424,4 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
 
         return $key . ' ' . $operator . ' ' . $value . ' ';
     }
-
-
 }

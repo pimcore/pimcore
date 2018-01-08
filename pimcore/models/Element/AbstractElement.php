@@ -29,8 +29,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected $__dataVersionTimestamp = null;
 
-    protected function updateModificationInfos() {
-
+    protected function updateModificationInfos()
+    {
         $updateTime = time();
         $this->setModificationDate($updateTime);
 
@@ -41,12 +41,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         // auto assign user if possible, if no user present, use ID=0 which represents the "system" user
         $userId = 0;
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        if($user instanceof Model\User) {
+        if ($user instanceof Model\User) {
             $userId = $user->getId();
         }
         $this->setUserModification($userId);
 
-        if($this->getUserOwner() === null) {
+        if ($this->getUserOwner() === null) {
             $this->setUserOwner($userId);
         }
     }

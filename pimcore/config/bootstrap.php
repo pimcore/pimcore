@@ -26,7 +26,7 @@ require_once PIMCORE_PATH . '/lib/Pimcore.php';
 Pimcore::setAutoloader($loader);
 require_once __DIR__ . '/autoload.php';
 
-if ("syslog" === PIMCORE_PHP_ERROR_LOG || is_writable( dirname(PIMCORE_PHP_ERROR_LOG))) {
+if ('syslog' === PIMCORE_PHP_ERROR_LOG || is_writable(dirname(PIMCORE_PHP_ERROR_LOG))) {
     ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
     ini_set('log_errors', '1');
 }
