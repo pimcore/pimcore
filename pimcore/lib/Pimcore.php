@@ -845,6 +845,10 @@ class Pimcore
 
             $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
 
+            foreach (ExtensionManager::getDiPaths() as $diPath) {
+                $builder->addDefinitions($diPath);
+            }
+
             $customFile = \Pimcore\Config::locateConfigFile("di.php");
             if (file_exists($customFile)) {
                 $builder->addDefinitions($customFile);

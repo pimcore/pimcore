@@ -19,6 +19,8 @@ The folder structure of a plugin should look as follows:
 plugins
 └───ExtensionExample
     │
+    └───config (this is totally optional)
+    │   |   di.php
     ├───controllers
     │   │   IndexController.php
     │   │   ...
@@ -68,6 +70,7 @@ A plugin needs to be configured in the plugin.xml with the following parameters:
 * CSS file paths
 * Javascript paths for scripts which should be included in document editmode
 * CSS paths for stylesheets which should be included in document editmode
+* Dependency Injection config paths (optional, for more informations about DI look at here: [Dependency Injection](../03_Dependency_Injection.md))
 
 An example plugin.xml file looks like below:
 
@@ -104,6 +107,10 @@ An example plugin.xml file looks like below:
     <namespace>ExtensionExample</namespace>
     <namespace>Resource</namespace>
     </pluginNamespaces>
+    <!-- (optional) di config paths relative to plugin-directory -->
+    <pluginDependencyInjectionPaths>
+        <path>/ExtensionExample/config/di.php</path>
+    </pluginDependencyInjectionPaths>
     <!-- js files needed for Pimcore plugin (backend) with path relative to plugin-directory -->
     <pluginJsPaths>
         <path>/ExtensionExample/static/js/test.js</path>

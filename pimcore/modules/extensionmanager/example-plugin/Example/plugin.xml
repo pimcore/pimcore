@@ -24,6 +24,11 @@
 				<path>/Example/lib</path>
 			</pluginIncludePaths>
 
+			<!-- di config paths relative to plugin-directory -->
+			<pluginDependencyInjectionPaths>
+				<path>/Example/config/di.php</path>
+			</pluginDependencyInjectionPaths>
+
 			<!-- namespaces to register with autoloader-->
 			<pluginNamespaces>
 				<namespace>Example</namespace>
