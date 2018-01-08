@@ -1748,8 +1748,8 @@ INSERT INTO `documents_elements` VALUES ('73','content:1.contents_2:2.socialCont
 INSERT INTO `documents_elements` VALUES ('73','headDescription','input','');
 INSERT INTO `documents_elements` VALUES ('73','headline','input','Embedding Social Contents');
 INSERT INTO `documents_elements` VALUES ('73','headTitle','input','');
-INSERT INTO `documents_email` VALUES ('38','','default','default','Advanced/email.html.php','pimcore@byom.de','pimcore@byom.de','','','Contact Form','0');
-INSERT INTO `documents_email` VALUES ('66','','newsletter','standard-mail','','','','','','','0');
+INSERT INTO `documents_email` VALUES ('38','','default','default','Advanced/email.html.php','pimcore@byom.de','pimcore@byom.de','','','','Contact Form','0');
+INSERT INTO `documents_email` VALUES ('66','','newsletter','standard-mail','','','','','','','','0');
 INSERT INTO `documents_hardlink` VALUES ('33','3','1','1');
 INSERT INTO `documents_link` VALUES ('32',NULL,'0','http://www.pimcore.org/','direct');
 INSERT INTO `documents_link` VALUES ('40','document','1','','internal');
