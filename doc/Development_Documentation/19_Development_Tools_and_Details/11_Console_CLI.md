@@ -44,7 +44,9 @@ commands either by hooking into an event or by placing your commands in predefin
 
 ### Usage
 Call `bin/console list` script from the command line to get a list of available commands. To call 
-a command, use `bin/console <subcommand>`. 
+a command, use `bin/console <subcommand>`.
+
+> Be sure to run the console with the PHP user to prevent writing permissions issues later, either by calling `php bin/console` or by switching to the appropriate user, for instance on Debian system `su -l www-data -s /bin/bash`.
 
 ##### Examples:
 ```php 
