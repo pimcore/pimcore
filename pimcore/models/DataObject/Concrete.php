@@ -142,9 +142,11 @@ class Concrete extends AbstractObject
     }
 
     /**
+     * @param $isUpdate
+     *
      * @throws \Exception
      */
-    protected function update()
+    protected function update($isUpdate = null)
     {
         $fieldDefintions = $this->getClass()->getFieldDefinitions();
         foreach ($fieldDefintions as $fd) {
@@ -194,9 +196,9 @@ class Concrete extends AbstractObject
             }
         }
 
-        parent::update();
+        parent::update($isUpdate);
 
-        $this->getDao()->update();
+        $this->getDao()->update($isUpdate);
 
         // scheduled tasks are saved in $this->saveVersion();
 

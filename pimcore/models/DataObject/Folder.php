@@ -42,10 +42,14 @@ class Folder extends AbstractObject
         return $object;
     }
 
-    protected function update()
+    /**
+     * @param null $isUpdate
+     * @throws \Exception
+     */
+    protected function update($isUpdate = null)
     {
-        parent::update();
-        $this->getDao()->update();
+        parent::update($isUpdate);
+        $this->getDao()->update($isUpdate);
     }
 
     /**

@@ -165,10 +165,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
     /**
      * Save changes to database, it's an good idea to use save() instead
+     *
+     * @param $isUpdate
      */
-    public function update()
+    public function update($isUpdate = null)
     {
-        parent::update();
+        parent::update($isUpdate);
 
         // get fields which shouldn't be updated
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions();
@@ -218,7 +220,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
         }
 
-        $this->db->insertOrUpdate('object_store_' . $this->model->getClassId(), $data);
+        $method = $isUpdate ? 'insertOrUpdate' : 'insert';
+        $this->db->$method('object_store_' . $this->model->getClassId(), $data);
 
         // get data for query table
         $data = [];

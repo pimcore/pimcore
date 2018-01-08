@@ -612,7 +612,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
 
-                $this->update();
+                $this->update($isUpdate);
 
                 self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -723,11 +723,19 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @param $isUpdate
+     *
      * @throws \Exception
      */
-    protected function update()
+    protected function update($isUpdate = null)
     {
-        $this->updateModificationInfos();
+
+        // set mod date
+        $this->setModificationDate(time());
+
+        if (!$this->getCreationDate()) {
+            $this->setCreationDate(time());
+        }
 
         // save properties
         $this->getProperties();

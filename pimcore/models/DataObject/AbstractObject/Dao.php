@@ -90,10 +90,11 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @throws \Exception
+     * @param $isUpdate
+     *
      * @throws \Exception
      */
-    public function update()
+    public function update($isUpdate = null)
     {
         $object = get_object_vars($this->model);
 
