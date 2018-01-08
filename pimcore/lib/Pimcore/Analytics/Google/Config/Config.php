@@ -90,13 +90,18 @@ class Config
 
     public function isReportingConfigured(string $configKey): bool
     {
-        if (!$this->isSiteConfigured($configKey)) {
+        $config = $this->getConfigForSite($configKey);
+
+        if (null === $config) {
             return false;
         }
 
-        $siteConfig = $this->getConfigForSite($configKey);
+        $profile = $this->normalizeStringValue($config->profile);
+        if (null === $profile) {
+            return false;
+        }
 
-        return !empty($siteConfig->profile);
+        return true;
     }
 
     /**

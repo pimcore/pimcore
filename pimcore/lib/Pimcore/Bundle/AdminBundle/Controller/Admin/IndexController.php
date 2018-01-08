@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
@@ -52,9 +53,16 @@ class IndexController extends AdminController
      * @Route("/", name="pimcore_admin_index")
      * @TemplatePhp()
      *
+     * @param Request $request
+     * @param SiteConfigProvider $siteConfigProvider
+     *
      * @return ViewModel
+     * @throws \Exception
      */
-    public function indexAction(Request $request)
+    public function indexAction(
+        Request $request,
+        SiteConfigProvider $siteConfigProvider
+    )
     {
         $user = $this->getAdminUser();
         $view = new ViewModel([
@@ -67,6 +75,7 @@ class IndexController extends AdminController
             ->addPluginAssets($view);
 
         $settings = $this->buildPimcoreSettings($request, $view, $user);
+        $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
         // allow to alter settings via an event
         $this->eventDispatcher->dispatch(AdminEvents::INDEX_SETTINGS, new IndexSettingsEvent($settings));
@@ -176,13 +185,6 @@ class IndexController extends AdminController
             'disabledPortlets'      => $dashboardHelper->getDisabledPortlets(),
         ]);
 
-        // google settings
-        $settings->getParameters()->add([
-            'google_analytics_enabled'      => (bool)Google\Analytics::isConfigured(),
-            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
-            'google_maps_api_key'           => $config->services->google->browserapikey ?: ''
-        ]);
-
         $this
             ->addSystemVarSettings($settings)
             ->addCsrfToken($settings, $user)
@@ -191,6 +193,21 @@ class IndexController extends AdminController
             ->addCustomViewSettings($settings);
 
         return $settings;
+    }
+
+    private function buildGoogleAnalyticsSettings(
+        ViewModel $view,
+        ViewModel $settings,
+        SiteConfigProvider $siteConfigProvider
+    )
+    {
+        $config = $view->config;
+
+        $settings->getParameters()->add([
+            'google_analytics_enabled'      => (bool)$siteConfigProvider->isSiteReportingConfigured(),
+            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
+            'google_maps_api_key'           => $config->services->google->browserapikey ?: ''
+        ]);
     }
 
     /**
