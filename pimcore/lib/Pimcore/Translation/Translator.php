@@ -320,6 +320,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 // the key would be inserted/updated several times, what would be redundant
                 $this->getCatalogue($locale)->set($normalizedId, $id, $domain);
 
+                $translated = $id; // use the original translation key, this is necessary if using case-insensitive configuration
                 $lookForFallback = true;
             }
         }
