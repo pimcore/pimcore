@@ -42,7 +42,7 @@ class ConfigProvider
     public function getConfig(): Config
     {
         if (null === $this->config) {
-            return new Config($this->getConfigObject());
+            $this->config = new Config($this->getConfigObject());
         }
 
         return $this->config;
