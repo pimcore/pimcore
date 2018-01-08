@@ -6,6 +6,18 @@ services:
 
     Pimcore\Analytics\SiteId\SiteIdProvider: ~
 
+
+    #
+    # GOOGLE
+    #
+
+    Pimcore\Analytics\Google\Config\ConfigProvider: ~
+    Pimcore\Analytics\Google\Config\Config:
+        factory: 'Pimcore\Analytics\Google\Config\ConfigProvider:getConfig'
+
+    Pimcore\Analytics\Google\Tracker: ~
+
+
     #
     # PIWIK
     #
