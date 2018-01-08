@@ -6,7 +6,7 @@ There are several different kinds of logs in Pimcore. All of them are located un
 This is definitely one of the most important logs and also the default logging location. 
 
 Pimcore uses Symfony default monolog logging with following channels: `pimcore`, `pimcore_api`, `session`. 
-For details see [Symfonys monolog docs](http://symfony.com/doc/current/logging.html).
+For details see [Symfonys monolog docs](http://symfony.com/doc/3.4/logging.html).
 
 The log file will be rotated and compressed if it gets larger than 200 MB. The archived logs 
 will be kept for 30 days.
@@ -18,7 +18,9 @@ You can change this using constant `PIMCORE_PHP_ERROR_LOG` that is used to set P
 You can additionally use the Constant `PIMCORE_PHP_ERROR_REPORTING` to set PHP's [error_reporting](http://php.net/manual/en/errorfunc.configuration.php#ini.error-reporting)
 
 ## usagelog.log
-In this log you can find every action done within the Pimcore Backend Interface. 
+In this log you can find every action done within the Pimcore Backend Interface. It can be deactivated in system settings.
+
+![Usage Log Setting](../img/usage-log-setting.jpg)
 
 ##### Example Entry: 
 ``` 
