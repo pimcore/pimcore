@@ -412,6 +412,7 @@ $scripts = array(
     "pimcore/object/classes/data/data.js",          // THIS MUST BE THE FIRST FILE, DO NOT MOVE THIS DOWN !!!
     "pimcore/object/classes/data/block.js",
     "pimcore/object/classes/data/classificationstore.js",
+    "pimcore/object/classes/data/rgbaColor.js",
     "pimcore/object/classes/data/date.js",
     "pimcore/object/classes/data/datetime.js",
     "pimcore/object/classes/data/time.js",
@@ -521,6 +522,7 @@ $scripts = array(
     "pimcore/object/objectbricks/field.js",
     "pimcore/object/tags/abstract.js",
     "pimcore/object/tags/block.js",
+    "pimcore/object/tags/rgbaColor.js",
     "pimcore/object/tags/date.js",
     "pimcore/object/tags/datetime.js",
     "pimcore/object/tags/time.js",

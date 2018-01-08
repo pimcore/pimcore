@@ -60,3 +60,32 @@ $object = DataObject::getById(234);
 #### Link Generators
 
 Please also see the section about [Link Generators](../05_Class_Settings/15_Link_Generator.md)
+
+## RGBA Color
+
+Allows to store RGBA Values. RGB and Alpha values are stored as hex values in two separate columns as hex values in the database. 
+
+![Color Picker](../../../img/rgba_color_picker.png)
+
+API Examples:
+
+```php
+$o = \Pimcore\Model\DataObject\User::getById(50);
+// get the color, can be null!
+$color = $o->getMyColor();
+// get the RGB part as hex with leading #
+                
+var_dump($color->getHex());
+
+// get the RGBA value (with alpha component) has without leading hash
+var_dump($color->getHex(true, false));
+
+// get the RGBA value as array (R,G,B 0-255, Alpha 0-1)
+var_dump($color->getCssRgba(true, true));
+
+// set the RGBA value
+$color->setRgba(0, 0, 255, 64);
+
+
+```
+

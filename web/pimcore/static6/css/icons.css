@@ -1192,3 +1192,7 @@
     filter: "FlipH";
     -ms-filter: "FlipH";
 }
+
+.pimcore_icon_rgbaColor {
+    background: url(/pimcore/static6/img/flat-color-icons/rgbacolor.svg) center center no-repeat !important;
+}

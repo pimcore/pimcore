@@ -1727,6 +1727,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     } elseif ($class->getFieldDefinition($orderKey) instanceof  DataObject\ClassDefinition\Data\QuantityValue) {
                         $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
                         $doNotQuote = true;
+                    } elseif ($class->getFieldDefinition($orderKey) instanceof  DataObject\ClassDefinition\Data\RgbaColor) {
+                        $orderKey = 'concat(' . $orderKey . '__rgb, ' . $orderKey . '__a)';
+                        $doNotQuote = true;
                     } elseif (strpos($orderKey, '~') !== false) {
                         $orderKeyParts = explode('~', $orderKey);
                         if (count($orderKeyParts) == 2) {

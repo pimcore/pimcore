@@ -1805,5 +1805,7 @@
   "operator_dateformatter": "Operator DateFormatter",
   "operator_dateformatter_settings": "Operator DateFormatter Settings",
   "clear_hotspots_title": "Clear Data?",
-  "clear_hotspots_msg": "This image contains additional data like markers or hotspots. Do you want to clear them as well?"
+  "clear_hotspots_msg": "This image contains additional data like markers or hotspots. Do you want to clear them as well?",
+  "rgbaColor": "RGBA Color"
+
 }

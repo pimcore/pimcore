@@ -15,31 +15,31 @@
 // debug
 if (typeof console == "undefined") {
     console = {
-        log:function (v) {
+        log: function (v) {
         },
-        dir:function (v) {
+        dir: function (v) {
         },
-        debug:function (v) {
+        debug: function (v) {
         },
-        info:function (v) {
+        info: function (v) {
         },
-        warn:function (v) {
+        warn: function (v) {
         },
-        error:function (v) {
+        error: function (v) {
         },
-        trace:function (v) {
+        trace: function (v) {
         },
-        group:function (v) {
+        group: function (v) {
         },
-        groupEnd:function (v) {
+        groupEnd: function (v) {
         },
-        time:function (v) {
+        time: function (v) {
         },
-        timeEnd:function (v) {
+        timeEnd: function (v) {
         },
-        profile:function (v) {
+        profile: function (v) {
         },
-        profileEnd:function (v) {
+        profileEnd: function (v) {
         }
     };
 }
@@ -78,6 +78,8 @@ Ext.require([
     'Ext.toolbar.Spacer',
     'Ext.tree.plugin.TreeViewDragDrop',
     'Ext.tree.Panel',
+    'Ext.ux.colorpick.Field',
+    'Ext.ux.colorpick.SliderAlpha',
     'Ext.ux.DataTip',
     'Ext.ux.form.MultiSelect',
     'Ext.ux.TabCloseMenu',
@@ -89,10 +91,94 @@ Ext.require([
 
 Ext.onReady(function () {
 
+    Ext.define('pimcore.colorpick.Field', {
+        extend: 'Ext.ux.colorpick.Field',
+
+        constructor: function (config) {
+            if (typeof config.isNull !== "undefined") {
+                this.isNull = config.isNull;
+            }
+            this.callParent([config]);
+        },
+
+        setIsNull: function (isNull) {
+            var me = this;
+            me.isNull = isNull;
+        },
+
+        getIsNull: function () {
+            return this.isNull;
+        },
+
+        setValue: function (color) {
+            var me = this;
+
+            if (color != null) {
+                color = me.applyValue(color);
+            }
+
+            var c = color;
+
+            if (c != null) {
+                me.callParent([c]);
+                me.updateValue(c);
+            }
+        },
+
+        render: function (container, position) {
+            this.callParent(container, position);
+        },
+
+        onColorPickerOK: function (colorPicker) {
+            this.isNull = false;
+            this.callParent([colorPicker]);
+            this.updateValue(null, true);
+
+        },
+
+        updateValue: function (color, fromEvent) {
+            var me = this,
+                c;
+
+            if (!fromEvent) {
+                if (!me.syncing) {
+                    me.syncing = true;
+                    me.setColor(color);
+                    me.syncing = false;
+                }
+            }
+
+            c = me.getColor();
+
+            var inputEl = me.getEl() ? me.getEl().down('input') : null;
+
+            if (inputEl) {
+                if (me.isNull) {
+                    inputEl.hide();
+                } else {
+                    inputEl.show();
+                }
+            }
+
+            if (me.swatchEl) {
+                var parent = me.swatchEl.parent();
+                parent.setVisible(!me.isNull);
+            }
+            if (!me.isNull) {
+                Ext.ux.colorpick.ColorUtils.setBackground(me.swatchEl, c);
+            }
+
+            if (me.colorPicker) {
+                me.colorPicker.setColor(c);
+            }
+        }
+    });
+
+
     var StateFullProvider = Ext.extend(Ext.state.Provider, {
         namespace: "default",
 
-        constructor : function(config){
+        constructor: function (config) {
             StateFullProvider.superclass.constructor.call(this);
             Ext.apply(this, config);
 
@@ -109,7 +195,7 @@ Ext.onReady(function () {
             }
         },
 
-        get : function(name, defaultValue){
+        get: function (name, defaultValue) {
             try {
                 if (typeof this.state[name] == "undefined") {
                     return defaultValue
@@ -121,7 +207,7 @@ Ext.onReady(function () {
                 return defaultValue;
             }
         },
-        set : function(name, value){
+        set: function (name, value) {
             try {
                 if (typeof value == "undefined" || value === null) {
                     this.clear(name);
@@ -146,7 +232,7 @@ Ext.onReady(function () {
 
 
     var provider = new StateFullProvider({
-        namespace : "pimcore_ui_states_6"
+        namespace: "pimcore_ui_states_6"
     });
 
     Ext.state.Manager.setProvider(provider);
@@ -211,7 +297,7 @@ Ext.onReady(function () {
                     if (options["params"] && options["params"].length > 0) {
                         errorMessage += "Params:\n";
                         Ext.iterate(options.params, function (key, value) {
-                            errorMessage += ( "-> " + key + ": " + value.substr(0, 500) + "\n");
+                            errorMessage += ("-> " + key + ": " + value.substr(0, 500) + "\n");
                         });
                     }
 
@@ -265,14 +351,14 @@ Ext.onReady(function () {
     Ext.define('pimcore.model.doctypes', {
         extend: 'Ext.data.Model',
         fields: [
-            {name:'id'},
-            {name:'name', allowBlank:false},
-            {name:'module', allowBlank:true},
-            {name:'controller', allowBlank:true},
-            {name:'action', allowBlank:true},
-            {name:'template', allowBlank:true},
-            {name:'type', allowBlank:false},
-            {name:'priority', allowBlank:true},
+            {name: 'id'},
+            {name: 'name', allowBlank: false},
+            {name: 'module', allowBlank: true},
+            {name: 'controller', allowBlank: true},
+            {name: 'action', allowBlank: true},
+            {name: 'template', allowBlank: true},
+            {name: 'type', allowBlank: false},
+            {name: 'priority', allowBlank: true},
             {name: 'creationDate', allowBlank: true},
             {name: 'modificationDate', allowBlank: true},
             {name: 'legacy', allowBlank: true}
@@ -281,9 +367,9 @@ Ext.onReady(function () {
             type: 'ajax',
             reader: {
                 type: 'json',
-                totalProperty:'total',
-                successProperty:'success',
-                rootProperty:'data'
+                totalProperty: 'total',
+                successProperty: 'success',
+                rootProperty: 'data'
             },
             writer: {
                 type: 'json',
@@ -292,18 +378,18 @@ Ext.onReady(function () {
                 encode: 'true'
             },
             api: {
-                create  : docTypesUrl + "xaction=create",
-                read    : docTypesUrl + "xaction=read",
-                update  : docTypesUrl + "xaction=update",
-                destroy : docTypesUrl + "xaction=destroy"
+                create: docTypesUrl + "xaction=create",
+                read: docTypesUrl + "xaction=read",
+                update: docTypesUrl + "xaction=update",
+                destroy: docTypesUrl + "xaction=destroy"
             }
         }
     });
 
     var store = new Ext.data.Store({
-        id:'doctypes',
+        id: 'doctypes',
         model: 'pimcore.model.doctypes',
-        remoteSort:false,
+        remoteSort: false,
         autoSync: true,
         autoLoad: true
     });
@@ -317,14 +403,16 @@ Ext.onReady(function () {
 
 
     var objectClassFields = [
-        {name:'id'},
-        {name:'text', allowBlank:false},
-        {name:"translatedText", convert:function (v, rec) {
-            return ts(rec.data.text);
-        }},
-        {name:'icon'},
-        {name:'group'},
-        {name:"propertyVisibility"}
+        {name: 'id'},
+        {name: 'text', allowBlank: false},
+        {
+            name: "translatedText", convert: function (v, rec) {
+                return ts(rec.data.text);
+            }
+        },
+        {name: 'icon'},
+        {name: 'group'},
+        {name: "propertyVisibility"}
     ];
 
     Ext.define('pimcore.model.objecttypes', {
@@ -332,7 +420,7 @@ Ext.onReady(function () {
         fields: objectClassFields,
         proxy: {
             type: 'ajax',
-            url:'/admin/class/get-tree',
+            url: '/admin/class/get-tree',
             reader: {
                 type: 'json'
             }
@@ -341,7 +429,7 @@ Ext.onReady(function () {
 
     var storeo = new Ext.data.Store({
         model: 'pimcore.model.objecttypes',
-        id:'object_types'
+        id: 'object_types'
     });
     storeo.load();
 
@@ -354,7 +442,7 @@ Ext.onReady(function () {
         fields: objectClassFields,
         proxy: {
             type: 'ajax',
-            url:'/admin/class/get-tree?createAllowed=true',
+            url: '/admin/class/get-tree?createAllowed=true',
             reader: {
                 type: 'json'
             }
@@ -363,7 +451,7 @@ Ext.onReady(function () {
 
     var storeoc = new Ext.data.Store({
         model: 'pimcore.model.objecttypes.create',
-        id:'object_types'
+        id: 'object_types'
     });
     storeoc.load();
 
@@ -377,13 +465,13 @@ Ext.onReady(function () {
     //pimcore languages
     Ext.define('pimcore.model.languages', {
         extend: 'Ext.data.Model',
-        fields:  [
-            {name:'language'},
-            {name:'display'}
+        fields: [
+            {name: 'language'},
+            {name: 'display'}
         ],
         proxy: {
             type: 'ajax',
-            url:'/admin/settings/get-available-admin-languages',
+            url: '/admin/settings/get-available-admin-languages',
             reader: {
                 type: 'json'
             }
@@ -399,10 +487,10 @@ Ext.onReady(function () {
 
     Ext.define('pimcore.model.sites', {
         extend: 'Ext.data.Model',
-        fields:  ["id", "domains", "rootId", "rootPath", "domain"],
+        fields: ["id", "domains", "rootId", "rootPath", "domain"],
         proxy: {
             type: 'ajax',
-            url:'/admin/settings/get-available-sites',
+            url: '/admin/settings/get-available-sites',
             reader: {
                 type: 'json'
             }
@@ -478,44 +566,44 @@ Ext.onReady(function () {
         var user = pimcore.globalmanager.get("user");
 
         pimcore.viewport = Ext.create('Ext.container.Viewport', {
-            id:"pimcore_viewport",
-            layout:'fit',
-            items:[
+            id: "pimcore_viewport",
+            layout: 'fit',
+            items: [
                 {
-                    xtype:"panel",
-                    id:"pimcore_body",
-                    cls:"pimcore_body",
-                    layout:"border",
-                    border:false,
-                    items:[
+                    xtype: "panel",
+                    id: "pimcore_body",
+                    cls: "pimcore_body",
+                    layout: "border",
+                    border: false,
+                    items: [
                         Ext.create('Ext.panel.Panel',
                             {
                                 region: 'west',
-                                id:'pimcore_panel_tree_left',
-                                split:true,
-                                width:300,
-                                minSize:175,
-                                collapsible:true,
+                                id: 'pimcore_panel_tree_left',
+                                split: true,
+                                width: 300,
+                                minSize: 175,
+                                collapsible: true,
                                 collapseMode: 'header',
-                                animCollapse:false,
-                                layout:'accordion',
-                                layoutConfig:{
-                                    animate:false
+                                animCollapse: false,
+                                layout: 'accordion',
+                                layoutConfig: {
+                                    animate: false
                                 },
                                 hidden: true,
-                                forceLayout:true,
-                                hideMode:"offsets",
-                                items:[]
+                                forceLayout: true,
+                                hideMode: "offsets",
+                                items: []
                             }
                         )
                         ,
                         Ext.create('Ext.tab.Panel', {
-                            region:'center',
-                            deferredRender:false,
+                            region: 'center',
+                            deferredRender: false,
                             id: "pimcore_panel_tabs",
-                            enableTabScroll:true,
-                            hideMode:"offsets",
-                            cls:"tab_panel",
+                            enableTabScroll: true,
+                            hideMode: "offsets",
+                            cls: "tab_panel",
                             plugins:
                                 [
                                     Ext.create('Ext.ux.TabCloseMenu', {
@@ -530,30 +618,30 @@ Ext.onReady(function () {
                         })
                         ,
                         {
-                            region:'east',
-                            id:'pimcore_panel_tree_right',
+                            region: 'east',
+                            id: 'pimcore_panel_tree_right',
                             cls: "pimcore_panel_tree",
-                            split:true,
-                            width:300,
-                            minSize:175,
-                            collapsible:true,
+                            split: true,
+                            width: 300,
+                            minSize: 175,
+                            collapsible: true,
                             collapseMode: 'header',
-                            collapsed:false,
-                            animCollapse:false,
-                            layout:'accordion',
-                            hidden:true,
-                            layoutConfig:{
-                                animate:false
+                            collapsed: false,
+                            animCollapse: false,
+                            layout: 'accordion',
+                            hidden: true,
+                            layoutConfig: {
+                                animate: false
                             },
-                            forceLayout:true,
-                            hideMode:"offsets",
-                            items:[]
+                            forceLayout: true,
+                            hideMode: "offsets",
+                            items: []
                         }
                     ]
                 }
             ],
-            listeners:{
-                "afterrender":function (el) {
+            listeners: {
+                "afterrender": function (el) {
                     Ext.get("pimcore_navigation").show();
                     Ext.get("pimcore_avatar").show();
                     Ext.get("pimcore_logout").show();
@@ -563,7 +651,7 @@ Ext.onReady(function () {
                     var loadMask = new Ext.LoadMask(
                         {
                             target: Ext.getCmp("pimcore_viewport"),
-                            msg:t("please_wait")
+                            msg: t("please_wait")
                         });
                     loadMask.enable();
                     pimcore.globalmanager.add("loadingmask", loadMask);
@@ -596,7 +684,7 @@ Ext.onReady(function () {
         var perspective = pimcore.globalmanager.get("perspective");
         var elementTree = perspective.getElementTree();
 
-        for(var i = 0; i < elementTree.length; i++) {
+        for (var i = 0; i < elementTree.length; i++) {
 
             var treeConfig = elementTree[i];
             var type = treeConfig["type"];
@@ -714,9 +802,9 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
         }
         pimcore.globalmanager.add("translations_admin_missing", new Array());
         Ext.Ajax.request({
-            method:"post",
-            url:"/admin/translation/add-admin-translation-keys",
-            params:{keys:params}
+            method: "post",
+            url: "/admin/translation/add-admin-translation-keys",
+            params: {keys: params}
         });
     }
 
@@ -761,7 +849,7 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
             }
         }
     });
-}, (pimcore.settings.session_gc_maxlifetime-60)*1000);
+}, (pimcore.settings.session_gc_maxlifetime - 60) * 1000);
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");
