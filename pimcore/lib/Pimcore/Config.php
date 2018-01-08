@@ -140,11 +140,13 @@ class Config
             } elseif (Tool::isFrontentRequestByAdmin()) {
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
                 $front = \Zend_Controller_Front::getInstance();
-                $originDocument = $front->getRequest()->getParam("document");
-                if ($originDocument) {
-                    $site = Tool\Frontend::getSiteForDocument($originDocument);
-                    if ($site) {
-                        $siteId = $site->getId();
+                if ($request = $front->getRequest()) {
+                    $originDocument = $request->getParam("document");
+                    if ($originDocument) {
+                        $site = Tool\Frontend::getSiteForDocument($originDocument);
+                        if ($site) {
+                            $siteId = $site->getId();
+                        }
                     }
                 }
             }
