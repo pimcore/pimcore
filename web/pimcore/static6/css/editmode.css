@@ -391,6 +391,11 @@
     line-height: 24px;
 }
 
+.pimcore_area_hidden .pimcore_area_content {
+    filter: blur(1px);
+    opacity: 0.5;
+}
+
 /* ExtJS specific overrides */
 
 .x-btn {

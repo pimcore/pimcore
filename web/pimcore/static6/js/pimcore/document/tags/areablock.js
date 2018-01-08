@@ -35,8 +35,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.createToolBar();
         }
 
+        this.visibilityButtons = {};
+
         var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
-            typemenu, typeDiv, typeButton, typebuttontext, editDiv, editButton;
+            typeDiv, typeButton, typebuttontext, editDiv, editButton, visibilityDiv;
 
         this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 
@@ -93,15 +95,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     plusButton = new Ext.Button({
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus",
-                        menu: this.getTypeMenu(this, this.elements[i]),
-                        listeners: {
-                            /*"menushow": function () {
-                                Ext.get(this).addClass("pimcore_tag_areablock_force_show_buttons");
-                            }.bind(this.elements[i]),
-                            "menuhide": function () {
-                                Ext.get(this).removeClass("pimcore_tag_areablock_force_show_buttons");
-                            }.bind(this.elements[i])*/
-                        }
+                        menu: this.getTypeMenu(this, this.elements[i])
                     });
                     plusButton.render(plusDiv);
                 }
@@ -164,14 +158,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         hasOuterHandles: true,
                         getDragData: function(e) {
                             var sourceEl = element;
-                            var proxyEl = null;
-
-                            /*if(Ext.get(element).getHeight() > 300 || Ext.get(element).getWidth() > 900) {
-                                // use the button as proxy if the area itself is to big
-                                proxyEl = v.getEl().dom;
-                            } else {
-                                proxyEl = element;
-                            }*/
 
                             // only use the button as proxy element
                             proxyEl = v.getEl().dom;
@@ -213,14 +199,20 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     optionsButton.render(optionsDiv);
                 }
 
-                /*
-                Ext.get(this.elements[i]).on("mouseenter", function () {
-                    Ext.get(this.query(".pimcore_block_buttons")[0]).show();
+                visibilityDiv = Ext.get(this.elements[i]).query('.pimcore_block_visibility[data-name="' + this.name + '"]')[0];
+                this.visibilityButtons[this.elements[i].key] = new Ext.Button({
+                    cls: "pimcore_block_button_visibility",
+                    iconCls: "pimcore_icon_hide",
+                    enableToggle: true,
+                    pressed: (this.elements[i].dataset.hidden == "true"),
+                    toggleHandler: function (index, el) {
+                        Ext.get(this.elements[index]).toggleCls('pimcore_area_hidden');
+                    }.bind(this, i)
                 });
-                Ext.get(this.elements[i]).on("mouseleave", function () {
-                    Ext.get(this.query(".pimcore_block_buttons")[0]).hide();
-                });
-                */
+                this.visibilityButtons[this.elements[i].key].render(visibilityDiv);
+                if(this.elements[i].dataset.hidden == "true") {
+                    Ext.get(this.elements[i]).addCls('pimcore_area_hidden');
+                }
             }
         }
     },
@@ -651,10 +643,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element));
             }
         }
-
-        var typeMenu = new Ext.menu.Menu({
-            items: menu
-        });
 
         return menu;
     },
@@ -1146,7 +1134,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 if (this.elements[i].key) {
                     data.push({
                         key: this.elements[i].key,
-                        type: this.elements[i].type
+                        type: this.elements[i].type,
+                        hidden: this.visibilityButtons[this.elements[i].key].pressed
                     });
                 }
             }

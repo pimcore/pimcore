@@ -190,7 +190,9 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
         $info->setParams($params);
 
-        $this->getTagHandler()->renderAreaFrontend($info);
+        if($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
+            $this->getTagHandler()->renderAreaFrontend($info);
+        }
 
         $this->current++;
     }
@@ -347,9 +349,15 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             'data-real-name' => $this->getRealName(),
         ];
 
+        $hidden = "false";
+        if(isset($this->indices[$this->current]['hidden']) && $this->indices[$this->current]['hidden']) {
+            $hidden = "true";
+        }
+
         $outerAttributes = [
             'key'  => $this->indices[$this->current]['key'],
-            'type' => $this->indices[$this->current]['type']
+            'type' => $this->indices[$this->current]['type'],
+            'data-hidden' => $hidden
         ];
 
         $attr  = HtmlUtils::assembleAttributeString($attributes);
@@ -367,6 +375,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
         $this->outputEditmode('<div class="pimcore_block_type" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_options" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_visibility" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
 
         $this->outputEditmode('</div>'); // .pimcore_block_buttons
