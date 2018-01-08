@@ -59,7 +59,7 @@ pimcore.object.bulkimport = Class.create({
             });
 
             var checkColumn = Ext.create('Ext.grid.column.Check', {
-                header: t("import"),
+                text: t("import"),
                 dataIndex: 'checked',
                 width: 30
             });
@@ -92,7 +92,7 @@ pimcore.object.bulkimport = Class.create({
                 columns: [
                     checkColumn,
                     {
-                        header: t("type"),
+                        text: t("type"),
                         dataIndex: 'type',
                         editable: false,
                         hidden: true,
@@ -100,7 +100,7 @@ pimcore.object.bulkimport = Class.create({
                         sortable: true
                     },
                     {
-                        header: t("type"),
+                        text: t("type"),
                         dataIndex: 'icon',
                         editable: false,
                         width: 40,
@@ -108,7 +108,7 @@ pimcore.object.bulkimport = Class.create({
                         sortable: true
                     },
                     {
-                        header: t('name'),
+                        text: t('name'),
                         dataIndex: 'displayName',
                         id: "bulk_import_defintion_name",
                         editable: false,

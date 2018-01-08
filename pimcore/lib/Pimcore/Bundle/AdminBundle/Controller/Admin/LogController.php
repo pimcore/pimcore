@@ -35,7 +35,7 @@ class LogController extends AdminController implements EventedControllerInterfac
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-        if (!$this->getUser()->isAllowed('application_logging')) {
+        if (!$this->getAdminUser()->isAllowed('application_logging')) {
             throw new AccessDeniedHttpException("Permission denied, user needs 'application_logging' permission.");
         }
     }
@@ -144,7 +144,7 @@ class LogController extends AdminController implements EventedControllerInterfac
             $logEntries[] = $logEntry;
         }
 
-        return $this->json([
+        return $this->adminJson([
             'p_totalCount' => $total,
             'p_results'    => $logEntries
         ]);
@@ -202,7 +202,7 @@ class LogController extends AdminController implements EventedControllerInterfac
             $priorities[] = ['key' => $key, 'value' => $p];
         }
 
-        return $this->json(['priorities' => $priorities]);
+        return $this->adminJson(['priorities' => $priorities]);
     }
 
     /**
@@ -219,7 +219,7 @@ class LogController extends AdminController implements EventedControllerInterfac
             $components[] = ['key' => $p, 'value' => $p];
         }
 
-        return $this->json(['components' => $components]);
+        return $this->adminJson(['components' => $components]);
     }
 
     /**

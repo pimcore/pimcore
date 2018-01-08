@@ -1,8 +1,8 @@
 # Is Equal
 
-Return true if all children evaluate to true.
+![Symbol](../../../img/gridconfig/operator_isequal_symbol.png)
 
-![Setting](../../../img/gridconfig/operator_isequal_symbol.png)
+Return true if all children evaluate to true.
 
 
 

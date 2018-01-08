@@ -22,7 +22,7 @@ pimcore.plugin.sample = Class.create(pimcore.plugin.admin, {
         
         if (object.data.general.o_className == 'ShopProduct') {
     
-            object.tab.items.items[0].add({
+            object.toolbar.add({
                 text: t('show-pdf'),
                 iconCls: 'pimcore_icon_pdf',
                 scale: 'small',

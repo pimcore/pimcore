@@ -56,7 +56,7 @@ class IndexController extends AdminController
      */
     public function indexAction(Request $request)
     {
-        $user = $this->getUser();
+        $user = $this->getAdminUser();
         $view = new ViewModel([
             'config' => Config::getSystemConfig()
         ]);
@@ -147,7 +147,7 @@ class IndexController extends AdminController
         $settings->getParameters()->add([
             'language'         => $request->getLocale(),
             'websiteLanguages' => Admin::reorderWebsiteLanguages(
-                $this->getUser(),
+                $this->getAdminUser(),
                 $config->general->validLanguages,
                 true
             )

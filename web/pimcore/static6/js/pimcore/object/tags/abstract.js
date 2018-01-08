@@ -90,7 +90,7 @@ pimcore.object.tags.abstract = Class.create({
 
         }.bind(this, field.key);
 
-        return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+        return {text:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
             editor:this.getGridColumnEditor(field)};
     },
 

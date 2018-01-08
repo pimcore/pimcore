@@ -12,7 +12,7 @@ of course you can use them also anywhere in your code or in your dependency inje
 Pimcore implements the standard Symfony framework event dispatcher and just adds some pimcore specific events, 
 so you can also subscribe to all Symfony core eventsand events triggered by arbitrary Symfony bundles. 
 
-For that reason it's recommended to have a look into the Symfony [Events and Event Listeners documentation](http://symfony.com/doc/current/event_dispatcher.html)
+For that reason it's recommended to have a look into the Symfony [Events and Event Listeners documentation](http://symfony.com/doc/3.4/event_dispatcher.html)
 first, which covers all basics in that matter. 
 
 ## Available Events
@@ -20,12 +20,12 @@ first, which covers all basics in that matter.
 All Pimcore events are defined and documented as a constant on component specific classes: 
 - [Assets](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/AssetEvents.php)
 - [Documents](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DocumentEvents.php)
-- [Objects](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectEvents.php)
+- [Data Objects](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectEvents.php)
 - [Versions](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/VersionEvents.php)
-- [Object Class Definition](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectClassDefinitionEvents.php)
-- [Object Classification Store](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectClassificationStoreEvents.php)
-- [Object Custom Layouts](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectCustomLayoutEvents.php)
-- [Object Import](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectImportEvents.php)
+- [Data Object Class Definition](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectClassDefinitionEvents.php)
+- [Data Object Classification Store](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectClassificationStoreEvents.php)
+- [Data Object Custom Layouts](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectCustomLayoutEvents.php)
+- [Data Object Import](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectImportEvents.php)
 - [Users / Roles](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/UserRoleEvents.php)
 - [Workflows](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/WorkflowEvents.php)
 - [Elements](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/ElementEvents.php)
@@ -34,6 +34,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Cache](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/CoreCacheEvents.php)
 - [Search](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/SearchBackendEvents.php)
 - [System](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/SystemEvents.php)
+- [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/BundleManagerEvents.php)
 
 ## Examples
 
@@ -80,3 +81,11 @@ class TestListener {
 }
 ```
 
+### Hook into the list of objects in the tree, the grid list and the search panel
+
+There are some global events having effect on several places. One of those is `pimcore.admin.object.list.beforeListLoad`.
+The object list can be modified (changing condition for instance) before being loaded. This global event will apply to the tree, the grid list, the search panel and everywhere objects are listed in the Pimcore GUI.
+This way, it is possible to create custom permission rules to decide if the object should or not be listed (for instance, the user must be the owner of the object, ...).
+
+It extends the possibility further than just limiting list permissions folder by folder depending the user/role object workspace.
+To ensure maximum security, it is advisable to combine this with an object DI to overload isAllowed method with the same custom permission rules. This way proper permission is ensuring all the way (rest services, ...).

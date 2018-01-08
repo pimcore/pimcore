@@ -226,7 +226,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
             stripeRows: true,
             columns: [
                 {
-                    header: t("name"),
+                    text: t("name"),
                     dataIndex: 'label',
                     editable: false,
                     width: 120,
@@ -237,7 +237,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 },
                 {
                     flex: 1,
-                    header: t("value"),
+                    text: t("value"),
                     dataIndex: 'value',
                     getEditor: this.getCellEditor.bind(this),
                     editable: true,

@@ -30,7 +30,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function (field) {
 
         return {
-            header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -162,10 +162,11 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     onNodeDrop: function (target, dd, e, data) {
 
-        this.empty(true);
-
         var record = data.records[0];
+
         if (record.data.type == "image") {
+            this.empty(true);
+
             if (this.data.id != record.data.id) {
                 this.dirty = true;
             }
@@ -191,7 +192,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     uploadDialog: function () {
         pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
             try {
-                this.empty();
+                this.empty(true);
 
                 var data = Ext.decode(res.response.responseText);
                 if (data["id"] && data["type"] == "image") {
@@ -207,7 +208,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     addDataFromSelector: function (item) {
 
-        this.empty();
+        this.empty(true);
 
         if (item) {
             if (!this.data || this.data.id != item.id) {

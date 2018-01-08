@@ -23,19 +23,35 @@ use Pimcore\Model\DataObject\AbstractObject;
 
 abstract class AbstractConfig implements IConfig
 {
-    protected $tenantName;
-    protected $attributeConfig;
-    protected $searchAttributeConfig;
-
     /**
-     * @var Attribute[]
+     * @var string
      */
-    protected $attributes = [];
+    protected $tenantName;
 
     /**
      * @var array
      */
-    protected $searchAttributes = [];
+    protected $attributeConfig;
+
+    /**
+     * @var array
+     */
+    protected $searchAttributeConfig;
+
+    /**
+     * @var AttributeFactory
+     */
+    protected $attributeFactory;
+
+    /**
+     * @var Attribute[]
+     */
+    protected $attributes;
+
+    /**
+     * @var array
+     */
+    protected $searchAttributes;
 
     /**
      * @var array
@@ -59,7 +75,7 @@ abstract class AbstractConfig implements IConfig
 
     /**
      * @param string $tenantName
-     * @param Attribute[] $attributes
+     * @param array[]|Attribute[] $attributes
      * @param array $searchAttributes
      * @param array $filterTypes
      * @param array $options
@@ -73,16 +89,56 @@ abstract class AbstractConfig implements IConfig
     ) {
         $this->tenantName = $tenantName;
 
-        foreach ($attributes as $attribute) {
-            $this->addAttribute($attribute);
-        }
-
-        foreach ($searchAttributes as $searchAttribute) {
-            $this->addSearchAttribute($searchAttribute);
-        }
+        $this->attributeConfig       = $attributes;
+        $this->searchAttributeConfig = $searchAttributes;
 
         $this->filterTypes = $filterTypes;
         $this->processOptions($options);
+    }
+
+    /**
+     * Sets attribute factory as dependency. This was added as setter for BC reasons and will be added to the constructor
+     * signature in Pimcore 6.
+     *
+     * TODO Pimcore 6 add to constructor signature.
+     *
+     * @required
+     *
+     * @param AttributeFactory $attributeFactory
+     */
+    public function setAttributeFactory(AttributeFactory $attributeFactory)
+    {
+        if (null !== $this->attributeFactory) {
+            throw new \RuntimeException('Attribute factory is already set.');
+        }
+
+        $this->attributeFactory = $attributeFactory;
+
+        $this->attributes = [];
+        $this->searchAttributes = [];
+
+        $this->buildAttributes($this->attributeConfig);
+
+        foreach ($this->searchAttributeConfig as $searchAttribute) {
+            $this->addSearchAttribute($searchAttribute);
+        }
+    }
+
+    protected function buildAttributes(array $attributes)
+    {
+        foreach ($attributes as $attribute) {
+            if ($attribute instanceof Attribute) {
+                $this->addAttribute($attribute);
+            } elseif (is_array($attribute)) {
+                $attribute = $this->attributeFactory->createAttribute($attribute);
+                $this->addAttribute($attribute);
+            } else {
+                throw new \InvalidArgumentException(sprintf(
+                    'Wrong type for attribute. Expected Attribute or array, got "%s"',
+                    is_object($attribute) ? get_class($attribute) : gettype($attribute)
+                ));
+            }
+        }
     }
 
     protected function addAttribute(Attribute $attribute)
@@ -163,6 +219,11 @@ abstract class AbstractConfig implements IConfig
      */
     public function getAttributes(): array
     {
+        // TODO Pimcore 6 remove as soon as attribute factory was added to the constructor.
+        if (null === $this->attributes) {
+            throw new \RuntimeException('Attributes are not built yet. Is the service properly configured to set an attribute factory?');
+        }
+
         return $this->attributes;
     }
 
@@ -173,6 +234,11 @@ abstract class AbstractConfig implements IConfig
      */
     public function getSearchAttributes(): array
     {
+        // TODO Pimcore 6 remove as soon as attribute factory was added to the constructor.
+        if (null === $this->attributes) {
+            throw new \RuntimeException('Search attributes are not built yet. Is the service properly configured to set an attribute factory?');
+        }
+
         return $this->searchAttributes;
     }
 

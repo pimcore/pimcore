@@ -142,7 +142,7 @@ class DataObjectController extends AbstractElementController
             $data['profiling'] = $this->getProfilingData($profileName);
         }
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**
@@ -441,7 +441,7 @@ class DataObjectController extends AbstractElementController
 
         $class = $this->service->getObjectMetadataById($id);
         if (!$class) {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundResponseException();
         }
 
         return $this->createSuccessResponse($class);
@@ -543,7 +543,7 @@ class DataObjectController extends AbstractElementController
             return $object;
         }
 
-        throw $this->createNotFoundException([
+        throw $this->createNotFoundResponseException([
             'msg'  => sprintf('Object %d does not exist', (int)$id),
             'code' => static::ELEMENT_DOES_NOT_EXIST
         ]);

@@ -66,6 +66,7 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
             $headers->addMailboxHeader('X-Pimcore-Debug-To', $message->getTo());
             $headers->addMailboxHeader('X-Pimcore-Debug-Cc', $message->getCc());
             $headers->addMailboxHeader('X-Pimcore-Debug-Bcc', $message->getBcc());
+            $headers->addMailboxHeader('X-Pimcore-Debug-ReplyTo', $message->getReplyTo());
         }
     }
 

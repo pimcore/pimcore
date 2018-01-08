@@ -1135,46 +1135,25 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @deprecated Just a BC compatibility method
      * Adds given data field after existing field with given field name. If existing field is not found, nothing is added.
      *
      * @param $fieldNameToAddAfter
-     * @param ClassDefinition\Data $fieldsToAdd
+     * @param ClassDefinition\Data $fieldToAdd
      * @param ClassDefinition\Layout|null $layoutComponent
      */
     public function addNewDataField($fieldNameToAddAfter, DataObject\ClassDefinition\Data $fieldToAdd, DataObject\ClassDefinition\Layout $layoutComponent = null)
     {
-        $found = false;
-        $index = null;
-
         if (null === $layoutComponent) {
             $layoutComponent = $this->getLayoutDefinitions();
         }
 
-        $children = $layoutComponent->getChildren();
-
-        //try to find field
-        foreach ($children as $index => $child) {
-            if ($child->getName() == $fieldNameToAddAfter) {
-                $found = true;
-                break;
-            }
-        }
-
-        if ($found) {
-            //if found, insert toAdd after index
-            array_splice($children, $index + 1, 0, [$fieldToAdd]);
-            $layoutComponent->setChildren($children);
-        } else {
-            //if not found, call recursive
-            foreach ($children as $index => $child) {
-                if ($child instanceof ClassDefinition\Layout && $child->getChildren()) {
-                    $this->addNewDataField($fieldNameToAddAfter, $fieldToAdd, $child);
-                }
-            }
-        }
+        $definitionModifier = new DefinitionModifier();
+        $definitionModifier->appendFields($layoutComponent, $fieldNameToAddAfter, $fieldToAdd);
     }
 
     /**
+     * @deprecated Just a BC compatibility method
      * Removes data field with given name. If not found, nothing is removed.
      *
      * @param $fieldNameToRemove
@@ -1182,35 +1161,11 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function removeExistingDataField($fieldNameToRemove, DataObject\ClassDefinition\Layout $layoutComponent = null)
     {
-        $found = false;
-        $index = null;
-
         if (null === $layoutComponent) {
             $layoutComponent = $this->getLayoutDefinitions();
         }
 
-        $children = $layoutComponent->getChildren();
-
-        //try to find field
-        foreach ($children as $index => $child) {
-            if ($child->getName() == $fieldNameToRemove) {
-                $found = true;
-                break;
-            }
-        }
-
-        if ($found) {
-            //if found, insert toAdd after index
-            unset($children[$index]);
-            unset($this->fieldDefinitions[$fieldNameToRemove]);
-            $layoutComponent->setChildren(array_values($children));
-        } else {
-            //if not found, call recursive
-            foreach ($children as $index => $child) {
-                if ($child instanceof ClassDefinition\Layout && $child->getChildren()) {
-                    $this->removeExistingDataField($fieldNameToRemove, $child);
-                }
-            }
-        }
+        $definitionModifier = new DefinitionModifier();
+        $definitionModifier->removeField($layoutComponent, $fieldNameToRemove);
     }
 }

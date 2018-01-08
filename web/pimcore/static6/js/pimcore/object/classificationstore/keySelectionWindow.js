@@ -354,19 +354,19 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
 
         var gridColumns = [];
-        gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
+        gridColumns.push({text: "ID", width: 40, sortable: true, dataIndex: 'id'});
 
         if (postFix == "properties") {
             gridColumns.push({
-                header: t("classificationstore_tag_col_group"),
+                text: t("classificationstore_tag_col_group"),
                 width: 150,
                 sortable: true,
                 dataIndex: 'groupName'
             });
         }
 
-        gridColumns.push({header: t("name"), width: nameWidth, sortable: true, dataIndex: 'name'});
-        gridColumns.push({header: t("description"), width: descWidth, sortable: true, dataIndex: 'description'});
+        gridColumns.push({text: t("name"), width: nameWidth, sortable: true, dataIndex: 'name'});
+        gridColumns.push({text: t("description"), width: descWidth, sortable: true, dataIndex: 'description'});
 
         var extraParams = {
             storeId: this.config.storeId

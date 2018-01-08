@@ -69,25 +69,25 @@ pimcore.asset.listfolder = Class.create({
         this.selectionColumn = new Ext.selection.CheckboxModel();
 
         var typesColumns = [
-            {header: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40, filter: 'numeric'},
-            {header: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string'},
-            {header: t("type"), sortable: true, dataIndex: 'type', editable: false, flex: 50, filter: 'string'}
+            {text: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40, filter: 'numeric'},
+            {text: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string'},
+            {text: t("type"), sortable: true, dataIndex: 'type', editable: false, flex: 50, filter: 'string'}
         ];
 
 
-        typesColumns.push({header: t("creationDate"), width: 150, sortable: true, dataIndex: 'creationDate', editable: false, filter: 'date',
+        typesColumns.push({text: t("creationDate"), width: 150, sortable: true, dataIndex: 'creationDate', editable: false, filter: 'date',
                                                                                 renderer: function(d) {
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         }});
-        typesColumns.push({header: t("modificationDate"), width: 150, sortable: true, dataIndex: 'modificationDate', editable: false, filter: 'date',
+        typesColumns.push({text: t("modificationDate"), width: 150, sortable: true, dataIndex: 'modificationDate', editable: false, filter: 'date',
         renderer: function(d) {
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         }});
 
         typesColumns.push(
-            {header: t("size"), sortable: false, dataIndex: 'size', editable: false, filter: 'string'}
+            {text: t("size"), sortable: false, dataIndex: 'size', editable: false, filter: 'string'}
         );
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);

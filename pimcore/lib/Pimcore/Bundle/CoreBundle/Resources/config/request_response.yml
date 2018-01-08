@@ -17,6 +17,9 @@ services:
     Pimcore\Http\ResponseStack:
         public: false
 
+    Pimcore\Http\Response\CodeInjector:
+        public: false
+
     #
     # REQUEST RESOLVERS
     #

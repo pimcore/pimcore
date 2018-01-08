@@ -20,6 +20,7 @@ namespace Pimcore\Document\Renderer;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
@@ -47,21 +48,22 @@ class DocumentRenderer implements DocumentRendererInterface
     private $documentRouteHandler;
 
     /**
-     * @param RequestHelper $requestHelper
-     * @param ActionRenderer $actionRenderer
-     * @param FragmentRendererInterface $fragmentRenderer
-     * @param DocumentRouteHandler $documentRouteHandler
+     * @var DocumentTargetingConfigurator
      */
+    private $targetingConfigurator;
+
     public function __construct(
         RequestHelper $requestHelper,
         ActionRenderer $actionRenderer,
         FragmentRendererInterface $fragmentRenderer,
-        DocumentRouteHandler $documentRouteHandler
+        DocumentRouteHandler $documentRouteHandler,
+        DocumentTargetingConfigurator $targetingConfigurator
     ) {
-        $this->requestHelper        = $requestHelper;
-        $this->actionRenderer       = $actionRenderer;
-        $this->fragmentRenderer     = $fragmentRenderer;
-        $this->documentRouteHandler = $documentRouteHandler;
+        $this->requestHelper         = $requestHelper;
+        $this->actionRenderer        = $actionRenderer;
+        $this->fragmentRenderer      = $fragmentRenderer;
+        $this->documentRouteHandler  = $documentRouteHandler;
+        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
@@ -69,6 +71,9 @@ class DocumentRenderer implements DocumentRendererInterface
      */
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
+        // apply best matching target group (if any)
+        $this->targetingConfigurator->configureTargetGroup($document);
+
         // add document route to request if no route is set
         // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)
         if (!isset($attributes['_route'])) {

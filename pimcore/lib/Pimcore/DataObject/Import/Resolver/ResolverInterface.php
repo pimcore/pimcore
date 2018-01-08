@@ -17,7 +17,16 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+use Pimcore\Model\DataObject\Concrete;
+
 interface ResolverInterface
 {
+    /**
+     * @param \stdClass $config
+     * @param int $parentId
+     * @param array $rowData
+     *
+     * @return Concrete
+     */
     public function resolve(\stdClass $config, int $parentId, array $rowData);
 }

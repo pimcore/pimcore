@@ -1,6 +1,6 @@
 # Arithmetic
 
-![Setting](../../../img/gridconfig/operator_arithmetic_symbol.png)
+![Symbol](../../../img/gridconfig/operator_arithmetic_symbol.png)
 
 Simple calculation stuff like +, -, * and /.
 

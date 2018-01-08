@@ -16,7 +16,9 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
     initialize: function (config, callback) {
         this.config = config;
-        this.config.resolverSettings = this.config.resolverSettings || {};
+        this.config.resolverSettings = this.config.resolverSettings || {
+            skipHeadRow: true
+        };
         this.callback = callback;
     },
 
@@ -130,11 +132,16 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
         this.skipHeaderRow = new Ext.form.field.Checkbox(
             {
-                readOnly: true,
                 fieldLabel: t("skipheadrow"),
                 inputValue: true,
                 name: "skipHeadRow",
-                value: this.config.resolverSettings.skipHeadRow
+                value: this.config.resolverSettings.skipHeadRow,
+                listeners: {
+                    change: function (checkbox, checked) {
+                        this.callback.csvPreviewPanel.setFirstLineHeadline(checked);
+                        this.config.resolverSettings.skipHeadRow = checked;
+                    }.bind(this)
+                },
             }
         );
 
@@ -283,11 +290,9 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         );
     },
 
-
     commitData: function () {
         var settings = this.settingsForm.getValues();
         this.config.resolverSettings = settings;
     }
-
 
 });

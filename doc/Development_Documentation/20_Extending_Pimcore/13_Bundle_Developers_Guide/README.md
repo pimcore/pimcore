@@ -2,7 +2,7 @@
 
 In previous versions of Pimcore, a plugin system allowed you to hook into the system to add custom functionality. Starting with
 Pimcore 5, the plugin system was replaced by native Symfony bundles. Therefore, you do not need to follow any special
-plugin structure but can refer to the [Symfony Bundle Documentation](http://symfony.com/doc/current/bundles.html) on how
+plugin structure but can refer to the [Symfony Bundle Documentation](http://symfony.com/doc/3.4/bundles.html) on how
 to get started with your custom bundles. A bundle can do anything - in fact, core Pimcore functionalities like the admin
 interface are implemented as bundle. From within your bundle, you have all possibilities to extend the system, from
 defining new services or routes to hook into the event system or provide controllers and views.
@@ -10,7 +10,7 @@ defining new services or routes to hook into the event system or provide control
 
 ## Bundle Directory Structure
 
-See [Bundle Directory Structure](http://symfony.com/doc/current/bundles.html#bundle-directory-structure) for a standard
+See [Bundle Directory Structure](http://symfony.com/doc/3.4/bundles.html#bundle-directory-structure) for a standard
 bundle directory layout.
 
 
@@ -29,7 +29,7 @@ See the [Pimcore Bundles](./05_Pimcore_Bundles) documentation to getting started
 
 ### Generating Pimcore Bundles
 
-With [SensioGeneratorBundle](http://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html) there's already a
+With [SensioGeneratorBundle](http://symfony.com/doc/3.4/bundles/SensioGeneratorBundle/index.html) there's already a
 great bundle which facilitates creation of new bundles. Pimcore extends the `SensioGeneratorBundle` and  adds a
 `PimcoreGeneratorBundle` which provides commands to build Pimcore specific code. At the moment, it provides a single
 command which can be used to generate new Pimcore Bundles:
@@ -56,7 +56,7 @@ Below is a list of common tasks and how to achieve them inside your bundles.
 ### Service configuration
 
 If you want to provide custom services from within your bundle, you need to create an `Extension` which is able to load
-your service definitions. This is covered in detail in the [Extensions Documentation](http://symfony.com/doc/current/bundles/extension.html).
+your service definitions. This is covered in detail in the [Extensions Documentation](http://symfony.com/doc/3.4/bundles/extension.html).
 
 An example how to create an extension for your bundles can be found in
 [Loading Service Definitions](./01_Loading_Service_Definitions.md).
@@ -71,7 +71,7 @@ more information.
 
 ### i18n / Translations
 
-See the [Symfony Translation Component Documentation](http://symfony.com/doc/current/translation.html#translation-resource-file-names-and-locations)
+See the [Symfony Translation Component Documentation](http://symfony.com/doc/3.4/translation.html#translation-resource-file-names-and-locations)
 for locations which will be automatically searched for translation files.
 
 For bundles, translations should be stored in the `Resources/translations/` directory of the bundle in the format `locale.loader`
@@ -81,7 +81,7 @@ like `Resources/translations/en.yml`, which resolves to the default `messages` t
 
 ### Security / Authentication
 
-You can make full use of the [Symfony Security Component](http://symfony.com/doc/current/security.html) by auto loading
+You can make full use of the [Symfony Security Component](http://symfony.com/doc/3.4/security.html) by auto loading
 the security configuration as documented above. Best practice is to define the security configuration in a dedicated
 `security.yml` which can be imported from your bundle's `config.yml`.
 
@@ -93,7 +93,7 @@ For further details on security please refer to [Security](../../19_Development_
 To hook into core functions you can attach to any event provided by the [Pimcore event manager](../11_Event_API_and_Event_Manager.md).
 Custom listeners can be registered from your bundle by defining an event listener service. Further reading:
  
-* [Symfony Event Dispatcher](http://symfony.com/doc/current/event_dispatcher.html) for documentation how to create event
+* [Symfony Event Dispatcher](http://symfony.com/doc/3.4/event_dispatcher.html) for documentation how to create event
    listeners and how to register them as a service
 * [Pimcore Event Manager](../11_Event_API_and_Event_Manager.md) for a list of available events
 

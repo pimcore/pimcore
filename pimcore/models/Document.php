@@ -656,7 +656,7 @@ class Document extends Element\AbstractElement
     public function setChildren($children)
     {
         $this->childs=$children;
-        if (is_array($children) and count($children > 0)) {
+        if (is_array($children) and count($children) > 0) {
             $this->hasChilds=true;
         } elseif ($children === null) {
             $this->hasChilds = null;

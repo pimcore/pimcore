@@ -94,7 +94,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $extensions = array_merge($extensions, $legacyController->getExtensions());
         }
 
-        return $this->json(['extensions' => $extensions]);
+        return $this->adminJson(['extensions' => $extensions]);
     }
 
     /**
@@ -142,7 +142,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
         $this->bundleManager->setStates($updates);
 
-        return $this->json([
+        return $this->adminJson([
             'extensions' => $this->getBundleList(array_keys($updates))
         ]);
     }
@@ -189,7 +189,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $data['message'] = $message;
         }
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**
@@ -271,14 +271,14 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 $data['message'] = $message;
             }
 
-            return $this->json($data);
+            return $this->adminJson($data);
         } catch (BundleNotFoundException $e) {
-            return $this->json([
+            return $this->adminJson([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 404);
         } catch (\Exception $e) {
-            return $this->json([
+            return $this->adminJson([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 400);
@@ -349,14 +349,14 @@ class ExtensionManagerController extends AdminController implements EventedContr
                 $data['message'] = $message;
             }
 
-            return $this->json($data);
+            return $this->adminJson($data);
         } catch (BundleNotFoundException $e) {
-            return $this->json([
+            return $this->adminJson([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 404);
         } catch (\Exception $e) {
-            return $this->json([
+            return $this->adminJson([
                 'success' => false,
                 'message' => $e->getMessage()
             ], 400);

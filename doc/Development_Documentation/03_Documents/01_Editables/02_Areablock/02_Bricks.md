@@ -125,7 +125,7 @@ Given our `iframe` brick defined before, the following paths will be used.
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
 | view template | `app/Resources/views/Areas/iframe/view.html.(php|twig)` |
-| view template | `app/Resources/views/Areas/iframe/edit.html.(php|twig)` |
+| edit template | `app/Resources/views/Areas/iframe/edit.html.(php|twig)` |
 | icon path     | `web/bundles/app/areas/iframe/icon.png`                 |
 | icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
 
@@ -136,7 +136,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
 | view template | `src/AppBundle/Resources/views/Areas/iframe/view.html.(php|twig)` |
-| view template | `src/AppBundle/Resources/views/Areas/iframe/edit.html.(php|twig)` |
+| edit template | `src/AppBundle/Resources/views/Areas/iframe/edit.html.(php|twig)` |
 
 ## How to Create a Brick
  

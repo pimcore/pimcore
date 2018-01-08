@@ -53,12 +53,13 @@ pimcore.settings.user.editorSettings = Class.create({
             columnLines: true,
             width: 500,
             columns: [
-                {header: t("language"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                {text: t("language"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
                     width: 200},
-                {header: t("abbreviation"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                {text: t("abbreviation"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
                     width: 200},
                 {
                     xtype:'actioncolumn',
+                    menuText:t('up'),
                     width:40,
                     items:[
                         {
@@ -77,6 +78,7 @@ pimcore.settings.user.editorSettings = Class.create({
                 },
                 {
                     xtype:'actioncolumn',
+                    menuText:t('down'),
                     width:40,
                     items:[
                         {

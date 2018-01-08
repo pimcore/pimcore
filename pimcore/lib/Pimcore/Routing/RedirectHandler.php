@@ -16,9 +16,12 @@ namespace Pimcore\Routing;
 
 use Pimcore\Cache;
 use Pimcore\Config;
+use Pimcore\Http\Request\Resolver\SiteResolver;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
+use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
 use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -31,9 +34,49 @@ class RedirectHandler implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
+     * @var RequestHelper
+     */
+    private $requestHelper;
+
+    /**
+     * @var SiteResolver
+     */
+    private $siteResolver;
+
+    /**
      * @var Redirect[]
      */
     private $redirects;
+
+    /**
+     * For BC, this is currently added as extra method call. The required annotation
+     * makes sure this is called via autowiring.
+     *
+     * TODO Pimcore 6 set as constructor dependency
+     *
+     * @required
+     *
+     * @param RequestHelper $requestHelper
+     */
+    public function setRequestHelper(RequestHelper $requestHelper)
+    {
+        $this->requestHelper = $requestHelper;
+    }
+
+    /**
+     * For BC, this is currently added as extra method call. The required annotation
+     * makes sure this is called via autowiring.
+     *
+     * TODO Pimcore 6 set as constructor dependency
+     *
+     * @required
+     *
+     * @param SiteResolver $siteResolver
+     */
+    public function setSiteResolver(SiteResolver $siteResolver)
+    {
+        $this->siteResolver = $siteResolver;
+    }
 
     /**
      * @param Request $request
@@ -44,48 +87,49 @@ class RedirectHandler implements LoggerAwareInterface
     public function checkForRedirect(Request $request, $override = false)
     {
         // not for admin requests
-        if (Tool::isFrontentRequestByAdmin()) {
+        if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
             return null;
         }
 
-        $matchRequestUri = urldecode($request->getPathInfo());
-        $config          = Config::getSystemConfig();
-
         // get current site if available
         $sourceSite = null;
-        if (Site::isSiteRequest()) {
-            $sourceSite = Site::getCurrentSite();
+        if ($this->siteResolver->isSiteRequest($request)) {
+            $sourceSite = $this->siteResolver->getSite($request);
         }
 
-        $matchUrl = Tool::getHostUrl() . $matchRequestUri;
-        if (!empty($_SERVER['QUERY_STRING'])) {
-            $matchUrl .= '?' . $_SERVER['QUERY_STRING'];
-        }
+        $config       = Config::getSystemConfig();
+        $partResolver = new RedirectUrlPartResolver($request);
 
         foreach ($this->getFilteredRedirects($override) as $redirect) {
-            $matchAgainst = $matchRequestUri;
-            if ($redirect->getSourceEntireUrl()) {
-                $matchAgainst = $matchUrl;
-            }
-
-            if (null !== $response = $this->matchRedirect($redirect, $request, $config, $matchAgainst, $sourceSite)) {
+            if (null !== $response = $this->matchRedirect($redirect, $request, $partResolver, $config, $sourceSite)) {
                 return $response;
             }
         }
     }
 
-    /**
-     * @param Redirect $redirect
-     * @param Request $request
-     * @param Config\Config $config
-     * @param string $matchUri
-     * @param Site|null $sourceSite
-     *
-     * @return null|Response
-     */
-    private function matchRedirect(Redirect $redirect, Request $request, Config\Config $config, $matchUri, Site $sourceSite = null)
-    {
-        if (!@preg_match($redirect->getSource(), $matchUri, $matches)) {
+    private function matchRedirect(
+        Redirect $redirect,
+        Request $request,
+        RedirectUrlPartResolver $partResolver,
+        Config\Config $config,
+        Site $sourceSite = null
+    ) {
+        if (empty($redirect->getType())) {
+            return null;
+        }
+
+        $matchPart = $partResolver->getRequestUriPart($redirect->getType());
+        $matches   = [];
+
+        $doesMatch = false;
+        if ($redirect->isRegex()) {
+            $doesMatch = (bool)@preg_match($redirect->getSource(), $matchPart, $matches);
+        } else {
+            $source    = str_replace('+', ' ', $redirect->getSource()); // see #2202
+            $doesMatch = $source === $matchPart;
+        }
+
+        if (!$doesMatch) {
             return null;
         }
 
@@ -95,8 +139,6 @@ class RedirectHandler implements LoggerAwareInterface
                 return null;
             }
         }
-
-        array_shift($matches);
 
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
@@ -113,8 +155,13 @@ class RedirectHandler implements LoggerAwareInterface
             }
         }
 
-        // support for pcre backreferences
-        $url = replace_pcre_backreferences($target, $matches);
+        $url = $target;
+        if ($redirect->isRegex()) {
+            array_shift($matches);
+
+            // support for pcre backreferences
+            $url = replace_pcre_backreferences($url, $matches);
+        }
 
         if ($redirect->getTargetSite() && !preg_match('@http(s)?://@i', $url)) {
             try {
@@ -132,7 +179,7 @@ class RedirectHandler implements LoggerAwareInterface
 
                 return null;
             }
-        } elseif (!preg_match('@http(s)?://@i', $url) && $config->general->domain && $redirect->getSourceEntireUrl()) {
+        } elseif (!preg_match('@http(s)?://@i', $url) && $config->general->domain) {
             // prepend the host and scheme to avoid infinite loops when using "domain" redirects
             $url = $request->getScheme() . '://' . $config->general->domain . $url;
         }
@@ -200,7 +247,14 @@ class RedirectHandler implements LoggerAwareInterface
      */
     private function getFilteredRedirects($override = false)
     {
-        return array_filter($this->getRedirects(), function (Redirect $redirect) use ($override) {
+        $now = time();
+
+        return array_filter($this->getRedirects(), function (Redirect $redirect) use ($override, $now) {
+            // this is the case when maintenance did't deactivate the redirect yet but it is already expired
+            if (!empty($redirect->getExpiry()) && $redirect->getExpiry() < $now) {
+                return false;
+            }
+
             if ($override) {
                 // if override is true the priority has to be 99 which means that overriding is ok
                 return (int)$redirect->getPriority() === 99;

@@ -84,6 +84,13 @@ services:
         tags:
             - { name: pimcore.data_object.grid_column_config.operator_factory, id: Concatenator }
 
+    pimcore.data_object.grid_column_config.operator.factory.date_formatter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\DateFormatter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: DateFormatter }
+
     pimcore.data_object.grid_column_config.operator.factory.element_counter:
         class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:

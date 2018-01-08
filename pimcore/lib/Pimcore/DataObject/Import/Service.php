@@ -36,7 +36,7 @@ use Psr\Container\ContainerInterface;
 
 class Service
 {
-    const FORBIDDEN_KEYS = ['id', 'fullpath', 'filename', 'published', 'creationDate', 'modificationDate'];
+    const FORBIDDEN_KEYS = ['id', 'fullpath', 'filename', 'published', 'creationDate', 'modificationDate', 'key'];
 
     /**
      * @var Db\Connection
@@ -303,6 +303,7 @@ class Service
                             $newChild->dataType = $child['dataType'];
                             $newChild->label = $child['label'];
                             $newChild->class = 'DefaultValue';
+                            $newChild->type = 'value';
 
                             $lfImportColumn->attributes->childs = [$newChild];
                             $importColumns[] = $lfImportColumn;

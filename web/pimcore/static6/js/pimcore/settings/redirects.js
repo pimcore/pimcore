@@ -53,6 +53,7 @@ pimcore.settings.redirects = Class.create({
     },
 
     getRowEditor: function () {
+        var that = this;
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         var url = '/admin/settings/redirects?';
@@ -61,14 +62,15 @@ pimcore.settings.redirects = Class.create({
             url,
             [
                 {name: 'id'},
+                {name: 'type', allowBlank: false},
                 {name: 'source', allowBlank: false},
-                {name: 'sourceEntireUrl'},
                 {name: 'sourceSite'},
-                {name: 'passThroughParameters'},
                 {name: 'target', allowBlank: false},
                 {name: 'targetSite'},
                 {name: 'statusCode'},
                 {name: 'priority', type:'int'},
+                {name: 'regex'},
+                {name: 'passThroughParameters'},
                 {name: 'active'},
                 {name: 'expiry', type: "date", convert: function (v, r) {
                     if(v && !(v instanceof Date)) {
@@ -83,6 +85,7 @@ pimcore.settings.redirects = Class.create({
             ],
             itemsPerPage
         );
+
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         this.filterField = new Ext.form.TextField({
@@ -103,27 +106,47 @@ pimcore.settings.redirects = Class.create({
         });
 
         var sourceEntireUrlCheck = new Ext.grid.column.Check({
-            header: t("source_entire_url"),
+            text: t("source_entire_url"),
             dataIndex: "sourceEntireUrl",
             width: 70
         });
 
         var activeCheck = new Ext.grid.column.Check({
-            header: t("active"),
+            text: t("active"),
             dataIndex: "active",
             width: 70
         });
 
         var passThroughParametersCheck = new Ext.grid.column.Check({
-            header: t("pass_through_params"),
+            text: t("pass_through_params"),
             dataIndex: "passThroughParameters",
             width: 70
         });
 
         var typesColumns = [
-            {header: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
-            sourceEntireUrlCheck,
-            {header: t("source_site"), flex: 200, sortable:true, dataIndex: "sourceSite",
+            {
+                text: t("type"),
+                width: 70,
+                sortable: true,
+                dataIndex: 'type',
+                editor: new Ext.form.ComboBox({
+                    store: [
+                        ["entire_uri", t('redirects_type_entire_uri') + ': https://example.com/test?key=value'],
+                        ["path_query", t('redirects_type_path_query') + ': /test?key=value'],
+                        ["path", t('redirects_type_path') + ': /test']
+                    ],
+                    mode: "local",
+                    typeAhead: false,
+                    editable: false,
+                    listConfig: {
+                        minWidth: 350
+                    },
+                    forceSelection: true,
+                    triggerAction: "all"
+                })
+            },
+            {text: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
+            {text: t("source_site"), flex: 200, sortable:true, dataIndex: "sourceSite",
                 editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
@@ -137,12 +160,11 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            passThroughParametersCheck,
-            {header: t("target"), flex: 200, sortable: false, dataIndex: 'target',
+            {text: t("target"), flex: 200, sortable: false, dataIndex: 'target',
                 editor: new Ext.form.TextField({}),
                 tdCls: "input_drop_target"
             },
-            {header: t("target_site"), flex: 200, sortable:true, dataIndex: "targetSite",
+            {text: t("target_site"), flex: 200, sortable:true, dataIndex: "targetSite",
                 editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
@@ -156,7 +178,7 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {header: t("type"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
+            {text: t("type"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [
                     ["301", "Moved Permanently (301)"],
                     ["307", "Temporary Redirect (307)"],
@@ -171,7 +193,7 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            {header: t("priority"), width: 60, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
+            {text: t("priority"), width: 60, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
                 store: [
                     [1, "1 - " + t("lowest")],
                     [2, 2],
@@ -192,9 +214,23 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            activeCheck,
+            new Ext.grid.column.Check({
+                text: t("regex"),
+                dataIndex: "regex",
+                width: 70
+            }),
+            new Ext.grid.column.Check({
+                text: t("pass_through_params"),
+                dataIndex: "passThroughParameters",
+                width: 70
+            }),
+            new Ext.grid.column.Check({
+                text: t("active"),
+                dataIndex: "active",
+                width: 70
+            }),
             {
-                header: t("expiry"),
+                text: t("expiry"),
                 width: 150, sortable:true, dataIndex: "expiry",
                 editor: {
                     xtype: 'datefield',
@@ -207,7 +243,7 @@ pimcore.settings.redirects = Class.create({
                         }
                     }
             },
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 width: 150,
                 renderer: function(d) {
@@ -219,7 +255,7 @@ pimcore.settings.redirects = Class.create({
                     }
                 }
             },
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false,
                 hidden: true,
                 width: 150,
                 renderer: function(d) {
@@ -233,6 +269,7 @@ pimcore.settings.redirects = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('delete'),
                 width: 30,
                 items: [{
                     tooltip: t('delete'),
@@ -266,7 +303,95 @@ pimcore.settings.redirects = Class.create({
                         text: t("add_beginner_mode"),
                         handler: this.openWizard.bind(this)
                     }]
-                }, "->", {
+                },
+                {
+                    text: t("export_csv"),
+                    iconCls: "pimcore_icon_export",
+                    handler: function () {
+                        pimcore.helpers.download('/admin/redirects/csv-export');
+                    }
+                },
+                {
+                    text: t("import_csv"),
+                    iconCls: "pimcore_icon_import",
+                    handler: function () {
+                        pimcore.helpers.uploadDialog(
+                            '/admin/redirects/csv-import', 'redirects',
+                            function (res) {
+                                that.store.reload();
+
+                                var json;
+
+                                try {
+                                    json = Ext.decode(res.response.responseText);
+                                } catch (e) {
+                                    console.error(e);
+                                }
+
+                                if (json && json.data) {
+                                    var stats = json.data;
+
+                                    var icon = 'pimcore_icon_success';
+                                    if (stats.errored > 0) {
+                                        icon = 'pimcore_icon_warning';
+                                    }
+
+                                    var message = '';
+
+                                    message += '<table class="pimcore_stats_table">';
+                                    message += '<tr><th>' + t('redirects_import_total') + '</th><td class="pimcore_stats_table--number">' + stats.total + '</td></tr>';
+                                    message += '<tr><th>' + t('redirects_import_created') + '</th><td class="pimcore_stats_table--number">' + stats.created + '</td></tr>';
+                                    message += '<tr><th>' + t('redirects_import_updated') + '</th><td  class="pimcore_stats_table--number">' + stats.updated + '</td></tr>';
+
+                                    if (stats.errored > 0) {
+                                        message += '<tr><th>' + t('redirects_import_errored') + '</th><td class="pimcore_stats_table--number">' + stats.errored + '</td></tr>';
+                                    }
+
+                                    message += '</table>';
+
+                                    if (stats.errors && Object.keys(stats.errors).length > 0) {
+                                        message += '<h4 style="margin-top: 15px; margin-bottom: 0; color: red">' + t('redirects_import_errors') + '</h4>';
+                                        message += '<table class="pimcore_stats_table">';
+
+                                        var errorKeys = Object.keys(stats.errors);
+                                        for (var i = 0; i < errorKeys.length; i++) {
+                                            message += '<tr><td>' + t('redirects_import_error_line') + ' ' + errorKeys[i] + ':</td><td>' + stats.errors[errorKeys[i]] + '</td></tr>';
+                                        }
+
+                                        message += '</table>';
+                                    }
+
+                                    var win = new Ext.Window({
+                                        modal: true,
+                                        iconCls: icon,
+                                        title: t('redirects_csv_import'),
+                                        width: 400,
+                                        maxHeight: 500,
+                                        html: message,
+                                        autoScroll: true,
+                                        bodyStyle: "padding: 10px; background:#fff;",
+                                        buttonAlign: "center",
+                                        shadow: false,
+                                        closable: false,
+                                        buttons: [{
+                                            text: t("OK"),
+                                            handler: function () {
+                                                win.close();
+                                            }
+                                        }]
+                                    });
+
+                                    win.show();
+                                }
+                            },
+                            function () {
+                                Ext.MessageBox.alert(t("error"), t("error"));
+                            }
+                        )
+                    }
+                },
+                "->",
+                {
                     text: t("filter") + "/" + t("search"),
                     xtype: "tbtext",
                     style: "margin: 0 10px 0 0;"
@@ -364,7 +489,6 @@ pimcore.settings.redirects = Class.create({
     },
 
     openWizard: function () {
-
         this.wizardForm = new Ext.form.FormPanel({
             bodyStyle: "padding:10px;",
             layout: 'hbox',
@@ -396,7 +520,7 @@ pimcore.settings.redirects = Class.create({
 
         this.wizardWindow = new Ext.Window({
             width: 650,
-            modal:true,
+            modal: true,
             items: [this.wizardForm],
             buttons: [{
                 text: t("save"),
@@ -409,48 +533,60 @@ pimcore.settings.redirects = Class.create({
     },
 
     saveWizard: function () {
-
-        var source = "";
-        var sourceEntireUrl = false;
-        var priority = 1;
         var values = this.wizardForm.getForm().getFieldValues();
-        var pattern = preg_quote(values.pattern);
-        pattern = str_replace("@","\\@",pattern);
+        var pattern = values.pattern;
 
-        if(values.mode == "begin") {
-            source = "@^" + pattern + "@";
-        } else if (values.mode == "exact") {
-            source = "@^" + pattern + "$@";
-        } else if (values.mode == "contain") {
-            source = "@" + pattern + "@i";
-        } else if (values.mode == "begin_end_slash") {
-            if(pattern.charAt(0) != "/") {
+        var record = {
+            type: 'entire_uri',
+            source: '',
+            priority: 1,
+            regex: false,
+            active: true
+        };
+
+        var escapeRegex = function(pattern) {
+            pattern = preg_quote(pattern);
+            pattern = str_replace("@", "\\@", pattern);
+
+            return pattern;
+        };
+
+        if (values.mode === "begin") {
+            record.type = 'path';
+            record.source = "@^" + escapeRegex(pattern) + "@";
+            record.regex = true;
+        } else if (values.mode === "exact") {
+            record.type = 'path';
+            record.source = pattern.replace('+', ' ');
+        } else if (values.mode === "contain") {
+            record.type = 'path_query';
+            record.source = "@" + escapeRegex(pattern) + "@i";
+            record.regex = true;
+        } else if (values.mode === "begin_end_slash") {
+            if (pattern.charAt(0) !== "/") {
                 pattern = "/" + pattern;
             }
-            source = "@^" + pattern + "[\\/]?$@i";
-        } else if (values.mode == "domain") {
-            if(values.pattern.indexOf("http") >= 0) {
+
+            record.type = 'path';
+            record.source = "@^" + escapeRegex(pattern) + "[\\/]?$@i";
+            record.regex = true;
+        } else if (values.mode === "domain") {
+            if (values.pattern.indexOf("http") >= 0) {
                 pattern = parse_url(values.pattern, "host");
             } else {
                 pattern = values.pattern;
             }
             pattern = preg_quote(pattern);
-            source = "@https?://" + pattern + "@";
-            sourceEntireUrl = true;
-            priority = 99;
+
+            record.type = 'entire_uri';
+            record.source = "@https?://" + pattern + "@";
+            record.regex = true;
+            record.priority = 99;
         }
 
-        var u = {
-            source: source,
-            sourceEntireUrl: sourceEntireUrl,
-            active: true,
-            priority: priority
-        };
-        this.grid.store.insert(0, u);
-
-		this.updateRows();
+        this.grid.store.insert(0, record);
+        this.updateRows();
 
         this.wizardWindow.close();
     }
-
 });

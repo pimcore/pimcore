@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
 use Pimcore\Tool\Session;
@@ -121,16 +122,15 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Request $request
-     * @param Model\Document $document
+     * @param Model\Document|Model\Document\PageSnippet $document
      */
     protected function addDataToDocument(Request $request, Model\Document $document)
     {
-        // if a persona variant get's saved, we have to load all other editables first, otherwise they will get deleted
-        if ($request->get('appendEditables') || ($document instanceof Model\Document\Page && $document->hasPersonaSpecificElements())) {
+        // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
+        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificElements())) {
             $document->getElements();
         }
 
-        // data
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
             foreach ($data as $name => $value) {
@@ -181,7 +181,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             Session::writeClose();
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -215,7 +215,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             $session->remove($key);
         }, 'pimcore_documents');
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -264,7 +264,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             $doc->saveVersion();
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**

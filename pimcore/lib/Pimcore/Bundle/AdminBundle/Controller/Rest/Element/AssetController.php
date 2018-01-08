@@ -299,7 +299,7 @@ class AssetController extends AbstractElementController
             return $asset;
         }
 
-        throw $this->createNotFoundException([
+        throw $this->createNotFoundResponseException([
             'msg'  => sprintf('Asset %d does not exist', (int)$id),
             'code' => static::ELEMENT_DOES_NOT_EXIST
         ]);

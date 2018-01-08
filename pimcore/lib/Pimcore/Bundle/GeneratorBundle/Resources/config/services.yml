@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\GeneratorBundle\Command\:
+        resource: '../../Command'

@@ -43,12 +43,12 @@ class VariantsController extends AdminController
                 $object->setKey($key);
                 $object->save();
 
-                return $this->json(['success' => true]);
+                return $this->adminJson(['success' => true]);
             } else {
                 throw new \Exception('No Object found for given id.');
             }
         } catch (\Exception $e) {
-            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -107,9 +107,9 @@ class VariantsController extends AdminController
                 try {
                     $object->save();
 
-                    return $this->json(['data' => DataObject\Service::gridObjectData($object, $request->get('fields')), 'success' => true]);
+                    return $this->adminJson(['data' => DataObject\Service::gridObjectData($object, $request->get('fields')), 'success' => true]);
                 } catch (\Exception $e) {
-                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
                 throw new \Exception('Permission denied');
@@ -211,7 +211,7 @@ class VariantsController extends AdminController
                     }
                 }
 
-                return $this->json(['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()]);
+                return $this->adminJson(['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()]);
             } else {
                 throw new \Exception('Permission denied');
             }

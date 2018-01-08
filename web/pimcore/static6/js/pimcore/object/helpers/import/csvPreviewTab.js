@@ -61,7 +61,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
         var dataGridCols = [];
         dataGridCols.push({
-            header: t("row"), sortable: false, dataIndex: "rowId", flex: 1, filter: 'numeric',
+            text: t("row"), sortable: false, dataIndex: "rowId", flex: 1, filter: 'numeric',
             renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                 if (!this.hasHeadline.getValue() || rowIndex > 0) {
                     return value;
@@ -70,7 +70,8 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
         });
 
         dataGridCols.push({
-                header: t("preview"),
+                text: t("preview"),
+                menuText: t("preview"),
                 xtype: 'actioncolumn',
                 width: 80,
                 tooltip: t('preview'),
@@ -95,7 +96,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
         for (var i = 0; i < data.dataFields.length - 1; i++) {
             dataGridCols.push({
-                header: t("field") + " " + i,
+                text: t("field") + " " + i,
                 sortable: false,
                 dataIndex: data.dataFields[i],
                 flex: 1,
@@ -105,7 +106,7 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
 
         }
 
-        var dataGrid = new Ext.grid.Panel({
+        this.dataGrid = new Ext.grid.Panel({
             store: dataStore,
             columns: dataGridCols,
             viewConfig: {
@@ -114,17 +115,18 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
             autoScroll: true
         });
 
-        var headRecord = dataStore.getAt(0);
+
         this.hasHeadline = new Ext.form.field.Checkbox(
             {
                 xtype: "checkbox",
                 name: "hasHeadRow",
                 fieldLabel: t("importFileHasHeadRow"),
                 listeners: {
-                    change: function (headRecord, dataGrid, checkbox, checked) {
-                        var settingsForm = this.callback.resolverSettingsPanel.setSkipHeaderRow(checked);
-                        dataGrid.getView().refresh();
-                    }.bind(this, headRecord, dataGrid)
+                    change: function (checkbox, checked) {
+                        this.callback.resolverSettingsPanel.setSkipHeaderRow(checked);
+                        this.config.resolverSettings.skipHeadRow = checked;
+                        this.dataGrid.getView().refresh();
+                    }.bind(this)
                 },
                 value: this.config.resolverSettings.skipHeadRow
             });
@@ -141,7 +143,13 @@ pimcore.object.helpers.import.csvPreviewTab = Class.create({
             bodyStyle: "padding: 10px;"
         });
 
-        this.previewPanel.add([formPanel, dataGrid]);
+        this.previewPanel.add([formPanel, this.dataGrid]);
+    },
+
+    setFirstLineHeadline: function (value) {
+        this.hasHeadline.setValue(value);
+        this.dataGrid.getView().refresh();
     }
+
 
 });

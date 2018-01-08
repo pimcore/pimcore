@@ -34,7 +34,7 @@ class DefaultAdapter implements AddressSourceAdapterInterface
     /**
      * @var int[]
      */
-    protected $personas;
+    protected $targetGroups = [];
 
     /**
      * @var int
@@ -53,9 +53,9 @@ class DefaultAdapter implements AddressSourceAdapterInterface
      */
     public function __construct($params)
     {
-        $this->class = $params['class'];
-        $this->condition = empty($params['condition']) ? $params['objectFilterSQL'] : $params['condition'];
-        $this->personas = $params['personas'];
+        $this->class        = $params['class'];
+        $this->condition    = empty($params['condition']) ? $params['objectFilterSQL'] : $params['condition'];
+        $this->targetGroups = $params['target_groups'] ?? [];
     }
 
     /**
@@ -71,25 +71,13 @@ class DefaultAdapter implements AddressSourceAdapterInterface
             if ($this->condition) {
                 $conditions[] = '(' . $this->condition . ')';
             }
-            if ($this->personas) {
-                $class = ClassDefinition::getByName($this->class);
-                if ($class && $class->getFieldDefinition('persona')) {
-                    $personas = [];
 
-                    if ($class->getFieldDefinition('persona') instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Persona) {
-                        foreach ($this->personas as $value) {
-                            if (!empty($value)) {
-                                $personas[] = $this->list->quote($value);
-                            }
-                        }
-                        $conditions[] = 'persona IN (' . implode(',', $personas) . ')';
-                    } elseif ($class->getFieldDefinition('persona') instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Personamultiselect) {
-                        $personasCondition = [];
-                        foreach ($this->personas as $value) {
-                            $personasCondition[] = 'persona LIKE ' . $this->list->quote('%,' . $value .  ',%');
-                        }
-                        $conditions[] = '(' . implode(' OR ', $personasCondition). ')';
-                    }
+            if ($this->targetGroups) {
+                $class = ClassDefinition::getByName($this->class);
+
+                if ($class) {
+                    $conditions = $this->addTargetGroupConditions($class, $conditions);
+                    $conditions = $this->addPersonaConditions($class, $conditions);
                 }
             }
 
@@ -101,6 +89,79 @@ class DefaultAdapter implements AddressSourceAdapterInterface
         }
 
         return $this->list;
+    }
+
+    /**
+     * Handle target group filters
+     *
+     * @param ClassDefinition $class
+     * @param array $conditions
+     *
+     * @return array
+     */
+    protected function addTargetGroupConditions(ClassDefinition $class, array $conditions): array
+    {
+        if (!$class->getFieldDefinition('targetGroup')) {
+            return $conditions;
+        }
+
+        $fieldDefinition = $class->getFieldDefinition('targetGroup');
+        if ($fieldDefinition instanceof ClassDefinition\Data\TargetGroup) {
+            $targetGroups = [];
+            foreach ($this->targetGroups as $value) {
+                if (!empty($value)) {
+                    $targetGroups[] = $this->list->quote($value);
+                }
+            }
+
+            $conditions[] = 'targetGroup IN (' . implode(',', $targetGroups) . ')';
+        } elseif ($fieldDefinition instanceof ClassDefinition\Data\TargetGroupMultiselect) {
+            $targetGroupsCondition = [];
+            foreach ($this->targetGroups as $value) {
+                $targetGroupsCondition[] = 'targetGroup LIKE ' . $this->list->quote('%,' . $value . ',%');
+            }
+
+            $conditions[] = '(' . implode(' OR ', $targetGroupsCondition) . ')';
+        }
+
+        return $conditions;
+    }
+
+    /**
+     * Handle deprecated persona filters. Note that this only handles the field "persona" which
+     * can either be Persona or Personamultiselect. The class parameter is only handled as target_groups.
+     *
+     * @param ClassDefinition $class
+     * @param array $conditions
+     *
+     * @return array
+     */
+    protected function addPersonaConditions(ClassDefinition $class, array $conditions): array
+    {
+        if (!$class->getFieldDefinition('persona')) {
+            return $conditions;
+        }
+
+        $fieldDefinition = $class->getFieldDefinition('persona');
+        if ($fieldDefinition instanceof ClassDefinition\Data\Persona) {
+            $personas = [];
+            foreach ($this->targetGroups as $value) {
+                if (!empty($value)) {
+                    $personas[] = $this->list->quote($value);
+                }
+            }
+
+            $conditions[] = 'persona IN (' . implode(',', $personas) . ')';
+        } elseif ($fieldDefinition instanceof ClassDefinition\Data\Personamultiselect) {
+            $personasCondition = [];
+            foreach ($this->targetGroups as $value) {
+                $personasCondition[] = 'persona LIKE ' . $this->list->quote('%,' . $value . ',%');
+            }
+
+            $conditions[] = '(' . implode(' OR ', $personasCondition) . ')';
+        }
+
+        return $conditions;
     }
 
     /**

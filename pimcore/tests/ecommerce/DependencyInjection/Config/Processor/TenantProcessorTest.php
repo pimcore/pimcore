@@ -285,7 +285,7 @@ class TenantProcessorTest extends TestCase
             ],
         ];
 
-        $this->setExpectedException(InvalidConfigurationException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->processor->mergeTenantConfig($input);
     }
 }

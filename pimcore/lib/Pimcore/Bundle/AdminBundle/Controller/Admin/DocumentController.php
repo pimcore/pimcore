@@ -24,6 +24,7 @@ use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +52,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $document = Document::getById($request->get('id'));
         $document = clone $document;
@@ -63,14 +64,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'data' => $data,
             'document' => $document
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');
 
         if ($document->isAllowed('view')) {
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(['success' => false, 'message' => 'missing_permission']);
+        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
     }
 
     /**
@@ -80,30 +81,32 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request)
+    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $document = Document::getById($request->get('node'));
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
+        $document = Document::getById($allParams['node']);
 
         $documents = [];
         $cv = false;
         if ($document->hasChildren()) {
-            $limit = intval($request->get('limit'));
-            if (!$request->get('limit')) {
+            $limit = intval($allParams['limit']);
+            if (!$allParams['limit']) {
                 $limit = 100000000;
             }
 
-            $offset = intval($request->get('start'));
+            $offset = intval($allParams['start']);
 
-            if ($request->get('view')) {
-                $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get('view'));
+            if ($allParams['view']) {
+                $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
             }
 
             $list = new Document\Listing();
-            if ($this->getUser()->isAdmin()) {
+            if ($this->getAdminUser()->isAdmin()) {
                 $list->setCondition('parentId = ? ', $document->getId());
             } else {
-                $userIds = $this->getUser()->getRoles();
-                $userIds[] = $this->getUser()->getId();
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
                 $list->setCondition('parentId = ? and
                                         (
                                         (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -119,6 +122,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $list->setOffset($offset);
 
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $list);
+
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $childsList,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $childsList = $beforeListLoadEvent->getArgument('list');
+
             $childsList = $list->load();
 
             foreach ($childsList as $childDocument) {
@@ -129,15 +140,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        if ($request->get('limit')) {
-            return $this->json([
+        if ($allParams['limit']) {
+            return $this->adminJson([
                 'offset' => $offset,
                 'limit' => $limit,
-                'total' => $document->getChildAmount($this->getUser()),
+                'total' => $document->getChildAmount($this->getAdminUser()),
                 'nodes' => $documents
             ]);
         } else {
-            return $this->json($documents);
+            return $this->adminJson($documents);
         }
     }
 
@@ -160,8 +171,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             if (!Document\Service::pathExists($intendedPath)) {
                 $createValues = [
-                    'userOwner' => $this->getUser()->getId(),
-                    'userModification' => $this->getUser()->getId(),
+                    'userOwner' => $this->getAdminUser()->getId(),
+                    'userModification' => $this->getAdminUser()->getId(),
                     'published' => false
                 ];
 
@@ -221,7 +232,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                             $document->save();
                             $success = true;
                         } catch (\Exception $e) {
-                            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                         }
                         break;
                     default:
@@ -242,7 +253,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                                 $document->save();
                                 $success = true;
                             } catch (\Exception $e) {
-                                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                             }
                             break;
                         } else {
@@ -273,13 +284,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $service->addTranslation($translationsBaseDocument, $document);
             }
 
-            return $this->json([
+            return $this->adminJson([
                 'success' => $success,
                 'id' => $document->getId(),
                 'type' => $document->getType()
             ]);
         } else {
-            return $this->json([
+            return $this->adminJson([
                 'success' => $success,
                 'message' => $errorMessage
             ]);
@@ -314,23 +325,23 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 }
             }
 
-            return $this->json(['success' => true, 'deleted' => $deletedItems]);
+            return $this->adminJson(['success' => true, 'deleted' => $deletedItems]);
         } elseif ($request->get('id')) {
             $document = Document::getById($request->get('id'));
             if ($document->isAllowed('delete')) {
                 try {
                     $document->delete();
 
-                    return $this->json(['success' => true]);
+                    return $this->adminJson(['success' => true]);
                 } catch (\Exception $e) {
                     Logger::err($e);
 
-                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
             }
         }
 
-        return $this->json(['success' => false, 'message' => 'missing_permission']);
+        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
     }
 
     /**
@@ -403,7 +414,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         // get the element key
         $elementKey = $document->getKey();
 
-        return $this->json([
+        return $this->adminJson([
             'hasDependencies' => $hasDependency,
             'childs' => $childs,
             'deletejobs' => $deleteJobs,
@@ -432,7 +443,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($document instanceof Document\PageSnippet) {
             $latestVersion = $document->getLatestVersion();
             if ($latestVersion && $latestVersion->getData()->getModificationDate() != $document->getModificationDate()) {
-                return $this->json(['success' => false, 'message' => "You can't relocate if there's a newer not published version"]);
+                return $this->adminJson(['success' => false, 'message' => "You can't relocate if there's a newer not published version"]);
             }
         }
 
@@ -500,34 +511,34 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     }
                 }
 
-                $document->setUserModification($this->getUser()->getId());
+                $document->setUserModification($this->getAdminUser()->getId());
                 try {
                     $document->save();
                     $success = true;
                 } catch (\Exception $e) {
-                    return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
                 $msg = 'Prevented moving document, because document with same path+key already exists or the document is locked. ID: ' . $document->getId();
                 Logger::debug($msg);
 
-                return $this->json(['success' => false, 'message' => $msg]);
+                return $this->adminJson(['success' => false, 'message' => $msg]);
             }
         } elseif ($document->isAllowed('rename') && $request->get('key')) {
             //just rename
             try {
                 $document->setKey($request->get('key'));
-                $document->setUserModification($this->getUser()->getId());
+                $document->setUserModification($this->getAdminUser()->getId());
                 $document->save();
                 $success = true;
             } catch (\Exception $e) {
-                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
         } else {
             Logger::debug('Prevented update document, because of missing permissions.');
         }
 
-        return $this->json(['success' => $success]);
+        return $this->adminJson(['success' => $success]);
     }
 
     /**
@@ -548,7 +559,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $type = Document\DocType::getById($id);
                 $type->delete();
 
-                return $this->json(['success' => true, 'data' => []]);
+                return $this->adminJson(['success' => true, 'data' => []]);
             } elseif ($request->get('xaction') == 'update') {
                 $data = $this->decodeJson($request->get('data'));
 
@@ -558,7 +569,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $type->setValues($data);
                 $type->save();
 
-                return $this->json(['data' => $type, 'success' => true]);
+                return $this->adminJson(['data' => $type, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -569,7 +580,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
                 $type->save();
 
-                return $this->json(['data' => $type, 'success' => true]);
+                return $this->adminJson(['data' => $type, 'success' => true]);
             }
         } else {
             // get list of types
@@ -578,15 +589,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $docTypes = [];
             foreach ($list->getDocTypes() as $type) {
-                if ($this->getUser()->isAllowed($type->getId(), 'docType')) {
+                if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
                     $docTypes[] = $type;
                 }
             }
 
-            return $this->json(['data' => $docTypes, 'success' => true, 'total' => count($docTypes)]);
+            return $this->adminJson(['data' => $docTypes, 'success' => true, 'total' => count($docTypes)]);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -618,7 +629,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $docTypes[] = $type;
         }
 
-        return $this->json(['docTypes' => $docTypes]);
+        return $this->adminJson(['docTypes' => $docTypes]);
     }
 
     /**
@@ -661,15 +672,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
             try {
                 $document->setKey($currentDocument->getKey());
                 $document->setPath($currentDocument->getRealPath());
-                $document->setUserModification($this->getUser()->getId());
+                $document->setUserModification($this->getAdminUser()->getId());
 
                 $document->save();
             } catch (\Exception $e) {
-                return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -700,7 +711,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $site->save();
 
         $site->setRootDocument(null); // do not send the document to the frontend
-        return $this->json($site);
+        return $this->adminJson($site);
     }
 
     /**
@@ -715,7 +726,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $site = Site::getByRootId(intval($request->get('id')));
         $site->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -805,7 +816,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             ]];
         }
 
-        return $this->json([
+        return $this->adminJson([
             'pastejobs' => $pasteJobs
         ]);
     }
@@ -840,7 +851,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'enableInheritance' => ($request->get('enableInheritance') == 'true') ? true : false
             ]);
 
-            $document->setUserModification($this->getUser()->getId());
+            $document->setUserModification($this->getAdminUser()->getId());
             $document->save();
         }
 
@@ -849,7 +860,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $session->set($transactionId, $idStore);
         }, 'pimcore_copy');
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'id' => $id
         ]);
@@ -917,11 +928,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
             } else {
                 Logger::error('could not execute copy/paste because of missing permissions on target [ ' . $targetId . ' ]');
 
-                return $this->json(['success' => false, 'message' => 'missing_permission']);
+                return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
             }
         }
 
-        return $this->json(['success' => $success]);
+        return $this->adminJson(['success' => $success]);
     }
 
     /**
@@ -1126,12 +1137,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
     public function getIdForPathAction(Request $request)
     {
         if ($doc = Document::getByPath($request->get('path'))) {
-            return $this->json([
+            return $this->adminJson([
                 'id' => $doc->getId(),
                 'type' => $doc->getType()
             ]);
         } else {
-            return $this->json(false);
+            return $this->adminJson(false);
         }
     }
 
@@ -1154,10 +1165,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($root->isAllowed('list')) {
             $nodeConfig = $this->getSeoNodeConfig($request, $root);
 
-            return $this->json($nodeConfig);
+            return $this->adminJson($nodeConfig);
         }
 
-        return $this->json(['success' => false, 'message' => 'missing_permission']);
+        return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
     }
 
     /**
@@ -1167,11 +1178,20 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return JsonResponse
      */
-    public function seopanelTreeAction(Request $request)
+    public function seopanelTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
+        $allParams = array_merge($request->request->all(), $request->query->all());
+
+        $filterPrepareEvent = new GenericEvent($this, [
+            'requestParams' => $allParams
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+
+        $allParams = $filterPrepareEvent->getArgument('requestParams');
+
         $this->checkPermission('seo_document_editor');
 
-        $document = Document::getById($request->get('node'));
+        $document = Document::getById($allParams['node']);
 
         $documents = [];
         if ($document->hasChildren()) {
@@ -1179,6 +1199,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $list->setCondition('parentId = ?', $document->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
+
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $list,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
 
@@ -1195,7 +1222,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        return $this->json($documents);
+        $result = ['data' => $documents, 'success' => true, 'total' => count($documents)];
+
+        $afterListLoadEvent = new GenericEvent($this, [
+            'list' => $result,
+            'context' => $allParams
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $result = $afterListLoadEvent->getArgument('list');
+
+        return $this->adminJson($result['data']);
     }
 
     /**
@@ -1235,7 +1271,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $new->save();
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1261,7 +1297,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success,
             'targetPath' => $targetPath
         ]);
@@ -1284,7 +1320,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $service->addTranslation($sourceDocument, $targetDocument);
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -1309,7 +1345,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success,
             'language' => $language
         ]);
@@ -1461,7 +1497,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         // check permissions
         $this->checkActionPermission($event, 'documents', ['docTypesAction']);
 
-        $this->_documentService = new Document\Service($this->getUser());
+        $this->_documentService = new Document\Service($this->getAdminUser());
     }
 
     /**

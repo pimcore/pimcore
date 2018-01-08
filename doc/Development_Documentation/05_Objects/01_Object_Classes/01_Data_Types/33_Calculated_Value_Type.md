@@ -1,4 +1,4 @@
-# Calculated Value Datatype (ExtJS6 only)
+# Calculated Value Datatype
 
 
 ## General

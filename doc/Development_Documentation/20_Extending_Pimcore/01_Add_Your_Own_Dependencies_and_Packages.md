@@ -14,7 +14,7 @@ composer require mtdowling/cron-expression
 You can install third party bundles via composer as shown above (as Pimcore is a standard Symfony application, you should
 be able to use any third-party Symfony bundle).
 
-To load a bundle with the application, it must first be registered on the kernel (see [bundles documentation](http://symfony.com/doc/current/bundles.html)).
+To load a bundle with the application, it must first be registered on the kernel (see [bundles documentation](http://symfony.com/doc/3.4/bundles.html)).
 By default there's a `registerBundles` method on the `AppKernel` which is expected to return a list of bundles to load. As
 Pimcore defines a list of default bundles in its base kernel and priority can be important for config auto loading, the
 Pimcore Kernel exposes a `registerBundlesToCollection`  method which allows to add bundles to a `BundleCollection` with

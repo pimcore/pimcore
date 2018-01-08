@@ -89,8 +89,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         //var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         var columns = [];
-        columns.push({header: 'ID', dataIndex: 'id', width: 50});
-        columns.push({header: t('reference'), dataIndex: 'path', flex: 1});
+        columns.push({text: 'ID', dataIndex: 'id', width: 50});
+        columns.push({text: t('reference'), dataIndex: 'path', flex: 1});
 
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
@@ -141,7 +141,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         fieldInfo: fieldInfo
                     });
                 }.bind(this, this.fieldConfig.columns[i]);
-            } else if(this.fieldConfig.columns[i].type == "bool") {
+            } else if(this.fieldConfig.columns[i].type === "bool" || this.fieldConfig.columns[i].type === "columnbool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (value) {
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
@@ -154,7 +154,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
                 if(readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
-                        header: ts(this.fieldConfig.columns[i].label),
+                        text: ts(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
@@ -162,10 +162,28 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                     continue;
                 }
 
+                if (!readOnly && this.fieldConfig.columns[i].type === "columnbool") {
+                    editor.addListener('change', function (el, newValue) {
+                        window.gridPanel = el.up('gridpanel');
+                        window.el = el;
+                        var gridPanel = el.up('gridpanel');
+                        var columnKey = el.up().column.dataIndex;
+                        if (newValue) {
+                            gridPanel.getStore().each(function (record) {
+                                if (!!record.get(columnKey)) {
+                                    // note, we don't need to check for the row here as the editor fires another change
+                                    // on blur, which updates the underlying record without a subsequent event being fired.
+                                    record.set(columnKey, false);
+                                }
+                            });
+                        }
+                    });
+                }
+
             }
 
             var columnConfig = {
-                header: ts(this.fieldConfig.columns[i].label),
+                text: ts(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
@@ -183,13 +201,14 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         }
 
 
-        columns.push({header: t("type"), dataIndex: 'type', width: 100});
-        columns.push({header: t("subtype"), dataIndex: 'subtype', width: 100});
+        columns.push({text: t("type"), dataIndex: 'type', width: 100});
+        columns.push({text: t("subtype"), dataIndex: 'subtype', width: 100});
 
 
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('up'),
                 width: 40,
                 items: [
                     {
@@ -207,6 +226,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             });
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('down'),
                 width: 40,
                 items: [
                     {
@@ -226,6 +246,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
         columns.push({
             xtype: 'actioncolumn',
+            menuText: t('open'),
             width: 40,
             items: [
                 {
@@ -247,6 +268,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('remove'),
                 width: 40,
                 items: [
                     {
@@ -825,7 +847,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);

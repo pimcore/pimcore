@@ -88,8 +88,8 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
             'id'          => $transaction->getId(),                     // Transaction ID. Required.
             'affiliation' => $transaction->getAffiliation() ?: '',      // Affiliation or store name.
             'revenue'     => $transaction->getTotal(),                  // Grand Total.
-            'shipping'    => $transaction->getShipping(),               // Shipping.
-            'tax'         => $transaction->getTax()                     // Tax.
+            'shipping'    => round($transaction->getShipping(), 2),               // Shipping.
+            'tax'         => round($transaction->getTax(), 2)                     // Tax.
         ]);
     }
 
@@ -107,7 +107,7 @@ class UniversalEcommerce extends Tracker implements ICheckoutComplete
             'sku'      => $item->getId(),                               // SKU/code.
             'name'     => $item->getName(),                             // Product name. Required.
             'category' => $item->getCategory(),                         // Category or variation.
-            'price'    => $item->getPrice(),                            // Unit price.
+            'price'    => round($item->getPrice(), 2),                            // Unit price.
             'quantity' => $item->getQuantity() ?: 1,                    // Quantity.
         ]);
     }

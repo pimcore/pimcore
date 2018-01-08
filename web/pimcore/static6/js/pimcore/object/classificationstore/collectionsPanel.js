@@ -96,8 +96,9 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         var gridColumns = [];
 
         gridColumns.push({
-            header: t("open"),
             xtype: 'actioncolumn',
+            text: t("open"),
+            menuText: t("open"),
             width: 40,
             items: [
                 {
@@ -113,19 +114,20 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             ]
         });
 
-        gridColumns.push({header: t("group_id"), flex: 60, sortable: true, dataIndex: 'groupId', filter: 'string'});
-        gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'groupName', filter: 'string'});
-        gridColumns.push({header: t("description"), flex: 200, sortable: true, dataIndex: 'groupDescription', filter: 'string'});
+        gridColumns.push({text: t("group_id"), flex: 60, sortable: true, dataIndex: 'groupId', filter: 'string'});
+        gridColumns.push({text: t("name"), flex: 200, sortable: true, dataIndex: 'groupName', filter: 'string'});
+        gridColumns.push({text: t("description"), flex: 200, sortable: true, dataIndex: 'groupDescription', filter: 'string'});
 
-        gridColumns.push({header: t('sorter'), width: 150, sortable: true, dataIndex: 'sorter',
+        gridColumns.push({text: t('sorter'), width: 150, sortable: true, dataIndex: 'sorter',
             tooltip: t("classificationstore_tooltip_sorter"),
             editor: new Ext.form.NumberField()
         });
 
 
         gridColumns.push({
-            hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('remove'),
+            hideable: false,
             width: 30,
             items: [
                 {
@@ -263,10 +265,10 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
         var gridColumns = [];
 
-        //gridColumns.push({header: t("store"), flex: 60, sortable: true, dataIndex: 'storeId', filter: 'string'});
-        gridColumns.push({header: "ID", flex: 60, sortable: true, dataIndex: 'id', filter: 'string'});
-        gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({header: t("description"), flex: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
+        //gridColumns.push({text: t("store"), flex: 60, sortable: true, dataIndex: 'storeId', filter: 'string'});
+        gridColumns.push({text: "ID", flex: 60, sortable: true, dataIndex: 'id', filter: 'string'});
+        gridColumns.push({text: t("name"), flex: 200, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({text: t("description"), flex: 300, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({}), filter: 'string'});
 
         var dateRenderer =  function(d) {
             if (d !== undefined) {
@@ -279,13 +281,13 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
 
         gridColumns.push(
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
                 hidden: true,
                 renderer: dateRenderer            }
         );
 
         gridColumns.push(
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
                 hidden: true,
                 renderer: dateRenderer
             }
@@ -294,6 +296,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('remove'),
             width: 30,
             items: [
                 {

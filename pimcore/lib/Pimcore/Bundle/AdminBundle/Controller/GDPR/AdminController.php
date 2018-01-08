@@ -36,7 +36,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             ];
         }
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     public function onKernelController(FilterControllerEvent $event)

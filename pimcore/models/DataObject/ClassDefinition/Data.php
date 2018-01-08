@@ -1136,6 +1136,10 @@ abstract class Data
     {
         $data = null;
 
+        if (isset($params['injectedData'])) {
+            return $params['injectedData'];
+        }
+
         $context = $params && $params['context'] ? $params['context'] : null;
 
         if ($context) {

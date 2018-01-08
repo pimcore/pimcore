@@ -46,8 +46,8 @@ pimcore.layout.portlets.modifiedDocuments = Class.create(pimcore.layout.portlets
         var grid = Ext.create('Ext.grid.Panel', {
             store: store,
             columns: [
-                {header: t('path'), sortable: false, dataIndex: 'path', flex: 1},
-                {header: t('date'), width: 150, sortable: false, renderer: function (d) {
+                {text: t('path'), sortable: false, dataIndex: 'path', flex: 1},
+                {text: t('date'), width: 150, sortable: false, renderer: function (d) {
                     var date = new Date(d * 1000);
                     return Ext.Date.format(date,"Y-m-d H:i:s");
                 }, dataIndex: 'date'}

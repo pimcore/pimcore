@@ -146,7 +146,10 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
             // this information is then grabbed in Pimcore_Controller_Action_Frontend::init() to set the correct locale
             params["pimcore_parentDocument"] = window.editWindow.document.id;
         } catch (e) {
+        }
 
+        if ('undefined' !== typeof window.editWindow.targetGroup && window.editWindow.targetGroup.getValue()) {
+            params['_ptg'] = window.editWindow.targetGroup.getValue();
         }
 
         var setContent = function(content) {

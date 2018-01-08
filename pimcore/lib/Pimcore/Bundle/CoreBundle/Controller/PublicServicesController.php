@@ -108,6 +108,8 @@ class PublicServicesController extends FrameworkController
                 Logger::error($message);
                 throw $this->createNotFoundException($message, $e);
             }
+        } else {
+            throw $this->createNotFoundException("Asset with ID '" . $assetId . "' doesn't exist");
         }
     }
 

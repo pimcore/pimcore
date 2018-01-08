@@ -41,7 +41,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     {
         // check for lock
         if (\Pimcore\Model\Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->json([
+            return $this->adminJson([
                 'editlock' => \Pimcore\Model\Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
@@ -81,10 +81,10 @@ class PrintpageControllerBase extends DocumentControllerBase
         if ($page->isAllowed('view')) {
             $data = $event->getArgument('data');
 
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -100,7 +100,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             $page = Document\Printpage::getById($request->get('id'));
 
             $page = $this->getLatestVersion($page);
-            $page->setUserModification($this->getUser()->getId());
+            $page->setUserModification($this->getAdminUser()->getId());
 
             // save to session
             $key = 'document_' . $request->get('id');
@@ -130,11 +130,11 @@ class PrintpageControllerBase extends DocumentControllerBase
                 try {
                     $page->save();
 
-                    return $this->json(['success' => true]);
+                    return $this->adminJson(['success' => true]);
                 } catch (\Exception $e) {
                     Logger::err($e);
 
-                    return $this->json(['success' => false, 'message'=>$e->getMessage()]);
+                    return $this->adminJson(['success' => false, 'message' =>$e->getMessage()]);
                 }
             } else {
                 if ($page->isAllowed('save')) {
@@ -143,17 +143,17 @@ class PrintpageControllerBase extends DocumentControllerBase
                     try {
                         $page->saveVersion();
 
-                        return $this->json(['success' => true]);
+                        return $this->adminJson(['success' => true]);
                     } catch (\Exception $e) {
                         Logger::err($e);
 
-                        return $this->json(['success' => false, 'message'=>$e->getMessage()]);
+                        return $this->adminJson(['success' => false, 'message' =>$e->getMessage()]);
                     }
                 }
             }
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -198,7 +198,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             $statusUpdate = Processor::getInstance()->getStatusUpdate($document->getId());
         }
 
-        return $this->json([
+        return $this->adminJson([
             'activeGenerateProcess' => !empty($inProgress),
             'date' => $date,
             'message' => $document->getLastGenerateMessage(),
@@ -270,7 +270,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
         $this->saveProcessingOptions($document->getId(), $allParams);
 
-        return $this->json(['success' => $result]);
+        return $this->adminJson(['success' => $result]);
     }
 
     /**
@@ -289,7 +289,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             $dirty = $printDocument->pdfIsDirty();
         }
 
-        return $this->json(['pdfDirty' => $dirty]);
+        return $this->adminJson(['pdfDirty' => $dirty]);
     }
 
     /**
@@ -322,7 +322,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             ];
         }
 
-        return $this->json(['options' => $returnValue]);
+        return $this->adminJson(['options' => $returnValue]);
     }
 
     /**
@@ -332,7 +332,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     private function getStoredProcessingOptions($documentId)
     {
-        $filename = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getUser()->getId() . '.psf';
+        $filename = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf';
         if (file_exists($filename)) {
             return \Pimcore\Tool\Serialize::unserialize(file_get_contents($filename));
         } else {
@@ -346,7 +346,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     private function saveProcessingOptions($documentId, $options)
     {
-        file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getUser()->getId() . '.psf', \Pimcore\Tool\Serialize::serialize($options));
+        file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf', \Pimcore\Tool\Serialize::serialize($options));
     }
 
     /**
@@ -360,6 +360,6 @@ class PrintpageControllerBase extends DocumentControllerBase
     {
         Processor::getInstance()->cancelGeneration(intval($request->get('id')));
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 }

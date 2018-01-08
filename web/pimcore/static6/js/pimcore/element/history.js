@@ -14,7 +14,6 @@
 pimcore.registerNS("pimcore.element.history");
 pimcore.element.history = Class.create({
 
-
     initialize:function () {
         this.getTabPanel();
     },
@@ -57,17 +56,19 @@ pimcore.element.history = Class.create({
                 data: storeValues
             });
 
-
             this.resultpanel = Ext.create('Ext.grid.Panel', {
                 store:this.store,
                 trackMouseOver:true,
                 disableSelection:true,
                 autoScroll:true,
-
+                plugins: [
+                    'gridfilters'
+                ],
                 columns:[
                         {
                             hideable: false,
                             xtype: 'actioncolumn',
+                            menuText: t('open'),
                             width: 30,
                             items: [
                                 {
@@ -88,33 +89,38 @@ pimcore.element.history = Class.create({
                             ]
                         },
                         {
-                            header:t("name"),
+                            text:t("name"),
                             dataIndex:'name',
                             flex:500,
                             align:'left',
-                            sortable:true
+                            sortable:true,
+                            filter: 'string'
                         }
 
                         ,
                         {
-                            header:t("type"),
+                            text:t("type"),
                             dataIndex:'type',
                             flex:80,
                             align:'left',
-                            sortable:true
+                            sortable:true,
+                            filter: 'list'
                         }
                         ,
                         {
-                            header:t("id"),
+                            text:t("id"),
                             dataIndex:'id',
                             flex:80,
                             align:'left',
-                            sortable:true
+                            sortable:true,
+                            filter: 'number'
                         }
                         ,
                         {
-                            header:t("time"),
+                            text:t("time"),
                             dataIndex:'time',
+                            filter: 'date',
+                            type: 'date',
                             flex:220,
                             align:'left',
                             sortable:true

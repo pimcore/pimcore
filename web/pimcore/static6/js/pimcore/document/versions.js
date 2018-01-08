@@ -67,13 +67,13 @@ pimcore.document.versions = Class.create({
             this.store.on("update", this.dataUpdate.bind(this));
 
             var checkPublic = Ext.create('Ext.grid.column.Check', {
-                header: t("public"),
+                text: t("public"),
                 dataIndex: "public",
                 width: 50
             });
 
             var checkShow = Ext.create('Ext.grid.column.Check', {
-                header: t("show"),
+                text: t("show"),
                 dataIndex: "show",
                 width: 50
             });
@@ -88,28 +88,28 @@ pimcore.document.versions = Class.create({
                 plugins: [this.cellEditing],
                 columns: [
                     checkShow,
-                    {header: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
+                    {text: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
                         if (d == this.document.data.modificationDate) {
                             metaData.tdCls = "pimcore_icon_publish";
                         }
                         return "";
                     }.bind(this), editable: false},
-                    {header: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
+                    {text: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
                         var date = new Date(d * 1000);
                         return Ext.Date.format(date, "Y-m-d H:i:s");
                     }, editable: false},
-                    {header: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
-                    {header: t("user"), sortable: true, dataIndex: 'name', editable: false},
-                    {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
+                    {text: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
+                    {text: t("user"), sortable: true, dataIndex: 'name', editable: false},
+                    {text: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
                         if (d != null){
                             var date = new Date(d * 1000);
                             return Ext.Date.format(date, "Y-m-d H:i:s");
                         }
                         return d;
                     }, editable: false},
-                    {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
+                    {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
                     checkPublic,
-                    {header: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}
+                    {text: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}
                 ],
                 columnLines: true,
                 trackMouseOver: true,

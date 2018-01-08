@@ -76,7 +76,7 @@ class PortalController extends AdminController implements EventedControllerInter
             }
         }
 
-        return $this->json($data);
+        return $this->adminJson($data);
     }
 
     /**
@@ -94,13 +94,13 @@ class PortalController extends AdminController implements EventedControllerInter
         $key = trim($request->get('key'));
 
         if ($dashboards[$key]) {
-            return $this->json(['success' => false, 'message' => 'dashboard_already_exists']);
+            return $this->adminJson(['success' => false, 'message' => 'dashboard_already_exists']);
         } elseif (!empty($key)) {
             $this->dashboardHelper->saveDashboard($key);
 
-            return $this->json(['success' => true]);
+            return $this->adminJson(['success' => true]);
         } else {
-            return $this->json(['success' => false, 'message' => 'empty']);
+            return $this->adminJson(['success' => false, 'message' => 'empty']);
         }
     }
 
@@ -116,7 +116,7 @@ class PortalController extends AdminController implements EventedControllerInter
         $key = $request->get('key');
         $this->dashboardHelper->deleteDashboard($key);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -128,7 +128,7 @@ class PortalController extends AdminController implements EventedControllerInter
      */
     public function getConfigurationAction(Request $request)
     {
-        return $this->json($this->getCurrentConfiguration($request));
+        return $this->adminJson($this->getCurrentConfiguration($request));
     }
 
     /**
@@ -156,7 +156,7 @@ class PortalController extends AdminController implements EventedControllerInter
         $config['positions'] = $newConfig;
         $this->saveConfiguration($request, $config);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -182,7 +182,7 @@ class PortalController extends AdminController implements EventedControllerInter
 
         $this->saveConfiguration($request, $config);
 
-        return $this->json(['success' => true, 'id' => $nextId]);
+        return $this->adminJson(['success' => true, 'id' => $nextId]);
     }
 
     /**
@@ -214,7 +214,7 @@ class PortalController extends AdminController implements EventedControllerInter
         $config['positions'] = $newConfig;
         $this->saveConfiguration($request, $config);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -241,7 +241,7 @@ class PortalController extends AdminController implements EventedControllerInter
         }
         $this->dashboardHelper->saveDashboard($key, $dashboard);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -309,7 +309,7 @@ class PortalController extends AdminController implements EventedControllerInter
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'entries' => $entries
         ]);
     }
@@ -338,11 +338,11 @@ class PortalController extends AdminController implements EventedControllerInter
                 'type' => $doc->getType(),
                 'path' => $doc->getRealFullPath(),
                 'date' => $doc->getModificationDate(),
-                'condition' => "userModification = '".$this->getUser()->getId()."'"
+                'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
             ];
         }
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -369,11 +369,11 @@ class PortalController extends AdminController implements EventedControllerInter
                 'type' => $doc->getType(),
                 'path' => $doc->getRealFullPath(),
                 'date' => $doc->getModificationDate(),
-                'condition' => "userModification = '".$this->getUser()->getId()."'"
+                'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
             ];
         }
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -389,7 +389,7 @@ class PortalController extends AdminController implements EventedControllerInter
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'o_modificationDate',
-            'condition' => "o_userModification = '".$this->getUser()->getId()."'"
+            'condition' => "o_userModification = '".$this->getAdminUser()->getId()."'"
         ]);
 
         $response = [];
@@ -404,7 +404,7 @@ class PortalController extends AdminController implements EventedControllerInter
             ];
         }
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -446,7 +446,7 @@ class PortalController extends AdminController implements EventedControllerInter
 
         $data = array_reverse($data);
 
-        return $this->json(['data' => $data]);
+        return $this->adminJson(['data' => $data]);
     }
 
     /**
@@ -477,7 +477,7 @@ class PortalController extends AdminController implements EventedControllerInter
             }
         }
 
-        return $this->json(['data' => $data]);
+        return $this->adminJson(['data' => $data]);
     }
 
     /**
@@ -490,7 +490,7 @@ class PortalController extends AdminController implements EventedControllerInter
             return;
         }
 
-        $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getUser());
+        $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getAdminUser());
     }
 
     /**

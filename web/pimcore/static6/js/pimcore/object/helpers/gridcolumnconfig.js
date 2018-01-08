@@ -32,7 +32,7 @@ pimcore.object.helpers.gridcolumnconfig = {
 
         var descriptionField = new Ext.form.TextArea({
             fieldLabel: t('description'),
-            height: 400,
+            // height: 200,
             value: this.settings.gridConfigDescription
         });
 
@@ -119,15 +119,17 @@ pimcore.object.helpers.gridcolumnconfig = {
         this.buildColumnConfigMenu();
     },
 
-    addGridConfigMenuItems: function(menu, list) {
+    addGridConfigMenuItems: function(menu, list, onlyConfigs) {
         for (var i = 0; i < list.length; i++) {
             var disabled = false;
             var config = list[i];
             var text = config["name"];
             if (config.id == this.settings.gridConfigId) {
                 text = this.settings.gridConfigName;
-                text = "<b>" + text + "</b>";
-                disabled = true;
+                if (!onlyConfigs) {
+                    text = "<b>" + text + "</b>";
+                    disabled = true;
+                }
             }
             var menuConfig = {
                 text: text,
@@ -140,36 +142,38 @@ pimcore.object.helpers.gridcolumnconfig = {
         }
     },
 
-    buildColumnConfigMenu: function () {
+    buildColumnConfigMenu: function (onlyConfigs) {
         var menu = this.columnConfigButton.getMenu();
         menu.removeAll();
 
-        menu.add({
-            text: t('save_as_copy'),
-            iconCls: "pimcore_icon_save",
-            handler: this.saveConfig.bind(this, true)
-        });
+        if (!onlyConfigs) {
+            menu.add({
+                text: t('save_as_copy'),
+                iconCls: "pimcore_icon_save",
+                handler: this.saveConfig.bind(this, true)
+            });
 
-        menu.add({
-            text: t('set_as_favourite'),
-            iconCls: "pimcore_icon_favourite",
-            handler: function () {
-                pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true);
-            }.bind(this)
-        });
+            menu.add({
+                text: t('set_as_favourite'),
+                iconCls: "pimcore_icon_favourite",
+                handler: function () {
+                    pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true);
+                }.bind(this)
+            });
 
-        menu.add({
-            text: t('remove_config'),
-            iconCls: "pimcore_icon_delete",
-            disabled: !this.settings.gridConfigId || this.settings.isShared,
-            handler: this.deleteGridConfig.bind(this)
-        });
+            menu.add({
+                text: t('remove_config'),
+                iconCls: "pimcore_icon_delete",
+                disabled: !this.settings.gridConfigId || this.settings.isShared,
+                handler: this.deleteGridConfig.bind(this)
+            });
 
-        menu.add('-');
+            menu.add('-');
+        }
 
         var disabled = false;
         var text = t('predefined');
-        if (!this.settings.gridConfigId) {
+        if (!this.settings.gridConfigId && !onlyConfigs) {
             text = "<b>" + text + "</b>";
             disabled = true;
 
@@ -186,12 +190,12 @@ pimcore.object.helpers.gridcolumnconfig = {
         });
 
         if (this.availableConfigs && this.availableConfigs.length > 0) {
-            this.addGridConfigMenuItems(menu, this.availableConfigs);
+            this.addGridConfigMenuItems(menu, this.availableConfigs, onlyConfigs);
         }
 
         if (this.sharedConfigs && this.sharedConfigs.length > 0) {
             menu.add('-');
-            this.addGridConfigMenuItems(menu, this.sharedConfigs);
+            this.addGridConfigMenuItems(menu, this.sharedConfigs, onlyConfigs);
         }
     },
 

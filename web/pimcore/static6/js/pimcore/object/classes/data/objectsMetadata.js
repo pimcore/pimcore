@@ -238,10 +238,10 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
 
 
         var typesColumns = [
-            {header: t("position"), width: 65, sortable: true, dataIndex: 'position',
+            {text: t("position"), width: 65, sortable: true, dataIndex: 'position',
                 editor: new Ext.form.NumberField({})},
-            {header: t("key"), flex: 40, sortable: true, dataIndex: 'key', editor: keyTextField},
-            {header: t("label"), flex: 40, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
+            {text: t("key"), flex: 40, sortable: true, dataIndex: 'key', editor: keyTextField},
+            {text: t("label"), flex: 40, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
         ];
 
         if(hasType) {
@@ -272,13 +272,13 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), width: 100, sortable: true, dataIndex: 'type', editor: typeComboBox,
+            typesColumns.push({text: t("type"), width: 100, sortable: true, dataIndex: 'type', editor: typeComboBox,
                 renderer: function(value) {
                     return types[value];
                 }});
-            typesColumns.push({header: t("value"), flex: 80, sortable: true, dataIndex: 'value',
+            typesColumns.push({text: t("value"), flex: 80, sortable: true, dataIndex: 'value',
                 editor: new Ext.form.TextField({})});
-            typesColumns.push({header: t("width"), width: 80, sortable: true, dataIndex: 'width',
+            typesColumns.push({text: t("width"), width: 80, sortable: true, dataIndex: 'width',
                 editor: new Ext.form.NumberField({})});
 
 

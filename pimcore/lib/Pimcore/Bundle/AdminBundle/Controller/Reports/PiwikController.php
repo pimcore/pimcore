@@ -22,9 +22,10 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\ReportBroker;
 use Pimcore\Analytics\Piwik\WidgetBroker;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
-use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -45,7 +46,7 @@ class PiwikController extends ReportsControllerBase
 
         $reports = $reportBroker->getReports();
 
-        return $this->jsonResponse($reports);
+        return $this->json($reports);
     }
 
     /**
@@ -62,7 +63,7 @@ class PiwikController extends ReportsControllerBase
         try {
             $report = $reportBroker->getReport((string)$report);
 
-            return $this->jsonResponse($report);
+            return $this->json($report);
         } catch (\InvalidArgumentException $e) {
             throw $this->createNotFoundException($e->getMessage());
         }
@@ -92,7 +93,7 @@ class PiwikController extends ReportsControllerBase
             ];
         }
 
-        return $this->jsonResponse($data);
+        return $this->json($data);
     }
 
     /**
@@ -126,7 +127,7 @@ class PiwikController extends ReportsControllerBase
             ];
         }
 
-        return $this->jsonResponse(['data' => $sites]);
+        return $this->json(['data' => $sites]);
     }
 
     /**
@@ -143,32 +144,40 @@ class PiwikController extends ReportsControllerBase
 
         $widgetReferences = $widgetBroker->getWidgetReferences($configKey);
 
-        return $this->jsonResponse(['data' => $widgetReferences]);
+        return $this->json(['data' => $widgetReferences]);
     }
 
     /**
      * @Route("/portal-widgets/{configKey}/{widgetId}")
      *
+     * @param Request $request
      * @param WidgetBroker $widgetBroker
      * @param string $configKey
      * @param string $widgetId
      *
      * @return JsonResponse
      */
-    public function portalWidgetAction(WidgetBroker $widgetBroker, string $configKey, string $widgetId)
+    public function portalWidgetAction(Request $request, WidgetBroker $widgetBroker, string $configKey, string $widgetId)
     {
         $this->checkPermission('piwik_reports');
 
+        $params = [];
+        foreach (['date', 'period'] as $param) {
+            if ($request->get($param)) {
+                $params[$param] = urlencode($request->get($param));
+            }
+        }
+
         try {
-            $widgetConfig = $widgetBroker->getWidgetConfig($widgetId, $configKey);
+            $widgetConfig = $widgetBroker->getWidgetConfig($widgetId, $configKey, null, $params);
         } catch (\InvalidArgumentException $e) {
-            return $this->jsonResponse([
+            return $this->json([
                 'success' => false,
                 'message' => $e->getMessage()
             ], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        return $this->jsonResponse($widgetConfig);
+        return $this->json($widgetConfig);
     }
 
     /**
@@ -219,21 +228,5 @@ class PiwikController extends ReportsControllerBase
         return $this->json([
             'site_id' => $siteId
         ]);
-    }
-
-    /**
-     * Serializes JSON data through Symfony's serializer, not the Pimcore admin one
-     * to make use of all serializer features.
-     *
-     * @param $data
-     * @param int $status
-     * @param array $headers
-     * @param array $context
-     *
-     * @return JsonResponse
-     */
-    private function jsonResponse($data, int $status = JsonResponse::HTTP_OK, array $headers = [], array $context = []): JsonResponse
-    {
-        return $this->json($data, $status, $headers, $context, false);
     }
 }

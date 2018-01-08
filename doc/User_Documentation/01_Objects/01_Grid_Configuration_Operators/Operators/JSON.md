@@ -1,8 +1,8 @@
 # JSON
 
-JSON encode or decode
+![Symbol](../../../img/gridconfig/operator_json_symbol.png)
 
-![Setting](../../../img/gridconfig/operator_json_symbol.png)
+JSON encode or decode
 
 Sample:
 * Merge two numbers and return them as json encoded array

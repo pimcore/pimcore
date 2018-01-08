@@ -41,9 +41,9 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $reports = CustomReport\Config::getReportsList();
 
         if ($request->get('portlet')) {
-            return $this->json(['data' => $reports]);
+            return $this->adminJson(['data' => $reports]);
         } else {
-            return $this->json($reports);
+            return $this->adminJson($reports);
         }
     }
 
@@ -68,7 +68,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
             $success = true;
         }
 
-        return $this->json(['success' => $success, 'id' => $report->getName()]);
+        return $this->adminJson(['success' => $success, 'id' => $report->getName()]);
     }
 
     /**
@@ -83,7 +83,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $report = CustomReport\Config::getByName($request->get('name'));
         $report->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -117,7 +117,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
         $report->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -131,7 +131,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
     {
         $report = CustomReport\Config::getByName($request->get('name'));
 
-        return $this->json($report);
+        return $this->adminJson($report);
     }
 
     /**
@@ -159,7 +159,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
         $report->save();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -209,7 +209,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
             $errorMessage = $e->getMessage();
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success,
             'columns' => $result,
             'errorMessage' => $errorMessage
@@ -243,7 +243,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
             ];
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'reports' => $reports
         ]);
@@ -277,7 +277,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters, $config);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'data' => $result['data'],
             'total' => $result['total']
@@ -303,7 +303,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'data' => $result['data'],
         ]);
@@ -330,7 +330,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'data' => $result['data'],
             'total' => $result['total']

@@ -142,13 +142,13 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 width: 300,
                 store: this.selectionStore,
                 columns: [
-                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer:
+                    {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer:
                         function (value, metaData, record, rowIndex, colIndex, store) {
                             return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
                                 + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                         }
                     },
-                    {header: t("filename"), flex: 1, sortable: false, dataIndex: 'filename'}
+                    {text: t("filename"), flex: 1, sortable: false, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true
@@ -188,16 +188,16 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
     getResultPanel: function () {
         if (!this.resultPanel) {
             var columns = [
-                {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+                {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_'
                             + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
-                {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
-                {header: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
-                {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
-                {header: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
+                {text: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
+                {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
+                {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
+                {text: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         if(record.data.subtype == "image") {
                             return '<div name="' + t(record.data.subtype)

@@ -6,7 +6,7 @@ There are several different kinds of logs in Pimcore. All of them are located un
 This is definitely one of the most important logs and also the default logging location. 
 
 Pimcore uses Symfony default monolog logging with following channels: `pimcore`, `pimcore_api`, `session`. 
-For details see [Symfonys monolog docs](http://symfony.com/doc/current/logging.html).
+For details see [Symfonys monolog docs](http://symfony.com/doc/3.4/logging.html).
 
 The log file will be rotated and compressed if it gets larger than 200 MB. The archived logs 
 will be kept for 30 days.

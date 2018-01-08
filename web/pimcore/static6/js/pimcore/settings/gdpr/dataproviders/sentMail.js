@@ -46,18 +46,18 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
 
         var gridColumns = [{
-            header: "ID",
+            text: "ID",
             dataIndex: "id",
             flex: 40,
             hidden: true
         },{
-            header: "Document Id",
+            text: "Document Id",
             dataIndex: "documentId",
             flex: 130,
             hidden: true
         },
             {
-                header: t('email_log_sent_Date'),
+                text: t('email_log_sent_Date'),
                 dataIndex: "sentDate",
                 width: 150,
                 flex: false,
@@ -68,31 +68,31 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 }
             },
             {
-                header: t('email_log_from'),
+                text: t('email_log_from'),
                 sortable: false,
                 dataIndex: "from",
                 flex: 120
             },
             {
-                header: t('email_log_to'),
+                text: t('email_log_to'),
                 sortable: false,
                 dataIndex: "to",
                 flex: 120
             },
             {
-                header: t('email_log_cc'),
+                text: t('email_log_cc'),
                 sortable: false,
                 dataIndex: "cc",
                 flex: 120
             },
             {
-                header: t('email_log_bcc'),
+                text: t('email_log_bcc'),
                 sortable: false,
                 dataIndex: "bcc",
                 flex: 120
             },
             {
-                header: t('email_log_subject'),
+                text: t('email_log_subject'),
                 sortable: false,
                 dataIndex: "subject",
                 flex: 220
@@ -102,7 +102,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 sortable: false,
                 width: 50,
                 dataIndex: "emailLogExistsHtml",
-                header: t('email_log_html'),
+                text: t('email_log_html'),
+                menuText: t('email_log_html'),
                 items : [{
                     tooltip: t('email_log_show_html_email'),
                     icon: "/pimcore/static6/img/flat-color-icons/feedback.svg",
@@ -133,7 +134,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 sortable: false,
                 width: 50,
                 dataIndex: "emailLogExistsText",
-                header: t('email_log_text'),
+                text: t('email_log_text'),
+                menuText: t('email_log_text'),
                 hidden: true,
                 items : [{
                     tooltip: t('email_log_show_text_email'),
@@ -166,7 +168,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 width: 120,
                 dataIndex: "params",
                 hidden: false,
-                header: t('email_log_params'),
+                text: t('email_log_params'),
+                menuText: t('email_log_params'),
                 items : [{
                     tooltip: t('email_log_show_text_params'),
                     icon: "/pimcore/static6/img/flat-color-icons/info.svg",
@@ -193,12 +196,12 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                             columnLines: true,
                             columns:[
                                 new Ext.tree.Column({
-                                    header: t('email_log_property'),
+                                    text: t('email_log_property'),
                                     dataIndex: 'key',
                                     width: 230
                                 }),
                                 {
-                                    header: t('email_log_data'),
+                                    text: t('email_log_data'),
                                     width: 370,
                                     dataIndex: 'data',
                                     renderer: function(value, metadata, record) {
@@ -241,6 +244,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('gdpr_dataSource_export'),
                 width: 40,
                 items: [
                     {
@@ -255,6 +259,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
             },
             {
                 xtype: 'actioncolumn',
+                menuText: t('delete'),
                 width: 30,
                 items: [{
                     tooltip: t('delete'),

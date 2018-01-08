@@ -19,17 +19,24 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Db;
 use Pimcore\Logger;
-use Pimcore\Model;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Redirect;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
- * @method bool hasPersonaSpecificElements()
  */
-class Page extends Model\Document\PageSnippet
+class Page extends TargetingDocument
 {
-    const PERSONA_ELEMENT_PREFIX_PREFIXPART = 'persona_-';
-    const PERSONA_ELEMENT_PREFIX_SUFFIXPART = '-_';
+    /**
+     * @deprecated Will be removed in Pimcore 6.
+     */
+    const PERSONA_ELEMENT_PREFIX_PREFIXPART = TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX;
+
+    /**
+     * @deprecated Will be removed in Pimcore 6.
+     */
+    const PERSONA_ELEMENT_PREFIX_SUFFIXPART = TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX;
 
     /**
      * Contains the title of the page (meta-title)
@@ -63,16 +70,11 @@ class Page extends Model\Document\PageSnippet
     public $prettyUrl;
 
     /**
-     * comma separated IDs of personas
+     * Comma separated IDs of target groups
      *
      * @var string
      */
-    public $personas = '';
-
-    /**
-     * @var int
-     */
-    public $usePersona;
+    public $targetGroupIds = '';
 
     /**
      * @throws \Exception
@@ -286,141 +288,132 @@ class Page extends Model\Document\PageSnippet
     }
 
     /**
+     * Set linked Target Groups as set in properties panel as list of IDs
+     *
+     * @param string|array $targetGroupIds
+     */
+    public function setTargetGroupIds($targetGroupIds)
+    {
+        if (is_array($targetGroupIds)) {
+            $targetGroupIds = implode(',', $targetGroupIds);
+        }
+
+        $targetGroupIds = trim($targetGroupIds, ' ,');
+
+        if (!empty($targetGroupIds)) {
+            $targetGroupIds = ',' . $targetGroupIds . ',';
+        }
+
+        $this->targetGroupIds = $targetGroupIds;
+    }
+
+    /**
+     * Get serialized list of Target Group IDs
+     *
+     * @return string
+     */
+    public function getTargetGroupIds(): string
+    {
+        return $this->targetGroupIds;
+    }
+
+    /**
+     * Set assigned target groups
+     *
+     * @param TargetGroup[]|int[] $targetGroups
+     */
+    public function setTargetGroups(array $targetGroups)
+    {
+        $ids = array_map(function ($targetGroup) {
+            if (is_numeric($targetGroup)) {
+                return (int)$targetGroup;
+            } elseif ($targetGroup instanceof TargetGroup) {
+                return $targetGroup->getId();
+            }
+
+            return null;
+        }, $targetGroups);
+
+        $ids = array_filter($ids, function ($id) {
+            return null !== $id && $id > 0;
+        });
+
+        $this->setTargetGroupIds($ids);
+    }
+
+    /**
+     * Return list of assigned target groups (via properties panel)
+     *
+     * @return TargetGroup[]
+     */
+    public function getTargetGroups(): array
+    {
+        $ids = explode(',', $this->targetGroupIds);
+
+        $targetGroups = array_map(function ($id) {
+            $id = trim($id);
+            if (!empty($id)) {
+                $targetGroup = TargetGroup::getById($id);
+                if ($targetGroup) {
+                    return $targetGroup;
+                }
+            }
+        }, $ids);
+
+        $targetGroups = array_filter($targetGroups);
+
+        return $targetGroups;
+    }
+
+    /**
+     * @deprecated Use setTargetGroupIds instead. Will be removed in Pimcore 6.
+     *
      * @param string $personas
      */
     public function setPersonas($personas)
     {
-        if (is_array($personas)) {
-            $personas = implode(',', $personas);
-        }
-        $personas = trim($personas, ' ,');
-        if (!empty($personas)) {
-            $personas = ',' . $personas . ',';
-        }
-        $this->personas = $personas;
+        $this->setTargetGroupIds((array)$personas);
     }
 
     /**
+     * @deprecated Use getTargetGroupIds instead. Will be removed in Pimcore 6.
+     *
      * @return string
      */
     public function getPersonas()
     {
-        return $this->personas;
+        return $this->getTargetGroupIds();
     }
 
     /**
-     * @param null $personaId
-     *
-     * @return null|string
+     * @deprecated Use getTargetGroupElementPrefix instead. Will be removed in Pimcore 6.
      */
     public function getPersonaElementPrefix($personaId = null)
     {
-        $prefix = null;
-
-        if (!$personaId) {
-            $personaId = $this->getUsePersona();
-        }
-
-        if ($personaId) {
-            $prefix = self::PERSONA_ELEMENT_PREFIX_PREFIXPART . $personaId . self::PERSONA_ELEMENT_PREFIX_SUFFIXPART;
-        }
-
-        return $prefix;
+        return $this->getTargetGroupElementPrefix(null !== $personaId ? (int)$personaId : null);
     }
 
     /**
-     * @param $name
-     *
-     * @return string
+     * @deprecated Use getTargetGroupElementName instead. Will be removed in Pimcore 6.
      */
     public function getPersonaElementName($name)
     {
-        if ($this->getUsePersona() && !preg_match('/^' . preg_quote($this->getPersonaElementPrefix(), '/') . '/', $name)) {
-            $name = $this->getPersonaElementPrefix() . $name;
-        }
-
-        return $name;
+        return $this->getTargetGroupElementName((string)$name);
     }
 
     /**
-     * @param string $name
-     * @param string $data
-     */
-    public function setElement($name, $data)
-    {
-        if ($this->getUsePersona()) {
-            $name = $this->getPersonaElementName($name);
-            $data->setName($name);
-        }
-
-        return parent::setElement($name, $data);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return Model\Document\Tag
-     */
-    public function getElement($name)
-    {
-
-        // check if a persona is requested for this page, if yes deliver a different version of the element (prefixed)
-        if ($this->getUsePersona()) {
-            $personaName = $this->getPersonaElementName($name);
-
-            if ($this->hasElement($personaName)) {
-                $name = $personaName;
-            } else {
-                // if there's no dedicated content for this persona, inherit from the "original" content (unprefixed)
-                // and mark it as inherited so it is clear in the ui that the content is not specific to the selected persona
-                // replace all occurrences of the persona prefix, this is needed because of block-prefixes
-                $inheritedName = str_replace($this->getPersonaElementPrefix(), '', $name);
-                $inheritedElement = parent::getElement($inheritedName);
-                if ($inheritedElement) {
-                    $inheritedElement = clone $inheritedElement;
-                    $inheritedElement->setDao(null);
-                    $inheritedElement->setName($personaName);
-                    $inheritedElement->setInherited(true);
-                    $this->setElement($personaName, $inheritedElement);
-
-                    return $inheritedElement;
-                }
-            }
-        }
-
-        // delegate to default
-        return parent::getElement($name);
-    }
-
-    /**
-     * @param int $usePersona
+     * @deprecated Use setUseTargetGroup instead. Will be removed in Pimcore 6.
      */
     public function setUsePersona($usePersona)
     {
-        $this->usePersona = $usePersona;
+        $this->setUseTargetGroup(null !== $usePersona ? (int)$usePersona : null);
     }
 
     /**
-     * @return int
+     * @deprecated Use getUseTargetGroup instead. Will be removed in Pimcore 6.
      */
     public function getUsePersona()
     {
-        return $this->usePersona;
-    }
-
-    public function __sleep()
-    {
-        $finalVars = [];
-        $parentVars = parent::__sleep();
-
-        $blockedVars = ['usePersona'];
-
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return $this->getUseTargetGroup();
     }
 }

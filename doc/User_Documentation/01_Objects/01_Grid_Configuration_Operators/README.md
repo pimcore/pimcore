@@ -1,5 +1,7 @@
 # Grid Column Configuration Operators (Experimental)
 
+> This is an experimental feature and subject to change without notice.
+
 Grid Configuration Operators allow you to add special columns to your grid which first are somehow assembled or converted using operators listed below.
 
 Please note that the portfolio of available operators (and how they work in detail) may change until release 5.1.0).
@@ -28,6 +30,7 @@ This can be changed by defining an alternative renderer. In the following exampl
 * [CaseConverter](./Operators/CaseConverter.md)
 * [CharCounter](./Operators/CharCounter.md)
 * [Concatenator](./Operators/Concatenator.md)
+* [DateFormatter](./Operators/DateFormatter.md)
 * [ElementCounter](./Operators/ElementCounter.md)
 * [FieldCollectionGetter](./Operators/FieldCollectionGetter.md)
 * [IsEqual](./Operators/IsEqual.md)
@@ -35,6 +38,8 @@ This can be changed by defining an alternative renderer. In the following exampl
 * [LFExpander](./Operators/LFExpander.md)
 * [LocaleSwitcher](./Operators/LocaleSwitcher.md)
 * [Merge](./Operators/Merge.md)
+* [ObjectBrickGetter](./Operators/ObjectBrickGetter.md)
+* [ObjectFieldGetter](./Operators/ObjectFieldGetter.md)
 * [PHP Serialize/Unserialize](./Operators/PHP.md)
 * [PHPCode](./Operators/PHPCode.md)
 * [RequiredBy](./Operators/RequiredBy.md)

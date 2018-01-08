@@ -15,7 +15,6 @@
 namespace Pimcore\Templating\Renderer;
 
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Loader\TagLoaderInterface;
@@ -71,13 +70,9 @@ class TagRenderer implements LoggerAwareInterface
     public function getTag(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
     {
         $type = strtolower($type);
-        $name = Tag::buildTagName($type, $inputName, $document);
 
-        //personal element name needed for real name of tag in case of personalized content - in order to build hierarchical name correctly
-        $personalElementName = $inputName;
-        if ($document && $document instanceof Page) {
-            $personalElementName = $document->getPersonaElementName($inputName);
-        }
+        $name     = Tag::buildTagName($type, $inputName, $document);
+        $realName = Tag::buildTagRealName($inputName, $document);
 
         if (null === $editmode) {
             $editmode = $this->editmodeResolver->isEditmode();
@@ -108,7 +103,7 @@ class TagRenderer implements LoggerAwareInterface
                 }
 
                 // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
-                $tag->setRealName($personalElementName);
+                $tag->setRealName($realName);
             }
 
             return $tag;

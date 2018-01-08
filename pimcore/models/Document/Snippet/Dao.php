@@ -18,12 +18,15 @@
 namespace Pimcore\Model\Document\Snippet;
 
 use Pimcore\Model;
+use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
  * @property \Pimcore\Model\Document\Snippet $model
  */
-class Dao extends Model\Document\PageSnippet\Dao
+class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface
 {
+    use Model\Document\Targeting\TargetingDocumentDaoTrait;
+
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
