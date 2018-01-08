@@ -317,7 +317,7 @@ class Tool
      *
      * @return null|Request
      */
-    private static function resolveRequest(Request $request = null)
+    public static function resolveRequest(Request $request = null)
     {
         if (null === $request) {
             // do an extra check for the container as we might be in a state where no container is set yet

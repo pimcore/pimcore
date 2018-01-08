@@ -40,7 +40,7 @@ trait SymfonyProxyTestTrait
 
         $reflector = new \ReflectionClass($tagAwareAdapter);
 
-        $property = $reflector->getProperty('itemsAdapter');
+        $property = $reflector->getProperty('pool');
         $property->setAccessible(true);
 
         return $property->getValue($tagAwareAdapter);

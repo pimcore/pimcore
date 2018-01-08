@@ -72,55 +72,55 @@ pimcore.document.seopanel = Class.create({
 
         var columns = [{
             xtype: 'treecolumn',
-            header: t("name"),
+            text: t("name"),
             dataIndex: 'text',
             width: 300
         },{
-            header: t("pretty_url"),
+            text: t("pretty_url"),
             dataIndex: 'prettyUrl',
             width: 180
         },{
-            header: t("title"),
+            text: t("title"),
             dataIndex: 'title',
             width: 230
         },{
-            header: t("length"),
+            text: t("length"),
             dataIndex: 'title_length',
             width: 50
         },{
-            header: t("description"),
+            text: t("description"),
             dataIndex: 'description',
             width: 400
         },{
-            header: t("length"),
+            text: t("length"),
             dataIndex: 'description_length',
             width: 50
         },{
-            header: "H1",
+            text: "H1",
             dataIndex: 'h1',
             width: 25
         },{
-            header: t("h1_text"),
+            text: t("h1_text"),
             dataIndex: 'h1_text',
             width: 300
         },{
-            header: "H2-5",
+            text: "H2-5",
             dataIndex: 'hx',
             width: 35
         },{
-            header: t("images_with_alt"),
+            text: t("images_with_alt"),
             dataIndex: 'imgwithalt',
             width: 120
         },{
-            header: t("images_without_alt"),
+            text: t("images_without_alt"),
             dataIndex: 'imgwithoutalt',
             width: 120
         },{
-            header: t("links"),
+            text: t("links"),
             dataIndex: 'links',
             width: 50
         },{
-            header: t("external_links"),
+            text: t("external_links"),
             dataIndex: 'externallinks',
             width: 90
         }];

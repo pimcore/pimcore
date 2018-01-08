@@ -172,29 +172,29 @@ pimcore.log.admin = Class.create({
                 autoScroll: true,
                 region: "center",
                 columns:[{
-                    header: t("log_timestamp"),
+                    text: t("log_timestamp"),
                     dataIndex: 'timestamp',
                     width: 150,
                     align: 'left',
                     sortable: true
                 },{
-                    header: t("log_pid"),
+                    text: t("log_pid"),
                     dataIndex: 'pid',
                     flex: 40,
                     sortable: true,
                     hidden: true
                 },{
-                    header: t("log_message"),
+                    text: t("log_message"),
                     dataIndex: 'message',
                     flex: 220,
                     sortable: true
                 },{
-                    header: t("log_type"),
+                    text: t("log_type"),
                     dataIndex: 'priority',
                     flex: 25,
                     sortable: true
                 },{
-                    header: t("log_fileobject"),
+                    text: t("log_fileobject"),
                     dataIndex: 'fileobject',
                     flex: 70,
                     renderer: function(value, p, record){
@@ -206,17 +206,17 @@ pimcore.log.admin = Class.create({
                     },
                     sortable: true
                 },{
-                    header: t("log_relatedobject"),
+                    text: t("log_relatedobject"),
                     dataIndex: 'relatedobject',
                     flex: 20,
                     sortable: false
                 },{
-                    header: t("log_component"),
+                    text: t("log_component"),
                     dataIndex: 'component',
                     flex: 50,
                     sortable: true
                 },{
-                    header: t("log_source"),
+                    text: t("log_source"),
                     dataIndex: 'source',
                     flex: 50,
                     sortable: true

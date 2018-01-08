@@ -51,7 +51,7 @@ pimcore.layout.portlets.feed = Class.create(pimcore.layout.portlets.abstract, {
         var grid = new Ext.grid.GridPanel({
             store: this.store,
             columns: [
-                {header: t('title'), id: "title", sortable: false, dataIndex: 'title', flex: 1}
+                {text: t('title'), id: "title", sortable: false, dataIndex: 'title', flex: 1}
             ],
             stripeRows: true
         });

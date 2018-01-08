@@ -418,26 +418,25 @@ Ext.onReady(function () {
     sitesStore.load();
     pimcore.globalmanager.add("sites", sitesStore);
 
-    // personas
-    Ext.define('pimcore.model.personas', {
+    // target groups
+    Ext.define('pimcore.model.target_groups', {
         extend: 'Ext.data.Model',
         fields: ["id", "text"]
     });
 
-    // personas
-    var personaStore = Ext.create('Ext.data.JsonStore', {
-        model: "pimcore.model.personas",
+    var targetGroupStore = Ext.create('Ext.data.JsonStore', {
+        model: "pimcore.model.target_groups",
         proxy: {
             type: 'ajax',
-            url: '/admin/reports/targeting/persona-list',
+            url: '/admin/targeting/target-group/list',
             reader: {
                 type: 'json'
             }
         }
     });
 
-    personaStore.load();
-    pimcore.globalmanager.add("personas", personaStore);
+    targetGroupStore.load();
+    pimcore.globalmanager.add("target_group_store", targetGroupStore);
 
     // STATUSBAR
     // check for devmode

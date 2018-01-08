@@ -34,7 +34,7 @@ pimcore.settings.user.workspace.object = Class.create({
         var storeFields = ["path"];
 
         var typesColumns = [
-            {header: t("path"), width: 200, sortable: false, dataIndex: 'path',
+            {text: t("path"), width: 200, sortable: false, dataIndex: 'path',
                                 editor: new Ext.form.TextField({}),
                                 tdCls: "pimcore_property_droptarget"
             }
@@ -45,7 +45,7 @@ pimcore.settings.user.workspace.object = Class.create({
 
             // columns
             check = new Ext.grid.column.Check({
-                header: t(availableRights[i]),
+                text: t(availableRights[i]),
                 dataIndex: availableRights[i],
                 width: 50,
                 flex: 1
@@ -64,7 +64,8 @@ pimcore.settings.user.workspace.object = Class.create({
 
         typesColumns.push({
             xtype: 'actioncolumn',
-            header: t('special_settings'),
+            text: t('special_settings'),
+            menuText: t('special_settings'),
             width: 40,
             items: [{
                 tooltip: t('special_settings_tooltip'),
@@ -89,6 +90,7 @@ pimcore.settings.user.workspace.object = Class.create({
 
         typesColumns.push({
             xtype: 'actioncolumn',
+            menuText: t('delete'),
             width: 40,
             items: [{
                 tooltip: t('delete'),

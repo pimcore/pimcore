@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -71,7 +72,12 @@ class Date extends Model\DataObject\ClassDefinition\Data
     public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data) {
-            return $data->getTimestamp();
+            $result = $data->getTimestamp();
+            if ($this->getColumnType() == 'date') {
+                $result = date('Y-m-d', $result);
+            }
+
+            return $result;
         }
     }
 
@@ -87,10 +93,17 @@ class Date extends Model\DataObject\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
-            return $this->getDateFromTimestamp($data);
-        }
+            if ($this->getColumnType() == 'datetime') {
+                $data = strtotime($data);
+                if ($data === false) {
+                    return null;
+                }
+            }
 
-        return null;
+            $result = $this->getDateFromTimestamp($data);
+
+            return $result;
+        }
     }
 
     /**
@@ -104,9 +117,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        if ($data) {
-            return $data->getTimestamp();
-        }
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -392,5 +403,41 @@ class Date extends Model\DataObject\ClassDefinition\Data
         $result[] = $diffdata;
 
         return $result;
+    }
+
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     *
+     * @param $value
+     * @param $operator
+     * @param array $params optional params used to change the behavior
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        $timestamp = $value;
+
+        if ($this->getColumnType() == 'date') {
+            $value = date('Y-m-d', $value);
+        }
+
+        if ($operator == '=') {
+            $db = Db::get();
+
+            if ($this->getColumnType() == 'date') {
+                $condition = '`' . $params['name'] . ' = '. $db->quote($value);
+
+                return $condition;
+            } else {
+                $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
+                $filterField = $params['name'] ? $params['name'] : $this->getName();
+                $condition = '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
+
+                return $condition;
+            }
+        }
+
+        return parent::getFilterConditionExt($value, $operator, $params);
     }
 }

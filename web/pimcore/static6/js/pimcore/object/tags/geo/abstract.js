@@ -61,7 +61,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function(field) {
         return {
-            header: ts(field.label),
+            text: ts(field.label),
             width: 150,
             sortable: false,
             dataIndex: field.key,

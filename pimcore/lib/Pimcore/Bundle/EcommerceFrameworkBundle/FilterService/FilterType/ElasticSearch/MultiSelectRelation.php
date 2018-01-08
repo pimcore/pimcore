@@ -69,7 +69,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
                         $productList->addRelationCondition($field, $value);
                     }
                 } else {
-                    $productList->addRelationCondition($field, ['terms' => [$field => $quotedValues]]);
+                    $productList->addRelationCondition($field, ['terms' => ['relations.' . $field => $quotedValues]]);
                 }
             }
         }

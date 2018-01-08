@@ -21,16 +21,6 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
-        var classStore = pimcore.globalmanager.get("object_types_store");
-        var typeOf = typeof(className);
-        var className = classStore.getById(fieldConfig.allowedClassId);
-
-        if (typeOf != "undefined") {
-            classNameText = className.data.text;
-        } else {
-            classNameText = "";
-        }
-
 
         if (data) {
             this.data = data;
@@ -159,6 +149,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
 
         columns.push({
             xtype: 'actioncolumn',
+            menuText: t('open'),
             width: 40,
             items: [
                 {
@@ -175,6 +166,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
+                menuText: t('remove'),
                 width: 40,
                 items: [
                     {
@@ -202,6 +194,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
                 {dataIndex: "path", header: t("path"), flex: 200},
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('open'),
                     width: 40,
                     items: [
                         {
@@ -216,6 +209,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
                 },
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('remove'),
                     width: 40,
                     items: [
                         {
@@ -230,7 +224,6 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
             ]
             ,
             cls: cls,
-            //autoExpandColumn: 'path',
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: {
@@ -340,7 +333,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             allowedClasses = [];
             for (var i = 0; i < this.fieldConfig.classes.length; i++) {
-                allowedClasses.push(this.fieldConfig.classes[i].classes);
+                allowedClasses.push(this.fieldConfig.classes[i]);
             }
         }
 

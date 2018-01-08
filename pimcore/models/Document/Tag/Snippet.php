@@ -21,6 +21,7 @@ use Pimcore\Cache;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 
 /**
@@ -102,61 +103,73 @@ class Snippet extends Model\Document\Tag
      */
     public function frontend()
     {
-        // TODO inject area handler via DI when tags are built through container
-        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+        // TODO inject services via DI when tags are built through container
+        $container = \Pimcore::getContainer();
+
+        $tagHandler            = $container->get('pimcore.document.tag.handler');
+        $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
 
         if (!$tagHandler->supports($this->view)) {
             return null;
         }
 
         try {
-            if ($this->snippet instanceof Document\Snippet) {
-                $params = $this->options;
-                $params['document'] = $this->snippet;
+            if (!$this->snippet instanceof Document\Snippet) {
+                return null;
+            }
 
-                if ($this->snippet->isPublished()) {
-
-                    // check if output-cache is enabled, if so, we're also using the cache here
-                    $cacheKey = null;
-                    if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
-
-                        // cleanup params to avoid serializing Element\ElementInterface objects
-                        $cacheParams = $params;
-                        array_walk($cacheParams, function (&$value, $key) {
-                            if ($value instanceof Model\Element\ElementInterface) {
-                                $value = $value->getId();
-                            }
-                        });
-
-                        $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
-                        if ($content = Cache::load($cacheKey)) {
-                            return $content;
-                        }
-                    }
-
-                    $content = $tagHandler->renderAction(
-                        $this->view,
-                        $this->snippet->getController(),
-                        $this->snippet->getAction(),
-                        $this->snippet->getModule(),
-                        $params
-                    );
-
-                    // write contents to the cache, if output-cache is enabled
-                    if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
-                        Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
-                    }
-
-                    return $content;
-                }
-
+            if (!$this->snippet->isPublished()) {
                 return '';
             }
+
+            // apply best matching target group (if any)
+            $targetingConfigurator->configureTargetGroup($this->snippet);
+
+            $params = $this->options;
+            $params['document'] = $this->snippet;
+
+            // check if output-cache is enabled, if so, we're also using the cache here
+            $cacheKey = null;
+            if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
+
+                // cleanup params to avoid serializing Element\ElementInterface objects
+                $cacheParams = $params;
+                array_walk($cacheParams, function (&$value, $key) {
+                    if ($value instanceof Model\Element\ElementInterface) {
+                        $value = $value->getId();
+                    }
+                });
+
+                // TODO is this enough for cache or should we disable caching completely?
+                if ($this->snippet->getUseTargetGroup()) {
+                    $params['target_group'] = $this->snippet->getUseTargetGroup();
+                }
+
+                $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
+                if ($content = Cache::load($cacheKey)) {
+                    return $content;
+                }
+            }
+
+            $content = $tagHandler->renderAction(
+                $this->view,
+                $this->snippet->getController(),
+                $this->snippet->getAction(),
+                $this->snippet->getModule(),
+                $params
+            );
+
+            // write contents to the cache, if output-cache is enabled
+            if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
+                Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
+            }
+
+            return $content;
         } catch (\Exception $e) {
             Logger::error($e);
 
             if (\Pimcore::inDebugMode()) {
-                return 'ERROR: ' . $e->getMessage() . ' (for details see debug.log)';
+                return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
             }
         }
     }

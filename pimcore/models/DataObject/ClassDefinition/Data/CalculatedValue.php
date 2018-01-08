@@ -412,7 +412,11 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
-        $code .= "\t" . '$data->setContextualData("fieldcollection", $this->getFieldname(), $this->getIndex(), null);' . "\n";
+
+        $code .= "\t" . '$fcDef = DataObject\Fieldcollection\Definition::getByKey($this->getType());' . "\n";
+        $code .= "\t" . '$definition = $fcDef->getFieldDefinition(\'' . $this->getName() . '\');' . "\n";
+
+        $code .= "\t" . '$data->setContextualData("fieldcollection", $this->getFieldname(), $this->getIndex(), null, null, null, $definition);' . "\n";
 
         $code .= "\t" . '$data = DataObject\Service::getCalculatedFieldValue($this, $data);' . "\n";
         $code .= "\t return " . '$data' . ";\n";

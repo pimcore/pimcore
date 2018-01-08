@@ -320,20 +320,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 text: t("export_csv"),
                 iconCls: "pimcore_icon_export",
                 handler: function () {
-
-                    Ext.MessageBox.show({
-                        title: t('warning'),
-                        msg: t('csv_object_export_warning'),
-                        buttons: Ext.Msg.OKCANCEL,
-                        fn: function (btn) {
-                            if (btn == 'ok') {
-                                this.exportPrepare();
-                            }
-                        }.bind(this),
-                        icon: Ext.MessageBox.WARNING
-                    });
-
-
+                    pimcore.helpers.csvExportWarning(function(settings) {
+                        this.exportPrepare(settings);
+                    }.bind(this));
                 }.bind(this)
             }, "-",
                 this.columnConfigButton,
@@ -398,63 +387,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         config.pageSize = this.pagingtoolbar.pageSize;
         return config;
     },
-
-    buildColumnConfigMenu: function () {
-        var menu = this.columnConfigButton.getMenu();
-        menu.removeAll();
-
-        menu.add({
-            text: t('save_as'),
-            iconCls: "pimcore_icon_save",
-            handler: this.saveConfig.bind(this, true)
-        });
-
-        // menu.add({
-        //     text: t('set_as_favourite'),
-        //     iconCls: "pimcore_icon_favourite",
-        //     handler: function () {
-        //         pimcore.helpers.markColumnConfigAsFavourite(this.object.id, this.classId, this.settings.gridConfigId, this.searchType, true);
-        //     }.bind(this)
-        // });
-
-        menu.add({
-            text: t('remove_config'),
-            iconCls: "pimcore_icon_delete",
-            disabled: !this.importConfigId,
-            handler: this.deleteGridConfig.bind(this)
-        });
-
-        menu.add('-');
-
-        var disabled = false;
-        var text = t('predefined');
-        if (!this.settings.gridConfigId) {
-            text = "<b>" + text + "</b>";
-            disabled = true;
-
-        }
-
-        menu.add({
-            text: text,
-            iconCls: "pimcore_icon_importconfig",
-            disabled: disabled,
-            gridConfig: {
-                id: 0
-            },
-            handler: this.switchToGridConfig.bind(this)
-        });
-
-        if (this.availableConfigs && this.availableConfigs.length > 0) {
-            this.addGridConfigMenuItems(menu, this.availableConfigs);
-        }
-
-        if (this.sharedConfigs && this.sharedConfigs.length > 0) {
-            menu.add('-');
-            this.addGridConfigMenuItems(menu, this.sharedConfigs);
-        }
-    },
-
-
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 

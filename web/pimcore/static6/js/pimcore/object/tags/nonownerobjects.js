@@ -110,11 +110,12 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     sortable: false
                 },
                 items: [
-                    {header: 'ID', dataIndex: 'id', flex: 50},
-                    {header: t("reference"), dataIndex: 'path', flex: 200},
-                    {header: t("type"), dataIndex: 'type', flex: 100},
+                    {text: 'ID', dataIndex: 'id', flex: 50},
+                    {text: t("reference"), dataIndex: 'path', flex: 200},
+                    {text: t("type"), dataIndex: 'type', flex: 100},
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('open'),
                         width: 30,
                         items: [
                             {
@@ -129,6 +130,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     },
                     {
                         xtype: 'actioncolumn',
+                        menuText: t('remove'),
                         width: 30,
                         items: [
                             {

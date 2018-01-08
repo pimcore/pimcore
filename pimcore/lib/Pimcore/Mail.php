@@ -339,6 +339,7 @@ class Mail extends \Swift_Message
         $this->getHeaders()->removeAll('to');
         $this->getHeaders()->removeAll('cc');
         $this->getHeaders()->removeAll('bcc');
+        $this->getHeaders()->removeAll('replyTo');
     }
 
     /**
@@ -477,7 +478,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets the settings which are defined in the Document Settings (from,to,cc,bcc)
+     * Sets the settings which are defined in the Document Settings (from,to,cc,bcc,replyTo)
      *
      * @return \Pimcore\Mail Provides fluent interface
      */
@@ -505,6 +506,13 @@ class Mail extends \Swift_Message
                 if (!empty($bcc)) {
                     foreach ($bcc as $bccEntry) {
                         $this->addBcc($bccEntry);
+                    }
+                }
+
+                $replyTo = $document->getReplyToAsArray();
+                if (!empty($replyTo)) {
+                    foreach ($replyTo as $replyToEntry) {
+                        $this->addReplyTo($replyToEntry);
                     }
                 }
             }
@@ -586,7 +594,7 @@ class Mail extends \Swift_Message
 
         $recipients = [];
 
-        foreach (['To', 'Cc', 'Bcc'] as $key) {
+        foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
             $recipients[$key] = null;
             $getterName = 'get' . $key;
             $setterName = 'set' . $key;
@@ -640,7 +648,7 @@ class Mail extends \Swift_Message
     {
         $headers = $this->getHeaders();
 
-        foreach (['To', 'Cc', 'Bcc'] as $key) {
+        foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
             $recipients[$key] = null;
 
             $headerName = 'X-Pimcore-Debug-' . $key;
@@ -726,7 +734,7 @@ class Mail extends \Swift_Message
 
     /**
      * Replaces the placeholders with the content and returns
-     * the rendered text if a text was set with "$mail->setBodyText()"     *
+     * the rendered text if a text was set with "$mail->setBodyText()"
      *
      * @return string
      */

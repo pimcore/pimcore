@@ -116,7 +116,7 @@ abstract class AbstractRestController extends AdminController
      */
     protected function createSuccessResponse($data = null, $wrapInDataProperty = true, $status = Response::HTTP_OK)
     {
-        return $this->json(
+        return $this->adminJson(
             $this->createSuccessData($data, $wrapInDataProperty),
             $status
         );
@@ -144,7 +144,7 @@ abstract class AbstractRestController extends AdminController
      */
     protected function createErrorResponse($data = null, $status = Response::HTTP_BAD_REQUEST)
     {
-        return $this->json(
+        return $this->adminJson(
             $this->createErrorData($data),
             $status
         );
@@ -153,7 +153,7 @@ abstract class AbstractRestController extends AdminController
     /**
      * @inheritDoc
      */
-    protected function createNotFoundException($message = null, \Exception $previous = null)
+    protected function createNotFoundResponseException($message = null, \Exception $previous = null)
     {
         return new ResponseException($this->createErrorResponse(
             $message ?: Response::$statusTexts[Response::HTTP_NOT_FOUND],

@@ -87,8 +87,8 @@ class Ecommerce extends Tracker implements ICheckoutComplete
             '_addTrans',
             $transaction->getId(),                  // order ID - required
             $transaction->getAffiliation() ?: '',   // affiliation or store name
-            $transaction->getTotal(),               // total - required
-            $transaction->getTax(),                 // tax
+            round($transaction->getTotal(), 2),               // total - required
+            round($transaction->getTax(), 2),                 // tax
             $transaction->getShipping(),            // shipping
         ];
     }
@@ -108,7 +108,7 @@ class Ecommerce extends Tracker implements ICheckoutComplete
             $item->getId(),                         // SKU/code - required
             $item->getName(),                       // product name
             $item->getCategory(),                   // category or variation
-            $item->getPrice(),                      // unit price - required
+            round($item->getPrice(), 2),                      // unit price - required
             $item->getQuantity() ?: 1,              // quantity - required
         ];
     }

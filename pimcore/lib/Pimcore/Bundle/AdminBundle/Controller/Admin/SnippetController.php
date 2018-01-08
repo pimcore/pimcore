@@ -39,7 +39,7 @@ class SnippetController extends DocumentControllerBase
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->json([
+            return $this->adminJson([
                 'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
@@ -78,10 +78,10 @@ class SnippetController extends DocumentControllerBase
         $data = $event->getArgument('data');
 
         if ($snippet->isAllowed('view')) {
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -100,7 +100,7 @@ class SnippetController extends DocumentControllerBase
                 $snippet = Document\Snippet::getById($request->get('id'));
                 $snippet = $this->getLatestVersion($snippet);
 
-                $snippet->setUserModification($this->getUser()->getId());
+                $snippet->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $snippet->setPublished(false);
@@ -116,13 +116,13 @@ class SnippetController extends DocumentControllerBase
                         $snippet->save();
                         $this->saveToSession($snippet);
 
-                        return $this->json(['success' => true]);
+                        return $this->adminJson(['success' => true]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
 
-                        return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                     }
                 } else {
                     if ($snippet->isAllowed('save')) {
@@ -132,9 +132,9 @@ class SnippetController extends DocumentControllerBase
                             $snippet->saveVersion();
                             $this->saveToSession($snippet);
 
-                            return $this->json(['success' => true]);
+                            return $this->adminJson(['success' => true]);
                         } catch (\Exception $e) {
-                            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                         }
                     }
                 }
@@ -142,12 +142,12 @@ class SnippetController extends DocumentControllerBase
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**

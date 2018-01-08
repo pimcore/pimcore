@@ -235,10 +235,10 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                     linkParams.push("pimcore_preview=true");
                     linkParams.push("_dc=" + date.getTime());
 
-                    // add persona parameter if available
-                    if(this["edit"] && this.edit["persona"]) {
-                        if(this.edit.persona && this.edit.persona.getValue()) {
-                            linkParams.push("_ptp=" + this.edit.persona.getValue());
+                    // add target group parameter if available
+                    if(this["edit"] && this.edit["targetGroup"]) {
+                        if(this.edit.targetGroup && this.edit.targetGroup.getValue()) {
+                            linkParams.push("_ptg=" + this.edit.targetGroup.getValue());
                         }
                     }
 

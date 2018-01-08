@@ -45,7 +45,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key);
 
         return {
-            header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            text: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
             editor: this.getGridColumnEditor(field)
         };
 

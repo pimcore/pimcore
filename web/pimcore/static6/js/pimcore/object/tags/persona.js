@@ -11,6 +11,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+/**
+ * @deprecated Use pimcore.object.tags.targetGroup instead. Will be removed in Pimcore 6.
+ */
 pimcore.registerNS("pimcore.object.tags.persona");
 pimcore.object.tags.persona = Class.create(pimcore.object.tags.select, {
 

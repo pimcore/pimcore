@@ -42,7 +42,7 @@ class NewsletterController extends DocumentControllerBase
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->json([
+            return $this->adminJson([
                 'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
@@ -77,10 +77,10 @@ class NewsletterController extends DocumentControllerBase
         $data = $event->getArgument('data');
 
         if ($email->isAllowed('view')) {
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -99,7 +99,7 @@ class NewsletterController extends DocumentControllerBase
                 $page = Document\Newsletter::getById($request->get('id'));
 
                 $page = $this->getLatestVersion($page);
-                $page->setUserModification($this->getUser()->getId());
+                $page->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $page->setPublished(false);
@@ -115,11 +115,11 @@ class NewsletterController extends DocumentControllerBase
                         $page->save();
                         $this->saveToSession($page);
 
-                        return $this->json(['success' => true]);
+                        return $this->adminJson(['success' => true]);
                     } catch (\Exception $e) {
                         Logger::err($e);
 
-                        return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed('save')) {
@@ -129,7 +129,7 @@ class NewsletterController extends DocumentControllerBase
                             $page->saveVersion();
                             $this->saveToSession($page);
 
-                            return $this->json(['success' => true]);
+                            return $this->adminJson(['success' => true]);
                         } catch (\Exception $e) {
                             if ($e instanceof Element\ValidationException) {
                                 throw $e;
@@ -137,7 +137,7 @@ class NewsletterController extends DocumentControllerBase
 
                             Logger::err($e);
 
-                            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                         }
                     }
                 }
@@ -145,12 +145,12 @@ class NewsletterController extends DocumentControllerBase
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -189,7 +189,7 @@ class NewsletterController extends DocumentControllerBase
         } catch (\Exception $e) {
         }
 
-        return $this->json([
+        return $this->adminJson([
             'count' => $count,
             'success' => $success
         ]);
@@ -222,7 +222,7 @@ class NewsletterController extends DocumentControllerBase
             }
         }
 
-        return $this->json(['data' => $availableClasses]);
+        return $this->adminJson(['data' => $availableClasses]);
     }
 
     /**
@@ -244,7 +244,7 @@ class NewsletterController extends DocumentControllerBase
                 $availableReports[] = ['id' => $report['id'], 'text' => $report['text']];
             }
 
-            return $this->json(['data' => $availableReports]);
+            return $this->adminJson(['data' => $availableReports]);
         } elseif ($task === 'fieldNames') {
             $reportId = $request->get('reportId');
             $report = \Pimcore\Model\Tool\CustomReport\Config::getByName($reportId);
@@ -257,7 +257,7 @@ class NewsletterController extends DocumentControllerBase
                 }
             }
 
-            return $this->json(['data' => $availableColumns]);
+            return $this->adminJson(['data' => $availableColumns]);
         }
     }
 
@@ -273,7 +273,7 @@ class NewsletterController extends DocumentControllerBase
         $document = Document\Newsletter::getById($request->get('id'));
         $data = Tool\TmpStore::get($document->getTmpStoreId());
 
-        return $this->json([
+        return $this->adminJson([
             'data' => $data ? $data->getData() : null,
             'success' => true
         ]);
@@ -291,7 +291,7 @@ class NewsletterController extends DocumentControllerBase
         $document = Document\Newsletter::getById($request->get('id'));
         Tool\TmpStore::delete($document->getTmpStoreId());
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -323,7 +323,7 @@ class NewsletterController extends DocumentControllerBase
 
         \Pimcore\Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'), 'internal:newsletter-document-send ' . escapeshellarg($document->getTmpStoreId()) . ' ' . escapeshellarg(\Pimcore\Tool::getHostUrl()), PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'newsletter-sending-output.log');
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -342,7 +342,7 @@ class NewsletterController extends DocumentControllerBase
         $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
-            return $this->json(['success' => false, 'error' => sprintf('Cannot send newsletters because Address Source Adapter with identifier %s could not be found', $addressSourceAdapterName)]);
+            return $this->adminJson(['success' => false, 'error' => sprintf('Cannot send newsletters because Address Source Adapter with identifier %s could not be found', $addressSourceAdapterName)]);
         }
 
         /**
@@ -356,6 +356,6 @@ class NewsletterController extends DocumentControllerBase
         $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
         \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingContainer);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 }

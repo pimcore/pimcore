@@ -47,6 +47,11 @@ This one allows you to enter an external image URL which is then shown as a prev
 <?php } ?>
 ```
 
+## Image Gallery
+
+Is a collection of `Advanced Images` (see below). The sort order can be changed via drag & drop.
+
+![Image Gallery](../../../img/image_gallery.png) 
 
 ## Image Advanced (supporting Hotspots/Markers/Cropping)
 
@@ -57,7 +62,6 @@ the assigned image.
 
 The hotspots are defined by a name and are stored as an array with the attributes name, top, left, width and height 
 whereas the values top, left, width, height are stored as percentages of the image dimensions.
-
 
 #### Get Hotspots
 

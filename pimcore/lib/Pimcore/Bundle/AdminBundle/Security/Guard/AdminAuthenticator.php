@@ -104,6 +104,14 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * @inheritDoc
      */
+    public function supports(Request $request)
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function start(Request $request, AuthenticationException $authException = null)
     {
         if ($request->isXmlHttpRequest()) {

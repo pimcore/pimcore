@@ -49,7 +49,7 @@ class Mail
             }
             $debugInformation .= '</td></tr>';
 
-            foreach (['To', 'Cc', 'Bcc'] as $key) {
+            foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
                 $getterName = 'get' . $key;
                 $addresses = $mail->$getterName();
 
@@ -68,7 +68,7 @@ class Mail
             }
 
             //generating text debug info
-            foreach (['To', 'Cc', 'Bcc'] as $key) {
+            foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
                 $getterName = 'get' . $key;
                 $addresses = $mail->$getterName();
 
@@ -185,7 +185,7 @@ CSS;
             $emailLog->setBodyText($text->getBody());
         }
 
-        foreach (['To', 'Cc', 'Bcc'] as $key) {
+        foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
             $addresses = isset($recipients[$key]) ? $recipients[$key] : null;
 
             if ($addresses) {
@@ -260,7 +260,12 @@ CSS;
         foreach ((array)$matches[1] as $i => $value) {
             $parts = explode(',', $value);
             foreach ($parts as $key => $v) {
-                $parts[$key] = $hostUrl.trim($v);
+                $v = trim($v);
+                // ignore absolute urls
+                if (strpos($v, 'http://') === 0 || strpos($v, 'https://') === 0 || strpos($v, '//') === 0) {
+                    continue;
+                }
+                $parts[$key] = $hostUrl.$v;
             }
             $s = ' srcset="'.implode(', ', $parts).'" ';
             if ($matches[0][$i]) {

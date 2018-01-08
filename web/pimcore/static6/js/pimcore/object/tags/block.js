@@ -33,7 +33,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -253,7 +253,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         var blockElement = new Ext.Panel({
             pimcore_oIndex: oIndex,
             bodyStyle: "padding:10px;",
-            style: "margin: 10px 0 10px 0;",
+            style: "margin: 10px 0 10px 0;"  + this.fieldConfig.styleElement,
             manageHeight: false,
             border: false,
             items: [

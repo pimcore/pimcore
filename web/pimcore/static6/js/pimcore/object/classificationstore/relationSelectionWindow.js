@@ -216,10 +216,10 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
 
         var gridColumns = [];
-        gridColumns.push({header: "ID", width: 60, sortable: true, dataIndex: 'id'});
-        gridColumns.push({header: t("group"), flex: 1, sortable: true, dataIndex: 'groupName', filter: 'string'});
-        gridColumns.push({header: t("name"), flex: 1, sortable: true, dataIndex: 'keyName', filter: 'string'});
-        gridColumns.push({header: t("description"), flex: 1, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
+        gridColumns.push({text: "ID", width: 60, sortable: true, dataIndex: 'id'});
+        gridColumns.push({text: t("group"), flex: 1, sortable: true, dataIndex: 'groupName', filter: 'string'});
+        gridColumns.push({text: t("name"), flex: 1, sortable: true, dataIndex: 'keyName', filter: 'string'});
+        gridColumns.push({text: t("description"), flex: 1, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
 
 
         var proxy = {

@@ -43,9 +43,25 @@ services:
 
     Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~
 
+
     #
-    # GRID CONFIG
+    # REDIRECTS
     #
-    pimcore.object.gridcolumconfig:
-        class: Pimcore\Model\DataObject\GridColumnConfig\Service
-        public: true
+
+    Pimcore\Routing\Redirect\Csv: ~
+
+
+    #
+    # GDPR Services
+    #
+
+    # Tagged data providers will be injected from compiler pass
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager: ~
+
+    # Providers implementing DataProviderInterface will be auto-tagged via autoconfiguration
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects:
+        arguments:
+            $config: '%pimcore.gdpr-data-extrator.dataobjects%'
+
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers: ~

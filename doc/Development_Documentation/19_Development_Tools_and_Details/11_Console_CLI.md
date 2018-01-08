@@ -44,7 +44,9 @@ commands either by hooking into an event or by placing your commands in predefin
 
 ### Usage
 Call `bin/console list` script from the command line to get a list of available commands. To call 
-a command, use `bin/console <subcommand>`. 
+a command, use `bin/console <subcommand>`.
+
+> Be sure to run the console with the PHP user to prevent writing permissions issues later, either by calling `php bin/console` or by switching to the appropriate user, for instance on Debian system `su -l www-data -s /bin/bash`.
 
 ##### Examples:
 ```php 
@@ -57,10 +59,10 @@ $ ./bin/console foo:bar
 
 
 ### Implementing own Commands
-Have a look at the `Symfony\Console` [documentation](http://symfony.com/doc/current/console.html) 
+Have a look at the `Symfony\Console` [documentation](http://symfony.com/doc/3.4/console.html) 
 for details how commands are implemented. However, it makes sense to let your command classes extend 
 `Pimcore\Console\AbstractCommand` to get some defaults like the `--ignore-maintenance-mode` option 
-and a helper for the [Symfony VarDumper Component](http://symfony.com/doc/current/components/var_dumper/index.html) 
+and a helper for the [Symfony VarDumper Component](http://symfony.com/doc/3.4/components/var_dumper/index.html) 
 set up automatically (see below).
 
 ### Registering Commands
@@ -85,7 +87,7 @@ The console application implicitly adds the `--ignore-maintenance-mode` option f
 mode and the option is not set.
 
 ##### `dump()` and `dumpVerbose()`
-Better `var_dump` through [`VarDumper`](http://symfony.com/doc/current/components/var_dumper/introduction.html). 
+Better `var_dump` through [`VarDumper`](http://symfony.com/doc/3.4/components/var_dumper/introduction.html). 
 
 Usage:
 ```php

@@ -89,9 +89,9 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
                 }
             }
 
-            return $this->json($data);
+            return $this->adminJson($data);
         } catch (\Exception $e) {
-            return $this->json(false);
+            return $this->adminJson(false);
         }
     }
 
@@ -217,7 +217,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
             $data[] = $tmpData;
         }
 
-        return $this->json(['data' => $data]);
+        return $this->adminJson(['data' => $data]);
     }
 
     /**
@@ -290,7 +290,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
 
         ksort($outputData);
 
-        return $this->json(['data' => $outputData]);
+        return $this->adminJson(['data' => $outputData]);
     }
 
     /**
@@ -342,7 +342,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
             ];
         }
 
-        return $this->json(['data' => $data]);
+        return $this->adminJson(['data' => $data]);
     }
 
     /**
@@ -411,7 +411,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
             ];
         }
 
-        return $this->json(['data' => $data]);
+        return $this->adminJson(['data' => $data]);
     }
 
     /**
@@ -423,7 +423,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
      */
     public function getDimensionsAction(Request $request)
     {
-        return $this->json(['data' => Google\Api::getAnalyticsDimensions()]);
+        return $this->adminJson(['data' => Google\Api::getAnalyticsDimensions()]);
     }
 
     /**
@@ -435,7 +435,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
      */
     public function getMetricsAction(Request $request)
     {
-        return $this->json(['data' => Google\Api::getAnalyticsMetrics()]);
+        return $this->adminJson(['data' => Google\Api::getAnalyticsMetrics()]);
     }
 
     /**
@@ -458,7 +458,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
             ];
         }
 
-        return $this->json(['data' => $data]);
+        return $this->adminJson(['data' => $data]);
     }
 
     /**

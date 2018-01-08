@@ -48,6 +48,13 @@ class Email extends Model\Document\PageSnippet
     public $from = '';
 
     /**
+     * Contains the reply to email addresses
+     *
+     * @var string
+     */
+    public $replyTo = '';
+
+    /**
      * Contains the email addresses of the recipients
      *
      * @var string
@@ -201,6 +208,46 @@ class Email extends Model\Document\PageSnippet
     public function getFromAsArray()
     {
         $emailAddresses = preg_split('/,|;/', $this->getFrom());
+
+        return $emailAddresses;
+    }
+
+    /**
+     * Sets the "replyTo" email address
+     *
+     * @param string $replyTo
+     *
+     * @return $this
+     */
+    public function setReplyTo($replyTo)
+    {
+        $this->replyTo = $replyTo;
+
+        return $this;
+    }
+
+    /**
+     * Returns the "replyTo" email address
+     *
+     * @return string
+     */
+    public function getReplyTo()
+    {
+        return $this->replyTo;
+    }
+
+    /**
+     * Returns the "replyTo" email address as array
+     *
+     * @return array
+     */
+    public function getReplyToAsArray()
+    {
+        if (empty($this->getReplyTo())) {
+            return null;
+        }
+
+        $emailAddresses = preg_split('/,|;/', $this->getReplyTo());
 
         return $emailAddresses;
     }

@@ -21,6 +21,15 @@ services:
 
 
     #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    AppBundle\Command\:
+        resource: '../../Command'
+
+
+    #
     # TEMPLATING
     #
 

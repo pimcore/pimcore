@@ -42,7 +42,7 @@ class LinkController extends DocumentControllerBase
 
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->json([
+            return $this->adminJson([
                 'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
@@ -76,10 +76,10 @@ class LinkController extends DocumentControllerBase
         $data = $event->getArgument('data');
 
         if ($link->isAllowed('view')) {
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -99,7 +99,7 @@ class LinkController extends DocumentControllerBase
                 $this->setValuesToDocument($request, $link);
 
                 $link->setModificationDate(time());
-                $link->setUserModification($this->getUser()->getId());
+                $link->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $link->setPublished(false);
@@ -112,18 +112,18 @@ class LinkController extends DocumentControllerBase
                 if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
                     $link->save();
 
-                    return $this->json(['success' => true]);
+                    return $this->adminJson(['success' => true]);
                 }
             }
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**

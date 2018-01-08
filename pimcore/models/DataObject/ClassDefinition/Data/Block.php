@@ -68,6 +68,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public $columnType = 'longtext';
 
     /**
+     * @var string
+     */
+    public $styleElement = '';
+
+    /**
      * Type for the generated phpdoc
      *
      * @var string
@@ -360,7 +365,37 @@ class Block extends Model\DataObject\ClassDefinition\Data
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        return 'not supported yet';
+        $data = $this->getDataFromObjectParam($object, $params);
+        $result = [];
+        $idx = -1;
+
+        if (is_array($data)) {
+            foreach ($data as $blockElements) {
+                $resultElement = [];
+                $idx++;
+
+                /**
+                 * @var  $blockElement DataObject\Data\BlockElement
+                 */
+                foreach ($blockElements as $elementName => $blockElement) {
+                    /** @var $fd DataObject\ClassDefinition\Data */
+                    $fd = $this->getFielddefinition($elementName);
+                    if (!$fd) {
+                        // class definition seems to have changed
+                        Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+                        continue;
+                    }
+
+                    $params['context']['containerType'] = 'block';
+                    $params['injectedData'] = $blockElement->getData();
+                    $dataForEditMode = $fd->getForWebserviceExport($object, $params);
+                    $resultElement[$elementName] = $dataForEditMode;
+                }
+                $result[] = $resultElement;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -375,7 +410,35 @@ class Block extends Model\DataObject\ClassDefinition\Data
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
-        // do nothing
+        $result = [];
+
+        if (is_array($value)) {
+            foreach ($value as $blockElementsData) {
+                $resultElement = [];
+
+                /**
+                 * @var  $blockElement DataObject\Data\BlockElement
+                 */
+                foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
+
+                    /** @var $fd DataObject\ClassDefinition\Data */
+                    $fd = $this->getFielddefinition($elementName);
+                    if (!$fd) {
+                        // class definition seems to have changed
+                        Logger::warn('class definition seems to have changed, element name: ' . $elementName);
+                        continue;
+                    }
+
+                    $data = $fd->getFromWebserviceImport($blockElementDataRaw, $relatedObject, $params, $idMapper);
+                    $blockElement = new DataObject\Data\BlockElement($elementName, $fd->getFieldtype(), $data);
+
+                    $resultElement[$elementName] = $blockElement;
+                }
+                $result[] = $resultElement;
+            }
+        }
+
+        return $result;
     }
 
     /** True if change is allowed in edit mode.
@@ -739,5 +802,25 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public function setCollapsible($collapsible)
     {
         $this->collapsible = $collapsible;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStyleElement()
+    {
+        return $this->styleElement;
+    }
+
+    /**
+     * @param string $styleElement
+     *
+     * @return $this
+     */
+    public function setStyleElement($styleElement)
+    {
+        $this->styleElement = $styleElement;
+
+        return $this;
     }
 }

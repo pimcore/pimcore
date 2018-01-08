@@ -46,6 +46,11 @@ pimcore.document.emails.settings = Class.create(pimcore.document.settings_abstra
                                 value: this.document.data.from
                             },
                             {
+                                fieldLabel: t('email_reply_to'),
+                                name: 'replyTo',
+                                value: this.document.data.replyTo
+                            },
+                            {
                                 fieldLabel: t('email_to'),
                                 name: 'to',
                                 value: this.document.data.to

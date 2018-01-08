@@ -58,7 +58,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnConfig: function (field) {
         return {
-            header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);

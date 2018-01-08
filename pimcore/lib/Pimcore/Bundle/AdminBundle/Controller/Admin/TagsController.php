@@ -15,7 +15,10 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,7 +42,7 @@ class TagsController extends AdminController
         $tag->setParentId(intval($request->get('parentId')));
         $tag->save();
 
-        return $this->json(['success' => true, 'id' => $tag->getId()]);
+        return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
     }
 
     /**
@@ -57,7 +60,7 @@ class TagsController extends AdminController
         if ($tag) {
             $tag->delete();
 
-            return $this->json(['success' => true]);
+            return $this->adminJson(['success' => true]);
         } else {
             throw new \Exception('Tag with ID ' . $request->get('id') . ' not found.');
         }
@@ -86,7 +89,7 @@ class TagsController extends AdminController
 
             $tag->save();
 
-            return $this->json(['success' => true]);
+            return $this->adminJson(['success' => true]);
         } else {
             throw new \Exception('Tag with ID ' . $request->get('id') . ' not found.');
         }
@@ -127,7 +130,7 @@ class TagsController extends AdminController
             $tags[] = $this->convertTagToArray($tag, $showSelection, $assignedTagIds, true);
         }
 
-        return $this->json($tags);
+        return $this->adminJson($tags);
     }
 
     /**
@@ -145,6 +148,7 @@ class TagsController extends AdminController
             'text' => $tag->getName(),
             'path' => $tag->getNamePath(),
             'expandable' => $tag->hasChildren(),
+            'leaf' => !$tag->hasChildren(),
             'iconCls' => 'pimcore_icon_element_tags',
             'qtipCfg' => [
                 'title' => 'ID: ' . $tag->getId()
@@ -186,7 +190,7 @@ class TagsController extends AdminController
             }
         }
 
-        return $this->json($assignedTagArray);
+        return $this->adminJson($assignedTagArray);
     }
 
     /**
@@ -206,9 +210,9 @@ class TagsController extends AdminController
         if ($tag) {
             Tag::addTagToElement($assginmentCType, $assginmentCId, $tag);
 
-            return $this->json(['success' => true, 'id' => $tag->getId()]);
+            return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
         } else {
-            return $this->json(['success' => false]);
+            return $this->adminJson(['success' => false]);
         }
     }
 
@@ -229,9 +233,9 @@ class TagsController extends AdminController
         if ($tag) {
             Tag::removeTagFromElement($assginmentCType, $assginmentCId, $tag);
 
-            return $this->json(['success' => true, 'id' => $tag->getId()]);
+            return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
         } else {
-            return $this->json(['success' => false]);
+            return $this->adminJson(['success' => false]);
         }
     }
 
@@ -277,7 +281,7 @@ class TagsController extends AdminController
             $offset += $size;
         }
 
-        return $this->json(['success' => true, 'idLists' => $idListParts, 'totalCount' => count($idList)]);
+        return $this->adminJson(['success' => true, 'idLists' => $idListParts, 'totalCount' => count($idList)]);
     }
 
     /**
@@ -285,13 +289,13 @@ class TagsController extends AdminController
      *
      * @return mixed
      */
-    private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object)
+    private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object, EventDispatcherInterface $eventDispatcher)
     {
         $childsList = new \Pimcore\Model\DataObject\Listing();
         $condition = 'o_path LIKE ?';
-        if (!$this->getUser()->isAdmin()) {
-            $userIds = $this->getUser()->getRoles();
-            $userIds[] = $this->getUser()->getId();
+        if (!$this->getAdminUser()->isAdmin()) {
+            $userIds = $this->getAdminUser()->getRoles();
+            $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
                 (SELECT `view` FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
@@ -301,6 +305,13 @@ class TagsController extends AdminController
 
         $childsList->setCondition($condition, $object->getRealFullPath() . '/%');
 
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $childsList,
+            'context' => []
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $childsList = $beforeListLoadEvent->getArgument('list');
+
         return $childsList->loadIdList();
     }
 
@@ -309,13 +320,13 @@ class TagsController extends AdminController
      *
      * @return mixed
      */
-    private function getSubAssetIds(\Pimcore\Model\Asset $asset)
+    private function getSubAssetIds(\Pimcore\Model\Asset $asset, EventDispatcherInterface $eventDispatcher)
     {
         $childsList = new \Pimcore\Model\Asset\Listing();
         $condition = 'path LIKE ?';
-        if (!$this->getUser()->isAdmin()) {
-            $userIds = $this->getUser()->getRoles();
-            $userIds[] = $this->getUser()->getId();
+        if (!$this->getAdminUser()->isAdmin()) {
+            $userIds = $this->getAdminUser()->getRoles();
+            $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
                 (SELECT `view` FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
@@ -325,6 +336,13 @@ class TagsController extends AdminController
 
         $childsList->setCondition($condition, $asset->getRealFullPath() . '/%');
 
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $childsList,
+            'context' => []
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $childsList = $beforeListLoadEvent->getArgument('list');
+
         return $childsList->loadIdList();
     }
 
@@ -333,13 +351,13 @@ class TagsController extends AdminController
      *
      * @return mixed
      */
-    private function getSubDocumentIds(\Pimcore\Model\Document $document)
+    private function getSubDocumentIds(\Pimcore\Model\Document $document, EventDispatcherInterface $eventDispatcher)
     {
         $childsList = new \Pimcore\Model\Document\Listing();
         $condition = 'path LIKE ?';
-        if (!$this->getUser()->isAdmin()) {
-            $userIds = $this->getUser()->getRoles();
-            $userIds[] = $this->getUser()->getId();
+        if (!$this->getAdminUser()->isAdmin()) {
+            $userIds = $this->getAdminUser()->getRoles();
+            $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
                 (SELECT `view` FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
@@ -348,6 +366,13 @@ class TagsController extends AdminController
         }
 
         $childsList->setCondition($condition, $document->getRealFullPath() . '/%');
+
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $childsList,
+            'context' => []
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $childsList = $beforeListLoadEvent->getArgument('list');
 
         return $childsList->loadIdList();
     }
@@ -368,6 +393,6 @@ class TagsController extends AdminController
 
         Tag::batchAssignTagsToElement($cType, $elementIds, $assignedTags, $doCleanupTags);
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 }

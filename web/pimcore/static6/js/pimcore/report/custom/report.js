@@ -58,7 +58,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
 
             gridColConfig = {
-                header: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
+                text: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
                 hidden: !colConfig["display"],
                 sortable: colConfig["order"],
                 dataIndex: colConfig["name"]
@@ -96,7 +96,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
             if (colConfig["columnAction"]) {
                 this.gridColumns.push({
-                    header: t("open"),
+                    text: t("open"),
+                    menuText: t("open"),
                     xtype: 'actioncolumn',
                     width: 40,
                     items: [

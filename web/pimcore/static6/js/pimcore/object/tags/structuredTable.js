@@ -64,7 +64,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             renderer: function (key, field, value, metaData, record) {
                         this.applyPermissionStyle(key, value, metaData, record);
 
@@ -112,7 +112,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         }
 
         var columns = [
-            {header: this.fieldConfig.labelFirstCell, width: this.fieldConfig.labelWidth, sortable: false,
+            {text: this.fieldConfig.labelFirstCell, width: this.fieldConfig.labelWidth, sortable: false,
                                 dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
                     metaData.tdCls = 'x-grid-hd-row';
                     return ts(value);
@@ -152,7 +152,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             }
 
             columns.push({
-                header: ts(this.fieldConfig.cols[i].label),
+                text: ts(this.fieldConfig.cols[i].label),
                 width: this.fieldConfig.cols[i].width,
                 sortable: false,
                 dataIndex: this.fieldConfig.cols[i].key,
@@ -218,7 +218,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         var cls = 'object_field';
 
         var columns = [
-            {header: "", width: 80, sortable: false, dataIndex: '__row_label', editor: null,
+            {text: "", width: 80, sortable: false, dataIndex: '__row_label', editor: null,
                 renderer: function(value, metaData) {
                                 metaData.tdCls = 'x-grid3-hd-row';
                                 return ts(value);
@@ -228,7 +228,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
 
         for(var i = 0; i < this.fieldConfig.cols.length; i++) {
 
-            var columnConfig = {header: ts(this.fieldConfig.cols[i].label), width: 120, sortable: false,
+            var columnConfig = {text: ts(this.fieldConfig.cols[i].label), width: 120, sortable: false,
                 dataIndex: this.fieldConfig.cols[i].key, editor: null};
             if(this.fieldConfig.cols[i].type == "bool") {
                 columnConfig.renderer = function (value, metaData, record, rowIndex, colIndex, store) {

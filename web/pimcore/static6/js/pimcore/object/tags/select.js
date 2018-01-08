@@ -55,7 +55,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             return value;
         }.bind(this, field.key);
 
-        return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+        return {text:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
             getEditor:this.getCellEditor.bind(this, field)
         };
     },
@@ -83,7 +83,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key);
 
         return {
-            header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            text: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
             editor: this.getGridColumnEditor(field)
         };
     },

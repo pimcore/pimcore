@@ -23,7 +23,10 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
+use Pimcore\Model\Staticroute;
+use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Model\Version;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -64,21 +67,22 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     protected $userLoader;
 
     /**
-     * @param DocumentResolver $documentResolver
-     * @param EditmodeResolver $editmodeResolver
-     * @param RequestHelper $requestHelper
-     * @param UserLoader $userLoader
+     * @var DocumentTargetingConfigurator
      */
+    private $targetingConfigurator;
+
     public function __construct(
         DocumentResolver $documentResolver,
         EditmodeResolver $editmodeResolver,
         RequestHelper $requestHelper,
-        UserLoader $userLoader
+        UserLoader $userLoader,
+        DocumentTargetingConfigurator $targetingConfigurator
     ) {
-        $this->documentResolver = $documentResolver;
-        $this->editmodeResolver = $editmodeResolver;
-        $this->requestHelper    = $requestHelper;
-        $this->userLoader       = $userLoader;
+        $this->documentResolver      = $documentResolver;
+        $this->editmodeResolver      = $editmodeResolver;
+        $this->requestHelper         = $requestHelper;
+        $this->userLoader            = $userLoader;
+        $this->targetingConfigurator = $targetingConfigurator;
     }
 
     /**
@@ -87,7 +91,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 3], // has to be right after DocumentFallbackListener
+            KernelEvents::REQUEST => ['onKernelRequest', 3], // has to be after DocumentFallbackListener and after TargetingListener
         ];
     }
 
@@ -131,8 +135,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             // for public versions
             $document = $this->handleVersion($request, $document);
 
-            // check for persona
-            $document = $this->handlePersona($request, $document);
+            // apply target group configuration
+            $this->applyTargetGroups($request, $document);
 
             $this->documentResolver->setDocument($request, $document);
         }
@@ -168,29 +172,23 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    /**
-     * @param Request $request
-     * @param Document $document
-     *
-     * @return Document
-     */
-    protected function handlePersona(Request $request, Document $document)
+    protected function applyTargetGroups(Request $request, Document $document)
     {
-        if ($document instanceof Document\Page) {
-            // reset because of preview and editmode (saved in session)
-            $document->setUsePersona(null);
-
-            if ($request->get('_ptp')) {
-                $this->logger->info('Setting persona to {persona} for document {document}', [
-                    'persona'  => $request->get('_ptp'),
-                    'document' => $document->getFullPath()
-                ]);
-
-                $document->setUsePersona($request->get('_ptp'));
-            }
+        if (!$document instanceof Document\Targeting\TargetingDocumentInterface || null !== Staticroute::getCurrentRoute()) {
+            return;
         }
 
-        return $document;
+        // reset because of preview and editmode (saved in session)
+        $document->setUseTargetGroup(null);
+
+        $this->targetingConfigurator->configureTargetGroup($document);
+
+        if ($document->getUseTargetGroup()) {
+            $this->logger->info('Setting target group to {targetGroup} for document {document}', [
+                'targetGroup' => $document->getUseTargetGroup(),
+                'document'    => $document->getFullPath()
+            ]);
+        }
     }
 
     /**

@@ -14,22 +14,22 @@
 pimcore.registerNS("pimcore.settings.profile.panel");
 pimcore.settings.profile.panel = Class.create({
 
-    initialize:function () {
+    initialize: function () {
 
         this.getTabPanel();
     },
 
-    getTabPanel:function () {
+    getTabPanel: function () {
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id:"profile",
-                title:t("profile"),
-                border:false,
-                closable:true,
-                layout:"fit",
-                bodyStyle:"padding: 10px;",
-                items:[this.getEditPanel()]
+                id: "profile",
+                title: t("profile"),
+                border: false,
+                closable: true,
+                layout: "fit",
+                bodyStyle: "padding: 10px;",
+                items: [this.getEditPanel()]
             });
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
@@ -48,12 +48,12 @@ pimcore.settings.profile.panel = Class.create({
         return this.panel;
     },
 
-    getEditPanel:function () {
+    getEditPanel: function () {
         this.forceReloadOnSave = false;
         this.currentUser = pimcore.currentuser;
 
         var passwordCheck = function (el) {
-            if(/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(el.getValue())) {
+            if (/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(el.getValue())) {
                 el.getEl().addCls("password_valid");
                 el.getEl().removeCls("password_invalid");
             } else {
@@ -65,99 +65,134 @@ pimcore.settings.profile.panel = Class.create({
         var generalItems = [];
 
         generalItems.push({
-            xtype:"textfield",
-            fieldLabel:t("firstname"),
-            name:"firstname",
-            value:this.currentUser.firstname,
-            width:400
+            xtype: "textfield",
+            fieldLabel: t("firstname"),
+            name: "firstname",
+            value: this.currentUser.firstname,
+            width: 400
         });
         generalItems.push({
-            xtype:"textfield",
-            fieldLabel:t("lastname"),
-            name:"lastname",
-            value:this.currentUser.lastname,
-            width:400
-        });
-
-
-        generalItems.push({
-            xtype:"textfield",
-            fieldLabel:t("email"),
-            name:"email",
-            value:this.currentUser.email,
-            width:400
+            xtype: "textfield",
+            fieldLabel: t("lastname"),
+            name: "lastname",
+            value: this.currentUser.lastname,
+            width: 400
         });
 
 
         generalItems.push({
-            xtype:'combo',
-            fieldLabel:t('language'),
-            typeAhead:true,
-            value:this.currentUser.language,
-            mode:'local',
+            xtype: "textfield",
+            fieldLabel: t("email"),
+            name: "email",
+            value: this.currentUser.email,
+            width: 400
+        });
+
+
+        generalItems.push({
+            xtype: 'combo',
+            fieldLabel: t('language'),
+            typeAhead: true,
+            value: this.currentUser.language,
+            mode: 'local',
             name: "language",
-            listWidth:100,
-            store:pimcore.globalmanager.get("pimcorelanguages"),
-            displayField:'display',
-            valueField:'language',
-            forceSelection:true,
-            triggerAction:'all',
-            hiddenName:'language',
-            listeners:{
-                change:function () {
+            listWidth: 100,
+            store: pimcore.globalmanager.get("pimcorelanguages"),
+            displayField: 'display',
+            valueField: 'language',
+            forceSelection: true,
+            triggerAction: 'all',
+            hiddenName: 'language',
+            listeners: {
+                change: function () {
                     this.forceReloadOnSave = true;
                 }.bind(this),
-                select:function () {
+                select: function () {
                     this.forceReloadOnSave = true;
                 }.bind(this)
             }
         });
 
         generalItems.push({
-            xtype:"checkbox",
-            fieldLabel:t("show_welcome_screen"),
-            name:"welcomescreen",
-            checked:this.currentUser.welcomescreen
+            xtype: "checkbox",
+            fieldLabel: t("show_welcome_screen"),
+            name: "welcomescreen",
+            checked: this.currentUser.welcomescreen
         });
 
         generalItems.push({
-            xtype:"checkbox",
-            fieldLabel:t("memorize_tabs"),
-            name:"memorizeTabs",
-            checked:this.currentUser.memorizeTabs
+            xtype: "checkbox",
+            fieldLabel: t("memorize_tabs"),
+            name: "memorizeTabs",
+            checked: this.currentUser.memorizeTabs
+        });
+
+        var passwordField = new Ext.form.field.Text({
+            fieldLabel: t("new_password"),
+            name: "new_password",
+            inputType: "password",
+            width: 400,
+            enableKeyEvents: true,
+            listeners: {
+                keyup: passwordCheck
+            }
+        });
+
+        var retypePasswordField = new Ext.form.field.Text({
+            xtype: "textfield",
+            fieldLabel: t("retype_password"),
+            name: "retype_password",
+            inputType: "password",
+            width: 400,
+            style: "margin-bottom: 20px;",
+            enableKeyEvents: true,
+            listeners: {
+                keyup: passwordCheck
+            }
         });
 
         generalItems.push({
             xtype: "fieldset",
             title: t("change_password"),
             items: [{
-                xtype:"textfield",
-                fieldLabel:t("old_password"),
-                name:"old_password",
-                inputType:"password",
-                width:400
+                xtype: "textfield",
+                fieldLabel: t("old_password"),
+                name: "old_password",
+                inputType: "password",
+                width: 400
             }, {
-                xtype:"textfield",
-                fieldLabel:t("new_password"),
-                name:"new_password",
-                inputType:"password",
-                width:400,
-                enableKeyEvents: true,
-                listeners: {
-                    keyup: passwordCheck
-                }
-            }, {
-                xtype:"textfield",
-                fieldLabel:t("retype_password"),
-                name:"retype_password",
-                inputType:"password",
-                width:400,
-                style:"margin-bottom: 20px;",
-                enableKeyEvents: true,
-                listeners: {
-                    keyup: passwordCheck
-                }
-            }]
+                xtype: "fieldcontainer",
+                layout: 'hbox',
+                items: [
+
+                    passwordField,
+                    {
+                        xtype: "button",
+                        width: 32,
+                        style: "margin-left: 8px",
+                        iconCls: "pimcore_icon_clear_cache",
+                        handler: function () {
+
+                            var pass;
+
+                            while (true) {
+                                pass = pimcore.helpers.generatePassword(15);
+                                if (pimcore.helpers.isValidPassword(pass)) {
+                                    break;
+                                }
+                            }
+
+                            passwordField.getEl().down('input').set({type: 'text'});
+
+                            passwordField.setValue(pass);
+                            retypePasswordField.setValue(pass);
+                            
+                            passwordCheck(passwordField);
+                            passwordCheck(retypePasswordField);
+                        }.bind(this)
+                    }
+                ]
+            }, retypePasswordField]
         });
 
         var date = new Date();
@@ -173,16 +208,16 @@ pimcore.settings.profile.panel = Class.create({
                 width: 45,
                 height: 45,
                 style: "float:left; margin-right: 10px;"
-            },{
-                xtype:"button",
+            }, {
+                xtype: "button",
                 text: t("upload"),
                 handler: function () {
                     pimcore.helpers.uploadDialog("/admin/user/upload-current-user-image?id="
-                                    + this.currentUser.id, null, function () {
+                        + this.currentUser.id, null, function () {
                         var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
                         var date = new Date();
                         cont.update('<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc='
-                                    + date.getTime() + '" />');
+                            + date.getTime() + '" />');
                     }.bind(this));
                 }.bind(this)
             }]
@@ -191,29 +226,29 @@ pimcore.settings.profile.panel = Class.create({
         this.editorSettings = new pimcore.settings.user.editorSettings(this, this.currentUser.contentLanguages);
 
         this.userPanel = new Ext.form.FormPanel({
-            border:false,
-            items: [{ items: generalItems}, this.editorSettings.getPanel()],
-            labelWidth:130,
-            buttons:[
+            border: false,
+            items: [{items: generalItems}, this.editorSettings.getPanel()],
+            labelWidth: 130,
+            buttons: [
                 {
-                    text:t("save"),
-                    iconCls:"pimcore_icon_apply",
-                    handler:this.saveCurrentUser.bind(this)
+                    text: t("save"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: this.saveCurrentUser.bind(this)
                 }
             ],
-            autoScroll:true
+            autoScroll: true
         });
 
         return this.userPanel;
     },
 
-    saveCurrentUser:function () {
+    saveCurrentUser: function () {
         var values = this.userPanel.getForm().getFieldValues();
         var contentLanguages = this.editorSettings.getContentLanguages();
         values.contentLanguages = contentLanguages;
 
-        if(values["new_password"]) {
-            if(!pimcore.helpers.isValidPassword(values["new_password"]) || values["new_password"] != values["retype_password"]) {
+        if (values["new_password"]) {
+            if (!pimcore.helpers.isValidPassword(values["new_password"]) || values["new_password"] != values["retype_password"]) {
                 delete values["new_password"];
                 delete values["retype_password"];
                 Ext.MessageBox.alert(t('error'), t("password_was_not_changed"));
@@ -221,13 +256,13 @@ pimcore.settings.profile.panel = Class.create({
         }
 
         Ext.Ajax.request({
-            url:"/admin/user/update-current-user",
-            method:"post",
-            params:{
-                id:this.currentUser.id,
-                data:Ext.encode(values)
+            url: "/admin/user/update-current-user",
+            method: "post",
+            params: {
+                id: this.currentUser.id,
+                data: Ext.encode(values)
             },
-            success:function (response) {
+            success: function (response) {
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
@@ -258,7 +293,7 @@ pimcore.settings.profile.panel = Class.create({
     },
 
 
-    activate:function () {
+    activate: function () {
         Ext.getCmp("pimcore_panel_tabs").setActiveItem("users");
     }
 

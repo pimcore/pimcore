@@ -122,6 +122,7 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
     getValue: function () {
         var value = this.element.dom.innerHTML;
+        value = strip_tags(value, '<br>'); // strip out nasty HTML, eg. inserted by highlighting feature (ExtJS masks)
         value = value.replace(/<br>/g,"\n");
         value = trim(value);
         return value;

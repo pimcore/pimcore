@@ -15,17 +15,38 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Cache as CacheManager;
+use Pimcore\Cache;
+use Pimcore\Cache\FullPage\SessionStatus;
+use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
+use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
+use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 
 class FullPageCacheListener
 {
     use PimcoreContextAwareTrait;
+
+    /**
+     * @var VisitorInfoStorageInterface
+     */
+    private $visitorInfoStorage;
+
+    /**
+     * @var SessionStatus
+     */
+    private $sessionStatus;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @var bool
@@ -56,6 +77,16 @@ class FullPageCacheListener
      * @var string
      */
     protected $defaultCacheKey;
+
+    public function __construct(
+        VisitorInfoStorageInterface $visitorInfoStorage,
+        SessionStatus $sessionStatus,
+        EventDispatcherInterface $eventDispatcher
+    ) {
+        $this->visitorInfoStorage = $visitorInfoStorage;
+        $this->sessionStatus      = $sessionStatus;
+        $this->eventDispatcher    = $eventDispatcher;
+    }
 
     /**
      * @param null $reason
@@ -206,13 +237,18 @@ class FullPageCacheListener
         } catch (\Exception $e) {
             Logger::error($e);
 
-            return $this->disable('ERROR: Exception (see debug.log)');
+            return $this->disable('ERROR: Exception (see log files in /var/logs)');
         }
 
         foreach ($excludePatterns as $pattern) {
             if (@preg_match($pattern, $requestUri)) {
                 return $this->disable('exclude path pattern in system-settings matches');
             }
+        }
+
+        // check if targeting matched anything and disable cache
+        if ($this->disabledByTargeting()) {
+            return $this->disable('Targeting matched rules/target groups');
         }
 
         $deviceDetector = Tool\DeviceDetector::getInstance();
@@ -237,7 +273,7 @@ class FullPageCacheListener
         $cacheKey = null;
         $cacheItem = null;
         foreach ($cacheKeys as $cacheKey) {
-            $cacheItem = CacheManager::load($cacheKey, true);
+            $cacheItem = Cache::load($cacheKey);
             if ($cacheItem) {
                 break;
             }
@@ -268,33 +304,32 @@ class FullPageCacheListener
     }
 
     /**
-     * @param KernelEvent $event
+     * @param FilterResponseEvent $event
      *
      * @return bool|void
      */
-    public function onKernelResponse(KernelEvent $event)
+    public function onKernelResponse(FilterResponseEvent $event)
     {
         if (!$event->isMasterRequest()) {
-            return false;
+            return;
         }
 
         $request = $event->getRequest();
         if (!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontendRequestByAdmin($request)) {
-            return false;
+            return;
         }
 
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
-            return false;
+            return;
         }
 
         $response = $event->getResponse();
-
         if (!$response) {
-            return false;
+            return;
         }
 
-        if ($this->enabled && $request->hasSession() && !empty($request->getSession()->getId())) {
-            $this->disable('session in use');
+        if ($this->enabled && $this->sessionStatus->isDisabledBySession($request)) {
+            $this->disable('Session in use');
         }
 
         if ($this->disableReason) {
@@ -322,14 +357,17 @@ class FullPageCacheListener
                     $cacheKey .= '_' . $deviceDetector->getDevice();
                 }
 
-                $cacheItem = $response;
+                $event = new PrepareResponseEvent($request, $response);
+                $this->eventDispatcher->dispatch(FullPageCacheEvents::PREPARE_RESPONSE, $event);
+
+                $cacheItem = $event->getResponse();
 
                 $tags = ['output'];
                 if ($this->lifetime) {
                     $tags = ['output_lifetime'];
                 }
 
-                CacheManager::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
+                Cache::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
             } catch (\Exception $e) {
                 Logger::error($e);
 
@@ -338,7 +376,26 @@ class FullPageCacheListener
         } else {
             // output-cache was disabled, add "output" as cleared tag to ensure that no other "output" tagged elements
             // like the inc and snippet cache get into the cache
-            CacheManager::addIgnoredTagOnSave('output_inline');
+            Cache::addIgnoredTagOnSave('output_inline');
         }
+    }
+
+    private function disabledByTargeting(): bool
+    {
+        if (!$this->visitorInfoStorage->hasVisitorInfo()) {
+            return false;
+        }
+
+        $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
+
+        if (!empty($visitorInfo->getMatchingTargetingRules())) {
+            return true;
+        }
+
+        if (!empty($visitorInfo->getTargetGroupAssignments())) {
+            return true;
+        }
+
+        return false;
     }
 }

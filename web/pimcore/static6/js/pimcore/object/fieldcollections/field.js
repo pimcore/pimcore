@@ -72,7 +72,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 this.parentPanel.tree.getStore().load();
                 pimcore.helpers.showNotification(t("success"), t("fieldcollection_saved_successfully"), "success");
             } else {
-                throw "save was not successful, see debug.log";
+                throw "save was not successful, see log files in /var/logs";
             }
         } catch (e) {
             this.saveOnError();

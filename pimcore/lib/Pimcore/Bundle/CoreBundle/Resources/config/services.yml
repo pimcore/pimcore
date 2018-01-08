@@ -74,6 +74,15 @@ services:
 
 
     #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\CoreBundle\Command\:
+        resource: '../../Command'
+        exclude: '../../Command/Bundle/Helper'
+
+    #
     # HTTP/REST clients
     #
 
@@ -128,4 +137,5 @@ services:
 
     pimcore.custom_report.adapter.factories:
         class: Symfony\Component\DependencyInjection\ServiceLocator
+        public: true
         tags: ['container.service_locator']

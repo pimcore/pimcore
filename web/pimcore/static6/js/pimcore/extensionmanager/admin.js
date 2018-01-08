@@ -217,21 +217,22 @@ pimcore.extensionmanager.admin = Class.create({
         }.bind(this);
 
         var typesColumns = [
-            {header: t("type"), width: 50, sortable: false, dataIndex: 'type', renderer:
+            {text: t("type"), width: 50, sortable: false, dataIndex: 'type', renderer:
             function (value, metaData, record, rowIndex, colIndex, store) {
                 return '<div class="pimcore_icon_' + value + '" style="min-height: 16px;" title="' + t("value") +'"></div>';
             }},
             {
-                header: "ID", width: 100, sortable: true, dataIndex: 'id', flex: 1,
+                text: "ID", width: 100, sortable: true, dataIndex: 'id', flex: 1,
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     return self.getExtensionId(record);
                 }
             },
-            {header: t("name"), width: 200, sortable: true, dataIndex: 'name', flex: 2},
-            {header: t("version"), width: 80, sortable: false, dataIndex: 'version'},
-            {header: t("description"), width: 200, sortable: true, dataIndex: 'description', flex: 4},
+            {text: t("name"), width: 200, sortable: true, dataIndex: 'name', flex: 2},
+            {text: t("version"), width: 80, sortable: false, dataIndex: 'version'},
+            {text: t("description"), width: 200, sortable: true, dataIndex: 'description', flex: 4},
             {
-                header: t('enable') + " / " + t("disable"),
+                text: t('enable') + " / " + t("disable"),
+                menuText: t('enable') + " / " + t("disable"),
                 xtype: 'actioncolumn',
                 width: 100,
                 items: [{
@@ -277,7 +278,8 @@ pimcore.extensionmanager.admin = Class.create({
                 }]
             },
             {
-                header: t('install') + "/" + t("uninstall"),
+                text: t('install') + "/" + t("uninstall"),
+                menuText: t('install') + "/" + t("uninstall"),
                 xtype: 'actioncolumn',
                 width: 100,
                 items: [{
@@ -319,7 +321,8 @@ pimcore.extensionmanager.admin = Class.create({
                 }]
             },
             {
-                header: t('update'),
+                text: t('update'),
+                menuText: t('update'),
                 xtype: 'actioncolumn',
                 width: 100,
                 items: [{
@@ -359,7 +362,8 @@ pimcore.extensionmanager.admin = Class.create({
                 }]
             },
             {
-                header: t('configure'),
+                text: t('configure'),
+                menuText: t('configure'),
                 xtype: 'actioncolumn',
                 width: 70,
                 items: [{
@@ -418,7 +422,8 @@ pimcore.extensionmanager.admin = Class.create({
                 hideable: false
             },
             {
-                header: t("priority"),
+                text: t("priority"),
+                menuText: t("priority"),
                 width: 80,
                 align: 'right',
                 sortable: true,
@@ -426,7 +431,8 @@ pimcore.extensionmanager.admin = Class.create({
                 editor: new Ext.form.Number({})
             },
             {
-                header: t("environments"),
+                text: t("environments"),
+                menuText: t("environments"),
                 width: 100,
                 sortable: false,
                 dataIndex: 'environments',

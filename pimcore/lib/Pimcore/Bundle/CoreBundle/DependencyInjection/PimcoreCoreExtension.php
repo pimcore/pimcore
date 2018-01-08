@@ -22,6 +22,9 @@ use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
+use Pimcore\Targeting\DataLoaderInterface;
+use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Tool\ArrayUtils;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
@@ -29,12 +32,13 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
-use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class PimcoreCoreExtension extends Extension implements PrependExtensionInterface
+class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
     /**
      * @return string
@@ -47,12 +51,8 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function loadInternal(array $config, ContainerBuilder $container)
     {
-        // TODO use ConfigurableExtension or getExtension()??
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
-
         // bundle manager/locator config
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
@@ -101,6 +101,7 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
         $this->configureRouting($container, $config['routing']);
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
+        $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories', 'Newsletter Address Source Adapter Factory');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories', 'Custom Report Adapter Factory');
@@ -143,10 +144,12 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
     {
         $strategyName = $config['documents']['editables']['naming_strategy'];
 
-        $container->setAlias(
-            'pimcore.document.tag.naming.strategy',
-            sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
-        );
+        $container
+            ->setAlias(
+                'pimcore.document.tag.naming.strategy',
+                sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
+            )
+            ->setPublic(true);
     }
 
     /**
@@ -292,6 +295,75 @@ class PimcoreCoreExtension extends Extension implements PrependExtensionInterfac
             $definition = $container->getDefinition(TranslationDebugListener::class);
             $definition->setArgument('$parameterName', $parameter);
         }
+    }
+
+    private function configureTargeting(ContainerBuilder $container, LoaderInterface $loader, array $config)
+    {
+        $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
+        $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
+        $container->setParameter('pimcore.geoip.db_file', PIMCORE_CONFIGURATION_DIRECTORY . '/GeoLite2-City.mmdb');
+
+        $loader->load('targeting.yml');
+
+        // set TargetingStorageInterface type hint to the configured service ID
+        $container->setAlias(TargetingStorageInterface::class, $config['storage_id']);
+
+        if ($config['enabled']) {
+            // enable targeting by registering listeners
+            $loader->load('targeting/listeners.yml');
+
+            // add session support by registering the session configurator and session storage
+            if ($config['session']['enabled']) {
+                $loader->load('targeting/session.yml');
+            }
+        }
+
+        $dataProviders = [];
+        foreach ($config['data_providers'] as $dataProviderKey => $dataProviderServiceId) {
+            $dataProviders[$dataProviderKey] = new Reference($dataProviderServiceId);
+        }
+
+        $dataProviderLocator = new Definition(ServiceLocator::class, [$dataProviders]);
+        $dataProviderLocator
+            ->setPublic(false)
+            ->addTag('container.service_locator');
+
+        $container
+            ->findDefinition(DataLoaderInterface::class)
+            ->setArgument('$dataProviders', $dataProviderLocator);
+
+        $actionHandlers = [];
+        foreach ($config['action_handlers'] as $actionHandlerKey => $actionHandlerServiceId) {
+            $actionHandlers[$actionHandlerKey] = new Reference($actionHandlerServiceId);
+        }
+
+        $actionHandlerLocator = new Definition(ServiceLocator::class, [$actionHandlers]);
+        $actionHandlerLocator
+            ->setPublic(false)
+            ->addTag('container.service_locator');
+
+        $container
+            ->getDefinition(DelegatingActionHandler::class)
+            ->setArgument('$actionHandlers', $actionHandlerLocator);
+    }
+
+    /**
+     * Configures a "typed locator" (a class exposing get/has for a specific type) wrapping
+     * a standard service locator. Example: Pimcore\Targeting\DataProviderLocator
+     *
+     * @param ContainerBuilder $container
+     * @param string $locatorClass
+     * @param array $services
+     */
+    private function configureTypedLocator(ContainerBuilder $container, string $locatorClass, array $services)
+    {
+        $serviceLocator = new Definition(ServiceLocator::class, [$services]);
+        $serviceLocator
+            ->setPublic(false)
+            ->addTag('container.service_locator');
+
+        $locator = $container->getDefinition($locatorClass);
+        $locator->setArgument('$locator', $serviceLocator);
     }
 
     /**

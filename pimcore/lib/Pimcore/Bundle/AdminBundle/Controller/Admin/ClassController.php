@@ -52,7 +52,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             ];
         }
 
-        return $this->json($typeItems);
+        return $this->adminJson($typeItems);
     }
 
     /**
@@ -72,7 +72,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             ];
         }
 
-        return $this->json($typeItems);
+        return $this->adminJson($typeItems);
     }
 
     /**
@@ -95,7 +95,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         if ($request->get('createAllowed')) {
             $tmpClasses = [];
             foreach ($classes as $class) {
-                if ($this->getUser()->isAllowed($class->getId(), 'class')) {
+                if ($this->getAdminUser()->isAllowed($class->getId(), 'class')) {
                     $tmpClasses[] = $class;
                 }
             }
@@ -183,7 +183,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             }
         }
 
-        return $this->json($treeNodes);
+        return $this->adminJson($treeNodes);
     }
 
     /**
@@ -198,7 +198,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
         $class->setFieldDefinitions(null);
 
-        return $this->json($class);
+        return $this->adminJson($class);
     }
 
     /**
@@ -212,7 +212,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById(intval($request->get('id')));
 
-        return $this->json(['success' => true, 'data' => $customLayout]);
+        return $this->adminJson(['success' => true, 'data' => $customLayout]);
     }
 
     /**
@@ -226,12 +226,12 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $class = DataObject\ClassDefinition::create(
             ['name' => $this->correctClassname($request->get('name')),
-                'userOwner' => $this->getUser()->getId()]
+                'userOwner' => $this->getAdminUser()->getId()]
         );
 
         $class->save();
 
-        return $this->json(['success' => true, 'id' => $class->getId()]);
+        return $this->adminJson(['success' => true, 'id' => $class->getId()]);
     }
 
     /**
@@ -245,14 +245,14 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::create(
             ['name' => $request->get('name'),
-                'userOwner' => $this->getUser()->getId(),
+                'userOwner' => $this->getAdminUser()->getId(),
                 'classId' => $request->get('classId')]
         );
 
         $customLayout->save();
 
-        return $this->json(['success' => true, 'id' => $customLayout->getId(), 'name' => $customLayout->getName(),
-            'data' => $customLayout]);
+        return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'name' => $customLayout->getName(),
+                                 'data'    => $customLayout]);
     }
 
     /**
@@ -284,7 +284,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             $customLayout->delete();
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -304,7 +304,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $modificationDate = intval($values['modificationDate']);
         if ($modificationDate < $customLayout->getModificationDate()) {
-            return $this->json(['success' => false, 'msg' => 'custom_layout_changed']);
+            return $this->adminJson(['success' => false, 'msg' => 'custom_layout_changed']);
         }
 
         $configuration['datatype'] = 'layout';
@@ -319,11 +319,11 @@ class ClassController extends AdminController implements EventedControllerInterf
             $customLayout->setDefault($values['default']);
             $customLayout->save();
 
-            return $this->json(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout]);
+            return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -374,7 +374,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $class->setLayoutDefinitions($layout);
 
-            $class->setUserModification($this->getUser()->getId());
+            $class->setUserModification($this->getAdminUser()->getId());
             $class->setModificationDate(time());
 
             $propertyVisibility = [];
@@ -396,11 +396,11 @@ class ClassController extends AdminController implements EventedControllerInterf
             // set the fielddefinitions to null because we don't need them in the response
             $class->setFieldDefinitions(null);
 
-            return $this->json(['success' => true, 'class' => $class]);
+            return $this->adminJson(['success' => true, 'class' => $class]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -431,7 +431,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
 
-        $response = $this->json([
+        $response = $this->adminJson([
             'success' => $success
         ]);
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
@@ -468,7 +468,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             }
         }
 
-        $response = $this->json([
+        $response = $this->adminJson([
             'success' => $success
         ]);
 
@@ -503,7 +503,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             ];
         }
 
-        return $this->json(['success' => true, 'data' => $result]);
+        return $this->adminJson(['success' => true, 'data' => $result]);
     }
 
     /**
@@ -551,7 +551,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             }
         }
 
-        return $this->json(['data' => $resultList]);
+        return $this->adminJson(['data' => $resultList]);
     }
 
     /**
@@ -635,7 +635,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
 
-        return $this->json($fc);
+        return $this->adminJson($fc);
     }
 
     /**
@@ -682,11 +682,11 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $fc->save();
 
-            return $this->json(['success' => true, 'id' => $fc->getKey()]);
+            return $this->adminJson(['success' => true, 'id' => $fc->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -705,7 +705,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $success = DataObject\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
 
-        $response = $this->json([
+        $response = $this->adminJson([
             'success' => $success
         ]);
 
@@ -753,7 +753,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
         $fc->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -777,7 +777,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             ];
         }
 
-        return $this->json($items);
+        return $this->adminJson($items);
     }
 
     /**
@@ -824,7 +824,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             $list = $filteredList;
         }
 
-        return $this->json(['fieldcollections' => $list]);
+        return $this->adminJson(['fieldcollections' => $list]);
     }
 
     /**
@@ -869,14 +869,16 @@ class ClassController extends AdminController implements EventedControllerInterf
             $classDefs = $brickDefinition->getClassDefinitions();
             if (!empty($classDefs)) {
                 foreach ($classDefs as $classDef) {
-                    if ($classDef['classname'] == $class->getId()) {
+                    if ($classDef['classname'] == $class->getName()) {
                         $fieldName = $classDef['fieldname'];
                         if ($filteredFieldDefinition && !$filteredFieldDefinition[$fieldName]) {
                             continue;
                         }
 
                         $key = $brickDefinition->getKey();
+
                         $result[$key]['nodeLabel'] = $key;
+                        $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
                         $result[$key]['childs'] = $brickDefinition->getLayoutdefinitions()->getChilds();
                         break;
@@ -885,7 +887,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             }
         }
 
-        return $this->json($result);
+        return $this->adminJson($result);
     }
 
     /**
@@ -903,7 +905,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
-        return $this->json($fc);
+        return $this->adminJson($fc);
     }
 
     /**
@@ -953,11 +955,11 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $fc->save();
 
-            return $this->json(['success' => true, 'id' => $fc->getKey()]);
+            return $this->adminJson(['success' => true, 'id' => $fc->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
-            return $this->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -975,7 +977,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $data = file_get_contents($_FILES['Filedata']['tmp_name']);
         $success = DataObject\ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $data);
 
-        $response = $this->json([
+        $response = $this->adminJson([
             'success' => $success
         ]);
 
@@ -1023,7 +1025,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
         $fc->delete();
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -1047,7 +1049,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             ];
         }
 
-        return $this->json($items);
+        return $this->adminJson($items);
     }
 
     /**
@@ -1085,7 +1087,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 $currentLayoutId = $request->get('layoutId', null);
 
-                $user = $this->getUser();
+                $user = $this->getAdminUser();
                 if ($currentLayoutId == -1 && $user->isAdmin()) {
                     DataObject\Service::createSuperLayout($layout);
                     $objectData['layout'] = $layout;
@@ -1113,7 +1115,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
         $list = $event->getArgument('list');
 
-        return $this->json(['objectbricks' => $list]);
+        return $this->adminJson(['objectbricks' => $list]);
     }
 
     /**
@@ -1170,7 +1172,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             }
         }
 
-        $response = $this->json(['success' => true, 'filename' => $tmpName, 'data' => $result]);
+        $response = $this->adminJson(['success' => true, 'filename' => $tmpName, 'data' => $result]);
         $response->headers->set('Content-Type', 'text/html');
 
         return $response;
@@ -1218,7 +1220,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
                 $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($item), true);
 
-                return $this->json(['success' => $success !== false]);
+                return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'objectbrick' && $item['key'] == $name) {
                 try {
                     $brick = DataObject\Objectbrick\Definition::getByKey($name);
@@ -1229,7 +1231,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 $success = DataObject\ClassDefinition\Service::importObjectBrickFromJson($brick, json_encode($item), true);
 
-                return $this->json(['success' => $success !== false]);
+                return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'fieldcollection' && $item['key'] == $name) {
                 try {
                     $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name);
@@ -1239,7 +1241,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
                 $success = DataObject\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
 
-                return $this->json(['success' => $success !== false]);
+                return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'customlayout') {
                 $layoutData = unserialize($data['name']);
                 $className = $layoutData['className'];
@@ -1277,13 +1279,13 @@ class ClassController extends AdminController implements EventedControllerInterf
                     } catch (\Exception $e) {
                         Logger::error($e->getMessage());
 
-                        return $this->json(['success' => false, 'message' => $e->getMessage()]);
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                     }
                 }
             }
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**

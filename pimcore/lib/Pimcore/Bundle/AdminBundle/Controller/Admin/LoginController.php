@@ -72,7 +72,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             return $this->redirect('/install');
         }
 
-        $user = $this->getUser();
+        $user = $this->getAdminUser();
         if ($user instanceof UserInterface) {
             return $this->redirectToRoute('pimcore_admin_index');
         }

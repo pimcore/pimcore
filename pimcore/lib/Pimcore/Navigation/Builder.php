@@ -258,7 +258,7 @@ class Builder
                 $child = Document\Hardlink\Service::wrap($child);
             }
 
-            if (($child instanceof Document\Page or $child instanceof Document\Link) and $child->getProperty('navigation_name')) {
+            if (($child instanceof Document\Folder or $child instanceof Document\Page or $child instanceof Document\Link) and $child->getProperty('navigation_name')) {
                 $path = $child->getFullPath();
                 if ($child instanceof Document\Link) {
                     $path = $child->getHref();
@@ -266,7 +266,9 @@ class Builder
 
                 /** @var DocumentPage $page */
                 $page = new $this->pageClass();
-                $page->setUri($path . $child->getProperty('navigation_parameters') . $child->getProperty('navigation_anchor'));
+                if (!$child instanceof Document\Folder) {
+                    $page->setUri($path . $child->getProperty('navigation_parameters') . $child->getProperty('navigation_anchor'));
+                }
                 $page->setLabel($child->getProperty('navigation_name'));
                 $page->setActive(false);
                 $page->setId($this->htmlMenuIdPrefix . $child->getId());

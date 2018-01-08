@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Log\Simple;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -70,6 +71,10 @@ class UsageStatisticsListener implements EventSubscriberInterface
      */
     protected function logUsageStatistics(Request $request)
     {
+        if (Config::getSystemConfig()->general->disableusagestatistics) {
+            return;
+        }
+
         $params = $this->getParams($request);
         $user   = $this->userResolver->getUser();
 

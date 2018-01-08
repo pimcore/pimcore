@@ -123,10 +123,10 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
         var gridColumns = [];
 
-        //gridColumns.push({header: t("store"), width: 40, sortable: true, dataIndex: 'storeId'});
-        gridColumns.push({header: "ID", width: 100, sortable: true, dataIndex: 'id'});
+        //gridColumns.push({text: t("store"), width: 40, sortable: true, dataIndex: 'storeId'});
+        gridColumns.push({text: "ID", width: 100, sortable: true, dataIndex: 'id'});
         gridColumns.push({
-                header: t("name"),
+                text: t("name"),
                 width: 200,
                 sortable: true,
                 dataIndex: 'name',
@@ -136,10 +136,10 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
         );
 
-        gridColumns.push({header: t("title"), width: 200, sortable: false, dataIndex: 'title',editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({}), filter: 'string'});
-        gridColumns.push({header: t("definition"), width: 300, sortable: true, hidden: true, dataIndex: 'definition',editor: new Ext.form.TextField({})});
-        gridColumns.push({header: t("type"), width: 150, sortable: true, dataIndex: 'type', filter: 'string',
+        gridColumns.push({text: t("title"), width: 200, sortable: false, dataIndex: 'title',editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({text: t("description"), width: 300, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({}), filter: 'string'});
+        gridColumns.push({text: t("definition"), width: 300, sortable: true, hidden: true, dataIndex: 'definition',editor: new Ext.form.TextField({})});
+        gridColumns.push({text: t("type"), width: 150, sortable: true, dataIndex: 'type', filter: 'string',
             editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
@@ -154,6 +154,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t("classificationstore_detailed_configuration"),
             width: 30,
             items: [
                 {
@@ -175,14 +176,14 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
 
         gridColumns.push(
-            {header: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
+            {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false, width: 130,
                 hidden: true,
                 renderer: dateRenderer
             }
         );
 
         gridColumns.push(
-            {header: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
+            {text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false, width: 130,
                 hidden: true,
                 renderer: dateRenderer            }
         );
@@ -190,6 +191,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('remove'),
             width: 30,
             items: [
                 {

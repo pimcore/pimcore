@@ -118,19 +118,19 @@ pimcore.element.scheduler = Class.create({
             });
 
             var checkColumn = Ext.create('Ext.grid.column.Check', {
-                header: t("active"),
+                text: t("active"),
                 dataIndex: 'active',
                 width: 50,
                 sortable: true
             });
 
             var propertiesColumns = [
-                {header: t("date"), width: 120, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField()                },
-                {header: t("time"), width: 100, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
+                {text: t("date"), width: 120, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField()                },
+                {text: t("time"), width: 100, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
                         format: "H:i",
                     })
                 },
-                {header: t("action"), width: 100, sortable: false, dataIndex: 'action', editor: new Ext.form.ComboBox({
+                {text: t("action"), width: 100, sortable: false, dataIndex: 'action', editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
                     editable: false,
                     store: actionTypes,
@@ -151,7 +151,7 @@ pimcore.element.scheduler = Class.create({
 
                     return "";
                 }},
-                {header: t("version"), width: 200, sortable: false, dataIndex: 'version',
+                {text: t("version"), width: 200, sortable: false, dataIndex: 'version',
                     editor: new Ext.form.ComboBox({
                         triggerAction: 'all',
                         editable: false,
@@ -168,6 +168,7 @@ pimcore.element.scheduler = Class.create({
                 checkColumn,
                 {
                     xtype: 'actioncolumn',
+                    menuText: t('delete'),
                     width: 30,
                     items: [{
                         tooltip: t('delete'),

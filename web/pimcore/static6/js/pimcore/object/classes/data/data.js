@@ -21,7 +21,7 @@ pimcore.object.classes.data.data = Class.create({
                 "userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data",
                 "versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource",
                 "parentClass","definition","locked","language","omitmandatorycheck", "idpath", "object", "fieldname",
-                "property"
+                "property","localizedfields"
             ],
 
     /**

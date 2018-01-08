@@ -52,7 +52,7 @@ class PimcoreUrl extends Helper
     public function __invoke(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
     {
         // merge all parameters from request to parameters
-        if (!$reset) {
+        if (!$reset && $this->requestHelper->hasMasterRequest()) {
             $urlOptions = array_replace($this->requestHelper->getMasterRequest()->query->all(), $urlOptions);
         }
 
@@ -96,8 +96,13 @@ class PimcoreUrl extends Helper
      */
     protected function getCurrentRoute()
     {
-        $route = $this->requestHelper->getCurrentRequest()->attributes->get('_route');
-        if (!$route) {
+        $route = null;
+
+        if ($this->requestHelper->hasCurrentRequest()) {
+            $route = $this->requestHelper->getCurrentRequest()->attributes->get('_route');
+        }
+
+        if (!$route && $this->requestHelper->hasMasterRequest()) {
             $route = $this->requestHelper->getMasterRequest()->attributes->get('_route');
         }
 

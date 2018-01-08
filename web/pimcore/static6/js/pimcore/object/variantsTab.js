@@ -18,12 +18,13 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
     fieldObject: {},
     initialize: function (object) {
-        this.object = object;
+        this.element = object;
         this.searchType = "folder";
+        this.noBatchColumns = [];
     },
 
     getLayout: function () {
-        this.selectedClass = this.object.data.general.o_className;
+        this.selectedClass = this.element.data.general.o_className;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var klassIndex = classStore.findExact("text", this.selectedClass);
@@ -52,7 +53,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             params: {
                 id: this.classId,
                 objectId:
-                this.object.id,
+                this.element.id,
                 gridtype: "grid",
                 gridConfigId: this.settings ? this.settings.gridConfigId : null,
                 searchType: this.searchType
@@ -89,7 +90,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             "/admin/variants/get-variants",
             {
                 language: this.gridLanguage,
-                objectId: this.object.id
+                objectId: this.element.id
             },
             false
         );
@@ -99,7 +100,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         gridHelper.showSubtype = false;
         gridHelper.showKey = true;
         gridHelper.enableEditor = true;
-        gridHelper.baseParams.objectId = this.object.id;
+        gridHelper.baseParams.objectId = this.element.id;
 
         this.store = gridHelper.getStore(this.noBatchColumns);
         this.store.setPageSize(itemsPerPage);
@@ -109,6 +110,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('open'),
             width: 30,
             items: [
                 {
@@ -124,6 +126,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         gridColumns.push({
             hideable: false,
             xtype: 'actioncolumn',
+            menuText: t('remove'),
             width: 30,
             items: [
                 {
@@ -185,7 +188,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             iconCls: "pimcore_icon_publish",
             hidden: hideSaveColumnConfig,
             handler: function () {
-                pimcore.helpers.saveColumnConfig(this.object.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton);
+                pimcore.helpers.saveColumnConfig(this.element.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton);
             }.bind(this)
         });
 
@@ -229,21 +232,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     text: t("export_csv"),
                     iconCls: "pimcore_icon_export",
                     handler: function(){
-
-                        Ext.MessageBox.show({
-                            title:t('warning'),
-                            msg: t('csv_object_export_warning'),
-                            buttons: Ext.Msg.OKCANCEL ,
-                            fn: function(btn){
-                                if (btn == 'ok'){
-                                    this.exportPrepare();
-                                }
-                            }.bind(this),
-                            icon: Ext.MessageBox.WARNING
-                        });
-
-
-
+                        pimcore.helpers.csvExportWarning(function(settings) {
+                            this.exportPrepare(settings);
+                        }.bind(this));
                     }.bind(this)
                 }, "-",
                 this.columnConfigButton,
@@ -339,9 +330,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             Ext.Ajax.request({
                 url: "/admin/object/add",
                 params: {
-                    className: this.object.data.general.o_className,
-                    classId: this.object.data.general.o_classId,
-                    parentId: this.object.id,
+                    className: this.element.data.general.o_className,
+                    classId: this.element.data.general.o_classId,
+                    parentId: this.element.id,
                     objecttype: "variant",
                     key: pimcore.helpers.getValidFilename(value, "object")
                 },
@@ -351,7 +342,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                         this.store.reload();
                         pimcore.helpers.openObject(responseJson.id, responseJson.type);
 
-                        pimcore.elementservice.refreshNodeAllTrees("object", this.object.id);
+                        pimcore.elementservice.refreshNodeAllTrees("object", this.element.id);
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error",
                             t(responseJson.message));
@@ -386,7 +377,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                         pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error");
                     }
                     this.store.reload();
-                    pimcore.elementservice.refreshNodeAllTrees("object", this.object.id);
+                    pimcore.elementservice.refreshNodeAllTrees("object", this.element.id);
                 }.bind(this)
             });
         }

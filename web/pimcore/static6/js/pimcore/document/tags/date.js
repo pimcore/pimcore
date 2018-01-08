@@ -21,6 +21,11 @@ pimcore.document.tags.date = Class.create(pimcore.document.tag, {
         this.setupWrapper();
         options = this.parseOptions(options);
 
+        if (options.format) {
+            // replace any % prefixed parts from strftime format
+            options.format = options.format.replace(/%([a-zA-Z])/g, '$1');
+        }
+
         if (data) {
             var tmpDate = new Date(intval(data) * 1000);
             options.value = tmpDate;

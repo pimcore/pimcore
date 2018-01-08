@@ -21,7 +21,9 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
     setConfig: function (config) {
         var parsed = {
             site: null,
-            widget: null
+            widget: null,
+            period: null,
+            date: null
         };
 
         try {
@@ -93,6 +95,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
         var config = this.config || {};
 
         var siteCombo = new Ext.form.ComboBox({
+            name: "site",
             xtype: "combo",
             width: 500,
             autoSelect: true,
@@ -107,6 +110,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
         });
 
         var widgetCombo = new Ext.form.ComboBox({
+            name: "widget",
             xtype: "combo",
             width: 500,
             autoSelect: true,
@@ -139,7 +143,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
 
         var win = new Ext.Window({
             width: 550,
-            height: 200,
+            height: 280,
             modal: true,
             title: t('portlet_piwik_widget'),
             closeAction: "destroy",
@@ -151,13 +155,41 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
                         siteCombo,
                         widgetCombo,
                         {
+                            name: 'period',
+                            fieldLabel: t("piwik_widget_period"),
+                            xtype: 'combo',
+                            store: [
+                                ['day', t('piwik_period_day')],
+                                ['week', t('piwik_period_week')],
+                                ['month', t('piwik_period_month')],
+                                ['year', t('piwik_period_year')]
+                            ],
+                            mode: 'local',
+                            width: 500,
+                            value: ('undefined' !== typeof config.period) ? config.period : 'day',
+                            editable: false,
+                            triggerAction: 'all'
+                        },
+                        {
+                            name: 'date',
+                            fieldLabel: t("piwik_widget_date"),
+                            xtype: 'combo',
+                            store: [
+                                ['yesterday', t('piwik_date_yesterday')],
+                                ['today', t('piwik_date_today')]
+                            ],
+                            mode: 'local',
+                            width: 500,
+                            value: ('undefined' !== typeof config.date) ? config.date : 'yesterday',
+                            editable: true,
+                            triggerAction: 'all'
+                        },
+                        {
                             xtype: "button",
                             text: t("save"),
-                            handler: function () {
-                                this.updateSettings(
-                                    siteCombo.getValue(),
-                                    widgetCombo.getValue()
-                                );
+                            handler: function (button) {
+                                var form = button.up('form').getForm();
+                                this.updateSettings(form.getValues());
 
                                 win.close();
                             }.bind(this)
@@ -170,12 +202,8 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
         win.show();
     },
 
-    updateSettings: function (site, widget) {
-        this.config = {
-            site: site,
-            widget: widget
-        };
-
+    updateSettings: function (data) {
+        this.config = data;
         this.loadMask.show();
 
         Ext.Ajax.request({
@@ -213,8 +241,22 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
             return;
         }
 
+        var params = {
+            period: 'day',
+            date: 'yesterday'
+        };
+
+        if (config.period) {
+            params.period = config.period;
+        }
+
+        if (config.date) {
+            params.date = config.date;
+        }
+
         Ext.Ajax.request({
             url: "/admin/reports/piwik/portal-widgets/" + config.site + "/" + config.widget,
+            params: params,
             method: "GET",
             ignoreErrors: true, // do not pop up error window on failure
             success: function (response) {
@@ -227,10 +269,12 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
                     }
                 });
 
+                var title = 'Piwik: ' + widget.title;
+                title += ' (period: ' + params.period + ', date: ' + params.date + ')';
+
                 layout.removeAll();
                 layout.add(iframe);
-
-                layout.setTitle('Piwik: ' + widget.title);
+                layout.setTitle(title);
 
                 iframe.el.dom.onload = function() {
                     that.loadMask.hide();

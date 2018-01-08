@@ -18,6 +18,7 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 use Pimcore\Tool;
@@ -44,7 +45,7 @@ class PageController extends DocumentControllerBase
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->json([
+            return $this->adminJson([
                 'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
             ]);
         }
@@ -89,10 +90,10 @@ class PageController extends DocumentControllerBase
         $data = $event->getArgument('data');
 
         if ($page->isAllowed('view')) {
-            return $this->json($data);
+            return $this->adminJson($data);
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -135,7 +136,7 @@ class PageController extends DocumentControllerBase
                     $page = $this->getLatestVersion($page);
                 }
 
-                $page->setUserModification($this->getUser()->getId());
+                $page->setUserModification($this->getAdminUser()->getId());
 
                 if ($request->get('task') == 'unpublish') {
                     $page->setPublished(false);
@@ -150,7 +151,7 @@ class PageController extends DocumentControllerBase
                 }
 
                 // check for redirects
-                if ($this->getUser()->isAllowed('redirects') && $request->get('settings')) {
+                if ($this->getAdminUser()->isAllowed('redirects') && $request->get('settings')) {
                     if (is_array($settings)) {
                         $redirectList = new Redirect\Listing();
                         $redirectList->setCondition('target = ?', $page->getId());
@@ -206,14 +207,14 @@ class PageController extends DocumentControllerBase
                         $page->save();
                         $this->saveToSession($page);
 
-                        return $this->json(['success' => true]);
+                        return $this->adminJson(['success' => true]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
                         Logger::err($e);
 
-                        return $this->json(['success' => false, 'message'=>$e->getMessage()]);
+                        return $this->adminJson(['success' => false, 'message' =>$e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed('save')) {
@@ -223,11 +224,11 @@ class PageController extends DocumentControllerBase
                             $page->saveVersion();
                             $this->saveToSession($page);
 
-                            return $this->json(['success' => true]);
+                            return $this->adminJson(['success' => true]);
                         } catch (\Exception $e) {
                             Logger::err($e);
 
-                            return $this->json(['success' => false, 'message'=>$e->getMessage()]);
+                            return $this->adminJson(['success' => false, 'message' =>$e->getMessage()]);
                         }
                     }
                 }
@@ -235,12 +236,12 @@ class PageController extends DocumentControllerBase
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                return $this->json(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
+                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
             }
             throw $e;
         }
 
-        return $this->json(false);
+        return $this->adminJson(false);
     }
 
     /**
@@ -256,7 +257,7 @@ class PageController extends DocumentControllerBase
         $list->setCondition('type = ?', ['page']);
         $data = $list->loadIdPathList();
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true,
             'data' => $data
         ]);
@@ -284,7 +285,7 @@ class PageController extends DocumentControllerBase
             File::put($file, $data);
         }
 
-        return $this->json(['success' => true]);
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -334,7 +335,7 @@ class PageController extends DocumentControllerBase
             }
         }
 
-        return $this->json(['success' => $success]);
+        return $this->adminJson(['success' => $success]);
     }
 
     /**
@@ -375,7 +376,7 @@ class PageController extends DocumentControllerBase
             $success = false;
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success
         ]);
     }
@@ -389,19 +390,21 @@ class PageController extends DocumentControllerBase
      */
     public function clearEditableDataAction(Request $request)
     {
-        $personaId = $request->get('persona');
+        $targetGroupId = $request->get('targetGroup');
         $docId = $request->get('id');
 
         $doc = Document::getById($docId);
 
+        /** @var Document\Tag $element */
         foreach ($doc->getElements() as $element) {
-            if ($personaId && $doc instanceof Document\Page) {
-                if (preg_match('/^' . preg_quote($doc->getPersonaElementPrefix($personaId), '/') . '/', $element->getName())) {
+            if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
+                // remove target group specific elements
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupElementPrefix($targetGroupId), '/') . '/', $element->getName())) {
                     $doc->removeElement($element->getName());
                 }
             } else {
-                // remove all but persona data
-                if (!preg_match("/^persona_\-/", $element->getName())) {
+                // remove all but target group data
+                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $element->getName())) {
                     $doc->removeElement($element->getName());
                 }
             }
@@ -409,7 +412,7 @@ class PageController extends DocumentControllerBase
 
         $this->saveToSession($doc, true);
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }

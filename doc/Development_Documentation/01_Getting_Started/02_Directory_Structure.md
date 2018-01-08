@@ -29,4 +29,4 @@ it is stored in the `app/` directory.
   
   
 For more information about the folder structure and the architecture in general, please have a look at the 
-[Symfony documentation](http://symfony.com/doc/current/quick_tour/the_architecture.html). 
+[Symfony documentation](http://symfony.com/doc/3.4/quick_tour/the_architecture.html). 

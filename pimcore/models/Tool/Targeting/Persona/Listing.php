@@ -20,6 +20,8 @@ namespace Pimcore\Model\Tool\Targeting\Persona;
 use Pimcore\Model;
 
 /**
+ * @deprecated Use TargetGroup\Listing instead. Will be removed in Pimcore 6.
+ *
  * @method \Pimcore\Model\Tool\Targeting\Persona\Listing\Dao getDao()
  */
 class Listing extends Model\Listing\AbstractListing

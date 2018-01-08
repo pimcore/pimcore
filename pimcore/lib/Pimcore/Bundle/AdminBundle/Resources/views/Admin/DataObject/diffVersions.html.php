@@ -7,7 +7,6 @@
 
 <body>
 
-
 <?php
 
 use Pimcore\Model\DataObject;
@@ -19,27 +18,51 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
     <tr>
         <th>Name</th>
         <th>Key</th>
-        <th>Version 1</th>
-        <th>Version 2</th>
+        <?php if ($this->isImportPreview) { ?>
+            <?php if ($this->isNew) { ?>
+                <th>New Object or unable to resolve</th>
+            <?php } else { ?>
+                <th>Before</th>
+                <th>After</th>
+            <?php } ?>
+        <?php } else { ?>
+            <th>Version 1</th>
+            <th>Version 2</th>
+        <?php } ?>
     </tr>
     <tr class="system">
         <td>Date</td>
         <td>o_modificationDate</td>
-        <td><?= date('Y-m-d H:i:s', $this->object1->getModificationDate()); ?></td>
+        <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+            <td><?= date('Y-m-d H:i:s', $this->object1->getModificationDate()); ?></td>
+        <?php }?>
         <td><?= date('Y-m-d H:i:s', $this->object2->getModificationDate()); ?></td>
     </tr>
     <tr class="system">
         <td>Path</td>
         <td>o_path</td>
-        <td><?= $this->object1->getRealFullPath(); ?></td>
+        <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+            <td><?= $this->object1->getRealFullPath(); ?></td>
+        <?php } ?>
         <td><?= $this->object2->getRealFullPath(); ?></td>
     </tr>
     <tr class="system">
         <td>Published</td>
         <td>o_published</td>
-        <td><?= json_encode($this->object1->getPublished()); ?></td>
+        <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+            <td><?= json_encode($this->object1->getPublished()); ?></td>
+        <?php } ?>
         <td><?= json_encode($this->object2->getPublished()); ?></td>
     </tr>
+    <tr class="system">
+        <td>Id</td>
+        <td>o_id</td>
+        <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+            <td><?= json_encode($this->object1->getId()); ?></td>
+        <?php } ?>
+        <td><?= json_encode($this->object2->getId()); ?></td>
+    </tr>
+
 
     <tr class="">
         <td colspan="3">&nbsp;</td>
@@ -53,13 +76,17 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
             <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                 <?php
-                    $v1 = $lfd->getVersionPreview($this->object1->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
-                    $v2 = $lfd->getVersionPreview($this->object2->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                    $v1Container = $this->object1->getValueForFieldName($fieldName);
+                    $v1 = $v1Container ? $lfd->getVersionPreview($v1Container->getLocalizedValue($lfd->getName(), $language)) : "";
+                    $v2Container = $this->object2->getValueForFieldName($fieldName);
+                    $v2 = $v2Container ? $lfd->getVersionPreview($v2Container->getLocalizedValue($lfd->getName(), $language)) : "";
                 ?>
                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
                     <td><?= $lfd->getTitle() ?> (<?= $language; ?>)</td>
                     <td><?= $lfd->getName() ?></td>
-                    <td><?= $v1 ?></td>
+                    <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                        <td><?= $v1 ?></td>
+                        <?php } ?>
                     <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
                 </tr>
                 <?php
@@ -138,7 +165,9 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         <tr class = "<?php if ($c % 2) { ?> odd<?php  } ?>">
                             <td><?= $definition->getTitle() ?></td>
                             <td><?= $groupDefinition->getName() ?> - <?= $keyGroupRelation->getName()?> <?= $definition->isLocalized() ? "/ " . $language : "" ?></td>
-                            <td><?= $preview1 ?></td>
+                            <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                                <td><?= $preview1 ?></td>
+                            <?php } ?>
                             <td><?= $preview2 ?></td>
                         </tr>
                         <?php
@@ -180,7 +209,9 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
                             <td><?= ucfirst($asAllowedType) . " - " . $lfd->getTitle() ?></td>
                             <td><?= $lfd->getName() ?></td>
-                            <td><?= $v1 ?></td>
+                            <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                                <td><?= $v1 ?></td>
+                            <?php } ?>
                             <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
                         </tr>
                         <?php
@@ -196,7 +227,9 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
             <td><?= $definition->getTitle() ?></td>
             <td><?= $definition->getName() ?></td>
+            <?php if (!$this->isImportPreview || !$this->isNew) { ?>
             <td><?= $v1 ?></td>
+            <?php } ?>
             <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
         </tr>
 

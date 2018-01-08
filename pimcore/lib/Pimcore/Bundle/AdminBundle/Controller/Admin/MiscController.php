@@ -49,7 +49,7 @@ class MiscController extends AdminController
             ];
         }, $bundles);
 
-        return $this->json([
+        return $this->adminJson([
             'data' => $result
         ]);
     }
@@ -73,7 +73,7 @@ class MiscController extends AdminController
             ];
         }, $controllers);
 
-        return $this->json([
+        return $this->adminJson([
             'data' => $result
         ]);
     }
@@ -102,7 +102,7 @@ class MiscController extends AdminController
             ];
         }, $actions);
 
-        return $this->json([
+        return $this->adminJson([
             'data' => $result
         ]);
     }
@@ -124,7 +124,7 @@ class MiscController extends AdminController
             ];
         }, $templates);
 
-        return $this->json([
+        return $this->adminJson([
             'data' => $result
         ]);
     }
@@ -234,7 +234,7 @@ class MiscController extends AdminController
             'success' => true
         ];
 
-        return $this->json($response);
+        return $this->adminJson($response);
     }
 
     /**
@@ -262,7 +262,7 @@ class MiscController extends AdminController
      */
     public function getValidFilenameAction(Request $request)
     {
-        return $this->json([
+        return $this->adminJson([
             'filename' => \Pimcore\Model\Element\Service::getValidKey($request->get('value'), $request->get('type'))
         ]);
     }
@@ -315,7 +315,7 @@ class MiscController extends AdminController
             }
         }
 
-        return $this->json($contents);
+        return $this->adminJson($contents);
     }
 
     /**
@@ -340,7 +340,7 @@ class MiscController extends AdminController
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success,
             'content' => $content,
             'writeable' => $writeable,
@@ -370,7 +370,7 @@ class MiscController extends AdminController
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success
         ]);
     }
@@ -406,7 +406,7 @@ class MiscController extends AdminController
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success
         ]);
     }
@@ -442,7 +442,7 @@ class MiscController extends AdminController
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success
         ]);
     }
@@ -466,7 +466,7 @@ class MiscController extends AdminController
             }
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => $success
         ]);
     }
@@ -510,7 +510,7 @@ class MiscController extends AdminController
             Tool\Admin::deactivateMaintenanceMode();
         }
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -560,7 +560,7 @@ class MiscController extends AdminController
         $logs = $db->fetchAll('SELECT code,uri,`count`,date FROM http_error_log ' . $condition . ' ORDER BY ' . $sort . ' ' . $dir . ' LIMIT ' . $offset . ',' . $limit);
         $total = $db->fetchOne('SELECT count(*) FROM http_error_log ' . $condition);
 
-        return $this->json([
+        return $this->adminJson([
             'items' => $logs,
             'total' => $total,
             'success' => true
@@ -581,7 +581,7 @@ class MiscController extends AdminController
         $db = Db::get();
         $db->query('TRUNCATE TABLE http_error_log');
 
-        return $this->json([
+        return $this->adminJson([
             'success' => true
         ]);
     }
@@ -633,7 +633,7 @@ class MiscController extends AdminController
             }
         }
 
-        return $this->json(['data' => $options]);
+        return $this->adminJson(['data' => $options]);
     }
 
     /**
@@ -654,7 +654,7 @@ class MiscController extends AdminController
             ];
         }
 
-        return $this->json(['data' => $options]);
+        return $this->adminJson(['data' => $options]);
     }
 
     /**
@@ -668,7 +668,7 @@ class MiscController extends AdminController
      */
     public function phpinfoAction(Request $request)
     {
-        if (!$this->getUser()->isAdmin()) {
+        if (!$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Permission denied');
         }
 

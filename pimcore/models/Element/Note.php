@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Event\ElementEvents;
+use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model;
 
 /**
@@ -127,7 +129,12 @@ class Note extends Model\AbstractModel
             }
         }
 
+        $isUpdate = $this->getId() ? true : false;
         $this->getDao()->save();
+
+        if (!$isUpdate) {
+            \Pimcore::getEventDispatcher()->dispatch(ElementEvents::POST_ADD, new ElementEvent($this));
+        }
     }
 
     /**

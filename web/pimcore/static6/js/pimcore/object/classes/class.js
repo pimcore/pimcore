@@ -1036,7 +1036,7 @@ pimcore.object.classes.klass = Class.create({
                     parentNode = parentNode.parentNode;
                 }
 
-                if ((fieldValidation && in_arrayi(containerAwareDataName,this.usedFieldNames) == false) || data.name == "localizedfields") {
+                if ((fieldValidation && in_arrayi(containerAwareDataName,this.usedFieldNames) == false) || data.name == "localizedfields" && data.fieldtype == "localizedfields") {
 
                     if(data.datatype == "data") {
                         this.usedFieldNames.push(containerAwareDataName);
@@ -1137,7 +1137,7 @@ pimcore.object.classes.klass = Class.create({
 
                 pimcore.helpers.showNotification(t("success"), t("class_saved_successfully"), "success");
             } else {
-                throw "save was not successful, see debug.log";
+                throw "save was not successful, see log files in /var/logs";
             }
         } catch (e) {
             this.saveOnError();

@@ -69,6 +69,13 @@ class Log extends Model\AbstractModel
     public $from;
 
     /**
+     * Contains the reply to email addresses (multiple recipients are separated by a ",")
+     *
+     * @var string
+     */
+    public $replyTo = '';
+
+    /**
      * The "to" recipients (multiple recipients are separated by a ",")
      *
      * @var string
@@ -569,6 +576,38 @@ class Log extends Model\AbstractModel
     }
 
     /**
+     * @param $replyTo
+     *
+     * @return $this
+     */
+    public function setReplyTo($replyTo)
+    {
+        $this->replyTo = $replyTo;
+
+        return $this;
+    }
+
+    /**
+     * Returns the "replyTo" email address
+     *
+     * @return string
+     */
+    public function getReplyTo()
+    {
+        return $this->replyTo;
+    }
+
+    /**
+     * Returns the "replyTo" email addresses as array
+     *
+     * @return array
+     */
+    public function getReplyToAsArray()
+    {
+        return $this->buildArray($this->getReplyTo());
+    }
+
+    /**
      * @param $html
      *
      * @return $this
@@ -631,8 +670,9 @@ class Log extends Model\AbstractModel
         foreach ($tmp as $entry) {
             $entry  = trim($entry);
             $tmp2   = explode(' ', $entry);
-            $dataArray[] = ['email' => trim($tmp2[0]),
-                                 'name' => str_replace(['(', ')'], '', $tmp2[1])
+            $dataArray[] = [
+                'email' => trim($tmp2[0]),
+                'name' => str_replace(['(', ')'], '', $tmp2[1])
             ];
         }
 

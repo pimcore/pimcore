@@ -350,7 +350,7 @@ class DocumentController extends AbstractElementController
             return $document;
         }
 
-        throw $this->createNotFoundException([
+        throw $this->createNotFoundResponseException([
             'msg'  => sprintf('Document %d does not exist', (int)$id),
             'code' => static::ELEMENT_DOES_NOT_EXIST
         ]);

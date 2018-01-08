@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Tool;
 
@@ -622,6 +623,13 @@ class User extends User\UserRole
                 $this->mergedPerspectives = array_merge($this->mergedPerspectives, $userRole->getPerspectives());
             }
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
+            if (!$this->mergedPerspectives) {
+                // $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
+                $allPerspectives = Config::getPerspectivesConfig()->toArray();
+                $this->mergedPerspectives = [];
+
+                $this->mergedPerspectives = array_keys($allPerspectives);
+            }
         }
 
         return $this->mergedPerspectives;

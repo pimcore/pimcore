@@ -24,6 +24,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -107,8 +108,9 @@ class Renderlet extends Model\Document\Tag
      */
     public function frontend()
     {
-        // TODO inject area handler via DI when tags are built through container
-        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+        // TODO inject services via DI when tags are built through container
+        $container  = \Pimcore::getContainer();
+        $tagHandler = $container->get('pimcore.document.tag.handler');
 
         if (!$tagHandler->supports($this->view)) {
             return null;
@@ -126,6 +128,12 @@ class Renderlet extends Model\Document\Tag
         }
 
         if ($this->o instanceof Element\ElementInterface) {
+            // apply best matching target group (if any)
+            if ($this->o instanceof Document\Targeting\TargetingDocumentInterface) {
+                $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
+                $targetingConfigurator->configureTargetGroup($this->o);
+            }
+
             $blockparams = ['action', 'controller', 'module', 'bundle', 'template'];
 
             $params = [
@@ -163,7 +171,7 @@ class Renderlet extends Model\Document\Tag
                 return $content;
             } catch (\Exception $e) {
                 if (\Pimcore::inDebugMode()) {
-                    return 'ERROR: ' . $e->getMessage() . ' (for details see debug.log)';
+                    return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
                 }
                 Logger::error($e);
             }

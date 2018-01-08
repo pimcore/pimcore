@@ -24,9 +24,9 @@ if(!$this->document instanceof \Pimcore\Model\Document\Page) {
 }
 
 // get the document which should be used to start in navigation | default home
-$navStartNode = $this->document->getProperty("navigationRoot");
-if(!$navStartNode instanceof \Pimcore\Model\Document\Page) {
-    $navStartNode = \Pimcore\Model\Document\Page::getById(1);
+$mainNavStartNode = $this->document->getProperty("navigationRoot");
+if(!$mainNavStartNode instanceof \Pimcore\Model\Document\Page) {
+    $mainNavStartNode = \Pimcore\Model\Document\Page::getById(1);
 }
 
 // this returns us the navigation container we can use to render the navigation
@@ -51,7 +51,7 @@ echo $this->navigation()->render($mainNavigation);
 {% set mainNavigation = pimcore_build_nav(document, navStartNode) %}
 
 {# later you can render the navigation #}
-{{ pimcore_render_nav(mainNavigation }}
+{{ pimcore_render_nav(mainNavigation) }}
 ```
 
 </div>
@@ -321,7 +321,7 @@ $navigation = $this->navigation()->buildNavigation($this->document, $navStartNod
                 "prefix" => $this->document->getFullPath()
             ], "news", true);
 
-            $uri = new Pimcore\Navigation\Page\Uri([
+            $uri = new Pimcore\Navigation\Page\Document([
                 "label" => $news->getTitle(),
                 "id" => "object-" . $news->getId(),
                 "uri" => $detailLink

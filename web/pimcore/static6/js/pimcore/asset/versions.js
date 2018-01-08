@@ -74,25 +74,25 @@ pimcore.asset.versions = Class.create({
                 store: this.store,
                 plugins: [this.cellEditing],
                 columns: [
-                    {header: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
+                    {text: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
                         if (d == this.asset.data.modificationDate) {
                             metaData.tdCls = "pimcore_icon_publish";
                         }
                         return "";
                     }.bind(this), editable: false},
-                    {header: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
+                    {text: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
                         var date = new Date(d * 1000);
                         return Ext.Date.format(date, "Y-m-d H:i:s");
                     }},
-                    {header: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
-                    {header: t("user"), sortable: true, dataIndex: 'name'},
-                    {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
+                    {text: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
+                    {text: t("user"), sortable: true, dataIndex: 'name'},
+                    {text: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
                         if (d != null){
                         	var date = new Date(d * 1000);
                             return Ext.Date.format(date, "Y-m-d H:i:s");
                     	}
                     }, editable: false},
-                    {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()}
+                    {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()}
                 ],
                 stripeRows: true,
                 width: 450,

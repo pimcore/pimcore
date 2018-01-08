@@ -24,10 +24,25 @@ use Pimcore\Logger;
  */
 class Redirect extends AbstractModel
 {
+    const TYPE_ENTIRE_URI = 'entire_uri';
+    const TYPE_PATH_QUERY = 'path_query';
+    const TYPE_PATH = 'path';
+
+    const TYPES = [
+        self::TYPE_ENTIRE_URI,
+        self::TYPE_PATH_QUERY,
+        self::TYPE_PATH
+    ];
+
     /**
      * @var int
      */
     public $id;
+
+    /**
+     * @var string
+     */
+    public $type;
 
     /**
      * @var string
@@ -72,6 +87,11 @@ class Redirect extends AbstractModel
     /**
      * @var bool
      */
+    public $regex;
+
+    /**
+     * @var bool
+     */
     public $active = true;
 
     /**
@@ -105,11 +125,11 @@ class Redirect extends AbstractModel
      *
      * @return Redirect
      */
-    public static function getById($id)
+    public static function getById($id, bool $throwOnInvalid = false)
     {
         $redirect = new self();
         $redirect->setId(intval($id));
-        $redirect->getDao()->getById();
+        $redirect->getDao()->getById(null, $throwOnInvalid);
 
         return $redirect;
     }
@@ -159,6 +179,26 @@ class Redirect extends AbstractModel
         $this->id = (int) $id;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        if (!empty($type) && !in_array($type, self::TYPES)) {
+            throw new \InvalidArgumentException(sprintf('Invalid type "%s"', $type));
+        }
+
+        $this->type = $type;
     }
 
     /**
@@ -289,27 +329,32 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $sourceEntireUrl
-     *
-     * @return $this
+     * @return bool
      */
-    public function setSourceEntireUrl($sourceEntireUrl)
+    public function getRegex()
     {
-        if ($sourceEntireUrl) {
-            $this->sourceEntireUrl = (bool) $sourceEntireUrl;
-        } else {
-            $this->sourceEntireUrl = null;
-        }
+        return $this->regex;
+    }
 
-        return $this;
+    public function isRegex(): bool
+    {
+        return (bool)$this->regex;
     }
 
     /**
-     * @return bool
+     * @param $regex
+     *
+     * @return $this
      */
-    public function getSourceEntireUrl()
+    public function setRegex($regex)
     {
-        return $this->sourceEntireUrl;
+        if ($regex) {
+            $this->regex = (bool) $regex;
+        } else {
+            $this->regex = null;
+        }
+
+        return $this;
     }
 
     /**
