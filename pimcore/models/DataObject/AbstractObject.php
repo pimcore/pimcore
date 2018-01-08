@@ -727,13 +727,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     protected function update()
     {
-
-        // set mod date
-        $this->setModificationDate(time());
-
-        if (!$this->getCreationDate()) {
-            $this->setCreationDate(time());
-        }
+        $this->updateModificationInfos();
 
         // save properties
         $this->getProperties();

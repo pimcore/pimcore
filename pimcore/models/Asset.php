@@ -614,13 +614,7 @@ class Asset extends Element\AbstractElement
      */
     protected function update()
     {
-
-        // set date
-        $this->setModificationDate(time());
-
-        if (!$this->getCreationDate()) {
-            $this->setCreationDate(time());
-        }
+        $this->updateModificationInfos();
 
         // create foldertree
         // use current file name in order to prevent problems when filename has changed
@@ -1400,7 +1394,7 @@ class Asset extends Element\AbstractElement
      */
     public function setUserOwner($userOwner)
     {
-        $this->userOwner = $userOwner;
+        $this->userOwner = (int) $userOwner;
 
         return $this;
     }
@@ -1412,7 +1406,7 @@ class Asset extends Element\AbstractElement
      */
     public function setUserModification($userModification)
     {
-        $this->userModification = $userModification;
+        $this->userModification = (int) $userModification;
 
         return $this;
     }

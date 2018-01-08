@@ -427,12 +427,7 @@ class Document extends Element\AbstractElement
             $this->beginTransaction();
 
             try {
-                // set date
-                $this->setModificationDate(time());
-
-                if (!$this->getCreationDate()) {
-                    $this->setCreationDate(time());
-                }
+                $this->updateModificationInfos();
 
                 if (!$isUpdate) {
                     $this->getDao()->create();
