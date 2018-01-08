@@ -400,7 +400,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             }
         }
 
-        pimcore.globalmanager.add("areablock_clipboard", item);
+        pimcore.globalmanager.add("areablock_clipboard", Ext.encode(item));
     },
 
     optionsClickhandler: function (element, btn, e) {
@@ -442,6 +442,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 handler: function (item) {
                     item.parentMenu.destroy();
                     item = pimcore.globalmanager.get("areablock_clipboard");
+                    /*
+                    This occurs for the following reason: properties of object.prototype like toString()
+                    and hasOwnProperty directly linked to window in which object was created
+                     */
+                    item = Ext.decode(item);
 
                     var areaIdentifier = {
                         name: this.getName(),
