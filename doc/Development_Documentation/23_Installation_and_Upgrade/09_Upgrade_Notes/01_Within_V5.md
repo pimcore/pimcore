@@ -1,5 +1,21 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build xxx (2018-01-xx)
+
+The Google Analytics and Google Tag Manager code generation was refactored to use the same extendable block logic as the 
+Piwik integration. If you have any custom code logic involving the `Pimcore\Google\Analytics` class or use a custom tracker
+with the Ecommerce Framework tracking implementation, please note the following:
+
+* The static calls to `Pimcore\Google\Analytics` still work, but are discouraged. Please use `Pimcore\Analytics\Google\Tracker`
+  directly instead.
+* Calling `Pimcore\Google\Analytics::getCode()` with a `$config` object is not supported anymore. Please use the tracker
+  directly if you need to build the code for a specific site.
+* The Google trackers in the Ecommerce Framework now have a dependency on the new Tracker service. To make the change more
+  backwards compatible, the dependency is injected via a dedicated setter method which is marked as `@required` to support
+  autowiring. If you have a custom tracker implementation inheriting from the core Google ones and don't use autowiring
+  please update your service definitions to add a call to `setTracker()`.
+
+
 ## Build 169 (2018-01-05)
 
 The install SQL dump shipped with the Pimcore 5.1 release was missing one column change in the `documents_page` table. The

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
+use Pimcore\Analytics\Google\Tracker as GoogleTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -29,12 +30,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductImpression;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductView;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
-use Pimcore\Google\Analytics;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EnhancedEcommerce extends Tracker implements
+class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     IProductView,
     IProductImpression,
     IProductActionAdd,
@@ -85,7 +84,7 @@ class EnhancedEcommerce extends Tracker implements
 
         $result = $this->renderTemplate('product_view', $parameters);
 
-        Analytics::addAdditionalCode($result, 'beforePageview');
+        $this->tracker->addCodePart($result, GoogleTracker::BLOCK_BEFORE_TRACK);
     }
 
     /**
@@ -105,7 +104,7 @@ class EnhancedEcommerce extends Tracker implements
 
         $result = $this->renderTemplate('product_impression', $parameters);
 
-        Analytics::addAdditionalCode($result, 'beforePageview');
+        $this->tracker->addCodePart($result, GoogleTracker::BLOCK_BEFORE_TRACK);
     }
 
     /**
@@ -166,7 +165,7 @@ class EnhancedEcommerce extends Tracker implements
 
         $result = $this->renderTemplate('product_action', $parameters);
 
-        Analytics::addAdditionalCode($result, 'beforePageview');
+        $this->tracker->addCodePart($result, GoogleTracker::BLOCK_BEFORE_TRACK);
     }
 
     /**
@@ -189,7 +188,7 @@ class EnhancedEcommerce extends Tracker implements
 
         $result = $this->renderTemplate('checkout', $parameters);
 
-        Analytics::addAdditionalCode($result, 'beforePageview');
+        $this->tracker->addCodePart($result, GoogleTracker::BLOCK_BEFORE_TRACK);
     }
 
     /**
@@ -220,7 +219,7 @@ class EnhancedEcommerce extends Tracker implements
 
         $result = $this->renderTemplate('checkout', $parameters);
 
-        Analytics::addAdditionalCode($result, 'beforePageview');
+        $this->tracker->addCodePart($result, GoogleTracker::BLOCK_BEFORE_TRACK);
     }
 
     /**
@@ -242,7 +241,7 @@ class EnhancedEcommerce extends Tracker implements
 
         $result = $this->renderTemplate('checkout_complete', $parameters);
 
-        Analytics::addAdditionalCode($result, 'beforePageview');
+        $this->tracker->addCodePart($result, GoogleTracker::BLOCK_BEFORE_TRACK);
     }
 
     /**
@@ -348,7 +347,7 @@ class EnhancedEcommerce extends Tracker implements
             'dependencies' => $this->dependencies
         ]);
 
-        Analytics::addAdditionalCode($result, 'beforePageview');
+        $this->tracker->addCodePart($result, GoogleTracker::BLOCK_BEFORE_TRACK);
 
         $this->dependenciesIncluded = true;
     }
