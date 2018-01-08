@@ -1,7 +1,7 @@
 # Product Index Configuration
 
 The configuration of the *Product Index* defines the content of the *Product Index* (which attributes are extracted how
-and stored where) and takes place in the `pimcore_ecommerce_framework` configuration within the section `product_index`.
+and stored where) and takes place in the `pimcore_ecommerce_framework` configuration within the section `index_service`.
 The product index can define multiple tenants (see [Assortment Tenant Configuration](./03_Assortment_Tenant_Configuration.md))
 which can be configured individually. Each tenant defines a set of attributes to index/search and a configuration and worker
 class responsible for storing and managing the index. 
