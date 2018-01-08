@@ -178,6 +178,9 @@
     background: url(/pimcore/static6/img/flat-color-icons/ok.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_hide {
+    background: url(/pimcore/static6/img/flat-color-icons/hidden.svg) center center no-repeat !important;
+}
 
 .pimcore_icon_save_white {
     background: url(/pimcore/static6/img/flat-color-icons/checkmark-white.svg) center center no-repeat !important;
