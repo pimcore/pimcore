@@ -176,12 +176,12 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var int
      */
-    public $o_userOwner = 0;
+    public $o_userOwner;
 
     /**
      * @var int
      */
-    public $o_userModification = 0;
+    public $o_userModification;
 
     /**
      * @var array

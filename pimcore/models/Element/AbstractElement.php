@@ -46,7 +46,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
         $this->setUserModification($userId);
 
-        if($this->getUserOwner() !== 0) {
+        if($this->getUserOwner() === null) {
             $this->setUserOwner($userId);
         }
     }
