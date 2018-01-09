@@ -41,6 +41,11 @@ class Tracker extends AbstractTracker
     const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
     /**
+     * @var SiteIdProvider
+     */
+    private $siteIdProvider;
+
+    /**
      * @var ConfigProvider
      */
     private $configProvider;
@@ -82,6 +87,7 @@ class Tracker extends AbstractTracker
     {
         parent::__construct($siteIdProvider);
 
+        $this->siteIdProvider   = $siteIdProvider;
         $this->configProvider   = $configProvider;
         $this->eventDispatcher  = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
@@ -113,6 +119,31 @@ class Tracker extends AbstractTracker
 
         $siteConfig = $config->getConfigForSite($configKey);
 
+        return $this->doBuildCode($siteId, $config, $siteConfig);
+    }
+
+    /**
+     * This method exists for BC with the existing Pimcore\Google\Analytics implementation which supports to pass a config
+     * object without a Site ID. Should be removed at a later point.
+     *
+     * @param ConfigObject $siteConfig
+     * @param SiteId|null $siteId
+     *
+     * @return string
+     */
+    public function generateCodeForSiteConfig(ConfigObject $siteConfig, SiteId $siteId = null)
+    {
+        if (null === $siteId) {
+            $siteId = $this->siteIdProvider->getForRequest();
+        }
+
+        $config = $this->configProvider->getConfig();
+
+        return $this->doBuildCode($siteId, $config, $siteConfig);
+    }
+
+    private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)
+    {
         $data = [
             'siteId'                 => $siteId,
             'config'                 => $config,
@@ -128,7 +159,7 @@ class Tracker extends AbstractTracker
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/asynchronousTrackingCode.html.twig';
         }
 
-        $blocks = $this->buildCodeBlocks($config, $siteId);
+        $blocks = $this->buildCodeBlocks($siteId, $siteConfig);
 
         $event = new TrackingDataEvent($config, $siteId, $data, $blocks, $template);
         $this->eventDispatcher->dispatch(GoogleAnalyticsEvents::CODE_TRACKING_DATA, $event);
@@ -136,26 +167,9 @@ class Tracker extends AbstractTracker
         return $this->renderTemplate($event);
     }
 
-    private function renderTemplate(TrackingDataEvent $event): string
+    private function buildCodeBlocks(SiteId $siteId, ConfigObject $siteConfig): array
     {
-        $data           = $event->getData();
-        $data['blocks'] = $event->getBlocks();
-
-        $code = $this->templatingEngine->render(
-            $event->getTemplate(),
-            $data
-        );
-
-        $code = trim($code);
-
-        return $code;
-    }
-
-    private function buildCodeBlocks(Config $config, SiteId $siteId): array
-    {
-        $configKey  = $siteId->getConfigKey();
-        $siteConfig = $config->getConfigForSite($configKey);
-        $blockData  = $this->buildBlockData($siteConfig, $config, $siteId);
+        $blockData  = $this->buildBlockData($siteConfig);
 
         $blocks = [];
         foreach ($this->blocks as $block) {
@@ -173,7 +187,7 @@ class Tracker extends AbstractTracker
         return $blocks;
     }
 
-    private function buildBlockData(ConfigObject $siteConfig, Config $config, SiteId $siteId): array
+    private function buildBlockData(ConfigObject $siteConfig): array
     {
         $blockData = [];
 
@@ -190,5 +204,20 @@ class Tracker extends AbstractTracker
         }
 
         return $blockData;
+    }
+
+    private function renderTemplate(TrackingDataEvent $event): string
+    {
+        $data           = $event->getData();
+        $data['blocks'] = $event->getBlocks();
+
+        $code = $this->templatingEngine->render(
+            $event->getTemplate(),
+            $data
+        );
+
+        $code = trim($code);
+
+        return $code;
     }
 }

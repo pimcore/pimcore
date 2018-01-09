@@ -65,16 +65,13 @@ class Analytics
      */
     public static function getCode($config = null)
     {
-        if (null !== $config) {
-            Logger::warning(sprintf(
-                'Passing a config object to %s::getCode() is not supported anymore. Please use the Analytics tracker service instead of the static class',
-                __CLASS__
-            ));
+        $tracker = self::getTracker();
 
-            return '';
+        if (null !== $config && $config instanceof ConfigObject) {
+            return $tracker->generateCodeForSiteConfig($config);
         }
 
-        return self::getTracker()->generateCode();
+        return $tracker->generateCode();
     }
 
     /**
