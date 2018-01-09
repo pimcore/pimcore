@@ -38,10 +38,13 @@ Please note that the usage of **PHP 7.1 is strongly recommended** as future vers
 - [curl](http://php.net/curl) (required if Google APIs are used)
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
 
-### MySQL / MariaDB >= 5.6.4
+### MySQL >= 5.6.4 / MariaDB >= 10.0.0.5
+
+MySQL 5.6 GA or compatible.
 
 #### Features
 - InnoDB / XtraDB storage engine
+- Support for InnoDB fulltext indexes
 - MEMORY storage engine
 
 #### Permissions
