@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use Pimcore\Analytics\Google\Config\SiteConfigProvider;
+use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
@@ -106,6 +108,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories', 'Newsletter Address Source Adapter Factory');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories', 'Custom Report Adapter Factory');
         $this->configureMigrations($container, $config['migrations']);
+        $this->configureGoogleAnalyticsFallbackServiceLocator($container);
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];
@@ -398,6 +401,27 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
             '$migrationSetConfigurations',
             $configurations
         );
+    }
+
+    /**
+     * Creates service locator which is used from static Pimcore\Google\Analytics class
+     *
+     * @param ContainerBuilder $container
+     */
+    private function configureGoogleAnalyticsFallbackServiceLocator(ContainerBuilder $container)
+    {
+        $services = [
+            AnalyticsGoogleTracker::class,
+            SiteConfigProvider::class
+        ];
+
+        $mapping = [];
+        foreach ($services as $service) {
+            $mapping[$service] = new Reference($service);
+        }
+
+        $serviceLocator = $container->getDefinition('pimcore.analytics.google.fallback_service_locator');
+        $serviceLocator->setArguments([$mapping]);
     }
 
     /**

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,55 +17,36 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Analytics\Google\Tracker;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
-use Pimcore\Google\Analytics as AnalyticsHelper;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 class GoogleAnalyticsCodeListener
 {
+    use EnabledTrait;
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
 
     /**
-     * @var bool
+     * @var Tracker
      */
-    protected $enabled = true;
+    private $tracker;
 
-    /**
-     * @return bool
-     */
-    public function disable()
+    public function __construct(Tracker $tracker)
     {
-        $this->enabled = false;
-
-        return true;
+        $this->tracker = $tracker;
     }
 
-    /**
-     * @return bool
-     */
-    public function enable()
-    {
-        $this->enabled = true;
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         $request = $event->getRequest();
         if (!$event->isMasterRequest()) {
             return;
@@ -73,19 +57,25 @@ class GoogleAnalyticsCodeListener
             return;
         }
 
+        if (!Tool::useFrontendOutputFilters()) {
+            return;
+        }
+
         // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
-        if ($request->server->get('HTTP_X_PURPOSE') == 'preview') {
+        if ($request->server->get('HTTP_X_PURPOSE') === 'preview') {
             return;
         }
 
         $response = $event->getResponse();
-
-        if (\Pimcore\Tool::useFrontendOutputFilters()) {
-            if ($this->isHtmlResponse($response)) {
-                if ($this->enabled && $code = AnalyticsHelper::getCode()) {
-                    $this->injectBeforeHeadEnd($response, $code);
-                }
-            }
+        if (!$this->isHtmlResponse($response)) {
+            return;
         }
+
+        $code = $this->tracker->generateCode();
+        if (empty($code)) {
+            return;
+        }
+
+        $this->injectBeforeHeadEnd($response, $code);
     }
 }

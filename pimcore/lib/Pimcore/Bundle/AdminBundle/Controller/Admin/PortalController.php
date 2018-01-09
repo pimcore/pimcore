@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use FeedIo\Adapter\Guzzle\Client;
 use FeedIo\FeedIo;
+use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
@@ -28,6 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @Route("/portal")
@@ -452,14 +454,16 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/portlet-analytics-sites")
      *
-     * @param Request $request
+     * @param TranslatorInterface $translator
+     * @param SiteConfigProvider $siteConfigProvider
      *
      * @return JsonResponse
      */
-    public function portletAnalyticsSitesAction(Request $request)
+    public function portletAnalyticsSitesAction(
+        TranslatorInterface $translator,
+        SiteConfigProvider $siteConfigProvider
+    )
     {
-        $translator = \Pimcore::getContainer()->get('translator');
-
         $sites = new Site\Listing();
         $data = [
             [
@@ -468,8 +472,9 @@ class PortalController extends AdminController implements EventedControllerInter
             ]
         ];
 
+        /** @var Site $site */
         foreach ($sites->load() as $site) {
-            if (\Pimcore\Google\Analytics::isConfigured($site)) {
+            if ($siteConfigProvider->isSiteReportingConfigured($site)) {
                 $data[] = [
                     'id' => $site->getId(),
                     'site' => $site->getMainDomain()

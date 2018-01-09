@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
+use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;
@@ -42,9 +43,9 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
      *
      * @return RedirectResponse
      */
-    public function deeplinkAction(Request $request)
+    public function deeplinkAction(Request $request, SiteConfigProvider $siteConfigProvider)
     {
-        $config = Google\Analytics::getSiteConfig();
+        $config = $siteConfigProvider->getSiteConfig();
 
         $url = $request->get('url');
         $url = str_replace(['{accountId}', '{internalWebPropertyId}', '{id}'], [$config->accountid, $config->internalid, $config->profile], $url);
@@ -98,19 +99,16 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     /**
      * @param Request $request
      *
-     * @return \Pimcore\Model\Site|void
+     * @return \Pimcore\Model\Site|null
      */
     private function getSite(Request $request)
     {
         $siteId = $request->get('site');
 
         try {
-            $site = Site::getById($siteId);
+            return Site::getById($siteId);
         } catch (\Exception $e) {
-            return; //TODO: Shouldn't be null returned here?
         }
-
-        return $site;
     }
 
     /**
@@ -143,12 +141,14 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
      * @Route("/chartmetricdata")
      *
      * @param Request $request
+     * @param SiteConfigProvider $siteConfigProvider
      *
      * @return JsonResponse
      */
-    public function chartmetricdataAction(Request $request)
+    public function chartmetricdataAction(Request $request, SiteConfigProvider $siteConfigProvider)
     {
-        $config = Google\Analytics::getSiteConfig($this->getSite($request));
+        $config = $siteConfigProvider->getSiteConfig($this->getSite($request));
+
         $startDate = date('Y-m-d', (time() - (86400 * 31)));
         $endDate = date('Y-m-d');
 
@@ -224,12 +224,14 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
      * @Route("/summary")
      *
      * @param Request $request
+     * @param SiteConfigProvider $siteConfigProvider
      *
      * @return JsonResponse
      */
-    public function summaryAction(Request $request)
+    public function summaryAction(Request $request, SiteConfigProvider $siteConfigProvider)
     {
-        $config = Google\Analytics::getSiteConfig($this->getSite($request));
+        $config = $siteConfigProvider->getSiteConfig($this->getSite($request));
+
         $startDate = date('Y-m-d', (time() - (86400 * 31)));
         $endDate = date('Y-m-d');
 
@@ -297,12 +299,14 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
      * @Route("/source")
      *
      * @param Request $request
+     * @param SiteConfigProvider $siteConfigProvider
      *
      * @return JsonResponse
      */
-    public function sourceAction(Request $request)
+    public function sourceAction(Request $request, SiteConfigProvider $siteConfigProvider)
     {
-        $config = Google\Analytics::getSiteConfig($this->getSite($request));
+        $config = $siteConfigProvider->getSiteConfig($this->getSite($request));
+
         $startDate = date('Y-m-d', (time() - (86400 * 31)));
         $endDate = date('Y-m-d');
 
@@ -349,12 +353,14 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
      * @Route("/data-explorer")
      *
      * @param Request $request
+     * @param SiteConfigProvider $siteConfigProvider
      *
      * @return JsonResponse
      */
-    public function dataExplorerAction(Request $request)
+    public function dataExplorerAction(Request $request, SiteConfigProvider $siteConfigProvider)
     {
-        $config = Google\Analytics::getSiteConfig($this->getSite($request));
+        $config = $siteConfigProvider->getSiteConfig($this->getSite($request));
+
         $startDate = date('Y-m-d', (time() - (86400 * 31)));
         $endDate = date('Y-m-d');
         $metric = 'ga:pageviews';
