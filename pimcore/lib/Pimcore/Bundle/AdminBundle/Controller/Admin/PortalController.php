@@ -462,8 +462,7 @@ class PortalController extends AdminController implements EventedControllerInter
     public function portletAnalyticsSitesAction(
         TranslatorInterface $translator,
         SiteConfigProvider $siteConfigProvider
-    )
-    {
+    ) {
         $sites = new Site\Listing();
         $data = [
             [

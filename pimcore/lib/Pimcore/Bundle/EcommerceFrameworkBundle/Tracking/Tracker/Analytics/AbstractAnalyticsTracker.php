@@ -29,6 +29,7 @@ abstract class AbstractAnalyticsTracker extends EcommerceTracker
 
     /**
      * @required
+     *
      * @internal
      *
      * TODO Pimcore 6 remove this setter and set as constructor dependency!

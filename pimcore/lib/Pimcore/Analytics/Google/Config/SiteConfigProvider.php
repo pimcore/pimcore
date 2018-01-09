@@ -36,8 +36,7 @@ class SiteConfigProvider
     public function __construct(
         SiteIdProvider $siteIdProvider,
         ConfigProvider $configProvider
-    )
-    {
+    ) {
         $this->siteIdProvider = $siteIdProvider;
         $this->configProvider = $configProvider;
     }
