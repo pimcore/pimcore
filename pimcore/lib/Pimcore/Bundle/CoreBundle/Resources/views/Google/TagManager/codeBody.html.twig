@@ -1,0 +1,10 @@
+{% block beforeNoscriptTag %}{{ blocks.beforeNoscriptTag|raw }}{% endblock %}
+
+{% block code %}
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ containerId }}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+{% endblock %}
+
+{% block afterNoscriptTag %}{{ blocks.afterNoscriptTag|raw }}{% endblock %}
