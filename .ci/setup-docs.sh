@@ -15,4 +15,4 @@ git checkout ${LATEST_VERSION}
 composer install --no-interaction --optimize-autoloader
 
 # prepare docs
-bin/console prepare -c 4.x.x ../../docs
+bin/console prepare -c config/pimcore4.json ../../docs
