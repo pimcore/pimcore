@@ -1,6 +1,6 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
-## Build xxx (2018-01-xx)
+## Build 173 (2018-01-09)
 
 The Google Analytics and Google Tag Manager code generation was refactored to use the same extendable block logic as the 
 Piwik integration. If you have any custom code logic involving the `Pimcore\Google\Analytics` class or use a custom tracker
