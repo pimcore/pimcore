@@ -468,12 +468,19 @@ class Thumbnail
             unset($pictureAttribs[$attribute]);
         }
 
-        $isSvgPreview = false;
-        if (isset($options['svgPlaceholder']) && $options['svgPlaceholder'] && file_exists($this->getAsset()->getSvgPreviewFileSystemPath())) {
-            $isSvgPreview = true;
+        $isLowQualityPreview = false;
+        $lowQualityPreviewFile = $this->getAsset()->getLowQualityPreviewFileSystemPath();
+        if (
+            (
+                (isset($options['svgPlaceholder']) && $options['svgPlaceholder']) // @deprecated config option
+                || (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
+            )
+            && file_exists($lowQualityPreviewFile)
+        ) {
+            $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
             $attributes['data-srcset'] = $attributes['srcset'];
-            $attributes['src'] = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($this->getAsset()->getSvgPreviewFileSystemPath()));
+            $attributes['src'] = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($lowQualityPreviewFile));
             unset($attributes['srcset']);
         }
 
@@ -523,7 +530,7 @@ class Thumbnail
             if (isset($attrCleanedForPicture['srcset'])) {
                 unset($attrCleanedForPicture['srcset']);
             }
-            if ($isSvgPreview) {
+            if ($isLowQualityPreview) {
                 unset($attrCleanedForPicture['data-src']);
                 unset($attrCleanedForPicture['data-srcset']);
             }

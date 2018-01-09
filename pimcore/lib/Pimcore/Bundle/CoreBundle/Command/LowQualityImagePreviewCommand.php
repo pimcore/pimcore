@@ -20,13 +20,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ImageSVGPreviewCommand extends AbstractCommand
+class LowQualityImagePreviewCommand extends AbstractCommand
 {
     protected function configure()
     {
         $this
-            ->setName('pimcore:image:svg-preview')
-            ->setDescription('Regenerates SVG image previews for all image assets')
+            ->setName('pimcore:image:low-quality-preview')
+            ->setAliases(['pimcore:image:svg-preview'])
+            ->setDescription('Regenerates low quality image previews for all image assets')
             ->addOption(
                 'parent',
                 'p',
@@ -62,10 +63,13 @@ class ImageSVGPreviewCommand extends AbstractCommand
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
 
+            /**
+             * @var $images Asset\Image[]
+             */
             $images = $list->load();
             foreach ($images as $image) {
-                $image->generateSvgPreview();
-                $this->output->writeln('generating svg preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
+                $image->generateLowQualityPreview();
+                $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
             }
             \Pimcore::collectGarbage();
         }
