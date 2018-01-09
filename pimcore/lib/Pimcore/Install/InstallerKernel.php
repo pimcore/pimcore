@@ -19,9 +19,6 @@ namespace Pimcore\Install;
 
 use Pimcore\Bundle\InstallBundle\Controller\InstallController;
 use Pimcore\Bundle\InstallBundle\PimcoreInstallBundle;
-use Pimcore\Composer\PackageInfo;
-use Pimcore\Install\Command\InstallCommand;
-use Pimcore\Install\Profile\ProfileLocator;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -89,49 +86,18 @@ class InstallerKernel extends Kernel
      */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
-        // configure bundles
-        $c->loadFromExtension('framework', [
-            'secret'     => uniqid('installer-', true),
-            'profiler'   => false,
-            'templating' => ['engines' => ['twig']],
-            'php_errors' => [
-                'log' => true
-            ]
-        ]);
+        $c->setParameter('secret', uniqid('installer-', true));
 
         $c->loadFromExtension('twig', [
-            'debug'            => '%kernel.debug%',
-            'strict_variables' => '%kernel.debug%',
-            'paths'            => [
+            'paths' => [
                 __DIR__ . '/../Bundle/AdminBundle/Resources/views' => 'PimcoreAdminBundle'
             ]
         ]);
 
-        $c->loadFromExtension('monolog', [
-            'handlers' => [
-                'main' => [
-                    'type'     => 'stream',
-                    'path'     => '%kernel.logs_dir%/%kernel.environment%.log',
-                    'level'    => 'debug',
-                    'channels' => ['!event']
-                ],
-
-                'console' => [
-                    'type'     => 'console',
-                    'level'    => 'debug',
-                    'channels' => ['!event'],
-
-                    // make sure we show all logs on the console
-                    // see https://symfony.com/blog/new-in-symfony-2-4-show-logs-in-console
-                    'verbosity_levels' => [
-                        'VERBOSITY_NORMAL' => 'DEBUG'
-                    ]
-                ]
-            ]
-        ]);
+        $loader->load('@PimcoreInstallBundle/Resources/config/config.yml');
 
         // load installer config files if available
-        foreach (['php', 'yml', 'xml'] as $extension) {
+        foreach (['php', 'yaml', 'yml', 'xml'] as $extension) {
             $file = sprintf('%s/app/config/installer.%s', $this->getProjectDir(), $extension);
 
             if (file_exists($file)) {
