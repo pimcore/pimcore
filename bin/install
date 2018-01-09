@@ -17,6 +17,7 @@ use Pimcore\Config;
 use Pimcore\Install\InstallerKernel;
 use Pimcore\Version;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Debug\Debug;
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 @ini_set('display_errors', 'On');
@@ -40,6 +41,8 @@ Pimcore::setAutoloader($loader);
 
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/constants.php';
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/lib/helper-functions.php';
+
+Debug::enable();
 
 if (!class_exists('Zend_Date')) {
     // if ZF is not loaded, we need to provide some compatibility stubs
