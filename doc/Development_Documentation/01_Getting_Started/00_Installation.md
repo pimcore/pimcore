@@ -72,24 +72,25 @@ Alternatively, you can use the CLI installer to install pimcore. The installer w
 interactively.
 
 ```
-$ bin/install
+$ bin/install pimcore:install
 ```
 
 Every parameter can be set as option to make the install automated. The `--no-interaction` flag will avoid any interactive
 prompts:
 
 ```
-$ bin/install --profile demo-basic \
+$ bin/install pimcore:install --profile demo-basic \
   --admin-username admin --admin-password admin \
   --mysql-username username --mysql-password password --mysql-database pimcore5 \
   --no-interaction
 ```
 
 To avoid having to pass sensitive data (e.g. DB password) as command line option, you can also set each parameter as env
-variable. See `bin/install --help` for details. Example:
+variable. See `bin/install pimcore:install --help` for details. Example:
 
 ```
-$ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password bin/install --profile demo-basic \
+$ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password bin/install pimcore:install \
+  --profile demo-basic \
   --admin-username admin --admin-password admin \
   --mysql-database pimcore5 \
   --no-interaction
