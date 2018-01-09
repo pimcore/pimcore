@@ -217,6 +217,9 @@ class Tracker extends AbstractTracker
         );
 
         $code = trim($code);
+        if (!empty($code)) {
+            $code = "\n" . $code . "\n";
+        }
 
         return $code;
     }

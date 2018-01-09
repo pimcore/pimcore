@@ -76,6 +76,6 @@ class GoogleAnalyticsCodeListener
             return;
         }
 
-        $this->injectBeforeHeadEnd($response, "\n" . $code . "\n");
+        $this->injectBeforeHeadEnd($response, $code);
     }
 }
