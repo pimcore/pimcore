@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\Db\Connection;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -35,7 +34,6 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -53,11 +51,11 @@ class SettingsController extends AdminController
     public function displayCustomLogoAction(Request $request)
     {
         // default logo
-        $logo = PIMCORE_WEB_ROOT . "/pimcore/static6/img/logo-claim-gray.svg";
+        $logo = PIMCORE_WEB_ROOT . '/pimcore/static6/img/logo-claim-gray.svg';
         $mime = 'image/svg+xml';
-        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . "/custom-logo.";
+        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . '/custom-logo.';
 
-        foreach(["svg","png","jpg"] as $format) {
+        foreach (['svg', 'png', 'jpg'] as $format) {
             $customLogoFile = $customLogoPath . $format;
             if (file_exists($customLogoFile)) {
                 try {
@@ -79,15 +77,16 @@ class SettingsController extends AdminController
      * @param Request $request
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function uploadCustomLogoAction(Request $request)
     {
         $fileExt = File::getFileExtension($_FILES['Filedata']['name']);
-        if(!in_array($fileExt, ['svg','png','jpg'])) {
+        if (!in_array($fileExt, ['svg', 'png', 'jpg'])) {
             throw new \Exception('Unsupported file format');
         }
-        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . "/custom-logo." . $fileExt;
+        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . '/custom-logo.' . $fileExt;
 
         copy($_FILES['Filedata']['tmp_name'], $customLogoPath);
         @chmod($customLogoPath, File::getDefaultMode());
@@ -110,10 +109,10 @@ class SettingsController extends AdminController
      */
     public function deleteCustomLogoAction(Request $request)
     {
-        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . "/custom-logo.*";
+        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . '/custom-logo.*';
 
         $files = glob($customLogoPath);
-        foreach($files as $file) {
+        foreach ($files as $file) {
             unlink($file);
         }
 
