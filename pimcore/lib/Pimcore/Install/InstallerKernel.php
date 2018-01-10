@@ -17,10 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Install;
 
+use Pimcore\Bundle\InstallBundle\Controller\InstallController;
+use Pimcore\Bundle\InstallBundle\PimcoreInstallBundle;
 use Pimcore\Composer\PackageInfo;
 use Pimcore\Install\Command\InstallCommand;
-use Pimcore\Install\Controller\InstallController;
-use Pimcore\Install\DependencyInjection\InstallerExtension;
 use Pimcore\Install\Profile\ProfileLocator;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -73,7 +73,8 @@ class InstallerKernel extends Kernel
         $bundles = [
             new FrameworkBundle(),
             new MonologBundle(),
-            new TwigBundle()
+            new TwigBundle(),
+            new PimcoreInstallBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'])) {
@@ -88,8 +89,6 @@ class InstallerKernel extends Kernel
      */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
-        $c->registerExtension(new InstallerExtension());
-
         // configure bundles
         $c->loadFromExtension('framework', [
             'secret'     => uniqid('installer-', true),
@@ -104,7 +103,6 @@ class InstallerKernel extends Kernel
             'debug'            => '%kernel.debug%',
             'strict_variables' => '%kernel.debug%',
             'paths'            => [
-                __DIR__ . '/Resources/views/Install'               => 'install',
                 __DIR__ . '/../Bundle/AdminBundle/Resources/views' => 'PimcoreAdminBundle'
             ]
         ]);
@@ -131,19 +129,6 @@ class InstallerKernel extends Kernel
                 ]
             ]
         ]);
-
-        // register services
-        $c->autowire(Installer::class, Installer::class);
-        $c->autowire(PackageInfo::class, PackageInfo::class);
-        $c->autowire(ProfileLocator::class, ProfileLocator::class);
-
-        // register command and tag it as console.command
-        $c->autowire(InstallCommand::class, InstallCommand::class);
-        $c->findDefinition(InstallCommand::class)->addTag('console.command');
-
-        // register controller and tag it with service_arguments to enable action injection
-        $c->autowire(InstallController::class, InstallController::class);
-        $c->findDefinition(InstallController::class)->addTag('controller.service_arguments');
 
         // load installer config files if available
         foreach (['php', 'yml', 'xml'] as $extension) {

@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Install\Controller;
+namespace Pimcore\Bundle\InstallBundle\Controller;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
@@ -50,7 +50,7 @@ class InstallController extends AbstractController
             ];
         }, array_values($profileLocator->getProfiles()));
 
-        return $this->render('@install/install.html.twig', [
+        return $this->render('@PimcoreInstall/Install/install.html.twig', [
             'errors'   => $installer->checkPrerequisites(),
             'profiles' => $profiles
         ]);
@@ -94,7 +94,7 @@ class InstallController extends AbstractController
             'headless'    => (bool)$request->get('headless')
         ];
 
-        return $this->render('@PimcoreAdminBundle/Admin/Install/check.html.twig', $viewParams);
+        return $this->render('@PimcoreAdmin/Admin/Install/check.html.twig', $viewParams);
     }
 
     /**

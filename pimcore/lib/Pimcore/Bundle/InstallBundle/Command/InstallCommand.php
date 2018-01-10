@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Install\Command;
+namespace Pimcore\Bundle\InstallBundle\Command;
 
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;

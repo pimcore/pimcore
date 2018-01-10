@@ -15,18 +15,18 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Install\DependencyInjection;
+namespace Pimcore\Bundle\InstallBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root('pimcore_installer');
+        $rootNode = $treeBuilder->root('pimcore_install');
         $rootNode->addDefaultsIfNotSet();
 
         $rootNode
@@ -55,5 +55,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+
+        return $treeBuilder;
     }
 }

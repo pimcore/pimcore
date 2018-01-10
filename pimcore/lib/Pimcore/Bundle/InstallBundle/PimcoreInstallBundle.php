@@ -15,19 +15,10 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Install\DependencyInjection;
+namespace Pimcore\Bundle\InstallBundle;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class InstallerExtension extends Extension
+class PimcoreInstallBundle extends Bundle
 {
-    public function getAlias()
-    {
-        return 'pimcore_installer';
-    }
-
-    public function load(array $configs, ContainerBuilder $container)
-    {
-    }
 }
