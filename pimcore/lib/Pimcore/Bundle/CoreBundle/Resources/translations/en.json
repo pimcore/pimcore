@@ -1,4 +1,11 @@
 {
+  "admin_interface": "Admin Interface",
+  "login_screen": "Login Screen",
+  "color_description": "Use the HTML hex format, eg. #ffffff",
+  "colors": "Colors",
+  "custom_logo": "Custom Logo",
+  "branding_logo_description": "Used on the login and start screen. We recommend to use a SVG (JPG & PNG are supported as well).",
+  "appearance_and_branding": "Appearance & Branding",
   "dev_mode_description": "The DEV-mode sets the highest verbosity level and removes certain performance optimizations such as combining Javascript of the admin backend. It is typically used for developing/debugging the core or plugins.",
   "do_not_use_in_production": "Do not use in production!",
   "open_data_object": "Open Data Object",

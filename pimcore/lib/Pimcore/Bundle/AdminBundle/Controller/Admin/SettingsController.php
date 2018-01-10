@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
 use Pimcore\Config;
+use Pimcore\Db\Connection;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -30,9 +31,11 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Tag;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -40,6 +43,83 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SettingsController extends AdminController
 {
+    /**
+     * @Route("/display-custom-logo", name="pimcore_settings_display_custom_logo")
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function displayCustomLogoAction(Request $request)
+    {
+        // default logo
+        $logo = PIMCORE_WEB_ROOT . "/pimcore/static6/img/logo-claim-gray.svg";
+        $mime = 'image/svg+xml';
+        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . "/custom-logo.";
+
+        foreach(["svg","png","jpg"] as $format) {
+            $customLogoFile = $customLogoPath . $format;
+            if (file_exists($customLogoFile)) {
+                try {
+                    $mime = Tool\Mime::detect($customLogoFile);
+                    $logo = $customLogoFile;
+                    break;
+                } catch (\Exception $e) {
+                    // do nothing
+                }
+            }
+        }
+
+        return new BinaryFileResponse($logo, 200, ['Content-Type' => $mime]);
+    }
+
+    /**
+     * @Route("/upload-custom-logo")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function uploadCustomLogoAction(Request $request)
+    {
+        $fileExt = File::getFileExtension($_FILES['Filedata']['name']);
+        if(!in_array($fileExt, ['svg','png','jpg'])) {
+            throw new \Exception('Unsupported file format');
+        }
+        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . "/custom-logo." . $fileExt;
+
+        copy($_FILES['Filedata']['tmp_name'], $customLogoPath);
+        @chmod($customLogoPath, File::getDefaultMode());
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+
+        $response = $this->adminJson(['success' => true]);
+        $response->headers->set('Content-Type', 'text/html');
+
+        return $response;
+    }
+
+    /**
+     * @Route("/delete-custom-logo")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteCustomLogoAction(Request $request)
+    {
+        $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . "/custom-logo.*";
+
+        $files = glob($customLogoPath);
+        foreach($files as $file) {
+            unlink($file);
+        }
+
+        return $this->adminJson(['success' => true]);
+    }
+
     /**
      * @Route("/metadata")
      *
@@ -425,6 +505,10 @@ class SettingsController extends AdminController
                 'devmode' => $values['general.devmode'],
                 'instanceIdentifier' => $values['general.instanceIdentifier'],
                 'show_cookie_notice' => $values['general.show_cookie_notice'],
+            ],
+            'branding' => [
+                'color_login_screen' => $values['branding.color_login_screen'],
+                'color_admin_interface' => $values['branding.color_admin_interface'],
             ],
             'documents' => [
                 'versions' => [

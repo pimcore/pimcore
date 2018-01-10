@@ -57,7 +57,7 @@ a, a:hover, a:visited, a:active {
 }
 
 #header img {
-    max-width: 70%;
+    max-height: 80px;
 }
 
 #header p {

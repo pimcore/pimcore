@@ -189,6 +189,83 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label_bottom"
                             }
                         ]
+                    } ,
+                    {
+                        xtype: 'fieldset',
+                        title: t('appearance_and_branding'),
+                        collapsible: true,
+                        collapsed: true,
+                        autoHeight: true,
+                        defaultType: 'textfield',
+                        defaults: {width: 450},
+                        items: [{
+                            xtype: 'fieldset',
+                            title: t('colors'),
+                            collapsible: false,
+                            width: "100%",
+                            autoHeight: true,
+                            items: [{
+                                xtype: "container",
+                                html: t('color_description'),
+                                style: "margin-bottom:10px;"
+                            }, {
+                                xtype: "textfield",
+                                fieldLabel: t('login_screen'),
+                                width: 330,
+                                value: this.getValue("branding.color_login_screen"),
+                                name: 'branding.color_login_screen'
+                            }, {
+                                xtype: "textfield",
+                                fieldLabel: t('admin_interface'),
+                                width: 330,
+                                value: this.getValue("branding.color_admin_interface"),
+                                name: 'branding.color_admin_interface'
+                            }]
+                        }, {
+                            xtype: 'fieldset',
+                            title: t('custom_logo'),
+                            collapsible: false,
+                            width: "100%",
+                            autoHeight: true,
+                            items: [{
+                                xtype: "container",
+                                html: t('branding_logo_description'),
+                                style: "margin-bottom:10px;"
+                            }, {
+                                xtype: "container",
+                                id: "pimcore_custom_branding_logo",
+                                html: '<img src="/admin/settings/display-custom-logo" />',
+                            }, {
+                                xtype: "button",
+                                text: t("upload"),
+                                iconCls: "pimcore_icon_upload",
+                                handler: function () {
+                                    pimcore.helpers.uploadDialog("/admin/settings/upload-custom-logo", null,
+                                        function () {
+                                            var cont = Ext.getCmp("pimcore_custom_branding_logo");
+                                            var date = new Date();
+                                            cont.update('<img src="/admin/settings/display-custom-logo?_dc=' + date.getTime() + '" />');
+                                        }.bind(this));
+                                }.bind(this),
+                                flex: 1
+                            }, {
+                                xtype: "button",
+                                text: t("delete"),
+                                iconCls: "pimcore_icon_delete",
+                                handler: function () {
+                                    Ext.Ajax.request({
+                                        url: "/admin/settings/delete-custom-logo",
+                                        method: "get",
+                                        success: function (response) {
+                                            var cont = Ext.getCmp("pimcore_custom_branding_logo");
+                                            var date = new Date();
+                                            cont.update('<img src="/admin/settings/display-custom-logo?_dc=' + date.getTime() + '" />');
+                                        }
+                                    });
+                                }.bind(this),
+                                flex: 1
+                            }]
+                        }]
                     }
                     ,
                     {

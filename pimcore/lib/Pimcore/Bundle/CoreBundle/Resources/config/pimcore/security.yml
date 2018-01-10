@@ -43,6 +43,7 @@ security:
                     - Pimcore\Bundle\AdminBundle\Security\Guard\WebserviceAuthenticator
 
     access_control:
+        - { path: ^/admin/settings/display-custom-logo, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/login/(login|lostpassword|deeplink)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_PIMCORE_USER }

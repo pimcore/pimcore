@@ -1307,7 +1307,7 @@ span.warning {
 /* ExtJS 6.0 specific styles */
 
 #pimcore_panel_tabs-body {
-    background-image: url(/pimcore/static6/img/logo-claim-gray.svg);
+    background-image: url(/admin/settings/display-custom-logo);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: 500px auto;
@@ -1551,3 +1551,10 @@ span.warning {
 {
     text-align: right;
 }
+
+#pimcore_custom_branding_logo img {
+    max-height: 70px;
+    margin-bottom: 10px;
+    width: fit-content;
+}
+
