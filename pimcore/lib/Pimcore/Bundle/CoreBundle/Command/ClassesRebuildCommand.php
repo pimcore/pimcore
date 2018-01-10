@@ -26,7 +26,8 @@ class ClassesRebuildCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('deployment:classes-rebuild')
+            ->setName('pimcore:deployment:classes-rebuild')
+            ->setAliases(['deployment:classes-rebuild'])
             ->setDescription('rebuilds db structure for classes, field collections and object bricks based on updated var/classes/definition_*.php files')
             ->addOption(
                 'create-classes',

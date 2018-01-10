@@ -27,7 +27,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('thumbnails:video')
+            ->setName('pimcore:thumbnails:video')
+            ->setAliases(['thumbnails:video'])
             ->setDescription('Generate video thumbnails, useful to pre-generate thumbnails in the background')
             ->addOption(
                 'parent',

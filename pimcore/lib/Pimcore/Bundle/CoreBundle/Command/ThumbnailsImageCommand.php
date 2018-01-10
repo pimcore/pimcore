@@ -25,7 +25,8 @@ class ThumbnailsImageCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('thumbnails:image')
+            ->setName('pimcore:thumbnails:image')
+            ->setAliases(['thumbnails:image'])
             ->setDescription('Generate image thumbnails, useful to pre-generate thumbnails in the background')
             ->addOption(
                 'parent',

@@ -25,7 +25,8 @@ class Web2PrintPdfCreationCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('web2print:pdf-creation')
+            ->setName('pimcore:web2print:pdf-creation')
+            ->setAliases(['web2print:pdf-creation'])
             ->setDescription('Start pdf creation')
             ->addOption(
                 'processId',
