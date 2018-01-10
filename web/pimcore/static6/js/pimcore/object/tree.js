@@ -82,7 +82,7 @@ pimcore.object.tree = Class.create({
             autoSync: false,
             proxy: {
                 type: 'ajax',
-                url: "/admin/object/tree-get-childs-by-id",
+                url: this.treeDataUrl,
                 reader: {
                     type: 'json',
                     totalProperty : 'total',
