@@ -74,13 +74,13 @@ use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 				$collection->addBundle(
 					new SensioGeneratorBundle(),
 					80, // priority
-					['dev'] // will use the dev config files of the bundle
+					['staging'] // will use the staging config files of the bundle
 				);
 				// PimcoreGeneratorBundle depends on SensioGeneratorBundle
 				$collection->addBundle(
 					new PimcoreGeneratorBundle(),
 					60,
-					['dev']
+					['staging']
 				);
 			}
 		}
