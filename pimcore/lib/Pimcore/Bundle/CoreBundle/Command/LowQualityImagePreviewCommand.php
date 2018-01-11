@@ -56,7 +56,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         }
 
         $generator = null;
-        if($input->getOption('generator')) {
+        if ($input->getOption('generator')) {
             $generator = $input->getOption('generator');
         }
 

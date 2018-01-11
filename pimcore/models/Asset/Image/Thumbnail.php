@@ -515,7 +515,7 @@ class Thumbnail
                     }
                 }
 
-                $sourceTagAttributes["srcset"] = implode(', ', $srcSetValues);
+                $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
                 if ($mediaQuery) {
                     // currently only max-width is supported, so we replace the width indicator (400w) out of the name
                     $maxWidth = str_replace('w', '', $mediaQuery);
@@ -523,7 +523,7 @@ class Thumbnail
                     $thumb->reset();
                 }
 
-                if($isLowQualityPreview) {
+                if ($isLowQualityPreview) {
                     $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
                     unset($sourceTagAttributes['srcset']);
                 }

@@ -83,20 +83,21 @@ class Image extends Model\Asset
 
     /**
      * @param null|string $generator
+     *
      * @return bool|string
+     *
      * @throws \Exception
      */
     public function generateLowQualityPreview($generator = null)
     {
         $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
-        if(!$generator) {
-            if($sqipBin) {
+        if (!$generator) {
+            if ($sqipBin) {
                 $generator = 'sqip';
-            } else if(class_exists('Imagick')) {
+            } elseif (class_exists('Imagick')) {
                 $generator = 'imagick';
             }
         }
-
 
         if ($generator == 'sqip') {
             // SQIP is preferred, produced smaller files & mostly better quality
