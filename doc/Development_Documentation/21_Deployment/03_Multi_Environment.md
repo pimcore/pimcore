@@ -74,7 +74,7 @@ use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 				$collection->addBundle(
 					new SensioGeneratorBundle(),
 					80, // priority
-					['staging'] // will use the staging config files of the bundle
+					['staging'] // the bundle will only be loaded in the staging environment
 				);
 				// PimcoreGeneratorBundle depends on SensioGeneratorBundle
 				$collection->addBundle(
