@@ -375,7 +375,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             },
             {
                 name: "deeplink",
-                value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?document_" + this.data.id + "_" + this.data.type
+                value: pimcore.helpers.getDeeplink("document", this.data.id, this.data.type)
             }
         ], "document");
     }

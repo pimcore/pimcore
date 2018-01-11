@@ -3170,5 +3170,10 @@ pimcore.helpers.isValidPassword = function (pass) {
     return true;
 };
 
-
+pimcore.helpers.getDeeplink = function(type, id, subtype) {
+    return window.location.protocol + "//"
+        + window.location.hostname
+        + (window.location.port && window.location.port !== "80" && window.location.port !== "443" ? ":" + window.location.port : "")
+        + "/admin/login/deeplink?" + type + "_" + id + "_" + subtype;
+};
 

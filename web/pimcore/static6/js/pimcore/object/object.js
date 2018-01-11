@@ -848,7 +848,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             },
             {
                 name: "deeplink",
-                value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?object_" + this.data.general.o_id + "_object"
+                value: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
             }
         ], "object");
     }
