@@ -42,7 +42,7 @@ You can need to configure a new environment name different than the existing one
 
 To create a new config, e.g. staging, which is based on the dev config, you must set `staging` as PIMCORE_ENVIRONMENT and create the following config file `app/config/config_staging.yml`:
 
-```
+```yaml
 imports:
     - { resource: '@PimcoreCoreBundle/Resources/config/pimcore/dev.yml' }
     - { resource: config.yml }
