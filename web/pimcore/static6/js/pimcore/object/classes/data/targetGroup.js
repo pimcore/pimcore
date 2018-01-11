@@ -25,7 +25,8 @@ pimcore.object.classes.data.targetGroup = Class.create(pimcore.object.classes.da
         fieldcollection: true,
         localizedfield: false,
         classificationstore: false,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {

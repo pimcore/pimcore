@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Tool\Serialize;
 
 abstract class Data
 {

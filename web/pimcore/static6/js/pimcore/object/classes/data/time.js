@@ -26,7 +26,8 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -45,7 +46,16 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
 
         $super();
         this.specificPanel.removeAll();
-        var self = this;
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+
+        specificItems = [];
 
         if (!this.isInCustomLayoutEditor()) {
 
@@ -54,8 +64,8 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
 
                 var minValueSelector = minmaxSet.getComponent('minTime'),
                     maxValueSelector = minmaxSet.getComponent('maxTime'),
-                    minValue = (minValueSelector.getValue()) ? self.formatTime(minValueSelector.getValue()) : null,
-                    maxValue = (maxValueSelector.getValue()) ? self.formatTime(maxValueSelector.getValue()) : null;
+                    minValue = (minValueSelector.getValue()) ? pimcore.object.classes.data.time.prototype.formatTime(minValueSelector.getValue()) : null,
+                    maxValue = (maxValueSelector.getValue()) ? pimcore.object.classes.data.time.prototype.formatTime(maxValueSelector.getValue()) : null;
 
                 minValueSelector.setMaxValue(maxValue);
                 maxValueSelector.setMinValue(minValue);
@@ -69,10 +79,10 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
                     xtype: 'timefield',
                     itemId: 'minTime',
                     fieldLabel: t('min_value'),
-                    format: self.dateFormat,
+                    format: pimcore.object.classes.data.time.prototype.dateFormat,
                     editable: false,
                     width: 200,
-                    value: self.datax.minValue,
+                    value: datax.minValue,
                     componentCls: "object_field",
                     name: 'minValue',
                     listeners: {
@@ -82,10 +92,10 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
                     xtype: 'timefield',
                     itemId: 'maxTime',
                     fieldLabel: t('max_value'),
-                    format: self.dateFormat,
+                    format: pimcore.object.classes.data.time.prototype.dateFormat,
                     editable: false,
                     width: 200,
-                    value: self.datax.maxValue,
+                    value: datax.maxValue,
                     componentCls: "object_field",
                     name: 'maxValue',
                     listeners: {
@@ -101,14 +111,14 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
                 }]
             });
 
-            this.specificPanel.add(minmaxSet);
+            specificItems = [minmaxSet];
             //init the values
             onMinMaxValueChange();
         }
 
+        return specificItems;
 
 
-        return this.layout;
     },
 
     applySpecialData: function(source) {

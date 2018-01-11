@@ -25,7 +25,8 @@ pimcore.object.classes.data.targetGroupMultiselect = Class.create(pimcore.object
         fieldcollection: true,
         localizedfield: true,
         classificationstore: false,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -52,23 +53,30 @@ pimcore.object.classes.data.targetGroupMultiselect = Class.create(pimcore.object
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("height"),
                 name: "height",
-                value: this.datax.height
+                value: datax.height
             }
-        ]);
-
-        return this.layout;
+        ];
     },
+
+
 
     applyData: function ($super) {
         $super();

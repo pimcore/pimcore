@@ -22,8 +22,9 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false,
-        block: true
+        classificationstore: false,
+        block: true,
+        encryptedField: true
     },
 
     getLayout: function ($super) {
@@ -31,34 +32,41 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: 'numberfield',
                 fieldLabel: t('latitude'),
                 name: 'lat',
-                value: this.datax.lat || 0,
+                value: datax.lat || 0,
                 decimalPrecision: 8,
                 minValue: 0,
                 allowDecimals: true,
                 incrementValue: 0.01
-            },{
+            }, {
                 xtype: 'numberfield',
                 fieldLabel: t('longitude'),
                 name: 'lng',
-                value: this.datax.lng || 0,
+                value: datax.lng || 0,
                 decimalPrecision: 8,
                 minValue: 0,
                 allowDecimals: true,
                 incrementValue: 0.01
-            },{
+            }, {
                 xtype: 'numberfield',
                 fieldLabel: t('zoom_level'),
                 name: 'zoom',
-                value: this.datax.zoom || 1,
+                value: datax.zoom || 1,
                 decimalPrecision: 0,
                 minValue: 1,
                 incrementValue: 1
-            },{
+            }, {
                 xtype: 'combo',
                 fieldLabel: t('map_type'),
                 name: 'mapType',
@@ -73,15 +81,13 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                     ['satellite', t('satellite')],
                     ['hybrid', t('hybrid')]
                 ],
-                value: this.datax.mapType || 'roadmap'
+                value: datax.mapType || 'roadmap'
             }
-        ]);
-
-        return this.layout;
+        ];
     },
 
     checkGoogleMapsAPI: function () {
-        if(!pimcore.settings.google_maps_api_key) {
+        if (!pimcore.settings.google_maps_api_key) {
             Ext.MessageBox.alert(t("geo_error_title"), t("geo_error_message"));
         }
     }

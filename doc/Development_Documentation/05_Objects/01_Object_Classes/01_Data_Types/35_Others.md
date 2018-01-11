@@ -88,7 +88,33 @@ var_dump($color->getCssRgba(true, true));
 
 // set the RGBA value
 $color->setRgba(0, 0, 255, 64);
-
-
 ```
 
+## Encrypted Field (Experimental)
+
+> This is an experimental feature and subject to change without notice
+
+Offers data encryption for certain data types.
+
+![Encrypted Field](../../../img/encrypted_field.png)
+
+> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to app/config/parameters.yml
+
+Example:
+```
+parameters:
+    secret: def00000651c413177995df6632eaf46db3977b3859f273fcd2095eb4b98cdf7951420fbbc079786248a4ff9a9e6c0f81cb34e88d63261f5cf415130089825dc63a33ef4
+```
+
+Key generation:
+
+![Generate Key](../../../img/generate_defuse_key.png)
+
+### Strict Mode
+
+In strict mode (which is the default) an exception is thrown if existing data cannot be decrypted (e.g. because of a key change).
+You can switch this off by calling
+
+```php
+Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(false)
+```

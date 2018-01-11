@@ -24,7 +24,8 @@ pimcore.object.classes.data.textarea = Class.create(pimcore.object.classes.data.
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -57,22 +58,28 @@ pimcore.object.classes.data.textarea = Class.create(pimcore.object.classes.data.
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("height"),
                 name: "height",
-                value: this.datax.height
+                value: datax.height
             }
-        ]);
+        ];
 
-        return this.layout;
     },
 
     applySpecialData: function(source) {

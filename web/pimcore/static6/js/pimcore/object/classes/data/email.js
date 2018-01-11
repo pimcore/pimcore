@@ -24,7 +24,8 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
         fieldcollection: true,
         localizedfield: false,
         classificationstore : false,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -62,25 +63,39 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
 
         $super();
 
-        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
-        nameField.disable();
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
 
-        this.specificPanel.removeAll();
-        this.specificPanel.add([
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+
+        var specificItems = [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
-            },{
+                value: datax.width
+            }
+        ];
+
+        if (!inEncryptedField) {
+
+            var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+            if (nameField) {
+                nameField.disable();
+            }
+
+            specificItems.push({
                 xtype: "numberfield",
                 fieldLabel: t("columnlength"),
                 name: "columnLength",
-                value: this.datax.columnLength
-            }
-        ]);
+                value: datax.columnLength
+            });
+        }
 
-        return this.layout;
+        return specificItems;
     }
 
 });

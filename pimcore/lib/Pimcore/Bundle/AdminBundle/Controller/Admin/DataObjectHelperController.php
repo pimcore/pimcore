@@ -1185,7 +1185,7 @@ class DataObjectHelperController extends AdminController
             }
             DataObject\Service::enrichLayoutDefinition($field, null, $context);
 
-            return [
+            $result = [
                 'key' => $key,
                 'type' => $field->getFieldType(),
                 'label' => $title,
@@ -1193,6 +1193,12 @@ class DataObjectHelperController extends AdminController
                 'layout' => $field,
                 'position' => $position
             ];
+
+            if ($field instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+                $result['delegateDatatype'] = $field->getDelegateDatatype();
+            }
+
+            return $result;
         } else {
             return null;
         }

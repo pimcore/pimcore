@@ -24,7 +24,8 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -48,28 +49,34 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("height"),
                 name: "height",
-                value: this.datax.height
+                value: datax.height
             },{
                 xtype: "checkbox",
                 fieldLabel: t("only_configured_languages"),
                 name: "onlySystemLanguages",
-                checked: this.datax.onlySystemLanguages
+                checked: datax.onlySystemLanguages
             }
-        ]);
-
-        return this.layout;
+        ]
     },
+
 
     applySpecialData: function(source) {
         if (source.datax) {
