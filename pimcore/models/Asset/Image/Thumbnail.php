@@ -502,6 +502,7 @@ class Thumbnail
 
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $srcSetValues = [];
+                $sourceTagAttributes = [];
                 foreach ([1, 2] as $highRes) {
                     $thumbConfigRes = clone $thumbConfig;
                     $thumbConfigRes->selectMedia($mediaQuery);
@@ -514,14 +515,21 @@ class Thumbnail
                     }
                 }
 
-                $html .= "\t" . '<source srcset="' . implode(', ', $srcSetValues) .'"';
+                $sourceTagAttributes["srcset"] = implode(', ', $srcSetValues);
                 if ($mediaQuery) {
                     // currently only max-width is supported, so we replace the width indicator (400w) out of the name
                     $maxWidth = str_replace('w', '', $mediaQuery);
-                    $html .= ' media="(max-width: ' . $maxWidth . 'px)"';
+                    $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
                     $thumb->reset();
                 }
-                $html .= ' />' . "\n";
+
+                if($isLowQualityPreview) {
+                    $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+                    // we reuse the 'src' attribute from the img tag, so we don't have to read & encode the preview image again
+                    $sourceTagAttributes['srcset'] = $attributes['src'] . ' 1x';
+                }
+
+                $html .= "\t" . '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />' . "\n";
             }
 
             $attrCleanedForPicture = $attributes;
@@ -535,7 +543,7 @@ class Thumbnail
                 unset($attrCleanedForPicture['data-srcset']);
             }
             $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
-            $htmlImgTagForpicture = '<img ' . array_to_html_attribute_string($attrCleanedForPicture) .' />';
+            $htmlImgTagForpicture = "\t" . '<img ' . array_to_html_attribute_string($attrCleanedForPicture) .' />';
 
             $html .= $htmlImgTagForpicture . "\n";
 
