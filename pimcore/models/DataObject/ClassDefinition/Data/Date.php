@@ -93,7 +93,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
-            if ($this->getColumnType() == 'datetime') {
+            if ($this->getColumnType() == 'date') {
                 $data = strtotime($data);
                 if ($data === false) {
                     return null;
