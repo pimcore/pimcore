@@ -81,9 +81,24 @@ class Image extends Model\Asset
         }
     }
 
-    public function generateLowQualityPreview()
+    /**
+     * @param null|string $generator
+     * @return bool|string
+     * @throws \Exception
+     */
+    public function generateLowQualityPreview($generator = null)
     {
-        if ($sqipBin = \Pimcore\Tool\Console::getExecutable('sqip')) {
+        $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
+        if(!$generator) {
+            if($sqipBin) {
+                $generator = 'sqip';
+            } else if(class_exists('Imagick')) {
+                $generator = 'imagick';
+            }
+        }
+
+
+        if ($generator == 'sqip') {
             // SQIP is preferred, produced smaller files & mostly better quality
             // primitive isn't able to process PJPEG so we have to generate a PNG
             $sqipConfig = Image\Thumbnail\Config::getPreviewConfig();
@@ -93,8 +108,12 @@ class Image extends Model\Asset
             \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . $svgPath . ' '. $pngPath);
             unlink($pngPath);
 
+            $svgData = file_get_contents($svgPath);
+            $svgData = str_replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"', $svgData);
+            File::put($svgPath, $svgData);
+
             return $svgPath;
-        } elseif (class_exists('Imagick')) {
+        } elseif ($generator == 'imagick') {
             // Imagick fallback
             $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
             $imagick = new \Imagick($path);
@@ -107,7 +126,7 @@ class Image extends Model\Asset
 
             $svg = <<<EOT
 <?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="$width" height="$height" viewBox="0 0 $width $height">
+<svg version="1.1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="$width" height="$height" viewBox="0 0 $width $height" preserveAspectRatio="xMidYMid slice">
 	<filter id="blur" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
     <feGaussianBlur stdDeviation="20 20" edgeMode="duplicate" />
     <feComponentTransfer>

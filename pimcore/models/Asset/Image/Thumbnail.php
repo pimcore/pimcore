@@ -525,24 +525,28 @@ class Thumbnail
 
                 if($isLowQualityPreview) {
                     $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                    // we reuse the 'src' attribute from the img tag, so we don't have to read & encode the preview image again
-                    $sourceTagAttributes['srcset'] = $attributes['src'] . ' 1x';
+                    unset($sourceTagAttributes['srcset']);
                 }
 
                 $html .= "\t" . '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />' . "\n";
             }
 
             $attrCleanedForPicture = $attributes;
+            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
+
             if (isset($attrCleanedForPicture['srcset'])) {
                 unset($attrCleanedForPicture['srcset']);
             }
+
             if ($isLowQualityPreview) {
                 unset($attrCleanedForPicture['data-src']);
                 unset($attrCleanedForPicture['data-srcset']);
+                $attrCleanedForPicture['data-src'] = $attrCleanedForPicture['src'];
+                $attrCleanedForPicture['src'] = $attributes['src'];
             }
-            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
+
             $htmlImgTagForpicture = "\t" . '<img ' . array_to_html_attribute_string($attrCleanedForPicture) .' />';
 
             $html .= $htmlImgTagForpicture . "\n";

@@ -33,7 +33,8 @@ class LowQualityImagePreviewCommand extends AbstractCommand
                 'p',
                 InputOption::VALUE_OPTIONAL,
                 'only create thumbnails of images in this folder (ID)'
-            );
+            )
+            ->addOption('generator', 'g', InputOption::VALUE_OPTIONAL, 'Force a generator, either `svg` or `imagick`');
     }
 
     /**
@@ -54,6 +55,11 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             }
         }
 
+        $generator = null;
+        if($input->getOption('generator')) {
+            $generator = $input->getOption('generator');
+        }
+
         $list = new Asset\Listing();
         $list->setCondition(implode(' AND ', $conditions));
         $total = $list->getTotalCount();
@@ -68,7 +74,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
              */
             $images = $list->load();
             foreach ($images as $image) {
-                $image->generateLowQualityPreview();
+                $image->generateLowQualityPreview($generator);
                 $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
             }
             \Pimcore::collectGarbage();
