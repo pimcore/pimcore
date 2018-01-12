@@ -33,15 +33,63 @@ var/config/system.php
 > **Note:** If you put your configurations into `app/config/pimcore/` they might not writable by the Pimcore backend UI. 
 > This can be especially useful when having automated building environments and don't want the user to allow changing settings.  
 
-If you add a new environment which is not an existing one by default (those are `dev`, `test` and `prod`), you need to
-manually create a YAML config file for the project. If you set environment before installation, this is needed to be done
-before installation. For instance, for a `staging` environment, you will need to add a `app/config/config_staging.yml` file
-with the following content:
+## Set a new Environment name
+
+You can need to configure a new environment name different than the existing ones, which respect Symfony convention: `dev`, `test` and `prod`.
+
+> **Note:** The default `test` environment should only be used for running test suite (like Travis).
+> It use the session.storage.mock_file which fakes sessions (as consequence, the administrator cannot log in Pimcore for instance)
+
+To create a new config, e.g. staging, which is based on the dev config, you must set `staging` as PIMCORE_ENVIRONMENT and create the following config file `app/config/config_staging.yml`:
 
 ```yaml
 imports:
+    - { resource: '@PimcoreCoreBundle/Resources/config/pimcore/dev.yml' }
     - { resource: config.yml }
 ```
+
+If you use some specific bundles, you need to register them in `app\AppKernel.php`.
+For instance for an new environment called `staging` using web profiler, you should add in the method `registerBundlesToCollection`:
+
+```
+use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
+use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
+use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
+use Symfony\Bundle\DebugBundle\DebugBundle;
+use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+...
+	public function registerBundlesToCollection(BundleCollection $collection)
+	{
+		//...
+		
+		// environment specific bundles
+		if (in_array($this->getEnvironment(), ['staging'])) {
+			$collection->addBundles([
+				new DebugBundle(),
+				new WebProfilerBundle(),
+				new SensioDistributionBundle()
+			], 80);
+			// add generator bundle only if installed
+			if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
+				$collection->addBundle(
+					new SensioGeneratorBundle(),
+					80, // priority
+					['staging'] // the bundle will only be loaded in the staging environment
+				);
+				// PimcoreGeneratorBundle depends on SensioGeneratorBundle
+				$collection->addBundle(
+					new PimcoreGeneratorBundle(),
+					60,
+					['staging']
+				);
+			}
+		}
+
+		//...
+	}
+```
+
+If you set `PIMCORE_ENVIRONMENT` to a new environment name before installation, all those steps need to be done before running the installation.
 
 ## Set the Environment
 
