@@ -25,7 +25,6 @@ use Pimcore\Install\Profile\Profile;
 use Pimcore\Install\Profile\ProfileLocator;
 use Pimcore\Install\SystemConfig\ConfigWriter;
 use Pimcore\Model\Tool\Setup;
-use Pimcore\Tool;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
@@ -237,7 +236,7 @@ class Installer
 
         $errors = $this->setupProfileDatabase($setup, $profile, $userCredentials, $errors);
 
-        Tool::clearSymfonyCache($kernel->getContainer());
+        $this->clearKernelCacheDir($kernel);
 
         return $errors;
     }
@@ -258,8 +257,8 @@ class Installer
             return;
         }
 
-        // see CacheClearCommand and Pimcore\Tool
-        $oldCacheDir = Tool::getSymfonyCacheDirRemoveTempLocation($cacheDir);
+        // see Symfony's cache:clear command
+        $oldCacheDir = substr($cacheDir, 0, -1) . ('~' === substr($cacheDir, -1) ? '+' : '~');;
 
         $filesystem = new Filesystem();
         if ($filesystem->exists($oldCacheDir)) {
