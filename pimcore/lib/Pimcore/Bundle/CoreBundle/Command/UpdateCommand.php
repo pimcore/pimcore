@@ -24,7 +24,6 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class UpdateCommand extends AbstractCommand
 {
@@ -69,7 +68,10 @@ class UpdateCommand extends AbstractCommand
             $currentRevision = $input->getOption('source-build');
         }
 
+        $this->output->writeln('Fetching available updates...');
         $availableUpdates = Update::getAvailableUpdates($currentRevision);
+
+        $this->io->newLine();
 
         if ($input->getOption('list')) {
             if (count($availableUpdates['releases'])) {
@@ -122,7 +124,7 @@ class UpdateCommand extends AbstractCommand
             }
 
             if (!Update::isWriteable()) {
-                $this->writeError(PIMCORE_PATH . ' is not recursivly writable, please check!');
+                $this->writeError(PIMCORE_PATH . ' is not recursively writable, please check!');
                 exit;
             }
 
@@ -131,15 +133,17 @@ class UpdateCommand extends AbstractCommand
                 exit;
             }
 
-            $helper = $this->getHelper('question');
-            $question = new ConfirmationQuestion("You are going to update to build $build! Continue with this action? (y/n)", false);
+            $questionResult = $this->io->confirm(
+                sprintf('You are going to update to build <comment>%s</comment>! Do you want to continue?', $build),
+                false
+            );
 
-            if (!$helper->ask($input, $output, $question) && !$input->getOption('no-interaction')) {
+            if (!$input->getOption('no-interaction') && !$questionResult) {
                 return;
             }
 
-            $this->output->writeln('Starting the update process ...');
             if ($input->getOption('dry-run')) {
+                $this->io->newLine();
                 $this->output->writeln('<info>---------- DRY-RUN ----------</info>');
             }
 
@@ -147,25 +151,39 @@ class UpdateCommand extends AbstractCommand
 
             $steps = count($jobs['download']) + count($jobs['update']);
 
+            $this->io->newLine(2);
+
             $progress = new ProgressBar($output, $steps);
+            $progress->setMessage('Starting the update process...');
+            $progress->setFormat("<comment>%message%</comment>\n\n %current%/%max% [%bar%] %percent:3s%%");
             $progress->start();
 
             foreach ($jobs['download'] as $job) {
                 if ($job['type'] == 'download') {
+                    $progress->setMessage(sprintf('Downloading update <comment>%s</comment>', $job['revision']));
                     Update::downloadData($job['revision'], $job['url']);
                 }
 
                 $progress->advance();
             }
 
+            $progress->setMessage('Activating maintenance mode before applying updates...');
+
             $maintenanceModeId = 'cache-warming-dummy-session-id';
             Admin::activateMaintenanceMode($maintenanceModeId);
+
+            $jobResults = [
+                'success' => [],
+                'error'   => []
+            ];
 
             $stoppedByError = false;
             foreach ($jobs['update'] as $job) {
                 if ($input->getOption('dry-run')) {
                     $job['dry-run'] = true;
                 }
+
+                $progress->setMessage(sprintf('Running job <comment>%s</comment>', json_encode($job)));
 
                 $script = realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console');
                 $return = Console::runPhpScript($script, 'internal:update-processor --ignore-maintenance-mode ' . escapeshellarg(json_encode($job)));
@@ -174,11 +192,13 @@ class UpdateCommand extends AbstractCommand
 
                 $returnData = @json_decode($return, true);
                 if (is_array($returnData)) {
-                    if (trim($returnData['message'])) {
+                    if (trim($returnData['message'] ?? null)) {
                         $returnMessages[] = [$job['revision'], strip_tags($returnData['message'])];
                     }
 
-                    if (!$returnData['success']) {
+                    if ($returnData['success'] ?? false) {
+                        $jobResults['success'][] = $job;
+                    } else {
                         $stoppedByError = true;
                         break;
                     }
@@ -187,29 +207,56 @@ class UpdateCommand extends AbstractCommand
                     break;
                 }
 
+                if ($stoppedByError) {
+                    $jobResults['error'][] = $job;
+                }
+
                 $progress->advance();
             }
 
-            $progress->finish();
+            if (!$stoppedByError) {
+                $progress->finish();
+            }
 
+            $this->io->newLine(2);
+
+            $this->output->writeln('Running composer update...');
             Update::composerUpdate();
 
+            $this->output->writeln('Deactivating maintenance mode...');
             Admin::deactivateMaintenanceMode();
 
-            $this->output->writeln("\n");
+            $this->io->newLine(2);
+
+            if (count($jobResults['error']) > 0 || $output->isVerbose()) {
+                $this->io->section('Scheduled jobs');
+                $this->io->listing(array_map('json_encode', $jobs['update']));
+
+                if (count($jobResults['success']) > 0) {
+                    $this->io->section('Successful jobs');
+                    $this->io->listing(array_map('json_encode', $jobResults['success']));
+                }
+
+                if (count($jobResults['error']) > 0) {
+                    $this->io->section('Erroneous jobs');
+                    $this->io->listing(array_map('json_encode', $jobResults['error']));
+                }
+            }
 
             if ($stoppedByError) {
-                $this->output->writeln('<error>Update stopped by error! Please check your logs</error>');
+                $this->io->error(sprintf('Update %s was stopped by error. Please check your logs.', $job['revision']));
+
+                $this->output->writeln('Erroneous job was: ' . json_encode($job));
                 $this->output->writeln('Last return value was: ' . $return);
             } else {
-                $this->output->writeln('<info>Update done!</info>');
+                $this->io->success('Update done!');
 
                 if (count($returnMessages)) {
                     $table = new Table($output);
                     $table
                         ->setHeaders(['Build', 'Message'])
-                        ->setRows($returnMessages);
-                    $table->render();
+                        ->setRows($returnMessages)
+                        ->render();
                 }
             }
         }
