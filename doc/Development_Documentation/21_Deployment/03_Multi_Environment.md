@@ -35,21 +35,27 @@ var/config/system.php
 
 ## Set a new Environment name
 
-You can need to configure a new environment name different than the existing ones, which respect Symfony convention: `dev`, `test` and `prod`.
+If you need add a new environment which is not an existing one by default (those are `prod`, `dev` and `test`) you need
+to manually create a config file for the project in `app/config/config_<environment>.yml`.
 
-> **Note:** The default `test` environment should only be used for running test suite (like Travis).
-> It use the session.storage.mock_file which fakes sessions (as consequence, the administrator cannot log in Pimcore for instance)
+> **Note:** The default `test` environment should only be used for running tests as it is configured to handle sessions 
+> with the `session.storage.mock_file`. As consequence, logging into the admin interface is not possible in a browser context.
 
-To create a new config, e.g. staging, which is based on the dev config, you must set `staging` as PIMCORE_ENVIRONMENT and create the following config file `app/config/config_staging.yml`:
+To create a new config, e.g. staging, which is based on the dev config, you must set `staging` as PIMCORE_ENVIRONMENT and
+create the following config file `app/config/config_staging.yml`:
 
 ```yaml
 imports:
-    - { resource: '@PimcoreCoreBundle/Resources/config/pimcore/dev.yml' }
+    - { resource: '@PimcoreCoreBundle/Resources/config/pimcore/dev.yml' } # loads default dev configuration
     - { resource: config.yml }
 ```
 
-If you use some specific bundles, you need to register them in `app\AppKernel.php`.
-For instance for an new environment called `staging` using web profiler, you should add in the method `registerBundlesToCollection`:
+By default, dev-bundles as the profiler are restricted to the `dev` environment. If you want to load those bundles in your
+environment, you need to register them to the kernel (in `app\AppKernel.php`) by adding them in the `registerBundlesToCollection`
+method. Have a look at the [Pimcore Kernel](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Kernel.php#L189)
+to see what is loaded in the default `dev` environment.
+
+For instance for an new environment called `staging` using web profiler, you can add something like the following:
 
 ```
 use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
@@ -89,7 +95,8 @@ use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 	}
 ```
 
-If you set `PIMCORE_ENVIRONMENT` to a new environment name before installation, all those steps need to be done before running the installation.
+If you set `PIMCORE_ENVIRONMENT` to a new environment name before installation, all those steps need to be done before
+running the installation.
 
 ## Set the Environment
 
