@@ -47,6 +47,8 @@ services:
         tags:
             - { name: kernel.cache_warmer }
 
+    Pimcore\Cache\Symfony\CacheClearer:
+        public: true
 
     #
     # CONFIG

@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
+use Pimcore\Cache\Symfony\CacheClearer;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -645,37 +646,45 @@ class Tool
     }
 
     /**
+     * @deprecated Use the Pimcore\Cache\Symfony\CacheClearer service
+     *
      * @param Container|null $container
-     * @param bool $envSpecific
      */
-    public static function clearSymfonyCache(Container $container = null, $envSpecific = false)
+    public static function clearSymfonyCache(Container $container = null)
     {
+        if (count(func_get_args()) > 1) {
+            @trigger_error(
+                sprintf(
+                    'The $envSpecific flag for Tool::clearSymfonyCache is not supported anymore. Please use the %s service instead.',
+                    CacheClearer::class
+                ),
+                E_USER_DEPRECATED
+            );
+        }
+
         if (!$container) {
             $container = \Pimcore::getContainer();
         }
 
-        if ($envSpecific) {
-            $realCacheDir = $container->getParameter('kernel.cache_dir');
-        } else {
-            $realCacheDir = PIMCORE_PRIVATE_VAR . '/cache';
-        }
+        $kernel = $container->get('kernel');
 
-        $oldCacheDir = self::getSymfonyCacheDirRemoveTempLocation($realCacheDir);
-        $filesystem = $container->get('filesystem');
-        if ($filesystem->exists($oldCacheDir)) {
-            $filesystem->remove($oldCacheDir);
-        }
-
-        if ($envSpecific) {
-            $container->get('cache_clearer')->clear($realCacheDir);
-        }
-
-        $filesystem->rename($realCacheDir, $oldCacheDir);
-        $filesystem->remove($oldCacheDir);
+        $clearer = $container->get(CacheClearer::class);
+        $clearer->clear($kernel);
     }
 
+    /**
+     * @deprecated Will be removed in Pimcore 6
+     */
     public static function getSymfonyCacheDirRemoveTempLocation(string $realCacheDir): string
     {
+        @trigger_error(
+            sprintf(
+                'The Tool::getSymfonyCacheDirRemoveTempLocation() method is deprecated and will be removed in Pimcore 6. Please use the %s service instead.',
+                CacheClearer::class
+            ),
+            E_USER_DEPRECATED
+        );
+
         // the temp cache dir name must not be longer than the real one to avoid exceeding
         // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
         return substr($realCacheDir, 0, -1) . ('~' === substr($realCacheDir, -1) ? '+' : '~');
