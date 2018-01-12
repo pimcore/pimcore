@@ -261,7 +261,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     public function cleanUpPendingOrders()
     {
         $dateTime = new \DateTime();
-        $dateTime->add(new \DateInterval('PT1H'));
+        $dateTime->sub(new \DateInterval('PT1H'));
         $timestamp = $dateTime->getTimestamp();
 
         $orderManager = $this->orderManagers->getOrderManager();
