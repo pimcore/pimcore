@@ -2093,7 +2093,7 @@ class DataObjectHelperController extends AdminController
         $folder = DataObject::getById($request->get('folderId'));
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
 
-        $conditionFilters = ["o_path = ? OR o_path LIKE '" . str_replace('//', '/', $folder->getRealFullPath() . '/') . "%'"];
+        $conditionFilters = ["(o_path = ? OR o_path LIKE '" . str_replace('//', '/', $folder->getRealFullPath() . '/') . "%')"];
 
         if ($request->get('filter')) {
             $conditionFilters[] = DataObject\Service::getFilterCondition($request->get('filter'), $class);
