@@ -598,6 +598,7 @@
   "exits": "Exits",
   "debug_mode_on": "DEBUG MODE",
   "restore": "Restore",
+  "restore_selected": "Restore selected",
   "amount": "Amount",
   "flush_recyclebin": "Flush Recycle Bin",
   "recyclebin": "Recycle Bin",
@@ -1813,6 +1814,7 @@
   "operator_dateformatter_settings": "Operator DateFormatter Settings",
   "clear_hotspots_title": "Clear Data?",
   "clear_hotspots_msg": "This image contains additional data like markers or hotspots. Do you want to clear them as well?",
-  "rgbaColor": "RGBA Color"
+  "rgbaColor": "RGBA Color",
+  "restore_failed": "Restore failed"
 
 }
