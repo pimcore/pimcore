@@ -272,14 +272,17 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
 
         var options = [];
 
-        var valueStore = this.specificPanel.getComponent("valueeditor").getStore();
-        valueStore.commitChanges();
-        valueStore.each(function (rec) {
-            options.push({
-                key: rec.get("key"),
-                value: rec.get("value")
+        var valueEditor = this.specificPanel.getComponent("valueeditor");
+        if (valueEditor) {
+            var valueStore = valueEditor.getStore();
+            valueStore.commitChanges();
+            valueStore.each(function (rec) {
+                options.push({
+                    key: rec.get("key"),
+                    value: rec.get("value")
+                });
             });
-        });
+        }
 
         this.datax.options = options;
     },
