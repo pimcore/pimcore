@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\FrontendEvents;
+use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -72,7 +73,7 @@ class Image extends Model\Asset
                 // we need the @ in front of touch because of some stream wrapper (eg. s3) which don't support touch()
                 @touch($path, $this->getModificationDate());
 
-                $this->generateSvgPreview();
+                $this->generateLowQualityPreview();
             } catch (\Exception $e) {
                 Logger::error('Problem while creating system-thumbnails for image ' . $this->getRealFullPath());
                 Logger::error($e);
@@ -80,19 +81,64 @@ class Image extends Model\Asset
         }
     }
 
-    public function generateSvgPreview()
+    /**
+     * @param null|string $generator
+     *
+     * @return bool|string
+     *
+     * @throws \Exception
+     */
+    public function generateLowQualityPreview($generator = null)
     {
-        // SQIP SVG Previews
-        if ($sqipBin = \Pimcore\Tool\Console::getExecutable('sqip')) {
+        $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
+        if (!$generator) {
+            if ($sqipBin) {
+                $generator = 'sqip';
+            } elseif (class_exists('Imagick')) {
+                $generator = 'imagick';
+            }
+        }
+
+        if ($generator == 'sqip') {
+            // SQIP is preferred, produced smaller files & mostly better quality
             // primitive isn't able to process PJPEG so we have to generate a PNG
             $sqipConfig = Image\Thumbnail\Config::getPreviewConfig();
             $sqipConfig->setFormat('png');
             $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
-            $svgPath = $this->getSvgPreviewFileSystemPath();
+            $svgPath = $this->getLowQualityPreviewFileSystemPath();
             \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . $svgPath . ' '. $pngPath);
             unlink($pngPath);
 
+            $svgData = file_get_contents($svgPath);
+            $svgData = str_replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"', $svgData);
+            File::put($svgPath, $svgData);
+
             return $svgPath;
+        } elseif ($generator == 'imagick') {
+            // Imagick fallback
+            $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
+            $imagick = new \Imagick($path);
+            $imagick->setImageFormat('jpg');
+            $imagick->setOption('jpeg:extent', '1kb');
+            $width = $imagick->getImageWidth();
+            $height = $imagick->getImageHeight();
+            $imageBase64 = base64_encode($imagick->getImageBlob());
+            $imagick->destroy();
+
+            $svg = <<<EOT
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="$width" height="$height" viewBox="0 0 $width $height" preserveAspectRatio="xMidYMid slice">
+	<filter id="blur" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+    <feGaussianBlur stdDeviation="20 20" edgeMode="duplicate" />
+    <feComponentTransfer>
+      <feFuncA type="discrete" tableValues="1 1" />
+    </feComponentTransfer>
+  </filter>
+    <image filter="url(#blur)" x="0" y="0" height="100%" width="100%" xlink:href="data:image/jpg;base64,$imageBase64" />
+</svg>
+EOT;
+
+            File::put($this->getLowQualityPreviewFileSystemPath(), $svg);
         }
 
         return false;
@@ -101,9 +147,9 @@ class Image extends Model\Asset
     /**
      * @return string
      */
-    public function getSvgPreviewPath()
+    public function getLowQualityPreviewPath()
     {
-        $fsPath = $this->getSvgPreviewFileSystemPath();
+        $fsPath = $this->getLowQualityPreviewFileSystemPath();
         $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
         $path = urlencode_ignore_slash($path);
 
@@ -120,10 +166,10 @@ class Image extends Model\Asset
     /**
      * @return string
      */
-    public function getSvgPreviewFileSystemPath()
+    public function getLowQualityPreviewFileSystemPath()
     {
         $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
-        $svgPath = preg_replace("/\.p?jpe?g$/", '.svg', $path);
+        $svgPath = preg_replace("/\.p?jpe?g$/", '-low-quality-preview.svg', $path);
 
         return $svgPath;
     }

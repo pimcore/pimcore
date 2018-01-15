@@ -137,6 +137,24 @@ Following elements are configured:
   or [Discount](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php)
   for examples. This should be self speaking. 
 
+
+
+
+## Available Cart Implementations
+
+Following cart implementations are shipped with Pimcore core and can be configured in the `factory_options` section of 
+the cart manager configuration: 
+
+* **Session-Cart** (class name `Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart`): This cart implementation 
+stores all cart information in the **session** of the user. If the session is cleared, also the carts are deleted. 
+Use this implementation when no user login is available and storing carts in the database has no benefit.   
+
+* **Database-Cart** (class name `Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart`): This cart implementation
+stores all cart information in the **database**. In this case, it is important that the currently logged in user is set 
+to the [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/IEnvironment.php)
+with the code snippet in the box below. 
+Use this implementation when user logins are available and the carts should be persisted beyond session lifetime. 
+
 > Note: if you are using the database cart, don't forget to set the currently logged in user to the environment like 
 > follows: `Factory::getInstance()->getEnvironment()->setCurrentUserId(YOUR_USER_ID)` 
 

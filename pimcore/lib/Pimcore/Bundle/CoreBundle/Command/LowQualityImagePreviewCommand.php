@@ -20,19 +20,21 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ImageSVGPreviewCommand extends AbstractCommand
+class LowQualityImagePreviewCommand extends AbstractCommand
 {
     protected function configure()
     {
         $this
-            ->setName('pimcore:image:svg-preview')
-            ->setDescription('Regenerates SVG image previews for all image assets')
+            ->setName('pimcore:image:low-quality-preview')
+            ->setAliases(['pimcore:image:svg-preview'])
+            ->setDescription('Regenerates low quality image previews for all image assets')
             ->addOption(
                 'parent',
                 'p',
                 InputOption::VALUE_OPTIONAL,
                 'only create thumbnails of images in this folder (ID)'
-            );
+            )
+            ->addOption('generator', 'g', InputOption::VALUE_OPTIONAL, 'Force a generator, either `svg` or `imagick`');
     }
 
     /**
@@ -53,6 +55,11 @@ class ImageSVGPreviewCommand extends AbstractCommand
             }
         }
 
+        $generator = null;
+        if ($input->getOption('generator')) {
+            $generator = $input->getOption('generator');
+        }
+
         $list = new Asset\Listing();
         $list->setCondition(implode(' AND ', $conditions));
         $total = $list->getTotalCount();
@@ -62,10 +69,13 @@ class ImageSVGPreviewCommand extends AbstractCommand
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
 
+            /**
+             * @var $images Asset\Image[]
+             */
             $images = $list->load();
             foreach ($images as $image) {
-                $image->generateSvgPreview();
-                $this->output->writeln('generating svg preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
+                $image->generateLowQualityPreview($generator);
+                $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());
             }
             \Pimcore::collectGarbage();
         }

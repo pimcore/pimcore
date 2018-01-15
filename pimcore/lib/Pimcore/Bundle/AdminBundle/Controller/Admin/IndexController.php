@@ -57,13 +57,13 @@ class IndexController extends AdminController
      * @param SiteConfigProvider $siteConfigProvider
      *
      * @return ViewModel
+     *
      * @throws \Exception
      */
     public function indexAction(
         Request $request,
         SiteConfigProvider $siteConfigProvider
-    )
-    {
+    ) {
         $user = $this->getAdminUser();
         $view = new ViewModel([
             'config' => Config::getSystemConfig()
@@ -199,8 +199,7 @@ class IndexController extends AdminController
         ViewModel $view,
         ViewModel $settings,
         SiteConfigProvider $siteConfigProvider
-    )
-    {
+    ) {
         $config = $view->config;
 
         $settings->getParameters()->add([

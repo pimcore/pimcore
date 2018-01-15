@@ -73,7 +73,7 @@ class ObjectMetadata extends Model\AbstractModel
             $key = strtolower(substr($name, 3, strlen($name) - 3));
 
             if (in_array($key, $this->columns)) {
-                return $this->data[$key];
+                return isset($this->data[$key]) ? $this->data[$key] : null;
             }
 
             throw new \Exception("Requested data $key not available");

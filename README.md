@@ -7,7 +7,8 @@ See https://github.com/pimcore/pimcore/tree/pimcore4**
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-* [Documentation](https://pimcore.com/docs/5.0.x)
+* [Documentation](https://pimcore.com/docs/)
+* [API Documentation](https://pimcore.com/docs/api/)
 * Homepage: [http://pimcore.com/](https://pimcore.com/) - Learn more about Pimcore
 * Like us on [Facebook](https://www.facebook.com/pimcore)
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news

@@ -26,7 +26,8 @@ class DeleteClassificationStoreCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('classificationstore:delete-store')
+            ->setName('pimcore:classificationstore:delete-store')
+            ->setAliases(['classificationstore:delete-store'])
             ->setDescription('Delete Classification Store')
             ->addArgument('storeId', InputArgument::REQUIRED, 'The store ID to delete')
         ;

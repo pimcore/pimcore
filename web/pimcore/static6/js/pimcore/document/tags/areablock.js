@@ -1129,13 +1129,19 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     getValue: function () {
         var data = [];
+        var hidden = false;
         for (var i = 0; i < this.elements.length; i++) {
             if (this.elements[i]) {
                 if (this.elements[i].key) {
+                    hidden = false;
+                    if(this.visibilityButtons[this.elements[i].key]) {
+                        hidden = this.visibilityButtons[this.elements[i].key].pressed;
+                    }
+
                     data.push({
                         key: this.elements[i].key,
                         type: this.elements[i].type,
-                        hidden: this.visibilityButtons[this.elements[i].key].pressed
+                        hidden: hidden
                     });
                 }
             }

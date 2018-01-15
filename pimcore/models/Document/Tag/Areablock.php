@@ -190,7 +190,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
         $info->setParams($params);
 
-        if($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
+        if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
             $this->getTagHandler()->renderAreaFrontend($info);
         }
 
@@ -349,9 +349,9 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             'data-real-name' => $this->getRealName(),
         ];
 
-        $hidden = "false";
-        if(isset($this->indices[$this->current]['hidden']) && $this->indices[$this->current]['hidden']) {
-            $hidden = "true";
+        $hidden = 'false';
+        if (isset($this->indices[$this->current]['hidden']) && $this->indices[$this->current]['hidden']) {
+            $hidden = 'true';
         }
 
         $outerAttributes = [

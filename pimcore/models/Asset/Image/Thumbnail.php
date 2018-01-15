@@ -468,12 +468,19 @@ class Thumbnail
             unset($pictureAttribs[$attribute]);
         }
 
-        $isSvgPreview = false;
-        if (isset($options['svgPlaceholder']) && $options['svgPlaceholder'] && file_exists($this->getAsset()->getSvgPreviewFileSystemPath())) {
-            $isSvgPreview = true;
+        $isLowQualityPreview = false;
+        $lowQualityPreviewFile = $this->getAsset()->getLowQualityPreviewFileSystemPath();
+        if (
+            (
+                (isset($options['svgPlaceholder']) && $options['svgPlaceholder']) // @deprecated config option
+                || (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
+            )
+            && file_exists($lowQualityPreviewFile)
+        ) {
+            $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
             $attributes['data-srcset'] = $attributes['srcset'];
-            $attributes['src'] = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($this->getAsset()->getSvgPreviewFileSystemPath()));
+            $attributes['src'] = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($lowQualityPreviewFile));
             unset($attributes['srcset']);
         }
 
@@ -495,6 +502,7 @@ class Thumbnail
 
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $srcSetValues = [];
+                $sourceTagAttributes = [];
                 foreach ([1, 2] as $highRes) {
                     $thumbConfigRes = clone $thumbConfig;
                     $thumbConfigRes->selectMedia($mediaQuery);
@@ -507,28 +515,39 @@ class Thumbnail
                     }
                 }
 
-                $html .= "\t" . '<source srcset="' . implode(', ', $srcSetValues) .'"';
+                $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
                 if ($mediaQuery) {
                     // currently only max-width is supported, so we replace the width indicator (400w) out of the name
                     $maxWidth = str_replace('w', '', $mediaQuery);
-                    $html .= ' media="(max-width: ' . $maxWidth . 'px)"';
+                    $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
                     $thumb->reset();
                 }
-                $html .= ' />' . "\n";
+
+                if ($isLowQualityPreview) {
+                    $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+                    unset($sourceTagAttributes['srcset']);
+                }
+
+                $html .= "\t" . '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />' . "\n";
             }
 
             $attrCleanedForPicture = $attributes;
+            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
+
             if (isset($attrCleanedForPicture['srcset'])) {
                 unset($attrCleanedForPicture['srcset']);
             }
-            if ($isSvgPreview) {
+
+            if ($isLowQualityPreview) {
                 unset($attrCleanedForPicture['data-src']);
                 unset($attrCleanedForPicture['data-srcset']);
+                $attrCleanedForPicture['data-src'] = $attrCleanedForPicture['src'];
+                $attrCleanedForPicture['src'] = $attributes['src'];
             }
-            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
-            $htmlImgTagForpicture = '<img ' . array_to_html_attribute_string($attrCleanedForPicture) .' />';
+
+            $htmlImgTagForpicture = "\t" . '<img ' . array_to_html_attribute_string($attrCleanedForPicture) .' />';
 
             $html .= $htmlImgTagForpicture . "\n";
 

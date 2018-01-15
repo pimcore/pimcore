@@ -44,6 +44,7 @@ class Folder extends AbstractObject
 
     /**
      * @param null $isUpdate
+     *
      * @throws \Exception
      */
     protected function update($isUpdate = null)

@@ -21,24 +21,24 @@ be added to version control systems and be deployed to different deployment stag
 
 > **Note**: Changes on Pimcore class definitions not only have influence to configuration files but also on the database. 
 > If deploying changes between different deployment stages also database changes need to be deployed. This can be done
-> with the `deployment:classes-rebuild` command. 
+> with the `pimcore:deployment:classes-rebuild` command. 
 
 
-After every code update you should use the `deployment:classes-rebuild` command to push changes to the database.
+After every code update you should use the `pimcore:deployment:classes-rebuild` command to push changes to the database.
  
 ```bash
-./bin/console deployment:classes-rebuild
+./bin/console pimcore:deployment:classes-rebuild
 ```
 
 
 As an alternative also class export to json-files and the class import commands can be used. 
 
 ```bash
-./bin/console definition:import:objectbrick /brick_jsonfile_path.json
+./bin/console pimcore:definition:import:objectbrick /brick_jsonfile_path.json
 
-./bin/console definition:import:fieldcollection /collection_jsonfile_path.json
+./bin/console pimcore:definition:import:fieldcollection /collection_jsonfile_path.json
 
-./bin/console definition:import:class /class_jsonfile_path.json
+./bin/console pimcore:definition:import:class /class_jsonfile_path.json
 ```
 
 
@@ -60,14 +60,14 @@ To get a list of all available commands use `./bin/console list`.
 | pimcore:cache:clear                                  | Clear Pimcore core caches                                                                                    |
 | cache:clear                                          | Clear Symfony caches                                                                                    |
 | pimcore:cache:warming                                | Warm up caches                                                                                  |
-| classificationstore:delete-store                     | Delete Classification Store                                                                     |
-| definition:import:class                              | Import Class definition from a JSON export                                                      |
-| definition:import:fieldcollection                    | Import FieldCollection definition from a JSON export                                            |
-| definition:import:objectbrick                        | Import ObjectBrick definition from a JSON export                                                |
-| deployment:classes-rebuild                           | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files |
-| thumbnails:image                                     | Generate image thumbnails, useful to pre-generate thumbnails in the background                  |
-| thumbnails:optimize-images                           | Optimize file size of all images in `web/var/tmp`                       |
-| thumbnails:video                                     | Generate video thumbnails, useful to pre-generate thumbnails in the background                  |
+| pimcore:classificationstore:delete-store                     | Delete Classification Store                                                                     |
+| pimcore:definition:import:class                      | Import Class definition from a JSON export                                                      |
+| pimcore:definition:import:fieldcollection            | Import FieldCollection definition from a JSON export                                            |
+| pimcore:definition:import:objectbrick                | Import ObjectBrick definition from a JSON export                                                |
+| pimcore:deployment:classes-rebuild                   | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files |
+| pimcore:thumbnails:image                             | Generate image thumbnails, useful to pre-generate thumbnails in the background                  |
+| pimcore:thumbnails:optimize-images                   | Optimize file size of all images in `web/var/tmp`                       |
+| pimcore:thumbnails:video                             | Generate video thumbnails, useful to pre-generate thumbnails in the background                  |
 
 Find more about the Pimcore Console on the [dedicated page](../19_Development_Tools_and_Details/11_Console_CLI.md).
 

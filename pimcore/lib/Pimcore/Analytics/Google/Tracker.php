@@ -83,8 +83,7 @@ class Tracker extends AbstractTracker
         ConfigProvider $configProvider,
         EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine
-    )
-    {
+    ) {
         parent::__construct($siteIdProvider);
 
         $this->siteIdProvider   = $siteIdProvider;

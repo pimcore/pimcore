@@ -78,8 +78,7 @@ class GoogleTagManagerListener
         SiteIdProvider $siteIdProvider,
         EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine
-    )
-    {
+    ) {
         $this->siteIdProvider   = $siteIdProvider;
         $this->eventDispatcher  = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;

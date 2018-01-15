@@ -25,7 +25,8 @@ class RunUpdateScriptCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('deployment:run-update-script')
+            ->setName('pimcore:deployment:run-update-script')
+            ->setAliases(['deployment:run-update-script'])
             ->setDescription('Re-run an update script of a certain build')
             ->addArgument('buildNumber', InputArgument::REQUIRED, 'Build number of the script you want to run again');
     }

@@ -202,8 +202,9 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
                 $hotspots[] = $itemData['__hotspots'];
             }
 
+            $elementCount = count($ids);
             $ids = implode(',', $ids);
-            if (count($ids) > 0) {
+            if ($elementCount > 0) {
                 $ids = ',' . $ids . ',';
             }
 
@@ -575,5 +576,26 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
 
             return $result;
         }
+    }
+
+    /**
+     * @param DataObject\Concrete $data
+     *
+     * @return bool
+     */
+    public function isEmpty($data)
+    {
+        if (empty($data)) {
+            return true;
+        }
+
+        if ($data instanceof DataObject\Data\ImageGallery) {
+            $items = $data->getItems();
+            if (empty($items)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

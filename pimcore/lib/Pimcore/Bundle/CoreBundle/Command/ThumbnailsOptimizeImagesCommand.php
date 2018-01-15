@@ -23,7 +23,8 @@ class ThumbnailsOptimizeImagesCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('thumbnails:optimize-images')
+            ->setName('pimcore:thumbnails:optimize-images')
+            ->setAliases(['thumbnails:optimize-images'])
             ->setDescription('Optimize filesize of all images in ' . PIMCORE_TEMPORARY_DIRECTORY);
     }
 

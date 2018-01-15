@@ -164,6 +164,19 @@ class Requirements
             'state' => $queryCheck ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
+        // Fulltext indexes
+        $queryCheck = true;
+        try {
+            $db->query('ALTER TABLE __pimcore_req_check ADD FULLTEXT INDEX `fulltextFieldIndex` (`field`)');
+        } catch (\Exception $e) {
+            $queryCheck = false;
+        }
+
+        $checks[] = new Check([
+            'name' => 'Fulltext Indexes',
+            'state' => $queryCheck ? Check::STATE_OK : Check::STATE_ERROR
+        ]);
+
         // insert data
         $queryCheck = true;
         try {

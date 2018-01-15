@@ -33,15 +33,70 @@ var/config/system.php
 > **Note:** If you put your configurations into `app/config/pimcore/` they might not writable by the Pimcore backend UI. 
 > This can be especially useful when having automated building environments and don't want the user to allow changing settings.  
 
-If you add a new environment which is not an existing one by default (those are `dev`, `test` and `prod`), you need to
-manually create a YAML config file for the project. If you set environment before installation, this is needed to be done
-before installation. For instance, for a `staging` environment, you will need to add a `app/config/config_staging.yml` file
-with the following content:
+## Set a new Environment name
+
+If you need add a new environment which is not an existing one by default (those are `prod`, `dev` and `test`) you need
+to manually create a config file for the project in `app/config/config_<environment>.yml`.
+
+> **Note:** The default `test` environment should only be used for running tests as it is configured to handle sessions 
+> with the `session.storage.mock_file`. As consequence, logging into the admin interface is not possible in a browser context.
+
+To create a new config, e.g. staging, which is based on the dev config, you must set `staging` as PIMCORE_ENVIRONMENT and
+create the following config file `app/config/config_staging.yml`:
 
 ```yaml
 imports:
+    - { resource: '@PimcoreCoreBundle/Resources/config/pimcore/dev.yml' } # loads default dev configuration
     - { resource: config.yml }
 ```
+
+By default, dev-bundles as the profiler are restricted to the `dev` environment. If you want to load those bundles in your
+environment, you need to register them to the kernel (in `app\AppKernel.php`) by adding them in the `registerBundlesToCollection`
+method. Have a look at the [Pimcore Kernel](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Kernel.php#L189)
+to see what is loaded in the default `dev` environment.
+
+For instance for an new environment called `staging` using web profiler, you can add something like the following:
+
+```
+use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
+use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
+use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
+use Symfony\Bundle\DebugBundle\DebugBundle;
+use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+...
+	public function registerBundlesToCollection(BundleCollection $collection)
+	{
+		//...
+		
+		// environment specific bundles
+		if (in_array($this->getEnvironment(), ['staging'])) {
+			$collection->addBundles([
+				new DebugBundle(),
+				new WebProfilerBundle(),
+				new SensioDistributionBundle()
+			], 80);
+			// add generator bundle only if installed
+			if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
+				$collection->addBundle(
+					new SensioGeneratorBundle(),
+					80, // priority
+					['staging'] // the bundle will only be loaded in the staging environment
+				);
+				// PimcoreGeneratorBundle depends on SensioGeneratorBundle
+				$collection->addBundle(
+					new PimcoreGeneratorBundle(),
+					60,
+					['staging']
+				);
+			}
+		}
+
+		//...
+	}
+```
+
+If you set `PIMCORE_ENVIRONMENT` to a new environment name before installation, all those steps need to be done before
+running the installation.
 
 ## Set the Environment
 

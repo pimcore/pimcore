@@ -700,6 +700,9 @@ class ClassificationstoreController extends AdminController
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
             $orderKey = $sortingSettings['orderKey'];
+            if ($orderKey == 'keyName') {
+                $orderKey = 'name';
+            }
             $order = $sortingSettings['order'];
         }
 

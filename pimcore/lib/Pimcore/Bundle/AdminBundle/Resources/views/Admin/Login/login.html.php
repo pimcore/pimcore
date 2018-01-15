@@ -51,10 +51,26 @@ $config = $this->config;
     </style>
 <?php } ?>
 
+<?php if($config->branding) { ?>
+    <?php if($config->branding->color_login_screen) {
+        $customColor = $config->branding->color_login_screen;
+        ?>
+        <style type="text/css">
+            #loginform button {
+                background: <?= $customColor ?>;
+            }
+
+            a, a:hover, a:visited, a:active {
+                color: <?= $customColor ?>;
+            }
+        </style>
+    <?php } ?>
+<?php } ?>
+
 <div id="vcenter" class="<?= ($config->general->loginscreencustomimage ? "customimage" : ""); ?>">
     <div id="hcenter">
         <div id="header">
-            <img src="/pimcore/static6/img/logo-claim-gray.svg">
+            <img src="/admin/settings/display-custom-logo">
         </div>
         <div id="content">
             <div id="loginform">

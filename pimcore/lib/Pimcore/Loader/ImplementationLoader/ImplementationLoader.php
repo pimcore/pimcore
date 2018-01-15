@@ -22,7 +22,7 @@ use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 /**
  * Core implementation loader delegating to a list of registered loaders
  */
-class ImplementationLoader implements LoaderInterface
+class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
 {
     /**
      * @var LoaderInterface[]
@@ -104,5 +104,48 @@ class ImplementationLoader implements LoaderInterface
         }
 
         return $loader->build($name, $params);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function supportsClassName(string $name): bool
+    {
+        $loader = $this->getLoader($name);
+
+        if (null === $loader || !$loader instanceof ClassNameLoaderInterface) {
+            return false;
+        }
+
+        return $loader->supportsClassName($name);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getClassNameFor(string $name): string
+    {
+        $loader = $this->getLoader($name);
+        if (null === $loader) {
+            throw new UnsupportedException(sprintf('Loader for "%s" was not found', $name));
+        }
+
+        if (!$loader instanceof ClassNameLoaderInterface) {
+            throw new UnsupportedException(sprintf(
+                'Loader "%s" for "%s" does not support building a class name',
+                get_class($loader),
+                $name
+            ));
+        }
+
+        if (!$loader->supportsClassName($name)) {
+            throw new UnsupportedException(sprintf(
+                'Building a class name for "%s" from loader "%s" is not supported',
+                $name,
+                get_class($loader)
+            ));
+        }
+
+        return $loader->getClassNameFor($name);
     }
 }
