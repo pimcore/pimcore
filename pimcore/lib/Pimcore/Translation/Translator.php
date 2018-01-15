@@ -88,6 +88,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     public function trans($id, array $parameters = [], $domain = null, $locale = null)
     {
+        $id = trim($id);
+
         if ($this->disableTranslations) {
             return $id;
         }
@@ -116,6 +118,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
     {
+        $id = trim($id);
+
         if ($this->disableTranslations) {
             return $id;
         }
