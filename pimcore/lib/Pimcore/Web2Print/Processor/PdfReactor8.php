@@ -70,7 +70,13 @@ class PdfReactor8 extends Processor
         $port = ((string)$web2PrintConfig->pdfreactorServerPort) ? (string)$web2PrintConfig->pdfreactorServerPort : '9423';
         $protocol = ((string)$web2PrintConfig->pdfreactorProtocol) ? (string)$web2PrintConfig->pdfreactorProtocol : 'http';
 
-        return new \PDFreactor($protocol . '://' . $web2PrintConfig->pdfreactorServer . ':' . $port . '/service/rest');
+        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->pdfreactorServer . ':' . $port . '/service/rest');
+
+        if (trim($web2PrintConfig->pdfreactorApiKey)) {
+            $pdfreactor->apiKey = trim($web2PrintConfig->pdfreactorApiKey);
+        }
+
+        return $pdfreactor;
     }
 
     /**
