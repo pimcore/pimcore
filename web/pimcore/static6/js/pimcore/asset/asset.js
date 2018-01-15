@@ -462,7 +462,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             },
             {
                 name: "deeplink",
-                value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?asset_" + this.data.id + "_" + this.data.type
+                value: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
             }
         ], "asset");
     }

@@ -402,7 +402,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         },
         {
             name: "deeplink",
-            value: window.location.protocol + "//" + window.location.hostname + "/admin/login/deeplink?object_" + this.data.general.o_id + "_folder"
+            value: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "folder")
         }
         ], "folder");
     }
