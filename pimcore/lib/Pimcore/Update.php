@@ -14,6 +14,7 @@
 
 namespace Pimcore;
 
+use Pimcore\Composer\Config\ConfigMerger;
 use Symfony\Component\Process\Process;
 
 class Update
@@ -378,9 +379,12 @@ class Update
         $newContents = json_decode($newContents, true);
 
         if ($existingContents && $newContents) {
-            $mergeResult = array_replace_recursive($existingContents, $newContents);
+            $configMerger = \Pimcore::getContainer()->get(ConfigMerger::class);
+            $mergeResult  = $configMerger->merge($existingContents, $newContents);
+
             $newJson = json_encode($mergeResult);
             $newJson = \Pimcore\Helper\JsonFormatter::format($newJson, true, true);
+
             File::put($oldFile, $newJson);
         }
 

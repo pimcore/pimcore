@@ -50,6 +50,13 @@ services:
     Pimcore\Cache\Symfony\CacheClearer:
         public: true
 
+    Pimcore\Composer\Config\ConfigMerger:
+        public: true
+
+    Pimcore\Composer\Config\Normalizer\:
+        resource: '../../../../Composer/Config/Normalizer'
+        tags: ['pimcore.composer.config_normalizer']
+
     #
     # CONFIG
     #
