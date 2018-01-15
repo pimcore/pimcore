@@ -132,10 +132,14 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             } else if (this.fieldConfig.columns[i].type == "text" && !readOnly) {
                 editor = new Ext.form.TextField({});
             } else if (this.fieldConfig.columns[i].type == "select" && !readOnly) {
-                var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
-                var selectData = [];
-                for (var j = 0; j < selectDataRaw.length; j++) {
-                    selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+               var selectData = [];
+
+                if (this.fieldConfig.columns[i].value) {
+                    var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
+
+                    for (var j = 0; j < selectDataRaw.length; j++) {
+                        selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+                    }
                 }
 
                 editor = new Ext.form.ComboBox({
