@@ -24,7 +24,8 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -52,41 +53,48 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
         $super();
 
         this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
 
-        this.specificPanel.add([
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+
+        specificItems = [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("default_value"),
                 name: "defaultValue",
-                value: this.datax.defaultValue
+                value: datax.defaultValue
             }, {
                 xtype: "panel",
                 bodyStyle: "padding-top: 3px",
                 style: "margin-bottom: 10px",
                 html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
             }
-        ]);
+        ];
 
         if (!this.isInCustomLayoutEditor()) {
-            this.specificPanel.add([
+            specificItems = specificItems.concat([
                 {
                     xtype: "numberfield",
                     fieldLabel: t("decimal_size"),
                     name: "decimalSize",
                     maxValue: 65,
-                    value: this.datax.decimalSize
+                    value: datax.decimalSize
                 }, {
                     xtype: "numberfield",
                     fieldLabel: t("decimal_precision"),
                     name: "decimalPrecision",
                     maxValue: 30,
-                    value: this.datax.decimalPrecision
+                    value: datax.decimalPrecision
                 }, {
                     xtype: "panel",
                     bodyStyle: "padding-top: 3px",
@@ -101,27 +109,26 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                     xtype: "checkbox",
                     fieldLabel: t("integer"),
                     name: "integer",
-                    checked: this.datax.integer
+                    checked: datax.integer
                 }, {
                     xtype: "checkbox",
                     fieldLabel: t("only_unsigned"),
                     name: "unsigned",
-                    checked: this.datax["unsigned"]
+                    checked: datax["unsigned"]
                 }, {
                     xtype: "numberfield",
                     fieldLabel: t("min_value"),
                     name: "minValue",
-                    value: this.datax.minValue
+                    value: datax.minValue
                 },{
                     xtype: "numberfield",
                     fieldLabel: t("max_value"),
                     name: "maxValue",
-                    value: this.datax.maxValue
+                    value: datax.maxValue
                 }
             ]);
         }
-
-        return this.layout;
+        return specificItems;
     },
 
     applySpecialData: function(source) {

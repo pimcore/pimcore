@@ -24,7 +24,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         fieldcollection: true,
         localizedfield: true,
         classificationstore: true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -53,21 +54,36 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
 
     getLayout: function ($super) {
 
-        if (typeof this.datax.options != "object") {
-            this.datax.options = [];
+        $super();
+
+        this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+
+        var selectionModel;
+
+        if (typeof datax.options != "object") {
+            datax.options = [];
         }
 
-        this.valueStore = new Ext.data.JsonStore({
+        var valueStore = new Ext.data.JsonStore({
             fields: ["key", "value"],
-            data: this.datax.options
+            data: datax.options
         });
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
         });
+        
+        var valueGrid;
 
-        this.valueGrid = Ext.create('Ext.grid.Panel', {
-            //enableDragDrop: true,
+        valueGrid = Ext.create('Ext.grid.Panel', {
+            itemId: "valueeditor",
             viewConfig: {
                 plugins: [
                     {
@@ -76,7 +92,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     }
                 ]
             },
-            plugins: [this.cellEditing],
+            plugins: [cellEditing],
             tbar: [{
                 xtype: "tbtext",
                 text: t("selection_options")
@@ -89,15 +105,15 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                         value: ""
                     };
 
-                    var selectedRow = this.selectionModel.getSelected();
+                    var selectedRow = selectionModel.getSelected();
                     var idx;
                     if (selectedRow) {
-                        idx = this.valueStore.indexOf(selectedRow) + 1;
+                        idx = valueStore.indexOf(selectedRow) + 1;
                     } else {
-                        idx = this.valueStore.getCount();
+                        idx = valueStore.getCount();
                     }
-                    this.valueStore.insert(idx, u);
-                    this.selectionModel.select(idx);
+                    valueStore.insert(idx, u);
+                    selectionModel.select(idx);
                 }.bind(this)
             },
                 {
@@ -108,7 +124,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 }
             ],
             style: "margin-top: 10px",
-            store: this.valueStore,
+            store: valueStore,
             disabled: this.isInCustomLayoutEditor(),
             selModel: Ext.create('Ext.selection.RowModel', {}),
             columnLines: true,
@@ -134,8 +150,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(--rowIndex, [rec]);
-                                    var sm = this.valueGrid.getSelectionModel();
-                                    this.selectionModel.select(rowIndex);
+                                    var sm = valueGrid.getSelectionModel();
+                                    selectionModel.select(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -154,8 +170,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(++rowIndex, [rec]);
-                                    var sm = this.valueGrid.getSelectionModel();
-                                    this.selectionModel.select(rowIndex);
+                                    var sm = valueGrid.getSelectionModel();
+                                    selectionModel.select(rowIndex);
                                 }
                             }.bind(this)
                         }
@@ -179,27 +195,26 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             autoHeight: true
         });
 
-        this.selectionModel = this.valueGrid.getSelectionModel();
-        ;
-        this.valueGrid.on("afterrender", function () {
+        selectionModel = valueGrid.getSelectionModel();;
+        valueGrid.on("afterrender", function () {
 
-            var dropTargetEl = this.valueGrid.getEl();
+            var dropTargetEl = valueGrid.getEl();
             var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
                 ddGroup: 'objectclassmultiselect',
                 getTargetFromEvent: function (e) {
-                    return this.valueGrid.getEl().dom;
+                    return valueGrid.getEl().dom;
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
-                    if (data["grid"] && data["grid"] == this.valueGrid) {
+                    if (data["grid"] && data["grid"] == valueGrid) {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
                     return Ext.dd.DropZone.prototype.dropNotAllowed;
                 }.bind(this),
                 onNodeDrop: function (target, dd, e, data) {
-                    if (data["grid"] && data["grid"] == this.valueGrid) {
-                        var rowIndex = this.valueGrid.getView().findRowIndex(e.target);
+                    if (data["grid"] && data["grid"] == valueGrid) {
+                        var rowIndex = valueGrid.getView().findRowIndex(e.target);
                         if (rowIndex !== false) {
-                            var store = this.valueGrid.getStore();
+                            var store = valueGrid.getStore();
                             var rec = store.getAt(data.rowIndex);
                             store.removeAt(data.rowIndex);
                             store.insert(rowIndex, [rec]);
@@ -210,27 +225,25 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             });
         }.bind(this));
 
-        $super();
 
-        this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("height"),
                 name: "height",
-                value: this.datax.height
+                value: datax.height
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("maximum_items"),
                 name: "maxItems",
-                value: this.datax.maxItems,
+                value: datax.maxItems,
                 minValue: 0
             },
             {
@@ -238,19 +251,19 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 fieldLabel: t("options_provider_class"),
                 width: 600,
                 name: "optionsProviderClass",
-                value: this.datax.optionsProviderClass
+                value: datax.optionsProviderClass
             },
             {
                 xtype: "textfield",
                 fieldLabel: t("options_provider_data"),
                 width: 600,
-                value: this.datax.optionsProviderData,
+                value: datax.optionsProviderData,
                 name: "optionsProviderData"
             },
-            this.valueGrid
-        ]);
+            valueGrid
+        ];
 
-        return this.layout;
+        return specificItems;
     },
 
     applyData: function ($super) {
@@ -259,13 +272,17 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
 
         var options = [];
 
-        this.valueStore.commitChanges();
-        this.valueStore.each(function (rec) {
-            options.push({
-                key: rec.get("key"),
-                value: rec.get("value")
+        var valueEditor = this.specificPanel.getComponent("valueeditor");
+        if (valueEditor) {
+            var valueStore = valueEditor.getStore();
+            valueStore.commitChanges();
+            valueStore.each(function (rec) {
+                options.push({
+                    key: rec.get("key"),
+                    value: rec.get("value")
+                });
             });
-        });
+        }
 
         this.datax.options = options;
     },
@@ -285,8 +302,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         }
     },
 
-    showoptioneditor: function () {
-        var editor = new pimcore.object.helpers.optionEditor(this.valueStore);
+    showoptioneditor: function (valueStore) {
+        var editor = new pimcore.object.helpers.optionEditor(valueStore);
         editor.edit();
     }
 });

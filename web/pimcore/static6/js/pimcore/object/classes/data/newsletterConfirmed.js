@@ -25,7 +25,8 @@ pimcore.object.classes.data.newsletterConfirmed = Class.create(pimcore.object.cl
         fieldcollection: true,
         localizedfield: true,
         classificationstore : false,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -63,13 +64,18 @@ pimcore.object.classes.data.newsletterConfirmed = Class.create(pimcore.object.cl
     getLayout: function ($super) {
         $super();
 
+        this.getSpecificPanelItems(this.datax);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
         var nameField = this.layout.getComponent("standardSettings").getComponent("name");
         nameField.disable();
 
         var noteditable  = this.layout.getComponent("standardSettings").getComponent("noteditable");
         noteditable.disable();
-
-        return this.layout;
+        return [];
     }
 
 });

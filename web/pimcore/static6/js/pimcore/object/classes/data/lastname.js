@@ -23,14 +23,15 @@ pimcore.object.classes.data.lastname = Class.create(pimcore.object.classes.data.
         objectbrick: true,
         fieldcollection: true,
         localizedfield: false,
-        classificationstore : false,
-        block: true
+        classificationstore: false,
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
         this.type = "lastname";
 
-        if(!initData["name"]) {
+        if (!initData["name"]) {
             initData = {
                 title: t("lastname")
             };
@@ -51,7 +52,7 @@ pimcore.object.classes.data.lastname = Class.create(pimcore.object.classes.data.
     },
 
     getGroup: function () {
-            return "crm";
+        return "crm";
     },
 
     getIconClass: function () {
@@ -66,34 +67,45 @@ pimcore.object.classes.data.lastname = Class.create(pimcore.object.classes.data.
         nameField.disable();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
-            {
-                xtype: "numberfield",
-                fieldLabel: t("width"),
-                name: "width",
-                value: this.datax.width
-            },{
-                xtype: "numberfield",
-                fieldLabel: t("columnlength"),
-                name: "columnLength",
-                value: this.datax.columnLength
-            }
-        ]);
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
 
         return this.layout;
     },
 
-    applySpecialData: function(source) {
-    if (source.datax) {
-        if (!this.datax) {
-            this.datax =  {};
-        }
-        Ext.apply(this.datax,
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        var specificItems = [
             {
-                width: source.datax.width,
-                columnLength: source.datax.columnLength
-            });
+                xtype: "numberfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: datax.width
+            }];
+
+        if (!inEncryptedField) {
+            specificItems.push(
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("columnlength"),
+                    name: "columnLength",
+                    value: datax.columnLength
+                }
+            );
+        }
+        return specificItems;
+    },
+
+    applySpecialData: function (source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax = {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    columnLength: source.datax.columnLength
+                });
+        }
     }
-}
 
 });

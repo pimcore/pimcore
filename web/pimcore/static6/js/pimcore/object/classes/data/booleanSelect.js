@@ -24,7 +24,8 @@ pimcore.object.classes.data.booleanSelect = Class.create(pimcore.object.classes.
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -66,41 +67,44 @@ pimcore.object.classes.data.booleanSelect = Class.create(pimcore.object.classes.
             this.datax.options = [];
         }
 
-
-
         $super();
 
         this.mandatoryCheckbox.disable();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "textfield",
                 fieldLabel: t("yes_label"),
                 name: "yesLabel",
-                value: this.datax.yesLabel
+                value: datax.yesLabel
             },
             {
                 xtype: "textfield",
                 fieldLabel: t("no_label"),
                 name: "noLabel",
-                value: this.datax.noLabel
+                value: datax.noLabel
             },
             {
                 xtype: "textfield",
                 fieldLabel: t("empty_label"),
                 name: "emptyLabel",
-                value: this.datax.emptyLabel
+                value: datax.emptyLabel
             }
-        ]);
-
-        return this.layout;
+        ];
     },
 
     applyData: function ($super) {

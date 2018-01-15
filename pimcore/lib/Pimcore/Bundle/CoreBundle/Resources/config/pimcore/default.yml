@@ -93,6 +93,7 @@ pimcore:
                     date: \Pimcore\Model\DataObject\ClassDefinition\Data\Date
                     datetime: \Pimcore\Model\DataObject\ClassDefinition\Data\Datetime
                     email: \Pimcore\Model\DataObject\ClassDefinition\Data\Email
+                    encryptedField: \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField
                     externalImage: \Pimcore\Model\DataObject\ClassDefinition\Data\ExternalImage
                     fieldcollections: \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections
                     firstname: \Pimcore\Model\DataObject\ClassDefinition\Data\Firstname

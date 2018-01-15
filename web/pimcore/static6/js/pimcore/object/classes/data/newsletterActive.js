@@ -25,7 +25,8 @@ pimcore.object.classes.data.newsletterActive = Class.create(pimcore.object.class
         fieldcollection: true,
         localizedfield: true,
         classificationstore : false,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -62,10 +63,15 @@ pimcore.object.classes.data.newsletterActive = Class.create(pimcore.object.class
     getLayout: function ($super) {
         $super();
 
-        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
-        nameField.disable();
+        this.getSpecificPanelItems(this.datax);
 
         return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        nameField.disable();
+        return [];
     }
 
 });

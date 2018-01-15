@@ -24,7 +24,8 @@ pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.da
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -56,40 +57,47 @@ pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.da
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+    
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
                 decimalPrecision: 0,
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("height"),
                 name: "height",
                 decimalPrecision: 0,
-                value: this.datax.height
+                value: datax.height
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("min_value"),
                 name: "minValue",
-                value: this.datax.minValue,
+                value: datax.minValue,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("max_value"),
                 name: "maxValue",
-                value: this.datax.maxValue,
+                value: datax.maxValue,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("increment"),
                 name: "increment",
-                value: this.datax.increment,
+                value: datax.increment,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
@@ -97,18 +105,17 @@ pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.da
                 fieldLabel: t("decimalPrecision"),
                 name: "decimalPrecision",
                 decimalPrecision: 0,
-                value: this.datax.decimalPrecision,
+                value: datax.decimalPrecision,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("vertical"),
                 name: "vertical",
-                checked: this.datax.vertical
+                checked: datax.vertical
             }
-        ]);
+        ];
 
-        return this.layout;
     },
 
     applySpecialData: function(source) {

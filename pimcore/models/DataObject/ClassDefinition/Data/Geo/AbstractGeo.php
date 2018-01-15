@@ -17,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Geo;
 
 use Pimcore\Model;
+use Pimcore\Tool\Serialize;
 
 abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
 {
@@ -118,5 +119,29 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
         $this->mapType = $mapType;
 
         return $this;
+    }
+
+    /**
+     * @param $value
+     * @param null $object
+     * @param array $params
+     *
+     * @return string
+     */
+    public function marshalBeforeEncryption($value, $object = null, $params = [])
+    {
+        return Serialize::serialize($value);
+    }
+
+    /**
+     * @param $value
+     * @param null $object
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function unmarshalAfterDecryption($value, $object = null, $params = [])
+    {
+        return Serialize::unserialize($value);
     }
 }

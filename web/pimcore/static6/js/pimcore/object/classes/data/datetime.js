@@ -24,7 +24,8 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
         fieldcollection:true,
         localizedfield:true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize:function (treeNode, initData) {
@@ -52,10 +53,21 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
 
         $super();
 
-        this.defaultValue = new Ext.form.Hidden({
+        this.specificPanel.removeAll();
+
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        var specificItems = [];
+
+        var defaultValue = new Ext.form.Hidden({
             xtype:"hidden",
             name:"defaultValue",
-            value: this.datax.defaultValue
+            value: datax.defaultValue
         });
 
         var date = {
@@ -70,48 +82,48 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
         };
 
 
-        if (this.datax.defaultValue) {
+        if (datax.defaultValue) {
             var tmpDate;
-            if(typeof this.datax.defaultValue === 'object'){
-                tmpDate = this.datax.defaultValue;
+            if(typeof datax.defaultValue === 'object'){
+                tmpDate = datax.defaultValue;
             } else {
-                tmpDate = new Date(this.datax.defaultValue * 1000);
+                tmpDate = new Date(datax.defaultValue * 1000);
             }
 
             date.value = tmpDate;
             time.value = Ext.Date.format(tmpDate, "H:i");
         }
 
-        this.datefield = new Ext.form.DateField(date);
-        this.timefield = new Ext.form.TimeField(time);
+        var datefield = new Ext.form.DateField(date);
+        var timefield = new Ext.form.TimeField(time);
 
-        this.datefield.addListener("change", this.setDefaultValue.bind(this));
-        this.timefield.addListener("change", this.setDefaultValue.bind(this));
+        datefield.addListener("change", this.setDefaultValue.bind(this, defaultValue, datefield, timefield));
+        timefield.addListener("change", this.setDefaultValue.bind(this, defaultValue, datefield, timefield));
 
-        if(this.datax.useCurrentDate){
-            this.datefield.setDisabled(true);
-            this.timefield.setDisabled(true);
+        if(datax.useCurrentDate){
+            datefield.setDisabled(true);
+            timefield.setDisabled(true);
         }
 
-        this.component = new Ext.form.FieldSet({
+        var defaultComponent = new Ext.form.FieldSet({
             layout: 'hbox',
             title: t("default_value"),
             style: "border: none !important",
             combineErrors:false,
-            items:[this.datefield, this.timefield],
+            items:[datefield, timefield],
             cls:"object_field"
         });
 
         var columnTypeData = [["bigint(20)", "BIGINT"], ["datetime", "DATETIME"]];
 
-        this.columnTypeField = new Ext.form.ComboBox({
+        var columnTypeField = new Ext.form.ComboBox({
             name: "columnType",
             mode: 'local',
             autoSelect: true,
             forceSelection: true,
             editable: false,
             fieldLabel: t("column_type"),
-            value: this.datax.columnType != "bigint(20)" && this.datax.columnType != "datetime" ? 'bigint(20)' : this.datax.columnType ,
+            value: datax.columnType != "bigint(20)" && datax.columnType != "datetime" ? 'bigint(20)' : datax.columnType ,
             store: new Ext.data.ArrayStore({
                 fields: [
                     'id',
@@ -125,59 +137,61 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
         });
 
 
-        this.specificPanel.removeAll();
-        this.specificPanel.add([
-            this.component,
-            this.defaultValue,
-            {
-                xtype:"checkbox",
-                fieldLabel:t("use_current_date"),
-                name:"useCurrentDate",
-                checked:this.datax.useCurrentDate,
-                disabled: this.isInCustomLayoutEditor(),
-                listeners:{
-                    change:this.toggleDefaultDate.bind(this)
-                }
-            }, {
+        specificItems = specificItems.concat(
+            [
+                defaultComponent,
+                defaultValue,
+                {
+                    xtype:"checkbox",
+                    fieldLabel:t("use_current_date"),
+                    name:"useCurrentDate",
+                    checked:datax.useCurrentDate,
+                    disabled: this.isInCustomLayoutEditor(),
+                    listeners:{
+                        change:this.toggleDefaultDate.bind(this, datefield, timefield)
+                    }
+                }, {
                 xtype: "displayfield",
                 hideLabel:true,
                 html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
             },
-            this.columnTypeField
-        ]);
+                columnTypeField
+            ]);
 
-        return this.layout;
+
+        return specificItems;
+
     },
 
-    setDefaultValue:function () {
+    setDefaultValue:function (defaultValue, datefield, timefield) {
 
-        if (this.datefield.getValue()) {
-            var dateString = Ext.Date.format(this.datefield.getValue(), "Y-m-d");
+        if (datefield.getValue()) {
+            var dateString = Ext.Date.format(datefield.getValue(), "Y-m-d");
 
-            if (this.timefield.getValue()) {
-                dateString += " " + Ext.Date.format(this.timefield.getValue(), "H:i");
+            if (timefield.getValue()) {
+                dateString += " " + Ext.Date.format(timefield.getValue(), "H:i");
             }
             else {
                 dateString += " 00:00";
             }
 
-            this.defaultValue.setValue((Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime())/1000);
+            defaultValue.setValue((Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime())/1000);
 
         } else {
-            this.defaultValue.setValue(null);
+            defaultValue.setValue(null);
         }
     },
 
-    toggleDefaultDate:function (checkbox, checked) {
+    toggleDefaultDate:function (datefield, timefield, checkbox, checked) {
             if (checked) {
-                this.datefield.setValue(null);
-                this.timefield.setValue(null);
-                this.defaultValue.setValue(null);
-                this.datefield.setDisabled(true);
-                this.timefield.setDisabled(true);
+                datefield.setValue(null);
+                timefield.setValue(null);
+                defaultValue.setValue(null);
+                datefield.setDisabled(true);
+                timefield.setDisabled(true);
             } else {
-                this.datefield.enable();
-                this.timefield.enable();
+                datefield.enable();
+                timefield.enable();
             }
 
 

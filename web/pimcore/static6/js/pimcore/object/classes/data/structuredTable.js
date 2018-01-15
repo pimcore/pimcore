@@ -192,7 +192,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         }
 
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
         });
 
@@ -203,7 +203,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
             autoDestroy: false,
             store: this.stores[title],
             height: 200,
-            plugins: [this.cellEditing],
+            plugins: [cellEditing],
             columns : typesColumns,
             selModel: new Ext.selection.RowModel({singleSelect:true}),
             columnLines: true,

@@ -24,7 +24,8 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -52,6 +53,14 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
         $super();
 
         this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
+
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
 
         var countryProxy = {
             type: 'ajax',
@@ -62,6 +71,8 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
             }
         };
 
+        var possibleOptions;
+
         var countryStore = new Ext.data.Store({
             proxy:countryProxy,
             fields: [
@@ -70,12 +81,14 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
             ],
             listeners: {
                 load: function() {
-                    if (this.datax.restrictTo) {
-                        this.possibleOptions.setValue(this.datax.restrictTo);
+                    if (datax.restrictTo) {
+                        possibleOptions.setValue(datax.restrictTo);
                     }
                 }.bind(this)
             }
         });
+
+        countryStore.load();
 
         var options = {
             name: "restrictTo",
@@ -88,15 +101,11 @@ pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.d
             width: 300,
             valueField: 'value',
             displayField: 'key',
-            disabled: this.isInCustomLayoutEditor()
+            disabled: !inEncryptedField && this.isInCustomLayoutEditor()
         };
 
-        this.possibleOptions = new Ext.ux.form.MultiSelect(options);
-
-        this.specificPanel.add(this.possibleOptions);
-        countryStore.load();
-
-        return this.layout;
+        possibleOptions = new Ext.ux.form.MultiSelect(options);
+        return [possibleOptions];
     },
 
     applySpecialData: function(source) {

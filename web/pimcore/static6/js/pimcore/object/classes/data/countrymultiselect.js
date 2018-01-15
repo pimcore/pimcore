@@ -23,8 +23,9 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true,
-        block: true
+        classificationstore: true,
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -48,46 +49,42 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
-            {
-                xtype: "numberfield",
-                fieldLabel: t("width"),
-                name: "width",
-                value: this.datax.width
-            },
-            {
-                xtype: "numberfield",
-                fieldLabel: t("height"),
-                name: "height",
-                value: this.datax.height
-            }
-        ]);
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
+        this.specificPanel.add(specificItems);
+
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
 
         var countryProxy = {
             type: 'ajax',
-            url:'/admin/settings/get-available-countries',
+            url: '/admin/settings/get-available-countries',
             reader: {
                 type: 'json',
                 rootProperty: 'data'
             }
         };
 
+        var possibleOptions;
         var countryStore = new Ext.data.Store({
-            proxy:countryProxy,
+            proxy: countryProxy,
             fields: [
-                {name:'key'},
-                {name:'value'}
+                {name: 'key'},
+                {name: 'value'}
             ],
             listeners: {
-                load: function() {
-                    if (this.datax.restrictTo) {
-                        this.possibleOptions.setValue(this.datax.restrictTo);
+                load: function () {
+                    if (datax.restrictTo) {
+                        possibleOptions.setValue(datax.restrictTo);
                     }
                 }.bind(this)
             }
         });
 
         var options = {
+            itemId: "valueeditor",
             name: "restrictTo",
             triggerAction: "all",
             editable: false,
@@ -103,14 +100,27 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
             options.disabled = true;
         }
 
-        this.possibleOptions = new Ext.ux.form.MultiSelect(options);
+        var possibleOptions = new Ext.ux.form.MultiSelect(options);
 
-        this.specificPanel.add(this.possibleOptions);
+        var specificItems = [
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("width"),
+                    name: "width",
+                    value: datax.width
+                },
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("height"),
+                    name: "height",
+                    value: datax.height
+                },
+                possibleOptions
+            ]
+        ;
+
         countryStore.load();
-
-
-
-        return this.layout;
+        return specificItems;
     },
 
     applyData: function ($super) {
@@ -118,10 +128,10 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
         delete this.datax.options;
     },
 
-    applySpecialData: function(source) {
+    applySpecialData: function (source) {
         if (source.datax) {
             if (!this.datax) {
-                this.datax =  {};
+                this.datax = {};
             }
             Ext.apply(this.datax,
                 {

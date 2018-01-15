@@ -24,7 +24,8 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         fieldcollection: true,
         localizedfield: true,
         classificationstore: true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -49,25 +50,34 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
     getLayout: function ($super) {
 
-        if (typeof this.datax.options != "object") {
-            this.datax.options = [];
+        $super();
+
+        this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        if (typeof datax.options != "object") {
+            datax.options = [];
         }
 
-        this.valueStore = new Ext.data.Store({
+        var valueStore = new Ext.data.Store({
 
             fields: ["key", "value"],
             proxy: {
                 type: 'memory'
             },
-            data: this.datax.options
+            data: datax.options
         });
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
-        });
+        var valueGrid;
 
-        this.valueGrid = Ext.create('Ext.grid.Panel', {
-            //enableDragDrop: true,
+        valueGrid = Ext.create('Ext.grid.Panel', {
+            itemId: "valueeditor",
             viewConfig: {
                 plugins: [
                     {
@@ -91,23 +101,23 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     var selectedRow = this.selectionModel.getSelected();
                     var idx;
                     if (selectedRow) {
-                        idx = this.valueStore.indexOf(selectedRow) + 1;
+                        idx = valueStore.indexOf(selectedRow) + 1;
                     } else {
-                        idx = this.valueStore.getCount();
+                        idx = valueStore.getCount();
                     }
-                    this.valueStore.insert(idx, u);
+                    valueStore.insert(idx, u);
                     this.selectionModel.select(idx);
                 }.bind(this)
             },
                 {
                     xtype: "button",
                     iconCls: "pimcore_icon_edit",
-                    handler: this.showoptioneditor.bind(this)
+                    handler: this.showoptioneditor.bind(this, valueStore)
 
                 }],
             disabled: this.isInCustomLayoutEditor(),
             style: "margin-top: 10px",
-            store: this.valueStore,
+            store: valueStore,
             selModel: Ext.create('Ext.selection.RowModel', {}),
             clicksToEdit: 1,
             columnLines: true,
@@ -133,7 +143,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(--rowIndex, [rec]);
-                                    var sm = this.valueGrid.getSelectionModel();
+                                    var sm = valueGrid.getSelectionModel();
                                     this.selectionModel.select(rowIndex);
                                 }
                             }.bind(this)
@@ -176,22 +186,24 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             ],
             autoHeight: true,
             plugins: [
-                this.cellEditing]
+                Ext.create('Ext.grid.plugin.CellEditing', {
+                    clicksToEdit: 1
+                })]
         });
 
 
-        this.selectionModel = this.valueGrid.getSelectionModel();
-        this.valueGrid.on("afterrender", function () {
+        this.selectionModel = valueGrid.getSelectionModel();
+        valueGrid.on("afterrender", function () {
 
-            var dropTargetEl = this.valueGrid.getEl();
+            var dropTargetEl = valueGrid.getEl();
             var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
                 ddGroup: 'objectclassselect',
                 getTargetFromEvent: function (e) {
-                    return this.valueGrid.getEl().dom;
+                    return valueGrid.getEl().dom;
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
                     try {
-                        if (data["grid"] && data["grid"] == this.valueGrid) {
+                        if (data["grid"] && data["grid"] == valueGrid) {
                             return Ext.dd.DropZone.prototype.dropAllowed;
                         }
                     } catch (e) {
@@ -202,10 +214,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 }.bind(this),
                 onNodeDrop: function (target, dd, e, data) {
                     try {
-                        if (data["grid"] && data["grid"] == this.valueGrid) {
-                            var rowIndex = this.valueGrid.getView().findRowIndex(e.target);
+                        if (data["grid"] && data["grid"] == valueGrid) {
+                            var rowIndex = valueGrid.getView().findRowIndex(e.target);
                             if (rowIndex !== false) {
-                                var store = this.valueGrid.getStore();
+                                var store = valueGrid.getStore();
                                 var rec = store.getAt(data.rowIndex);
                                 store.removeAt(data.rowIndex);
                                 store.insert(rowIndex, [rec]);
@@ -220,18 +232,13 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         }.bind(this));
 
 
-        $super();
-
-        this.specificPanel.removeAll();
-
         var items = [];
-
 
         items.push({
             xtype: "numberfield",
             fieldLabel: t("width"),
             name: "width",
-            value: this.datax.width
+            value: datax.width
         });
 
         if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
@@ -239,7 +246,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 xtype: "numberfield",
                 fieldLabel: t("columnlength"),
                 name: "columnLength",
-                value: this.datax.columnLength
+                value: datax.columnLength
             });
         }
 
@@ -247,7 +254,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             xtype: "textfield",
             fieldLabel: t("default_value"),
             name: "defaultValue",
-            value: this.datax.defaultValue
+            value: datax.defaultValue
         });
 
         items.push({
@@ -255,22 +262,20 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             fieldLabel: t("options_provider_class"),
             width: 600,
             name: "optionsProviderClass",
-            value: this.datax.optionsProviderClass
+            value: datax.optionsProviderClass
         });
 
         items.push({
             xtype: "textfield",
             fieldLabel: t("options_provider_data"),
             width: 600,
-            value: this.datax.optionsProviderData,
+            value: datax.optionsProviderData,
             name: "optionsProviderData"
         });
 
-        items.push(this.valueGrid);
+        items.push(valueGrid);
+        return items;
 
-        this.specificPanel.add(items);
-
-        return this.layout;
     },
 
     applyData: function ($super) {
@@ -279,8 +284,9 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
         var options = [];
 
-        this.valueStore.commitChanges();
-        this.valueStore.each(function (rec) {
+        var valueStore = this.specificPanel.getComponent("valueeditor").getStore();
+        valueStore.commitChanges();
+        valueStore.each(function (rec) {
             options.push({
                 key: rec.get("key"),
                 value: rec.get("value")
@@ -305,8 +311,8 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         }
     },
 
-    showoptioneditor: function () {
-        var editor = new pimcore.object.helpers.optionEditor(this.valueStore);
+    showoptioneditor: function (valueStore) {
+        var editor = new pimcore.object.helpers.optionEditor(valueStore);
         editor.edit();
     }
 });

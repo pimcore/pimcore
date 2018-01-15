@@ -27,7 +27,8 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
         fieldcollection: true,
         localizedfield: false,
         classificationstore : false,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -66,10 +67,15 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
 
         $super();
 
-        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
-        nameField.disable();
+        this.getSpecificPanelItems(this.datax);
 
         return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        nameField.disable();
+        return [];
     }
 
 });

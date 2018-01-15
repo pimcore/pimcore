@@ -24,7 +24,8 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -52,25 +53,31 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
         $super();
 
         this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+        
+        return this.layout;
+    },
 
-        this.specificPanel.add([
-            {
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        var specificItems = [ {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             }
-        ]);
+            ];
 
         if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
-            this.specificPanel.add([{
+
+            if (!inEncryptedField) {
+                specificItems.push({
                     xtype: "numberfield",
                     fieldLabel: t("columnlength"),
                     name: "columnLength",
-                    value: this.datax.columnLength
-                }
-            ]);
-
+                    value: datax.columnLength
+                });
+            }
 
             var regexSet;
             var checkRegex = function () {
@@ -80,16 +87,14 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
 
                 try {
                     var regexp = new RegExp(regex);
-                    if(regexp.test(testString)) {
-                        console.log("success");
+                    if (regexp.test(testString)) {
                         testStringEl.addCls("class-editor-validation-success");
                         testStringEl.removeCls("class-editor-validation-error");
                     } else {
-                        console.log("error");
                         testStringEl.removeCls("class-editor-validation-success");
                         testStringEl.addCls("class-editor-validation-error");
                     }
-                } catch(e) {
+                } catch (e) {
                     console.log(e);
                 }
             };
@@ -104,7 +109,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     itemId: "regex",
                     name: "regex",
                     width: 400,
-                    value: this.datax["regex"],
+                    value: datax["regex"],
                     enableKeyEvents: true,
                     listeners: {
                         keyup: checkRegex
@@ -113,7 +118,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     xtype: "panel",
                     bodyStyle: "padding-top: 3px",
                     style: "margin-bottom: 10px",
-                    html:'<span class="object_field_setting_warning">' + t('object_regex_info')+' (Delimiter: #)</span>'
+                    html: '<span class="object_field_setting_warning">' + t('object_regex_info') + ' (Delimiter: #)</span>'
                 }, {
                     xtype: "textfield",
                     fieldLabel: t("test_string"),
@@ -126,10 +131,11 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 }]
             });
 
-            this.specificPanel.add(regexSet);
+            specificItems.push(regexSet);
         }
 
-        return this.layout;
+        return specificItems;
+
     },
 
     applySpecialData: function(source) {

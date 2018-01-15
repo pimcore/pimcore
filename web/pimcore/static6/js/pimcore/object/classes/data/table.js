@@ -24,7 +24,8 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -56,45 +57,52 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("height"),
                 name: "height",
-                value: this.datax.height
+                value: datax.height
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("rows"),
                 name: "rows",
-                value: this.datax.rows,
+                value: datax.rows,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("rows_fixed"),
                 name: "rowsFixed",
-                checked: this.datax.rowsFixed,
+                checked: datax.rowsFixed,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("cols"),
                 name: "cols",
-                value: this.datax.cols,
+                value: datax.cols,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("cols_fixed"),
                 name: "colsFixed",
-                checked: this.datax.colsFixed,
+                checked: datax.colsFixed,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
@@ -103,12 +111,10 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 name: "data",
                 width: 500,
                 height: 300,
-                value: this.datax.data,
+                value: datax.data,
                 disabled: this.isInCustomLayoutEditor()
             }
-        ]);
-
-        return this.layout;
+        ];
     },
 
     applySpecialData: function(source) {

@@ -24,7 +24,8 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -56,29 +57,34 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
         $super();
 
         this.specificPanel.removeAll();
-        this.specificPanel.add([
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             },
             {
                 xtype: "numberfield",
                 fieldLabel: t("height"),
                 name: "height",
-                value: this.datax.height
+                value: datax.height
             }, {
                 xtype: "textarea",
                 fieldLabel: t("editor_configuration"),
                 name: "toolbarConfig",
-                value: this.datax.toolbarConfig,
+                value: datax.toolbarConfig,
                 width:400,
                 height:150
             }
-        ]);
-
-        return this.layout;
+        ];
     },
 
     applySpecialData: function(source) {

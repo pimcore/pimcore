@@ -24,7 +24,8 @@ pimcore.object.classes.data.rgbaColor = Class.create(pimcore.object.classes.data
         fieldcollection: true,
         localizedfield: true,
         classificationstore : true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -52,17 +53,22 @@ pimcore.object.classes.data.rgbaColor = Class.create(pimcore.object.classes.data
         $super();
 
         this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
+        this.specificPanel.add(specificItems);
 
-        this.specificPanel.add([
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        return [
             {
                 xtype: "numberfield",
                 fieldLabel: t("width"),
                 name: "width",
-                value: this.datax.width
+                value: datax.width
             }
-        ]);
+        ];
 
-        return this.layout;
     },
 
     applySpecialData: function(source) {

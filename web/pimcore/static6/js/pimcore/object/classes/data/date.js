@@ -24,7 +24,8 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
         fieldcollection: true,
         localizedfield: true,
         classificationstore: true,
-        block: true
+        block: true,
+        encryptedField: true
     },
 
     initialize: function (treeNode, initData) {
@@ -48,64 +49,47 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
     },
 
     getLayout: function ($super) {
-
-
         $super();
 
-        var date = {
+        this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax, false);
+
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
+    },
+
+    getSpecificPanelItems: function (datax, inEncryptedField) {
+        var defaultDateConfig = {
             fieldLabel: t("default_value"),
             name: "defaultValue",
             cls: "object_field",
             width: 300,
-            disabled: this.datax.useCurrentDate
+            disabled: datax.useCurrentDate
         };
 
-        if (this.datax.defaultValue) {
+        if (datax.defaultValue) {
             var tmpDate;
-            if (typeof this.datax.defaultValue === 'object') {
-                tmpDate = this.datax.defaultValue;
+            if (typeof datax.defaultValue === 'object') {
+                tmpDate = datax.defaultValue;
             } else {
-                tmpDate = new Date(this.datax.defaultValue * 1000);
+                tmpDate = new Date(datax.defaultValue * 1000);
             }
 
-            date.value = tmpDate;
+            defaultDateConfig.value = tmpDate;
         }
 
-        this.component = new Ext.form.DateField(date);
+        var defaultDateField = new Ext.form.DateField(defaultDateConfig);
 
-        var columnTypeData = [["bigint(20)", "BIGINT"], ["date", "DATE"]];
-
-        this.columnTypeField = new Ext.form.ComboBox({
-            name: "columnType",
-            mode: 'local',
-            autoSelect: true,
-            forceSelection: true,
-            editable: false,
-            fieldLabel: t("column_type"),
-            value: this.datax.columnType != "bigint(20)" && this.datax.columnType != "date" ? 'bigint(20)' : this.datax.columnType ,
-            store: new Ext.data.ArrayStore({
-                fields: [
-                    'id',
-                    'label'
-                ],
-                data: columnTypeData
-            }),
-            triggerAction: 'all',
-            valueField: 'id',
-            displayField: 'label'
-        });
-
-
-        this.specificPanel.removeAll();
-        this.specificPanel.add([
-            this.component,
+        var specificItems = [
+            defaultDateField,
             {
                 xtype: "checkbox",
                 fieldLabel: t("use_current_date"),
                 name: "useCurrentDate",
-                checked: this.datax.useCurrentDate,
+                checked: datax.useCurrentDate,
                 listeners: {
-                    change: this.toggleDefaultDate.bind(this)
+                    change: this.toggleDefaultDate.bind(this, defaultDateField)
                 },
                 disabled: this.isInCustomLayoutEditor()
             }, {
@@ -113,19 +97,46 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
                 bodyStyle: "padding-top: 3px",
                 style: "margin-bottom: 10px",
                 html: '<span class="object_field_setting_warning">' + t('default_value_warning') + '</span>'
-            },
-            this.columnTypeField
-        ]);
+            }
+        ];
 
-        return this.layout;
+        if (!inEncryptedField) {
+
+            var columnTypeData = [["bigint(20)", "BIGINT"], ["date", "DATE"]];
+
+            var columnTypeField = new Ext.form.ComboBox({
+                name: "columnType",
+                mode: 'local',
+                autoSelect: true,
+                forceSelection: true,
+                editable: false,
+                fieldLabel: t("column_type"),
+                value: datax.columnType != "bigint(20)" && datax.columnType != "date" ? 'bigint(20)' : datax.columnType,
+                store: new Ext.data.ArrayStore({
+                    fields: [
+                        'id',
+                        'label'
+                    ],
+                    data: columnTypeData
+                }),
+                triggerAction: 'all',
+                valueField: 'id',
+                displayField: 'label'
+            });
+
+
+            specificItems.push(columnTypeField);
+        }
+
+        return specificItems;
     },
 
-    toggleDefaultDate: function (checkbox, checked) {
+    toggleDefaultDate: function (defaultDateField, checkbox, checked) {
         if (checked) {
-            this.component.setValue(null);
-            this.component.setDisabled(true);
+            defaultDateField.setValue(null);
+            defaultDateField.setDisabled(true);
         } else {
-            this.component.enable();
+            defaultDateField.enable();
         }
     },
 
