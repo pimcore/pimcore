@@ -491,6 +491,8 @@ class HeadScript extends CacheBusterAware
      */
     public function toString($indent = null)
     {
+        $this->prepareEntries();
+
         $indent = (null !== $indent)
             ? $this->getWhitespace($indent)
             : $this->getIndent();
