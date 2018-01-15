@@ -58,6 +58,12 @@ server {
         deny all;
     }
 
+    # Some Admin Modules need this:
+    # Database Admin, Server Info
+    location ~* ^/admin/(adminer|external) {
+        rewrite .* /app.php$is_args$args last;
+    }
+    
     # Thumbnails
     location ~* .*/(image|video)-thumb__\d+__.* {
         try_files /var/tmp/$1-thumbnails$request_uri /app.php;
