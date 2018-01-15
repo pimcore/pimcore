@@ -16,7 +16,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
+use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
+use Pimcore\Db\Connection;
+use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -30,10 +34,14 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Tag;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -722,48 +730,104 @@ class SettingsController extends AdminController
      * @Route("/clear-cache")
      *
      * @param Request $request
+     * @param KernelInterface $kernel
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param CoreHandlerInterface $cache
+     * @param Connection $db
+     * @param Filesystem $filesystem
+     * @param CacheClearer $symfonyCacheClearer
      *
      * @return JsonResponse
      */
-    public function clearCacheAction(Request $request)
+    public function clearCacheAction(
+        Request $request,
+        KernelInterface $kernel,
+        EventDispatcherInterface $eventDispatcher,
+        CoreHandlerInterface $cache,
+        Connection $db,
+        Filesystem $filesystem,
+        CacheClearer $symfonyCacheClearer
+    )
     {
         $this->checkPermission('clear_cache');
 
-        $onlyPimcoreCache = (bool)$request->get('only_pimcore_cache');
-        $onlySymfonyCache = (bool)$request->get('only_symfony_cache');
+        $result = [
+            'success' => true
+        ];
 
-        if (!$onlySymfonyCache) {
+        $clearPimcoreCache = !(bool)$request->get('only_symfony_cache');
+        $clearSymfonyCache = !(bool)$request->get('only_pimcore_cache');
+
+        if ($clearPimcoreCache) {
             // empty document cache
-            Cache::clearAll();
+            $cache->clearAll();
 
-            $db = \Pimcore\Db::get();
             $db->query('truncate table cache_tags');
             $db->query('truncate table cache');
-        }
 
-        if (!$onlyPimcoreCache) {
-            \Pimcore\Tool::clearSymfonyCache($this->container);
-        }
+            if ($filesystem->exists(PIMCORE_CACHE_DIRECTORY)) {
+                $filesystem->remove(PIMCORE_CACHE_DIRECTORY);
+            }
 
-        if (!$onlySymfonyCache) {
-            $this->get('filesystem')->remove(PIMCORE_CACHE_DIRECTORY);
             // PIMCORE-1854 - recreate .dummy file => should remain
-            \Pimcore\File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
+            File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
 
-            \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR);
+            $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR);
         }
 
-        return $this->adminJson(['success' => true]);
+        if ($clearSymfonyCache) {
+            try {
+                $this->clearSymfonyCache($kernel, $eventDispatcher, $symfonyCacheClearer);
+            } catch (\Throwable $e) {
+                $result = [
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ];
+            }
+        }
+
+        $response = new JsonResponse($result);
+
+        if ($clearSymfonyCache) {
+            // we send the response directly here and exit to make sure no code depending on the stale container
+            // is running after this
+            $response->sendHeaders();
+            $response->sendContent();
+            exit;
+        }
+
+        return $response;
+    }
+
+    private function clearSymfonyCache(
+        KernelInterface $kernel,
+        EventDispatcherInterface $eventDispatcher,
+        CacheClearer $symfonyCacheClearer
+    )
+    {
+        // remove terminate and exception event listeners as they break with a cleared container - see #2434
+        foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
+            $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);
+        }
+
+        foreach ($eventDispatcher->getListeners(KernelEvents::EXCEPTION) as $listener) {
+            $eventDispatcher->removeListener(KernelEvents::EXCEPTION, $listener);
+        }
+
+        $symfonyCacheClearer->clear($kernel, [
+            // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
+            'no-warmup' => true
+        ]);
     }
 
     /**
      * @Route("/clear-output-cache")
      *
-     * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function clearOutputCacheAction(Request $request)
+    public function clearOutputCacheAction(EventDispatcherInterface $eventDispatcher)
     {
         $this->checkPermission('clear_cache');
 
@@ -773,7 +837,7 @@ class SettingsController extends AdminController
         // empty document cache
         Cache::clearTags(['output', 'output_lifetime']);
 
-        \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
+        $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
 
         return $this->adminJson(['success' => true]);
     }
@@ -781,11 +845,11 @@ class SettingsController extends AdminController
     /**
      * @Route("/clear-temporary-files")
      *
-     * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function clearTemporaryFilesAction(Request $request)
+    public function clearTemporaryFilesAction(EventDispatcherInterface $eventDispatcher)
     {
         $this->checkPermission('clear_temp_files');
 
@@ -796,10 +860,10 @@ class SettingsController extends AdminController
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY, false);
 
         // recreate .dummy files # PIMCORE-2629
-        \Pimcore\File::put(PIMCORE_TEMPORARY_DIRECTORY . '/.dummy', '');
-        \Pimcore\File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/.dummy', '');
+        File::put(PIMCORE_TEMPORARY_DIRECTORY . '/.dummy', '');
+        File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/.dummy', '');
 
-        \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
+        $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 
         return $this->adminJson(['success' => true]);
     }
@@ -1545,7 +1609,7 @@ class SettingsController extends AdminController
 
         if ($request->get('data') !== null) {
             // save data
-            \Pimcore\File::put($robotsPath, $request->get('data'));
+            File::put($robotsPath, $request->get('data'));
 
             return $this->adminJson([
                 'success' => true
