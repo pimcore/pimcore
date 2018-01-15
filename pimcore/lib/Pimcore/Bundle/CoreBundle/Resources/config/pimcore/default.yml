@@ -104,6 +104,7 @@ pimcore:
                     hotspotimage: \Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage
                     href: \Pimcore\Model\DataObject\ClassDefinition\Data\Href
                     image: \Pimcore\Model\DataObject\ClassDefinition\Data\Image
+                    imageGallery: \Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery
                     input: \Pimcore\Model\DataObject\ClassDefinition\Data\Input
                     language: \Pimcore\Model\DataObject\ClassDefinition\Data\Language
                     languagemultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Languagemultiselect
@@ -120,6 +121,7 @@ pimcore:
                     objects: \Pimcore\Model\DataObject\ClassDefinition\Data\Objects
                     objectsMetadata: \Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata
                     password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
+                    rgbaColor: \Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor
                     targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
                     targetGroupMultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
                     persona: \Pimcore\Model\DataObject\ClassDefinition\Data\Persona
