@@ -35,8 +35,8 @@ use Pimcore\Model\Tool\Tag;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -747,8 +747,7 @@ class SettingsController extends AdminController
         Connection $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
-    )
-    {
+    ) {
         $this->checkPermission('clear_cache');
 
         $result = [
@@ -803,8 +802,7 @@ class SettingsController extends AdminController
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
         CacheClearer $symfonyCacheClearer
-    )
-    {
+    ) {
         // remove terminate and exception event listeners as they break with a cleared container - see #2434
         foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
             $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);

@@ -244,8 +244,8 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
         if ($fd && method_exists($fd, 'getDataFromGridEditor')) {
             $data = $fd->getDataFromGridEditor($data, $object, $params);
         }
-        return $data;
 
+        return $data;
     }
 
     /**
