@@ -201,13 +201,25 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
                     if (array_key_exists('cse_image', $item['pagemap']) && is_array($item['pagemap']['cse_image'])) {
                         if ($item['pagemap']['cse_image'][0]) {
                             // try to get the asset id
-                            if (preg_match('/image-thumb__([0-9]+)__/', $item['pagemap']['cse_image'][0]['src'], $matches)) {
-                                $test = $matches;
-                                if ($matches[1]) {
-                                    if ($image = Model\Asset::getById($matches[1])) {
-                                        if ($image instanceof Model\Asset\Image) {
-                                            $item['image'] = $image;
-                                        }
+                            $id = false;
+                            $regexes = [
+                                '/image-thumb__([0-9]+)__/',
+                                '/([0-9]+)\/thumb__/',
+                                '/thumb_([0-9]+)__/'
+                            ];
+
+                            foreach($regexes as $regex) {
+                                if (preg_match($regex, $item['pagemap']['cse_image'][0]['src'], $matches)) {
+                                    if($id = $matches[1]) {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if ($id) {
+                                if ($image = Model\Asset::getById($id)) {
+                                    if ($image instanceof Model\Asset\Image) {
+                                        $item['image'] = $image;
                                     }
                                 }
                             }
