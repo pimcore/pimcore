@@ -78,8 +78,6 @@ class UpdateCommand extends AbstractCommand
         $this->output->writeln('Fetching available updates...');
         $availableUpdates = Update::getAvailableUpdates($currentRevision);
 
-        $this->io->newLine();
-
         if ($input->getOption('list')) {
             if (count($availableUpdates['releases'])) {
                 $rows = [];
@@ -87,19 +85,23 @@ class UpdateCommand extends AbstractCommand
                     $rows[] = [$release['version'], date('Y-m-d', $release['date']), $release['id']];
                 }
 
+                $this->io->newLine();
+
                 $table = new Table($output);
                 $table
                     ->setHeaders(['Version', 'Date', 'Build'])
-                    ->setRows($rows);
-                $table->render();
+                    ->setRows($rows)
+                    ->render();
+
+                $this->io->newLine();
             }
 
             if (count($availableUpdates['revisions'])) {
-                $this->output->writeln('The latest available build is: <comment>' . $availableUpdates['revisions'][0]['id'] . '</comment> (' . date('Y-m-d', $availableUpdates['revisions'][0]['date']) . ')');
+                $this->io->writeln('The latest available build is: <comment>' . $availableUpdates['revisions'][0]['id'] . '</comment> (' . date('Y-m-d', $availableUpdates['revisions'][0]['date']) . ')');
             }
 
             if (!count($availableUpdates['releases']) && !count($availableUpdates['revisions'])) {
-                $this->output->writeln('<info>No updates available</info>');
+                $this->io->writeln('<info>No updates available</info>');
             }
         }
 
@@ -150,15 +152,14 @@ class UpdateCommand extends AbstractCommand
             }
 
             if ($input->getOption('dry-run')) {
-                $this->io->newLine();
-                $this->output->writeln('<info>---------- DRY-RUN ----------</info>');
+                $this->io->writeln('<info>---------- DRY-RUN ----------</info>');
             }
 
             $jobs = Update::getJobs($build, $currentRevision);
 
             $steps = count($jobs['download']) + count($jobs['update']);
 
-            $this->io->newLine(2);
+            $this->io->newLine();
 
             $progress = new ProgressBar($output, $steps);
             $progress->setMessage('Starting the update process...');
@@ -227,13 +228,13 @@ class UpdateCommand extends AbstractCommand
 
             $this->io->newLine(2);
 
-            $this->output->writeln('Running composer update...');
+            $this->io->writeln('Running composer update...');
             Update::composerUpdate();
 
-            $this->output->writeln('Deactivating maintenance mode...');
+            $this->io->writeln('Deactivating maintenance mode...');
             Admin::deactivateMaintenanceMode();
 
-            $this->io->newLine(2);
+            $this->io->newLine(1);
 
             if (count($jobResults['error']) > 0 || $output->isVerbose()) {
                 $this->io->section('Scheduled jobs');
@@ -255,8 +256,8 @@ class UpdateCommand extends AbstractCommand
             if ($stoppedByError) {
                 $this->io->error(sprintf('Update %s was stopped by error. Please check your logs.', $job['revision']));
 
-                $this->output->writeln('Erroneous job was: ' . json_encode($job));
-                $this->output->writeln('Last return value was: ' . $return);
+                $this->io->writeln('Erroneous job was: ' . json_encode($job));
+                $this->io->writeln('Last return value was: ' . $return);
 
                 exit(1);
             } else {
