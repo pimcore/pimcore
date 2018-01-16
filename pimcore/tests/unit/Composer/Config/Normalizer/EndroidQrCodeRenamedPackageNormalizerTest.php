@@ -31,15 +31,15 @@ class EndroidQrCodeRenamedPackageNormalizerTest extends TestCase
     private $normalizer;
 
     private $fixture = [
-        "name"     => "pimcore/pimcore",
-        "type"     => "project",
-        "homepage" => "http://www.pimcore.com",
-        "license"  => "GPL-3.0",
-        "require"  => [
-            "php"                  => ">=7.0",
-            "endroid/qr-code"      => "~2.2",
-            "pimcore/core-version" => "v5.1.0",
-            "symfony/symfony"      => "3.4.*",
+        'name'     => 'pimcore/pimcore',
+        'type'     => 'project',
+        'homepage' => 'http://www.pimcore.com',
+        'license'  => 'GPL-3.0',
+        'require'  => [
+            'php'                  => '>=7.0',
+            'endroid/qr-code'      => '~2.2',
+            'pimcore/core-version' => 'v5.1.0',
+            'symfony/symfony'      => '3.4.*',
         ],
     ];
 
@@ -62,7 +62,7 @@ class EndroidQrCodeRenamedPackageNormalizerTest extends TestCase
     {
         $input = $this->fixture;
 
-        $input['require']['endroid/qrcode'] = "~2.2";
+        $input['require']['endroid/qrcode'] = '~2.2';
 
         codecept_debug($input);
 
@@ -77,7 +77,7 @@ class EndroidQrCodeRenamedPackageNormalizerTest extends TestCase
         $input = $this->fixture;
 
         unset($input['require']['endroid/qr-code']);
-        $input['require']['endroid/qrcode'] = "~2.2";
+        $input['require']['endroid/qrcode'] = '~2.2';
 
         codecept_debug($input);
 

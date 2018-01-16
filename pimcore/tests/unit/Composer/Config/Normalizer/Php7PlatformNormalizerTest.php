@@ -31,18 +31,18 @@ class Php7PlatformNormalizerTest extends TestCase
     private $normalizer;
 
     private $fixture = [
-        "name"     => "pimcore/pimcore",
-        "type"     => "project",
-        "homepage" => "http://www.pimcore.com",
-        "license"  => "GPL-3.0",
-        "config"   => [
-            "optimize-autoloader" => true,
-            "sort-packages"       => true
+        'name'     => 'pimcore/pimcore',
+        'type'     => 'project',
+        'homepage' => 'http://www.pimcore.com',
+        'license'  => 'GPL-3.0',
+        'config'   => [
+            'optimize-autoloader' => true,
+            'sort-packages'       => true
         ],
-        "require"  => [
-            "php"                  => ">=7.0",
-            "pimcore/core-version" => "v5.1.0",
-            "symfony/symfony"      => "3.4.*",
+        'require'  => [
+            'php'                  => '>=7.0',
+            'pimcore/core-version' => 'v5.1.0',
+            'symfony/symfony'      => '3.4.*',
         ],
     ];
 
