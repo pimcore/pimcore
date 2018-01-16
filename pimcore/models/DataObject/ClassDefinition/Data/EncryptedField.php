@@ -589,4 +589,12 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             $delegate->enrichLayoutDefinition($object, $context);
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getPhpdocType()
+    {
+        return $this->delegate ? $this->delegate->getPhpdocType() : null;
+    }
 }
