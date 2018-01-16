@@ -1,0 +1,65 @@
+// to build the CSS file use
+// `sass --sourcemap=none toolbar.scss toolbar.css`
+// and commit the built CSS file
+
+$width: 350px;
+$triggerWidth: 36px;
+
+._ptg-toolbar {
+    display: block;
+    width: $width;
+    height: 500px;
+    position: absolute;
+    right: 0;
+    top: 150px;
+    z-index: 100;
+    background: #444;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    font: 12px Arial, sans-serif;
+    transition: 0.3s ease-in-out;
+
+    &._ptg-toolbar--hidden {
+        right: $triggerWidth - $width;
+    }
+
+    ._ptg-toolbar__trigger {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: $triggerWidth;
+        height: 100%;
+        background: #222;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        cursor: pointer;
+
+        ._ptg-toolbar__icon {
+            display: block;
+            position: absolute;
+            width: $triggerWidth;
+            height: $triggerWidth;
+            text-align: center;
+
+            svg {
+                display: inline-block;
+                height: 18px;
+                max-height: 18px;
+                margin-top: 10px;
+            }
+        }
+
+        ._ptg-toolbar__icon--target {
+            top: 0;
+            left: 0;
+        }
+
+        ._ptg-toolbar__icon--close {
+            bottom: 0;
+            left: 0;
+            background: #444;
+            cursor: pointer;
+            border-bottom-left-radius: 4px;
+        }
+    }
+}

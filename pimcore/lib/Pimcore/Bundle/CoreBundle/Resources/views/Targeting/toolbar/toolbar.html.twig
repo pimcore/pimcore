@@ -1,0 +1,16 @@
+<div id="_ptg-toolbar-{{ token }}" class="_ptg-toolbar _ptg-toolbar--hidden">
+    <div class="_ptg-toolbar__trigger">
+        <span class="_ptg-toolbar__icon _ptg-toolbar__icon--target">
+            {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
+        </span>
+
+        <a class="_ptg-toolbar__icon _ptg-toolbar__icon--close" data-selector="#_ptg-toolbar-{{ token }}" title="Close Toolbar">
+            {{ include('@PimcoreCore/Targeting/toolbar/icon/close.svg.twig') }}
+        </a>
+    </div>
+</div>
+<style type="text/css">
+    {{ include('@PimcoreCore/Targeting/toolbar/toolbar.css') }}
+</style>
+{{ include('@PimcoreCore/Targeting/toolbar/toolbar_js.html.twig') }}
+

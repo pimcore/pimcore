@@ -1,0 +1,84 @@
+<script type="text/javascript">
+    (function (window, document, undefined) {
+        'use strict';
+
+        var util = {
+            addEventListener: function (el, eventName, handler) {
+                if (el.addEventListener) {
+                    el.addEventListener(eventName, handler);
+                } else {
+                    el.attachEvent('on' + eventName, function () {
+                        handler.call(el);
+                    });
+                }
+            },
+
+            removeEventListener: function (el, eventName, handler) {
+                if (el.removeEventListener)
+                    el.removeEventListener(eventName, handler);
+                else
+                    el.detachEvent('on' + eventName, handler);
+            },
+
+            addClass: function (el, className) {
+                if (el.classList) {
+                    el.classList.add(className);
+                } else {
+                    el.className += ' ' + className;
+                }
+            },
+
+            hasClass: function (el, className) {
+                if (el.classList) {
+                    return el.classList.contains(className);
+                } else {
+                    return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+                }
+            },
+
+            removeClass: function (el, className) {
+                if (el.classList) {
+                    el.classList.remove(className);
+                } else {
+                    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+                }
+            }
+        };
+
+        util.addEventListener(document, 'DOMContentLoaded', function () {
+            document.querySelectorAll('._ptg-toolbar__trigger').forEach(function (trigger) {
+                util.addEventListener(trigger, 'click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var parent = this.parentNode;
+                    var hiddenClass = '_ptg-toolbar--hidden';
+
+                    if (util.hasClass(parent, hiddenClass)) {
+                        util.removeClass(parent, hiddenClass);
+                    } else {
+                        util.addClass(parent, hiddenClass);
+                    }
+                });
+            });
+
+            document.querySelectorAll('._ptg-toolbar__icon--close').forEach(function (close) {
+                util.addEventListener(close, 'click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var selector = this.getAttribute('data-selector');
+                    if (!selector) {
+                        return;
+                    }
+
+                    var toolbar = document.querySelector(selector);
+                    if (toolbar) {
+                        toolbar.parentNode.removeChild(toolbar);
+                    }
+                });
+            });
+        });
+
+    }(window, document));
+</script>
