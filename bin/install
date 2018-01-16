@@ -52,6 +52,7 @@ if (!class_exists('Zend_Date')) {
 }
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
+Pimcore::setKernel($kernel);
 
 $application = new Application($kernel);
 $application->setName('Pimcore Installer');
