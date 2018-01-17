@@ -155,7 +155,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     private function getFromCatalogue(MessageCatalogueInterface $catalogue, $id, $domain, $locale)
     {
         $originalId = $id;
-        if ($this->caseInsensitive && in_array($domain, ['messages','admin'])) {
+        if ($this->caseInsensitive && in_array($domain, ['messages', 'admin'])) {
             $id = mb_strtolower($id);
         }
 

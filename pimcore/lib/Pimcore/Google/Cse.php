@@ -208,9 +208,9 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
                                 '/thumb_([0-9]+)__/'
                             ];
 
-                            foreach($regexes as $regex) {
+                            foreach ($regexes as $regex) {
                                 if (preg_match($regex, $item['pagemap']['cse_image'][0]['src'], $matches)) {
-                                    if($id = $matches[1]) {
+                                    if ($id = $matches[1]) {
                                         break;
                                     }
                                 }
