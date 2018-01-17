@@ -98,12 +98,13 @@ Offers data encryption for certain data types.
 
 ![Encrypted Field](../../../img/encrypted_field.png)
 
-> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to app/config/parameters.yml
+> Prerequisites: generate a secret key by calling vendor/bin/generate-defuse-key and add it to app/config/config.yml
 
 Example:
 ```
-parameters:
-    secret: def00000651c413177995df6632eaf46db3977b3859f273fcd2095eb4b98cdf7951420fbbc079786248a4ff9a9e6c0f81cb34e88d63261f5cf415130089825dc63a33ef4
+pimcore:
+    encryption:
+        secret: def00000fc1e34a17a03e2ef85329325b0736a5941633f8062f6b0a1a20f416751af119256bea0abf83ac33ef656b3fff087e1ce71fa6b8810d7f854fe2781f3fe4507f6
 ```
 
 Key generation:

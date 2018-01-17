@@ -750,6 +750,10 @@ abstract class Data
             $code .= "\t" . '}' . "\n";
         }
 
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" .'    return $data->getPlain();' . "\n";
+        $code .= "\t" . '}' . "\n";
+
         $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";
 
@@ -777,6 +781,16 @@ abstract class Data
         $code .= '* @return ' . $returnType . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+
+        if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+            if ($this->getDelegate()) {
+                $code .= "\t" . '$encryptedFd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+                $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
+                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {'. "\n";
+                $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
+                $code .= "\t" . '}'. "\n";
+            }
+        }
 
         if (method_exists($this, 'preSetData')) {
             $code .= "\t" . '$this->' . $key . ' = ' . '$this->getClass()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
@@ -817,6 +831,10 @@ abstract class Data
         $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
         $code .= "\t" . '}' . "\n";
 
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" .'    return $data->getPlain();' . "\n";
+        $code .= "\t" . '}' . "\n";
+
         $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";
 
@@ -841,6 +859,16 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+
+        if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+            if ($this->getDelegate()) {
+                $code .= "\t" . '$encryptedFd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+                $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
+                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {'. "\n";
+                $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
+                $code .= "\t" . '}'. "\n";
+            }
+        }
 
         if (method_exists($this, 'preSetData')) {
             $code .= "\t" . '$this->' . $key . ' = ' . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
@@ -880,6 +908,10 @@ abstract class Data
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
 
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" .'    return $data->getPlain();' . "\n";
+        $code .= "\t" . '}' . "\n";
+
         $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";
 
@@ -904,6 +936,16 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+
+        if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+            if ($this->getDelegate()) {
+                $code .= "\t" . '$encryptedFd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+                $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
+                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {'. "\n";
+                $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
+                $code .= "\t" . '}'. "\n";
+            }
+        }
 
         if (method_exists($this, 'preSetData')) {
             $code .= "\t" . '$this->' . $key . ' = ' . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
@@ -943,6 +985,10 @@ abstract class Data
             $code .= "\t" . '}' . "\n";
         }
 
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" .'    return $data->getPlain();' . "\n";
+        $code .= "\t" . '}' . "\n";
+
         // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
 
         $code .= "\t return " . '$data' . ";\n";
@@ -974,7 +1020,18 @@ abstract class Data
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
 
+        if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
+            if ($this->getDelegate()) {
+                $code .= "\t" . '$encryptedFd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+                $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
+                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {'. "\n";
+                $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
+                $code .= "\t" . '}'. "\n";
+            }
+        }
+
         $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language)' . ";\n";
+
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
 

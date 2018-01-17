@@ -17,6 +17,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Tool\Serialize;
 
 class RgbaColor extends Model\DataObject\ClassDefinition\Data
 {
@@ -423,5 +424,29 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
         }
 
         return $key . ' ' . $operator . ' ' . $value . ' ';
+    }
+
+    /**
+     * @param $value
+     * @param null $object
+     * @param array $params
+     *
+     * @return string
+     */
+    public function marshalBeforeEncryption($value, $object = null, $params = [])
+    {
+        return Serialize::serialize($value);
+    }
+
+    /**
+     * @param $value
+     * @param null $object
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function unmarshalAfterDecryption($value, $object = null, $params = [])
+    {
+        return Serialize::unserialize($value);
     }
 }

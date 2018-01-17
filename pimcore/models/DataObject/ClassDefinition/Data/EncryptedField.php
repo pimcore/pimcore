@@ -43,7 +43,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     /**
      * @var bool
      */
-    private static $strictMode = 1;
+    private static $strictMode = self::STRICT_ENABLED;
 
     /**
      * Static type of this element
@@ -94,12 +94,15 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        $fd = $this->getDelegateDatatypeDefinition();
-        if ($fd) {
-            $result = $fd->getDataForResource($data, $object, $params);
-            $result = $this->encrypt($result, $object, $params);
+        if ($data) {
+            $fd = $this->getDelegateDatatypeDefinition();
+            if ($fd) {
+                $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
+                $result = $fd->getDataForResource($data, $object, $params);
+                $result = $this->encrypt($result, $object, $params);
 
-            return $result;
+                return $result;
+            }
         }
     }
 
@@ -116,8 +119,13 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     public function encrypt($data, $object, $params = [])
     {
         if (!is_null($data)) {
-            $key = \Pimcore::getContainer()->getParameter('secret');
-            $key = Key::loadFromAsciiSafeString($key);
+            $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+
+            try {
+                $key = Key::loadFromAsciiSafeString($key);
+            } catch (\Exception $e) {
+                throw new \Exception('could not load key');
+            }
             // store it in raw binary mode to preserve space
             if (method_exists($this->delegate, 'marshalBeforeEncryption')) {
                 $data = $this->delegate->marshalBeforeEncryption($data, $object, $params);
@@ -141,8 +149,17 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         if ($data) {
             try {
-                $key = \Pimcore::getContainer()->getParameter('secret');
-                $key = Key::loadFromAsciiSafeString($key);
+                $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
+                try {
+                    $key = Key::loadFromAsciiSafeString($key);
+                } catch (\Exception $e) {
+                    if (!self::isStrictMode()) {
+                        Logger::error('failed to load key');
+
+                        return;
+                    }
+                    throw new \Exception('could not laod key');
+                }
                 $data = Crypto::decrypt($data, $key, true);
 
                 if (method_exists($this->delegate, 'unmarshalAfterDecryption')) {
@@ -175,7 +192,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             $data = $this->decrypt($data, $object, $params);
             $data = $fd->getDataFromResource($data, $object, $params);
 
-            return $data;
+            return new Model\DataObject\Data\EncryptedField($this->delegate, $data);
         }
     }
 
@@ -206,6 +223,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
+            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
             $result = $fd->getDataForEditmode($data, $object, $params);
 
             return $result;
@@ -226,6 +244,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $result = $fd->getDataFromEditmode($data, $object, $params);
+            $result = new Model\DataObject\Data\EncryptedField($this->delegate, $result);
 
             return $result;
         }
@@ -243,6 +262,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd && method_exists($fd, 'getDataFromGridEditor')) {
             $data = $fd->getDataFromGridEditor($data, $object, $params);
+            $data = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
         }
 
         return $data;
@@ -276,6 +296,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
+            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : data;
             $result = $fd->checkValidity($data, $omitMandatoryCheck);
 
             return $result;
@@ -299,6 +320,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
+            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
             $result = $fd->isEmpty($data);
 
             return $result;
@@ -316,6 +338,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
+        $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
 
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             return $this->getDataForEditmode($data, $object, $params);
@@ -355,6 +378,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             if (method_exists($fd, 'getDataForGrid')) {
+                $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
                 $result = $fd->getDataForGrid($data, $object, $params);
 
                 return $result;
@@ -375,6 +399,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         {
             $fd = $this->getDelegateDatatypeDefinition();
+            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
             $result = $fd->getVersionPreview($data, $object, $params);
 
             return $result;
@@ -392,6 +417,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
+            $value = $value instanceof Model\DataObject\Data\EncryptedField ? $value->getPlain() : null;
             $result = $fd->marshal($value, $object, $params);
 
             return $result;
@@ -409,6 +435,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
+            $value = $value instanceof Model\DataObject\Data\EncryptedField ? $value->getPlain() : null;
             $result = $fd->unmarshal($value, $object, $params);
 
             return $result;
@@ -429,6 +456,14 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
+            $data = parent::getForCsvExport($object, $params);
+            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
+
+            if (is_array($params)) {
+                $params = [];
+            }
+            $params['injectedData'] = $data;
+
             $result = $fd->getForCsvExport($object, $params);
 
             return $result;

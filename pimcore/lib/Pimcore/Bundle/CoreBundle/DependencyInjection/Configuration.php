@@ -86,6 +86,7 @@ class Configuration implements ConfigurationInterface
 
         $this->addObjectsNode($rootNode);
         $this->addDocumentsNode($rootNode);
+        $this->addEncryptionNode($rootNode);
         $this->addModelsNode($rootNode);
         $this->addRoutingNode($rootNode);
         $this->addCacheNode($rootNode);
@@ -135,6 +136,22 @@ class Configuration implements ConfigurationInterface
 
         $this->addImplementationLoaderNode($classDefinitionsNode, 'data');
         $this->addImplementationLoaderNode($classDefinitionsNode, 'layout');
+    }
+
+    /**
+     * Add encryption specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addEncryptionNode(ArrayNodeDefinition $rootNode)
+    {
+        $encryptionNode = $rootNode
+            ->children()
+            ->arrayNode('encryption')->addDefaultsIfNotSet();
+
+        $encryptionNode
+            ->children()
+            ->scalarNode('secret')->defaultNull();
     }
 
     /**
