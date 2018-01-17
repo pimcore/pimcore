@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache;
 use Pimcore\Cache\FullPage\SessionStatus;
+use Pimcore\Event\Cache\FullPage\CacheResponseEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -24,7 +25,9 @@ use Pimcore\Logger;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
@@ -328,6 +331,10 @@ class FullPageCacheListener
             return;
         }
 
+        if (!$this->responseCanBeCached($response)) {
+            $this->disable('Response can\'t be cached');
+        }
+
         if ($this->enabled && $this->sessionStatus->isDisabledBySession($request)) {
             $this->disable('Session in use');
         }
@@ -378,6 +385,26 @@ class FullPageCacheListener
             // like the inc and snippet cache get into the cache
             Cache::addIgnoredTagOnSave('output_inline');
         }
+    }
+
+    private function responseCanBeCached(Response $response): bool
+    {
+        $cache = true;
+
+        // do not cache common responses
+        if ($response instanceof BinaryFileResponse) {
+            $cache = false;
+        }
+
+        if ($response instanceof StreamedResponse) {
+            $cache = false;
+        }
+
+        // fire an event to allow full customozations
+        $event = new CacheResponseEvent($response, $cache);
+        $this->eventDispatcher->dispatch(FullPageCacheEvents::CACHE_RESPONSE, $event);
+
+        return $event->getCache();
     }
 
     private function disabledByTargeting(): bool
