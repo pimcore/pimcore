@@ -272,7 +272,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                 if (type == data.data.elementType) {
                     found = true;
 
-                    if (this.options.subtypes[type] && this.options.subtypes[type].length) {
+                    if (this.options.subtypes && this.options.subtypes[type] && this.options.subtypes[type].length) {
                         checkSubType = true;
                     }
                     if (data.data.elementType == "object" && this.options.classes) {
