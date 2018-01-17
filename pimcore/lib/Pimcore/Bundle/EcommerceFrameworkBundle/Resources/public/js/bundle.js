@@ -129,6 +129,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
 
         Ext.Ajax.request({
             url: '/admin/ecommerceframework/reports/piwik/reports',
+            ignoreErrors: true,
             success: function (response) {
                 var json;
 
@@ -172,18 +173,20 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
                     });
                 });
 
-                menuItems.add({
-                    text: t('reports'),
-                    iconCls: "pimcore_icon_reports",
-                    hideOnClick: false,
-                    menu: {
-                        cls: "pimcore_navigation_flyout",
-                        shadow: false,
-                        items: reportItems
-                    }
-                });
+                if (reportItems.length > 0) {
+                    menuItems.add({
+                        text: t('reports'),
+                        iconCls: "pimcore_icon_reports",
+                        hideOnClick: false,
+                        menu: {
+                            cls: "pimcore_navigation_flyout",
+                            shadow: false,
+                            items: reportItems
+                        }
+                    });
 
-                that.initializeMenu(toolbar, menuItems);
+                    that.initializeMenu(toolbar, menuItems);
+                }
             }
         });
     },
