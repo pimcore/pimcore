@@ -20,6 +20,7 @@ namespace Pimcore\Model\Asset\Image;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
+use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Thumbnail
@@ -476,6 +477,7 @@ class Thumbnail
                 || (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
             )
             && file_exists($lowQualityPreviewFile)
+            && !Tool::isFrontendRequestByAdmin()
         ) {
             $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
