@@ -1204,4 +1204,8 @@
     background: url(/pimcore/static6/img/flat-color-icons/data_encryption.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_refresh {
+    background: url(/pimcore/static6/img/flat-color-icons/refresh.svg) center center no-repeat !important;
+}
+
 

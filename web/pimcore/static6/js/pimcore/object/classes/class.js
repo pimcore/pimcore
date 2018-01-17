@@ -653,9 +653,20 @@ pimcore.object.classes.klass = Class.create({
             return "Pimcore\\Model\\DataObject\\" + ucfirst(name);
         };
 
+        var iconField = new Ext.form.field.Text({
+            fieldLabel: t("icon"),
+            name: "icon",
+            width: 600,
+            value: this.data.icon,
+            listeners: {
+                "afterrender": function (el) {
+                    el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
+                }
+            }
+        });
+
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
-            //border: true,
             bodyStyle: "padding: 10px;",
             defaults: {
                 labelWidth: 200
@@ -713,22 +724,23 @@ pimcore.object.classes.klass = Class.create({
                     name: "linkGeneratorReference",
                     width: 600,
                     value: this.data.linkGeneratorReference
-                },
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("icon"),
-                    name: "icon",
-                    width: 600,
-                    value: this.data.icon,
-                    enableKeyEvents: true,
-                    listeners: {
-                        "keyup": function (el) {
-                            el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
-                        },
-                        "afterrender": function (el) {
-                            el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
+                }, {
+                    xtype: "fieldcontainer",
+                    layout: "hbox",
+                    defaults: {
+                        labelWidth: 200
+                    },
+                    items: [
+                        iconField, {
+                            iconCls: "pimcore_icon_refresh",
+                            xtype: "button",
+                            tooltip: t("refresh"),
+
+                            handler: function(iconField) {
+                                iconField.inputEl.applyStyles("background:url(" + iconField.getValue() + ") right center no-repeat;");
+                            }.bind(this, iconField)
                         }
-                    }
+                    ]
                 },
                 {
                     xtype: "textfield",
