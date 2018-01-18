@@ -663,6 +663,9 @@ $scripts = array(
     "pimcore/analytics/piwik/widget_store_provider.js",
     "pimcore/report/piwik/settings.js",
     "pimcore/report/piwik/dashboard_iframe.js",
+
+    // color picker
+    "pimcore/colorpicker-overrides.js",
 );
 
 // google maps API key
