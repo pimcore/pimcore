@@ -699,6 +699,9 @@ class Configuration implements ConfigurationInterface
                                     $config[$tenant]['placeholders'] = $placeholders;
                                 }
 
+                                $config[$tenant]['config_id'] = $config[$tenant]['config_id'] ?? null;
+                                $config[$tenant]['worker_id'] = $config[$tenant]['worker_id'] ?? null;
+
                                 // if only config or worker is set, try to auto resolve missing config/worker
                                 if (!($config[$tenant]['config_id'] && $config[$tenant]['worker_id'])) {
                                     // nothing is set - set default value
