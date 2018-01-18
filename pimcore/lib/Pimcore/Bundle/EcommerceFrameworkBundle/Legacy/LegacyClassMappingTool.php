@@ -628,21 +628,21 @@ class LegacyClassMappingTool
 
         foreach (self::$symfonyMappingInterfaces as $newClass => $oldClass) {
             class_alias($newClass, $oldClass);
-            if (self::$mappingInterfaces[$oldClass]) {
+            if (self::$mappingInterfaces[$oldClass] ?? null) {
                 class_alias($newClass, self::$mappingInterfaces[$oldClass]);
             }
         }
 
         foreach (self::$symfonyMappingAbstractClasses as $newClass => $oldClass) {
             class_alias($newClass, $oldClass);
-            if (self::$mappingAbstractClasses[$oldClass]) {
+            if (self::$mappingAbstractClasses[$oldClass] ?? null) {
                 class_alias($newClass, self::$mappingAbstractClasses[$oldClass]);
             }
         }
 
         foreach (self::$symfonyMappingClasses as $newClass => $oldClass) {
             class_alias($newClass, $oldClass);
-            if (self::$mappingClasses[$oldClass]) {
+            if (self::$mappingClasses[$oldClass] ?? null) {
                 class_alias($newClass, self::$mappingClasses[$oldClass]);
             }
         }
