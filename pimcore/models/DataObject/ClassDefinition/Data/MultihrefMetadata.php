@@ -111,8 +111,8 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 $identifier = $targetType == 'object' ? 'o_id' : 'id';
 
                 $result = $db->fetchCol(
-                    'SELECT '.$identifier.' FROM '.$targetType.'s'
-                    .' WHERE '.$identifier.' IN ('.implode(',', $targetIds).')'
+                    'SELECT ' . $identifier . ' FROM ' . $targetType . 's'
+                    . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
                 );
                 $existingTargets[$targetType] = $result;
             }
@@ -188,11 +188,11 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 $element = $metaObject->getElement();
                 if ($element instanceof Element\ElementInterface) {
                     $elementType = Element\Service::getElementType($element);
-                    $d[] = $elementType.'|'.$element->getId();
+                    $d[] = $elementType . '|' . $element->getId();
                 }
             }
 
-            return ','.implode(',', $d).',';
+            return ',' . implode(',', $d) . ',';
         } elseif (is_array($d) && count($data) === 0) {
             return '';
         } else {
@@ -248,10 +248,10 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
 
                 $result = $db->fetchAll(
                     'SELECT '
-                    .$identifier.' id, '
-                    .$typeCol.' type'.$className
-                    .' ,concat('.$pathCol.','.$keyCol.') fullpath FROM '.$targetType.'s'
-                    .' WHERE '.$identifier.' IN ('.implode(',', $targetIds).')'
+                    . $identifier . ' id, '
+                    . $typeCol . ' type' . $className
+                    . ' ,concat(' . $pathCol . ',' . $keyCol . ') fullpath FROM ' . $targetType . 's'
+                    . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
                 );
 
                 $resultMap = [];
@@ -269,7 +269,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 $targetId = $metaObject->getElementId();
 
                 if (!isset($existingTargets[$targetType]) || !isset($existingTargets[$targetType][$targetId])) {
-                    Logger::error('element '.$targetType.' '.$targetId.' does not exist anymore');
+                    Logger::error('element ' . $targetType . ' ' . $targetId . ' does not exist anymore');
                     continue;
                 }
 
@@ -296,7 +296,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 }
 
                 foreach ($this->getColumns() as $c) {
-                    $getter = 'get'.ucfirst($c['key']);
+                    $getter = 'get' . ucfirst($c['key']);
                     $itemData[$c['key']] = $metaObject->$getter();
                 }
                 $return[] = $itemData;
@@ -349,7 +349,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
 
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
-                        $setter = 'set'.ucfirst($key);
+                        $setter = 'set' . ucfirst($key);
                         $value = $element[$key];
 
                         if ($columnConfig['type'] == 'multiselect') {
@@ -401,7 +401,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getElement();
-                $pathes[] = Element\Service::getElementType($o).' '.$o->getRealFullPath();
+                $pathes[] = Element\Service::getElementType($o) . ' ' . $o->getRealFullPath();
             }
 
             return implode('<br />', $pathes);
@@ -419,7 +419,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
 
         if (is_array($data)) {
@@ -466,7 +466,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             foreach ($data as $metaObject) {
                 $eo = $metaObject->getElement();
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = Element\Service::getType($eo).':'.$eo->getRealFullPath();
+                    $paths[] = Element\Service::getType($eo) . ':' . $eo->getRealFullPath();
                 }
             }
 
@@ -560,7 +560,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     $item['id'] = $eo->getId();
 
                     foreach ($this->getColumns() as $c) {
-                        $getter = 'get'.ucfirst($c['key']);
+                        $getter = 'get' . ucfirst($c['key']);
                         $item[$c['key']] = $metaObject->$getter();
                     }
                     $items[] = $item;
@@ -608,7 +608,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                         $elMeta = new DataObject\Data\ElementMetadata($this->getName(), $this->getColumnKeys(), $e);
 
                         foreach ($this->getColumns() as $c) {
-                            $setter = 'set'.ucfirst($c['key']);
+                            $setter = 'set' . ucfirst($c['key']);
                             $elMeta->$setter($href[$c['key']]);
                         }
 
@@ -616,7 +616,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     } else {
                         if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                             throw new \Exception(
-                                'cannot get values from web service import - unknown element of type [ '.$href['type'].' ] with id ['.$href['id'].'] is referenced'
+                                'cannot get values from web service import - unknown element of type [ ' . $href['type'] . ' ] with id [' . $href['id'] . '] is referenced'
                             );
                         } else {
                             $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $href['id']);
@@ -660,7 +660,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             $classId = $object->getClassId();
         }
 
-        $table = 'object_metadata_'.$classId;
+        $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
         $this->enrichRelation($object, $params, $classId, $relation);
@@ -672,16 +672,16 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             $index = $context['index'];
             $containerName = $context['fieldname'];
 
-            $sql = $db->quoteInto('o_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
-                .$db->quoteInto('ownername LIKE ?', '/fieldcollection~'.$containerName.'/'.$index.'/%')
-                .' AND '.$db->quoteInto('fieldname = ?', $this->getName())
-                .' AND '.$db->quoteInto('position = ?', $position);
+            $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . $index . '/%')
+                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                . ' AND ' . $db->quoteInto('position = ?', $position);
         } else {
-            $sql = $db->quoteInto('o_id = ?', $objectId).' AND '.$db->quoteInto('fieldname = ?', $this->getName())
-                .' AND '.$db->quoteInto('position = ?', $position);
+            $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                . ' AND ' . $db->quoteInto('position = ?', $position);
 
             if ($params && $params['context'] && $params['context']['fieldname']) {
-                $sql .= ' AND '.$db->quoteInto('ownername = ?', $params['context']['fieldname']);
+                $sql .= ' AND ' . $db->quoteInto('ownername = ?', $params['context']['fieldname']);
             }
         }
 
@@ -721,7 +721,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
-                $setter = 'set'.ucfirst($this->getName());
+                $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
                     $object->$setter($data);
                 }
@@ -763,10 +763,10 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             $containerName = $context['fieldname'];
 
             $db->deleteWhere(
-                'object_metadata_'.$object->getClassId(),
-                $db->quoteInto('o_id = ?', $object->getId())." AND ownertype = 'localizedfield' AND "
-                .$db->quoteInto('ownername LIKE ?', '/fieldcollection~'.$containerName.'/'.$index.'/%')
-                .' AND '.$db->quoteInto('fieldname = ?', $this->getName())
+                'object_metadata_' . $object->getClassId(),
+                $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . $index . '/%')
+                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
             );
         } else {
             $deleteCondition = [
@@ -778,7 +778,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 $deleteCondition['ownername'] = $params['context']['fieldname'];
             }
 
-            $db->delete('object_metadata_'.$object->getClassId(), $deleteCondition);
+            $db->delete('object_metadata_' . $object->getClassId(), $deleteCondition);
         }
     }
 
@@ -928,7 +928,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 $e = $metaElement->getElement();
                 if ($e instanceof Element\ElementInterface) {
                     $elementType = Element\Service::getElementType($e);
-                    $dependencies[$elementType.'_'.$e->getId()] = [
+                    $dependencies[$elementType . '_' . $e->getId()] = [
                         'id' => $e->getId(),
                         'type' => $elementType,
                     ];
@@ -1011,5 +1011,92 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
     public function getPhpdocType()
     {
         return $this->phpdocType;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    {
+        if ($data) {
+            $data = $data[0];
+
+            $items = $data['data'];
+            $newItems = [];
+            if ($items) {
+                foreach ($items as $item) {
+                    $unique = $this->buildUniqueKeyForDiffEditor($item);
+
+                    $itemId = json_encode($item);
+                    $raw = $itemId;
+
+                    $newItems[] = [
+                        'itemId' => $itemId,
+                        'title' => $item['path'],
+                        'raw' => $raw,
+                        'gridrow' => $item,
+                        'unique' => $unique
+                    ];
+                }
+                $data['data'] = $newItems;
+            }
+
+            $data['value'] = [
+                'type' => 'grid',
+                'columnConfig' => [
+                    'id' => [
+                        'width' => 60
+                    ],
+                    'path' => [
+                        'flex' => 2
+                    ]
+
+                ],
+                'html' => $this->getVersionPreview($originalData, $object, $params)
+            ];
+
+            $newData = [];
+            $newData[] = $data;
+
+            return $newData;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    {
+        $data = parent::getDiffDataForEditMode($data, $object, $params);
+
+        return $data;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function getDiffDataFromEditmode($data, $object = null, $params = [])
+    {
+        if ($data) {
+            $tabledata = $data[0]['data'];
+
+            $result = [];
+            if ($tabledata) {
+                foreach ($tabledata as $in) {
+                    $out = json_decode($in['raw'], true);
+                    $result[] = $out;
+                }
+            }
+
+            return $this->getDataFromEditmode($result, $object, $params);
+        }
+
+        return;
     }
 }

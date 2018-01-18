@@ -842,36 +842,6 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
         return $value;
     }
 
-    /** See parent class.
-     * @param $data
-     * @param null $object
-     * @param mixed $params
-     *
-     * @return null|\Pimcore_Date
-     */
-    public function getDiffDataFromEditmode($data, $object = null, $params = [])
-    {
-        if ($data) {
-            $tabledata = $data[0]['data'];
-
-            $result = [];
-            if ($tabledata) {
-                foreach ($tabledata as $in) {
-                    $out = [];
-                    $out['id'] = $in[0];
-                    $out['path'] = $in[1];
-                    $out['type'] = $in[2];
-                    $out['subtype'] = $in[3];
-                    $result[] = $out;
-                }
-            }
-
-            return $this->getDataFromEditmode($result, $object, $params);
-        }
-
-        return;
-    }
-
     /**
      * Rewrites id from source to target, $idMapping contains
      * array(
@@ -969,4 +939,116 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
             return $result;
         }
     }
+
+
+    /**
+     * Returns a ID which must be unique across the grid rows
+     * @param $item
+     * @return string
+     */
+    public function buildUniqueKeyForDiffEditor($item) {
+        $parts = [
+            $item['id'],
+            $item["path"],
+            $item["type"],
+            $item["subtype"]
+        ];
+        return json_encode($parts);
+
+    }
+    /**
+     * @inheritdoc
+     */
+    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    {
+        if ($data) {
+            $data = $data[0];
+
+            $items = $data['data'];
+            $newItems = [];
+            if ($items) {
+                foreach ($items as $in) {
+                    $item = array();
+                    $item['id'] = $in[0];
+                    $item['path'] = $in[1];
+                    $item['type'] = $in[2];
+                    $item['subtype'] = $in[3];
+
+                    $unique = $this->buildUniqueKeyForDiffEditor($item);
+
+                    $itemId = json_encode($item);
+                    $raw = $itemId;
+
+                    $newItems[] = [
+                        "itemId" => $itemId,
+                        'title' => $item['path'],
+                        'raw' => $raw,
+                        'gridrow' => $item,
+                        "unique" => $unique
+                    ];
+                }
+                $data['data'] = $newItems;
+            }
+
+            $data['value'] = [
+                'type' => 'grid',
+                'columnConfig' => [
+                    'id' => [
+                        'width' => 60
+                    ],
+                    'path' => [
+                        'flex' => 2
+                    ]
+
+                ],
+                'html' => $this->getVersionPreview($originalData, $object, $params)
+            ];
+
+            $newData = [];
+            $newData[] = $data;
+
+            return $newData;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    {
+        $originalData = $data;
+        $data = parent::getDiffDataForEditMode($data, $object, $params);
+        $data = $this->processDiffDataForEditMode($originalData, $data, $object, $params);
+
+        return $data;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function getDiffDataFromEditmode($data, $object = null, $params = [])
+    {
+        if ($data) {
+            $tabledata = $data[0]['data'];
+
+            $result = [];
+            if ($tabledata) {
+                foreach ($tabledata as $in) {
+                    $out = json_decode($in['raw'], true);
+                    $result[] = $out;
+                }
+            }
+
+            return $this->getDataFromEditmode($result, $object, $params);
+        }
+
+        return;
+    }
+
 }

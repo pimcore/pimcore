@@ -959,4 +959,62 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
             return $result;
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
+    {
+        if ($data) {
+            $data = $data[0];
+
+            $items = $data['data'];
+            $newItems = [];
+            if ($items) {
+                $columns = array_merge(['id', 'fullpath'], $this->getColumnKeys());
+                foreach ($items as $itemBeforeCleanup) {
+                    $unique = $this->buildUniqueKeyForDiffEditor($itemBeforeCleanup);
+
+                    foreach ($itemBeforeCleanup as $key => $value) {
+                        if (in_array($key, $columns)) {
+                            $item[$key] = $value;
+                        }
+                    }
+
+                    $itemId = json_encode($item);
+                    $raw = $itemId;
+
+                    $newItems[] = [
+                    'itemId' => $itemId,
+                    'title' => $item['fullpath'],
+                    'raw' => $raw,
+                    'gridrow' => $item,
+                    'unique' => $unique
+                ];
+                }
+                $data['data'] = $newItems;
+            }
+
+            $data['value'] = [
+            'type' => 'grid',
+            'columnConfig' => [
+                'id' => [
+                    'width' => 60
+                ],
+                'fullpath' => [
+                    'flex' => 2
+                ]
+
+            ],
+            'html' => $this->getVersionPreview($originalData, $data, $object, $params)
+        ];
+
+            $newData = [];
+            $newData[] = $data;
+
+            return $newData;
+        }
+
+        return $data;
+    }
 }
