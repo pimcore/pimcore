@@ -275,6 +275,8 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
             ];
 
             $script = <<<'LUA'
+local notMatchingTags = ARGV[1] == '1'
+
 for i = 1, #KEYS do
     local itemId = KEYS[i]
     local itemKey = 'zc:k:' .. itemId
@@ -285,7 +287,7 @@ for i = 1, #KEYS do
     redis.call('DEL', itemKey)
 
     -- remove ID from list of all IDs
-    if ARGV[1] == '1' then
+    if notMatchingTags then
         redis.call('SREM', 'zc:ids', itemId)
     end
 
@@ -392,73 +394,76 @@ LUA;
 
         if ($this->useLua) {
             $sArgs = [
-                static::PREFIX_KEY, // 1
-                static::FIELD_DATA, // 2
-                static::FIELD_TAGS, // 3
-                static::FIELD_MTIME, // 4
-                static::FIELD_INF, // 5
-                static::SET_TAGS, // 6
-                static::PREFIX_TAG_IDS, // 7
-                static::SET_IDS, // 8
-                $id, // 9
-                $values[static::FIELD_DATA], // 10
-                $values[static::FIELD_TAGS], // 11
-                $values[static::FIELD_MTIME], // 12
-                $values[static::FIELD_INF], // 13
-                min($lifetime, static::MAX_LIFETIME), // 14
-                $this->notMatchingTags ? 1 : 0, // 15
+                $id, // 1
+                $values[static::FIELD_DATA], // 2
+                $values[static::FIELD_TAGS], // 3
+                $values[static::FIELD_MTIME], // 4
+                $values[static::FIELD_INF], // 5
+                min($lifetime, static::MAX_LIFETIME), // 6
+                $this->notMatchingTags ? 1 : 0, // 7
             ];
 
             $script = <<<'LUA'
-local inTable = function(val, tbl)
-    for _, v in ipairs(tbl) do
-        if v == val then
-            return true
-        end
-    end
+local itemId = ARGV[1]
+local itemKey = 'zc:k:' .. itemId
 
-    return false
-end
+local values = {
+    d = ARGV[2],
+    t = ARGV[3],
+    m = ARGV[4],
+    i = ARGV[5],
+}
 
-local itemKey = ARGV[1] .. ARGV[9]
+local lifetime = ARGV[6]
+local notMatchingTags = ARGV[7] == '1'
 
 -- fetch currently set tags and remove tag <-> item relation for tags
 -- which do not match anymore
 -- TODO use JSON instead of csv here!
-local oldTagsSerialized = redis.call('HGET', itemKey, ARGV[3])
+local oldTagsSerialized = redis.call('HGET', itemKey, 't')
 
 if (oldTagsSerialized) then
+    local inTable = function(val, tbl)
+        for _, v in ipairs(tbl) do
+            if v == val then
+                return true
+            end
+        end
+
+        return false
+    end
+
     for oldTag in string.gmatch(oldTagsSerialized, "[^,]+") do
         if not inTable(oldTag, KEYS) then
             -- remove item ID from tags set
             -- e.g. remove nav_foo_32312313 from set zc:ti:navigation
-            redis.call('SREM', ARGV[7] .. oldTag, ARGV[9])
+            redis.call('SREM', 'zc:ti:' .. oldTag, itemId)
         end
     end
 end
 
 -- write item data
-redis.call('HMSET', itemKey, ARGV[2], ARGV[10], ARGV[3], ARGV[11], ARGV[4], ARGV[12], ARGV[5], ARGV[13])
+redis.call('HMSET', itemKey, 'd', values.d, 't', values.t, 'm', values.m, 'i', values.i)
 
 -- set expiration for item if a lifetime is set
-if (ARGV[13] == '0') then
-    redis.call('EXPIRE', itemKey, ARGV[14])
+if (values.i == '0') then
+    redis.call('EXPIRE', itemKey, lifetime)
 end
 
 -- add tag entries in zc:ti:<tagName> format
 if next(KEYS) ~= nil then
     -- add all tags to zc:tags set
-    redis.call('SADD', ARGV[6], unpack(KEYS))
+    redis.call('SADD', 'zc:tags', unpack(KEYS))
 
     -- for every tag, add the item ID to the zc:ti:<tagName> set
     for _, tagName in ipairs(KEYS) do
-        redis.call('SADD', ARGV[7] .. tagName, ARGV[9])
+        redis.call('SADD', 'zc:ti:' .. tagName, itemId)
     end
 end
 
 -- handle notMatchingTags if configured
-if (ARGV[15] == '1') then
-    redis.call('SADD', ARGV[8], ARGV[9])
+if (notMatchingTags) then
+    redis.call('SADD', 'zc:ids', itemId)
 end
 
 return true
@@ -536,37 +541,52 @@ LUA;
         if ($this->useLua) {
             $pTags = $this->preprocessTagIds($tags);
             $sArgs = [
-                static::PREFIX_KEY, // 1
-                static::SET_TAGS, // 2
-                static::SET_IDS, // 3
-                ($this->notMatchingTags ? 1 : 0), // 4
-                (int)$this->luaMaxCStack, // 5
-                static::PREFIX_TAG_IDS, // 6
+                ($this->notMatchingTags ? 1 : 0), // 1
+                (int)$this->luaMaxCStack, // 2
             ];
 
             $script = <<<'LUA'
+local notMatchingTags = ARGV[1] == '1'
+local luaMaxCStack = ARGV[2]
+
 -- build a list of tags without zc:ti: prefix
 local unprefixedTags = {}
-local prefixLength = string.len(ARGV[6])
+local prefixLength = string.len('zc:ti:')
 
 for up = 1, #KEYS do
     unprefixedTags[up] = string.sub(KEYS[up], prefixLength + 1)
 end
 
 -- iterate in lua max c stack steps
-for i = 1, #KEYS, ARGV[5] do
-    local keysToDel = redis.call('SUNION', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1)))
+for i = 1, #KEYS, luaMaxCStack do
+    local itemsToDel = redis.call('SUNION', unpack(KEYS, i, math.min(#KEYS, i + luaMaxCStack - 1)))
 
-    for _, keyName in ipairs(keysToDel) do
-        redis.call('DEL', ARGV[1] .. keyName)
+    for _, itemId in ipairs(itemsToDel) do
+        local itemKey = 'zc:k:' .. itemId
 
-        if (ARGV[4] == '1') then
-            redis.call('SREM', ARGV[3], keyName)
+        local itemTagsSerialized = redis.call('HGET', itemKey, 't')
+
+        -- remove data
+        redis.call('DEL', itemKey)
+
+        -- remove ID from list of all IDs
+        if notMatchingTags then
+            redis.call('SREM', 'zc:ids', itemId)
+        end
+
+        -- update the ID list for each tag
+        if (itemTagsSerialized) then
+            for tagName in string.gmatch(itemTagsSerialized, "[^,]+") do
+                redis.call('SREM', 'zc:ti:' .. tagName, itemId)
+            end
         end
     end
 
-    redis.call('DEL', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1)))
-    redis.call('SREM', ARGV[2], unpack(unprefixedTags, i, math.min(#unprefixedTags, i + ARGV[5] - 1)))
+    -- delete all tags in iteration
+    redis.call('DEL', unpack(KEYS, i, math.min(#KEYS, i + luaMaxCStack - 1)))
+
+    -- delete tags from zc:tags set for iteration
+    redis.call('SREM', 'zc:tags', unpack(unprefixedTags, i, math.min(#unprefixedTags, i + luaMaxCStack - 1)))
 end
 
 return true
