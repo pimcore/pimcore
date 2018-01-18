@@ -41,8 +41,6 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     const MAX_LIFETIME = 2592000; // Redis backend limit
     const COMPRESS_PREFIX = ":\x1f\x8b";
 
-    const LUA_SAVE_SH1 = '1617c9fb2bda7d790bb1aaa320c1099d81825e64';
-    const LUA_CLEAN_SH1 = '9255d2172b02be1219e6accb37c6a2d184d6736f';
     const LUA_GC_SH1 = 'c00416b970f1aa6363b44965d4cf60ee99a6f065';
 
     /**
@@ -201,7 +199,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
             $value = $this->unserializeData($value);
 
             $tags    = [];
-            $tagData = $this->decodeData($entry[static::FIELD_TAGS]);
+            $tagData = $entry[static::FIELD_TAGS];
 
             if (!empty($tagData)) {
                 $tags = explode(',', $tagData);
@@ -276,7 +274,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         // TODO implement a better way for multiple items! (multi for whole set?)
         foreach ($ids as $id) {
             // Get list of tags for this id
-            $tags = explode(',', $this->decodeData($this->redis->hGet(static::PREFIX_KEY . $id, static::FIELD_TAGS)));
+            $tags = explode(',', $this->redis->hGet(static::PREFIX_KEY . $id, static::FIELD_TAGS));
 
             $this->redis->pipeline()->multi();
 
@@ -347,72 +345,97 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
         $values = [
             static::FIELD_DATA  => $this->encodeData($data, $this->compressData),
-            static::FIELD_TAGS  => $this->encodeData(implode(',', $tags), $this->compressTags),
+            static::FIELD_TAGS  => implode(',', $tags),
             static::FIELD_MTIME => $now,
             static::FIELD_INF   => $lifetime ? 0 : 1,
         ];
 
         if ($this->useLua) {
             $sArgs = [
-                static::PREFIX_KEY,
-                static::FIELD_DATA,
-                static::FIELD_TAGS,
-                static::FIELD_MTIME,
-                static::FIELD_INF,
-                static::SET_TAGS,
-                static::PREFIX_TAG_IDS,
-                static::SET_IDS,
-                $id,
-                $values[static::FIELD_DATA],
-                $values[static::FIELD_TAGS],
-                $values[static::FIELD_MTIME],
-                $values[static::FIELD_INF],
-                min($lifetime, static::MAX_LIFETIME),
-                $this->notMatchingTags ? 1 : 0
+                static::PREFIX_KEY, // 1
+                static::FIELD_DATA, // 2
+                static::FIELD_TAGS, // 3
+                static::FIELD_MTIME, // 4
+                static::FIELD_INF, // 5
+                static::SET_TAGS, // 6
+                static::PREFIX_TAG_IDS, // 7
+                static::SET_IDS, // 8
+                $id, // 9
+                $values[static::FIELD_DATA], // 10
+                $values[static::FIELD_TAGS], // 11
+                $values[static::FIELD_MTIME], // 12
+                $values[static::FIELD_INF], // 13
+                min($lifetime, static::MAX_LIFETIME), // 14
+                $this->notMatchingTags ? 1 : 0, // 15
             ];
 
-            $res = $this->redis->evalSha(static::LUA_SAVE_SH1, $tags, $sArgs);
-            if (is_null($res)) {
-                $script =
-                    "local oldTags = redis.call('HGET', ARGV[1]..ARGV[9], ARGV[3]) " .
-                    "redis.call('HMSET', ARGV[1]..ARGV[9], ARGV[2], ARGV[10], ARGV[3], ARGV[11], ARGV[4], ARGV[12], ARGV[5], ARGV[13]) " .
-                    "if (ARGV[13] == '0') then " .
-                    "redis.call('EXPIRE', ARGV[1]..ARGV[9], ARGV[14]) " .
-                    'end ' .
-                    'if next(KEYS) ~= nil then ' .
-                    "redis.call('SADD', ARGV[6], unpack(KEYS)) " .
-                    'for _, tagname in ipairs(KEYS) do ' .
-                    "redis.call('SADD', ARGV[7]..tagname, ARGV[9]) " .
-                    'end ' .
-                    'end ' .
-                    "if (ARGV[15] == '1') then " .
-                    "redis.call('SADD', ARGV[8], ARGV[9]) " .
-                    'end ' .
-                    'if (oldTags ~= false) then ' .
-                    'return oldTags ' .
-                    'else ' .
-                    "return '' " .
-                    'end';
+            $script = <<<'LUA'
+local inTable = function(val, tbl)
+    for _, v in ipairs(tbl) do
+        if v == val then
+            return true
+        end
+    end
 
+    return false
+end
+
+local itemKey = ARGV[1] .. ARGV[9]
+
+-- fetch currently set tags and remove tag <-> item relation for tags
+-- which do not match anymore
+-- TODO use JSON instead of csv here!
+local oldTagsSerialized = redis.call('HGET', itemKey, ARGV[3])
+
+if (oldTagsSerialized) then
+    for oldTag in string.gmatch(oldTagsSerialized, "[^,]+") do
+        if not inTable(oldTag, KEYS) then
+            -- remove item ID from tags set
+            -- e.g. remove nav_foo_32312313 from set zc:ti:navigation
+            redis.call('SREM', ARGV[7] .. oldTag, ARGV[9])
+        end
+    end
+end
+
+-- write item data
+redis.call('HMSET', itemKey, ARGV[2], ARGV[10], ARGV[3], ARGV[11], ARGV[4], ARGV[12], ARGV[5], ARGV[13])
+
+-- set expiration for item if a lifetime is set
+if (ARGV[13] == '0') then
+    redis.call('EXPIRE', itemKey, ARGV[14])
+end
+
+-- add tag entries in zc:ti:<tagName> format
+if next(KEYS) ~= nil then
+    -- add all tags to zc:tags set
+    redis.call('SADD', ARGV[6], unpack(KEYS))
+
+    -- for every tag, add the item ID to the zc:ti:<tagName> set
+    for _, tagName in ipairs(KEYS) do
+        redis.call('SADD', ARGV[7] .. tagName, ARGV[9])
+    end
+end
+
+-- handle notMatchingTags if configured
+if (ARGV[15] == '1') then
+    redis.call('SADD', ARGV[8], ARGV[9])
+end
+
+return true
+LUA;
+
+            $sha1 = sha1($script);
+            $res  = $this->redis->evalSha($sha1, $tags, $sArgs);
+
+            if (null === $res) {
                 $res = $this->redis->eval($script, $tags, $sArgs);
             }
 
-            // Process removed tags if cache entry already existed
-            if ($res) {
-                $oldTags = explode(',', $this->decodeData($res));
-                if ($remTags = ($oldTags ? array_diff($oldTags, $tags) : false)) {
-                    // Update the id list for each tag
-                    foreach ($remTags as $tag) {
-                        $this->redis->sRem(static::PREFIX_TAG_IDS . $tag, $id);
-                    }
-                }
-            }
-
-            return true;
+            return (bool) $res;
         }
 
         // Get list of tags previously assigned
-        $oldTags = $this->decodeData($this->redis->hGet(static::PREFIX_KEY . $id, static::FIELD_TAGS));
+        $oldTags = $this->redis->hGet(static::PREFIX_KEY . $id, static::FIELD_TAGS);
         $oldTags = $oldTags ? explode(',', $oldTags) : [];
 
         $this->redis->pipeline()->multi();
@@ -473,34 +496,50 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         if ($this->useLua) {
             $pTags = $this->preprocessTagIds($tags);
             $sArgs = [
-                static::PREFIX_KEY,
-                static::SET_TAGS,
-                static::SET_IDS,
-                ($this->notMatchingTags ? 1 : 0),
-                (int)$this->luaMaxCStack,
-                static::PREFIX_TAG_IDS
+                static::PREFIX_KEY, // 1
+                static::SET_TAGS, // 2
+                static::SET_IDS, // 3
+                ($this->notMatchingTags ? 1 : 0), // 4
+                (int)$this->luaMaxCStack, // 5
+                static::PREFIX_TAG_IDS, // 6
             ];
 
-            if (!$this->redis->evalSha(static::LUA_CLEAN_SH1, $pTags, $sArgs)) {
-                $script =
-                    'for i = 1, #KEYS, ARGV[5] do ' .
-                    "local keysToDel = redis.call('SUNION', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
-                    'for _, keyname in ipairs(keysToDel) do ' .
-                    "redis.call('DEL', ARGV[1]..keyname) " .
-                    "if (ARGV[4] == '1') then " .
-                    "redis.call('SREM', ARGV[3], keyname) " .
-                    'end ' .
-                    'end ' .
-                    "redis.call('DEL', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
-                    'local unprefixedTags={}; local prefixLength=string.len(ARGV[6]); for up=1, #KEYS do unprefixedTags[up] = string.sub(KEYS[up], prefixLength + 1) end ' .
-                    "redis.call('SREM', ARGV[2], unpack(unprefixedTags, i, math.min(#unprefixedTags, i + ARGV[5] - 1))) " .
-                    'end ' .
-                    'return true';
+            $script = <<<'LUA'
+-- build a list of tags without zc:ti: prefix
+local unprefixedTags = {}
+local prefixLength = string.len(ARGV[6])
 
-                $this->redis->eval($script, $pTags, $sArgs);
+for up = 1, #KEYS do
+    unprefixedTags[up] = string.sub(KEYS[up], prefixLength + 1)
+end
+
+-- iterate in lua max c stack steps
+for i = 1, #KEYS, ARGV[5] do
+    local keysToDel = redis.call('SUNION', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1)))
+
+    for _, keyName in ipairs(keysToDel) do
+        redis.call('DEL', ARGV[1] .. keyName)
+
+        if (ARGV[4] == '1') then
+            redis.call('SREM', ARGV[3], keyName)
+        end
+    end
+
+    redis.call('DEL', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1)))
+    redis.call('SREM', ARGV[2], unpack(unprefixedTags, i, math.min(#unprefixedTags, i + ARGV[5] - 1)))
+end
+
+return true
+LUA;
+
+            $sha1 = sha1($script);
+            $res  = $this->redis->evalSha($sha1, $pTags, $sArgs);
+
+            if (null === $res) {
+                $res = $this->redis->eval($script, $pTags, $sArgs);
             }
 
-            return true;
+            return (bool)$res;
         }
 
         $ids = $this->getIdsMatchingAnyTags($tags);
