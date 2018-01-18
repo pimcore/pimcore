@@ -269,9 +269,49 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      */
     protected function doDelete(array $ids)
     {
+        if ($this->useLua) {
+            $args = [
+                ($this->notMatchingTags ? 1 : 0), // 1
+            ];
+
+            $script = <<<'LUA'
+for i = 1, #KEYS do
+    local itemId = KEYS[i]
+    local itemKey = 'zc:k:' .. itemId
+
+    local itemTagsSerialized = redis.call('HGET', itemKey, 't')
+
+    -- remove data
+    redis.call('DEL', itemKey)
+
+    -- remove ID from list of all IDs
+    if ARGV[1] == '1' then
+        redis.call('SREM', 'zc:ids', itemId)
+    end
+
+    -- update the ID list for each tag
+    if (itemTagsSerialized) then
+        for tagName in string.gmatch(itemTagsSerialized, "[^,]+") do
+            redis.call('SREM', 'zc:ti:' .. tagName, itemId)
+        end
+    end
+end
+
+return true
+LUA;
+
+            $sha1 = sha1($script);
+            $res  = $this->redis->evalSha($sha1, $ids, $args);
+
+            if (null === $res) {
+                $res = $this->redis->eval($script, $ids, $args);
+            }
+
+            return (bool)$res;
+        }
+
         $totalResult = true;
 
-        // TODO implement a better way for multiple items! (multi for whole set?)
         foreach ($ids as $id) {
             // Get list of tags for this id
             $tags = explode(',', $this->redis->hGet(static::PREFIX_KEY . $id, static::FIELD_TAGS));
@@ -431,7 +471,7 @@ LUA;
                 $res = $this->redis->eval($script, $tags, $sArgs);
             }
 
-            return (bool) $res;
+            return (bool)$res;
         }
 
         // Get list of tags previously assigned
