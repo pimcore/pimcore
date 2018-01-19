@@ -23,8 +23,8 @@ use Pimcore\Storage\Redis\Connection;
  * WARNING: LUA mode is only working on standalone modes as it violates Redis EVAL semantics of passing every used key
  * in the KEYS argument when loading tags from an item and building tag item IDs inside the script.
  *
- * TODO in non LUA mode this currently handles tag clearing wrong as potentially orphaned tag entries can lead to items
- * being purged despite being invalid. See the TaggableRedisTest for annotations.
+ * TODO this currently handles tag clearing wrong as potentially orphaned tag entries can lead to items being purged
+ * despite being invalid. See the TaggableRedisTest for annotations.
  *
  * Adapted from https://github.com/colinmollenhour/Cm_Cache_Backend_Redis and from Pimcore\Cache\Backend\Redis2
  */
@@ -618,7 +618,6 @@ for i = staticKeyCount + 1, #KEYS, luaMaxCStack do
 
     for _, itemId in ipairs(itemsToDel) do
         local itemKey = 'zc:k:' .. itemId
-        local itemTagsSerialized = redis.call('HGET', itemKey, 't')
 
         -- remove data
         redis.call('DEL', itemKey)
@@ -626,13 +625,6 @@ for i = staticKeyCount + 1, #KEYS, luaMaxCStack do
         -- remove ID from list of all IDs
         if notMatchingTags then
             redis.call('SREM', setIds, itemId)
-        end
-
-        -- update the ID list for each tag
-        if (itemTagsSerialized) then
-            for tagName in string.gmatch(itemTagsSerialized, "[^,]+") do
-                redis.call('SREM', 'zc:ti:' .. tagName, itemId)
-            end
         end
     end
 
