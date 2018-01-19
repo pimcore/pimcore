@@ -213,6 +213,7 @@ abstract class AbstractListing extends AbstractModel
      */
     public function addConditionParam($key, $value = null, $concatenator = 'AND')
     {
+        $key = '('.$key.')';
         $ignore = true;
         if (strpos($key, '?') !== false || strpos($key, ':') !== false) {
             $ignore = false;
