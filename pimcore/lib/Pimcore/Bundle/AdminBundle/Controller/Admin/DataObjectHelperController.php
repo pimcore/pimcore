@@ -2161,6 +2161,13 @@ class DataObjectHelperController extends AdminController
             $object = DataObject::getById($request->get('job'));
 
             if ($object) {
+
+                if (!$object->isAllowed('publish')) {
+                    throw new \Exception("Permission denied. You don't have the rights to save this object.");
+                }
+
+                $append = $request->get("append");
+
                 $className = $object->getClassName();
                 $class = DataObject\ClassDefinition::getByName($className);
                 $value = $request->get('value');
@@ -2214,6 +2221,7 @@ class DataObjectHelperController extends AdminController
                         }
 
                         $keyValuePairs->setPropertyWithId($keyid, $value, true);
+
                         $object->$setter($keyValuePairs);
                     }
                 } elseif (count($parts) > 1) {
@@ -2236,12 +2244,26 @@ class DataObjectHelperController extends AdminController
 
                     $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
                     $field = $brickClass->getFieldDefinition($brickKey);
-                    $brick->$valueSetter($field->getDataFromEditmode($value, $object));
+
+                    $newData = $field->getDataFromEditmode($value, $object);
+
+                    if ($append) {
+                        $valueGetter = 'get' . ucfirst($brickKey);
+                        $existingData = $brick->$valueGetter();
+                        $newData = $field->appendData($existingData, $newData);
+                    }
+                    $brick->$valueSetter($newData);
                 } else {
                     // everything else
                     $field = $class->getFieldDefinition($name);
                     if ($field) {
-                        $object->setValue($name, $field->getDataFromEditmode($value, $object));
+                        $newData = $field->getDataFromEditmode($value, $object);
+
+                        if ($append) {
+                            $existingData = $object->{'get' . $name}();
+                            $newData = $field->appendData($existingData, $newData);
+                        }
+                        $object->setValue($name, $newData);
                     } else {
                         // check if it is a localized field
                         if ($request->get('language')) {
@@ -2249,8 +2271,17 @@ class DataObjectHelperController extends AdminController
                             if ($localizedField) {
                                 $field = $localizedField->getFieldDefinition($name);
                                 if ($field) {
+                                    $getter = 'get' . $name;
+                                    $setter = 'set' . $name;
                                     /** @var $field DataObject\ClassDefinition\Data */
-                                    $object->{'set' . $name}($field->getDataFromEditmode($value, $object), $request->get('language'));
+
+                                    $newData = $field->getDataFromEditmode($value, $object);
+                                    if ($append) {
+                                        $existingData = $object->$getter($request->get('language'));
+                                        $newData = $field->appendData($existingData, $newData);
+                                    }
+
+                                    $object->$setter($newData, $request->get('language'));
                                 }
                             }
                         }

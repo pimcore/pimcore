@@ -17,6 +17,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     type: "multihref",
     dataChanged: false,
     idProperty: "rowId",
+    allowBatchAppend: true,
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -657,6 +658,9 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     },
 
     requestNicePathData: function (targets) {
+        if (!this.object) {
+            return;
+        }
         pimcore.helpers.requestNicePathData(
             {
                 type: "object",

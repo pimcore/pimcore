@@ -77,7 +77,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, false);
+                this.batchPrepare(columnDataIndex.fullColumnIndex, false, false);
             }.bind(this, grid)
         });
         menu.add(batchAllMenu);
@@ -88,10 +88,32 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
-                this.batchPrepare(columnDataIndex.fullColumnIndex, true);
+                this.batchPrepare(columnDataIndex.fullColumnIndex, true, false);
             }.bind(this, grid)
         });
         menu.add(batchSelectedMenu);
+
+        var batchAppendAllMenu = new Ext.menu.Item({
+            text: t("batch_append_all"),
+            iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+            handler: function (grid) {
+                menu = grid.headerCt.getMenu();
+                var columnDataIndex = menu.activeHeader;
+                this.batchPrepare(columnDataIndex.fullColumnIndex, false, true);
+            }.bind(this, grid)
+        });
+        menu.add(batchAppendAllMenu);
+
+        var batchAppendSelectedMenu = new Ext.menu.Item({
+            text: t("batch_append_selected"),
+            iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+            handler: function (grid) {
+                menu = grid.headerCt.getMenu();
+                var columnDataIndex = menu.activeHeader;
+                this.batchPrepare(columnDataIndex.fullColumnIndex, true, true);
+            }.bind(this, grid)
+        });
+        menu.add(batchAppendSelectedMenu);
         //
         menu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, grid) {
             var menu = grid.headerCt.getMenu();
@@ -107,10 +129,17 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 batchSelectedMenu.show();
             }
 
+            if (!Ext.Array.contains(this.systemColumns,columnDataIndex) && Ext.Array.contains(this.batchAppendColumns, columnDataIndex)) {
+                batchAppendAllMenu.show();
+                batchAppendSelectedMenu.show();
+            } else {
+                batchAppendAllMenu.hide();
+                batchAppendSelectedMenu.hide();
+            }
         }.bind(this, batchAllMenu, batchSelectedMenu, grid));
     },
 
-    batchPrepare: function(columnIndex, onlySelected){
+    batchPrepare: function(columnIndex, onlySelected, append){
         // no batch for system properties
         if(this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
             return;
@@ -122,7 +151,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             for (var i=0; i<selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
-            this.batchOpen(columnIndex,jobs);
+            this.batchOpen(columnIndex,jobs, append);
 
         } else {
 
@@ -154,7 +183,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 success: function (columnIndex,response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
-                        this.batchOpen(columnIndex, rdata.jobs);
+                        this.batchOpen(columnIndex, rdata.jobs, append);
                     }
 
                 }.bind(this,columnIndex)
@@ -163,7 +192,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     },
 
-    batchOpen: function (columnIndex, jobs) {
+    batchOpen: function (columnIndex, jobs, append) {
 
         columnIndex = columnIndex-1;
 
@@ -208,15 +237,16 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     text: t("save"),
                     handler: function() {
                         if(formPanel.isValid()) {
-                            this.batchProcess(jobs, editor, fieldInfo, true);
+                            this.batchProcess(jobs, append, editor, fieldInfo, true);
                         }
                     }.bind(this)
                 }
             ]
         });
+        var title = append ? t("batch_append_to") + " " + fieldInfo.text : t("batch_edit_field") + " " + fieldInfo.text;
         this.batchWin = new Ext.Window({
             modal: false,
-            title: t("batch_edit_field") + " " + fieldInfo.text,
+            title: title,
             items: [formPanel],
             bodyStyle: "background: #fff;",
             width: 700,
@@ -226,9 +256,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         this.batchWin.updateLayout();
     },
 
-    batchProcess: function (jobs,  editor, fieldInfo, initial) {
+    batchProcess: function (jobs, append, editor, fieldInfo, initial) {
 
-        if(initial){
+        if (initial) {
 
             this.batchErrors = [];
             this.batchJobCurrent = 0;
@@ -296,6 +326,10 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         this.batchProgressBar.updateProgress(status, percent + "%");
 
         this.batchParameters.job = jobs[this.batchJobCurrent];
+        if (append) {
+            this.batchParameters.append = 1;
+        }
+        
         Ext.Ajax.request({
             url: "/admin/object-helper/batch",
             params: this.batchParameters,
@@ -316,7 +350,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
                 window.setTimeout(function() {
                     this.batchJobCurrent++;
-                    this.batchProcess(jobs);
+                    this.batchProcess(jobs, append);
                 }.bind(this), 400);
             }.bind(this,jobs, this.batchParameters.job)
         });

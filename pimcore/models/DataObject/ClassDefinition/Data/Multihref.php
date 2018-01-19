@@ -1050,5 +1050,4 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
 
         return;
     }
-
 }

@@ -414,4 +414,48 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
     {
         return '';
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function appendData($existingData, $additionalData)
+    {
+        $newData = [];
+        if (!is_array($existingData)) {
+            $existingData = [];
+        }
+
+        $map = [];
+
+        /** @var $item Element\ElementInterface */
+        foreach ($existingData as $item) {
+            $key = $this->buildUniqueKeyForAppending($item);
+            $map[$key]= 1;
+            $newData[]= $item;
+        }
+
+        if (is_array($additionalData)) {
+            foreach ($additionalData as $item) {
+                $key = $this->buildUniqueKeyForAppending($item);
+                if (!isset($map[$key])) {
+                    $newData[] = $item;
+                }
+            }
+        }
+
+        return $newData;
+    }
+
+    /**
+     * @param $item
+     *
+     * @return string
+     */
+    protected function buildUniqueKeyForAppending($item)
+    {
+        $elementType = Element\Service::getElementType($item);
+        $id = $item->getId();
+
+        return $elementType . $id;
+    }
 }

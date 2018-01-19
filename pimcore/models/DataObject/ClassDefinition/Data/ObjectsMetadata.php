@@ -1017,4 +1017,18 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 
         return $data;
     }
+
+    /**
+     * @param $item
+     *
+     * @return string
+     */
+    protected function buildUniqueKeyForAppending($item)
+    {
+        $element = $item->getElement();
+        $elementType = Element\Service::getElementType($element);
+        $id = $element->getId();
+
+        return $elementType . $id;
+    }
 }

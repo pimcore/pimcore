@@ -1099,4 +1099,18 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
 
         return;
     }
+
+    /**
+     * @param $item
+     *
+     * @return string
+     */
+    protected function buildUniqueKeyForAppending($item)
+    {
+        $element = $item->getElement();
+        $elementType = Element\Service::getElementType($element);
+        $id = $element->getId();
+
+        return $elementType . $id;
+    }
 }

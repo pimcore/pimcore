@@ -533,7 +533,7 @@
   "direct_socket": "Direct (Socket)",
   "http_connectivity_direct_proxy": "HTTP Connectivity (direct, proxy, ...)",
   "parent_element": "Parent Element",
-  "batch_change_selected": "Batch change selected",
+  "batch_change_selected": "Batch edit selected",
   "gridview": "Grid View",
   "modificationDate": "Modification Date",
   "creationDate": "Creation Date",
@@ -631,7 +631,7 @@
   "email_log_resend_window_error_message": "An error occurred. The email has not been resent.",
   "condition": "Condition",
   "error_jobs": "The following jobs failed",
-  "batch_change": "Batch Assignment",
+  "batch_change": "Batch edit all",
   "batch_edit_field": "Batch edit field",
   "published": "Published",
   "all": "all",
@@ -1819,5 +1819,8 @@
   "rgbaColor": "RGBA Color",
   "encryptedField": "Encrypted Field",
   "datatype": "Datatype",
-  "restore_failed": "Restore failed"
+  "restore_failed": "Restore failed",
+  "batch_append_all": "Batch append to all",
+  "batch_append_selected": "Batch append to selected",
+  "batch_append_to": "Append data to"
 }

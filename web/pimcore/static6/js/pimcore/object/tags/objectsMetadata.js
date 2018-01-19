@@ -18,6 +18,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     dataChanged: false,
     idProperty: "id",
     pathProperty: "fullpath",
+    allowBatchAppend: true,
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -49,7 +50,6 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             fields.push(this.fieldConfig.columns[i].key);
         }
-
 
         this.store = new Ext.data.JsonStore({
             data: this.data,

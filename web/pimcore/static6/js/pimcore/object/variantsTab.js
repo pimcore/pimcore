@@ -21,6 +21,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         this.element = object;
         this.searchType = "folder";
         this.noBatchColumns = [];
+        this.batchAppendColumns = [];
     },
 
     getLayout: function () {
@@ -102,7 +103,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         gridHelper.enableEditor = true;
         gridHelper.baseParams.objectId = this.element.id;
 
-        this.store = gridHelper.getStore(this.noBatchColumns);
+        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns);
         this.store.setPageSize(itemsPerPage);
 
         var gridColumns = gridHelper.getGridColumns();

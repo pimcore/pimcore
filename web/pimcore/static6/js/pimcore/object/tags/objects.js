@@ -18,6 +18,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     dataChanged: false,
     idProperty: "id",
     pathProperty: "path",
+    allowBatchAppend: true,
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -725,6 +726,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     },
 
     requestNicePathData: function (targets) {
+        if (!this.object) {
+            return;
+        }
         targets = this.normalizeTargetData(targets);
 
         pimcore.helpers.requestNicePathData(
