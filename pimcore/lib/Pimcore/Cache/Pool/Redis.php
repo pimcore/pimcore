@@ -82,7 +82,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     /**
      * @var bool
      */
-    protected $useLua = false;
+    protected $useLua = true;
 
     /**
      * Lua's unpack() has a limit on the size of the table imposed by

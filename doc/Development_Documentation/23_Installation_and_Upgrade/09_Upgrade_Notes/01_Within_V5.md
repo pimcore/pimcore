@@ -1,5 +1,12 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 188 (2018-01-26)
+
+In a highly concurrent setup, the [**Redis Cache**](../../19_Development_Tools_and_Details/09_Cache/README.md)
+adapter can lead to inconsistencies resulting in items losing cache tags and not being cleared anymore on save. This was
+fixed in the Lua version of the cache adapter and the `use_lua` option now defaults to true. Please note that Lua scripting
+is not available in Redis versions prior to 2.6.0.
+
 ## Build 183 (2018-01-23)
 
 The `pimcore:cache:clear` command semantics for the `-o` and `-a` option changed to follow option semantics as in other

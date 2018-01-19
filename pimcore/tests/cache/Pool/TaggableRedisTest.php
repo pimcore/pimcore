@@ -16,7 +16,7 @@ class TaggableRedisTest extends TaggableCachePoolTest
     use RedisItemPoolTrait;
 
     protected $skippedTests = [
-        'testInvalidateTag' => 'Invalidate tags is currently not working properly on redis',
+        'testInvalidateTag' => 'Invalidate tags is currently not working properly on Redis.',
     ];
 
     /**
