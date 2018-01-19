@@ -216,7 +216,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         });
         this.batchWin = new Ext.Window({
             modal: false,
-            title: t("batch_edit_field") + " " + fieldInfo.header,
+            title: t("batch_edit_field") + " " + fieldInfo.text,
             items: [formPanel],
             bodyStyle: "background: #fff;",
             width: 700,
