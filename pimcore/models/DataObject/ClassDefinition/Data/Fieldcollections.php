@@ -344,7 +344,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getAllowedTypes()
     {

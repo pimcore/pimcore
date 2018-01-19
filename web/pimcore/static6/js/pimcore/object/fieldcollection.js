@@ -67,8 +67,6 @@ pimcore.object.fieldcollection = Class.create({
                 }
             });
 
-            // iconCls: "pimcore_icon_fieldcollection",
-
             this.tree = Ext.create('Ext.tree.Panel', {
                 id: "pimcore_panel_fieldcollections_tree",
                 store: this.store,

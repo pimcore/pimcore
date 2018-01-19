@@ -828,11 +828,59 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("creationDate") + " (" + t("search") + ")",
                     name: "propertyVisibility.search.creationDate",
                     checked: this.data.propertyVisibility.search.creationDate
-                }
+                },
+                {
+                    xtype: "displayfield",
+                    hideLabel: true,
+                    width: 600,
+                    value: "<b>" + t('uses_these_bricks') + "</b>",
+                    cls: "pimcore_extra_label_headline"
+                },
+                this.getBricksGrid()
+
             ]
         });
 
+        this.rootPanel.on("afterrender", function() {
+            this.usagesStore.reload()
+        }.bind(this));
+
         return this.rootPanel;
+    },
+
+    getBricksGrid: function() {
+        this.usagesStore = new Ext.data.ArrayStore({
+            proxy: {
+                url: '/admin/class/get-bricks-usages',
+                type: 'ajax',
+                reader: {
+                    type: 'json'
+                },
+                extraParams: {
+                    classId: this.getId()
+                }
+            },
+            fields: ["objectbrick", "field"]
+        });
+
+        var usagesGrid = new Ext.grid.GridPanel({
+            frame: false,
+            autoScroll: true,
+            store: this.usagesStore,
+            columnLines: true,
+            stripeRows: true,
+            plugins: ['gridfilters'],
+            width: 600,
+            columns: [
+                {text: t('objectbrick'), sortable: true, dataIndex: 'objectbrick', filter: 'string', flex: 1},
+                {text: t('field'), sortable: true, dataIndex: 'field', filter: 'string', flex: 1}
+            ],
+            viewConfig: {
+                forceFit: true
+            }
+        });
+        return usagesGrid;
+
     },
 
     addLayoutChild: function (type, initData, context) {

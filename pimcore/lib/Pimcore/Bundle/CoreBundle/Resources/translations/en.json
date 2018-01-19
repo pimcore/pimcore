@@ -1822,5 +1822,7 @@
   "restore_failed": "Restore failed",
   "batch_append_all": "Batch append to all",
   "batch_append_selected": "Batch append to selected",
-  "batch_append_to": "Append data to"
+  "batch_append_to": "Append data to",
+  "used_by_class": "Used by class:",
+  "uses_these_bricks": "Uses these bricks:"
 }

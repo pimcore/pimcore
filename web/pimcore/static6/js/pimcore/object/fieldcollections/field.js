@@ -15,31 +15,68 @@ pimcore.registerNS("pimcore.object.fieldcollections.field");
 pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'fieldcollection',
-    disallowedDataTypes: ["nonownerobjects","user","fieldcollections","localizedfields", "objectbricks",
-                                                                "objectsMetadata"],
+    disallowedDataTypes: ["nonownerobjects", "user", "fieldcollections", "localizedfields", "objectbricks",
+        "objectsMetadata"],
     uploadUrl: '/admin/class/import-fieldcollection',
     exportUrl: "/admin/class/export-fieldcollection",
     context: "fieldcollection",
 
-    
-    getId: function(){
-        return  this.data.key;
+    getId: function () {
+        return this.data.key;
     },
 
     getRootPanel: function () {
 
+        this.usagesStore = new Ext.data.ArrayStore({
+            proxy: {
+                url: '/admin/class/get-fieldcollection-usages',
+                type: 'ajax',
+                reader: {
+                    type: 'json'
+                },
+                extraParams: {
+                    key: this.data.key
+                }
+            },
+            fields: ["class", "field"]
+        });
+
+        var usagesGrid = new Ext.grid.GridPanel({
+            frame: false,
+            autoScroll: true,
+            store: this.usagesStore,
+            columnLines: true,
+            stripeRows: true,
+            plugins: ['gridfilters'],
+            width: 600,
+            columns: [
+                {text: t('class'), sortable: true, dataIndex: 'class', filter: 'string', flex: 1},
+                {text: t('field'), sortable: true, dataIndex: 'field', filter: 'string', flex: 1}
+            ],
+            viewConfig: {
+                forceFit: true
+            }
+        });
+
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
-            //id: "pimcore_fieldcollection_editor_panel_" + this.getId(),
             items: [{
                 xtype: "textfield",
                 width: 400,
                 name: "parentClass",
                 fieldLabel: t("parent_class"),
                 value: this.data.parentClass
-            }]
+            }, {
+                xtype: 'displayfield',
+                text: '<b>' + t("used_by_class") + '</b>'
+            },
+                usagesGrid]
         });
+
+        this.rootPanel.on("afterrender", function() {
+            this.usagesStore.reload()
+        }.bind(this));
 
         return this.rootPanel;
     },
@@ -83,15 +120,15 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         pimcore.helpers.showNotification(t("error"), t("definition_save_error"), "error");
     },
 
-    upload: function() {
+    upload: function () {
 
-        pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function() {
+        pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function () {
             Ext.Ajax.request({
                 url: "/admin/class/fieldcollection-get",
                 params: {
                     id: this.getId()
                 },
-                success: function(response) {
+                success: function (response) {
                     this.data = Ext.decode(response.responseText);
                     this.parentPanel.getEditPanel().removeAll();
                     this.addLayout();

@@ -1379,4 +1379,69 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         // nothing to do
     }
+
+    /**
+ * @Route("/get-fieldcollection-usages")
+ *
+ * @param Request $request
+ *
+ * @return Response
+ */
+    public function getFieldcollectionUsagesAction(Request $request)
+    {
+        $key = $request->get('key');
+        $result = [];
+
+        $classes = new DataObject\ClassDefinition\Listing();
+        $classes = $classes->load();
+        foreach ($classes as $class) {
+            $fieldDefs = $class->getFieldDefinitions();
+            foreach ($fieldDefs as $fieldDef) {
+                if ($fieldDef instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    $allowedKeys = $fieldDef->getAllowedTypes();
+                    if (is_array($allowedKeys) && in_array($key, $allowedKeys)) {
+                        $result[] = [
+                            'class' => $class->getName(),
+                            'field' => $fieldDef->getName()
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $this->adminJson($result);
+    }
+
+
+    /**
+     * @Route("/get-bricks-usages")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function getBrickUsagesAction(Request $request)
+    {
+        $classId = $request->get('classId');
+        $myclass = DataObject\ClassDefinition::getById($classId);
+
+
+        $result = [];
+
+        $brickDefinitions = new DataObject\Objectbrick\Definition\Listing();
+        $brickDefinitions = $brickDefinitions->load();
+        foreach ($brickDefinitions as $brickDefinition) {
+            $classes = $brickDefinition->getClassDefinitions();
+            foreach ($classes as $class) {
+                if ($myclass->getName() == $class["classname"]) {
+                    $result[] = [
+                        'objectbrick' =>$brickDefinition->getKey(),
+                        'field' => $class["fieldname"]
+                    ];
+                }
+            }
+        }
+
+        return $this->adminJson($result);
+    }
 }
