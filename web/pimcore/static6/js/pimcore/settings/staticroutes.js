@@ -143,6 +143,7 @@ pimcore.settings.staticroutes = Class.create({
                         },
                         fields:["name"]
                     }),
+                    matchFieldWidth: false,
                     queryMode: 'local',
                     triggerAction:"all",
                     displayField:'name',
