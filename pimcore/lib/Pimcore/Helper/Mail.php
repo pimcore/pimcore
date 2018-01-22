@@ -225,10 +225,12 @@ CSS;
                 $replacePrefix = $site->getRootPath();
             }
 
-            // fallback
-            if (!$hostUrl) {
-                $hostUrl = \Pimcore\Tool::getHostUrl();
-            }
+
+        }
+
+        // fallback
+        if (!$hostUrl) {
+            $hostUrl = \Pimcore\Tool::getHostUrl();
         }
 
         //matches all links
