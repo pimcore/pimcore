@@ -48,14 +48,15 @@ class Maintenance
         $logFiles = glob(PIMCORE_LOG_DIRECTORY . '/*.log');
 
         foreach ($logFiles as $log) {
-            if (file_exists($log) && filesize($log) > 200000000) {
+            if (file_exists($log) && date('Y-m-d', filectime($log)) != date('Y-m-d')) {
                 // archive log (will be cleaned up by maintenance)
-                rename($log, $log . '-archive-' . date('m-d-Y-H-i'));
+                $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', filectime($log)) . ".log";
+                rename($log, $archiveFilename);
             }
         }
 
         // archive and cleanup logs
-        $files = glob(PIMCORE_LOG_DIRECTORY . '/*.log-archive-*');
+        $files = glob(PIMCORE_LOG_DIRECTORY . '/*-archive-*.log');
         if (is_array($files)) {
             foreach ($files as $file) {
                 if (filemtime($file) < (time() - (86400 * 30))) { // we keep the logs for 30 days
