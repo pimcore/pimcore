@@ -456,12 +456,13 @@ class Asset extends Element\AbstractElement
         return PIMCORE_ASSET_DIRECTORY . $this->getRealFullPath();
     }
 
+
     /**
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
      * @return $this
-     *
      * @throws \Exception
      */
-    public function save()
+    public function save($params = [])
     {
         try {
             // not only check if the type is set but also if the implementation can be found
@@ -472,16 +473,21 @@ class Asset extends Element\AbstractElement
         }
 
         if (!$dummyAsset) {
-            throw new \Exception("unable to resolve asset implementation with type: " . $this->getType());
+            throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
         }
 
         $isUpdate = false;
+
+        $preEvent = new AssetEvent($this, $params);
+
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, $preEvent);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, new AssetEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, $preEvent);
         }
+
+        $params = $preEvent->getArguments();
 
         $this->correctPath();
 
@@ -503,7 +509,7 @@ class Asset extends Element\AbstractElement
                     $oldPath = $this->getDao()->getCurrentFullPath();
                 }
 
-                $this->update();
+                $this->update($params);
 
                 // if the old path is different from the new path, update all children
                 $updatedChildren = [];
@@ -622,9 +628,10 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
      * @throws \Exception
      */
-    protected function update()
+    protected function update($params = [])
     {
         $this->updateModificationInfos();
 
@@ -748,7 +755,7 @@ class Asset extends Element\AbstractElement
         // this has to be after the registry update and the DB update, otherwise this would cause problem in the
         // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
         if ($this->getType() != 'folder') {
-            $this->saveVersion(false, false);
+            $this->saveVersion(false, false, isset($params["versionNote"]) ? $params["versionNote"] : null);
         }
 
         $this->closeStream();
@@ -757,12 +764,12 @@ class Asset extends Element\AbstractElement
     /**
      * @param bool $setModificationDate
      * @param bool $callPluginHook
-     *
+     * @param string $versionNote version note
      * @return null|Version
      *
      * @throws \Exception
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true)
+    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote = null)
     {
 
         // hook should be also called if "save only new version" is selected
@@ -794,6 +801,7 @@ class Asset extends Element\AbstractElement
             $version->setDate($this->getModificationDate());
             $version->setUserId($this->getUserModification());
             $version->setData($this);
+            $version->setNote($versionNote);
             $version->save();
         }
 

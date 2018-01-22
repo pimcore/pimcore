@@ -143,10 +143,10 @@ class Concrete extends AbstractObject
 
     /**
      * @param $isUpdate
-     *
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
      * @throws \Exception
      */
-    protected function update($isUpdate = null)
+    protected function update($isUpdate = null, $params = [])
     {
         $fieldDefintions = $this->getClass()->getFieldDefinitions();
         foreach ($fieldDefintions as $fd) {
@@ -196,13 +196,13 @@ class Concrete extends AbstractObject
             }
         }
 
-        parent::update($isUpdate);
+        parent::update($isUpdate, $params);
 
         $this->getDao()->update($isUpdate);
 
         // scheduled tasks are saved in $this->saveVersion();
 
-        $this->saveVersion(false, false);
+        $this->saveVersion(false, false, isset($params["versionNote"]) ? $params["versionNote"] : null);
         $this->saveChildData();
     }
 
@@ -249,10 +249,11 @@ class Concrete extends AbstractObject
      *
      * @param bool $setModificationDate
      * @param bool $callPluginHook
+     * @param string $versionNote version note
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true)
+    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote)
     {
         if ($setModificationDate) {
             $this->setModificationDate(time());
@@ -282,6 +283,7 @@ class Concrete extends AbstractObject
             $version->setDate($this->getModificationDate());
             $version->setUserId($this->getUserModification());
             $version->setData($this);
+            $version->setNote($versionNote);
             $version->save();
         }
 

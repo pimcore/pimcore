@@ -28,10 +28,10 @@ class AssetEvent extends Event implements ElementEventInterface
     protected $asset;
 
     /**
-     * DocumentEvent constructor.
+     * AssetEvent constructor.
      *
      * @param Asset $asset
-     * @param array $arguments
+     * @param array $arguments additional parameters (e.g. "versionNote" for the version note)
      */
     public function __construct(Asset $asset, array $arguments = [])
     {

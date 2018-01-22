@@ -560,19 +560,23 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
      * @return $this
-     *
      * @throws \Exception
      */
-    public function save()
+    public function save($params = [])
     {
         $isUpdate = false;
+
+        $preEvent = new DataObjectEvent($this, $params);
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, $preEvent);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_ADD, new DataObjectEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_ADD, $preEvent);
         }
+
+        $params = $preEvent->getArguments();
 
         $this->correctPath();
 
@@ -612,7 +616,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
 
-                $this->update($isUpdate);
+                $this->update($isUpdate, $params);
 
                 self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -727,7 +731,7 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception
      */
-    protected function update($isUpdate = null)
+    protected function update($isUpdate = null, $params = [])
     {
 
         // set mod date

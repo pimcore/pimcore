@@ -86,9 +86,10 @@ abstract class PageSnippet extends Model\Document
     public $legacy = false;
 
     /**
-     * @see Document::update
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @throws \Exception
      */
-    protected function update()
+    protected function update($params = [])
     {
 
         // update elements
@@ -112,21 +113,21 @@ abstract class PageSnippet extends Model\Document
         $this->getElements();
 
         // update this
-        parent::update();
+        parent::update($params);
 
         // save version if needed
-        $this->saveVersion(false, false);
+        $this->saveVersion(false, false, isset($params["versionNote"]) ? $params["versionNote"] : null);
     }
 
     /**
      * @param bool $setModificationDate
      * @param bool $callPluginHook
-     *
+     * @param $versionNote string version note
      * @return null|Model\Version
      *
      * @throws \Exception
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true)
+    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote = null)
     {
 
         // hook should be also called if "save only new version" is selected
@@ -158,6 +159,7 @@ abstract class PageSnippet extends Model\Document
             $version->setDate($this->getModificationDate());
             $version->setUserId($this->getUserModification());
             $version->setData($this);
+            $version->setNote($versionNote);
             $version->save();
         }
 

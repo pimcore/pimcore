@@ -402,20 +402,24 @@ class Document extends Element\AbstractElement
 
     /**
      * Save the document.
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @return Document
      *
      * @throws \Exception
      */
-    public function save()
+    public function save($params = [])
     {
         $isUpdate = false;
+        $preEvent = new DocumentEvent($this, $params);
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, $preEvent);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_ADD, new DocumentEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_ADD, $preEvent);
         }
+
+        $params = $preEvent->getArguments();
 
         $this->correctPath();
 
@@ -439,7 +443,7 @@ class Document extends Element\AbstractElement
                     $oldPath = $this->getDao()->getCurrentFullPath();
                 }
 
-                $this->update();
+                $this->update($params);
 
                 // if the old path is different from the new path, update all children
                 $updatedChildren = [];
@@ -548,9 +552,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * @param array $params additional parameters (e.g. "versionNote" for the version note)
      * @throws \Exception
      */
-    protected function update()
+    protected function update($params = [])
     {
         $disallowedKeysInFirstLevel = ['install', 'admin', 'webservice', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {

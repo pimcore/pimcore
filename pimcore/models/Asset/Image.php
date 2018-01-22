@@ -33,7 +33,11 @@ class Image extends Model\Asset
      */
     public $type = 'image';
 
-    protected function update()
+    /**
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @throws \Exception
+     */
+    protected function update($params = [])
     {
 
         // only do this if the file exists and contains data
@@ -59,7 +63,7 @@ class Image extends Model\Asset
             $this->setCustomSetting('imageDimensionsCalculated', true);
         }
 
-        parent::update();
+        parent::update($params);
 
         $this->clearThumbnails();
 

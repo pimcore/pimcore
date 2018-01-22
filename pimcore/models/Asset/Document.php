@@ -31,7 +31,12 @@ class Document extends Model\Asset
      */
     public $type = 'document';
 
-    protected function update()
+
+    /**
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @throws \Exception
+     */
+    protected function update($params = [])
     {
         $this->clearThumbnails();
 
@@ -49,7 +54,7 @@ class Document extends Model\Asset
             unlink($tmpFile);
         }
 
-        parent::update();
+        parent::update($params);
     }
 
     public function delete()

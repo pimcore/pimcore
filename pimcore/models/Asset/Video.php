@@ -32,7 +32,12 @@ class Video extends Model\Asset
      */
     public $type = 'video';
 
-    protected function update()
+
+    /**
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @throws \Exception
+     */
+    protected function update($params = [])
     {
 
         // only do this if the file exists and contains data
@@ -45,7 +50,7 @@ class Video extends Model\Asset
         }
 
         $this->clearThumbnails();
-        parent::update();
+        parent::update($params);
     }
 
     public function delete()
