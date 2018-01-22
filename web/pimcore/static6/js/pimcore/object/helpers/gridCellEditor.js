@@ -116,8 +116,13 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
     completeEdit: function(remainVisible) {
         var me = this,
             field = me.field,
+            fieldInfo = me.config.fieldInfo,
             startValue = me.startValue,
             value;
+
+        if(fieldInfo.layout.noteditable) {
+            return;
+        }
 
         value = me.getValue();
 
