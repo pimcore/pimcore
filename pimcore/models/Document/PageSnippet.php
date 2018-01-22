@@ -29,6 +29,8 @@ use Pimcore\Model\Document;
  */
 abstract class PageSnippet extends Model\Document
 {
+    use Document\Traits\ScheduledTasksTrait;
+
     /**
      * @var string
      */
@@ -62,13 +64,6 @@ abstract class PageSnippet extends Model\Document
      * @var array
      */
     public $versions = null;
-
-    /**
-     * Contains all scheduled tasks
-     *
-     * @var array
-     */
-    public $scheduledTasks = null;
 
     /**
      * @var null|int
@@ -543,48 +538,6 @@ abstract class PageSnippet extends Model\Document
     public function getHref()
     {
         return $this->getFullPath();
-    }
-
-    /**
-     * @return array the $scheduledTasks
-     */
-    public function getScheduledTasks()
-    {
-        if ($this->scheduledTasks === null) {
-            $taskList = new Model\Schedule\Task\Listing();
-            $taskList->setCondition("cid = ? AND ctype='document'", $this->getId());
-            $this->setScheduledTasks($taskList->load());
-        }
-
-        return $this->scheduledTasks;
-    }
-
-    /**
-     * @param $scheduledTasks
-     *
-     * @return $this
-     */
-    public function setScheduledTasks($scheduledTasks)
-    {
-        $this->scheduledTasks = $scheduledTasks;
-
-        return $this;
-    }
-
-    public function saveScheduledTasks()
-    {
-        $scheduled_tasks = $this->getScheduledTasks();
-        $this->getDao()->deleteAllTasks();
-
-        if (is_array($scheduled_tasks) && count($scheduled_tasks) > 0) {
-            foreach ($scheduled_tasks as $task) {
-                $task->setId(null);
-                $task->setDao(null);
-                $task->setCid($this->getId());
-                $task->setCtype('document');
-                $task->save();
-            }
-        }
     }
 
     public function __sleep()

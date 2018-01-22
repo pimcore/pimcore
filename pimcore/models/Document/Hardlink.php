@@ -28,6 +28,7 @@ use Pimcore\Model\Redirect;
 class Hardlink extends Document
 {
     use Element\ChildsCompatibilityTrait;
+    use Document\Traits\ScheduledTasksTrait;
 
     /**
      * static type of this object
@@ -300,5 +301,7 @@ class Hardlink extends Document
             $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
             $redirect->save();
         }
+
+        $this->saveScheduledTasks();
     }
 }
