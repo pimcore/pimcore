@@ -26,6 +26,8 @@ use Pimcore\Model\Document;
  */
 class Link extends Model\Document
 {
+    use Document\Traits\ScheduledTasksTrait;
+
     /**
      * Contains the ID of the internal ID
      *
@@ -543,6 +545,17 @@ class Link extends Model\Document
 
         return '<a href="' . $this->getLink() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function update()
+    {
+        parent::update();
+
+        $this->saveScheduledTasks();
+    }
+
 
     public function __sleep()
     {

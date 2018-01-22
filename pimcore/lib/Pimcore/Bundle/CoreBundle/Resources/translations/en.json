@@ -1062,7 +1062,7 @@
   "overwrite_object_with_same_key": "Overwrite",
   "overwrite_object_with_same_key_description": "When overwrite is checked, instead of creating a new object for each import row, objects with the same key are replaced. Existing objects in your import folder with keys not contained in the import file will remain untouched. Please be aware that all objects which have a matching key in the import file will be replaced in the target folder. This is also true for objects based on a different class or even object folders! Object fields which are set to ignore in the field mapping keep their old value.",
   "object_import_filename_description": "select the field which is used to generate the object key",
-  "save_pubish_close": "Save,publish and close",
+  "save_pubish_close": "Save, publish and close",
   "save_close": "Save and close",
   "webservice": "Web Service API",
   "webservice_enabled": "Web Service API enabled",
