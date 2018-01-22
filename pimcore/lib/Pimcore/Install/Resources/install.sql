@@ -288,7 +288,8 @@ CREATE TABLE `email_log` (
   `bcc` longtext,
   `sentDate` int(11) UNSIGNED DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `sentDate` (`sentDate`, `id`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `glossary`;
