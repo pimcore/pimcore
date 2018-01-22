@@ -30,36 +30,53 @@ class CacheClearCommand extends AbstractCommand
             ->addOption(
                 'tags',
                 't',
-                InputOption::VALUE_OPTIONAL,
-                'only specific tags (csv list of tags)'
+                InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY,
+                'Only specific tags (csv list of tags)'
             )
             ->addOption(
                 'output',
                 'o',
-                InputOption::VALUE_OPTIONAL,
-                'only output cache'
+                InputOption::VALUE_NONE,
+                'Only output cache'
             )
             ->addOption(
                 'all',
                 'a',
-                InputOption::VALUE_OPTIONAL,
-                'clear all'
+                InputOption::VALUE_NONE,
+                'Clear all'
             )
         ;
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption('tags')) {
-            $tags = explode(',', $input->getOption('tags'));
+            $tags = $this->prepareTags($input->getOption('tags'));
             Cache::clearTags($tags);
         } elseif ($input->getOption('output')) {
             Cache::clearTag('output');
         } else {
             Cache::clearAll();
         }
+    }
+
+    private function prepareTags(array $tags): array
+    {
+        // previous implementations didn't use VALUE_IS_ARRAY and just supported csv strings, so we not iterate
+        // through the input array and split values
+        // -t foo -t bar,baz results in [foo, bar, baz]
+        $result = [];
+        foreach ($tags as $tagEntries) {
+            $tagEntries = explode(',', $tagEntries);
+            foreach ($tagEntries as $tagEntry) {
+                $tagEntry = trim($tagEntry);
+
+                if (!empty($tagEntry)) {
+                    $result[] = $tagEntry;
+                }
+            }
+        }
+
+        return $result;
     }
 }
