@@ -98,7 +98,10 @@ pimcore.object.versions = Class.create({
                 split: true,
                 selModel: new Ext.selection.RowModel({
                     mode: 'MULTI'
-                })
+                }),
+                viewConfig: {
+                    xtype: 'patchedgridview'
+                }
             });
 
             grid.on("rowclick", this.onRowClick.bind(this));

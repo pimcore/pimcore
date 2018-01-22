@@ -98,7 +98,10 @@ pimcore.asset.versions = Class.create({
                 width: 450,
                 title: t('available_versions'),
                 region: "west",
-                split: true
+                split: true,
+                viewConfig: {
+                    xtype: 'patchedgridview'
+                }
             });
 
             grid.on("rowclick", this.onRowClick.bind(this));
