@@ -57,6 +57,11 @@ abstract class AbstractListing extends AbstractModel
     protected $conditionVariables = [];
 
     /**
+     * @var array
+     */
+    protected $conditionVariablesFromSetCondition;
+
+    /**
      * @var string
      */
     protected $groupBy;
