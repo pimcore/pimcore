@@ -14,13 +14,16 @@
 pimcore.registerNS("pimcore.element.scheduler");
 pimcore.element.scheduler = Class.create({
 
-    initialize: function(element, type) {
+    initialize: function(element, type, options) {
+        this.options = Ext.Object.merge({
+            supportsVersions: true
+        }, options);
+
         this.element = element;
         this.type = type;
     },
 
     getLayout: function () {
-
         if (this.layout == null) {
 
             var tasksData = [];
@@ -28,94 +31,96 @@ pimcore.element.scheduler = Class.create({
             var rawTask = [];
 
             if (this.element.data.scheduledTasks.length > 0) {
+                var td = [];
+
                 for (var i = 0; i < this.element.data.scheduledTasks.length; i++) {
                     rawTask = this.element.data.scheduledTasks[i];
                     d = new Date(intval(rawTask.date) * 1000);
-                    tasksData.push([d, Ext.Date.format(d, "H:i"), rawTask.action, rawTask.version, rawTask.active]);
+
+                    td = [
+                        d,
+                        Ext.Date.format(d, "H:i"),
+                        rawTask.action
+                    ];
+
+                    if (this.options.supportsVersions) {
+                        td.push(rawTask.version);
+                    }
+
+                    td.push(rawTask.active);
+                    tasksData.push(td);
                 }
             }
 
-            var store = new Ext.data.SimpleStore({
-                fields: [{name: "date", convert: function (v, rec) {
-                    var ret = v;
-                    if(v instanceof Date) {
-                        ret = Ext.Date.format(v, "Y-m-d");
+            var storeFields = [
+                {
+                    name: "date",
+                    convert: function (v, rec) {
+                        var ret = v;
+                        if (v instanceof Date) {
+                            ret = Ext.Date.format(v, "Y-m-d");
+                        }
+                        return ret;
                     }
-                    return ret;
-                }}, {name: "time", convert: function (v, rec) {
+                }, {
+                name: "time",
+                convert: function (v, rec) {
                     var ret = v;
-                    if(v instanceof Date) {
+                    if (v instanceof Date) {
                         ret = Ext.Date.format(v, "H:i");
                     }
                     return ret;
-                }}, "action","version","active"],
+                }
+            },
+                "action"
+            ];
+
+            if (this.options.supportsVersions) {
+                storeFields.push("version");
+            }
+
+            storeFields.push("active");
+
+            var store = new Ext.data.SimpleStore({
+                fields: storeFields,
                 data: tasksData
             });
 
-            var actionTypes = null;
-            if (this.type == "document") {
-                actionTypes = new Ext.data.SimpleStore({
-                    fields: ['key', 'name'],
-                    data: [
-                        ["publish", t("publish")],
-                        ["unpublish", t("unpublish")],
-                        ["delete", t("delete")],
-                        ["publish-version", t("publish_version")]
-                    ]
-                });
-            }
-            else if (this.type == "asset") {
-                actionTypes = new Ext.data.SimpleStore({
-                    fields: ['key', 'name'],
-                    data: [
-                        ["delete", t("delete")],
-                        ["publish-version", t("publish_version")]
-                    ]
-                });
-            }
-            else if (this.type == "object") {
-                actionTypes = new Ext.data.SimpleStore({
-                    fields: ['key', 'name'],
-                    data: [
-                        ["publish", t("publish")],
-                        ["unpublish", t("unpublish")],
-                        ["delete", t("delete")],
-                        ["publish-version", t("publish_version")]
-                    ]
-                });
-            }
+            var actionTypes = this.buildActionsColumnStore();
 
-            this.versions = new Ext.data.Store({
-                autoDestroy: true,
-                proxy: {
-                    type: 'ajax',
-                    url: "/admin/element/get-versions",
-                    extraParams: {
-                        id: this.element.id,
-                        elementType: this.type
-                    },
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'versions'
-                    }
-                },
-                fields: ['id', {name: 'date', convert: function (v, rec) {
-                    var d = new Date(intval(v) * 1000);
-
-                    var ret = Ext.Date.format(d, "Y-m-d H:i");
-                    if (rec.data.user) {
-                        ret += " - " + rec.data.user.name;
-                    }
-                    return ret;
-                }}, 'note', {name:'name', convert: function (v, rec) {
-                    if (rec.data.user) {
-                        if (rec.data.user.name) {
-                            return rec.data.user.name;
+            if (this.options.supportsVersions) {
+                this.versions = new Ext.data.Store({
+                    autoDestroy: true,
+                    proxy: {
+                        type: 'ajax',
+                        url: "/admin/element/get-versions",
+                        extraParams: {
+                            id: this.element.id,
+                            elementType: this.type
+                        },
+                        reader: {
+                            type: 'json',
+                            rootProperty: 'versions'
                         }
-                    }
-                    return null;
-                }}]
-            });
+                    },
+                    fields: ['id', {name: 'date', convert: function (v, rec) {
+                            var d = new Date(intval(v) * 1000);
+
+                            var ret = Ext.Date.format(d, "Y-m-d H:i");
+                            if (rec.data.user) {
+                                ret += " - " + rec.data.user.name;
+                            }
+                            return ret;
+                        }}, 'note', {name:'name', convert: function (v, rec) {
+                            if (rec.data.user) {
+                                if (rec.data.user.name) {
+                                    return rec.data.user.name;
+                                }
+                            }
+                            return null;
+                        }}]
+                });
+            }
 
             var checkColumn = Ext.create('Ext.grid.column.Check', {
                 text: t("active"),
@@ -150,13 +155,20 @@ pimcore.element.scheduler = Class.create({
                     }
 
                     return "";
-                }},
-                {text: t("version"), width: 200, sortable: false, dataIndex: 'version',
+                }}
+            ];
+
+            if (this.options.supportsVersions) {
+                propertiesColumns.push({
+                    text: t("version"),
+                    width: 200,
+                    sortable: false,
+                    dataIndex: 'version',
                     editor: new Ext.form.ComboBox({
                         triggerAction: 'all',
                         editable: false,
                         store: this.versions,
-                        displayField:'date',
+                        displayField: 'date',
                         valueField: "id",
                         listeners: {
                             "expand": function (el) {
@@ -164,21 +176,22 @@ pimcore.element.scheduler = Class.create({
                             }
                         }
                     })
-                },
-                checkColumn,
-                {
-                    xtype: 'actioncolumn',
-                    menuText: t('delete'),
-                    width: 30,
-                    items: [{
-                        tooltip: t('delete'),
-                        icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
-                        handler: function (grid, rowIndex) {
-                            grid.getStore().removeAt(rowIndex);
-                        }.bind(this)
-                    }]
-                }
-            ];
+                });
+            }
+
+            propertiesColumns.push(checkColumn);
+            propertiesColumns.push({
+                xtype: 'actioncolumn',
+                menuText: t('delete'),
+                width: 30,
+                items: [{
+                    tooltip: t('delete'),
+                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                    handler: function (grid, rowIndex) {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this)
+                }]
+            });
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1
@@ -226,9 +239,40 @@ pimcore.element.scheduler = Class.create({
         return this.layout;
     },
 
+    buildActionsColumnStore: function() {
+        var actions = [];
+
+        if ("document" === this.type) {
+            actions = [
+                ["publish", t("publish")],
+                ["unpublish", t("unpublish")],
+                ["delete", t("delete")]
+            ];
+        }
+        else if ("asset" === this.type) {
+            actions = [
+                ["delete", t("delete")]
+            ];
+        }
+        else if ("object" === this.type) {
+            actions = [
+                ["publish", t("publish")],
+                ["unpublish", t("unpublish")],
+                ["delete", t("delete")]
+            ];
+        }
+
+        if (this.options.supportsVersions) {
+            actions.push(["publish-version", t("publish_version")]);
+        }
+
+        return new Ext.data.SimpleStore({
+            fields: ['key', 'name'],
+            data: actions
+        });
+    },
 
     onAdd: function (btn, ev) {
-
         var model = this.grid.getStore().getModel();
         var u = new model();
         u.set("date", new Date());
@@ -246,7 +290,6 @@ pimcore.element.scheduler = Class.create({
     },
 
     getValues: function () {
-
         if (!this.grid.rendered) {
             throw "scheduler not available";
         }
@@ -254,14 +297,20 @@ pimcore.element.scheduler = Class.create({
         var values = [];
         var data = this.grid.store.getRange();
 
+        var value;
         for (var i = 0; i < data.length; i++) {
-            values.push({
+            value = {
                 date:  data[i].data.date,
                 time: data[i].data.time,
                 action: data[i].data.action,
-                version: data[i].data.version,
                 active: data[i].data.active
-            });
+            };
+
+            if (this.options.supportsVersions) {
+                value.version = data[i].data.version;
+            }
+
+            values.push(value);
         }
 
         return values;

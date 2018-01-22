@@ -33,6 +33,12 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             this.properties = new pimcore.document.properties(this, "document");
         }
 
+        if (this.isAllowed("settings")) {
+            this.scheduler = new pimcore.element.scheduler(this, "document", {
+                supportsVersions: false
+            });
+        }
+
         if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "document");
         }
@@ -41,10 +47,22 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
     },
 
-    getSaveData: function () {
+    getSaveData: function (only) {
         var parameters = {};
-
         parameters.id = this.id;
+
+        // get only scheduled tasks
+        if (only === "scheduler") {
+            try {
+                parameters.scheduler = Ext.encode(this.scheduler.getValues());
+                return parameters;
+            }
+            catch (e) {
+                console.log("scheduler not available");
+                return;
+            }
+        }
+
         var values = this.panel.getForm().getFieldValues();
         values.published = this.data.published;
         parameters.data = Ext.encode(values);
@@ -56,6 +74,16 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             }
             catch (e) {
                 //console.log(e);
+            }
+        }
+
+        if (this.isAllowed("settings")) {
+            // scheduler
+            try {
+                parameters.scheduler = Ext.encode(this.scheduler.getValues());
+            }
+            catch (e5) {
+                //console.log(e5);
             }
         }
 
@@ -117,17 +145,27 @@ pimcore.document.link = Class.create(pimcore.document.document, {
     getLayoutToolbar: function () {
 
         if (!this.toolbar) {
-
             this.toolbarButtons = {};
 
-            this.toolbarButtons.publish = new Ext.Button({
+            this.toolbarButtons.publish = new Ext.SplitButton({
                 text: t('save_and_publish'),
                 iconCls: "pimcore_icon_save_white",
                 cls: "pimcore_save_button",
                 scale: "medium",
-                handler: this.publish.bind(this)
+                handler: this.publish.bind(this),
+                menu: [
+                    {
+                        text: t('save_pubish_close'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.publishClose.bind(this)
+                    },
+                    {
+                        text: t('save_only_scheduled_tasks'),
+                        iconCls: "pimcore_icon_save",
+                        handler: this.save.bind(this, "scheduler", "scheduler")
+                    }
+                ]
             });
-
 
             this.toolbarButtons.unpublish = new Ext.Button({
                 text: t('unpublish'),
@@ -239,6 +277,10 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         }
 
         items.push(this.dependencies.getLayout());
+
+        if (this.isAllowed("settings")) {
+            items.push(this.scheduler.getLayout());
+        }
 
         if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());

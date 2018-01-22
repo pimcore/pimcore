@@ -37,7 +37,6 @@ class HardlinkController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'document')) {
             return $this->adminJson([
@@ -60,6 +59,7 @@ class HardlinkController extends DocumentControllerBase
 
         $this->addTranslationsData($link);
         $this->minimizeProperties($link);
+        $link->getScheduledTasks();
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
@@ -142,5 +142,6 @@ class HardlinkController extends DocumentControllerBase
         }
 
         $this->addPropertiesToDocument($request, $link);
+        $this->addSchedulerToDocument($request, $link);
     }
 }
