@@ -123,45 +123,51 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
             $user = User::getByName($username);
 
-            if (!$user instanceof User) {
-                $view->error = 'user unknown';
-            } else {
-                if ($user->isActive()) {
-                    if ($user->getEmail()) {
-                        $token = Authentication::generateToken($username, $user->getPassword());
-
-                        $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
-                            'username' => $username,
-                            'token'    => $token,
-                            'reset'    => 'true'
-                        ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-                        try {
-                            $event = new LostPasswordEvent($user, $loginUrl);
-                            $this->get('event_dispatcher')->dispatch(AdminEvents::LOGIN_LOSTPASSWORD, $event);
-
-                            // only send mail if it wasn't prevented in event
-                            if ($event->getSendMail()) {
-                                $mail = Tool::getMail([$user->getEmail()], 'Pimcore lost password service');
-                                $mail->setIgnoreDebugMode(true);
-                                $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
-                                $mail->send();
-                            }
-
-                            // directly return event response
-                            if ($event->hasResponse()) {
-                                return $event->getResponse();
-                            }
-
-                            $view->success = true;
-                        } catch (\Exception $e) {
-                            $view->error = 'could not send email';
-                        }
-                    } else {
-                        $view->error = 'user has no email address';
-                    }
-                } else {
+            if ($user instanceof User) {
+                if (!$user->isActive()) {
                     $view->error = 'user inactive';
+                }
+
+                if (!$user->getEmail()) {
+                    $view->error = 'user has no email address';
+                }
+
+                if (!$user->getPassword()) {
+                    $view->error = 'user has no password';
+                }
+            } else {
+                $view->error = 'user unknown';
+            }
+
+            if (!$view->error) {
+                $token = Authentication::generateToken($username, $user->getPassword());
+
+                $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
+                    'username' => $username,
+                    'token'    => $token,
+                    'reset'    => 'true'
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                try {
+                    $event = new LostPasswordEvent($user, $loginUrl);
+                    $this->get('event_dispatcher')->dispatch(AdminEvents::LOGIN_LOSTPASSWORD, $event);
+
+                    // only send mail if it wasn't prevented in event
+                    if ($event->getSendMail()) {
+                        $mail = Tool::getMail([$user->getEmail()], 'Pimcore lost password service');
+                        $mail->setIgnoreDebugMode(true);
+                        $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
+                        $mail->send();
+                    }
+
+                    // directly return event response
+                    if ($event->hasResponse()) {
+                        return $event->getResponse();
+                    }
+
+                    $view->success = true;
+                } catch (\Exception $e) {
+                    $view->error = 'could not send email';
                 }
             }
         }

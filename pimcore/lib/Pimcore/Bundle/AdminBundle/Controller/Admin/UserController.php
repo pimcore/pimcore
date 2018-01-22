@@ -776,21 +776,37 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function getTokenLoginLinkAction(Request $request)
     {
+        /** @var User $user */
         $user = User::getById($request->get('id'));
 
-        if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
-            throw new \Exception('Only admin users are allowed to login as an admin user');
-        }
-
-        if ($user) {
-            $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
-
-            $link = $request->getScheme() . '://' . $request->getHttpHost() . '/admin/login/login?username=' . $user->getName() . '&token=' . $token;
-
+        if (!$user) {
             return $this->adminJson([
-                'link' => $link
-            ]);
+                'success' => false,
+                'message' => $this->trans('login_token_invalid_user_error'),
+            ], Response::HTTP_NOT_FOUND);
         }
+
+        if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
+            return $this->adminJson([
+                'success' => false,
+                'message' => $this->trans('login_token_as_admin_non_admin_user_error'),
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        if (empty($user->getPassword())) {
+            return $this->adminJson([
+                'success' => false,
+                'message' => $this->trans('login_token_no_password_error'),
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
+        $link  = $request->getScheme() . '://' . $request->getHttpHost() . '/admin/login/login?username=' . $user->getName() . '&token=' . $token;
+
+        return $this->adminJson([
+            'success' => true,
+            'link'    => $link
+        ]);
     }
 
     /**
