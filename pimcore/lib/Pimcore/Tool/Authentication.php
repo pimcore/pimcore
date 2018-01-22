@@ -15,6 +15,7 @@
 namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\CryptoException;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
@@ -128,7 +129,12 @@ class Authentication
             }
 
             $passwordHash = $user->getPassword();
-            $decrypted = self::tokenDecrypt($passwordHash, $token);
+
+            try {
+                $decrypted = self::tokenDecrypt($passwordHash, $token);
+            } catch (CryptoException $e) {
+                return null;
+            }
 
             $timestamp = $decrypted[0];
             $timeZone = date_default_timezone_get();
@@ -222,6 +228,10 @@ class Authentication
      */
     public static function generateToken($username, $passwordHash)
     {
+        if (empty($passwordHash)) {
+            throw new \InvalidArgumentException('Can\'t generate token for an empty password');
+        }
+
         $data = time() - 1 . '|' . $username;
         $token = Crypto::encryptWithPassword($data, $passwordHash);
 
