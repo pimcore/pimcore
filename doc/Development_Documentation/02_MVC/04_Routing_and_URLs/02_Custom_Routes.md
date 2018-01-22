@@ -125,7 +125,7 @@ Output will be: `/news-category/random+text_5_category_776`
 ### Setting locale from a route
 
 Symfony supports a special `_locale` parameter which is automatically used as current locale if set via route 
-parameters (see [https://symfony.com/doc/current/translation/locale.html#the-locale-and-the-url](https://symfony.com/doc/current/translation/locale.html#the-locale-and-the-url)).
+parameters (see [https://symfony.com/doc/3.4/translation/locale.html#the-locale-and-the-url](https://symfony.com/doc/3.4/translation/locale.html#the-locale-and-the-url)).
 As an example a simple route matching `/{_locale}/test`:
 
 | Name          | Pattern                                                  | Reverse                                          | Module     | Controller     | Action     | Variables                | Defaults     | Site     | Priority     |
