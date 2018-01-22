@@ -411,5 +411,4 @@ abstract class AbstractListing extends AbstractModel
     {
         return $this->conditionVariablesFromSetCondition;
     }
-
 }

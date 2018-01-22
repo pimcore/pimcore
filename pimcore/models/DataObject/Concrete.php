@@ -144,6 +144,7 @@ class Concrete extends AbstractObject
     /**
      * @param $isUpdate
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @throws \Exception
      */
     protected function update($isUpdate = null, $params = [])
@@ -202,7 +203,7 @@ class Concrete extends AbstractObject
 
         // scheduled tasks are saved in $this->saveVersion();
 
-        $this->saveVersion(false, false, isset($params["versionNote"]) ? $params["versionNote"] : null);
+        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
         $this->saveChildData();
     }
 

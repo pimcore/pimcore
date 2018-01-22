@@ -87,6 +87,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @throws \Exception
      */
     protected function update($params = [])
@@ -116,13 +117,14 @@ abstract class PageSnippet extends Model\Document
         parent::update($params);
 
         // save version if needed
-        $this->saveVersion(false, false, isset($params["versionNote"]) ? $params["versionNote"] : null);
+        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
     }
 
     /**
      * @param bool $setModificationDate
      * @param bool $callPluginHook
      * @param $versionNote string version note
+     *
      * @return null|Model\Version
      *
      * @throws \Exception

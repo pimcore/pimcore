@@ -35,6 +35,7 @@ class Image extends Model\Asset
 
     /**
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @throws \Exception
      */
     protected function update($params = [])

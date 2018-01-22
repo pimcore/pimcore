@@ -402,6 +402,7 @@ class Document extends Element\AbstractElement
 
     /**
      * Save the document.
+     *
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @return Document
@@ -553,6 +554,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @throws \Exception
      */
     protected function update($params = [])

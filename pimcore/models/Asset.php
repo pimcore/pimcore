@@ -456,10 +456,11 @@ class Asset extends Element\AbstractElement
         return PIMCORE_ASSET_DIRECTORY . $this->getRealFullPath();
     }
 
-
     /**
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @return $this
+     *
      * @throws \Exception
      */
     public function save($params = [])
@@ -629,6 +630,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @throws \Exception
      */
     protected function update($params = [])
@@ -755,7 +757,7 @@ class Asset extends Element\AbstractElement
         // this has to be after the registry update and the DB update, otherwise this would cause problem in the
         // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
         if ($this->getType() != 'folder') {
-            $this->saveVersion(false, false, isset($params["versionNote"]) ? $params["versionNote"] : null);
+            $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
         }
 
         $this->closeStream();
@@ -765,6 +767,7 @@ class Asset extends Element\AbstractElement
      * @param bool $setModificationDate
      * @param bool $callPluginHook
      * @param string $versionNote version note
+     *
      * @return null|Version
      *
      * @throws \Exception

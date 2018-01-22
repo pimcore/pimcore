@@ -561,7 +561,9 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @return $this
+     *
      * @throws \Exception
      */
     public function save($params = [])

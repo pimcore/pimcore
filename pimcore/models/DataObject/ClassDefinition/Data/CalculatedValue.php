@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -227,6 +226,7 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
+
         return $data;
     }
 

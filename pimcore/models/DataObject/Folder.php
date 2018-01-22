@@ -45,6 +45,7 @@ class Folder extends AbstractObject
     /**
      * @param null $isUpdate
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @throws \Exception
      */
     protected function update($isUpdate = null, $params = [])

@@ -32,9 +32,9 @@ class Video extends Model\Asset
      */
     public $type = 'video';
 
-
     /**
      * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
      * @throws \Exception
      */
     protected function update($params = [])

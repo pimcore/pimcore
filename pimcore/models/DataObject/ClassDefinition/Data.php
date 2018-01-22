@@ -1346,13 +1346,14 @@ abstract class Data
         return null;
     }
 
-
     /**
      * @param $existingData
      * @param $additionalData
+     *
      * @return mixed
      */
-    public function appendData($existingData, $additionalData) {
+    public function appendData($existingData, $additionalData)
+    {
         return $existingData;
     }
 }

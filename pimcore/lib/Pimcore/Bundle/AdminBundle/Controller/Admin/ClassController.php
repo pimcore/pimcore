@@ -1381,12 +1381,12 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
- * @Route("/get-fieldcollection-usages")
- *
- * @param Request $request
- *
- * @return Response
- */
+     * @Route("/get-fieldcollection-usages")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
     public function getFieldcollectionUsagesAction(Request $request)
     {
         $key = $request->get('key');
@@ -1412,7 +1412,6 @@ class ClassController extends AdminController implements EventedControllerInterf
         return $this->adminJson($result);
     }
 
-
     /**
      * @Route("/get-bricks-usages")
      *
@@ -1425,7 +1424,6 @@ class ClassController extends AdminController implements EventedControllerInterf
         $classId = $request->get('classId');
         $myclass = DataObject\ClassDefinition::getById($classId);
 
-
         $result = [];
 
         $brickDefinitions = new DataObject\Objectbrick\Definition\Listing();
@@ -1433,10 +1431,10 @@ class ClassController extends AdminController implements EventedControllerInterf
         foreach ($brickDefinitions as $brickDefinition) {
             $classes = $brickDefinition->getClassDefinitions();
             foreach ($classes as $class) {
-                if ($myclass->getName() == $class["classname"]) {
+                if ($myclass->getName() == $class['classname']) {
                     $result[] = [
                         'objectbrick' =>$brickDefinition->getKey(),
-                        'field' => $class["fieldname"]
+                        'field' => $class['fieldname']
                     ];
                 }
             }

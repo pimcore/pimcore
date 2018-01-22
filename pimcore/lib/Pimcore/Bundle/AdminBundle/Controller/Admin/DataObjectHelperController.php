@@ -2161,12 +2161,11 @@ class DataObjectHelperController extends AdminController
             $object = DataObject::getById($request->get('job'));
 
             if ($object) {
-
                 if (!$object->isAllowed('publish')) {
                     throw new \Exception("Permission denied. You don't have the rights to save this object.");
                 }
 
-                $append = $request->get("append");
+                $append = $request->get('append');
 
                 $className = $object->getClassName();
                 $class = DataObject\ClassDefinition::getByName($className);
@@ -2274,7 +2273,6 @@ class DataObjectHelperController extends AdminController
                                     $getter = 'get' . $name;
                                     $setter = 'set' . $name;
                                     /** @var $field DataObject\ClassDefinition\Data */
-
                                     $newData = $field->getDataFromEditmode($value, $object);
                                     if ($append) {
                                         $existingData = $object->$getter($request->get('language'));

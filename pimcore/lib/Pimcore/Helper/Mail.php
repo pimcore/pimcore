@@ -224,8 +224,6 @@ CSS;
                 $hostUrl = \Pimcore\Tool::getRequestScheme() . '://' . $site->getMainDomain();
                 $replacePrefix = $site->getRootPath();
             }
-
-
         }
 
         // fallback

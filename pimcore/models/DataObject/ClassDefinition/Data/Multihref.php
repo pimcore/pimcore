@@ -940,22 +940,25 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
         }
     }
 
-
     /**
      * Returns a ID which must be unique across the grid rows
+     *
      * @param $item
+     *
      * @return string
      */
-    public function buildUniqueKeyForDiffEditor($item) {
+    public function buildUniqueKeyForDiffEditor($item)
+    {
         $parts = [
             $item['id'],
-            $item["path"],
-            $item["type"],
-            $item["subtype"]
+            $item['path'],
+            $item['type'],
+            $item['subtype']
         ];
-        return json_encode($parts);
 
+        return json_encode($parts);
     }
+
     /**
      * @inheritdoc
      */
@@ -968,7 +971,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
             $newItems = [];
             if ($items) {
                 foreach ($items as $in) {
-                    $item = array();
+                    $item = [];
                     $item['id'] = $in[0];
                     $item['path'] = $in[1];
                     $item['type'] = $in[2];
@@ -980,11 +983,11 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
                     $raw = $itemId;
 
                     $newItems[] = [
-                        "itemId" => $itemId,
+                        'itemId' => $itemId,
                         'title' => $item['path'],
                         'raw' => $raw,
                         'gridrow' => $item,
-                        "unique" => $unique
+                        'unique' => $unique
                     ];
                 }
                 $data['data'] = $newItems;
