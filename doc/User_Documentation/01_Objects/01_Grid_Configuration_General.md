@@ -39,4 +39,16 @@ If you want to enable it or adjust CSV settings do this via the settings dialog.
 
 ![Configurator Button Expanded](../img/gridconfig/csv_export_settings.png)
 
+## Batch Editing
+
+![Batch Editing](../img/gridconfig/batch_editing.png)
+
+You modify several objects at once by using the grid's batch update feature. There several modes:
+
+* _Batch edit all_:  Overwrite the field's data for all objects that match the current grid filter (not only the visible ones!)
+* _Batch edit selected_: Same but only for the selected ones
+* _Batch append to all_: Same as batch edit all but the data will be appended. Currently only supported for relational types.
+* _Batch append to selected_: Same as "batch append" but only applied to the selected ones. 
+
+
 
