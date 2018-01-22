@@ -254,8 +254,8 @@ abstract class AbstractListing extends AbstractModel
         $conditionParams = $this->getConditionParams();
         $db = \Pimcore\Db::get();
 
+        $params = [];
         if (!empty($conditionParams)) {
-            $params = [];
             $i = 0;
             foreach ($conditionParams as $key => $value) {
                 if (!$this->condition && $i == 0) {
@@ -276,8 +276,10 @@ abstract class AbstractListing extends AbstractModel
                 }
                 $i++;
             }
-            $this->setConditionVariables($params);
         }
+        $params = array_merge((array) $this->getConditionVariablesFromSetCondition(), $params);
+
+        $this->setConditionVariables($params);
 
         $condition = $this->condition . $conditionString;
 
@@ -296,9 +298,9 @@ abstract class AbstractListing extends AbstractModel
 
         // statement variables
         if (is_array($conditionVariables)) {
-            $this->setConditionVariables($conditionVariables);
+            $this->setConditionVariablesFromSetCondition($conditionVariables);
         } elseif ($conditionVariables !== null) {
-            $this->setConditionVariables([$conditionVariables]);
+            $this->setConditionVariablesFromSetCondition([$conditionVariables]);
         }
 
         return $this;
@@ -381,6 +383,28 @@ abstract class AbstractListing extends AbstractModel
      */
     public function getConditionVariables()
     {
+        $this->getCondition();          // this will merge conditionVariablesFromSetCondition and additional params into conditionVariables
         return $this->conditionVariables;
     }
+
+    /**
+     * @param $conditionVariables
+     *
+     * @return $this
+     */
+    public function setConditionVariablesFromSetCondition($conditionVariables)
+    {
+        $this->conditionVariablesFromSetCondition = $conditionVariables;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConditionVariablesFromSetCondition()
+    {
+        return $this->conditionVariablesFromSetCondition;
+    }
+
 }
