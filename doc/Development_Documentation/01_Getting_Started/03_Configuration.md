@@ -13,7 +13,7 @@ Pimcore's configuration can be found in several places:
 
 ## Symfony Configuration
 
-Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/current/bundles/configuration.html)
+Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/3.4/bundles/configuration.html)
 tree defined under the `pimcore` extension. These values can be changed through config files in `app/config` (e.g. `app/config/config.yml)`).
 
 Pimcore additionally includes a set of standard configuration files which (in contrast to a standard Symfony project) are
@@ -50,7 +50,7 @@ at AWS S3 you have multiple ways to do so:
   already defined.
 * Define an environment variable named after the constant. When defining a constant, Pimcore will look if an env variable
   with the same name is defined and use that instead of the default value.
-* Define an environment variable in a `/.env` file which will be automatically loaded through the [DotEnv](https://symfony.com/doc/current/components/dotenv.html)
+* Define an environment variable in a `/.env` file which will be automatically loaded through the [DotEnv](https://symfony.com/doc/3.4/components/dotenv.html)
   component if it exists. Environment variables defined here will have the same effect as "real" environment variables.
 
 

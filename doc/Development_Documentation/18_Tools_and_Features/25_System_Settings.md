@@ -21,7 +21,7 @@ Several debugging settings for Pimcore, like Debug Mode and Application Logger s
 Please note that the core logger (log levels, files, ...) can now directly be configured via Symfony's Monolog configuration.
 For details see:
 
-* [Symfony Logging](https://symfony.com/doc/current/logging.html#handlers-writing-logs-to-different-locations)
+* [Symfony Logging](https://symfony.com/doc/3.4/logging.html#handlers-writing-logs-to-different-locations)
 * [Logging](../19_Development_Tools_and_Details/07_Logging.md) 
 
 ### Debug Mode

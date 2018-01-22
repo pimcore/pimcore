@@ -4,7 +4,7 @@ Pimcore, starting with version 5, fully supports the Twig templating engine whic
 and third party bundles. You can use Twig exactly as documented in:
 
 * [Twig Documentation](https://twig.symfony.com/doc/2.x/)
-* [Symfony Templating Documentation](https://symfony.com/doc/current/templating.html)
+* [Symfony Templating Documentation](https://symfony.com/doc/3.4/templating.html)
 
 For historical reasons, Pimcore's default implementations default to the PHP templating engine, but you
 can easily change the default behaviour when you use template auto-discovery from your controllers. If
