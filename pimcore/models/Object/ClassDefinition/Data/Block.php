@@ -702,6 +702,7 @@ class Block extends Model\Object\ClassDefinition\Data
     public function setStyleElement($styleElement)
     {
         $this->styleElement = $styleElement;
+
         return $this;
     }
 }
