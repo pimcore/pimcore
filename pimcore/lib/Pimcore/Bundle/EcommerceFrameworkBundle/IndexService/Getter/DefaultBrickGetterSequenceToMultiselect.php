@@ -77,6 +77,8 @@ class DefaultBrickGetterSequenceToMultiselect implements IGetter
                 }
             }
         }
+
+        return $values;
     }
 
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
