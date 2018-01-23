@@ -198,10 +198,15 @@ class Version extends AbstractModel
 
             // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
             if ($data instanceof Asset && $data->getType() != 'folder') {
+                $linked = false;
                 if ($linkTarget = $this->locateHardlinkableBinaryFile($data)) {
                     // we have an identical binary version file already, so we create only a hardlink instead of duplicating the content again
-                    link($linkTarget, $this->getBinaryFilePath());
-                } else {
+                    if(stream_is_local($linkTarget) && stream_is_local($this->getBinaryFilePath())) {
+                        $linked = link($linkTarget, $this->getBinaryFilePath());
+                    }
+                }
+
+                if(!$linked) {
                     // append binary data to version file
                     $handle = fopen($this->getBinaryFilePath(), 'w', false, File::getContext());
                     $src = $data->getStream();
