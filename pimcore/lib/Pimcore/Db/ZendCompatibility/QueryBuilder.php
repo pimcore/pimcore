@@ -1483,6 +1483,25 @@ class QueryBuilder
     }
 
     /**
+     * Gets an ExpressionBuilder used for object-oriented construction of query expressions.
+     * This producer method is intended for convenient inline usage. Example:
+     *
+     * <code>
+     *     $qb = $conn->select()
+     *         ->where($qb->expr()->eq('u.id', 1));
+     * </code>
+     *
+     * For more complex expression construction, consider storing the expression
+     * builder object in a local variable.
+     *
+     * @return \Doctrine\DBAL\Query\Expression\ExpressionBuilder
+     */
+    public function expr()
+    {
+        return $this->_adapter->getExpressionBuilder();
+    }
+
+    /**
      * Turn magic function calls into non-magic function calls
      * for joinUsing syntax
      *
