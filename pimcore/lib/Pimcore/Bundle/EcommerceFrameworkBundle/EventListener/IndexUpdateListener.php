@@ -25,7 +25,7 @@ class IndexUpdateListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DataObjectEvents::PRE_ADD => 'onObjectUpdate',
+            DataObjectEvents::POST_ADD => 'onObjectUpdate',
             DataObjectEvents::POST_UPDATE => 'onObjectUpdate',
             DataObjectEvents::PRE_DELETE => 'onObjectDelete'
         ];
