@@ -24,6 +24,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Version\Listing;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -85,6 +86,11 @@ class Version extends AbstractModel
      * @var string
      */
     public $stackTrace = '';
+
+    /**
+     * @var string
+     */
+    public $binaryDataHash;
 
     /**
      * @var bool
@@ -163,6 +169,10 @@ class Version extends AbstractModel
             $data->_fulldump = true;
             $dataString = Serialize::serialize($data);
 
+            if ($data instanceof Asset && $data->getType() != 'folder') {
+               $this->setBinaryDataHash(sha1_file($data->getFileSystemPath()));
+            }
+
             // revert all changed made by __sleep()
             if (method_exists($data, '__wakeup')) {
                 $data->__wakeup();
@@ -186,16 +196,40 @@ class Version extends AbstractModel
         } else {
             File::put($this->getFilePath(), $dataString);
 
-            // assets are kina special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
+            // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
             if ($data instanceof Asset && $data->getType() != 'folder') {
-                // append binary data to version file
-                $handle = fopen($this->getBinaryFilePath(), 'w', false, File::getContext());
-                $src = $data->getStream();
-                stream_copy_to_stream($src, $handle);
-                fclose($handle);
+                if ($linkTarget = $this->locateHardlinkableBinaryFile($data)) {
+                    // we have an identical binary version file already, so we create only a hardlink instead of duplicating the content again
+                    link($linkTarget, $this->getBinaryFilePath());
+                } else {
+                    // append binary data to version file
+                    $handle = fopen($this->getBinaryFilePath(), 'w', false, File::getContext());
+                    $src = $data->getStream();
+                    stream_copy_to_stream($src, $handle);
+                    fclose($handle);
+                }
             }
         }
         \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_SAVE, new VersionEvent($this));
+    }
+
+    /**
+     * @param $data
+     * @return null|string
+     */
+    protected function locateHardlinkableBinaryFile($data) {
+        $currentHash = sha1_file($data->getFileSystemPath());
+        $list = new Listing();
+        $list->setCondition('binaryDataHash = ? AND id != ?', [$currentHash, $this->getId()]);
+        $list->setLimit(1);
+        $versions = $list->load();
+
+        if(count($versions)) {
+            $linkTarget = $versions[0]->getBinaryFilePath();
+            return $linkTarget;
+        }
+
+        return null;
     }
 
     /**
@@ -310,7 +344,7 @@ class Version extends AbstractModel
     /**
      * @return string
      */
-    protected function getBinaryFilePath()
+    public function getBinaryFilePath()
     {
 
         // compatibility
@@ -579,6 +613,22 @@ class Version extends AbstractModel
         $this->public = (bool) $public;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBinaryDataHash()
+    {
+        return $this->binaryDataHash;
+    }
+
+    /**
+     * @param string $binaryDataHash
+     */
+    public function setBinaryDataHash($binaryDataHash)
+    {
+        $this->binaryDataHash = $binaryDataHash;
     }
 
     public function maintenanceCompress()
