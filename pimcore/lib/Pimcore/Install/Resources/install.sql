@@ -759,12 +759,10 @@ CREATE TABLE `versions` (
   `date` int(11) unsigned default NULL,
   `public` tinyint(1) unsigned NOT NULL default '0',
   `serialized` tinyint(1) unsigned default '0',
-  `binaryDataHash` VARCHAR(40) NULL DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
-  KEY `date` (`date`),
-  KEY `binaryDataHash` (`binaryDataHash`)
+  KEY `date` (`date`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;
