@@ -33,6 +33,11 @@ abstract class Data
     {
         $keys = get_object_vars($this);
         $blockedKeys = ['childs', 'fieldDefinitions'];
+
+        if($this instanceof \Pimcore\Model\Webservice\Data\Asset\File && isset($options['LIGHT']) && $options['LIGHT']) {
+            $blockedKeys[] = 'data';
+        }
+
         foreach ($keys as $key => $value) {
             $method = 'get' . $key;
             if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {

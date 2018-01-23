@@ -332,6 +332,7 @@ pimcore.settings.user.user.settings = Class.create({
             handler: function () {
                 Ext.Ajax.request({
                     url: "/admin/user/get-token-login-link",
+                    ignoreErrors: true,
                     params: {
                         id: this.currentUser.id
                     },
@@ -341,6 +342,19 @@ pimcore.settings.user.user.settings = Class.create({
                             Ext.MessageBox.alert("", t("login_as_this_user_description")
                                 + ' <br /><br /><textarea style="width:100%;height:70px;">' + res["link"] + "</textarea>");
                         }
+                    },
+                    failure: function (response) {
+                        var message = t("error_general");
+
+                        try {
+                            var json = Ext.decode(response.responseText);
+                            if (json.message) {
+
+                                message = json.message;
+                            }
+                        } catch (e) {}
+
+                        pimcore.helpers.showNotification(t("error"), message, "error");
                     }
                 });
             }.bind(this)

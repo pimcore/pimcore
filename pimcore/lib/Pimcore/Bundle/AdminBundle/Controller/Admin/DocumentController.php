@@ -1436,7 +1436,18 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $description = $document->getDescription();
             }
 
-            $nodeConfig['title']       = $title;
+            $nodeConfig['title'] = $title;
+
+            // the title as used in the edit window
+            $nodeConfig['edit_title'] = $document->getTitle();
+
+            // fall back to resolved title if no document title is set - this potentially includes
+            // pre- and suffixes but is better than and empty input when actually a title was resolved
+            // in the tree
+            if (empty($nodeConfig['edit_title']) && !empty($nodeConfig['title'])) {
+                $nodeConfig['edit_title'] = $nodeConfig['title'];
+            }
+
             $nodeConfig['description'] = $description;
 
             $nodeConfig['title_length']       = mb_strlen($title);

@@ -199,9 +199,9 @@ pimcore.document.seopanel = Class.create({
             bodyStyle: "padding:10px;",
             items: [{
                 xtype: "textfield",
-                fieldLabel: t("title") + " (" + record.data.title.length + ")",
+                fieldLabel: t("title") + " (" + record.data.edit_title.length + ")",
                 name: "title",
-                value: record.data.title,
+                value: record.data.edit_title,
                 width: 450,
                 enableKeyEvents: true,
                 listeners: {

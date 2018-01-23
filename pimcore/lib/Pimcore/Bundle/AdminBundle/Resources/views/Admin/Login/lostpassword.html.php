@@ -17,9 +17,15 @@ $this->get("translate")->setDomain("admin");
                     <?= $this->translate("Please check your mailbox."); ?>
                 </div>
             <?php } else { ?>
-                <div class="body info">
-                    <?= $this->translate("Enter your username and pimcore will send a login link to your email address"); ?>
-                </div>
+                <?php if ($this->error) { ?>
+                    <div class="body error">
+                        <?= $this->translate('lostpassword_reset_error'); ?>
+                    </div>
+                <?php } else { ?>
+                    <div class="body info">
+                        <?= $this->translate("Enter your username and pimcore will send a login link to your email address"); ?>
+                    </div>
+                <?php } ?>
 
                 <div id="loginform">
 

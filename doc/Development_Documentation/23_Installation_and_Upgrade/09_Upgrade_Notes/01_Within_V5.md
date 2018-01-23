@@ -1,5 +1,11 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 181 (2018-01-xx)
+
+The `pimcore:cache:clear` command semantics for the `-o` and `-a` option changed to follow option semantics as in other
+commands. Instead of `-a=1`, `-o=1`, now just pass `-a` and `-o`. The tags option now accepts multiple options, so you can
+use `-t foo -t bar` instead of `-t foo,bar` (old syntax still works).
+
 ## Build 173 (2018-01-09)
 
 The Google Analytics and Google Tag Manager code generation was refactored to use the same extendable block logic as the 
