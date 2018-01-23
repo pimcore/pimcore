@@ -170,7 +170,7 @@ class Version extends AbstractModel
             $dataString = Serialize::serialize($data);
 
             if ($data instanceof Asset && $data->getType() != 'folder') {
-               $this->setBinaryDataHash(sha1_file($data->getFileSystemPath()));
+                $this->setBinaryDataHash(sha1_file($data->getFileSystemPath()));
             }
 
             // revert all changed made by __sleep()
@@ -215,17 +215,20 @@ class Version extends AbstractModel
 
     /**
      * @param $data
+     *
      * @return null|string
      */
-    protected function locateHardlinkableBinaryFile($data) {
+    protected function locateHardlinkableBinaryFile($data)
+    {
         $currentHash = sha1_file($data->getFileSystemPath());
         $list = new Listing();
         $list->setCondition('binaryDataHash = ? AND id != ?', [$currentHash, $this->getId()]);
         $list->setLimit(1);
         $versions = $list->load();
 
-        if(count($versions)) {
+        if (count($versions)) {
             $linkTarget = $versions[0]->getBinaryFilePath();
+
             return $linkTarget;
         }
 

@@ -34,7 +34,7 @@ abstract class Data
         $keys = get_object_vars($this);
         $blockedKeys = ['childs', 'fieldDefinitions'];
 
-        if($this instanceof \Pimcore\Model\Webservice\Data\Asset\File && isset($options['LIGHT']) && $options['LIGHT']) {
+        if ($this instanceof \Pimcore\Model\Webservice\Data\Asset\File && isset($options['LIGHT']) && $options['LIGHT']) {
             $blockedKeys[] = 'data';
         }
 

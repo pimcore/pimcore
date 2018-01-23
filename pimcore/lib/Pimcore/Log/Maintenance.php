@@ -50,7 +50,7 @@ class Maintenance
         foreach ($logFiles as $log) {
             if (file_exists($log) && date('Y-m-d', filectime($log)) != date('Y-m-d')) {
                 // archive log (will be cleaned up by maintenance)
-                $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', filectime($log)) . ".log";
+                $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', filectime($log)) . '.log';
                 rename($log, $archiveFilename);
             }
         }

@@ -30,7 +30,7 @@ class CacheClearCommand extends AbstractCommand
             ->addOption(
                 'tags',
                 't',
-                InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Only specific tags (csv list of tags)'
             )
             ->addOption(
