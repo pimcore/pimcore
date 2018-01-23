@@ -462,17 +462,21 @@ class Requirements
 
         // check for memory limit
         $memoryLimit = ini_get('memory_limit');
-        $memoryLimit = filesize2bytes($memoryLimit . 'B');
         $memoryLimitState = Check::STATE_OK;
         $memoryLimitMessage = '';
 
-        if ($memoryLimit < 67108000) {
-            $memoryLimitState = Check::STATE_ERROR;
-            $memoryLimitMessage = 'Your memory limit is by far too low. Set `memory_limit` in your php.ini at least to `150M`.';
-        } elseif ($memoryLimit < 134217000) {
-            $memoryLimitState = Check::STATE_WARNING;
-            $memoryLimitMessage = 'Your memory limit is probably too low. Set `memory_limit` in your php.ini to `150M` or higher to avoid issues.';
-        }
+        // check bytes of memory limit if it's not set to unlimited ('-1')
+		// http://php.net/manual/en/ini.core.php#ini.memory-limit
+        if($memoryLimit !== '-1') {
+			$memoryLimit = filesize2bytes($memoryLimit . 'B');
+			if ($memoryLimit < 67108000) {
+				$memoryLimitState = Check::STATE_ERROR;
+				$memoryLimitMessage = 'Your memory limit is by far too low. Set `memory_limit` in your php.ini at least to `150M`.';
+			} elseif ($memoryLimit < 134217000) {
+				$memoryLimitState = Check::STATE_WARNING;
+				$memoryLimitMessage = 'Your memory limit is probably too low. Set `memory_limit` in your php.ini to `150M` or higher to avoid issues.';
+			}
+		}
 
         $checks[] = new Check([
             'name' => 'memory_limit (in php.ini)',
