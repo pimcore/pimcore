@@ -4,6 +4,11 @@ services:
         autoconfigure: true
         public: false
 
+    # public alias to the delegating engine
+    pimcore.templating.engine.delegating:
+        alias: templating.engine.delegating
+        public: true
+
     # RENDERERS
 
     Pimcore\Templating\Renderer\ActionRenderer:

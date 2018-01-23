@@ -549,9 +549,9 @@ class Link extends Model\Document
     /**
      * @inheritDoc
      */
-    protected function update()
+    protected function update($params = [])
     {
-        parent::update();
+        parent::update($params);
 
         $this->saveScheduledTasks();
     }
