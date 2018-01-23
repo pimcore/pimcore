@@ -526,6 +526,13 @@ class Asset extends Element\AbstractElement
                     }
                 }
 
+                // lastly create a new version if necessary
+                // this has to be after the registry update and the DB update, otherwise this would cause problem in the
+                // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
+                if ($this->getType() != 'folder') {
+                    $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+                }
+
                 $this->commit();
 
                 break; // transaction was successfully completed, so we cancel the loop here -> no restart required
@@ -751,13 +758,6 @@ class Asset extends Element\AbstractElement
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
             $asset = self::getById($this->getId());
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), $asset);
-        }
-
-        // lastly create a new version if necessary
-        // this has to be after the registry update and the DB update, otherwise this would cause problem in the
-        // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
-        if ($this->getType() != 'folder') {
-            $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
         }
 
         $this->closeStream();

@@ -403,11 +403,14 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset->setStream($stream);
         $asset->setCustomSetting('thumbnails', null);
         $asset->setUserModification($this->getAdminUser()->getId());
-        $newFilename = Element\Service::getValidKey($_FILES['Filedata']['name'], 'asset');
-        if ($newFilename != $asset->getFilename()) {
+
+        $newFileExt = File::getFileExtension($newFilename);
+        $currentFileExt = File::getFileExtension($asset->getFilename());
+        if ($newFileExt != $currentFileExt) {
+            $newFilename = preg_replace('/\.' . $currentFileExt . '$/', ".".$newFileExt, $asset->getFilename());
             $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
+            $asset->setFilename($newFilename);
         }
-        $asset->setFilename($newFilename);
 
         if ($asset->isAllowed('publish')) {
             $asset->save();
