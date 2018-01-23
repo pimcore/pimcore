@@ -84,6 +84,8 @@ class PimcoreContextGuesser
     private function getMatchers(): array
     {
         if (null === $this->matchers) {
+            $this->matchers = [];
+
             foreach ($this->routes as $context => $routes) {
                 $this->matchers[$context] = $this->requestMatcherFactory->buildRequestMatchers($routes);
             }
