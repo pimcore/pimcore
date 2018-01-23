@@ -372,7 +372,22 @@ LUA;
 
         /** @var CacheItem $item */
         while ($item = array_shift($this->deferred)) {
-            $result = $result && $this->commitItem($item);
+            try {
+                $res = $this->commitItem($item);
+            } catch (\Throwable $e) {
+                $res = false;
+
+                CacheItem::log(
+                    $this->logger,
+                    'Failed to commit key "{key}"',
+                    [
+                        'key'       => $item->getKey(),
+                        'exception' => $e
+                    ]
+                );
+            }
+
+            $result = $result && (bool)$res;
         }
 
         return $result;
