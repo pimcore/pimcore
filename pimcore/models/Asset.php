@@ -677,7 +677,7 @@ class Asset extends Element\AbstractElement
                 $src = $this->getStream();
                 $streamMeta = stream_get_meta_data($src);
                 if ($destinationPath != $streamMeta['uri']) {
-                    if(file_exists($destinationPath)) {
+                    if (file_exists($destinationPath)) {
                         // We don't open a stream on existing files, because they could be possibly used by versions
                         // using hardlinks, so it's safer to delete them first, so the inode and therefore also the
                         // versioning information persists. Using the stream on the existing file would overwrite the
