@@ -669,7 +669,7 @@ class Tool
         $kernel = $container->get('kernel');
 
         $clearer = $container->get(CacheClearer::class);
-        $clearer->clear($kernel);
+        $clearer->clear($kernel->getEnvironment());
     }
 
     /**
