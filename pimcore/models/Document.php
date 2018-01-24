@@ -401,16 +401,14 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Save the document.
-     *
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
-     *
      * @return Document
-     *
      * @throws \Exception
      */
-    public function save($params = [])
+    public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = func_get_arg(0) ?: [];
+
         $isUpdate = false;
         $preEvent = new DocumentEvent($this, $params);
         if ($this->getId()) {

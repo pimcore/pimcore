@@ -560,14 +560,14 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
-     *
      * @return $this
-     *
      * @throws \Exception
      */
-    public function save($params = [])
+    public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = func_get_arg(0) ?: [];
+
         $isUpdate = false;
 
         $preEvent = new DataObjectEvent($this, $params);

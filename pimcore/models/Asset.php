@@ -457,14 +457,14 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
-     *
      * @return $this
-     *
      * @throws \Exception
      */
-    public function save($params = [])
+    public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = func_get_arg(0) ?: [];
+
         try {
             // not only check if the type is set but also if the implementation can be found
             $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
