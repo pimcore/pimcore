@@ -35,7 +35,7 @@ interface IPricingManager
     public function applyCartRules(ICart $cart);
 
     /**
-     * Factory
+     * @deprecated as it is never used. Will be removed in Pimcore 6.
      *
      * @return IRule
      */
