@@ -16,12 +16,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Tests\Test\EcommerceTestCase;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class CartTaxManagementTest extends EcommerceTestCase
 {
@@ -48,9 +50,15 @@ class CartTaxManagementTest extends EcommerceTestCase
     {
         $taxClass = $this->buildTaxClass($taxes, $combinationType);
 
-        $pricingManager = new PricingManager([], [], $this->buildSession());
+        $environment = $this->buildEnvironment();
 
-        $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManager, $this->buildEnvironment()], [
+        $pricingManagers = Stub::make(PricingManagerLocator::class, [
+            'getPricingManager' => function() {
+                return new PricingManager([], [], $this->buildSession());
+            }
+        ]);
+
+        $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManagers, $environment], [
             'getTaxClassForProduct'           => function () use ($taxClass) {
                 return $taxClass;
             },
