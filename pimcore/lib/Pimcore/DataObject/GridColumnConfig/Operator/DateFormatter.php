@@ -46,6 +46,7 @@ class DateFormatter extends AbstractOperator
 
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
+                $isArrayType = $childResult->isArrayType;
 
                 $childValues = $childResult->value;
                 if ($childValues && !is_array($childValues)) {
@@ -72,7 +73,8 @@ class DateFormatter extends AbstractOperator
                 $newChildsResult[] = $newValue;
             }
 
-            if (count($childs) > 0) {
+            $result->isArrayType = $isArrayType;
+            if ($isArrayType) {
                 $result->value = $newChildsResult;
             } else {
                 $result->value = $newChildsResult[0];
