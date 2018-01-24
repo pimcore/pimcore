@@ -347,28 +347,28 @@ pimcore.asset.tree = Class.create({
                         text += (t("type") + ": "+ t(record.data.type));
                     }
 
-                    $("#pimcore_tooltip").show();
-                    $("#pimcore_tooltip").html(text);
-                    $("#pimcore_tooltip").removeClass('right');
+                    jQuery("#pimcore_tooltip").show();
+                    jQuery("#pimcore_tooltip").html(text);
+                    jQuery("#pimcore_tooltip").removeClass('right');
 
-                    var offsetTabPanel = $("#pimcore_panel_tabs").offset();
+                    var offsetTabPanel = jQuery("#pimcore_panel_tabs").offset();
 
-                    var offsetTreeNode = $(item).offset();
+                    var offsetTreeNode = jQuery(item).offset();
 
                     var parentTree = el.ownerCt.ownerCt;
 
                     if(parentTree.region == 'west') {
-                        $("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, left: offsetTabPanel.left, right: 'auto'});
+                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, left: offsetTabPanel.left, right: 'auto'});
                     }
 
                     if(parentTree.region == 'east') {
-                        $("#pimcore_tooltip").addClass('right');
-                        $("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, right: parentTree.width+35, left: 'auto'});
+                        jQuery("#pimcore_tooltip").addClass('right');
+                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, right: parentTree.width+35, left: 'auto'});
                     }
                 }
             },
             "itemmouseleave": function () {
-                $("#pimcore_tooltip").hide();
+                jQuery("#pimcore_tooltip").hide();
             }
         };
 

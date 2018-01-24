@@ -2925,24 +2925,24 @@ pimcore.helpers.hideRedundantSeparators = function (menu) {
 
 pimcore.helpers.initMenuTooltips = function () {
 
-    var items = $("[data-menu-tooltip]:not(.initialized)");
-    $('#pimcore_navigation li:not(:has(>svg))').addClass('compatibility');
+    var items = jQuery("[data-menu-tooltip]:not(.initialized)");
+    jQuery('#pimcore_navigation li:not(:has(>svg))').addClass('compatibility');
 
     items.mouseenter(function (e) {
-        $("#pimcore_tooltip").show();
-        $("#pimcore_tooltip").removeClass('right');
-        $("#pimcore_tooltip").html($(this).data("menu-tooltip"));
+        jQuery("#pimcore_tooltip").show();
+        jQuery("#pimcore_tooltip").removeClass('right');
+        jQuery("#pimcore_tooltip").html(jQuery(this).data("menu-tooltip"));
 
-        var closestEl = $(e.target).closest('[data-menu-tooltip]');
+        var closestEl = jQuery(e.target).closest('[data-menu-tooltip]');
         var offset = closestEl.offset();
         var top = offset.top;
         top = top + (closestEl.height() / 2);
 
-        $("#pimcore_tooltip").css({top: top, left: 60, right: 'auto'});
+        jQuery("#pimcore_tooltip").css({top: top, left: 60, right: 'auto'});
     });
 
     items.mouseleave(function () {
-        $("#pimcore_tooltip").hide();
+        jQuery("#pimcore_tooltip").hide();
     });
 
     items.addClass("initialized", "true");

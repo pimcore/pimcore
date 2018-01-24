@@ -151,7 +151,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
             this.layout.on("afterrender", function () {
 
                 // unfortunately we have to do this in jQuery, because Ext doesn'T offer this functionality
-                $("#" + this.iframeName).load(function () {
+                jQuery("#" + this.iframeName).on("load", function () {
                     // this is to hide the mask if edit/startup.js isn't executed (eg. in case an error is shown)
                     // otherwise edit/startup.js will disable the loading mask
                     if(!this["frame"]) {

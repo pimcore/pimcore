@@ -190,9 +190,6 @@ pimcore.document.versions = Class.create({
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
 
-        //$(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
-        //    .animate( { backgroundColor: '#fff' }, 400);
-
         var menu = new Ext.menu.Menu();
 
         menu.add(new Ext.menu.Item({

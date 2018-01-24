@@ -18,7 +18,7 @@
 <body>
 
 <script type="text/javascript" src="https://dme0ih8comzn4.cloudfront.net/imaging/v3/editor.js"></script>
-<script type="text/javascript" src="/pimcore/static6/js/lib/jquery.min.js"></script>
+<script type="text/javascript" src="/pimcore/static6/js/lib/jquery-3.3.1.min.js"></script>
 
 <div id="editor"></div>
 

@@ -12,7 +12,7 @@
     <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png"/>
 
     <link rel="stylesheet" href="/pimcore/static6/css/login.css" type="text/css"/>
-    <script type="text/javascript" src="/pimcore/static6/js/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="/pimcore/static6/js/lib/jquery-3.3.1.min.js"></script>
 
     <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
         <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>

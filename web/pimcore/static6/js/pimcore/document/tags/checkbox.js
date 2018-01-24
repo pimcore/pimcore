@@ -31,11 +31,11 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
             checked = ' checked="checked"';
         }
 
-        var elContainer = $(document.getElementById(id));
+        var elContainer = jQuery(document.getElementById(id));
 
         elContainer.append('<input name="' + this.htmlId + '" type="checkbox" value="true" id="' + this.htmlId + '" ' + checked + ' />');
 
-        this.elComponent = $(document.getElementById(this.htmlId));
+        this.elComponent = jQuery(document.getElementById(this.htmlId));
 
         if(options["label"]) {
             elContainer.append('<label for="' + this.htmlId + '">' + options["label"] + '</label>');

@@ -363,8 +363,8 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             var metaData = this.hasMetaData(this.currentPage);
 
             Ext.each(this.pagesContainer.body.query('.nr'), function(value) {
-                if(parseInt($(value).text()) == this.currentPage){
-                    metaData ? $(value).addClass('hasMetadata') : $(value).removeClass('hasMetadata');
+                if(parseInt(jQuery(value).text()) == this.currentPage){
+                    metaData ? jQuery(value).addClass('hasMetadata') : jQuery(value).removeClass('hasMetadata');
                }
             }.bind(this));
 

@@ -290,7 +290,7 @@ class EditmodeListener implements EventSubscriberInterface
         return [
             '/pimcore/static6/js/pimcore/common.js',
             '/pimcore/static6/js/lib/prototype-light.js',
-            '/pimcore/static6/js/lib/jquery.min.js',
+            '/pimcore/static6/js/lib/jquery-3.3.1.min.js',
             '/pimcore/static6/js/lib/ext/ext-all' . (PIMCORE_DEVMODE ? '-debug' : '') . '.js',
             '/pimcore/static6/js/lib/ckeditor/ckeditor.js'
         ];
