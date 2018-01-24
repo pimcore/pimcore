@@ -32,7 +32,7 @@ trait Wrapper
     protected $sourceDocument;
 
     // OVERWRITTEN METHODS
-    public function save($params = [])
+    public function save()
     {
         $this->raiseHardlinkError();
     }
