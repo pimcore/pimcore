@@ -66,7 +66,8 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
             iconCls: source.data.iconCls,
             text: source.data.text,
             isTarget: true,
-            leaf: true,
+            leaf: false,
+            expandable: false,
             dataType: source.data.dataType,
             qtip: source.data.key,
             configAttributes: {
@@ -140,5 +141,9 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
         }
 
         return nodeLabel;
+    },
+
+    allowChild: function (targetNode, dropNode) {
+        return true;
     }
 });
