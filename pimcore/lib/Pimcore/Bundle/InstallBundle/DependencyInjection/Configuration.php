@@ -32,6 +32,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('info_message')
+                    ->info('Shows an info message on the installation screen')
                     ->defaultNull()
                 ->end()
                 ->arrayNode('files')
@@ -51,6 +52,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('profile')
+                            ->info('The install profile to use')
                             ->defaultNull()
                         ->end()
                         ->arrayNode('database_credentials')

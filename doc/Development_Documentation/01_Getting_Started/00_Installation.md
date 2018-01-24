@@ -98,6 +98,64 @@ $ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=passwor
 
 Please also remove the `web/install.php` file after the installation is complete.
 
+
+### Preconfiguring the installer
+
+You can preconfigure the values used by the installer by adding a config file which sets values for profile and database
+credentials. This is especially useful when installing Pimcore on platforms where credentials are available via env vars
+instead of having direct access to them. To preconfigure the installer, add a config file in `app/config/installer.yml` 
+(note: the file can be of any format supported by Symfony's config, so you could also use xml or php as format) configure
+the `pimcore_installer` tree:
+
+```yaml
+# app/config/installer.yml
+
+pimcore_install:
+    parameters:
+        profile: demo-basic
+        database_credentials:
+            user:                 username
+            password:             password
+            dbname:               pimcore5
+            
+            # env variables can be directly read with the %env() syntax
+            # see https://symfony.com/blog/new-in-symfony-3-2-runtime-environment-variables
+            host:                 %env(DB_HOST)
+            port:                 %env(DB_PORT)
+```
+
+You can also configure the installer to not copy the profile files or to symlink them (useful for development). See the
+full tree of available options:
+
+```yaml
+# output of bin/install config:dump-reference pimcore_install
+
+# Default configuration for extension with alias: "pimcore_install"
+pimcore_install:
+
+    # Shows an info message on the installation screen
+    info_message:         null
+    files:
+
+        # Defines if profile files should be installed. If this is false, only the DB will be installed.
+        install:              true
+
+        # Symlink files instead of copying them
+        symlink:              false
+    parameters:
+
+        # The install profile to use
+        profile:              null
+        database_credentials:
+            user:                 ~
+            password:             ~
+            dbname:               ~
+            host:                 ~
+            port:                 ~
+            unix_socket:          ~
+```
+
+
 ### Debugging installation issues
 
 The installer writes a log in `var/installer/logs` which contains any errors encountered during the installation. Please
