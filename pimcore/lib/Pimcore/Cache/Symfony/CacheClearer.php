@@ -17,71 +17,117 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Symfony;
 
-use Pimcore\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Pimcore\Tool\Console;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class CacheClearer
 {
-    public function clear(KernelInterface $kernel, array $options = [])
+    /**
+     * @var int
+     */
+    private $processTimeout;
+
+    public function __construct(array $options = [])
+    {
+        $this->resolveOptions($options);
+    }
+
+    private function resolveOptions(array $options = [])
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'processTimeout' => 300
+        ]);
+
+        $resolver->setAllowedTypes('processTimeout', 'int');
+        $resolver->setRequired('processTimeout');
+
+        $options = $resolver->resolve($options);
+
+        $this->processTimeout = $options['processTimeout'];
+    }
+
+    public function clear(string $environment, array $options = [])
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'no-warmup'           => false,
             'no-optional-warmers' => false,
-            'env'                 => $kernel->getEnvironment()
+            'env'                 => $environment,
         ]);
 
-        $this->runCommand($kernel, 'cache:clear', [], $resolver->resolve($options));
+        $this->runCommand('cache:clear', [], $resolver->resolve($options));
     }
 
-    public function warmup(KernelInterface $kernel, array $options = [])
+    public function warmup(string $environment, array $options = [])
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'no-optional-warmers' => false,
-            'env'                 => $kernel->getEnvironment()
+            'env'                 => $environment,
         ]);
 
-        $this->runCommand($kernel, 'cache:warmup', [], $resolver->resolve($options));
+        $this->runCommand('cache:warmup', [], $resolver->resolve($options));
     }
 
-    private function runCommand(KernelInterface $kernel, string $command, array $arguments = [], array $options = [])
+    private function runCommand(string $command, array $arguments = [], array $options = [])
     {
-        $input = $this->createInput($command, $arguments, $options);
+        $process = $this->buildProcess($command, $arguments, $options);
+        $process->run();
 
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
-
-        $output = new BufferedOutput();
-        $result = $application->run($input, $output);
-
-        if (0 !== $result) {
-            throw new \RuntimeException(sprintf(
-                'Command "%s" failed: %s',
-                $command,
-                $output->fetch()
-            ));
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
         }
+
+        return $process;
     }
 
-    private function createInput(string $command, array $arguments = [], array $options = []): ArrayInput
+    private function buildProcess(string $command, array $arguments = [], array $options = []): Process
     {
-        $input = array_merge($arguments, [
-            'command' => $command
-        ]);
+        $parts = $this->buildProcessParts($arguments, $options);
+        $parts = array_merge([
+            Console::getPhpCli(),
+            'bin/console',
+            $command
+        ], $parts);
 
+        $process = new Process($parts);
+        $process
+            ->setTimeout($this->processTimeout)
+            ->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
+
+        return $process;
+    }
+
+    private function buildProcessParts(array $arguments = [], array $options = []): array
+    {
+        $parts = [];
         foreach ($options as $optionKey => $option) {
             // do not set option if it is false
             if (is_bool($option) && !$option) {
                 continue;
             }
 
-            $input['--' . $optionKey] = $option;
+            $part = '';
+            if (1 === strlen($optionKey)) {
+                $part = '-' . $optionKey;
+            } else {
+                $part = '--' . $optionKey;
+            }
+
+            if (!is_bool($option) && $option) {
+                $part .= '=' . $option;
+            }
+
+            $parts[] = $part;
         }
 
-        return new ArrayInput($input);
+        foreach ($arguments as $argument) {
+            $parts[] = $argument;
+        }
+
+        return $parts;
     }
 }

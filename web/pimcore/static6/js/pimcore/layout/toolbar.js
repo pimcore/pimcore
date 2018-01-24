@@ -898,25 +898,64 @@ pimcore.layout.toolbar = Class.create({
             if (perspectiveCfg.inToolbar("settings.cache") && (user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files"))) {
 
                 var cacheItems = [];
+                var cacheSubItems = [];
 
-                if (perspectiveCfg.inToolbar("settings.cache.clearOutput")) {
-                    if (user.isAllowed("clear_cache")) {
-                        cacheItems.push({
-                            text: t("clear_only_output_cache"),
+                if (user.isAllowed("clear_cache")) {
+
+                    if (perspectiveCfg.inToolbar("settings.cache.clearAll")) {
+                        cacheSubItems.push({
+                            text: t("all_caches") + ' (Symfony + Data)',
+                            iconCls: "pimcore_icon_clear_cache",
+                            handler: this.clearCache.bind(this, {'env[]': ['dev','prod']})
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.cache.clearData")) {
+                        cacheSubItems.push({
+                            text: t("data_cache"),
+                            iconCls: "pimcore_icon_clear_cache",
+                            handler: this.clearCache.bind(this, {'only_pimcore_cache': true})
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.cache.clearOutput")) {
+                        cacheSubItems.push({
+                            text: t("full_page_cache"),
                             iconCls: "pimcore_icon_clear_cache",
                             handler: this.clearOutputCache
                         });
                     }
-                }
 
-                if (perspectiveCfg.inToolbar("settings.cache.clearAll")) {
-                    if (user.isAllowed("clear_cache")) {
-                        cacheItems.push({
-                            text: t("clear_cache"),
+                    if (perspectiveCfg.inToolbar("settings.cache.clearSymfony")) {
+                        cacheSubItems.push({
+                            text: 'Symfony ' + t('environment') + ": prod",
                             iconCls: "pimcore_icon_clear_cache",
-                            handler: this.clearCache
+                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': 'prod'})
+                        });
+
+                        cacheSubItems.push({
+                            text: 'Symfony ' + t('environment') + ": " + pimcore.settings['environment'],
+                            iconCls: "pimcore_icon_clear_cache",
+                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': pimcore.settings['environment']})
+                        });
+
+                        cacheSubItems.push({
+                            text: 'Symfony ' + t('environment') + ": " + t('all'),
+                            iconCls: "pimcore_icon_clear_cache",
+                            handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': ['dev','prod']})
                         });
                     }
+
+                    cacheItems.push({
+                        text: t("clear_cache"),
+                        iconCls: "pimcore_icon_clear_cache",
+                        hideOnClick: false,
+                        menu: {
+                            cls: "pimcore_navigation_flyout",
+                            shadow: false,
+                            items: cacheSubItems
+                        }
+                    });
                 }
 
                 if (perspectiveCfg.inToolbar("settings.cache.clearTemp")) {
@@ -1488,11 +1527,12 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    clearCache: function () {
+    clearCache: function (params) {
         Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
             if (btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/admin/settings/clear-cache'
+                    url: '/admin/settings/clear-cache',
+                    params: params
                 });
             }
         });

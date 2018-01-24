@@ -775,13 +775,50 @@ class SettingsController extends AdminController
         }
 
         if ($clearSymfonyCache) {
-            try {
-                $this->clearSymfonyCache($kernel, $eventDispatcher, $symfonyCacheClearer);
-            } catch (\Throwable $e) {
-                $result = [
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ];
+            // pass one or move env parameters to clear multiple envs
+            // if no env is passed it will use the current one
+            $environments = $request->get('env', $kernel->getEnvironment());
+
+            if (!is_array($environments)) {
+                $environments = trim((string)$environments);
+
+                if (empty($environments)) {
+                    $environments = [];
+                } else {
+                    $environments = [$environments];
+                }
+            }
+
+            if (empty($environments)) {
+                $environments = [$kernel->getEnvironment()];
+            }
+
+            $result['environments'] = $environments;
+
+            if (in_array($kernel->getEnvironment(), $environments)) {
+                // remove terminate and exception event listeners for the current env as they break with a
+                // cleared container - see #2434
+                foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
+                    $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);
+                }
+
+                foreach ($eventDispatcher->getListeners(KernelEvents::EXCEPTION) as $listener) {
+                    $eventDispatcher->removeListener(KernelEvents::EXCEPTION, $listener);
+                }
+            }
+
+            foreach ($environments as $environment) {
+                try {
+                    $symfonyCacheClearer->clear($environment);
+                } catch (\Throwable $e) {
+                    $errors = $result['errors'] ?? [];
+                    $errors[] = $e->getMessage();
+
+                    $result = array_merge($result, [
+                        'success' => false,
+                        'errors'  => $errors
+                    ]);
+                }
             }
         }
 
@@ -796,26 +833,6 @@ class SettingsController extends AdminController
         }
 
         return $response;
-    }
-
-    private function clearSymfonyCache(
-        KernelInterface $kernel,
-        EventDispatcherInterface $eventDispatcher,
-        CacheClearer $symfonyCacheClearer
-    ) {
-        // remove terminate and exception event listeners as they break with a cleared container - see #2434
-        foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
-            $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);
-        }
-
-        foreach ($eventDispatcher->getListeners(KernelEvents::EXCEPTION) as $listener) {
-            $eventDispatcher->removeListener(KernelEvents::EXCEPTION, $listener);
-        }
-
-        $symfonyCacheClearer->clear($kernel, [
-            // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
-            'no-warmup' => true
-        ]);
     }
 
     /**

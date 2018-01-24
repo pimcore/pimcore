@@ -136,7 +136,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             \Pimcore\Cache::clearAll();
 
             $symfonyCacheClearer = $this->get(CacheClearer::class);
-            $symfonyCacheClearer->clear($kernel, [
+            $symfonyCacheClearer->clear($kernel->getEnvironment(), [
                 // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
                 'no-warmup' => true
             ]);
