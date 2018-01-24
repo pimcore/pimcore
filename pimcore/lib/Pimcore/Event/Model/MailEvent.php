@@ -18,44 +18,40 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Mail;
 use Symfony\Component\EventDispatcher\Event;
 
-class MailEvent extends Event implements ElementEventInterface
+class MailEvent extends Event
 {
     use ArgumentsAwareTrait;
 
     /**
      * @var Mail
      */
-    protected $element;
+    protected $mail;
 
     /**
-     * DocumentEvent constructor.
-     *
      * @param Mail $mail
      * @param array $arguments
      */
     public function __construct(Mail $mail, array $arguments = [])
     {
-        $this->element = $mail;
+        $this->mail = $mail;
         $this->arguments = $arguments;
     }
 
     /**
      * @return Mail
      */
-    public function getElement()
+    public function getMail()
     {
-        return $this->element;
+        return $this->mail;
     }
 
     /**
-     * @param Mail $element
+     * @param Mail $mail
      * @return $this
      */
-    public function setElement($element)
+    public function setMail($mail)
     {
-        $this->element = $element;
+        $this->mail = $mail;
         return $this;
     }
-
-
 }

@@ -623,7 +623,8 @@ class Mail extends \Swift_Message
 
         \Pimcore::getEventDispatcher()->dispatch(MailEvents::PRE_SEND, $event);
 
-        if($mailer = $event->getArguments()['mailer']){
+        if($event->hasArgument('mailer')){
+            $mailer = $event->getArgument('mailer');
             $mailer->send($this);
         }
 
