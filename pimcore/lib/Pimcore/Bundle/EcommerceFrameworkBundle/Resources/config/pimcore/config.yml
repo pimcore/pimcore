@@ -21,6 +21,9 @@ pimcore_ecommerce_framework:
             default: ~
 
     pricing_manager:
+        tenants:
+            default: ~
+
         conditions:
             Bracket: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket
             DateRange: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange
