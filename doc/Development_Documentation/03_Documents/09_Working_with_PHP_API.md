@@ -21,7 +21,11 @@ The example below, shows how to create simple page document via the PHP API.
 $page = new \Pimcore\Model\Document\Page();
 $page->setKey('document8');
 $page->setParentId(82); // id of a document or folder
-$page->save();
+
+// the optional parameter allows you to provide additional info
+// currently supported:
+//      * versionNote: note added to the version (see version tab)
+$page->save(["versionNote" => "my new version"]);
 ```
 
 Now you can refresh the parent node of the newly created document in the admin interface (ID `82` in this case) and you'll 
