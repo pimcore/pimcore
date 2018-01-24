@@ -25,6 +25,8 @@ use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Resource\FileExistenceResource;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Route;
@@ -100,7 +102,10 @@ class InstallerKernel extends Kernel
         foreach (['php', 'yaml', 'yml', 'xml'] as $extension) {
             $file = sprintf('%s/app/config/installer.%s', $this->getProjectDir(), $extension);
 
+            $c->addResource(new FileExistenceResource($file));
+
             if (file_exists($file)) {
+                $c->addResource(new FileResource($file));
                 $loader->load($file);
             }
         }
