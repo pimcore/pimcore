@@ -138,6 +138,14 @@
     background: url(/pimcore/static6/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_alphabetical_sorting_az {
+    background: url(/pimcore/static6/img/flat-color-icons/alphabetical_sorting_az.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_alphabetical_sorting_za {
+    background: url(/pimcore/static6/img/flat-color-icons/alphabetical_sorting_za.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_link, .pimcore_icon_operator_requiredby {
     background: url(/pimcore/static6/img/flat-color-icons/link.svg)  center center no-repeat !important;
 }

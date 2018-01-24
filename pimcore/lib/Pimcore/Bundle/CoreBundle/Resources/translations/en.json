@@ -1828,5 +1828,12 @@
   "batch_append_selected": "Batch append to selected",
   "batch_append_to": "Append data to",
   "used_by_class": "Used by class:",
-  "uses_these_bricks": "Uses these bricks:"
+  "uses_these_bricks": "Uses these bricks:",
+  "sort_children_by": "Sort Children By",
+  "by_key": "Key (Alphabetically)",
+  "by_index": "Index (Ordered By Manually)",
+  "successful_object_change_children_sort_to_index": "Changed object children sorting to Index",
+  "successful_object_change_children_sort_to_key": "Changed object children sorting to Key",
+  "error_object_change_children_sort_to_index": "Unable to change object children sorting to Index",
+  "error_object_change_children_sort_to_key": "Unable to change object children sorting to Key"
 }
