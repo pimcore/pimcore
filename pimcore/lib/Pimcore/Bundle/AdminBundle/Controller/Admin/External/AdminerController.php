@@ -43,7 +43,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             }
 
             // disable debug error handler while including adminer
-            $errorHandler = set_error_handler(function() {});
+            $errorHandler = set_error_handler(function () {
+            });
 
             chdir($this->adminerHome . 'adminer');
             include($this->adminerHome . 'adminer/index.php');

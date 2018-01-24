@@ -21,7 +21,6 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Google;
-use Pimcore\Kernel;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Manager\Procedural;
 use Pimcore\Model\User;

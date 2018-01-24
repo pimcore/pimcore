@@ -47,11 +47,13 @@ class MailEvent extends Event
 
     /**
      * @param Mail $mail
+     *
      * @return $this
      */
     public function setMail($mail)
     {
         $this->mail = $mail;
+
         return $this;
     }
 }

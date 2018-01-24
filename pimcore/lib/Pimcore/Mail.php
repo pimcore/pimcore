@@ -16,9 +16,9 @@ namespace Pimcore;
 
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
-use Pimcore\Helper\Mail as MailHelper;
-use Pimcore\Event\Model\MailEvent;
 use Pimcore\Event\MailEvents;
+use Pimcore\Event\Model\MailEvent;
+use Pimcore\Helper\Mail as MailHelper;
 
 class Mail extends \Swift_Message
 {
@@ -623,7 +623,7 @@ class Mail extends \Swift_Message
 
         \Pimcore::getEventDispatcher()->dispatch(MailEvents::PRE_SEND, $event);
 
-        if($event->hasArgument('mailer')){
+        if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
             $mailer->send($this);
         }

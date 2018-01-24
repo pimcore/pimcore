@@ -402,13 +402,14 @@ class Document extends Element\AbstractElement
 
     /**
      * @return Document
+     *
      * @throws \Exception
      */
     public function save()
     {
         // additional parameters (e.g. "versionNote" for the version note)
         $params = [];
-        if(func_num_args() && is_array(func_get_arg(0))) {
+        if (func_num_args() && is_array(func_get_arg(0))) {
             $params =  func_get_arg(0);
         }
 
