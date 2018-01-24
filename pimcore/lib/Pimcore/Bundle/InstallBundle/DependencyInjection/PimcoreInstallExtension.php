@@ -47,7 +47,8 @@ class PimcoreInstallExtension extends ConfigurableExtension
         $parameters = $config['parameters'] ?? [];
         $definition = $container->getDefinition(Installer::class);
 
-        $definition->addMethodCall('setCopyProfileFiles', [$config['copy_profile_files']]);
+        $definition->addMethodCall('setInstallProfileFiles', [$config['files']['install']]);
+        $definition->addMethodCall('setSymlink', [$config['files']['symlink']]);
 
         $dbCredentials = $parameters['database_credentials'] ?? [];
         $dbCredentials = $this->normalizeDbCredentials($dbCredentials);

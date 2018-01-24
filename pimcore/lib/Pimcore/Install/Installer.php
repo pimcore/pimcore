@@ -50,11 +50,11 @@ class Installer
     private $fileInstaller;
 
     /**
-     * If false, profile files won't be copied
+     * If false, profile files won't be copied/symlinked
      *
      * @var bool
      */
-    private $copyProfileFiles = true;
+    private $installProfileFiles = true;
 
     /**
      * @var bool
@@ -91,9 +91,9 @@ class Installer
         $this->fileInstaller  = $fileInstaller;
     }
 
-    public function setCopyProfileFiles(bool $copyProfile)
+    public function setInstallProfileFiles(bool $installFiles)
     {
-        $this->copyProfileFiles = $copyProfile;
+        $this->installProfileFiles = $installFiles;
     }
 
     public function setProfile(string $profile = null)
@@ -277,7 +277,7 @@ class Installer
         ]);
 
         $errors = [];
-        if ($this->copyProfileFiles) {
+        if ($this->installProfileFiles) {
             $errors = $this->fileInstaller->installFiles($profile, $this->overwriteExistingFiles, $this->symlink);
             if (count($errors) > 0) {
                 return $errors;

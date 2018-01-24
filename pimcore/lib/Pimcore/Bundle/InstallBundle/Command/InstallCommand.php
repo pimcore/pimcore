@@ -331,7 +331,7 @@ class InstallCommand extends Command
         }
 
         if ($input->getOption('no-copy-profile-files')) {
-            $this->installer->setCopyProfileFiles(false);
+            $this->installer->setInstallProfileFiles(false);
         }
 
         if ($input->getOption('no-overwrite')) {
