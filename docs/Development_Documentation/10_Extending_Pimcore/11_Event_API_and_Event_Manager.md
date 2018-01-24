@@ -329,6 +329,12 @@ Various events that can be used to manipulate a search request.
 | `workflowmanagement.action.success` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`  | |
 | `workflowmanagement.action.failure` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`, Exception `e` | |
  
+### Mail
+
+| Name                             | Target                                        | Parameters                            | Description                                                                 |
+|----------------------------------|-----------------------------------------------|---------------------------------------|-----------------------------------------------------------------------------|
+| `mail.preSend`                   | `Pimcore\Mail`                         | (Pimcore\Model\Tool\Admin\EventDataContainer) `transport` contains the Zend_Mail_Transport_* if defined                                   | Fired before an email is sent. Modify mail settings or define a custom Zend_Mail_Transport_* depending on the mail settings |
+
 
 ## Example of custom error handling using the Event API
 

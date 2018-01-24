@@ -694,6 +694,10 @@ class Mail extends \Zend_Mail
             }
         }
 
+        $returnValueContainer = new Model\Tool\Admin\EventDataContainer(['transport' => $transport]);
+        \Pimcore::getEventManager()->trigger("mail.preSend", $this,$returnValueContainer);
+        $transport = $returnValueContainer->getData()['transport'];
+
         $result = parent::send($transport);
 
         if ($this->loggingIsEnabled()) {
