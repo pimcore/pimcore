@@ -14,6 +14,7 @@
 
 namespace Pimcore;
 
+use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class Config
@@ -133,16 +134,34 @@ class Config
     }
 
     /**
+     * @param null $languange
+     *
+     * @return string
+     */
+    public static function getWebsiteConfigRuntimeCacheKey($languange = null)
+    {
+        $cacheKey = 'pimcore_config_website';
+        if ($languange) {
+            $cacheKey .= '_' . $languange;
+        }
+
+        return $cacheKey;
+    }
+
+    /**
      * @static
      *
      * @return mixed|\Pimcore\Config\Config
      */
-    public static function getWebsiteConfig()
+    public static function getWebsiteConfig($language = null)
     {
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_website')) {
-            $config = \Pimcore\Cache\Runtime::get('pimcore_config_website');
+        if (\Pimcore\Cache\Runtime::isRegistered(self::getWebsiteConfigRuntimeCacheKey($language))) {
+            $config = \Pimcore\Cache\Runtime::get(self::getWebsiteConfigRuntimeCacheKey($language));
         } else {
             $cacheKey = 'website_config';
+            if ($language) {
+                $cacheKey .= "_" . $language;
+            }
 
             $siteId = null;
             if (Model\Site::isSiteRequest()) {
@@ -170,6 +189,7 @@ class Config
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
+                /** @var  $item WebsiteSetting */
                 foreach ($list as $item) {
                     $key = $item->getName();
                     $itemSiteId = $item->getSiteId();
@@ -177,6 +197,26 @@ class Config
                     if ($itemSiteId != 0 && $itemSiteId != $siteId) {
                         continue;
                     }
+
+
+                    $itemLanguage =  $item->getLanguage();
+
+                    if ($itemLanguage && $language != $itemLanguage) {
+                        continue;
+                    }
+
+
+                    if (isset($settingsArray[$key])) {
+
+                        if (!$itemLanguage) {
+                            continue;
+                        }
+                    }
+
+                    if ($settingsArray[$key] && !$itemLanguage) {
+                        continue;
+                    }
+
 
                     $s = null;
 
@@ -204,25 +244,25 @@ class Config
                     }
                 }
 
+                //TODO resolve for all langs, current lang first, then no lang
                 $config = new \Pimcore\Config\Config($settingsArray, true);
 
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
             }
 
-            self::setWebsiteConfig($config);
+            self::setWebsiteConfig($config, $language);
         }
 
         return $config;
     }
 
     /**
-     * @static
-     *
-     * @param \Pimcore\Config\Config $config
+     * @param Config\Config $config
+     * @param null $language
      */
-    public static function setWebsiteConfig(\Pimcore\Config\Config $config)
+    public static function setWebsiteConfig(\Pimcore\Config\Config $config, $language = null)
     {
-        \Pimcore\Cache\Runtime::set('pimcore_config_website', $config);
+        \Pimcore\Cache\Runtime::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
 
     /**
@@ -230,12 +270,13 @@ class Config
      *
      * @param null|mixed $key       Config key to directly load. If null, the whole config will be returned
      * @param null|mixed $default   Default value to use if the key is not set
+     * @param null|string $language   Language
      *
      * @return Config\Config|mixed
      */
-    public static function getWebsiteConfigValue($key = null, $default = null)
+    public static function getWebsiteConfigValue($key = null, $default = null, $language = null)
     {
-        $config = self::getWebsiteConfig();
+        $config = self::getWebsiteConfig($language);
         if (null !== $key) {
             return $config->get($key, $default);
         }

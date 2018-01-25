@@ -19,7 +19,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\WebsiteSetting\Listing\Dao getDao()
  */
-class Listing extends Model\Listing\AbstractListing
+class Listing extends Model\Listing\JsonListing
 {
     /**
      * Contains the results of the list. They are all an instance of WebsiteSetting
@@ -30,8 +30,6 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
      *
      * @param $key
      *

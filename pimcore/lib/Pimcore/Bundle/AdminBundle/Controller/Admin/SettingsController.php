@@ -1850,24 +1850,47 @@ class SettingsController extends AdminController
 
                 $list = new WebsiteSetting\Listing();
 
-                $list->setLimit($request->get('limit'));
-                $list->setOffset($request->get('start'));
+                $limit = $request->get('limit');
+                $start = $request->get('start');
 
                 $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-                if ($sortingSettings['orderKey']) {
-                    $list->setOrderKey($sortingSettings['orderKey']);
-                    $list->setOrder($sortingSettings['order']);
-                } else {
-                    $list->setOrderKey('name');
-                    $list->setOrder('asc');
-                }
+
+
 
                 if ($request->get('filter')) {
-                    $list->setCondition('`name` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+                    $filter = $request->get('filter');
+                    $list->setFilter(function ($row) use ($filter) {
+                        foreach ($row as $value) {
+                            if (strpos($value, $filter) !== false) {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    });
                 }
+
+                $list->setOrder(function ($a, $b) use ($sortingSettings) {
+                    if (!$sortingSettings) {
+                        return 0;
+                    }
+                    $orderKey = $sortingSettings['orderKey'];
+                    if ($a[$orderKey] == $b[$orderKey]) {
+                        return 0;
+                    }
+
+                    $result = $a[$orderKey] < $b[$orderKey] ? -1 : 1;
+                    if ($sortingSettings['order'] == 'DESC') {
+                        $result = -1 * $result;
+                    }
+
+                    return $result;
+                });
 
                 $totalCount = $list->getTotalCount();
                 $list = $list->load();
+
+                $list = array_slice($list, $start, $limit);
 
                 $settings = [];
                 foreach ($list as $item) {
@@ -1885,7 +1908,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @param $item
+     * @param WebsiteSetting $item
      *
      * @return array
      */
@@ -1894,6 +1917,7 @@ class SettingsController extends AdminController
         $resultItem = [
             'id' => $item->getId(),
             'name' => $item->getName(),
+            'language' => $item->getLanguage(),
             'type' => $item->getType(),
             'data' => null,
             'siteId' => $item->getSiteId(),
