@@ -145,7 +145,11 @@ class UserController extends AdminController implements EventedControllerInterfa
                             if (is_array($workspaces)) {
                                 foreach ($workspaces as $workspace) {
                                     $vars = get_object_vars($workspace);
-                                    $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . ucfirst($key);
+                                    if ($key == 'object') {
+                                        $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\DataObject';
+                                    } else {
+                                        $workspaceClass = '\\Pimcore\\Model\\User\\Workspace\\' . ucfirst($key);
+                                    }
                                     $newWorkspace = new $workspaceClass();
                                     foreach ($vars as $varKey => $varValue) {
                                         $newWorkspace->$varKey = $varValue;
