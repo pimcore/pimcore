@@ -61,7 +61,7 @@ class Dao extends Model\Dao\PhpArrayTable
             if ($name && $row['name'] != $name) {
                 $return = false;
             }
-            if ($siteId && $row['siteId'] != $siteId) {
+            if ($row['siteId'] && $siteId && $row['siteId'] != $siteId) {
                 $return = false;
             }
 
@@ -71,6 +71,13 @@ class Dao extends Model\Dao\PhpArrayTable
 
             return $return;
         });
+
+        if (count($data) > 0) {
+            usort($data, function ($a, $b) {
+                $result = $a["siteId"] < $b["siteId"] ? 1 : -1;
+                return $result;
+            });
+        }
 
         if (count($data) && $data[0]['id']) {
             $this->assignVariablesToModel($data[0]);
