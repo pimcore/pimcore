@@ -160,7 +160,7 @@ class Config
         } else {
             $cacheKey = 'website_config';
             if ($language) {
-                $cacheKey .= "_" . $language;
+                $cacheKey .= '_' . $language;
             }
 
             $siteId = null;
@@ -189,7 +189,7 @@ class Config
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var  $item WebsiteSetting */
+                /** @var $item WebsiteSetting */
                 foreach ($list as $item) {
                     $key = $item->getName();
                     $itemSiteId = $item->getSiteId();
@@ -198,16 +198,13 @@ class Config
                         continue;
                     }
 
-
                     $itemLanguage =  $item->getLanguage();
 
                     if ($itemLanguage && $language != $itemLanguage) {
                         continue;
                     }
 
-
                     if (isset($settingsArray[$key])) {
-
                         if (!$itemLanguage) {
                             continue;
                         }
@@ -216,7 +213,6 @@ class Config
                     if ($settingsArray[$key] && !$itemLanguage) {
                         continue;
                     }
-
 
                     $s = null;
 

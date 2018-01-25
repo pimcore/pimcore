@@ -1855,8 +1855,6 @@ class SettingsController extends AdminController
 
                 $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
 
-
-
                 if ($request->get('filter')) {
                     $filter = $request->get('filter');
                     $list->setFilter(function ($row) use ($filter) {

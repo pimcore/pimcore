@@ -82,34 +82,32 @@ class WebsiteSetting extends AbstractModel
             if (!$setting) {
                 throw new \Exception('Website setting in registry is null');
             }
-
         } catch (\Exception $e) {
             $setting = new self();
             $setting->setId(intval($id));
             $setting->getDao()->getById();
             \Pimcore\Cache\Runtime::set($cacheKey, $setting);
         }
+
         return $setting;
     }
-
 
     /**
      * @param $name name of the config
      * @param null $siteId site ID
      * @param null $language language, if property cannot be found the value of property without language is returned
      * @param null $fallbackLanguage fallback language
+     *
      * @return null|WebsiteSetting
      */
     public static function getByName($name, $siteId = null, $language = null, $fallbackLanguage = null)
     {
-
-        $nameCacheKey = $name . '~~~' . $siteId . "~~~" . $language;
+        $nameCacheKey = $name . '~~~' . $siteId . '~~~' . $language;
 
         // check if pimcore already knows the id for this $name, if yes just return it
         if (array_key_exists($nameCacheKey, self::$nameIdMappingCache)) {
             return self::getById(self::$nameIdMappingCache[$nameCacheKey]);
         }
-
 
         // create a tmp object to obtain the id
         $setting = new self();
@@ -121,6 +119,7 @@ class WebsiteSetting extends AbstractModel
 
             if ($language != $fallbackLanguage) {
                 $result = self::getByName($name, $siteId, $fallbackLanguage, $fallbackLanguage);
+
                 return $result;
             }
 
@@ -293,8 +292,6 @@ class WebsiteSetting extends AbstractModel
     {
         $this->language = $language;
     }
-
-
 
     public function clearDependentCache()
     {

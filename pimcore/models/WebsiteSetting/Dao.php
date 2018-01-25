@@ -51,6 +51,7 @@ class Dao extends Model\Dao\PhpArrayTable
      * @param null $name
      * @param null $siteId
      * @param null $language
+     *
      * @throws \Exception
      */
     public function getByName($name = null, $siteId = null, $language = null)
