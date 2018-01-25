@@ -597,6 +597,8 @@ $scripts = array(
     "pimcore/plugin/broker.js",
     "pimcore/plugin/plugin.js",
 
+    "pimcore/event-dispatcher.js",
+
     // reports
     "pimcore/report/panel.js",
     "pimcore/report/broker.js",

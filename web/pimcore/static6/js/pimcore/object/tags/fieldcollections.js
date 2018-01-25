@@ -29,7 +29,14 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             this.data = data;
         }
         this.fieldConfig = fieldConfig;
+
+        this.eventDispatcherKey = pimcore.eventDispatcher.registerTarget(this.eventDispatcherKey, this);
     },
+
+    setObject:function (object) {
+        this.object = object;
+    },
+
 
     getGridColumnConfig: function(field) {
         return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
@@ -105,7 +112,22 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             }
         }.bind(this));
 
+        this.component.on("destroy", function() {
+            pimcore.eventDispatcher.unregisterTarget(this.eventDispatcherKey);
+        }.bind(this));
+
         return this.component;
+    },
+
+
+    postSaveObject: function(object, task) {
+
+        if (object.id == this.object.id && task == "publish") {
+            for (var itemIndex = 0; itemIndex < this.component.items.items.length; itemIndex++) {
+                var item = this.component.items.items[itemIndex];
+                item["pimcore_oIndex"] = itemIndex;
+            }
+        }
     },
 
     initData: function () {
