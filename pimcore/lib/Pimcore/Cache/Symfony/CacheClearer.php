@@ -29,6 +29,11 @@ class CacheClearer
      */
     private $processTimeout;
 
+    /**
+     * @var \Closure
+     */
+    private $runCallback;
+
     public function __construct(array $options = [])
     {
         $this->resolveOptions($options);
@@ -49,33 +54,43 @@ class CacheClearer
         $this->processTimeout = $options['processTimeout'];
     }
 
-    public function clear(string $environment, array $options = [])
+    public function clear(string $environment, array $options = []): Process
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'no-warmup'           => false,
             'no-optional-warmers' => false,
+            'ansi'                => false,
             'env'                 => $environment,
         ]);
 
-        $this->runCommand('cache:clear', [], $resolver->resolve($options));
+        return $this->runCommand('cache:clear', [], $resolver->resolve($options));
     }
 
-    public function warmup(string $environment, array $options = [])
+    public function warmup(string $environment, array $options = []): Process
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'no-optional-warmers' => false,
+            'ansi'                => false,
             'env'                 => $environment,
         ]);
 
-        $this->runCommand('cache:warmup', [], $resolver->resolve($options));
+        return $this->runCommand('cache:warmup', [], $resolver->resolve($options));
+    }
+
+    /**
+     * @param \Closure $runCallback
+     */
+    public function setRunCallback(\Closure $runCallback = null)
+    {
+        $this->runCallback = $runCallback;
     }
 
     private function runCommand(string $command, array $arguments = [], array $options = [])
     {
         $process = $this->buildProcess($command, $arguments, $options);
-        $process->run();
+        $process->run($this->runCallback);
 
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);

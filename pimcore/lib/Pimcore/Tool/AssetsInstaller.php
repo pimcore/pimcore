@@ -35,6 +35,11 @@ class AssetsInstaller
     private $kernel;
 
     /**
+     * @var \Closure
+     */
+    private $runCallback;
+
+    /**
      * @var string
      */
     private $composerJsonSetting;
@@ -54,7 +59,7 @@ class AssetsInstaller
     public function install(array $options = []): Process
     {
         $process = $this->buildProcess($options);
-        $process->run();
+        $process->run($this->runCallback);
 
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
@@ -116,6 +121,14 @@ class AssetsInstaller
         $this->configureOptions($resolver);
 
         return $resolver->resolve($options);
+    }
+
+    /**
+     * @param \Closure $runCallback
+     */
+    public function setRunCallback(\Closure $runCallback = null)
+    {
+        $this->runCallback = $runCallback;
     }
 
     private function configureOptions(OptionsResolver $resolver)
