@@ -21,8 +21,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Runs the assets:install command with the settings configured in composer.json
@@ -37,23 +35,13 @@ class AssetsInstaller
     private $kernel;
 
     /**
-     * @var Serializer
-     */
-    private $serializer;
-
-    /**
      * @var string
      */
     private $composerJsonSetting;
 
-    /**
-     * @param KernelInterface $kernel
-     * @param Serializer $serializer
-     */
-    public function __construct(KernelInterface $kernel, Serializer $serializer)
+    public function __construct(KernelInterface $kernel)
     {
-        $this->kernel     = $kernel;
-        $this->serializer = $serializer;
+        $this->kernel = $kernel;
     }
 
     /**
@@ -86,32 +74,32 @@ class AssetsInstaller
     {
         $options = $this->resolveOptions($options);
 
-        $builder = new ProcessBuilder([
+        $parts = [
+            Console::getPhpCli(),
             'bin/console',
             'assets:install',
             'web',
             '--env=' . $this->kernel->getEnvironment()
-        ]);
-
-        $builder
-            ->setWorkingDirectory(PIMCORE_PROJECT_ROOT)
-            ->setPrefix(Console::getPhpCli());
+        ];
 
         if (!$options['ansi']) {
-            $builder->add('--no-ansi');
+            $parts[] = '--no-ansi';
         } else {
-            $builder->add('--ansi');
+            $parts[] = '--ansi';
         }
 
         if ($options['symlink']) {
-            $builder->add('--symlink');
+            $parts[] = '--symlink';
         }
 
         if ($options['relative']) {
-            $builder->add('--relative');
+            $parts[] = '--relative';
         }
 
-        return $builder->getProcess();
+        $process = new Process($parts);
+        $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
+
+        return $process;
     }
 
     /**
@@ -135,7 +123,8 @@ class AssetsInstaller
         $defaults = [
             'ansi'     => false,
             'symlink'  => true,
-            'relative' => true
+            'relative' => true,
+            'env'      => $this->kernel->getEnvironment()
         ];
 
         $composerJsonSetting = $this->readComposerJsonSetting();
@@ -154,6 +143,10 @@ class AssetsInstaller
         }
 
         $resolver->setDefaults($defaults);
+
+        foreach (['symlink', 'ansi', 'relative'] as $option) {
+            $resolver->setAllowedTypes($option, 'bool');
+        }
     }
 
     /**
@@ -172,9 +165,9 @@ class AssetsInstaller
 
             if (!empty($contents)) {
                 try {
-                    $json = $this->serializer->decode($json, 'json', ['json_decode_associative' => true]);
+                    $json = json_decode($contents, true);
 
-                    if ($json && isset($json['extra']) && isset($json['extra']['symfony-assets-install'])) {
+                    if (JSON_ERROR_NONE === json_last_error() && $json && isset($json['extra']) && isset($json['extra']['symfony-assets-install'])) {
                         $this->composerJsonSetting = $json['extra']['symfony-assets-install'];
                     }
                 } catch (\Exception $e) {

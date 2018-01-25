@@ -20,17 +20,20 @@ namespace Pimcore\Install;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Config;
+use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
 use Pimcore\Install\Profile\FileInstaller;
 use Pimcore\Install\Profile\Profile;
 use Pimcore\Install\Profile\ProfileLocator;
 use Pimcore\Install\SystemConfig\ConfigWriter;
 use Pimcore\Model\Tool\Setup;
+use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class Installer
 {
@@ -80,6 +83,11 @@ class Installer
      */
     private $dbCredentials;
 
+    /**
+     * @var PimcoreStyle
+     */
+    private $commandLineOutput;
+
     public function __construct(
         LoggerInterface $logger,
         ProfileLocator $profileLocator,
@@ -113,6 +121,11 @@ class Installer
     public function setSymlink(bool $symlink)
     {
         $this->symlink = $symlink;
+    }
+
+    public function setCommandLineOutput(PimcoreStyle $commandLineOutput)
+    {
+        $this->commandLineOutput = $commandLineOutput;
     }
 
     public function needsProfile(): bool
@@ -311,9 +324,44 @@ class Installer
 
         $errors = $this->setupProfileDatabase($setup, $profile, $userCredentials, $errors);
 
+        $this->installAssets($kernel);
+
         $this->clearKernelCacheDir($kernel);
 
         return $errors;
+    }
+
+    private function installAssets(KernelInterface $kernel)
+    {
+        $this->logger->info('Running {command} command', ['command' => 'assets:install']);
+
+        $assetsInstaller = $kernel->getContainer()->get(AssetsInstaller::class);
+        $io              = $this->commandLineOutput;
+
+        try {
+            $ansi = null !== $io && $io->isDecorated();
+
+            $process = $assetsInstaller->install([
+                'ansi' => $ansi
+            ]);
+
+            if (null !== $io) {
+                $io->writeln($process->getOutput());
+            }
+        } catch (ProcessFailedException $e) {
+            $this->logger->error($e->getMessage());
+
+            if (null === $io) {
+                return;
+            }
+
+            $process = $e->getProcess();
+
+            $io->writeln($process->getOutput());
+
+            $io->note('Installing assets failed. Please run the following command manually:');
+            $io->writeln('  ' . $process->getCommandLine());
+        }
     }
 
     private function createConfigFiles(array $config)

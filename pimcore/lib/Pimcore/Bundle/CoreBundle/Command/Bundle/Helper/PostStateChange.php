@@ -112,8 +112,8 @@ class PostStateChange
 
         $assetsOptions = [];
         foreach ($assetsInstaller->resolveOptions(['ansi' => true]) as $option => $value) {
-            // do not set ansi option again for our subcommand
-            if ('ansi' === $option) {
+            // do not set env and ansi options again for our subcommand
+            if (in_array($option, ['ansi', 'env'])) {
                 continue;
             }
 
