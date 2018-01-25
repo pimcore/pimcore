@@ -32,7 +32,7 @@ class Tenant implements ICondition
      */
     public function check(IEnvironment $environment)
     {
-        $currentTenant = Factory::getInstance()->getEnvironment()->getCurrentAssortmentTenant();
+        $currentTenant = Factory::getInstance()->getEnvironment()->getCurrentCheckoutTenant();
 
         return in_array($currentTenant, $this->getTenant());
     }
