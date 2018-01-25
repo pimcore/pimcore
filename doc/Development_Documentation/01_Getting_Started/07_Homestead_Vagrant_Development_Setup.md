@@ -149,7 +149,7 @@ install_pimcore() {
     mysql -e "ALTER DATABASE \`$1\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
 
     # install pimcore
-    bin/install --symlink --profile ${2:-empty} --no-interaction \
+    bin/install pimcore:install --symlink --profile ${2:-empty} --no-interaction \
         --admin-username admin --admin-password admin \
         --mysql-username homestead --mysql-password secret --mysql-database $1
 }

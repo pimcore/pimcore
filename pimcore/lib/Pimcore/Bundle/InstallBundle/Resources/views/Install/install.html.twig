@@ -23,6 +23,12 @@
             color: #a61717;
         }
 
+        #install_info .x-panel-body {
+            background: #d9edf7;
+            color: #31708f;
+            border-color: #bce8f1;
+        }
+
         .icon_generate {
             background: url(/pimcore/static6/img/flat-color-icons/engineering.svg) center center no-repeat !important;
         }
@@ -74,7 +80,10 @@
 
 <script type="text/javascript">
     var errorMessages = '{{ errorString|trim|raw }}';
+    var infoMessage = {{ info|trim|json_encode|raw }};
     var availableProfiles = {{ profiles|json_encode()|raw }};
+    var needsProfile = {{ needsProfile ? 'true' : 'false' }};
+    var needsDb = {{ needsDb ? 'true' : 'false' }};
 
     {% verbatim %}
     Ext.onReady(function() {
@@ -114,23 +123,28 @@
         };
 
         var validateInput = function () {
-
             var validInstall = true;
             var validCheckReq = true;
             var credentialError;
 
+            if (needsDb) {
+                $.each(["mysql_host_socket","mysql_username","mysql_database"], function (index, value) {
+                    var item = Ext.getCmp(value);
+                    if(item.getValue().length < 1) {
+                        validCheckReq = false;
+                        item.addCls("invalid");
+                    } else {
+                        item.removeCls("invalid");
+                    }
+                });
+            }
 
-            $.each(["mysql_host_socket","mysql_username","mysql_database"], function (index, value) {
-                var item = Ext.getCmp(value);
-                if(item.getValue().length < 1) {
-                    validCheckReq = false;
-                    item.addCls("invalid");
-                } else {
-                    item.removeCls("invalid");
-                }
-            });
+            var nonEmptyInputs = ["admin_username","admin_password"];
+            if (needsProfile) {
+                nonEmptyInputs.push('profile');
+            }
 
-            $.each(["admin_username","admin_password", "profile"], function (index, value) {
+            $.each(nonEmptyInputs, function (index, value) {
                 var item = Ext.getCmp(value);
                 if(!item.getValue()) {
                     validInstall = false;
@@ -183,23 +197,35 @@
         };
 
         var win = null;
+        var windowItems = [];
 
         if(errorMessages.length > 0) {
+            windowItems.push(logoPanelConf);
+
+            if (infoMessage.length > 0) {
+                windowItems.push({
+                    xtype: "panel",
+                    id: "install_info",
+                    border: false,
+                    bodyStyle: "padding: 20px",
+                    html: infoMessage
+                });
+            }
+
+            windowItems.push({
+                xtype: "panel",
+                id: "install_errors",
+                border: false,
+                bodyStyle: "padding: 10px",
+                html: errorMessages
+            });
+
             win = new Ext.Window({
                 width: 450,
                 closable: false,
                 closeable: false,
                 y: 20,
-                items: [
-                    logoPanelConf,
-                    {
-                        xtype: "panel",
-                        id: "install_errors",
-                        border: false,
-                        bodyStyle: "padding: 10px",
-                        html: errorMessages
-                    }
-                ],
+                items: windowItems,
                 bbar: ["->", {
                     id: "check_button",
                     text: "Reload",
@@ -218,151 +244,176 @@
                 }
             });
         } else {
+            windowItems.push(logoPanelConf);
+
+            if (infoMessage.length > 0) {
+                windowItems.push({
+                    xtype: "panel",
+                    id: "install_info",
+                    border: false,
+                    bodyStyle: "padding: 20px",
+                    html: infoMessage
+                });
+            }
+
+            windowItems.push({
+                xtype: "panel",
+                id: "install_errors",
+                border: false,
+                bodyStyle: "padding: 10px",
+                hidden: true
+            });
+
+            var installFormItems = [];
+
+            if (needsProfile) {
+                installFormItems.push({
+                    xtype: "combo",
+                    name: "profile",
+                    id: "profile",
+                    fieldLabel: "<b>Install Profile</b>",
+                    labelWidth: 116,
+                    store: availableProfiles,
+                    mode: "local",
+                    emptyText: "Please select a profile",
+                    width: 396,
+                    editable: false,
+                    triggerAction: "all",
+                    listeners: {
+                        "select": validateInput
+                    }
+                });
+            }
+
+            if (needsDb) {
+                installFormItems.push({
+                    title: "MySQL Settings",
+                    xtype: "fieldset",
+                    defaults: {
+                        width: 380
+                    },
+                    items: [
+                        {
+                            xtype: "textfield",
+                            name: "mysql_host_socket",
+                            id: "mysql_host_socket",
+                            fieldLabel: "Host / Socket",
+                            value: "localhost",
+                            enableKeyEvents: true,
+                            listeners: {
+                                "keyup": validateInput
+                            }
+                        },
+                        {
+                            xtype: "textfield",
+                            name: "mysql_port",
+                            fieldLabel: "Port",
+                            value: "3306"
+                        },
+                        {
+                            xtype: "textfield",
+                            name: "mysql_username",
+                            id: "mysql_username",
+                            fieldLabel: "Username",
+                            enableKeyEvents: true,
+                            listeners: {
+                                "keyup": validateInput
+                            }
+                        },
+                        {
+                            xtype: "textfield",
+                            name: "mysql_password",
+                            fieldLabel: "Password"
+                        },
+                        {
+                            xtype: "textfield",
+                            name: "mysql_database",
+                            id: "mysql_database",
+                            fieldLabel: "Database",
+                            enableKeyEvents: true,
+                            listeners: {
+                                "keyup": validateInput
+                            }
+                        }
+                    ]
+                });
+            }
+
+            installFormItems.push({
+                title: "Admin User",
+                xtype: "fieldset",
+                defaults: {
+                    width: 380
+                },
+                items: [
+                    {
+                        xtype: "textfield",
+                        name: "admin_username",
+                        id: "admin_username",
+                        fieldLabel: "Username",
+                        value: "admin",
+                        enableKeyEvents: true,
+                        listeners: {
+                            "keyup": validateInput
+                        }
+                    },
+                    {
+                        xtype: "fieldcontainer",
+                        layout: 'hbox',
+                        items: [
+                            {
+                                xtype: "textfield",
+                                width: 340,
+                                name: "admin_password",
+                                id: "admin_password",
+                                fieldLabel: "Password",
+                                enableKeyEvents: true,
+                                listeners: {
+                                    "keyup": validateInput
+                                }
+                            }, {
+                                xtype: "button",
+                                width: 32,
+                                style: "margin-left: 8px",
+                                iconCls: "icon_generate",
+                                handler: function () {
+                                    var pass;
+
+                                    while(true) {
+                                        pass = passwordGenerator(15);
+                                        if(isValidPassword(pass)) {
+                                            break;
+                                        }
+                                    }
+
+                                    Ext.getCmp("admin_password").setValue(pass);
+                                    validateInput();
+                                }
+                            }
+                        ]
+                    }, {
+                        xtype: "container",
+                        id: "credential_error",
+                        hidden: true
+                    }
+                ]
+            });
+
+            windowItems.push({
+                xtype: "form",
+                id: "install_form",
+                defaultType: "textfield",
+                bodyStyle: "padding: 20px 10px 10px 10px",
+                items: installFormItems,
+                hidden: (installFormItems.length === 0)
+            });
+
             win = new Ext.Window({
                 width: 450,
                 closable: false,
                 closeable: false,
                 y: 20,
-                items: [
-                    logoPanelConf,
-                    {
-                        xtype: "panel",
-                        id: "install_errors",
-                        border: false,
-                        bodyStyle: "padding: 10px",
-                        hidden: true
-                    },
-                    {
-                        xtype: "form",
-                        id: "install_form",
-                        defaultType: "textfield",
-                        bodyStyle: "padding: 20px 10px 10px 10px",
-                        items: [{
-                            xtype: "combo",
-                            name: "profile",
-                            id: "profile",
-                            fieldLabel: "<b>Install Profile</b>",
-                            labelWidth: 116,
-                            store: availableProfiles,
-                            mode: "local",
-                            emptyText: "Please select a profile",
-                            width: 396,
-                            editable: false,
-                            triggerAction: "all",
-                            listeners: {
-                                "select": validateInput
-                            }
-                        },{
-                            title: "MySQL Settings",
-                            xtype: "fieldset",
-                            defaults: {
-                                width: 380
-                            },
-                            items: [{
-                                xtype: "textfield",
-                                name: "mysql_host_socket",
-                                id: "mysql_host_socket",
-                                fieldLabel: "Host / Socket",
-                                value: "localhost",
-                                enableKeyEvents: true,
-                                listeners: {
-                                    "keyup": validateInput
-                                }
-                            },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_port",
-                                    fieldLabel: "Port",
-                                    value: "3306"
-                                },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_username",
-                                    id: "mysql_username",
-                                    fieldLabel: "Username",
-                                    enableKeyEvents: true,
-                                    listeners: {
-                                        "keyup": validateInput
-                                    }
-                                },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_password",
-                                    fieldLabel: "Password"
-                                },
-                                {
-                                    xtype: "textfield",
-                                    name: "mysql_database",
-                                    id: "mysql_database",
-                                    fieldLabel: "Database",
-                                    enableKeyEvents: true,
-                                    listeners: {
-                                        "keyup": validateInput
-                                    }
-                                }
-                            ]
-                        },
-                            {
-                                title: "Admin User",
-                                xtype: "fieldset",
-                                defaults: {
-                                    width: 380
-                                },
-                                items: [
-                                    {
-                                        xtype: "textfield",
-                                        name: "admin_username",
-                                        id: "admin_username",
-                                        fieldLabel: "Username",
-                                        value: "admin",
-                                        enableKeyEvents: true,
-                                        listeners: {
-                                            "keyup": validateInput
-                                        }
-                                    },
-                                    {
-                                        xtype: "fieldcontainer",
-                                        layout: 'hbox',
-                                        items: [{
-                                            xtype: "textfield",
-                                            width: 340,
-                                            name: "admin_password",
-                                            id: "admin_password",
-                                            fieldLabel: "Password",
-                                            enableKeyEvents: true,
-                                            listeners: {
-                                                "keyup": validateInput
-                                            }
-                                        }, {
-                                            xtype: "button",
-                                            width: 32,
-                                            style: "margin-left: 8px",
-                                            iconCls: "icon_generate",
-                                            handler: function () {
-
-                                                var pass;
-
-                                                while(true) {
-                                                    pass = passwordGenerator(15);
-                                                    if(isValidPassword(pass)) {
-                                                        break;
-                                                    }
-                                                }
-
-                                                Ext.getCmp("admin_password").setValue(pass);
-                                                validateInput();
-                                            }
-                                        }]
-                                    }, {
-                                        xtype: "container",
-                                        id: "credential_error",
-                                        hidden: true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
+                items: windowItems,
                 bbar: [{
                     id: "check_button",
                     text: "Check Requirements",
@@ -440,7 +491,7 @@
                             };
 
                             Ext.Ajax.request({
-                                url: "/install",
+                                url: "/install/",
                                 method: "post",
                                 params: Ext.getCmp("install_form").getForm().getFieldValues(),
                                 success: handleResponse,

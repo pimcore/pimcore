@@ -77,7 +77,12 @@ class Console
             return $value;
         }
 
-        $pathVariable = Config::getSystemConfig()->general->path_variable;
+        $systemConfig = Config::getSystemConfig();
+
+        $pathVariable = null;
+        if ($systemConfig) {
+            $pathVariable = Config::getSystemConfig()->general->path_variable;
+        }
 
         $paths = [];
         if ($pathVariable) {

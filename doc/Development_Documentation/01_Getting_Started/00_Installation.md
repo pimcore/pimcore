@@ -72,30 +72,89 @@ Alternatively, you can use the CLI installer to install pimcore. The installer w
 interactively.
 
 ```
-$ bin/install
+$ bin/install pimcore:install
 ```
 
 Every parameter can be set as option to make the install automated. The `--no-interaction` flag will avoid any interactive
 prompts:
 
 ```
-$ bin/install --profile demo-basic \
+$ bin/install pimcore:install --profile demo-basic \
   --admin-username admin --admin-password admin \
   --mysql-username username --mysql-password password --mysql-database pimcore5 \
   --no-interaction
 ```
 
 To avoid having to pass sensitive data (e.g. DB password) as command line option, you can also set each parameter as env
-variable. See `bin/install --help` for details. Example:
+variable. See `bin/install pimcore:install --help` for details. Example:
 
 ```
-$ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password bin/install --profile demo-basic \
+$ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password bin/install pimcore:install \
+  --profile demo-basic \
   --admin-username admin --admin-password admin \
   --mysql-database pimcore5 \
   --no-interaction
 ```
 
 Please also remove the `web/install.php` file after the installation is complete.
+
+
+### Preconfiguring the installer
+
+You can preconfigure the values used by the installer by adding a config file which sets values for profile and database
+credentials. This is especially useful when installing Pimcore on platforms where credentials are available via env vars
+instead of having direct access to them. To preconfigure the installer, add a config file in `app/config/installer.yml` 
+(note: the file can be of any format supported by Symfony's config, so you could also use xml or php as format) configure
+the `pimcore_installer` tree:
+
+```yaml
+# app/config/installer.yml
+
+pimcore_install:
+    parameters:
+        profile: demo-basic
+        database_credentials:
+            user:                 username
+            password:             password
+            dbname:               pimcore5
+            
+            # env variables can be directly read with the %env() syntax
+            # see https://symfony.com/blog/new-in-symfony-3-2-runtime-environment-variables
+            host:                 %env(DB_HOST)
+            port:                 %env(DB_PORT)
+```
+
+You can also configure the installer to not copy the profile files or to symlink them (useful for development). See the
+full tree of available options:
+
+```yaml
+# output of bin/install config:dump-reference pimcore_install
+
+# Default configuration for extension with alias: "pimcore_install"
+pimcore_install:
+
+    # Shows an info message on the installation screen
+    info_message:         null
+    files:
+
+        # Defines if profile files should be installed. If this is false, only the DB will be installed.
+        install:              true
+
+        # Symlink files instead of copying them
+        symlink:              false
+    parameters:
+
+        # The install profile to use
+        profile:              null
+        database_credentials:
+            user:                 ~
+            password:             ~
+            dbname:               ~
+            host:                 ~
+            port:                 ~
+            unix_socket:          ~
+```
+
 
 ### Debugging installation issues
 

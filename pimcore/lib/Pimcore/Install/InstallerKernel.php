@@ -17,16 +17,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Install;
 
-use Pimcore\Composer\PackageInfo;
-use Pimcore\Install\Command\InstallCommand;
-use Pimcore\Install\Controller\InstallController;
-use Pimcore\Install\Profile\ProfileLocator;
+use Pimcore\Bundle\InstallBundle\Controller\InstallController;
+use Pimcore\Bundle\InstallBundle\PimcoreInstallBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Resource\FileExistenceResource;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Route;
@@ -72,7 +72,8 @@ class InstallerKernel extends Kernel
         $bundles = [
             new FrameworkBundle(),
             new MonologBundle(),
-            new TwigBundle()
+            new TwigBundle(),
+            new PimcoreInstallBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'])) {
@@ -87,60 +88,27 @@ class InstallerKernel extends Kernel
      */
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
-        // configure bundles
-        $c->loadFromExtension('framework', [
-            'secret'     => uniqid('installer-', true),
-            'profiler'   => false,
-            'templating' => ['engines' => ['twig']],
-            'php_errors' => [
-                'log' => true
-            ]
-        ]);
+        $c->setParameter('secret', uniqid('installer-', true));
 
         $c->loadFromExtension('twig', [
-            'debug'            => '%kernel.debug%',
-            'strict_variables' => '%kernel.debug%',
-            'paths'            => [
-                __DIR__ . '/Resources/views/Install'               => 'install',
+            'paths' => [
                 __DIR__ . '/../Bundle/AdminBundle/Resources/views' => 'PimcoreAdminBundle'
             ]
         ]);
 
-        $c->loadFromExtension('monolog', [
-            'handlers' => [
-                'main' => [
-                    'type'     => 'stream',
-                    'path'     => '%kernel.logs_dir%/%kernel.environment%.log',
-                    'level'    => 'debug',
-                    'channels' => ['!event']
-                ],
+        $loader->load('@PimcoreInstallBundle/Resources/config/config.yml');
 
-                'console' => [
-                    'type'     => 'console',
-                    'level'    => 'debug',
-                    'channels' => ['!event'],
+        // load installer config files if available
+        foreach (['php', 'yaml', 'yml', 'xml'] as $extension) {
+            $file = sprintf('%s/app/config/installer.%s', $this->getProjectDir(), $extension);
 
-                    // make sure we show all logs on the console
-                    // see https://symfony.com/blog/new-in-symfony-2-4-show-logs-in-console
-                    'verbosity_levels' => [
-                        'VERBOSITY_NORMAL' => 'DEBUG'
-                    ]
-                ]
-            ]
-        ]);
+            $c->addResource(new FileExistenceResource($file));
 
-        // register services
-        $c->autowire(Installer::class, Installer::class);
-        $c->autowire(PackageInfo::class, PackageInfo::class);
-        $c->autowire(ProfileLocator::class, ProfileLocator::class);
-
-        // register command and tag it as console.command
-        $c->autowire(InstallCommand::class, InstallCommand::class);
-        $c->findDefinition(InstallCommand::class)->addTag('console.command');
-
-        // register controller and tag it with service_arguments to enable action injection
-        $c->autowire(InstallController::class, InstallController::class);
-        $c->findDefinition(InstallController::class)->addTag('controller.service_arguments');
+            if (file_exists($file)) {
+                $c->addResource(new FileResource($file));
+                $loader->load($file);
+            }
+        }
     }
 
     /**
@@ -148,8 +116,8 @@ class InstallerKernel extends Kernel
      */
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->addRoute($this->buildRoute('/install', 'index', ['GET']));
-        $routes->addRoute($this->buildRoute('/install', 'install', ['POST']));
+        $routes->addRoute($this->buildRoute('/install/', 'index', ['GET']));
+        $routes->addRoute($this->buildRoute('/install/', 'install', ['POST']));
         $routes->addRoute($this->buildRoute('/install/check', 'check', ['POST']));
     }
 

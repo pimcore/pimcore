@@ -21,6 +21,7 @@ use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Config;
 use Pimcore\Db\Connection;
+use Pimcore\Install\Profile\FileInstaller;
 use Pimcore\Install\Profile\Profile;
 use Pimcore\Install\Profile\ProfileLocator;
 use Pimcore\Install\SystemConfig\ConfigWriter;
@@ -44,6 +45,18 @@ class Installer
     private $profileLocator;
 
     /**
+     * @var FileInstaller
+     */
+    private $fileInstaller;
+
+    /**
+     * If false, profile files won't be copied/symlinked
+     *
+     * @var bool
+     */
+    private $installProfileFiles = true;
+
+    /**
      * @var bool
      */
     private $overwriteExistingFiles = true;
@@ -54,29 +67,63 @@ class Installer
     private $symlink = false;
 
     /**
-     * @param LoggerInterface $logger
-     * @param ProfileLocator $profileLocator
+     * Predefined profile from config
+     *
+     * @var string
      */
-    public function __construct(LoggerInterface $logger, ProfileLocator $profileLocator)
+    private $profile;
+
+    /**
+     * Predefined DB credentials from config
+     *
+     * @var array
+     */
+    private $dbCredentials;
+
+    public function __construct(
+        LoggerInterface $logger,
+        ProfileLocator $profileLocator,
+        FileInstaller $fileInstaller
+    )
     {
         $this->logger         = $logger;
         $this->profileLocator = $profileLocator;
+        $this->fileInstaller  = $fileInstaller;
     }
 
-    /**
-     * @param bool $overwriteExistingFiles
-     */
+    public function setInstallProfileFiles(bool $installFiles)
+    {
+        $this->installProfileFiles = $installFiles;
+    }
+
+    public function setProfile(string $profile = null)
+    {
+        $this->profile = $profile;
+    }
+
+    public function setDbCredentials(array $dbCredentials = [])
+    {
+        $this->dbCredentials = $dbCredentials;
+    }
+
     public function setOverwriteExistingFiles(bool $overwriteExistingFiles)
     {
         $this->overwriteExistingFiles = $overwriteExistingFiles;
     }
 
-    /**
-     * @param bool $symlink
-     */
     public function setSymlink(bool $symlink)
     {
         $this->symlink = $symlink;
+    }
+
+    public function needsProfile(): bool
+    {
+        return null === $this->profile;
+    }
+
+    public function needsDbCredentials(): bool
+    {
+        return empty($this->dbCredentials);
     }
 
     public function checkPrerequisites(): array
@@ -112,7 +159,7 @@ class Installer
      */
     public function install(array $params): array
     {
-        $dbConfig = $this->normalizeDbConfig($params);
+        $dbConfig = $this->resolveDbConfig($params);
 
         // try to establish a mysql connection
         try {
@@ -131,16 +178,27 @@ class Installer
         }
 
         // check username & password
-        $adminUser = $params['admin_username'];
-        $adminPass = $params['admin_password'];
+        $adminUser = $params['admin_username'] ?? '';
+        $adminPass = $params['admin_password'] ?? '';
 
         if (strlen($adminPass) < 4 || strlen($adminUser) < 4) {
             $errors[] = 'Username and password should have at least 4 characters';
         }
 
-        $profileId = 'empty';
-        if (isset($params['profile'])) {
-            $profileId = $params['profile'];
+        $profileId = null;
+        if (null !== $this->profile) {
+            $profileId = $this->profile;
+        } else {
+            $profileId = 'empty';
+            if (isset($params['profile'])) {
+                $profileId = $params['profile'];
+            }
+        }
+
+        if (empty($profileId)) {
+            $errors[] = sprintf('Invalid profile ID');
+
+            return $errors;
         }
 
         $profile = null;
@@ -175,18 +233,33 @@ class Installer
         }
     }
 
-    private function normalizeDbConfig(array $params): array
+    public function resolveDbConfig(array $params): array
     {
-        // database configuration host/unix socket
         $dbConfig = [
-            'user'         => $params['mysql_username'],
-            'password'     => $params['mysql_password'],
-            'dbname'       => $params['mysql_database'],
+            'host'         => 'localhost',
+            'port'         => 3306,
             'driver'       => 'pdo_mysql',
-            'wrapperClass' => 'Pimcore\Db\Connection',
+            'wrapperClass' => Connection::class,
         ];
 
+        // do not handle parameters if db credentials are set via config
+        if (!empty($this->dbCredentials)) {
+            return array_merge(
+                $dbConfig,
+                $this->dbCredentials
+            );
+        }
+
+        // database configuration host/unix socket
+        $dbConfig = array_merge($dbConfig, [
+            'user'     => $params['mysql_username'],
+            'password' => $params['mysql_password'],
+            'dbname'   => $params['mysql_database'],
+        ]);
+
         $hostSocketValue = $params['mysql_host_socket'];
+
+        // use value as unix socket if file exists
         if (file_exists($hostSocketValue)) {
             $dbConfig['unix_socket'] = $hostSocketValue;
         } else {
@@ -203,9 +276,12 @@ class Installer
             'profile' => $profile->getName()
         ]);
 
-        $errors = $this->copyProfileFiles($profile);
-        if (count($errors) > 0) {
-            return $errors;
+        $errors = [];
+        if ($this->installProfileFiles) {
+            $errors = $this->fileInstaller->installFiles($profile, $this->overwriteExistingFiles, $this->symlink);
+            if (count($errors) > 0) {
+                return $errors;
+            }
         }
 
         $dbConfig['username'] = $dbConfig['user'];
@@ -267,61 +343,6 @@ class Installer
 
         $filesystem->rename($cacheDir, $oldCacheDir);
         $filesystem->remove($oldCacheDir);
-    }
-
-    private function copyProfileFiles(Profile $profile, array $errors = []): array
-    {
-        $fs = new Filesystem();
-
-        $symlink = $this->symlink;
-        if ($symlink && '\\' === DIRECTORY_SEPARATOR) {
-            $this->logger->warning('Symlink was chosen as installation method, but the installer can\'t symlink installation files on Windows. Copying selected files instead');
-            $symlink = false;
-        }
-
-        $logAction = $symlink ? 'Symlinking' : 'Copying';
-
-        foreach ($profile->getFilesToAdd() as $source => $target) {
-            $target = PIMCORE_PROJECT_ROOT . '/' . $target;
-
-            try {
-                if ($fs->exists($target)) {
-                    if ($this->overwriteExistingFiles) {
-                        $this->logger->warning('Removing existing file {file}', [
-                            'file' => $target
-                        ]);
-
-                        $fs->remove($target);
-                    } else {
-                        $this->logger->info('Skipping ' . $logAction . ' {source} to {target}. The target path already exists.');
-                        continue;
-                    }
-                }
-
-                $this->logger->info($logAction . ' {source} to {target}', [
-                    'source' => $source,
-                    'target' => $target
-                ]);
-
-                if ($symlink) {
-                    // create symlinks as relative links to make them portable
-                    $relativeSource = rtrim($fs->makePathRelative($source, dirname($target)), '/');
-
-                    $fs->symlink($relativeSource, $target);
-                } else {
-                    if (is_dir($source)) {
-                        $fs->mirror($source, $target);
-                    } else {
-                        $fs->copy($source, $target);
-                    }
-                }
-            } catch (\Exception $e) {
-                $this->logger->error($e);
-                $errors[] = $e->getMessage();
-            }
-        }
-
-        return $errors;
     }
 
     private function setupProfileDatabase(Setup $setup, Profile $profile, array $userCredentials, array $errors = []): array
