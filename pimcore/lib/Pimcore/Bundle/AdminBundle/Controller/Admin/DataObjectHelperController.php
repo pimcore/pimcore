@@ -1617,6 +1617,8 @@ class DataObjectHelperController extends AdminController
             $object->setUserModification($this->getUser());
             $object->save();
 
+            $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
+
             if ($job >= $importJobTotal) {
                 $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
             }
