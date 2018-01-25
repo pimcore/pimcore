@@ -30,16 +30,6 @@ pimcore.eventDispatcher = {
         delete this.targets[key];
     },
 
-
-
-    executePlugin: function (plugin, event, params) {
-        if (typeof plugin[event] == "function") {
-            params.push(this);
-            plugin[event].apply(plugin, params);
-        }
-    },
-
-
     executeHandler: function (target, event, params) {
         if (typeof target[event] == "function") {
             params.push(this);
@@ -48,8 +38,6 @@ pimcore.eventDispatcher = {
     },
 
     fireEvent: function (e) {
-
-
         var args = $A(arguments);
         args.splice(0, 1);
 
