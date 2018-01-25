@@ -60,6 +60,7 @@ class ListAvailableProfilesCommand extends Command
 
         if (empty($profiles)) {
             $this->io->warning('No profiles were found');
+
             return;
         }
 

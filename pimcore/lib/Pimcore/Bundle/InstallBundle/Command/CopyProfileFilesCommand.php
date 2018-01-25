@@ -91,6 +91,7 @@ class CopyProfileFilesCommand extends Command
 
         if (0 === count($errors)) {
             $this->io->success(sprintf('Files for profile "%s" were successfully copied', $profile->getName()));
+
             return;
         }
 

@@ -84,8 +84,7 @@ class Installer
         LoggerInterface $logger,
         ProfileLocator $profileLocator,
         FileInstaller $fileInstaller
-    )
-    {
+    ) {
         $this->logger         = $logger;
         $this->profileLocator = $profileLocator;
         $this->fileInstaller  = $fileInstaller;
