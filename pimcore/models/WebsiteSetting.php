@@ -93,7 +93,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param $name name of the config
+     * @param string $name name of the config
      * @param null $siteId site ID
      * @param null $language language, if property cannot be found the value of property without language is returned
      * @param null $fallbackLanguage fallback language
@@ -115,7 +115,7 @@ class WebsiteSetting extends AbstractModel
         try {
             $setting->getDao()->getByName($name, $siteId, $language);
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::warning($e->getMessage());
 
             if ($language != $fallbackLanguage) {
                 $result = self::getByName($name, $siteId, $fallbackLanguage, $fallbackLanguage);

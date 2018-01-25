@@ -75,7 +75,10 @@ class Dao extends Model\Dao\PhpArrayTable
         if (count($data) && $data[0]['id']) {
             $this->assignVariablesToModel($data[0]);
         } else {
-            throw new \Exception('Website Setting with name: ' . $this->model->getName() . ' does not exist');
+            throw new \Exception(sprintf(
+                'Website Setting "%s" does not exist.',
+                $this->model->getName() ?? $name
+            ));
         }
     }
 
