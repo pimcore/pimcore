@@ -243,8 +243,28 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         });
 
         this.namingStrategies.legacy = Class.create(this.namingStrategies.abstract, {
-            supportsCopyPaste: function () {
-                return false;
+            supportsCopyPaste: function() {
+                return true;
+            },
+
+            copyData: function (areaIdentifier, editable) {
+                if (!(editable.getName().indexOf(areaIdentifier.name + areaIdentifier.key) > 0)) {
+                    return false;
+                }
+
+                return this.createItem(editable);
+            },
+
+            getPasteName: function(areaIdentifier, item, editableData) {
+                var newKey = editableData.name.replace(new RegExp(item.identifier.name + item.identifier.key, 'g'), areaIdentifier.name + areaIdentifier.key);
+                var tmpKey;
+
+                while('undefined' === typeof tmpKey || tmpKey !== newKey) {
+                    tmpKey = newKey;
+                    newKey = newKey.replace(new RegExp(item.identifier.name + "_(.*)" + item.identifier.key + "_", "g"), areaIdentifier.name + "_$1" + areaIdentifier.key + "_");
+                }
+
+                return newKey;
             }
         });
 
