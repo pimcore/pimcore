@@ -1058,7 +1058,7 @@ class DataObjectHelperController extends AdminController
     protected function updateImportConfigShares($importConfig, $configData)
     {
         $user = $this->getAdminUser();
-        if (!$importConfig || $user->isAllowed('share_configurations')) {
+        if (!$importConfig || !$user->isAllowed('share_configurations')) {
             // nothing to do
             return;
         }
