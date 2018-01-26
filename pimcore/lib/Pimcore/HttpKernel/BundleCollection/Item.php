@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\HttpKernel\BundleCollection;
 
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class Item extends AbstractItem
@@ -51,5 +52,12 @@ class Item extends AbstractItem
     public function isPimcoreBundle(): bool
     {
         return $this->bundle instanceof PimcoreBundleInterface;
+    }
+
+    public function registerDependencies(BundleCollection $collection)
+    {
+        if ($this->bundle instanceof DependentBundleInterface) {
+            $this->bundle::registerDependentBundles($collection);
+        }
     }
 }

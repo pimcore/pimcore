@@ -52,9 +52,7 @@ class AppKernel extends Kernel
 }
 ```
 
- Internally, the `BundleCollection` will be ordered by priority, filtered by environment and returned as plain array in
-`registerBundles`. If you need full control over the registered bundles, you can override `registerBundles` and add your
-customizations on the resulting array.
+You can read more about the bundle collection and handling of dependencies in [Bundle Collection](./13_Bundle_Developers_Guide/04_Bundle_Collection.md).
 
 ### Pimcore Bundles
 

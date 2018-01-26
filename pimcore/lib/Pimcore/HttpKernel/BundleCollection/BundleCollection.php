@@ -27,16 +27,6 @@ class BundleCollection
     private $items = [];
 
     /**
-     * @var ItemInterface[]
-     */
-    private $itemsByPriority = [];
-
-    /**
-     * @var ItemInterface[]
-     */
-    private $itemsByEnvironment = [];
-
-    /**
      * Adds a collection item
      *
      * @param ItemInterface $item
@@ -46,12 +36,18 @@ class BundleCollection
     public function add(ItemInterface $item): self
     {
         $identifier = $item->getBundleIdentifier();
+
+        // a bundle can only be registered once
         if ($this->hasItem($identifier)) {
-            throw new \LogicException(sprintf('Trying to register the bundle "%s" multiple times', $identifier));
+            return $this;
         }
 
-        $this->items[$item->getBundleIdentifier()] = $item;
-        $this->itemsByPriority[$item->getPriority()][] = $item;
+        $this->items[$identifier] = $item;
+
+        // handle DependentBundleInterface by adding a bundle's dependencies to the collection - dependencies
+        // are added AFTER the item was added to the collection to avoid circular reference loops, but the
+        // sort order can be influenced by specifying a priority on the item
+        $item->registerDependencies($this);
 
         return $this;
     }
@@ -93,31 +89,21 @@ class BundleCollection
      */
     public function getItems(string $environment = null): array
     {
-        $cacheKey = '_all';
+        $items = array_values($this->items);
+
         if (null !== $environment) {
-            $cacheKey = $environment;
+            $items = array_filter($items, function (ItemInterface $item) use ($environment) {
+                return $item->matchesEnvironment($environment);
+            });
         }
 
-        if (isset($this->itemsByEnvironment[$cacheKey])) {
-            return $this->itemsByEnvironment[$cacheKey];
-        }
-
-        $priorities = array_keys($this->itemsByPriority);
-        rsort($priorities); // highest priority first
-
-        $items = [];
-        foreach ($priorities as $priority) {
-            /** @var Item $item */
-            foreach ($this->itemsByPriority[$priority] as $item) {
-                if (null !== $environment && !$item->matchesEnvironment($environment)) {
-                    continue;
-                }
-
-                $items[] = $item;
+        usort($items, function (ItemInterface $a, ItemInterface $b) {
+            if ($a->getPriority() === $b->getPriority()) {
+                return 0;
             }
-        }
 
-        $this->itemsByEnvironment[$cacheKey] = $items;
+            return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
+        });
 
         return $items;
     }
@@ -127,29 +113,55 @@ class BundleCollection
      *
      * @return array
      */
-    public function getIdentifiers(): array
+    public function getIdentifiers(string $environment = null): array
     {
-        return array_keys($this->items);
+        return array_map(function (ItemInterface $item) {
+            return $item->getBundleIdentifier();
+        }, $this->getItems($environment));
+    }
+
+    /**
+     * Get bundles matching environment ordered by priority
+     *
+     * @param string $environment
+     *
+     * @return BundleInterface[]
+     */
+    public function getBundles(string $environment): array
+    {
+        return array_map(function (ItemInterface $item) {
+            return $item->getBundle();
+        }, $this->getItems($environment));
     }
 
     /**
      * Adds a bundle
      *
-     * @param BundleInterface $bundle
+     * @param BundleInterface|string $bundle
      * @param int $priority
      * @param array $environments
      *
      * @return self
      */
-    public function addBundle(BundleInterface $bundle, int $priority = 0, array $environments = []): self
+    public function addBundle($bundle, int $priority = 0, array $environments = []): self
     {
-        return $this->add(new Item($bundle, $priority, $environments));
+        $item = null;
+
+        if ($bundle instanceof BundleInterface) {
+            $item = new Item($bundle, $priority, $environments);
+        } elseif (is_string($bundle) || !empty($bundle)) {
+            $item = new LazyLoadedItem($bundle, $priority, $environments);
+        } else {
+            throw new \InvalidArgumentException('Bundle must be either an instance of BundleInterface or a string containing the bundle class name');
+        }
+
+        return $this->add($item);
     }
 
     /**
      * Adds a collection of bundles with the same priority and environments
      *
-     * @param BundleInterface[] $bundles
+     * @param BundleInterface[]|string[] $bundles
      * @param int $priority
      * @param array $environments
      *
@@ -162,22 +174,5 @@ class BundleCollection
         }
 
         return $this;
-    }
-
-    /**
-     * Get bundles matching environment ordered by priority
-     *
-     * @param string $environment
-     *
-     * @return BundleInterface[]
-     */
-    public function getBundles(string $environment): array
-    {
-        $bundles = [];
-        foreach ($this->getItems($environment) as $item) {
-            $bundles[] = $item->getBundle();
-        }
-
-        return $bundles;
     }
 }

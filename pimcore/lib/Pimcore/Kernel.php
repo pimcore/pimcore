@@ -166,7 +166,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerBundles(): array
     {
-        $collection = new BundleCollection();
+        $collection = $this->createBundleCollection();
 
         // core bundles (Symfony, Pimcore)
         $this->registerCoreBundlesToCollection($collection);
@@ -182,6 +182,17 @@ abstract class Kernel extends SymfonyKernel
         $this->bundleCollection = $collection;
 
         return $bundles;
+    }
+
+    /**
+     * Creates bundle collection. Use this method to set bundles on the collection
+     * early.
+     *
+     * @return BundleCollection
+     */
+    protected function createBundleCollection(): BundleCollection
+    {
+        return new BundleCollection();
     }
 
     /**

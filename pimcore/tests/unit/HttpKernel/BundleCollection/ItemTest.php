@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\Item;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -73,6 +75,18 @@ class ItemTest extends TestCase
         $this->assertFalse($itemA->isPimcoreBundle());
         $this->assertTrue($itemB->isPimcoreBundle());
     }
+
+    public function testRegistersDependencies()
+    {
+        $collection = new BundleCollection();
+
+        $collection->add(new Item(new ItemTestBundleC()));
+
+        $this->assertEquals([
+            ItemTestBundleC::class,
+            ItemTestBundleA::class,
+        ], $collection->getIdentifiers());
+    }
 }
 
 class ItemTestBundleA extends Bundle
@@ -81,4 +95,12 @@ class ItemTestBundleA extends Bundle
 
 class ItemTestBundleB extends AbstractPimcoreBundle
 {
+}
+
+class ItemTestBundleC extends Bundle implements DependentBundleInterface
+{
+    public static function registerDependentBundles(BundleCollection $collection)
+    {
+        $collection->add(new Item(new ItemTestBundleA()));
+    }
 }
