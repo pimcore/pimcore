@@ -601,7 +601,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("piwik_reports") && 'undefined' !== typeof pimcore.settings.piwik && pimcore.settings.piwik.iframe_configured) {
                 marketingItems.push({
-                    text: "Piwik",
+                    text: "Matomo / Piwik",
                     iconCls: "pimcore_icon_piwik",
                     handler: (function() {
                         // create a promise which is resolved if the request succeeds
@@ -623,7 +623,7 @@ pimcore.layout.toolbar = Class.create({
                                         resolve(data.url);
                                     }
 
-                                    reject('Piwik iframe integration is not configured.');
+                                    reject('Matomo iframe integration is not configured.');
                                 },
 
                                 failure: function(response) {
@@ -648,8 +648,8 @@ pimcore.layout.toolbar = Class.create({
                                     pimcore.helpers.openGenericIframeWindow(
                                         "piwik_iframe_integration",
                                         url,
-                                        "pimcore_icon_piwik",
-                                        "Piwik"
+                                        "pimcore_icon_matomo",
+                                        "Matomo / Piwik"
                                     );
                                 },
                                 function (message) {

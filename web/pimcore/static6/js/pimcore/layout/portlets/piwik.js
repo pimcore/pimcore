@@ -31,7 +31,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
                 parsed = JSON.parse(config);
             }
         } catch (e) {
-            console.error('Failed to parse Piwik widget config: ', e);
+            console.error('Failed to parse Matomo/Piwik widget config: ', e);
         }
 
         this.config = parsed;
@@ -269,7 +269,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
                     }
                 });
 
-                var title = 'Piwik: ' + widget.title;
+                var title = 'Matomo/Piwik: ' + widget.title;
                 title += ' (period: ' + params.period + ', date: ' + params.date + ')';
 
                 layout.removeAll();
