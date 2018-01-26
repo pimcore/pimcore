@@ -202,6 +202,8 @@ class InstallCommand extends Command
 
         $this->io = new PimcoreStyle($input, $output);
 
+        $this->installer->setCommandLineOutput($this->io);
+
         foreach ($this->getOptions() as $name => $config) {
             if (!$this->installerNeedsOption($config)) {
                 continue;

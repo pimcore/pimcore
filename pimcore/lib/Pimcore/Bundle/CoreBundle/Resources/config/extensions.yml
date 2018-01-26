@@ -42,7 +42,7 @@ services:
 
     Pimcore\Config\BundleConfigLocator: ~
 
+    Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange: ~
+
     Pimcore\Tool\AssetsInstaller:
         public: true
-        arguments:
-            $serializer: '@pimcore_admin.serializer'
