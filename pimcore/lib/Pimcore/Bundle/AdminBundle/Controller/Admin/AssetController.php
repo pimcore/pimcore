@@ -1423,7 +1423,10 @@ class AssetController extends ElementControllerBase implements EventedController
             throw new \Exception('not allowed to publish');
         }
 
-        $asset->setData(Tool::getHttpData($request->get('url')));
+        $data = $request->get('dataUri');
+        $data = substr($data, strpos($data, ","));
+        $data = base64_decode($data);
+        $asset->setData($data);
         $asset->setUserModification($this->getAdminUser()->getId());
         $asset->save();
 
