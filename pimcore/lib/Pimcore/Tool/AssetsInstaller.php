@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Symfony\Component\HttpKernel\KernelInterface;
+use Pimcore\Process\PartsBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -30,11 +30,6 @@ use Symfony\Component\Process\Process;
 class AssetsInstaller
 {
     /**
-     * @var KernelInterface
-     */
-    private $kernel;
-
-    /**
      * @var \Closure
      */
     private $runCallback;
@@ -43,11 +38,6 @@ class AssetsInstaller
      * @var string
      */
     private $composerJsonSetting;
-
-    public function __construct(KernelInterface $kernel)
-    {
-        $this->kernel = $kernel;
-    }
 
     /**
      * Runs this assets:install command
@@ -77,29 +67,17 @@ class AssetsInstaller
      */
     public function buildProcess(array $options = []): Process
     {
-        $options = $this->resolveOptions($options);
-
-        $parts = [
+        $arguments = [
             Console::getPhpCli(),
             'bin/console',
             'assets:install',
-            'web',
-            '--env=' . $this->kernel->getEnvironment()
+            'web'
         ];
 
-        if (!$options['ansi']) {
-            $parts[] = '--no-ansi';
-        } else {
-            $parts[] = '--ansi';
-        }
+        $options = $this->resolveOptions($options);
 
-        if ($options['symlink']) {
-            $parts[] = '--symlink';
-        }
-
-        if ($options['relative']) {
-            $parts[] = '--relative';
-        }
+        $partsBuilder = new PartsBuilder($arguments, $options);
+        $parts        = $partsBuilder->getParts();
 
         $process = new Process($parts);
         $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
@@ -134,10 +112,11 @@ class AssetsInstaller
     private function configureOptions(OptionsResolver $resolver)
     {
         $defaults = [
-            'ansi'     => false,
             'symlink'  => true,
             'relative' => true,
-            'env'      => $this->kernel->getEnvironment()
+            'env'      => false,
+            'ansi'     => false,
+            'no-ansi'  => false,
         ];
 
         $composerJsonSetting = $this->readComposerJsonSetting();
@@ -157,7 +136,7 @@ class AssetsInstaller
 
         $resolver->setDefaults($defaults);
 
-        foreach (['symlink', 'ansi', 'relative'] as $option) {
+        foreach (['symlink', 'relative', 'ansi', 'no-ansi'] as $option) {
             $resolver->setAllowedTypes($option, 'bool');
         }
     }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Symfony;
 
+use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\Console;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -60,9 +61,14 @@ class CacheClearer
         $resolver->setDefaults([
             'no-warmup'           => false,
             'no-optional-warmers' => false,
-            'ansi'                => false,
             'env'                 => $environment,
+            'ansi'                => false,
+            'no-ansi'             => false,
         ]);
+
+        foreach (['no-warmup', 'no-optional-warmers', 'ansi', 'no-ansi'] as $option) {
+            $resolver->setAllowedTypes($option, 'bool');
+        }
 
         return $this->runCommand('cache:clear', [], $resolver->resolve($options));
     }
@@ -72,9 +78,14 @@ class CacheClearer
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'no-optional-warmers' => false,
-            'ansi'                => false,
             'env'                 => $environment,
+            'ansi'                => false,
+            'no-ansi'             => false,
         ]);
+
+        foreach (['no-optional-warmers', 'ansi', 'no-ansi'] as $option) {
+            $resolver->setAllowedTypes($option, 'bool');
+        }
 
         return $this->runCommand('cache:warmup', [], $resolver->resolve($options));
     }
@@ -101,12 +112,14 @@ class CacheClearer
 
     private function buildProcess(string $command, array $arguments = [], array $options = []): Process
     {
-        $parts = $this->buildProcessParts($arguments, $options);
-        $parts = array_merge([
+        $arguments = array_merge([
             Console::getPhpCli(),
             'bin/console',
             $command
-        ], $parts);
+        ], $arguments);
+
+        $partsBuilder = new PartsBuilder($arguments, $options);
+        $parts        = $partsBuilder->getParts();
 
         $process = new Process($parts);
         $process
@@ -114,35 +127,5 @@ class CacheClearer
             ->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
 
         return $process;
-    }
-
-    private function buildProcessParts(array $arguments = [], array $options = []): array
-    {
-        $parts = [];
-        foreach ($options as $optionKey => $option) {
-            // do not set option if it is false
-            if (is_bool($option) && !$option) {
-                continue;
-            }
-
-            $part = '';
-            if (1 === strlen($optionKey)) {
-                $part = '-' . $optionKey;
-            } else {
-                $part = '--' . $optionKey;
-            }
-
-            if (!is_bool($option) && $option) {
-                $part .= '=' . $option;
-            }
-
-            $parts[] = $part;
-        }
-
-        foreach ($arguments as $argument) {
-            $parts[] = $argument;
-        }
-
-        return $parts;
     }
 }
