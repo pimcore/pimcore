@@ -339,7 +339,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
             rowIndex: rowIndex,
             classId: this.classId,
             config: config,
-            additionalData: this.additionalData
+            additionalData: Ext.encode(this.additionalData)
         };
 
         Ext.Ajax.request({
@@ -680,7 +680,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
             classId: this.classId,
             job: 1,
             parentId: this.parentId,
-            additionalData: this.additionalData
+            additionalData: Ext.encode(this.additionalData)
         };
 
         this.stopIt = false;

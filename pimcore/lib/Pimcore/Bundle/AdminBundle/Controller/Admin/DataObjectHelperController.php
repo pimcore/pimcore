@@ -1261,7 +1261,7 @@ class DataObjectHelperController extends AdminController
             }, 'pimcore_gridconfig');
 
             $configData = $data->config;
-            $additionalData = $data->additionalData;
+            $additionalData = json_decode($data->additionalData, true);
             $rowIndex = $data->rowIndex;
 
             $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
