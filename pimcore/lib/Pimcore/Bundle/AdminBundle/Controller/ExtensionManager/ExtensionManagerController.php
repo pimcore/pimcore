@@ -172,9 +172,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             $this->bundleManager->setState($id, ['enabled' => $enable]);
             $reload = true;
 
-            if ($enable) {
-                $message = $this->installAssets($assetsInstaller);
-            }
+            $message = $this->installAssets($assetsInstaller, $enable);
         } elseif ($type === 'areabrick') {
             $this->areabrickManager->setState($id, $enable);
             $reload = true;
@@ -196,24 +194,32 @@ class ExtensionManagerController extends AdminController implements EventedContr
      * Runs array:install command and returns its result as array (line-by-line)
      *
      * @param AssetsInstaller $assetsInstaller
+     * @param bool $enable
      *
      * @return array
      */
-    private function installAssets(AssetsInstaller $assetsInstaller): array
+    private function installAssets(AssetsInstaller $assetsInstaller, bool $enable): array
     {
+        $message = null;
+
         try {
             $installProcess = $assetsInstaller->install();
 
-            $message = str_replace("'", '', $installProcess->getCommandLine()) . PHP_EOL . $installProcess->getOutput();
+            if ($enable) {
+                $message = str_replace("'", '', $installProcess->getCommandLine()) . PHP_EOL . $installProcess->getOutput();
+            }
         } catch (ProcessFailedException $e) {
             $message = 'Failed to run assets:install command. Please run command manually.' . PHP_EOL . PHP_EOL . $e->getMessage();
         }
 
+        if (!$message) {
+            return [];
+        }
+
         $message = Encoding::fixUTF8($message);
         $message = (new AnsiToHtmlConverter())->convert($message);
-        $message = explode(PHP_EOL, $message);
 
-        return $message;
+        return explode(PHP_EOL, $message);
     }
 
     /**
