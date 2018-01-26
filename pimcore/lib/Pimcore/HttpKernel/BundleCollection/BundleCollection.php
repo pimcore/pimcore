@@ -44,6 +44,11 @@ class BundleCollection
 
         $this->items[$identifier] = $item;
 
+        // handle DependentBundleInterface by adding a bundle's dependencies tothe collection. dependencies
+        // are added AFTER the item was added to the collection to avoid circular reference loops, but the
+        // sort order can be influenced by specifying a priority on the item
+        $item->registerDependencies($this);
+
         return $this;
     }
 
@@ -164,11 +169,8 @@ class BundleCollection
      */
     public function getBundles(string $environment): array
     {
-        $bundles = [];
-        foreach ($this->getItems($environment) as $item) {
-            $bundles[] = $item->getBundle();
-        }
-
-        return $bundles;
+        return array_map(function (ItemInterface $item) {
+            return $item->getBundle();
+        }, $this->getItems($environment));
     }
 }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\Item;
 use Pimcore\Tests\Test\TestCase;
@@ -213,6 +214,98 @@ class BundleCollectionTest extends TestCase
             $bundles[3]
         ], $collection->getBundles('test'));
     }
+
+    /**
+     * @group only
+     */
+    public function testDependenciesAreRegistered()
+    {
+        $collection = new BundleCollection();
+        $collection->addBundle(new BundleE());
+
+        $this->assertEquals([
+            BundleE::class,
+            BundleF::class,
+        ], $collection->getIdentifiers());
+
+        $this->assertTrue($collection->hasItem(BundleE::class));
+        $this->assertTrue($collection->hasItem(BundleF::class));
+    }
+
+    /**
+     * @group only
+     */
+    public function testDependenciesOfDependenciesAreRegistered()
+    {
+        $collection = new BundleCollection();
+        $collection->addBundle(new BundleI());
+
+        $this->assertEquals([
+            BundleI::class,
+            BundleA::class,
+            BundleB::class,
+            BundleE::class,
+            BundleF::class,
+        ], $collection->getIdentifiers());
+
+        $this->assertTrue($collection->hasItem(BundleA::class));
+        $this->assertTrue($collection->hasItem(BundleB::class));
+        $this->assertTrue($collection->hasItem(BundleE::class));
+        $this->assertTrue($collection->hasItem(BundleF::class));
+        $this->assertTrue($collection->hasItem(BundleI::class));
+    }
+
+    /**
+     * @group only2
+     */
+    public function testDependentCircularReferencesAreIgnored()
+    {
+        $collection = new BundleCollection();
+
+        // BundleH is now implicitely added and tries to add BundleG with prio 5
+        $collection->addBundle(new BundleG, 10);
+
+        $this->assertEquals([
+            BundleG::class,
+            BundleH::class,
+        ], $collection->getIdentifiers());
+
+        $this->assertTrue($collection->hasItem(BundleG::class));
+        $this->assertTrue($collection->hasItem(BundleH::class));
+
+        $this->assertEquals(10, $collection->getItem(BundleG::class)->getPriority());
+        $this->assertEquals(8, $collection->getItem(BundleH::class)->getPriority());
+    }
+
+    /**
+     * @group only2
+     */
+    public function testItemsAreNotOverwrittenByDependencies()
+    {
+        $collection = new BundleCollection();
+
+        // add BundleH explicitely
+        $collection->addBundle(new BundleH, 50);
+
+        // BundleG tries to add BundleH, but it will be ignored as it is already registered
+        $collection->addBundle(new BundleG, 10);
+
+        // BundleJ will try to add BundleH again with prio 9
+        $collection->addBundle(new BundleJ());
+
+        $this->assertEquals([
+            BundleH::class,
+            BundleG::class,
+            BundleJ::class,
+        ], $collection->getIdentifiers());
+
+        $this->assertTrue($collection->hasItem(BundleG::class));
+        $this->assertTrue($collection->hasItem(BundleH::class));
+        $this->assertTrue($collection->hasItem(BundleJ::class));
+
+        $this->assertEquals(5, $collection->getItem(BundleG::class)->getPriority()); // as set in BundleH dependency
+        $this->assertEquals(50, $collection->getItem(BundleH::class)->getPriority()); // as set here when adding the item
+    }
 }
 
 class BundleA extends Bundle
@@ -229,4 +322,50 @@ class BundleC extends Bundle
 
 class BundleD extends Bundle
 {
+}
+
+class BundleE extends Bundle implements DependentBundleInterface
+{
+    public static function registerDependentBundles(BundleCollection $collection)
+    {
+        $collection->addBundle(new BundleF());
+    }
+}
+
+class BundleF extends Bundle
+{
+}
+
+class BundleG extends Bundle implements DependentBundleInterface
+{
+    public static function registerDependentBundles(BundleCollection $collection)
+    {
+        $collection->addBundle(new BundleH, 8);
+    }
+}
+
+class BundleH extends Bundle implements DependentBundleInterface
+{
+    public static function registerDependentBundles(BundleCollection $collection)
+    {
+        $collection->addBundle(new BundleG, 5);
+    }
+}
+
+class BundleI extends Bundle implements DependentBundleInterface
+{
+    public static function registerDependentBundles(BundleCollection $collection)
+    {
+        $collection->addBundle(new BundleA);
+        $collection->addBundle(new BundleB);
+        $collection->addBundle(new BundleE);
+    }
+}
+
+class BundleJ extends Bundle implements DependentBundleInterface
+{
+    public static function registerDependentBundles(BundleCollection $collection)
+    {
+        $collection->addBundle(new BundleH(), 9);
+    }
 }
