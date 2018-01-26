@@ -46,8 +46,10 @@ class BundleCollection
     public function add(ItemInterface $item): self
     {
         $identifier = $item->getBundleIdentifier();
+
+        // a bundle can only be registered once
         if ($this->hasItem($identifier)) {
-            throw new \LogicException(sprintf('Trying to register the bundle "%s" multiple times', $identifier));
+            return $this;
         }
 
         $this->items[$item->getBundleIdentifier()] = $item;
