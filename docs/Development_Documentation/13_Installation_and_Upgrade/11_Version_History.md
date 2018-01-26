@@ -66,3 +66,6 @@
 | 4.6.3   |  4098 | 26th January 2018   |
 +---------+-------+---------------------+
 ```
+
+For all further releases, please see 
+https://github.com/pimcore/pimcore/milestones?state=closed
