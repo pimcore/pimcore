@@ -44,7 +44,7 @@ class BundleCollection
 
         $this->items[$identifier] = $item;
 
-        // handle DependentBundleInterface by adding a bundle's dependencies tothe collection. dependencies
+        // handle DependentBundleInterface by adding a bundle's dependencies to the collection - dependencies
         // are added AFTER the item was added to the collection to avoid circular reference loops, but the
         // sort order can be influenced by specifying a priority on the item
         $item->registerDependencies($this);
