@@ -74,7 +74,8 @@ class Dao extends Model\Dao\PhpArrayTable
 
         if (count($data) > 0) {
             usort($data, function ($a, $b) {
-                $result = $a["siteId"] < $b["siteId"] ? 1 : -1;
+                $result = $a['siteId'] < $b['siteId'] ? 1 : -1;
+
                 return $result;
             });
         }
