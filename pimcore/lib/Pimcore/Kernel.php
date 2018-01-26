@@ -39,6 +39,7 @@ use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 
@@ -91,6 +92,18 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        $loader->load(function (ContainerBuilder $container) use ($loader) {
+            // add system.php as container resource and extract config values into params
+            $resource = new SystemConfigParamResource($container);
+            $resource->register();
+            $resource->setParameters();
+
+            // add extensions.php as container resource
+            if ($this->extensionConfig->configFileExists()) {
+                $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
+            }
+        });
+
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
             $loader->load($bundleConfig);
@@ -105,6 +118,9 @@ abstract class Kernel extends SymfonyKernel
     public function boot()
     {
         if (true === $this->booted) {
+            // make sure container reset is handled properly
+            parent::boot();
+
             return;
         }
 
@@ -117,11 +133,15 @@ abstract class Kernel extends SymfonyKernel
         // initialize extension manager config
         $this->extensionConfig = new Extension\Config();
 
-        // init bundles
-        $this->initializeBundles();
+        parent::boot();
+    }
 
-        // init container
-        $this->initializeContainer();
+    /**
+     * @inheritDoc
+     */
+    protected function initializeContainer()
+    {
+        parent::initializeContainer();
 
         // initialize runtime cache (defined as synthetic service)
         Runtime::getInstance();
@@ -137,13 +157,6 @@ abstract class Kernel extends SymfonyKernel
             $this->getContainer()->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
             \Pimcore::shutdown();
         });
-
-        foreach ($this->getBundles() as $bundle) {
-            $bundle->setContainer($this->container);
-            $bundle->boot();
-        }
-
-        $this->booted = true;
     }
 
     /**
@@ -273,26 +286,6 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerBundlesToCollection(BundleCollection $collection)
     {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function buildContainer()
-    {
-        $container = parent::buildContainer();
-
-        // add system.php as container resource and extract config values into params
-        $resource = new SystemConfigParamResource($container);
-        $resource->register();
-        $resource->setParameters();
-
-        // add extensions.php as container resource
-        if ($this->extensionConfig->configFileExists()) {
-            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
-        }
-
-        return $container;
     }
 
     /**
