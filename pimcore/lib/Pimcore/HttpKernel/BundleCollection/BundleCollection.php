@@ -113,9 +113,25 @@ class BundleCollection
      *
      * @return array
      */
-    public function getIdentifiers(): array
+    public function getIdentifiers(string $environment = null): array
     {
-        return array_keys($this->items);
+        return array_map(function (ItemInterface $item) {
+            return $item->getBundleIdentifier();
+        }, $this->getItems($environment));
+    }
+
+    /**
+     * Get bundles matching environment ordered by priority
+     *
+     * @param string $environment
+     *
+     * @return BundleInterface[]
+     */
+    public function getBundles(string $environment): array
+    {
+        return array_map(function (ItemInterface $item) {
+            return $item->getBundle();
+        }, $this->getItems($environment));
     }
 
     /**
@@ -158,19 +174,5 @@ class BundleCollection
         }
 
         return $this;
-    }
-
-    /**
-     * Get bundles matching environment ordered by priority
-     *
-     * @param string $environment
-     *
-     * @return BundleInterface[]
-     */
-    public function getBundles(string $environment): array
-    {
-        return array_map(function (ItemInterface $item) {
-            return $item->getBundle();
-        }, $this->getItems($environment));
     }
 }
