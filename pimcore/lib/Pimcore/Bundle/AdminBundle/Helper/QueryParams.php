@@ -94,7 +94,7 @@ class QueryParams
                 if (in_array($f->property, $matchExact)) {
                     $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . ' = ' . $db->quote($f->value) . ' ';
                 } else {
-                    $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . $db->getQuoteIdentifierSymbol() . ' LIKE ' . $db->quote('%' . $f->value . '%') . ' ';
+                    $conditions[$f->property][] = ' ' . $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%') . ' ';
                 }
             } elseif ($f->type == 'numeric') {
                 if ($f->operator == 'eq') {
