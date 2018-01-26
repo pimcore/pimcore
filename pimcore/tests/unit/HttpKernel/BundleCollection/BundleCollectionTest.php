@@ -62,11 +62,39 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals($this->bundles, $this->collection->getBundles('prod'));
     }
 
+    public function testAddBundleAsString()
+    {
+        $identifiers = [];
+
+        foreach ($this->bundles as $bundle) {
+            $className     = get_class($bundle);
+            $identifiers[] = $className;
+
+            $this->collection->addBundle($className);
+        }
+
+        $this->assertEquals($identifiers, $this->collection->getIdentifiers());
+    }
+
     public function testAddBundles()
     {
         $this->collection->addBundles($this->bundles);
 
         $this->assertEquals($this->bundles, $this->collection->getBundles('prod'));
+    }
+
+    public function testAddBundlesAsString()
+    {
+        $identifiers = [];
+
+        foreach ($this->bundles as $bundle) {
+            $className     = get_class($bundle);
+            $identifiers[] = $className;
+        }
+
+        $this->collection->addBundles($identifiers);
+
+        $this->assertEquals($identifiers, $this->collection->getIdentifiers());
     }
 
     public function testAddItem()

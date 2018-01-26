@@ -135,21 +135,31 @@ class BundleCollection
     /**
      * Adds a bundle
      *
-     * @param BundleInterface $bundle
+     * @param BundleInterface|string $bundle
      * @param int $priority
      * @param array $environments
      *
      * @return self
      */
-    public function addBundle(BundleInterface $bundle, int $priority = 0, array $environments = []): self
+    public function addBundle($bundle, int $priority = 0, array $environments = []): self
     {
-        return $this->add(new Item($bundle, $priority, $environments));
+        $item = null;
+
+        if ($bundle instanceof BundleInterface) {
+            $item = new Item($bundle, $priority, $environments);
+        } elseif (is_string($bundle) || !empty($bundle)) {
+            $item = new LazyLoadedItem($bundle, $priority, $environments);
+        } else {
+            throw new \InvalidArgumentException('Bundle must be either an instance of BundleInterface or a string containing the bundle class name');
+        }
+
+        return $this->add($item);
     }
 
     /**
      * Adds a collection of bundles with the same priority and environments
      *
-     * @param BundleInterface[] $bundles
+     * @param BundleInterface[]|string[] $bundles
      * @param int $priority
      * @param array $environments
      *
