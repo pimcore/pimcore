@@ -27,16 +27,6 @@ class BundleCollection
     private $items = [];
 
     /**
-     * @var ItemInterface[]
-     */
-    private $itemsByPriority = [];
-
-    /**
-     * @var ItemInterface[]
-     */
-    private $itemsByEnvironment = [];
-
-    /**
      * Adds a collection item
      *
      * @param ItemInterface $item
@@ -52,8 +42,7 @@ class BundleCollection
             return $this;
         }
 
-        $this->items[$item->getBundleIdentifier()] = $item;
-        $this->itemsByPriority[$item->getPriority()][] = $item;
+        $this->items[$identifier] = $item;
 
         return $this;
     }
@@ -95,31 +84,21 @@ class BundleCollection
      */
     public function getItems(string $environment = null): array
     {
-        $cacheKey = '_all';
+        $items = array_values($this->items);
+
         if (null !== $environment) {
-            $cacheKey = $environment;
+            $items = array_filter($items, function (ItemInterface $item) use ($environment) {
+                return $item->matchesEnvironment($environment);
+            });
         }
 
-        if (isset($this->itemsByEnvironment[$cacheKey])) {
-            return $this->itemsByEnvironment[$cacheKey];
-        }
-
-        $priorities = array_keys($this->itemsByPriority);
-        rsort($priorities); // highest priority first
-
-        $items = [];
-        foreach ($priorities as $priority) {
-            /** @var Item $item */
-            foreach ($this->itemsByPriority[$priority] as $item) {
-                if (null !== $environment && !$item->matchesEnvironment($environment)) {
-                    continue;
-                }
-
-                $items[] = $item;
+        usort($items, function (ItemInterface $a, ItemInterface $b) {
+            if ($a->getPriority() === $b->getPriority()) {
+                return 0;
             }
-        }
 
-        $this->itemsByEnvironment[$cacheKey] = $items;
+            return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
+        });
 
         return $items;
     }
