@@ -1543,7 +1543,7 @@ class DataObjectHelperController extends AdminController
         EventDispatcherInterface $eventDispatcher
     ) {
         $parentId = $request->get('parentId');
-        $additionalData = $request->get('additionalData');
+        $additionalData = json_decode($request->get('additionalData'), true);
         $job = $request->get('job');
         $importId = $request->get('importId');
         $importJobTotal = $request->get('importJobTotal');
