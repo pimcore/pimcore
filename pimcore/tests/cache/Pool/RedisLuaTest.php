@@ -8,10 +8,10 @@ namespace Pimcore\Tests\Cache\Pool;
  */
 class RedisLuaTest extends RedisTest
 {
-    /**
-     * @var array
-     */
-    protected $redisOptions = [
-        'use_lua' => true
-    ];
+    protected function getRedisOptions(): array
+    {
+        return [
+            'use_lua' => true
+        ];
+    }
 }

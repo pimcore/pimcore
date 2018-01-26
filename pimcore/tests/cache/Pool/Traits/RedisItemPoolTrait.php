@@ -11,15 +11,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 trait RedisItemPoolTrait
 {
-    /**
-     * @var array
-     */
-    protected $redisConnectionOptions = [];
+    protected function getRedisConnectionOptions(): array
+    {
+        return [];
+    }
 
-    /**
-     * @var array
-     */
-    protected $redisOptions = [];
+    protected function getRedisOptions(): array
+    {
+        return [
+            'use_lua' => false
+        ];
+    }
 
     /**
      * @return PimcoreCacheItemPoolInterface|Redis
@@ -37,9 +39,9 @@ trait RedisItemPoolTrait
             }
         }
 
-        $connectionOptions = array_merge($this->redisConnectionOptions, $envOptions);
+        $connectionOptions = array_merge($this->getRedisConnectionOptions(), $envOptions);
 
-        return (new Factory())->createRedisItemPool($this->defaultLifetime, $connectionOptions, $this->redisOptions);
+        return (new Factory())->createRedisItemPool($this->defaultLifetime, $connectionOptions, $this->getRedisOptions());
     }
 
     protected function getRedisConnection(Redis $cache): Connection

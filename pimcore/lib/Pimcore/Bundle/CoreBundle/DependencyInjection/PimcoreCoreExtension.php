@@ -256,12 +256,12 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         if ($config['cache']['pools']['redis']['enabled']) {
             $container->setParameter(
                 'pimcore.cache.core.redis.connection',
-                $config['cache']['pools']['redis']['connection']
+                $config['cache']['pools']['redis']['connection'] ?? []
             );
 
             $container->setParameter(
                 'pimcore.cache.core.redis.options',
-                $config['cache']['pools']['redis']['options']
+                $config['cache']['pools']['redis']['options'] ?? []
             );
 
             $loader->load('cache_redis.yml');
