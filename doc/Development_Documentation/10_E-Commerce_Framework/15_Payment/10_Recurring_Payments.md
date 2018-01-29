@@ -14,9 +14,9 @@ For more details concerning the recurPayment operation also have a look at the o
 
 ## Best Practice
 ### Bad Way
-![Recurring Payment Bad](../img/recurring-payment-bad.png) 
+![Recurring Payment Bad](../../img/recurring-payment-bad.png) 
 ### Good Way
-![Recurring Payment Good](../img/recurring-payment-good.png) 
+![Recurring Payment Good](../../img/recurring-payment-good.png) 
 
 ## Implementation
 
