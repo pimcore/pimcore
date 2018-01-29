@@ -38,6 +38,7 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -98,10 +99,7 @@ abstract class Kernel extends SymfonyKernel
             $resource->register();
             $resource->setParameters();
 
-            // add extensions.php as container resource
-            if ($this->extensionConfig->configFileExists()) {
-                $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
-            }
+            $this->registerExtensionConfigFileResources($container);
         });
 
         $bundleConfigLocator = new BundleConfigLocator($this);
@@ -110,6 +108,31 @@ abstract class Kernel extends SymfonyKernel
         }
 
         $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
+    }
+
+    private function registerExtensionConfigFileResources(ContainerBuilder $container)
+    {
+        $filenames = [
+            'extensions.php',
+            sprintf('extensions_%s.php', $this->getEnvironment())
+        ];
+
+        $directories = [
+            PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
+            PIMCORE_CONFIGURATION_DIRECTORY,
+        ];
+
+        // add possible extensions.php files as file existence resources (only for the current env)
+        foreach ($directories as $directory) {
+            foreach ($filenames as $filename) {
+                $container->addResource(new FileExistenceResource($directory . '/' . $filename));
+            }
+        }
+
+        // add extensions.php as container resource
+        if ($this->extensionConfig->configFileExists()) {
+            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
+        }
     }
 
     /**
