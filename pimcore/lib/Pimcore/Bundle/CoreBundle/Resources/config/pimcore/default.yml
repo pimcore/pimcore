@@ -268,3 +268,10 @@ swiftmailer:
             port: '%pimcore_system_config.newsletter.smtp.port%'
             encryption: '%pimcore_system_config.newsletter.smtp.ssl%'
             auth_mode: '%pimcore_system_config.newsletter.smtp.auth.method%'
+
+presta_sitemap:
+    # do not add properties by default
+    defaults:
+        lastmod: ~
+        priority: ~
+        changefreq: ~

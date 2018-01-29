@@ -26,6 +26,7 @@ use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
+use Presta\SitemapBundle\PrestaSitemapBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -247,6 +248,9 @@ abstract class Kernel extends SymfonyKernel
 
             // CMF bundles
             new CmfRoutingBundle(),
+
+            // Sitemaps
+            new PrestaSitemapBundle()
         ], 100);
 
         // pimcore bundles

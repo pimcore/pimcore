@@ -36,6 +36,7 @@
 
 
 /web/var/
+/web/sitemap*.xml
 
 # PHP-CS-Fixer
 /.php_cs
