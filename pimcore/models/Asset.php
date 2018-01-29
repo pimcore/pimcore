@@ -469,15 +469,9 @@ class Asset extends Element\AbstractElement
             $params =  func_get_arg(0);
         }
 
-        try {
-            // not only check if the type is set but also if the implementation can be found
-            $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
-            $dummyAsset = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
-        } catch (\Throwable $e) {
-            Logger::error($e);
-        }
-
-        if (!$dummyAsset) {
+        // not only check if the type is set but also if the implementation can be found
+        $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
+        if (!\Pimcore::getContainer()->get('pimcore.model.factory')->supports($className)) {
             throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
         }
 
