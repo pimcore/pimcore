@@ -375,21 +375,26 @@ class QPay implements IPayment
     /**
      * Executes payment
      *
-     *  if price is given, recurPayment command is executed
-     *  if no price is given, amount from authorized Data is used and deposit command is executed
+     * If price is given, recurPayment command is executed
+     * If no price is given, amount from authorized Data is used and deposit command is executed
+     *
+     * Transaction-based operations by payment method: https://guides.wirecard.at/back-end_operations:transaction-based:table
+     *
+     * Recurring payment how to:                https://guides.wirecard.at/how_to:recurpayment
+     * Recurring payment backend operation:     https://guides.wirecard.at/back-end_operations:transaction-based:recurpayment
+     *
      *
      * @param IPrice $price
      * @param string $reference
+     * @param string $targetReference   Target reference for recurring payment.
      *
      * @return IStatus
      *
      * @throws \Exception
      */
-    public function executeDebit(IPrice $price = null, $reference = null)
+    public function executeDebit(IPrice $price = null, $reference = null, $targetReference = null)
     {
-        // https://integration.wirecard.at/doku.php/wcp:toolkit_light:start
-        // https://integration.wirecard.at/doku.php/wcs:backend_operations?s[]=deposit
-        // https://integration.wirecard.at/doku.php/backend:deposit
+        $recurPayment = false;
 
         if ($price) {
             // recurPayment
@@ -454,7 +459,7 @@ class QPay implements IPayment
             // Operation successfully done.
 
             return new Status(
-                $reference,
+                $recurPayment ? $targetReference : $reference,
                 $response['paymentNumber'] ?: $response['orderNumber'],
                 '',
                 IStatus::STATUS_CLEARED,
@@ -473,7 +478,7 @@ class QPay implements IPayment
             }
 
             return new Status(
-                $reference,
+                $recurPayment ? $targetReference : $reference,
                 $response['paymentNumber'] ?: $response['orderNumber'],
                 implode("\n", $error),
                 IStatus::STATUS_CANCELLED,
