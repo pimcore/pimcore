@@ -22,9 +22,7 @@ For more details concerning the recurPayment operation also have a look at the o
 
 The following code will briefly show how to execute a recurPayment operation for a one time payment in the checkout process.
 
-#### Controller Action
-
-##### CheckoutController.php
+#### CheckoutController.php
 
 ```php
   public function payAction(Request $request)
@@ -137,7 +135,7 @@ The following code will briefly show how to execute a recurPayment operation for
                 // displaying information about the payment here. 
                 // I.e. a masked string with the last for digits of the creditcard number
                 
-                case "SEPA_DD":
+                case "SEPA-DD":
                 // ...
                 case "CCARD":
                 // ...
