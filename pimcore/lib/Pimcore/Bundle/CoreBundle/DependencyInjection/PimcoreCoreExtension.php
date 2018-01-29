@@ -17,7 +17,9 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
+use Pimcore\DependencyInjection\CollectionServiceLocator;
 use Pimcore\DependencyInjection\ConfigMerger;
+use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
@@ -25,6 +27,7 @@ use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
@@ -97,6 +100,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('profiler.yml');
         $loader->load('migrations.yml');
         $loader->load('analytics.yml');
+        $loader->load('sitemaps.yml');
         $loader->load('aliases.yml');
 
         $this->configureImplementationLoaders($container, $config);
@@ -111,6 +115,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories', 'Custom Report Adapter Factory');
         $this->configureMigrations($container, $config['migrations']);
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
+        $this->configureSitemaps($container, $config['sitemaps']);
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];
@@ -424,6 +429,44 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $serviceLocator = $container->getDefinition('pimcore.analytics.google.fallback_service_locator');
         $serviceLocator->setArguments([$mapping]);
+    }
+
+    private function configureSitemaps(ContainerBuilder $container, array $config)
+    {
+        $listener = $container->getDefinition(SitemapGeneratorListener::class);
+
+        $generators = [];
+        if (isset($config['generators']) && !empty($config['generators'])) {
+            $generators = $config['generators'];
+        }
+
+        uasort($generators, function(array $a, array $b) {
+            if ($a['priority'] === $b['priority']) {
+                return 0;
+            }
+
+            return $a['priority'] < $b['priority'] ? 1 : -1;
+        });
+
+        $mapping = [];
+        foreach ($generators as $generatorName => $generatorConfig) {
+            if (!$generatorConfig['enabled']) {
+                continue;
+            }
+
+            $mapping[$generatorName] = new Reference($generatorConfig['generator_id']);
+        }
+
+        // the locator is a symfony core service locator containing every generator
+        $locator = new Definition(ServiceLocator::class, [$mapping]);
+        $locator->setPublic(false);
+        $locator->addTag('container.service_locator');
+
+        // the collection decorates the locator as iterable in the defined key order
+        $collection = new Definition(ServiceCollection::class, [$locator, array_keys($mapping)]);
+        $collection->setPublic(false);
+
+        $listener->setArgument('$generators', $collection);
     }
 
     /**

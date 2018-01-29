@@ -17,36 +17,30 @@ declare(strict_types=1);
 
 namespace Pimcore\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ServiceLocator;
+use Psr\Container\ContainerInterface;
 
-/**
- * Service locator exposing all of its services as collection
- */
-class CollectionServiceLocator extends ServiceLocator implements \IteratorAggregate
+class ServiceCollection implements \IteratorAggregate
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
     /**
      * @var array
      */
-    private $ids;
+    private $ids = [];
 
-    public function __construct($factories)
+    public function __construct(ContainerInterface $container, array $ids)
     {
-        $this->ids = array_keys($factories);
-
-        parent::__construct($factories);
-    }
-
-    public function all(): array
-    {
-        return array_map(function ($id) {
-            return $this->get($id);
-        }, $this->ids);
+        $this->container = $container;
+        $this->ids       = $ids;
     }
 
     public function getIterator()
     {
         foreach ($this->ids as $id) {
-            yield $this->get($id);
+            yield $this->container->get($id);
         }
     }
 }

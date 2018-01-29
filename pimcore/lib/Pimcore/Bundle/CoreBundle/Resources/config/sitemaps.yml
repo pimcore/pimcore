@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # Sitemap listener delegating to every registered sitemap generator
+    Pimcore\Sitemap\EventListener\SitemapGeneratorListener: ~
