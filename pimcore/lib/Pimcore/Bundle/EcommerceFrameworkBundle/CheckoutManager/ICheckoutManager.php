@@ -127,6 +127,15 @@ interface ICheckoutManager
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams);
 
     /**
+     * Start and commits payment based on a previously performed payment
+     * provided via the source order.
+     *
+     * @param AbstractOrder $sourceOrder
+     * @return AbstractOrder
+     */
+    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder);
+
+    /**
      * Commits order payment
      *
      *  - updates order payment information in order object
@@ -134,13 +143,13 @@ interface ICheckoutManager
      *
      * Delegates to commit order processor
      *
-     * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
      *
+     * @param AbstractOrder $sourceOrder
      * @param IStatus $status
      *
      * @return AbstractOrder
      */
-    public function commitOrderPayment(IStatus $status);
+    public function commitOrderPayment(IStatus $status, AbstractOrder $sourceOrder);
 
     /**
      * Commits order - does not consider any payment
