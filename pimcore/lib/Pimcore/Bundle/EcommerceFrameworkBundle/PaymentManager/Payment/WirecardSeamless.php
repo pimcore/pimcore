@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
-class WirecardSeamless implements IPayment
+class WirecardSeamless extends AbstractPayment
 {
     const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
 

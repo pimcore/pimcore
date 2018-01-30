@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Klarna implements IPayment
+class Klarna extends AbstractPayment
 {
     /**
      * @var string

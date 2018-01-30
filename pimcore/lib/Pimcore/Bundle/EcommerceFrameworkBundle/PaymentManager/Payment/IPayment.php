@@ -81,4 +81,11 @@ interface IPayment
      * @return IStatus
      */
     public function executeCredit(IPrice $price, $reference, $transactionId);
+
+    /**
+     * Payment supports recurring payment
+     *
+     * @return bool
+     */
+    public function isRecurringPaymentEnabled();
 }
