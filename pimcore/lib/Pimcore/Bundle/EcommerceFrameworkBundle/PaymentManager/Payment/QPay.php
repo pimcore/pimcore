@@ -27,7 +27,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class QPay implements IPayment
+class QPay extends AbstractPayment
 {
     // supported hashing algorithms
     const HASH_ALGO_MD5 = 'md5';

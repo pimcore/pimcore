@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PayPal implements IPayment
+class PayPal extends AbstractPayment
 {
     /**
      * @var string
