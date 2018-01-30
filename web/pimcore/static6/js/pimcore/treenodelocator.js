@@ -117,6 +117,7 @@ pimcore.treenodelocator.getDirection = function (node, element, elementType, sea
     }
 
     var childNodes = node.childNodes;
+    var sortBy = node.data.sortBy;
     var childCount = childNodes.length;
 
     var nodePath = node.getPath();
@@ -128,7 +129,11 @@ pimcore.treenodelocator.getDirection = function (node, element, elementType, sea
     } else {
         fullPath = element.fullpath;
         var elementParts = fullPath.split("/");
-        var elementKey = elementParts[nodeParts.length - 1];
+        if (sortBy == "index") {
+            var elementKey = element.index;
+        } else {
+            var elementKey = elementParts[nodeParts.length - 1];
+        }
     }
 
 
@@ -176,7 +181,7 @@ pimcore.treenodelocator.getDirection = function (node, element, elementType, sea
     for (i = 0; i < childCount; i++) {
         var childNode = childNodes[i];
 
-        if (elementType == "document") {
+        if (elementType == "document" || (elementType == "object" && sortBy == "index")) {
             lastelementChild = childNode;
             if (!firstelementChild) {
                 firstelementChild = childNode;
@@ -205,31 +210,18 @@ pimcore.treenodelocator.getDirection = function (node, element, elementType, sea
     var lastKey = null;
 
     if (elementType == "document") {
-        if (firstelementChild && elementKey < firstelementChild.data.idx) {
-            direction = -1;
-        } else if (lastelementChild && elementKey > lastelementChild.data.idx) {
-            direction = 1;
-        } else {
-            pimcore.treenodelocator.showError(node, node.data.elementType);
-        }
-
+        direction = pimcore.treenodelocator.getDirectionForElementsSortedByIndex(
+            elementKey, firstelementChild, lastelementChild
+        );
     } else {
-        if (eType == "folder") {
-            if (firstFolderChild && elementKey.toLowerCase() < firstFolderChild.data.text.toLowerCase()) {
-                direction = -1;
-            } else if (lastFolderChild && elementKey.toLowerCase() > lastFolderChild.data.text.toLowerCase()) {
-                direction = 1;
-            } else if (firstelementChild) {
-                direction = -1;
-            }
+        if (node.data.sortBy == "index") {
+            direction = pimcore.treenodelocator.getDirectionForElementsSortedByIndex(
+                elementKey, firstelementChild, lastelementChild
+            );
         } else {
-            if (lastFolderChild) {
-                direction = 1;
-            } else if (firstelementChild && elementKey.toLowerCase() < firstelementChild.data.text.toLowerCase()) {
-                direction = -1;
-            } else if (lastelementChild && elementKey.toLowerCase() > lastelementChild.data.text.toLowerCase()) {
-                direction = 1;
-            }
+            direction = pimcore.treenodelocator.getDirectionForElementsSortedByKey(
+                elementKey, eType, firstFolderChild, lastFolderChild, firstelementChild, lastelementChild
+            );
         }
     }
 
@@ -255,6 +247,44 @@ pimcore.treenodelocator.getDirection = function (node, element, elementType, sea
     } else {
         pimcore.treenodelocator.reportDone(node, node.data.elementType, callback);
     }
+}
+
+pimcore.treenodelocator.getDirectionForElementsSortedByKey = function (elementKey, eType, firstFolderChild, lastFolderChild, firstElementChild, lastElementChild) {
+    var direction = 0;
+
+    if (eType == "folder") {
+        if (firstFolderChild && elementKey.toLowerCase() < firstFolderChild.data.text.toLowerCase()) {
+            direction = -1;
+        } else if (lastFolderChild && elementKey.toLowerCase() > lastFolderChild.data.text.toLowerCase()) {
+            direction = 1;
+        } else if (firstElementChild) {
+            direction = -1;
+        }
+    } else {
+        if (lastFolderChild) {
+            direction = 1;
+        } else if (firstElementChild && elementKey.toLowerCase() < firstElementChild.data.text.toLowerCase()) {
+            direction = -1;
+        } else if (lastElementChild && elementKey.toLowerCase() > lastElementChild.data.text.toLowerCase()) {
+            direction = 1;
+        }
+    }
+
+    return direction;
+}
+
+pimcore.treenodelocator.getDirectionForElementsSortedByIndex = function (elementKey, firstElementChild, lastElementChild) {
+    var direction = 0;
+
+    if (firstElementChild && elementKey < firstElementChild.data.idx) {
+        direction = -1;
+    } else if (lastElementChild && elementKey > lastElementChild.data.idx) {
+        direction = 1;
+    } else {
+        pimcore.treenodelocator.showError(node, node.data.elementType);
+    }
+
+    return direction;
 }
 
 pimcore.treenodelocator.reloadComplete = function (node, element, elementType, searchData, callback) {

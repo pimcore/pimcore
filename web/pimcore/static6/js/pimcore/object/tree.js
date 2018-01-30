@@ -1008,6 +1008,7 @@ pimcore.object.tree = Class.create({
                             t("successful_object_change_children_sort_to_" + sortBy),
                             "success"
                         );
+                        record.data.sortBy = sortBy;
                         this.reloadNode(tree, record);
                     } else {
                         pimcore.helpers.showNotification(

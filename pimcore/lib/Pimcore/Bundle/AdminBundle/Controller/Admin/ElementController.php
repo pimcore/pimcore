@@ -463,6 +463,7 @@ class ElementController extends AdminController
             $data['index'] = $element->getIndex();
         } else {
             $element = DataObject::getById($id);
+            $data['index'] = $element->getIndex();
         }
         $typePath = Element\Service::getTypePath($element);
 

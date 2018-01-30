@@ -177,6 +177,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $tmpObject = [
             'id' => $child->getId(),
+            'idx' => intval($child->getIndex()),
+            'sortBy' => $child->getChildrenSortBy(),
             'text' => $child->getKey(),
             'type' => $child->getType(),
             'path' => $child->getRealFullPath(),
