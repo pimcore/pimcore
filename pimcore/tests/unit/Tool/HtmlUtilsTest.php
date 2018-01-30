@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tests\Unit\Mail;
+namespace Pimcore\Tests\Unit\Tool;
 
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tool\HtmlUtils;

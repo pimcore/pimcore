@@ -14,16 +14,12 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\DependencyInjection\ConfigMerger;
+
 class ArrayUtils
 {
     /**
-     *
-     * Recursively merge arrays.
-     *
-     * Merge two arrays as array_merge_recursive do, but instead of converting values to arrays when keys are same
-     * replaces value from first array with value from second
-     *
-     * @see https://github.com/oro-subtree/PhpUtils/blob/master/ArrayUtil.php
+     * @deprecated Use the ConfigMerger instead
      *
      * @param array $first
      * @param array $second
@@ -32,26 +28,8 @@ class ArrayUtils
      */
     public static function arrayMergeRecursiveDistinct(array $first, array $second)
     {
-        foreach ($second as $idx => $value) {
-            if (is_integer($idx)) {
-                $first[] = $value;
-            } else {
-                if (!array_key_exists($idx, $first)) {
-                    $first[$idx] = $value;
-                } else {
-                    if (is_array($value)) {
-                        if (is_array($first[$idx])) {
-                            $first[$idx] = self::arrayMergeRecursiveDistinct($first[$idx], $value);
-                        } else {
-                            $first[$idx] = $value;
-                        }
-                    } else {
-                        $first[$idx] = $value;
-                    }
-                }
-            }
-        }
+        $merger = new ConfigMerger();
 
-        return $first;
+        return $merger->merge($first, $second);
     }
 }
