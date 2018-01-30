@@ -482,6 +482,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         if (count($securityConfigs) > 1) {
             $securityConfig = [];
             foreach ($securityConfigs as $sec) {
+                if (!is_array($sec)) {
+                    continue;
+                }
+
                 $securityConfig = ArrayUtils::arrayMergeRecursiveDistinct($securityConfig, $sec);
             }
 
