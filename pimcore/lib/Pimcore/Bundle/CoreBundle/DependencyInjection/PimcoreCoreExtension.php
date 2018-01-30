@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
+use Pimcore\DependencyInjection\ConfigMerger;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
@@ -27,7 +28,6 @@ use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
-use Pimcore\Tool\ArrayUtils;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -466,12 +466,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     /**
      * The security component disallows definition of firewalls and access_control entries from different files to enforce
      * security. However this limits our possibilities how to provide a security config for the admin area while making
-     * the security component usable for applications built on Pimcore. This merges multiple security configs togehter
+     * the security component usable for applications built on Pimcore. This merges multiple security configs together
      * to create one single security config array which is passed to the security component.
      *
-     * @see OroPlatformExtension in Oro Platform/CRM which does the same provides the array merge method used below.
-     *
-     * TODO load pimcore specific security.yml here and make sure no more than 2 security configs are merged to avoid further merging?
+     * @see OroPlatformExtension in Oro Platform/CRM which does the same and provides the array merge method used below.
      *
      * @inheritDoc
      */
@@ -480,13 +478,15 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {
+            $configMerger = new ConfigMerger();
+
             $securityConfig = [];
             foreach ($securityConfigs as $sec) {
                 if (!is_array($sec)) {
                     continue;
                 }
 
-                $securityConfig = ArrayUtils::arrayMergeRecursiveDistinct($securityConfig, $sec);
+                $securityConfig = $configMerger->merge($securityConfig, $sec);
             }
 
             $securityConfigs = [$securityConfig];
