@@ -47,8 +47,7 @@ class PostStateChange
         CacheClearer $cacheClearer,
         AssetsInstaller $assetsInstaller,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->cacheClearer    = $cacheClearer;
         $this->assetsInstaller = $assetsInstaller;
         $this->eventDispatcher = $eventDispatcher;
@@ -93,7 +92,7 @@ class PostStateChange
             return;
         }
 
-        $runCallback = function($type, $buffer) use ($io) {
+        $runCallback = function ($type, $buffer) use ($io) {
             $io->write($buffer);
         };
 

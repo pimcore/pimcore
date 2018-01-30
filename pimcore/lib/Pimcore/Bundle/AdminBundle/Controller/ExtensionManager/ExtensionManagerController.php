@@ -163,8 +163,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         KernelInterface $kernel,
         CacheClearer $cacheClearer,
         AssetsInstaller $assetsInstaller
-    )
-    {
+    ) {
         if (null !== $response = $this->handleLegacyRequest($request, __FUNCTION__)) {
             return $response;
         }

@@ -1424,7 +1424,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $data = $request->get('dataUri');
-        $data = substr($data, strpos($data, ","));
+        $data = substr($data, strpos($data, ','));
         $data = base64_decode($data);
         $asset->setData($data);
         $asset->setUserModification($this->getAdminUser()->getId());
