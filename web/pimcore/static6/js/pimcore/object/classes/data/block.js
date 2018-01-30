@@ -62,6 +62,13 @@ pimcore.object.classes.data.block = Class.create(pimcore.object.classes.data.dat
             },
             {
                 xtype: "checkbox",
+                fieldLabel: t("lazy_loading"),
+                name: "lazyLoading",
+                disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible(),
+                checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible()
+            },
+            {
+                xtype: "checkbox",
                 fieldLabel: t("disallow_addremove"),
                 name: "disallowAddRemove",
                 checked: this.datax.disallowAddRemove

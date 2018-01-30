@@ -27,12 +27,14 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 {
     /**
      * @param DataObject\Concrete $object
+     * @param array $params
      *
      * @return array
      */
-    public function load(DataObject\Concrete $object)
+    public function load(DataObject\Concrete $object, $params = [])
     {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
+
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
@@ -61,7 +63,14 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if (method_exists($fd, 'load')) {
                         // datafield has it's own loader
-                        $value = $fd->load($brick);
+                        $context = [];
+                        $context['object'] = $object;
+                        $context['containerType'] = 'objectbrick';
+                        $context['containerKey'] = $brick->getType();
+                        $context['brickField'] = $key;
+                        $context['fieldname'] = $brick->getFieldname();
+                        $params['context'] = $context;
+                        $value = $fd->load($brick, $params);
                         if ($value === 0 || !empty($value)) {
                             $brick->setValue($key, $value);
                         }

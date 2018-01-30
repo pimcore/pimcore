@@ -75,6 +75,7 @@ class Dao extends Model\Dao\AbstractDao
                             $collection,
                             [
                                 'context' => [
+                                    "object" => $object,
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $type,
                                     'fieldname' =>  $this->model->getFieldname(),
