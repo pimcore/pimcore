@@ -247,6 +247,13 @@ pimcore:
                 namespace: App\Migrations
                 directory: "%kernel.root_dir%/Resources/migrations"
 
+    sitemaps:
+        generators:
+            pimcore_documents:
+                enabled: true
+                priority: 100
+                generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
+
 swiftmailer:
     default_mailer: pimcore_mailer
     mailers:
