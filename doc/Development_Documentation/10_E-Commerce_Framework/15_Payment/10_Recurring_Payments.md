@@ -108,4 +108,5 @@ payment_manager:
               - paymentType
               - financialInstitution # restrict for Visa, Mastercard etc.
               - transactionIdentifier # neccesary for recurPayment based on SEPA DIRECT DEBIT
+            recurring_payment_enabled: true
 ```
