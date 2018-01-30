@@ -13,6 +13,10 @@ The `pimcore:cache:clear` command semantics for the `-o` and `-a` option changed
 commands. Instead of `-a=1`, `-o=1`, now just pass `-a` and `-o`. The tags option now accepts multiple options, so you can
 use `-t foo -t bar` instead of `-t foo,bar` (old syntax still works).
 
+## Build 181 (2018-01-22)
+
+The signature of `Pimcore\Model\DataObject\AbstractObject` changed. It received an `$params = []` parameter to make saving notes for supported objects easier. This may lead to problems if you extend/overwrite this function though. Note that the issue of saving notes for supported objects is solved by a different approach (using func_get_arg(0) instead of changing the signature) on build >= 185. Due to that the parameter `$params = []` is removed in build 185
+
 ## Build 173 (2018-01-09)
 
 The Google Analytics and Google Tag Manager code generation was refactored to use the same extendable block logic as the 
