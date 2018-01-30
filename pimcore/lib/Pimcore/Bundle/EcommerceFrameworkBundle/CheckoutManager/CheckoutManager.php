@@ -18,9 +18,16 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
+use Pimcore\Tests\Helper\Pimcore;
 
 class CheckoutManager implements ICheckoutManager
 {
@@ -296,10 +303,76 @@ class CheckoutManager implements ICheckoutManager
         return $order;
     }
 
+
+    /**
+     * Verifies if the payment provider is supported for recurring payment
+     *
+     * @param IPayment $provider
+     * @throws \Exception
+     */
+    protected function verifyRecurringPayment(IPayment $provider)
+    {
+        if (!$provider instanceof QPay) {
+            throw  new \Exception("Payment provider not supported for recurring payment. Provider was [{$provider->getName()}].");
+        }
+
+        if (!$provider->isRecurringPaymentEnabled()) {
+            throw new \Exception("Recurring Payment is not enabled.");
+        }
+    }
+
+    /**
+     * @param AbstractOrder $sourceOrder
+     * @return AbstractOrder
+     * @throws \Exception
+     */
+    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder)
+    {
+        /* @var PaymentInfo $targetPaymentInfo */
+        $targetPaymentInfo = $this->startOrderPayment();
+
+        $orderManager = $this->orderManagers->getOrderManager();
+
+        /* @var Agent $sourceOrderAgent */
+        $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
+
+        if(!$sourceOrderAgent->isValidOrderForRecurringPayment()){
+            throw new \Exception("Order not valid for recurring payment.");
+        }
+
+        /* @var $paymentProvider QPay */
+        $paymentProvider = $sourceOrderAgent->getPaymentProvider();
+        $this->verifyRecurringPayment($paymentProvider);
+
+        $targetOrder = $orderManager->getOrderFromCart($this->getCart());
+
+        /* @var Agent $targetOrderAgent */
+        $targetOrderAgent = $orderManager->createOrderAgent($targetOrder);
+
+        $targetOrderAgent->setPaymentProvider($paymentProvider);
+        $price = new Price(
+            Decimal::create($targetOrder->getTotalPrice(), 2),
+            $sourceOrderAgent->getCurrency()
+        );
+
+        // execute recurPayment operation
+        $paymentStatus = $paymentProvider->executeDebit(
+            $price,
+            $targetPaymentInfo->getInternalPaymentId()
+        );
+
+        $targetOrderAgent->updatePayment($paymentStatus);
+
+        // Commit order
+        $this->commitOrderPayment($paymentStatus, $sourceOrder);
+
+        return $targetOrder;
+    }
+
     /**
      * @inheritdoc
      */
-    public function commitOrderPayment(IStatus $status)
+    public function commitOrderPayment(IStatus $status, AbstractOrder $sourceOrder = null)
     {
         $this->validateCheckoutSteps();
 
@@ -316,7 +389,7 @@ class CheckoutManager implements ICheckoutManager
         }
 
         // delegate commit order to commit order processor
-        $order = $this->commitOrderProcessors->getCommitOrderProcessor()->commitOrderPayment($status, $this->getPayment());
+        $order = $this->commitOrderProcessors->getCommitOrderProcessor()->commitOrderPayment($status, $this->getPayment(), $sourceOrder);
         $this->updateEnvironmentAfterOrderCommit($order);
 
         return $order;

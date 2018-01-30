@@ -59,6 +59,11 @@ class QPay implements IPayment
     protected $paymenttype = 'SELECT';
 
     /**
+     * @var bool
+     */
+    protected $recurringPaymentEnabled;
+
+    /**
      * Keep old implementation for backwards compatibility
      *
      * @var string
@@ -83,6 +88,14 @@ class QPay implements IPayment
         'shopId' // value=mobile for mobile checkout page
     ];
 
+    protected $recurringPaymentDataProperties = [
+        'anonymousPan',
+        'maskedPan',
+        'expiry',
+        'paymentType',
+        'language'
+    ];
+
     public function __construct(array $options, FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
@@ -103,6 +116,10 @@ class QPay implements IPayment
 
         if (isset($options['payment_type'])) {
             $this->paymenttype = $options['payment_type'];
+        }
+
+        if (isset($options['recurring_payment_enabled'])) {
+            $this->recurringPaymentEnabled = $options['recurring_payment_enabled'];
         }
 
         if (isset($options['hash_algorithm'])) {
@@ -131,6 +148,10 @@ class QPay implements IPayment
         $resolver
             ->setDefined('payment_type')
             ->setAllowedTypes('payment_type', ['string']);
+
+        $resolver
+            ->setDefined('recurring_payment_enabled')
+            ->setAllowedTypes('recurring_payment_enabled', ['bool']);
 
         $resolver
             ->setDefined('hash_algorithm')
@@ -283,9 +304,13 @@ class QPay implements IPayment
 
         $authorizedData = [
             'orderNumber' => null,
-            'language'    => null,
-            'amount'      => null,
-            'currency'    => null
+            'language' => null,
+            'amount' => null,
+            'currency' => null,
+            'expiry' => null,
+            'anonymousPan' => null,
+            'maskedPan' => null,
+            'paymentType' => null
         ];
 
         // check fields
@@ -373,6 +398,14 @@ class QPay implements IPayment
     }
 
     /**
+     * @return array
+     */
+    public function getRecurringPaymentDataProperties()
+    {
+        return $this->recurringPaymentDataProperties;
+    }
+
+    /**
      * Executes payment
      *
      * If price is given, recurPayment command is executed
@@ -386,15 +419,13 @@ class QPay implements IPayment
      *
      * @param IPrice $price
      * @param string $reference
-     * @param string $targetReference   Target reference for recurring payment.
      *
      * @return IStatus
      *
      * @throws \Exception
      */
-    public function executeDebit(IPrice $price = null, $reference = null, $targetReference = null)
+    public function executeDebit(IPrice $price = null, $reference = null)
     {
-        $recurPayment = false;
 
         if ($price) {
             // recurPayment
@@ -459,7 +490,7 @@ class QPay implements IPayment
             // Operation successfully done.
 
             return new Status(
-                $recurPayment ? $targetReference : $reference,
+                $reference,
                 $response['paymentNumber'] ?: $response['orderNumber'],
                 '',
                 IStatus::STATUS_CLEARED,
@@ -478,7 +509,7 @@ class QPay implements IPayment
             }
 
             return new Status(
-                $recurPayment ? $targetReference : $reference,
+                $reference,
                 $response['paymentNumber'] ?: $response['orderNumber'],
                 implode("\n", $error),
                 IStatus::STATUS_CANCELLED,
@@ -657,5 +688,10 @@ class QPay implements IPayment
     public function getPaymentType()
     {
         return $this->paymenttype;
+    }
+
+    public function isRecurringPaymentEnabled()
+    {
+        return $this->recurringPaymentEnabled;
     }
 }
