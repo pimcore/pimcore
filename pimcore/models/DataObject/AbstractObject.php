@@ -734,18 +734,13 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param $isUpdate
+     * @param $params
      *
      * @throws \Exception
      */
     protected function update($isUpdate = null, $params = [])
     {
-
-        // set mod date
-        $this->setModificationDate(time());
-
-        if (!$this->getCreationDate()) {
-            $this->setCreationDate(time());
-        }
+        $this->updateModificationInfos();
 
         // save properties
         $this->getProperties();
