@@ -337,7 +337,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 xtype: 'patchedgridview'
             },
             cls: 'pimcore_object_grid_panel',
-            selModel: Ext.create('Ext.selection.RowModel', {}),
+            selModel: this.getGridSelModel(),
             bbar: this.pagingtoolbar,
             listeners: {
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
