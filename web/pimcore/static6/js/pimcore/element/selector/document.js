@@ -214,7 +214,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 loadMask: true,
                 columnLines: true,
                 stripeRows: true,
-                selModel: Ext.create('Ext.selection.RowModel', {}),
+                selModel: this.getGridSelModel(),
                 bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {

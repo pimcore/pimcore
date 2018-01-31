@@ -155,6 +155,10 @@ pimcore.element.selector.abstract = Class.create({
 
         e.stopEvent();
         menu.showAt(e.getXY());
+    },
+
+    getGridSelModel: function() {
+        return Ext.create('Ext.selection.RowModel', {mode: (this.parent.multiselect ? "MULTI" : "SINGLE")});
     }
 
 });
