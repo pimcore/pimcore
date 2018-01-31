@@ -469,12 +469,6 @@ class Asset extends Element\AbstractElement
             $params =  func_get_arg(0);
         }
 
-        // not only check if the type is set but also if the implementation can be found
-        $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
-        if (!\Pimcore::getContainer()->get('pimcore.model.factory')->supports($className)) {
-            throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
-        }
-
         $isUpdate = false;
 
         $preEvent = new AssetEvent($this, $params);
@@ -712,6 +706,12 @@ class Asset extends Element\AbstractElement
                 if ($type != $this->getType()) {
                     $this->setType($type);
                     $typeChanged = true;
+                }
+
+                // not only check if the type is set but also if the implementation can be found
+                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
+                if (!\Pimcore::getContainer()->get('pimcore.model.factory')->supports($className)) {
+                    throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
 
