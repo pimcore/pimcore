@@ -2000,11 +2000,13 @@ INSERT INTO `properties` VALUES ('36','asset','/documents/pimcore_t-mobile.pdf',
 INSERT INTO `properties` VALUES ('37','document','/en/advanced-examples/contact-form','email','document','38','1');
 INSERT INTO `properties` VALUES ('37','document','/en/advanced-examples/contact-form','navigation_name','text','Contact Form','0');
 INSERT INTO `properties` VALUES ('40','document','/en','navigation_name','text','Home','0');
+INSERT INTO `properties` VALUES ('40','document','/en','news','document','27','1');
 INSERT INTO `properties` VALUES ('41','document','/de','language','text','de','1');
 INSERT INTO `properties` VALUES ('41','document','/de','leftNavStartNode','document','41','1');
 INSERT INTO `properties` VALUES ('41','document','/de','mainNavStartNode','document','41','1');
 INSERT INTO `properties` VALUES ('41','document','/de','navigation_name','text','Startseite','0');
 INSERT INTO `properties` VALUES ('41','document','/de','sidebar','document','58','1');
+INSERT INTO `properties` VALUES ('41','document','/de','news','document','53','1');
 INSERT INTO `properties` VALUES ('47','object','/crm/newsletter/pimcore-byom.de~7a3','token','text','YTozOntzOjQ6InNhbHQiO3M6MzI6IjNlMGRkYTk3MWU1YTY5MWViYmM0OGVkNGQ5NzA4MDFmIjtzOjU6ImVtYWlsIjtzOjE1OiJwaW1jb3JlQGJ5b20uZGUiO3M6MjoiaWQiO2k6NDc7fQ==','0');
 INSERT INTO `properties` VALUES ('50','document','/de/einfuehrung','navigation_name','text','Einführung','0');
 INSERT INTO `properties` VALUES ('51','document','/de/einfache-beispiele','navigation_name','text','Einfache Beispiele','0');
