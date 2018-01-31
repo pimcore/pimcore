@@ -257,7 +257,6 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
 
         return $data;
-
     }
 
     /**

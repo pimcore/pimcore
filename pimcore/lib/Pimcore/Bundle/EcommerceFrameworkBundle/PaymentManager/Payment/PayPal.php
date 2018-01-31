@@ -172,7 +172,7 @@ class PayPal implements IPayment
         $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->InvoiceID = $config['InvoiceID'];
 
         // add BN Code for Pimcore
-        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->ButtonSource = "Pimcore_SP";
+        $x->SetExpressCheckoutRequest->SetExpressCheckoutRequestDetails->ButtonSource = 'Pimcore_SP';
 
         // add optional config
         foreach ($config as $name => $value) {
