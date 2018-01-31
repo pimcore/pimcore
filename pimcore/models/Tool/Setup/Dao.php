@@ -142,6 +142,7 @@ class Dao extends Model\Dao\AbstractDao
             ['key' => 'piwik_reports'],
             ['key' => 'plugins'],
             ['key' => 'predefined_properties'],
+            ['key' => 'asset_metadata'],
             ['key' => 'recyclebin'],
             ['key' => 'redirects'],
             ['key' => 'reports'],
