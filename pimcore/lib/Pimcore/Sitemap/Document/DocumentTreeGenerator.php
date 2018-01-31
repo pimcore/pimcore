@@ -19,16 +19,13 @@ namespace Pimcore\Sitemap\Document;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Pimcore\Sitemap\Document\Filter\ElementFilterDecorator;
-use Pimcore\Sitemap\Document\Processor\ElementProcessorDecorator;
-use Pimcore\Sitemap\Element\FilterInterface as ElementFilterInterface;
-use Pimcore\Sitemap\Element\ProcessorInterface as ElementProcessorInterface;
-use Pimcore\Sitemap\GeneratorInterface;
+use Pimcore\Sitemap\Element\AbstractElementGenerator;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
+use Presta\SitemapBundle\Sitemap\Url\Url;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DocumentTreeGenerator implements GeneratorInterface
+class DocumentTreeGenerator extends AbstractElementGenerator
 {
     /**
      * @var UrlGeneratorInterface
@@ -39,16 +36,6 @@ class DocumentTreeGenerator implements GeneratorInterface
      * @var array
      */
     protected $options = [];
-
-    /**
-     * @var FilterInterface[]
-     */
-    private $filters = [];
-
-    /**
-     * @var ProcessorInterface[]
-     */
-    private $processors = [];
 
     /**
      * @var int
@@ -62,56 +49,14 @@ class DocumentTreeGenerator implements GeneratorInterface
         array $options = []
     )
     {
+        parent::__construct($filters, $processors);
+
         $this->urlGenerator = $urlGenerator;
-
-        foreach ($filters as $filter) {
-            $this->addFilter($filter);
-        }
-
-        foreach ($processors as $processor) {
-            $this->addProcessor($processor);
-        }
 
         $optionsResolver = new OptionsResolver();
         $this->configureOptions($optionsResolver);
 
         $this->options = $optionsResolver->resolve($options);
-    }
-
-    public function addFilter($filter)
-    {
-        // wrap filter in ElementFilterDecorator if an element filter was passed
-        if ($filter instanceof ElementFilterInterface) {
-            $filter = new ElementFilterDecorator($filter);
-        }
-
-        if (!$filter instanceof FilterInterface) {
-            throw new \InvalidArgumentException(sprintf(
-                'Filter needs to implement "%s" or "%s"',
-                FilterInterface::class,
-                ElementFilterInterface::class
-            ));
-        }
-
-        $this->filters[] = $filter;
-    }
-
-    public function addProcessor($processor)
-    {
-        // wrap processor in ElementProcessorDecorator if an element processor was passed
-        if ($processor instanceof ElementProcessorInterface) {
-            $processor = new ElementProcessorDecorator($processor);
-        }
-
-        if (!$processor instanceof ProcessorInterface) {
-            throw new \InvalidArgumentException(sprintf(
-                'Processor needs to implement "%s" or "%s"',
-                ProcessorInterface::class,
-                ElementProcessorInterface::class
-            ));
-        }
-
-        $this->processors[] = $processor;
     }
 
     protected function configureOptions(OptionsResolver $options)
@@ -154,10 +99,11 @@ class DocumentTreeGenerator implements GeneratorInterface
 
     private function populateCollection(UrlContainerInterface $container, Document $rootDocument, string $section, Site $site = null)
     {
-        $visit = $this->visit($rootDocument, $site);
+        $context = new DocumentGeneratorContext($site);
+        $visit   = $this->visit($rootDocument, $context);
 
         foreach ($visit as $document) {
-            $url = $this->createUrl($document, $site);
+            $url = $this->createUrl($document, $context);
             if (null === $url) {
                 continue;
             }
@@ -166,35 +112,40 @@ class DocumentTreeGenerator implements GeneratorInterface
         }
     }
 
-    private function createUrl(Document $document, Site $site = null)
+    /**
+     * @param Document $document
+     * @param DocumentGeneratorContext $context
+     *
+     * @return Url|null
+     */
+    private function createUrl(Document $document, DocumentGeneratorContext $context)
     {
-        $url = new UrlConcrete($this->urlGenerator->generateUrl($document, $site, $this->options['urlGeneratorOptions']));
+        $url = $this->urlGenerator->generateUrl(
+            $document,
+            $context->getSite(),
+            $this->options['urlGeneratorOptions']
+        );
 
-        foreach ($this->processors as $processor) {
-            $url = $processor->process($url, $document, $site);
-
-            if (null === $url) {
-                break;
-            }
-        }
+        $url = new UrlConcrete($url);
+        $url = $this->process($url, $document, $context);
 
         return $url;
     }
 
     /**
      * @param Document $document
-     * @param Site|null $site
+     * @param DocumentGeneratorContext $context
      *
      * @return \Generator|Document[]
      * @throws \Exception
      */
-    private function visit(Document $document, Site $site = null): \Generator
+    private function visit(Document $document, DocumentGeneratorContext $context): \Generator
     {
         if ($document instanceof Document\Hardlink) {
             $document = Document\Hardlink\Service::wrap($document);
         }
 
-        if ($this->canBeAdded($document, $site)) {
+        if ($this->canBeAdded($document, $context)) {
             yield $document;
 
             if (++$this->currentBatchCount >= $this->options['garbageCollectThreshold']) {
@@ -203,32 +154,10 @@ class DocumentTreeGenerator implements GeneratorInterface
             }
         }
 
-        if ($this->handlesChildren($document, $site)) {
+        if ($this->handlesChildren($document, $context)) {
             foreach ($document->getChildren() as $child) {
-                yield from $this->visit($child);
+                yield from $this->visit($child, $context);
             }
         }
-    }
-
-    private function canBeAdded(Document $document, Site $site = null): bool
-    {
-        foreach ($this->filters as $filter) {
-            if (!$filter->canBeAdded($document, $site)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function handlesChildren(Document $document, Site $site = null): bool
-    {
-        foreach ($this->filters as $filter) {
-            if (!$filter->handlesChildren($document, $site)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

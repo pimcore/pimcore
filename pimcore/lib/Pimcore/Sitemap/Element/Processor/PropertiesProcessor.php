@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Sitemap\Element\Processor;
 
 use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Sitemap\Element\GeneratorContextInterface;
 use Pimcore\Sitemap\Element\ProcessorInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
@@ -30,7 +31,7 @@ class PropertiesProcessor implements ProcessorInterface
     const PROPERTY_CHANGE_FREQUENCY = 'sitemaps_changefreq';
     const PROPERTY_PRIORITY = 'sitemaps_priority';
 
-    public function process(Url $url, AbstractElement $element)
+    public function process(Url $url, AbstractElement $element, GeneratorContextInterface $context)
     {
         if (!$url instanceof UrlConcrete) {
             return $url;

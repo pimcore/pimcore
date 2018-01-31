@@ -27,8 +27,9 @@ interface ProcessorInterface
      *
      * @param Url $url
      * @param AbstractElement $element
+     * @param GeneratorContextInterface $context
      *
      * @return Url|null
      */
-    public function process(Url $url, AbstractElement $element);
+    public function process(Url $url, AbstractElement $element, GeneratorContextInterface $context);
 }

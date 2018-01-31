@@ -18,8 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Sitemap\Document\Filter;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Site;
-use Pimcore\Sitemap\Document\FilterInterface;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Sitemap\Element\FilterInterface;
+use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
 class DocumentTypeFilter implements FilterInterface
 {
@@ -53,13 +54,21 @@ class DocumentTypeFilter implements FilterInterface
         }
     }
 
-    public function canBeAdded(Document $document, Site $site = null): bool
+    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
     {
-        return in_array($document->getType(), $this->documentTypes);
+        if (!$element instanceof Document) {
+            return false;
+        }
+
+        return in_array($element->getType(), $this->documentTypes);
     }
 
-    public function handlesChildren(Document $document, Site $site = null): bool
+    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
     {
-        return in_array($document->getType(), $this->containerTypes);
+        if (!$element instanceof Document) {
+            return false;
+        }
+
+        return in_array($element->getType(), $this->containerTypes);
     }
 }

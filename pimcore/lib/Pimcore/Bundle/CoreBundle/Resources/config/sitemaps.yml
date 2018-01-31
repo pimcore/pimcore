@@ -14,6 +14,7 @@ services:
     # Services valid for all elements
 
     # Filters
+    Pimcore\Sitemap\Element\Filter\PublishedFilter: ~
     Pimcore\Sitemap\Element\Filter\PropertiesFilter: ~
 
     # Processors
@@ -27,7 +28,7 @@ services:
     # Services valid for documents
 
     # Default filters for DocumentTreeGenerator
-    Pimcore\Sitemap\Document\Filter\PublishedFilter: ~
+
     Pimcore\Sitemap\Document\Filter\DocumentTypeFilter: ~
     Pimcore\Sitemap\Document\Filter\SiteRootFilter: ~
 
@@ -39,7 +40,7 @@ services:
     Pimcore\Sitemap\Document\DocumentTreeGenerator:
         arguments:
             $filters:
-                - '@Pimcore\Sitemap\Document\Filter\PublishedFilter'
+                - '@Pimcore\Sitemap\Element\Filter\PublishedFilter'
                 - '@Pimcore\Sitemap\Element\Filter\PropertiesFilter'
                 - '@Pimcore\Sitemap\Document\Filter\DocumentTypeFilter'
                 - '@Pimcore\Sitemap\Document\Filter\SiteRootFilter'

@@ -15,14 +15,18 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Sitemap\Document;
+namespace Pimcore\Sitemap\Element;
 
-use Pimcore\Model\Document;
-use Pimcore\Model\Site;
-
-interface FilterInterface
+/**
+ * Context which is passed to every filter/processor
+ */
+interface GeneratorContextInterface extends \IteratorAggregate, \Countable
 {
-    public function canBeAdded(Document $document, Site $site = null): bool;
+    public function all(): array;
 
-    public function handlesChildren(Document $document, Site $site = null): bool;
+    public function keys(): array;
+
+    public function get($key, $default = null);
+
+    public function has($key): bool;
 }

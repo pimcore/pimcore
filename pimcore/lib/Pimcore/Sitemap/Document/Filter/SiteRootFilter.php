@@ -18,8 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Sitemap\Document\Filter;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Site;
-use Pimcore\Sitemap\Document\FilterInterface;
+use Pimcore\Sitemap\Document\DocumentGeneratorContext;
+use Pimcore\Sitemap\Element\FilterInterface;
+use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
 /**
  * Filters document if it is a site root, but doesn't match the current site. This used to exclude
@@ -32,18 +35,27 @@ class SiteRootFilter implements FilterInterface
      */
     private $siteRoots;
 
-    public function canBeAdded(Document $document, Site $site = null): bool
+    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
     {
-        if ($this->isExcludedSiteRoot($document, $site)) {
+        if (!$element instanceof Document) {
+            return false;
+        }
+
+        $site = null;
+        if ($context instanceof DocumentGeneratorContext && $context->hasSite()) {
+            $site = $context->getSite();
+        }
+
+        if ($this->isExcludedSiteRoot($element, $site)) {
             return false;
         }
 
         return true;
     }
 
-    public function handlesChildren(Document $document, Site $site = null): bool
+    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
     {
-        return $this->canBeAdded($document, $site);
+        return $this->canBeAdded($element, $context);
     }
 
     private function isExcludedSiteRoot(Document $document, Site $site = null): bool

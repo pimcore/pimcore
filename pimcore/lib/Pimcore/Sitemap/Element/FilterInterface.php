@@ -21,7 +21,7 @@ use Pimcore\Model\Element\AbstractElement;
 
 interface FilterInterface
 {
-    public function canBeAdded(AbstractElement $element): bool;
+    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool;
 
-    public function handlesChildren(AbstractElement $element): bool;
+    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool;
 }
