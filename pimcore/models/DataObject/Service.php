@@ -299,7 +299,7 @@ class Service extends Model\Element\Service
                         if (method_exists($object, $getter)) {
                             /** @var $classificationStoreData Classificationstore */
                             $classificationStoreData = $object->$getter();
-                            $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $requestedLanguage, true, true);
+                            $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $requestedLanguage);
 
                             $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
                             $type = $keyConfig->getType();
