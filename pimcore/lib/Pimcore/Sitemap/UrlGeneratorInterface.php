@@ -15,12 +15,9 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Sitemap\Document;
-
-use Pimcore\Model\Document;
-use Pimcore\Model\Site;
+namespace Pimcore\Sitemap;
 
 interface UrlGeneratorInterface
 {
-    public function generateUrl(Document $document, Site $site = null, array $options = []): string;
+    public function generateUrl(string $path, array $options = []);
 }

@@ -28,7 +28,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class DocumentTreeGenerator extends AbstractElementGenerator
 {
     /**
-     * @var UrlGeneratorInterface
+     * @var DocumentUrlGeneratorInterface
      */
     private $urlGenerator;
 
@@ -43,7 +43,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
     private $currentBatchCount = 0;
 
     public function __construct(
-        UrlGeneratorInterface $urlGenerator,
+        DocumentUrlGeneratorInterface $urlGenerator,
         array $filters = [],
         array $processors = [],
         array $options = []
@@ -120,7 +120,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
      */
     private function createUrl(Document $document, DocumentGeneratorContext $context)
     {
-        $url = $this->urlGenerator->generateUrl(
+        $url = $this->urlGenerator->generateDocumentUrl(
             $document,
             $context->getSite(),
             $this->options['urlGeneratorOptions']
