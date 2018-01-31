@@ -19,17 +19,26 @@ namespace Pimcore\Sitemap\Document;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RequestContext;
 
 class UrlGenerator implements UrlGeneratorInterface
 {
+    /**
+     * @var RequestContext
+     */
+    private $requestContext;
+
     /**
      * @var OptionsResolver
      */
     private $optionsResolver;
 
-    public function __construct()
+    public function __construct(RequestContext $requestContext)
     {
+        $this->requestContext = $requestContext;
+
         $this->optionsResolver = new OptionsResolver();
         $this->configureOptions($this->optionsResolver);
     }
@@ -37,44 +46,97 @@ class UrlGenerator implements UrlGeneratorInterface
     protected function configureOptions(OptionsResolver $options)
     {
         $options->setDefaults([
-            'defaultScheme' => 'https'
+            'scheme'   => $this->requestContext->getScheme(),
+            'host'     => $this->requestContext->getHost(),
+            'base_url' => $this->requestContext->getBaseUrl()
         ]);
 
-        $options->setAllowedValues('defaultScheme', ['http', 'https']);
+        $options->setDefault('port', function (Options $options) {
+            if ('http' === $options['scheme'] && 80 !== $this->requestContext->getHttpPort()) {
+                return $this->requestContext->getHttpPort();
+            }
+
+            if ('https' === $options['scheme'] && 443 !== $this->requestContext->getHttpsPort()) {
+                return $this->requestContext->getHttpsPort();
+            }
+
+            return null;
+        });
+
+        $options->setAllowedValues('scheme', ['http', 'https']);
+        $options->setAllowedTypes('host', 'string');
+        $options->setAllowedTypes('port', ['int', 'null']);
+        $options->setAllowedTypes('base_url', 'string');
     }
 
     public function generateUrl(Document $document, Site $site = null, array $options = []): string
     {
-        $options = $this->optionsResolver->resolve($options);
+        $options = $this->prepareOptions($options, $site);
 
         $scheme = $this->schemeFor($document, $site, $options);
-        $domain = $this->domainFor($document, $site, $options);
+        $host   = $this->hostFor($document, $site, $options);
+        $port   = $this->portFor($document, $site, $options);
         $path   = $this->pathFor($document, $site, $options);
 
-        return sprintf('%s://%s%s', $scheme, $domain, $path);
+        if (!empty($port)) {
+            $port = ':' . $port;
+        }
+
+        return $scheme . '://' . $host . $port . $path;
+    }
+
+    protected function prepareOptions(array $options, Site $site = null): array
+    {
+        // set site host as default value if it is not explicitely set via options
+        if (null !== $site && !isset($options['host'])) {
+            $host = $this->hostForSite($site);
+
+            if (!empty($host)) {
+                $options['host'] = $host;
+            }
+        }
+
+        return $this->optionsResolver->resolve($options);
     }
 
     protected function schemeFor(Document $document, Site $site = null, array $options = []): string
     {
-        return $options['defaultScheme'];
+        return $options['scheme'];
     }
 
-    protected function domainFor(Document $document, Site $site = null, array $options = []): string
+    protected function hostFor(Document $document, Site $site = null, array $options = []): string
     {
         if (null !== $site) {
-            $domain = $site->getMainDomain();
+            return $this->hostForSite($site);
         } else {
-            $domain = \Pimcore\Config::getSystemConfig()->general->domain;
+            return $options['host'];
+        }
+    }
+
+    protected function hostForSite(Site $site)
+    {
+        $host = $site->getMainDomain();
+        if (!empty($host)) {
+            return $host;
         }
 
-        if (empty($domain)) {
-            throw new \RuntimeException(sprintf(
-                'Domain for %s is not defined',
-                null === $site ? 'main site' : 'site ' . $site->getId()
-            ));
+        foreach ($site->getDomains() as $domain) {
+            if (!empty($domain)) {
+                $host = $domain;
+                break;
+            }
         }
 
-        return $domain;
+        if (empty($host)) {
+            throw new \RuntimeException(sprintf('Failed to resolve host for site %d', $site->getId()));
+        }
+
+        return $host;
+    }
+
+    protected function portFor(Document $document, Site $site = null, array $options = [])
+    {
+        return $options['port'];
     }
 
     protected function pathFor(Document $document, Site $site = null, array $options = []): string
@@ -84,6 +146,12 @@ class UrlGenerator implements UrlGeneratorInterface
         if (null !== $site) {
             // strip site prefix from path
             $path = substr($path, strlen($site->getRootDocument()->getRealFullPath()));
+        }
+
+        $path = $options['base_url'] . $path;
+
+        if (!empty($path)) {
+            $path = '/' . ltrim($path, '/');
         }
 
         return $path;

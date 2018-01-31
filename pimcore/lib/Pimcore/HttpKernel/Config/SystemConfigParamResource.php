@@ -53,6 +53,12 @@ class SystemConfigParamResource
         $config = Config::getSystemConfig(true);
         if ($config) {
             $this->processConfig('pimcore_system_config', $config->toArray());
+
+            // set default domain for router to main domain if configured
+            // this will be overridden from the request in web context but is handy for CLI scripts
+            if (!empty($config->general->domain)) {
+                $this->container->setParameter('router.request_context.host', $config->general->domain);
+            }
         } else {
             $this->processConfig('pimcore_system_config', $this->getDefaultParameters());
         }
