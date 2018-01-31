@@ -231,6 +231,4 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     {
         $this->increment = (int) $increment;
     }
-
-
 }
