@@ -187,7 +187,7 @@ class Version extends AbstractModel
             File::put($this->getFilePath(), $dataString);
 
             // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
-            if ($data instanceof Asset && $data->getType() != 'folder') {
+            if ($data instanceof Asset && $data->getType() != 'folder' && file_exists($data->getFileSystemPath())) {
                 $linked = false;
 
                 // we always try to create a hardlink onto the original file, the asset ensures that not the actual
