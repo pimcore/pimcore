@@ -75,7 +75,15 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
                 xtype: 'fieldset',
                 style: 'margin-top:10px',
                 title: t('min_max_times'),
-                items: [{
+                items: [
+                    {
+                        xtype: "numberfield",
+                        fieldLabel: t("increment"),
+                        width: 200,
+                        name: "increment",
+                        value: datax.increment ? datax.increment : 15
+                    },
+                    {
                     xtype: 'timefield',
                     itemId: 'minTime',
                     fieldLabel: t('min_value'),

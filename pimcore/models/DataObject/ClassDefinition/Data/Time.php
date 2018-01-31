@@ -45,6 +45,11 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     public $maxValue;
 
     /**
+     * @var int
+     */
+    public $increment = 15 ;
+
+    /**
      * @return string
      */
     public function getMinValue()
@@ -210,4 +215,22 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     {
         return '';
     }
+
+    /**
+     * @return int
+     */
+    public function getIncrement()
+    {
+        return $this->increment;
+    }
+
+    /**
+     * @param int $increment
+     */
+    public function setIncrement($increment)
+    {
+        $this->increment = (int) $increment;
+    }
+
+
 }
