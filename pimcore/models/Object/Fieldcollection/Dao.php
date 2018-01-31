@@ -73,6 +73,7 @@ class Dao extends Model\Dao\AbstractDao
                         $value = $fd->load($collection,
                             [
                                 "context" => [
+                                    "object" => $object,
                                     "containerType" => "fieldcollection",
                                     "containerKey" => $type,
                                     "fieldname" =>  $this->model->getFieldname(),

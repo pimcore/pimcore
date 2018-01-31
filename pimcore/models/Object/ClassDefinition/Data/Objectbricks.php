@@ -182,7 +182,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         if (!$objectFromVersion && method_exists($fielddefinition, "getLazyLoading")
             && $fielddefinition->getLazyLoading()
             && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata
-            && !$fielddefinition instanceof Object\ClassDefinition\Data\MultihrefMetadata) {
+            && !$fielddefinition instanceof Object\ClassDefinition\Data\Block) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {
