@@ -34,7 +34,7 @@ class NewsGenerator extends AbstractElementGenerator
      */
     private $linkGenerator;
 
-    public function populate(UrlContainerInterface $container, string $section = null)
+    public function populate(UrlContainerInterface $urlContainer, string $section = null)
     {
         if (null !== $section && $section !== 'news') {
             // do not add entries if section doesn't match
@@ -55,7 +55,7 @@ class NewsGenerator extends AbstractElementGenerator
                 // context contains metadata which can be consumed from filters
                 // e.g. with this context it would be possible to filter entries by
                 // language
-                $context = new GeneratorContext([
+                $context = new GeneratorContext($urlContainer, $section, [
                     'language' => $language
                 ]);
 
@@ -73,7 +73,7 @@ class NewsGenerator extends AbstractElementGenerator
                     continue;
                 }
 
-                $container->addUrl($url, $section);
+                $urlContainer->addUrl($url, $section);
             }
         }
     }

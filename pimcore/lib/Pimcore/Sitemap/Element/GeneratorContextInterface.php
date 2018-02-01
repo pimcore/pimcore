@@ -17,11 +17,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Sitemap\Element;
 
+use Presta\SitemapBundle\Service\UrlContainerInterface;
+
 /**
  * Context which is passed to every filter/processor
  */
 interface GeneratorContextInterface extends \IteratorAggregate, \Countable
 {
+    public function getUrlContainer(): UrlContainerInterface;
+
+    /**
+     * @return string|null
+     */
+    public function getSection();
+
     public function all(): array;
 
     public function keys(): array;

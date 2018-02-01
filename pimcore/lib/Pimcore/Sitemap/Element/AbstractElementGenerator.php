@@ -77,16 +77,12 @@ abstract class AbstractElementGenerator implements GeneratorInterface
      * Determines if the element can be added.
      *
      * @param AbstractElement $element
-     * @param GeneratorContextInterface|null $context
+     * @param GeneratorContextInterface $context
      *
      * @return bool
      */
-    protected function canBeAdded(AbstractElement $element, GeneratorContextInterface $context = null): bool
+    protected function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
     {
-        if (null === $context) {
-            $context = $this->createDefaultContext($element);
-        }
-
         foreach ($this->filters as $filter) {
             if (!$filter->canBeAdded($element, $context)) {
                 return false;
@@ -101,16 +97,12 @@ abstract class AbstractElementGenerator implements GeneratorInterface
      * supporting tree structures).
      *
      * @param AbstractElement $element
-     * @param GeneratorContextInterface|null $context
+     * @param GeneratorContextInterface $context
      *
      * @return bool
      */
-    protected function handlesChildren(AbstractElement $element, GeneratorContextInterface $context = null): bool
+    protected function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
     {
-        if (null === $context) {
-            $context = $this->createDefaultContext($element);
-        }
-
         foreach ($this->filters as $filter) {
             if (!$filter->handlesChildren($element, $context)) {
                 return false;
@@ -126,29 +118,21 @@ abstract class AbstractElementGenerator implements GeneratorInterface
      *
      * @param Url $url
      * @param AbstractElement $element
-     * @param GeneratorContextInterface|null $context
+     * @param GeneratorContextInterface $context
      *
      * @return null|Url
      */
-    protected function process(Url $url, AbstractElement $element, GeneratorContextInterface $context = null)
+    protected function process(Url $url, AbstractElement $element, GeneratorContextInterface $context)
     {
-        if (null === $context) {
-            $context = $this->createDefaultContext($element);
-        }
-
         foreach ($this->processors as $processor) {
             $url = $processor->process($url, $element, $context);
 
+            // processor returned null - stop processing and return null
             if (null === $url) {
                 break;
             }
         }
 
         return $url;
-    }
-
-    protected function createDefaultContext(AbstractElement $element): GeneratorContextInterface
-    {
-        return new GeneratorContext();
     }
 }

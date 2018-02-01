@@ -19,10 +19,16 @@ namespace Pimcore\Sitemap\Document;
 
 use Pimcore\Model\Site;
 use Pimcore\Sitemap\Element\GeneratorContext;
+use Presta\SitemapBundle\Service\UrlContainerInterface;
 
 class DocumentGeneratorContext extends GeneratorContext
 {
-    public function __construct(Site $site = null, array $parameters = [])
+    public function __construct(
+        UrlContainerInterface $urlContainer,
+        string $section = null,
+        Site $site = null,
+        array $parameters = []
+    )
     {
         if (null !== $site) {
             $parameters['site'] = $site;
@@ -32,7 +38,7 @@ class DocumentGeneratorContext extends GeneratorContext
             throw new \InvalidArgumentException(sprintf('Site parameter must be an instance of %s', Site::class));
         }
 
-        parent::__construct($parameters);
+        parent::__construct($urlContainer, $section, $parameters);
     }
 
     public function hasSite(): bool

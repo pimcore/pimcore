@@ -76,12 +76,12 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         $options->setAllowedTypes('garbageCollectThreshold', 'int');
     }
 
-    public function populate(UrlContainerInterface $container, string $section = null)
+    public function populate(UrlContainerInterface $urlContainer, string $section = null)
     {
         if ($this->options['handleMainDomain'] && null === $section || $section === 'default') {
             $rootDocument = Document::getById($this->options['rootId']);
 
-            $this->populateCollection($container, $rootDocument, 'default');
+            $this->populateCollection($urlContainer, $rootDocument, 'default');
         }
 
         if ($this->options['handleSites']) {
@@ -91,15 +91,15 @@ class DocumentTreeGenerator extends AbstractElementGenerator
                 $siteSection = sprintf('site_%s', $site->getId());
 
                 if (null === $section || $section === $siteSection) {
-                    $this->populateCollection($container, $site->getRootDocument(), $siteSection, $site);
+                    $this->populateCollection($urlContainer, $site->getRootDocument(), $siteSection, $site);
                 }
             }
         }
     }
 
-    private function populateCollection(UrlContainerInterface $container, Document $rootDocument, string $section, Site $site = null)
+    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, Site $site = null)
     {
-        $context = new DocumentGeneratorContext($site);
+        $context = new DocumentGeneratorContext($urlContainer, $section, $site);
         $visit   = $this->visit($rootDocument, $context);
 
         foreach ($visit as $document) {
@@ -108,7 +108,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
                 continue;
             }
 
-            $container->addUrl($url, $section);
+            $urlContainer->addUrl($url, $section);
         }
     }
 

@@ -67,10 +67,10 @@ interface GeneratorInterface
     /**
      * Populates the sitemap
      *
-     * @param UrlContainerInterface $container
+     * @param UrlContainerInterface $urlContainer
      * @param string $section
      */
-    public function populate(UrlContainerInterface $container, string $section = null);
+    public function populate(UrlContainerInterface $urlContainer, string $section = null);
 }
 ```
 
@@ -162,13 +162,14 @@ namespace AppBundle\Sitemaps;
 
 use Pimcore\Model\DataObject\BlogArticle;
 use Pimcore\Sitemap\Element\AbstractElementGenerator;
+use Pimcore\Sitemap\Element\GeneratorContext;
 use Presta\SitemapBundle\Service\UrlContainerInterface;
 use Presta\SitemapBundle\Sitemap\Url\UrlConcrete;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class BlogGenerator extends AbstractElementGenerator
 {
-    public function populate(UrlContainerInterface $container, string $section = null)
+    public function populate(UrlContainerInterface $urlContainer, string $section = null)
     {
         if (null !== $section && $section !== 'blog') {
             // do not add entries if section doesn't match
@@ -181,10 +182,15 @@ class BlogGenerator extends AbstractElementGenerator
         $list->setOrderKey('date');
         $list->setOrder('DESC');
 
+        // the context contains metadata for filters/processors
+        // it contains at least the url container, but you can add additional data
+        // with the params parameter
+        $context = new GeneratorContext($urlContainer, $section, ['foo' => 'bar']);
+
         /** @var BlogArticle $blogArticle */
         foreach ($list as $blogArticle) {
             // only add element if it is not filtered
-            if (!$this->canBeAdded($blogArticle)) {
+            if (!$this->canBeAdded($blogArticle, $context)) {
                 continue;
             }
 
@@ -198,7 +204,7 @@ class BlogGenerator extends AbstractElementGenerator
             $url = new UrlConcrete($link);
 
             // run url through processors
-            $url = $this->process($url, $blogArticle);
+            $url = $this->process($url, $blogArticle, $context);
 
             // processors can return null to exclude the url
             if (null === $url) {
@@ -206,7 +212,7 @@ class BlogGenerator extends AbstractElementGenerator
             }
 
             // add the url to the container
-            $container->addUrl($url, $section);
+            $urlContainer->addUrl($url, $section);
         }
     }
 }

@@ -17,16 +17,43 @@ declare(strict_types=1);
 
 namespace Pimcore\Sitemap\Element;
 
+use Presta\SitemapBundle\Service\UrlContainerInterface;
+
 class GeneratorContext implements GeneratorContextInterface
 {
+    /**
+     * @var UrlContainerInterface
+     */
+    private $urlContainer;
+
+    /**
+     * @var string|null
+     */
+    private $section;
+
     /**
      * @var array
      */
     private $parameters = [];
 
-    public function __construct(array $parameters = [])
+    public function __construct(UrlContainerInterface $urlContainer, string $section = null, array $parameters = [])
     {
-        $this->parameters = $parameters;
+        $this->urlContainer = $urlContainer;
+        $this->section      = $section;
+        $this->parameters   = $parameters;
+    }
+
+    public function getUrlContainer(): UrlContainerInterface
+    {
+        return $this->urlContainer;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSection()
+    {
+        return $this->section;
     }
 
     public function all(): array
