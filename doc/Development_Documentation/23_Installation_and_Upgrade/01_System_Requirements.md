@@ -60,6 +60,12 @@ All permissions on database level, specifically:
 - Create view
 - Show view
 
+#### System Variables
+```
+innodb_file_format = Barracuda
+innodb_large_prefix = 1
+```
+
 ### Operating System
 Please ensure you have installed all required packages to ensure proper locale support by PHP.
 On Debian based systems, you can use the following command to install all required packages: 

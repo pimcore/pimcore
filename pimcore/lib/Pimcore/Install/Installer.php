@@ -185,6 +185,16 @@ class Installer
             if (!in_array($result['Value'], ['utf8mb4'])) {
                 $errors[] = 'Database charset is not utf8mb4';
             }
+
+            $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
+            if($largePrefix && $largePrefix['Value'] != 'ON') {
+                $errors[] = 'MySQL/MariaDB system variable innodb_large_prefix must be ON';
+            }
+            $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
+            if($fileFormat && $fileFormat['Value'] != 'Barracuda') {
+                $errors[] = 'MySQL/MariaDB system variable innodb_file_format must be Barracuda';
+            }
+
         } catch (\Exception $e) {
             $errors[] = sprintf('Couldn\'t establish connection to MySQL: %s', $e->getMessage());
         }

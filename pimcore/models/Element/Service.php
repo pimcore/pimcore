@@ -873,14 +873,13 @@ class Service extends Model\AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
         $key = $event->getArgument('key');
 
-        $key = \Pimcore\Tool\Transliteration::toASCII($key);
+        // replace all 4 byte unicode characters
+        $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
 
         if ($type == 'document') {
-            // no spaces for documents / clean URLs
+            // no spaces & utf8 for documents / clean URLs
+            $key = \Pimcore\Tool\Transliteration::toASCII($key);
             $key = preg_replace('/[^a-zA-Z0-9\-\.~_]+/', '-', $key);
-        } else {
-            // assets & objects including spaces
-            $key = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $key);
         }
 
         if ($type == 'asset') {

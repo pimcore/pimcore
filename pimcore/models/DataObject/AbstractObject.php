@@ -727,9 +727,7 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if (strlen($this->getRealFullPath()) > 765) {
-            throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
-        }
+        $this->validatePathLength();
     }
 
     /**

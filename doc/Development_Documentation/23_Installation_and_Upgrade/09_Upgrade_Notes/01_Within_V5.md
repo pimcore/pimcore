@@ -1,5 +1,12 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 195 (2018-02-01)
+New MySQL/MariaDB requirements are introduced, ensure the following system variables are set accordingly.
+```
+innodb_file_format = Barracuda
+innodb_large_prefix = 1
+```
+
 ## Build 188 (2018-01-26)
 
 In a highly concurrent setup, the [**Redis Cache**](../../19_Development_Tools_and_Details/09_Cache/README.md)
