@@ -28,8 +28,7 @@ class DocumentGeneratorContext extends GeneratorContext
         string $section = null,
         Site $site = null,
         array $parameters = []
-    )
-    {
+    ) {
         if (null !== $site) {
             $parameters['site'] = $site;
         }

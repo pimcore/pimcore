@@ -47,8 +47,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         array $filters = [],
         array $processors = [],
         array $options = []
-    )
-    {
+    ) {
         parent::__construct($filters, $processors);
 
         $this->urlGenerator = $urlGenerator;
@@ -137,6 +136,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
      * @param DocumentGeneratorContext $context
      *
      * @return \Generator|Document[]
+     *
      * @throws \Exception
      */
     private function visit(Document $document, DocumentGeneratorContext $context): \Generator

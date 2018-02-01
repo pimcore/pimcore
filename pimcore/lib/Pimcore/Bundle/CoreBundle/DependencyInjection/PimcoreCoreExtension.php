@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Analytics\Google\Tracker as AnalyticsGoogleTracker;
 use Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener;
-use Pimcore\DependencyInjection\CollectionServiceLocator;
 use Pimcore\DependencyInjection\ConfigMerger;
 use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
@@ -440,7 +439,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
             $generators = $config['generators'];
         }
 
-        uasort($generators, function(array $a, array $b) {
+        uasort($generators, function (array $a, array $b) {
             if ($a['priority'] === $b['priority']) {
                 return 0;
             }

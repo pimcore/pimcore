@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @method array getTranslations(Document $document)
  * @method addTranslation(Document $document, Document $translation, $language = null)
  * @method removeTranslation(Document $document)
- * @method int getTranslationSourceId(Document $document) 
+ * @method int getTranslationSourceId(Document $document)
  */
 class Service extends Model\Element\Service
 {
