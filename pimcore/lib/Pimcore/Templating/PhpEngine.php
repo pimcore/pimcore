@@ -27,6 +27,7 @@ use Pimcore\Templating\Helper\HeadTitle;
 use Pimcore\Templating\Helper\InlineScript;
 use Pimcore\Templating\Helper\Navigation;
 use Pimcore\Templating\Helper\Placeholder\Container;
+use Pimcore\Templating\Helper\WebLink;
 use Pimcore\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Model\ViewModelInterface;
@@ -89,6 +90,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method HeadTitle headTitle($title = null, $setType = null)
  * @method string inc($include, array $params = [], $cacheEnabled = true, $editmode = null)
  * @method InlineScript inlineScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
+ * @method WebLink webLink()
  * @method Navigation navigation()
  * @method Config|mixed websiteConfig($key = null, $default = null)
  * @method string pimcoreUrl(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)

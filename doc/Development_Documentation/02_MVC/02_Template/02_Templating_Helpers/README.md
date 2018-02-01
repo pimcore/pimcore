@@ -343,3 +343,13 @@ View helper for getting translation from shared translations. For details also s
 <a href="/"><?= $this->translate("Home"); ?></a>
 ```
 
+
+### `$this->webLink()`
+
+Exposes methods provided by Symfony's [WebLink Component](https://symfony.com/blog/new-in-symfony-3-3-weblink-component).
+See [WebLink](https://github.com/pimcore/pimcore/blob/web-link-support/pimcore/lib/Pimcore/Templating/Helper/WebLink.php)
+for details.
+
+```php
+<link rel="stylesheet" href="<?= $this->webLink()->preload('/static/css/global.css', ['as' => 'style']) ?>">
+```

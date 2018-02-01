@@ -16,6 +16,8 @@ framework:
     validation: { enable_annotations: true }
     templating:
         engines: ['php', 'twig']
+    web_link:
+        enabled: true
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id

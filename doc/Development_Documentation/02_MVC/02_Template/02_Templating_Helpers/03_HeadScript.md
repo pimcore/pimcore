@@ -111,3 +111,8 @@ pass it as the second argument to `captureStart()`.
 
 If you wish to specify any additional attributes for the `<script>` tag, pass them in an array as the third 
 argument to `captureStart()`.
+
+
+## HTTP/2 Push Support
+
+See [HTTP/2 Push Support on the HeadLink page](./01_HeadLink.md#page_HTTP-2-Push-Support).

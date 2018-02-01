@@ -29,7 +29,7 @@ The `headLink()` helper method allows specifying all attributes necessary for a 
 and allows you to also specify placement -- whether the new element replaces all others, prepends (top of stack), 
 or appends (end of stack).
 
-### Basic Usage
+## Basic Usage
 
 You may specify a headLink at any time. 
 Typically, you will specify global links in your layout script, and application specific links in your 
@@ -45,3 +45,50 @@ $this->headLink()->appendStylesheet('/styles/basic.css')
 <?= $this->headLink() ?>
 ```
 
+## HTTP/2 Push Support
+
+The HeadLink and HeadScript helpers have internal support for the [WebLink Component](https://symfony.com/blog/new-in-symfony-3-3-weblink-component).
+While you can call `$this->webLink()->preload('/path/to/file.css', ['as' => 'style'])` directly in your templates, the HeadLink
+and HeadScript helpers take care of adding a cache buster aware link instead of the unprefixed file path. Push support is
+currently opt-in - to make the helpers automatically include links to the served assets either enable it globally on the 
+helper level or individually for each item.
+
+```php
+<?php
+/** @var \Pimcore\Templating\PhpEngine $this */
+
+// enable web links for every item
+$this->headLink()->enableWebLinks();
+
+// set web link attributes passed to every item
+$this->headLink()->setWebLinkAttributes(['as' => 'style']);
+
+// enable webLink on an item level
+// the item will be added even if enableWebLinks() was not called
+$this->headLink()->appendStylesheet('/static/css/styles.css', 'screen', false, [
+    'webLink' => ['as' => 'style']
+]);
+
+// disable webLink on an item level
+// the item won't be added even if enableWebLinks() was called
+$this->headLink()->appendStylesheet('/static/css/styles.css', 'screen', false, [
+    'webLink' => false
+]);
+
+// override the used method (default is preload())
+$this->headLink()->appendStylesheet('/static/css/styles.css', 'screen', false, [
+    'webLink' => ['method' => 'prefetch']
+]);
+?>
+```
+
+Added links will be handled by the web link component and injected into the response. Make sure Symfony is properly configured
+(this setting is enabled by default from Pimcore's core config):
+
+```yaml
+# config.yml
+
+framework:
+    web_links:
+        enabled: true
+```
