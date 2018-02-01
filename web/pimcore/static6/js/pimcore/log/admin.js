@@ -274,11 +274,14 @@ pimcore.log.admin = Class.create({
                 height: 500,
                 border: false,
                 autoScroll: true,
+                referenceHolder: true,
+                defaultButton: 'log_search_button',
                 buttons: [{
                     text: t("log_reset_search"),
                     handler: this.clearValues.bind(this),
                     iconCls: "pimcore_icon_stop"
                 },{
+                    reference: 'log_search_button',
                     text: t("log_search"),
                     handler: this.find.bind(this),
                     iconCls: "pimcore_icon_search"
