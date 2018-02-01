@@ -14,11 +14,16 @@
 
 namespace Pimcore;
 
+use Pimcore\Config\EnvironmentConfig;
+use Pimcore\Config\EnvironmentConfigInterface;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class Config
 {
+    /**
+     * @deprecated Default environment is now determined by EnvironmentConfig
+     */
     const DEFAULT_ENVIRONMENT = 'prod';
 
     /**
@@ -30,6 +35,11 @@ class Config
      * @var string
      */
     protected static $environment = null;
+
+    /**
+     * @var EnvironmentConfigInterface
+     */
+    private static $environmentConfig;
 
     /**
      * @param $name - name of configuration file. slash is allowed for subdirectories.
@@ -779,10 +789,12 @@ class Config
                 if (null !== $default) {
                     $environment = $default;
                 } else {
+                    $environmentConfig = static::getEnvironmentConfig();
+
                     if (\Pimcore::inDebugMode()) {
-                        $environment = 'dev';
+                        $environment = $environmentConfig->getDefaultDebugModeEnvironment();
                     } else {
-                        $environment = static::DEFAULT_ENVIRONMENT;
+                        $environment = $environmentConfig->getDefaultEnvironment();
                     }
                 }
             }
@@ -799,6 +811,20 @@ class Config
     public static function setEnvironment($environment)
     {
         static::$environment = $environment;
+    }
+
+    public static function getEnvironmentConfig(): EnvironmentConfigInterface
+    {
+        if (null === static::$environmentConfig) {
+            static::$environmentConfig = new EnvironmentConfig();
+        }
+
+        return static::$environmentConfig;
+    }
+
+    public static function setEnvironmentConfig(EnvironmentConfigInterface $environmentConfig)
+    {
+        self::$environmentConfig = $environmentConfig;
     }
 
     /**

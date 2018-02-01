@@ -3,8 +3,8 @@
 Pimcore supports different configurations for different environments (dev, test, stage, prod, ...) as well as custom 
 configurations including a fallback mechanism. 
 
+## The `PIMCORE_ENVIRONMENT` variable
 
-## The `PIMCORE_ENVIRONMENT` Variable
 To switch to a different environment, you have to set the environment variable `PIMCORE_ENVIRONMENT` with a value of 
 your choice (eg. development or test). `PIMCORE_ENVIRONMENT` is an equivalent of Symfony's standard `SYMFONY_ENV` so 
 you can use whatever you prefer. 
@@ -20,10 +20,8 @@ app/config/pimcore/system.php
 var/config/system.php
 ```
 
-The value of `PIMCORE_ENVIRONMENT` is used as a part of the file name separated by `_`. 
-
-
-If you haven't set the environment variable, the loading order of configuration files looks like, below.
+The value of `PIMCORE_ENVIRONMENT` is used as a part of the file name separated by `_`.  If you haven't set the environment
+variable, the loading order of configuration files looks like, below.
 
 ```
 app/config/pimcore/system.php
@@ -51,57 +49,39 @@ imports:
 ```
 
 By default, dev-bundles as the profiler are restricted to the `dev` environment. If you want to load those bundles in your
-environment, you need to register them to the kernel (in `app\AppKernel.php`) by adding them in the `registerBundlesToCollection`
-method. Have a look at the [Pimcore Kernel](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Kernel.php#L189)
-to see what is loaded in the default `dev` environment.
+environment, you need to modify the kernel in `app\AppKernel.php` to include those bundles in your environment. Have a look
+at the [Pimcore Kernel](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Kernel.php#L189) to see what
+is loaded in the default `dev` environment.
 
 For instance for an new environment called `staging` using web profiler, you can add something like the following:
 
-```
-use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
-use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
-use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
-use Symfony\Bundle\DebugBundle\DebugBundle;
-use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
-...
-	public function registerBundlesToCollection(BundleCollection $collection)
-	{
-		//...
-		
-		// environment specific bundles
-		if (in_array($this->getEnvironment(), ['staging'])) {
-			$collection->addBundles([
-				new DebugBundle(),
-				new WebProfilerBundle(),
-				new SensioDistributionBundle()
-			], 80);
-			// add generator bundle only if installed
-			if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
-				$collection->addBundle(
-					new SensioGeneratorBundle(),
-					80, // priority
-					['staging'] // the bundle will only be loaded in the staging environment
-				);
-				// PimcoreGeneratorBundle depends on SensioGeneratorBundle
-				$collection->addBundle(
-					new PimcoreGeneratorBundle(),
-					60,
-					['staging']
-				);
-			}
-		}
+```php
+<?php
 
-		//...
-	}
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Pimcore\Kernel;
+
+class AppKernel extends Kernel
+{
+    public function registerBundlesToCollection(BundleCollection $collection)
+    {
+        $collection->addBundle(new \AppBundle\AppBundle);
+    }
+
+    protected function getEnvironmentsForDevBundles(): array
+    {
+        // override environments which should add dev bundles (e.g. the profiler)
+        return ['dev', 'test', 'staging'];
+    }
+}
 ```
 
 If you set `PIMCORE_ENVIRONMENT` to a new environment name before installation, all those steps need to be done before
 running the installation.
 
-## Set the Environment
+## Setting the Environment
 
 There are several ways to set the value of `PIMCORE_ENVIRONMENT` - depending on the environment and context you are using. 
-
 
 ### Apache mod_php
 
@@ -110,7 +90,6 @@ Add the following line to the virtual host configuration file.
 ```
 SetEnv PIMCORE_ENVIRONMENT dev
 ```
-
 
 ### PHP FPM
 
@@ -136,6 +115,16 @@ When running `./bin/console` application, set the environment by `--env=dev`.
 ./bin/console --env=dev ...
 ```
 
+### `.env`
+
+Pimcore loads a `.env` file if it exists. See [DotEnv Component Documentation](https://symfony.com/doc/3.4/components/dotenv.html)
+for details.
+
+```
+# .env
+PIMCORE_ENVIRONMENT=dev
+```
+
 ### Switching Environments Dynamically
 
 Add this to your .htaccess to switch dynamically between your environments:
@@ -149,14 +138,34 @@ RewriteCond %{HTTP_HOST} ^www\.site\.com
 RewriteRule .? - [E=PIMCORE_ENVIRONMENT:prod]
 ```
 
-### Debug Mode & Environments
+## Debug Mode & Environments
 
 In order to include some specific debugging tools (profiler, toolbar, ...), Pimcore implicitly sets the 
-environment to `dev` when enabling the debug mode in system settings and if **no** environment is defined manually as described above. 
+environment to `dev` when enabling the debug mode in system settings and if **no** environment is defined manually as described
+above.
+
+## Influencing default behaviour
+
+Pimcore ships with sensible defaults on which environment to use in which case, e.g. by automatically using the `dev` environment
+if Pimcore is in debug mode and by automatically enabling the kernel debug flag for the `dev` and `test` environments. If
+you need to influence that behaviour (e.g. because you have additional environments) you can do so by changing the environment
+config during the [startup process](../01_Getting_Started/03_Configuration.md). For example, if you want to specify the
+default environment to use when Pimcore's debug mode is enabled by no environment is explicitely defined:
+
+```php
+<?php
+
+// /app/startup.php
+
+/** @var \Pimcore\Config\EnvironmentConfig $environmentConfig */
+$environmentConfig = \Pimcore\Config::getEnvironmentConfig();
+$environmentConfig->setDefaultDebugModeEnvironment('prod');
+```
 
 ## Supported Configurations
 
-For examples, please see: 
+For examples, please see:
+
 * <https://github.com/pimcore/pimcore/tree/master/app/config> 
 * <https://github.com/pimcore/pimcore/tree/master/app/config/pimcore>
 * <https://github.com/pimcore/pimcore/tree/master/var/config>

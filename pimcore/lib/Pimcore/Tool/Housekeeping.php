@@ -14,6 +14,8 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Config;
+
 class Housekeeping
 {
     /**
@@ -29,10 +31,13 @@ class Housekeeping
      */
     public static function cleanupSymfonyProfilingData($olderThanDays = 4)
     {
+        $environments = Config::getEnvironmentConfig()->getProfilerHousekeepingEnvironments();
 
-        // currently only for the 'dev' environment which has enabled the profiler by default
-        $profilerDir = PIMCORE_PRIVATE_VAR . '/cache/dev/profiler';
-        self::deleteFilesInFolderOlderThanDays($profilerDir, $olderThanDays);
+        foreach ($environments as $environment) {
+            $profilerDir = sprintf('%s/cache/%s/profiler', PIMCORE_PRIVATE_VAR, $environment);
+
+            self::deleteFilesInFolderOlderThanDays($profilerDir, $olderThanDays);
+        }
     }
 
     /**
