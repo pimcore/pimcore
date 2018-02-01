@@ -1,5 +1,9 @@
 # Sitemaps
 
+<div class="alert alert-warning">
+The sitemaps integration is currently considered experimental and may be subject to change!
+</div>
+
 Pimcore includes the [`presta/sitemap-bundle`](https://github.com/prestaconcept/PrestaSitemapBundle) which adds a simple,
 yet powerful API to generate XML sitemaps. Have a look at the bundle documentation on details how the bundle works and how
 you can add sitemaps to it. The bundle exposes a way to add sitemap entries by [firing an event](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/5-Usage-Event_Listener.md)
