@@ -2205,7 +2205,6 @@ class DataObjectHelperController extends AdminController
                             $fd = $class->getFieldDefinition($field);
                             $keyConfig = $fd->getKeyConfiguration($keyid);
                             $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-                            $language = $fd->isLocalized() ? $requestedLanguage : null;
 
                             /** @var $classificationStoreData DataObject\Classificationstore */
                             $classificationStoreData = $object->$getter();
@@ -2213,7 +2212,7 @@ class DataObjectHelperController extends AdminController
                                 $groupId,
                                 $keyid,
                                 $dataDefinition->getDataFromEditmode($value),
-                                $language
+                                $requestedLanguage
                             );
                         }
                     } else {
