@@ -64,6 +64,7 @@ All permissions on database level, specifically:
 ```
 innodb_file_format = Barracuda
 innodb_large_prefix = 1
+innodb_file_per_table = 1
 ```
 
 ### Operating System

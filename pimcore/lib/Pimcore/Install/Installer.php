@@ -194,6 +194,11 @@ class Installer
             if($fileFormat && $fileFormat['Value'] != 'Barracuda') {
                 $errors[] = 'MySQL/MariaDB system variable innodb_file_format must be Barracuda';
             }
+            $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
+            if($fileFilePerTable && $fileFilePerTable['Value'] != 'ON') {
+                $errors[] = 'MySQL/MariaDB system variable innodb_file_per_table must be ON';
+            }
+
 
         } catch (\Exception $e) {
             $errors[] = sprintf('Couldn\'t establish connection to MySQL: %s', $e->getMessage());
