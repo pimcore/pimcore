@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Kernel;
 use Pimcore\Update;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,13 +35,13 @@ class IndexController extends AdminController implements EventedControllerInterf
     /**
      * @Route("/check-debug-mode")
      *
-     * @param Request $request
+     * @param KernelInterface $kernel
      *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
-    public function checkDebugModeAction(Request $request)
+    public function checkDebugModeAction(KernelInterface $kernel)
     {
-        $debug = \Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
+        $debug = \Pimcore::inDebugMode() || $kernel->isDebug();
 
         return $this->adminJson([
             'success' => (bool) $debug

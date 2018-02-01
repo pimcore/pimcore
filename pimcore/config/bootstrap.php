@@ -30,3 +30,10 @@ if ('syslog' === PIMCORE_PHP_ERROR_LOG || is_writable(dirname(PIMCORE_PHP_ERROR_
     ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
     ini_set('log_errors', '1');
 }
+
+// load a startup file if it exists - this is a good place to preconfigure the system
+// before the kernel is loaded - e.g. to set trusted proxies on the request object
+$startupFile = PIMCORE_PROJECT_ROOT . '/app/startup.php';
+if (file_exists($startupFile)) {
+    include_once $startupFile;
+}

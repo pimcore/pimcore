@@ -259,8 +259,8 @@ abstract class Kernel extends SymfonyKernel
             new PimcoreAdminBundle()
         ], 60);
 
-        // environment specific dev + test bundles
-        if (in_array($this->getEnvironment(), ['dev', 'test'])) {
+        // load development bundles only in matching environments
+        if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
                 new WebProfilerBundle(),
@@ -269,20 +269,32 @@ abstract class Kernel extends SymfonyKernel
 
             // add generator bundle only if installed
             if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
+                $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
+
                 $collection->addBundle(
                     new SensioGeneratorBundle(),
                     80,
-                    ['dev']
+                    $generatorEnvironments
                 );
 
                 // PimcoreGeneratorBundle depends on SensioGeneratorBundle
                 $collection->addBundle(
                     new PimcoreGeneratorBundle(),
                     60,
-                    ['dev']
+                    $generatorEnvironments
                 );
             }
         }
+    }
+
+    protected function getEnvironmentsForDevBundles(): array
+    {
+        return ['dev', 'test'];
+    }
+
+    protected function getEnvironmentsForDevGeneratorBundles(): array
+    {
+        return ['dev'];
     }
 
     /**
