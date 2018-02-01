@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
-use Carbon\Carbon;
 use Exception;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
@@ -38,6 +37,9 @@ use Pimcore\Model\Element\Note\Listing as NoteListing;
 
 class Agent implements IOrderAgent
 {
+
+    const PAYMENT_PROVIDER_BRICK_PREFIX = "PaymentProvider";
+
     /**
      * @var Order
      */
@@ -258,7 +260,7 @@ class Agent implements IOrderAgent
                     /* @var \Pimcore\Model\DataObject\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
 
                     // get provider data
-                    $name = strtolower(str_replace('PaymentProvider', '', $providerData->getType()));
+                    $name = strtolower(str_replace(AbstractOrder::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
                     $authorizedData = [];
                     foreach ($providerData->getObjectVars() as $field => $value) {
                         if (preg_match('#^auth_(?<name>\w+)$#i', $field, $match)) {
@@ -319,17 +321,14 @@ class Agent implements IOrderAgent
         }
 
         if (method_exists($providerData, "setPaymentFinished")) {
-            $providerData->setPaymentFinished(Carbon::now());
+            $providerData->setPaymentFinished(new \DateTime());
         }
 
         /* recurring payment data */
         if ($sourceOrder && method_exists($providerData, "setSourceOrder")) {
             $providerData->setSourceOrder($sourceOrder);
 
-            $recurringPaymentProperties = [];
-            if (method_exists($paymentProvider, "getRecurringPaymentDataProperties")) {
-                $recurringPaymentProperties = $paymentProvider->getRecurringPaymentDataProperties();
-            }
+            $recurringPaymentProperties = $paymentProvider->getRecurringPaymentDataProperties();
 
             $sourceOrderProviderData = $sourceOrder->getPaymentProvider()->{$providerDataGetter}();
 
@@ -338,8 +337,12 @@ class Agent implements IOrderAgent
                 $setter = 'setAuth_' . $field;
                 $getter = 'getAuth_' . $field;
 
-                if (method_exists($providerData, $setter) && method_exists($providerData, $getter)) {
-                    $sourceOrderProviderData->{$setter}($order->{$getter});
+                if (method_exists($sourceOrderProviderData, $getter)
+                    && method_exists($providerData, $setter)
+                    && method_exists($providerData, $getter)
+                    && empty($providerData->$getter())
+                ) {
+                    $providerData->{$setter}($sourceOrderProviderData->{$getter});
                 }
             }
         }
@@ -593,13 +596,4 @@ class Agent implements IOrderAgent
         return $this->fullChangeLog;
     }
 
-    /**
-     * @return bool
-     */
-    public function isValidOrderForRecurringPayment()
-    {
-        // TODO: Validate for creditcard expiry, time since payment success date,
-        // TODO: Cconsider different payment provider criterias
-        return !empty($this->getOrder()->getPaymentProvider());
-    }
 }

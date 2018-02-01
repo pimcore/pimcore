@@ -87,11 +87,11 @@ interface IOrderAgent
 
     /**
      * @param IPayment $paymentProvider
-     * @param AbstractOrder $sourceOrder
+     * @param AbstractOrder|null $sourceOrder
      *
      * @return Order
      */
-    public function setPaymentProvider(IPayment $paymentProvider, AbstractOrder $sourceOrder);
+    public function setPaymentProvider(IPayment $paymentProvider, AbstractOrder $sourceOrder = null);
 
     /**
      * Starts payment:

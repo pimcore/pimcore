@@ -18,16 +18,15 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
-use Pimcore\Tests\Helper\Pimcore;
 
 class CheckoutManager implements ICheckoutManager
 {
@@ -304,16 +303,22 @@ class CheckoutManager implements ICheckoutManager
      * Verifies if the payment provider is supported for recurring payment
      *
      * @param IPayment $provider
+     * @param AbstractOrder $sourceOrder
+     *
      * @throws \Exception
      */
-    protected function verifyRecurringPayment(IPayment $provider)
+    protected function verifyRecurringPayment(IPayment $provider, AbstractOrder $sourceOrder)
     {
-        if (!$provider instanceof QPay) {
-            throw  new \Exception("Payment provider not supported for recurring payment. Provider was [{$provider->getName()}].");
-        }
+
+        /* @var OrderManager $orderManager */
+        $orderManager = $this->orderManagers->getOrderManager();
 
         if (!$provider->isRecurringPaymentEnabled()) {
-            throw new \Exception("Recurring Payment is not enabled.");
+            throw new \Exception("Recurring Payment is not enabled or is not supported by payment provider [{$provider->getName()}].");
+        }
+
+        if(!$orderManager->isValidOrderForRecurringPayment($sourceOrder, $this->getPayment())){
+            throw new \Exception("The given source order is not valid for recurring payment.");
         }
     }
 
@@ -327,18 +332,15 @@ class CheckoutManager implements ICheckoutManager
         /* @var PaymentInfo $targetPaymentInfo */
         $targetPaymentInfo = $this->startOrderPayment();
 
+        /* @var OrderManager $orderManager */
         $orderManager = $this->orderManagers->getOrderManager();
 
         /* @var Agent $sourceOrderAgent */
         $sourceOrderAgent = $orderManager->createOrderAgent($sourceOrder);
 
-        if(!$sourceOrderAgent->isValidOrderForRecurringPayment()){
-            throw new \Exception("Order not valid for recurring payment.");
-        }
-
         /* @var $paymentProvider QPay */
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
-        $this->verifyRecurringPayment($paymentProvider);
+        $this->verifyRecurringPayment($paymentProvider, $sourceOrder);
 
         $targetOrder = $orderManager->getOrderFromCart($this->getCart());
 
