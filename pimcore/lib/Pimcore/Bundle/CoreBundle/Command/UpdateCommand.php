@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
-use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Console;

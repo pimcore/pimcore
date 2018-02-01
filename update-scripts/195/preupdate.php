@@ -5,15 +5,15 @@ $incompatible = false;
 $db = \Pimcore\Db::get();
 
 $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
-if($largePrefix && $largePrefix['Value'] != 'ON') {
+if ($largePrefix && $largePrefix['Value'] != 'ON') {
     $incompatible = true;
 }
 $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
-if($fileFormat && $fileFormat['Value'] != 'Barracuda') {
+if ($fileFormat && $fileFormat['Value'] != 'Barracuda') {
     $incompatible = true;
 }
 $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
-if($fileFilePerTable && $fileFilePerTable['Value'] != 'ON') {
+if ($fileFilePerTable && $fileFilePerTable['Value'] != 'ON') {
     $incompatible = true;
 }
 

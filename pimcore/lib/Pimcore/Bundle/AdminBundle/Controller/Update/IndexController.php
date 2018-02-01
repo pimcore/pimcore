@@ -16,9 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Update;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache\Symfony\CacheClearer;
-use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
-use Pimcore\Kernel;
 use Pimcore\Update;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
