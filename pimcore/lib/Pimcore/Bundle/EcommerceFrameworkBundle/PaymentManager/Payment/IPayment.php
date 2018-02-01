@@ -88,4 +88,12 @@ interface IPayment
      * @return bool
      */
     public function isRecurringPaymentEnabled();
+
+    /**
+     * Properties to write into PaymentProvider-Brick
+     *
+     * @return array
+     */
+    public function getRecurringPaymentDataProperties();
+
 }

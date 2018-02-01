@@ -8,6 +8,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Symfony\Component\Intl\Exception\NotImplementedException;
 
 abstract class AbstractPayment implements IPayment
 {
@@ -15,6 +16,11 @@ abstract class AbstractPayment implements IPayment
     public function isRecurringPaymentEnabled()
     {
         return false;
+    }
+
+    public function getRecurringPaymentDataProperties()
+    {
+        throw new NotImplementedException("getRecurringPaymentDataProperties not implemented for " . get_class($this));
     }
 
 }

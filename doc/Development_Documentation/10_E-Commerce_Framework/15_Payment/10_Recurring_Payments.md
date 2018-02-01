@@ -25,67 +25,106 @@ The following code will briefly show how to execute a recurPayment operation for
 #### CheckoutController.php
 
 ```php
-public function payAction(Request $request)
+    public function paymentAction(Request $request)
     {
-        // ...
-
         $factory = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance();
-        
-        $checkoutManager = $factory->getCheckoutManager();
 
-        $paymentMethod = $request->get("payment-method");
-        $isRecurrinPaymentRequest = $request->get("payment-recurring");
+        $checkoutManager = $factory->getCheckoutManager($this->cart);
+        $user = $this->getUser();
 
-        /* Recurring Payment */
-        if ($isRecurrinPaymentRequest && $paymentMethod) {
-            
-            $orderManager = $factory->getOrderManager();
-            $sourceOrder = $orderManager->getOrderForRecurringPayment($this->getUser(), $paymentMethod);
-            
-            try {
-                $targetOrder = $checkoutManager->startAndCommitRecurringOrderPayment($sourceOrder);
-                return $this->redirect("/my/payment/success/url");
-            } catch (\Exception $exception) {
-                // TODO
+        if ($request->getMethod() == "POST") {
+
+            $paymentMethod = $request->get("payment-method");
+            $paymentMethodRecurring = $request->get("payment-recurring");
+
+            $sourceOrderId = $request->get("source-order-{$paymentMethod}");
+
+            /* Recurring Payment */
+            if ($user && $sourceOrderId && $paymentMethod && ($paymentMethodRecurring == $paymentMethod)) {
+                $sourceOrder = \Pimcore\Model\DataObject\OnlineShopOrder::getById($sourceOrderId);
+
+                try {
+                    $targetOrder = $checkoutManager->startAndCommitRecurringOrderPayment($sourceOrder);
+                    return $this->redirect("/my/payment/success/url");
+                } catch (\Exception $exception) {
+                    // TODO: show warning
+                }
+
             }
+
+            // Render default payment frame
+            return $this->render("/my/payment/frame/view");
 
         }
 
-        // Render default payment frame
-        return $this->render("/my/payment/frame/view");
+        $paymentMethods = ["SEPA-DD", "CCARD"];
+
+        if ($user) {
+            $sourceOrders = [];
+
+            foreach ($paymentMethods as $paymentMethod) {
+                $orderManager = $factory->getOrderManager();
+                $sourceOrder = $orderManager->getRecurringPaymentSourceOrder(
+                    $user->getId(), $checkoutManager->getPayment(), $paymentMethod);
+
+                $sourceOrders[$paymentMethod] = $sourceOrder;
+            }
+            $this->view->sourceOrders = $sourceOrders;
+        }
+
+        $this->view->paymentMethods = $paymentMethods;
+
+        // payment.html.php rendered
+
     }
 ```
 
-#### paymentStep.html.php
+#### payment.html.php
 
 ```php
+<form action="/route/to/pay-action" method="post">
 
-<?php foreach ($availablePaymentMethods as $paymentMethod) {
-
-    // Show payment method <input> here
-
-    if ($this->security()->isGranted("IS_AUTHENTICATED_FULLY")) {
-        $order = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance()
-            ->getOrderForRecurringPayment($this->getUser(), $paymentMethod));
+    <?php
+    foreach ($this->paymentMethods as $paymentMethod) {
+        $sourceOrder = $this->sourceOrders[$paymentMethod];
+        $sourceOrderId =  $sourceOrder ? $sourceOrder->getId() : ""
+        ?>
+        
+        <input hidden
+            name="source-order-<?= $paymentMethod ?>" 
+            value="<?= $sourceOrderId ?>">
             
-        // TODO: Implement getRecurringPaymentData(): get the relevant for showing 
-        // the user to help him choose the payment type.
-        
-        if ($recurringPaymentInfo = $order->getRecurringPaymentData()) {
-        
-            switch ($paymentMethod) {
+        <input name="payment-method" value="<?= $paymentMethod ?>" type="radio">
 
-                // Show recurring payment <input type="radio"> and an according label 
-                // displaying information about the payment here. 
-                // I.e. a masked string with the last for digits of the creditcard number
-                
-                case "SEPA-DD":
-                // ...
-                case "CCARD":
-                // ...
+        <?php
+        if ($this->security()->isGranted("IS_AUTHENTICATED_FULLY")) {
+            if ($sourcePaymentProvider = $this->sourceOrder->getPaymentProvider()->getPaymentProviderQpay()) {
+
+                switch ($paymentProvider->getAuth_paymentType()) {
+                    case "SEPA-DD": ?>
+                        <p>
+                            <?= $paymentProvider->getAuth_bankAccountOwner() ?><br>
+                            <?= $paymentProvider->getAuth_bankAccountIBAN() ?>
+                            <input name="payment-recurring" value="<?= $paymentMethod ?>" type="checkbox">
+                        </p>
+                        <?php
+                        break;
+                    case "CCARD": ?>
+                        <p>
+                            <?= $paymentProvider->getAuth_maskedPan() ?><br>
+                            <?= $paymentProvider->getAuth_expiry() ?>
+                            <input name="payment-recurring" value="<?= $paymentMethod ?>" type="checkbox">
+                        </p>
+                        <?php
+                        break;
+                        // ...
+                }
             }
         }
-    }
+
+        <button type="submit">Pay now</button>
+    
+    </form>
 }
 
 ```

@@ -89,7 +89,11 @@ class QPay extends AbstractPayment
     ];
 
     protected $recurringPaymentDataProperties = [
+        'orderNumber',
         'anonymousPan',
+        'maskedPan',
+        'bankAccountIBAN',
+        'bankAccountOwner',
         'maskedPan',
         'expiry',
         'paymentType',
@@ -307,10 +311,12 @@ class QPay extends AbstractPayment
             'language' => null,
             'amount' => null,
             'currency' => null,
-            'expiry' => null,
+            'paymentType' => null,
+            'bankAccountIBAN' => null,
+            'bankAccountOwner' => null,
             'anonymousPan' => null,
             'maskedPan' => null,
-            'paymentType' => null
+            'expiry' => null
         ];
 
         // check fields
@@ -484,6 +490,13 @@ class QPay extends AbstractPayment
 
         // execute request
         $response = $this->serverToServerRequest('https://checkout.wirecard.com/page/toolkit.php', $request);
+
+        // handle
+        $properties = $this->getRecurringPaymentDataProperties();
+        $properties[] = "amount";
+
+        $authorizedData = array_intersect_key($response, array_flip($properties));
+        $this->setAuthorizedData($authorizedData);
 
         // check response
         if ($response['status'] === '0') {
