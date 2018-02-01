@@ -83,6 +83,9 @@ services:
     AppBundle\LinkGenerator\NewsLinkGenerator:
         public: true
 
+    # Processor adds Google Image tags to news entries
+    AppBundle\Sitemaps\Processor\NewsImageProcessor: ~
+
     # The actual news sitemaps generator. This generator is registered in pimcore/config.yml. Filters exclude certain
     # entries from being published (e.g. the PublishedFilter excludes unpublished elements) and processors enrich
     # generated entries (e.g. the ModificationDateProcessor adds the modification date property).
@@ -94,6 +97,7 @@ services:
             $processors:
                 - '@Pimcore\Sitemap\Element\Processor\ModificationDateProcessor'
                 - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
+                - '@AppBundle\Sitemaps\Processor\NewsImageProcessor'
 
 
     #
