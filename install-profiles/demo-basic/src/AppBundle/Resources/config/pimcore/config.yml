@@ -6,3 +6,7 @@ pimcore:
     models:
         class_overrides:
             'Pimcore\Model\DataObject\User': 'AppBundle\Model\DataObject\User'
+
+    sitemaps:
+        generators:
+            app_news: AppBundle\Sitemaps\NewsGenerator
