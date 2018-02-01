@@ -108,6 +108,24 @@ class Requirements
             'state' => ($result['Value'] == 'utf8mb4') ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
+        $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
+        $checks[] = new Check([
+            'name' => 'innodb_large_prefix = ON ',
+            'state' => ($largePrefix && $largePrefix['Value'] != 'ON') ? Check::STATE_ERROR : Check::STATE_OK
+        ]);
+
+        $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
+        $checks[] = new Check([
+            'name' => 'innodb_file_format = Barracuda',
+            'state' => ($fileFormat && $fileFormat['Value'] != 'Barracuda') ? Check::STATE_ERROR : Check::STATE_OK
+        ]);
+
+        $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
+        $checks[] = new Check([
+            'name' => 'innodb_file_per_table = ON',
+            'state' => ($fileFilePerTable && $fileFilePerTable['Value'] != 'ON') ? Check::STATE_ERROR : Check::STATE_OK
+        ]);
+
         // create table
         $queryCheck = true;
         try {
