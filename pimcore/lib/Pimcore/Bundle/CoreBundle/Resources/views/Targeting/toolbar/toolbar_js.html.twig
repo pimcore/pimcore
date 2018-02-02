@@ -42,26 +42,82 @@
                 } else {
                     el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
                 }
-            }
+            },
+
+            featureDetect: (function () {
+                // most tests come from to modernizr (MIT license)
+                // https://github.com/Modernizr/Modernizr/tree/master/feature-detects
+                var tests = {
+                    localStorage: function () {
+                        var v = 'test';
+
+                        try {
+                            localStorage.setItem(v, v);
+                            localStorage.removeItem(v);
+
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                };
+
+                var results = {};
+
+                return function (type) {
+                    if ('undefined' === typeof tests[type]) {
+                        throw new Error('Test ' + type + ' is not defined');
+                    }
+
+                    if ('undefined' === typeof results[type]) {
+                        results[type] = tests[type].call();
+                    }
+
+                    return results[type];
+                };
+            }())
         };
 
         util.addEventListener(document, 'DOMContentLoaded', function () {
+            var localStorageStateKey = 'pimcore/targeting/toolbar/displayState';
+            var hiddenClass = '_ptg-toolbar--hidden';
+
+            // whole toolbar
             document.querySelectorAll('._ptg-toolbar__trigger').forEach(function (trigger) {
+                var toolbar = trigger.parentNode;
+
+                var showToolbar = function(show) {
+                    if (show) {
+                        util.removeClass(toolbar, hiddenClass);
+                    } else {
+                        util.addClass(toolbar, hiddenClass);
+                    }
+
+                    if (util.featureDetect('localStorage')) {
+                        localStorage.setItem(localStorageStateKey, show ? 'block' : 'none');
+                    }
+                };
+
+                if (util.featureDetect('localStorage')) {
+                    var state = localStorage.getItem(localStorageStateKey);
+                    if ('block' === state) {
+                        showToolbar(true);
+                    }
+                }
+
                 util.addEventListener(trigger, 'click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    var parent = this.parentNode;
-                    var hiddenClass = '_ptg-toolbar--hidden';
-
-                    if (util.hasClass(parent, hiddenClass)) {
-                        util.removeClass(parent, hiddenClass);
+                    if (util.hasClass(toolbar, hiddenClass)) {
+                        showToolbar(true);
                     } else {
-                        util.addClass(parent, hiddenClass);
+                        showToolbar(false);
                     }
                 });
             });
 
+            // close icon
             document.querySelectorAll('._ptg-toolbar__icon--close').forEach(function (close) {
                 util.addEventListener(close, 'click', function (e) {
                     e.preventDefault();
@@ -79,6 +135,7 @@
                 });
             });
 
+            // collapsible detail table rows
             var detailRowCollapsedClass = '_ptg-toolbar__table__row-details--collapsed';
             document.querySelectorAll('._ptg-toolbar__table__row-with-details').forEach(function (row) {
                 var index = row.getAttribute('data-index');
