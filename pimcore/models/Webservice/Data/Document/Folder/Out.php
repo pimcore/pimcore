@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -20,24 +21,23 @@ use Pimcore\Model;
 
 class Out extends Model\Webservice\Data\Document\Folder
 {
-
     /**
      * @var string
      */
     public $path;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $userModification;
 }

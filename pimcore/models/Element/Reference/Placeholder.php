@@ -10,17 +10,15 @@
  *
  * @category   Pimcore
  * @package    Element
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element\Reference;
 
-use Pimcore\Model;
-
 class Placeholder
 {
-
     /**
      * @var int
      */
@@ -43,6 +41,7 @@ class Placeholder
 
     /**
      * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -62,6 +61,7 @@ class Placeholder
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function setType($type)

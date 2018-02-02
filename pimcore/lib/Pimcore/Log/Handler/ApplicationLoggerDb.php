@@ -8,40 +8,32 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Log\Handler;
 
-use Pimcore\Db as Database;
 use Monolog\Handler\AbstractProcessingHandler;
-use Pimcore\Tool;
-use Pimcore\Logger;
+use Pimcore\Db;
+use Pimcore\Log\ApplicationLogger;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
+    const TABLE_NAME = 'application_logs';
+    const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**
-     *
+     * @var Db\Connection
      */
-    const TABLE_NAME = "application_logs";
+    private $db;
 
-    /**
-     *
-     */
-    const TABLE_ARCHIVE_PREFIX = "application_logs_archive";
-
-    /**
-     * ApplicationLoggerDb constructor.
-     * @param string $level
-     * @param bool|true $bubble
-     */
-    public function __construct($level = "debug", $bubble = true)
+    public function __construct(Db\Connection $db, $level = 'debug', $bubble = true)
     {
+        $this->db = $db;
 
         // Zend_Log compatibility
-        $zendLoggerPsr3Mapping = Logger::getZendLoggerPsr3Mapping();
+        $zendLoggerPsr3Mapping = ApplicationLogger::getZendLoggerPsr3Mapping();
         if (isset($zendLoggerPsr3Mapping[$level])) {
             $level = $zendLoggerPsr3Mapping[$level];
         }
@@ -54,32 +46,30 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      */
     public function write(array $record)
     {
-        // put into db
-        $db = Database::get();
-
         $data = [
-            'pid' => getmypid(),
-            'priority' => strtolower($record["level_name"]),
-            'message' => $record["message"],
-            'timestamp' => $record["datetime"]->format("Y-m-d H:i:s"),
-            'fileobject' => $record["context"]["fileObject"],
-            'relatedobject' => $record["context"]["relatedObject"],
-            'relatedobjecttype' => $record["context"]["relatedObjectType"],
-            'component' => $record["context"]["component"],
-            'source' => $record["context"]["source"]
+            'pid'               => getmypid(),
+            'priority'          => strtolower($record['level_name']),
+            'message'           => $record['message'],
+            'timestamp'         => $record['datetime']->format('Y-m-d H:i:s'),
+            'component'         => $record['context']['component'] ?? $record['channel'],
+            'fileobject'        => $record['context']['fileObject'] ?? null,
+            'relatedobject'     => $record['context']['relatedObject'] ?? null,
+            'relatedobjecttype' => $record['context']['relatedObjectType'] ?? null,
+            'source'            => $record['context']['source'] ?? null
         ];
 
-        $db->insert(self::TABLE_NAME, $data);
+        $this->db->insert(self::TABLE_NAME, $data);
     }
 
     /**
      * @deprecated
+     *
      * @param $level
      */
     public function setFilterPriority($level)
     {
         // legacy ZF method
-        $zendLoggerPsr3Mapping = Logger::getZendLoggerPsr3Mapping();
+        $zendLoggerPsr3Mapping = ApplicationLogger::getZendLoggerPsr3Mapping();
         if (isset($zendLoggerPsr3Mapping[$level])) {
             $level = $zendLoggerPsr3Mapping[$level];
             $this->setLevel($level);
@@ -88,38 +78,40 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     /**
      * @static
+     *
      * @return string[]
      */
     public static function getComponents()
     {
-        $db = Database::get();
+        $db = Db::get();
 
-        $components = $db->fetchCol("SELECT component FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE NOT ISNULL(component) GROUP BY component;");
+        $components = $db->fetchCol('SELECT component FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(component) GROUP BY component;');
 
         return $components;
     }
 
     /**
      * @static
+     *
      * @return string[]
      */
     public static function getPriorities()
     {
         $priorities = [];
         $priorityNames = [
-            "debug" => "DEBUG",
-            "info" => "INFO",
-            "notice" => "NOTICE",
-            "warning" => "WARN",
-            "error" => "ERR",
-            "critical" => "CRIT",
-            "alert" => "ALERT",
-            "emergency" => "EMERG"
+            'debug' => 'DEBUG',
+            'info' => 'INFO',
+            'notice' => 'NOTICE',
+            'warning' => 'WARN',
+            'error' => 'ERR',
+            'critical' => 'CRIT',
+            'alert' => 'ALERT',
+            'emergency' => 'EMERG'
         ];
 
-        $db = Database::get();
+        $db = Db::get();
 
-        $priorityNumbers = $db->fetchCol("SELECT priority FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE NOT ISNULL(priority) GROUP BY priority;");
+        $priorityNumbers = $db->fetchCol('SELECT priority FROM ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE NOT ISNULL(priority) GROUP BY priority;');
         foreach ($priorityNumbers as $priorityNumber) {
             $priorities[$priorityNumber] = $priorityNames[$priorityNumber];
         }

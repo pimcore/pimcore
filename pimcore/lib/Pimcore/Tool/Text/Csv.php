@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -20,7 +20,9 @@ class Csv
 {
     /**
      * @param $data
+     *
      * @return \stdClass
+     *
      * @throws \Exception
      */
     public function detect($data)
@@ -48,13 +50,14 @@ class Csv
         $dialect->quotechar = $quote;
         $dialect->delimiter = $delim;
         $dialect->lineterminator = $linefeed;
-        $dialect->escapechar = "\\";
+        $dialect->escapechar = '\\';
 
         return $dialect;
     }
 
     /**
      * @param $data
+     *
      * @return string
      */
     protected function guessLinefeed($data)
@@ -82,6 +85,7 @@ class Csv
 
     /**
      * @param $data
+     *
      * @return array
      */
     protected function guessQuoteAndDelim($data)
@@ -101,7 +105,7 @@ class Csv
         }
 
         if (!$matches) {
-            return ["", null];
+            return ['', null];
         } // couldn't guess quote or delim
 
         $quotes = array_count_values($matches[2]);
@@ -113,7 +117,7 @@ class Csv
             $delims = array_flip($delims);
             $delim = array_shift($delims);
         } else {
-            $quote = "";
+            $quote = '';
             $delim = null;
         }
 
@@ -124,6 +128,7 @@ class Csv
      * @param $data
      * @param $linefeed
      * @param $quotechar
+     *
      * @return bool|string
      */
     protected function guessDelim($data, $linefeed, $quotechar)
@@ -136,19 +141,19 @@ class Csv
                 // exclude the quote char
                 continue;
             }
-            if ($char == ord(" ")) {
+            if ($char == ord(' ')) {
                 // exclude spaces
                 continue;
             }
-            if ($char >= ord("a") && $char <= ord("z")) {
+            if ($char >= ord('a') && $char <= ord('z')) {
                 // exclude a-z
                 continue;
             }
-            if ($char >= ord("A") && $char <= ord("Z")) {
+            if ($char >= ord('A') && $char <= ord('Z')) {
                 // exclude A-Z
                 continue;
             }
-            if ($char >= ord("0") && $char <= ord("9")) {
+            if ($char >= ord('0') && $char <= ord('9')) {
                 // exclude 0-9
                 continue;
             }
@@ -221,6 +226,7 @@ class Csv
 
     /**
      * @param $array
+     *
      * @return float
      */
     protected function deviation($array)

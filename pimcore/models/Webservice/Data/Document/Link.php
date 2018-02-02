@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -20,9 +21,8 @@ use Pimcore\Model;
 
 class Link extends Model\Webservice\Data\Document
 {
-    
     /**
-     * @var integer
+     * @var int
      */
     public $internal;
 
@@ -60,7 +60,6 @@ class Link extends Model\Webservice\Data\Document
      * @var string
      */
     public $href;
-
 
     /**
      * @var string

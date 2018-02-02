@@ -10,24 +10,25 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Tag\Area;
 
-use Pimcore\Model;
+use Pimcore\Templating\Model\ViewModelInterface;
+use Pimcore\View;
 
 abstract class AbstractArea
 {
-
     /**
-     * @var \Zend_View
+     * @var ViewModelInterface|View
      */
     protected $view;
 
     /**
-     * @var \Zend_Config
+     * @var \Pimcore\Config\Config
      */
     protected $config;
 
@@ -42,7 +43,8 @@ abstract class AbstractArea
     protected $params = [];
 
     /**
-     * @param $view
+     * @param ViewModelInterface|View $view
+     *
      * @return $this
      */
     public function setView($view)
@@ -53,7 +55,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @return \Zend_View
+     * @return ViewModelInterface|View
      */
     public function getView()
     {
@@ -62,6 +64,7 @@ abstract class AbstractArea
 
     /**
      * @param $config
+     *
      * @return $this
      */
     public function setConfig($config)
@@ -72,7 +75,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public function getConfig()
     {
@@ -81,6 +84,7 @@ abstract class AbstractArea
 
     /**
      * @param $key
+     *
      * @return mixed
      */
     public function getParam($key)
@@ -88,8 +92,6 @@ abstract class AbstractArea
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
         }
-
-        return;
     }
 
     /**
@@ -102,7 +104,9 @@ abstract class AbstractArea
 
     /**
      * @deprecated
+     *
      * @param $key
+     *
      * @return mixed
      */
     public function _getParam($key)
@@ -112,6 +116,7 @@ abstract class AbstractArea
 
     /**
      * @deprecated
+     *
      * @return array
      */
     public function _getAllParams()
@@ -130,6 +135,7 @@ abstract class AbstractArea
 
     /**
      * @param $params
+     *
      * @return $this
      */
     public function setParams($params)
@@ -141,6 +147,7 @@ abstract class AbstractArea
 
     /**
      * @param Info $brick
+     *
      * @return $this
      */
     public function setBrick($brick)

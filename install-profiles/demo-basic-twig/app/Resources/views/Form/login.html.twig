@@ -1,0 +1,10 @@
+{%- block form_row -%}
+    <div class="form-group{{ not form.vars.valid ? ' has-error' }}">
+        {{- form_label(form) -}}
+        {{- form_widget(form, {
+            attr: {
+                class: 'form-control'
+            }
+        }) -}}
+    </div>
+{%- endblock form_row -%}

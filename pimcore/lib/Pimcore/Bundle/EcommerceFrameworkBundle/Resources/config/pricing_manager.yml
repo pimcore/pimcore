@@ -1,0 +1,18 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # PRICING MANAGER
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager:
+        arguments:
+            - '%pimcore_ecommerce.pricing_manager.condition_mapping%'
+            - '%pimcore_ecommerce.pricing_manager.action_mapping%'
+            - '@session'
+            - '%pimcore_ecommerce.pricing_manager.options%'
+        calls:
+            - [setEnabled, ['%pimcore_ecommerce.pricing_manager.enabled%']]

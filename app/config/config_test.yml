@@ -1,0 +1,22 @@
+imports:
+    - { resource: config_dev.yml }
+
+# this cache is used during tests when setting up pimcore
+pimcore:
+    cache:
+        pool_service_id: pimcore.cache.core.pool.array
+
+doctrine:
+    dbal:
+        connections:
+            default:
+                url: '%pimcore_test.db.dsn%'
+                host: ~
+                port: ~
+                dbname: ~
+                user: ~
+                password: ~
+
+parameters:
+    pimcore_test.db.dsn: '%env(PIMCORE_TEST_DB_DSN)%'
+    env(PIMCORE_TEST_DB_DSN): ~

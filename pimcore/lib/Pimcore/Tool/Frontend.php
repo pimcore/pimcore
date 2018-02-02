@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -19,11 +19,12 @@ use Pimcore\Model\Site;
 
 class Frontend
 {
-
     /**
      * Returns the Website-Config
-     * @return \Zend_Config
-     * @depricated
+     *
+     * @return \Pimcore\Config\Config
+     *
+     * @deprecated
      */
     public static function getWebsiteConfig()
     {
@@ -32,7 +33,9 @@ class Frontend
 
     /**
      * @param Site $site
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function getSiteKey(Site $site = null)
@@ -46,11 +49,10 @@ class Frontend
             }
         }
 
-
         if ($site) {
-            $siteKey = "site_" . $site->getId();
+            $siteKey = 'site_' . $site->getId();
         } else {
-            $siteKey = "default";
+            $siteKey = 'default';
         }
 
         return $siteKey;
@@ -59,6 +61,7 @@ class Frontend
     /**
      * @param Site $site
      * @param Document $document
+     *
      * @return bool
      */
     public static function isDocumentInSite($site, $document)
@@ -66,7 +69,7 @@ class Frontend
         $inSite = true;
 
         if ($site && $site->getRootDocument() instanceof Document\Page) {
-            if (!preg_match("@^" . $site->getRootDocument()->getRealFullPath() . "/@", $document->getRealFullPath())) {
+            if (!preg_match('@^' . $site->getRootDocument()->getRealFullPath() . '/@', $document->getRealFullPath())) {
                 $inSite = false;
             }
         }
@@ -76,6 +79,7 @@ class Frontend
 
     /**
      * @param Document $document
+     *
      * @return bool
      */
     public static function isDocumentInCurrentSite($document)
@@ -92,20 +96,22 @@ class Frontend
 
     /**
      * @param Document $document
+     *
+     * @return Site
      */
     public static function getSiteForDocument($document)
     {
-        $cacheKey = "sites_full_list";
-        if (\Zend_Registry::isRegistered($cacheKey)) {
-            $sites = \Zend_Registry::get($cacheKey);
+        $cacheKey = 'sites_full_list';
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            $sites = \Pimcore\Cache\Runtime::get($cacheKey);
         } else {
             $sites = new Site\Listing();
             $sites = $sites->load();
-            \Zend_Registry::set($cacheKey, $sites);
+            \Pimcore\Cache\Runtime::set($cacheKey, $sites);
         }
 
         foreach ($sites as $site) {
-            if (preg_match("@^" . $site->getRootPath() . "/@", $document->getRealFullPath()) || $site->getRootDocument()->getId() == $document->getId()) {
+            if (preg_match('@^' . $site->getRootPath() . '/@', $document->getRealFullPath()) || $site->getRootDocument()->getId() == $document->getId()) {
                 return $site;
             }
         }
@@ -118,12 +124,18 @@ class Frontend
      */
     public static function isOutputCacheEnabled()
     {
-        $front = \Zend_Controller_Front::getInstance();
-        $cachePlugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Cache");
-        if ($cachePlugin && $cachePlugin->isEnabled()) {
+        $container = \Pimcore::getContainer();
+
+        $serviceId = 'pimcore.event_listener.frontend.full_page_cache';
+        if (!$container->has($serviceId)) {
+            return false;
+        }
+
+        $cacheService = $container->get($serviceId);
+        if ($cacheService && $cacheService->isEnabled()) {
             return [
-                "enabled" => true,
-                "lifetime" => $cachePlugin->getLifetime()
+                'enabled' => true,
+                'lifetime' => $cacheService->getLifetime()
             ];
         }
 

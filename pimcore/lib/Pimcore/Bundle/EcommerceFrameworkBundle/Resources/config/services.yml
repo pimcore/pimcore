@@ -1,0 +1,48 @@
+services:
+    _defaults:
+        public: true
+        autowire: true
+        autoconfigure: true
+
+    #
+    # SESSION
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator:
+        public: false
+        tags:
+            - { name: pimcore.session.configurator }
+
+    #
+    # INSTALLER
+    #
+
+    pimcore.ecommerceframework.installer: '@Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer'
+    Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer:
+        tags:
+            - { name: monolog.logger, channel: pimcore_ecommerce.installer }
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\EcommerceFrameworkBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\EcommerceFrameworkBundle\Command\:
+        resource: '../../Command'
+
+
+    #
+    # REPORTS
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Reports\Piwik\PiwikReportsProvider: ~

@@ -10,26 +10,27 @@
  *
  * @category   Pimcore
  * @package    Element
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element\Recyclebin;
 
-use Pimcore\Model;
+use Pimcore\Cache;
 use Pimcore\File;
-use Pimcore\Tool\Serialize;
-use Pimcore\Model\Document;
+use Pimcore\Model;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Element\Recyclebin\Item\Dao getDao()
  */
 class Item extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -72,6 +73,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @static
+     *
      * @param Element\ElementInterface $element
      * @param Model\User $user
      */
@@ -84,7 +86,9 @@ class Item extends Model\AbstractModel
 
     /**
      * @static
+     *
      * @param $id
+     *
      * @return Element\Recyclebin\Item
      */
     public static function getById($id)
@@ -97,6 +101,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param null $user
+     *
      * @throws \Exception
      */
     public function restore($user = null)
@@ -108,24 +113,24 @@ class Item extends Model\AbstractModel
         if ($element instanceof Document) {
             $indentElement = Document::getByPath($element->getRealFullPath());
             if ($indentElement) {
-                $element->setKey($element->getKey()."_restore");
+                $element->setKey($element->getKey().'_restore');
             }
         } elseif ($element instanceof Asset) {
             $indentElement = Asset::getByPath($element->getRealFullPath());
             if ($indentElement) {
-                $element->setFilename($element->getFilename()."_restore");
+                $element->setFilename($element->getFilename().'_restore');
             }
-        } elseif ($element instanceof Object\AbstractObject) {
-            $indentElement = Object::getByPath($element->getRealFullPath());
+        } elseif ($element instanceof DataObject\AbstractObject) {
+            $indentElement = DataObject::getByPath($element->getRealFullPath());
             if ($indentElement) {
-                $element->setKey($element->getKey()."_restore");
+                $element->setKey($element->getKey().'_restore');
             }
         }
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
             $parent = $element->getParent();
-            if (!$parent->isAllowed("publish")) {
-                throw new \Exception("Not sufficient permissions");
+            if (!$parent->isAllowed('publish')) {
+                throw new \Exception('Not sufficient permissions');
             }
         }
 
@@ -167,14 +172,14 @@ class Item extends Model\AbstractModel
         $saveBinaryData = function ($element, $rec, $scope) {
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if ($element instanceof Asset) {
-                if ($element->getType() != "folder") {
-                    $handle = fopen($scope->getStorageFileBinary($element), "w", false, File::getContext());
+                if ($element->getType() != 'folder') {
+                    $handle = fopen($scope->getStorageFileBinary($element), 'w', false, File::getContext());
                     $src = $element->getStream();
                     stream_copy_to_stream($src, $handle);
                     fclose($handle);
                 }
 
-                $children = $element->getChilds();
+                $children = $element->getChildren();
                 foreach ($children as $child) {
                     $rec($child, $rec, $scope);
                 }
@@ -186,15 +191,12 @@ class Item extends Model\AbstractModel
         @chmod($this->getStoreageFile(), File::getDefaultMode());
     }
 
-    /**
-     *
-     */
     public function delete()
     {
         unlink($this->getStoreageFile());
 
         // remove binary files
-        $files = glob(PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $this->getId() . "_*");
+        $files = glob(PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $this->getId() . '_*');
         if (is_array($files)) {
             foreach ($files as $file) {
                 unlink($file);
@@ -215,7 +217,7 @@ class Item extends Model\AbstractModel
 
         // for all
         $element->getProperties();
-        if (method_exists($element, "getScheduledTasks")) {
+        if (method_exists($element, 'getScheduledTasks')) {
             $element->getScheduledTasks();
         }
 
@@ -223,12 +225,12 @@ class Item extends Model\AbstractModel
 
         // we need to add the tag of each item to the cache cleared stack, so that the item doesn't gets into the cache
         // with the property _fulldump set, because this would cause major issues in wakeUp()
-        \Pimcore\Cache::addClearedTag($element->getCacheTag());
+        Cache::addIgnoredTagOnSave($element->getCacheTag());
 
-        if (method_exists($element, "getChilds")) {
-            if ($element instanceof Object\AbstractObject) {
+        if (method_exists($element, 'getChilds')) {
+            if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
-                $childs = $element->getChilds([Object::OBJECT_TYPE_FOLDER, Object::OBJECT_TYPE_VARIANT, Object::OBJECT_TYPE_OBJECT]);
+                $childs = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
             } else {
                 $childs = $element->getChilds();
             }
@@ -249,7 +251,7 @@ class Item extends Model\AbstractModel
             if ($element instanceof Asset) {
                 $binFile = $scope->getStorageFileBinary($element);
                 if (file_exists($binFile)) {
-                    $binaryHandle = fopen($binFile, "r", false, File::getContext());
+                    $binaryHandle = fopen($binFile, 'r', false, File::getContext());
                     $element->setStream($binaryHandle);
                 }
             }
@@ -257,10 +259,13 @@ class Item extends Model\AbstractModel
 
         $restoreBinaryData($element, $this);
 
+        if ($element instanceof DataObject\Concrete) {
+            $element->setOmitMandatoryCheck(true);
+        }
         $element->save();
 
-        if (method_exists($element, "getChilds")) {
-            if ($element instanceof Object\AbstractObject) {
+        if (method_exists($element, 'getChilds')) {
+            if ($element instanceof DataObject\AbstractObject) {
                 // don't use the getter because this will return an empty array (variants are excluded by default)
                 $childs = $element->o_childs;
             } else {
@@ -277,16 +282,17 @@ class Item extends Model\AbstractModel
      */
     public function getStoreageFile()
     {
-        return PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $this->getId() . ".psf";
+        return PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $this->getId() . '.psf';
     }
 
     /**
      * @param $element
+     *
      * @return string
      */
     public function getStorageFileBinary($element)
     {
-        return PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $this->getId() . "_" . Element\Service::getElementType($element) . "-" . $element->getId() . ".bin";
+        return PIMCORE_RECYCLEBIN_DIRECTORY . '/' . $this->getId() . '_' . Element\Service::getElementType($element) . '-' . $element->getId() . '.bin';
     }
 
     /**
@@ -299,6 +305,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -318,6 +325,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param $path
+     *
      * @return $this
      */
     public function setPath($path)
@@ -337,6 +345,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -356,6 +365,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param $subtype
+     *
      * @return $this
      */
     public function setSubtype($subtype)
@@ -375,6 +385,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param $amount
+     *
      * @return $this
      */
     public function setAmount($amount)
@@ -394,6 +405,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param $date
+     *
      * @return $this
      */
     public function setDate($date)
@@ -413,6 +425,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param $element
+     *
      * @return $this
      */
     public function setElement($element)
@@ -424,6 +437,7 @@ class Item extends Model\AbstractModel
 
     /**
      * @param $username
+     *
      * @return $this
      */
     public function setDeletedby($username)

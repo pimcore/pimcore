@@ -1,9 +1,21 @@
 <?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
 namespace Pimcore\Image\Adapter;
 
 use Pimcore\File;
 use Pimcore\Image\Adapter;
-use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Process;
 
@@ -11,6 +23,7 @@ use Symfony\Component\Process\Process;
  *
  *
  * Class ImageMagick
+ *
  * @package Pimcore\Image\Adapter
  */
 class ImageMagick extends Adapter
@@ -68,20 +81,20 @@ class ImageMagick extends Adapter
      */
     protected $forceAlpha = false;
 
-
     /**
      * loads the image by the specified path
      *
      * @param $imagePath
      * @param array $options
+     *
      * @return ImageMagick
      */
     public function load($imagePath, $options = [])
     {
         // support image URLs
-        if (preg_match("@^https?://@", $imagePath)) {
-            $tmpFilename = "imagick_auto_download_" . md5($imagePath) . "." . File::getFileExtension($imagePath);
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+        if (preg_match('@^https?://@', $imagePath)) {
+            $tmpFilename = 'imagick_auto_download_' . md5($imagePath) . '.' . File::getFileExtension($imagePath);
+            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFilename;
 
             $this->tmpFiles[] = $tmpFilePath;
 
@@ -92,7 +105,7 @@ class ImageMagick extends Adapter
         if (!stream_is_local($imagePath)) {
             // imagick is only able to deal with local files
             // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/imagick-tmp-" . uniqid() . "." . File::getFileExtension($imagePath);
+            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($imagePath);
             copy($imagePath, $tmpFilePath);
             $imagePath = $tmpFilePath;
             $this->tmpFiles[] = $imagePath;
@@ -128,6 +141,7 @@ class ImageMagick extends Adapter
      * @param $path
      * @param null $format
      * @param null $quality
+     *
      * @return $this
      */
     public function save($path, $format = null, $quality = null)
@@ -155,7 +169,6 @@ class ImageMagick extends Adapter
         return $this;
     }
 
-
     /**
      * @return ImageMagick
      */
@@ -174,6 +187,7 @@ class ImageMagick extends Adapter
      *
      * @param $width
      * @param $height
+     *
      * @return $this
      */
     public function resize($width, $height)
@@ -191,6 +205,7 @@ class ImageMagick extends Adapter
      * @param $width
      * @param $height
      * @param bool $forceResize
+     *
      * @return ImageMagick
      */
     public function frame($width, $height, $forceResize = false)
@@ -216,6 +231,7 @@ class ImageMagick extends Adapter
      * Trims edges
      *
      * @param int $tolerance
+     *
      * @return ImageMagick
      */
     public function trim($tolerance)
@@ -229,6 +245,7 @@ class ImageMagick extends Adapter
      * Rotates the image with the given angle.
      *
      * @param $angle
+     *
      * @return ImageMagick
      */
     public function rotate($angle)
@@ -254,6 +271,7 @@ class ImageMagick extends Adapter
      * @param $y
      * @param $width
      * @param $height
+     *
      * @return ImageMagick
      */
     public function crop($x, $y, $width, $height)
@@ -268,6 +286,7 @@ class ImageMagick extends Adapter
      * Set the background color of the image.
      *
      * @param $color
+     *
      * @return ImageMagick
      */
     public function setBackgroundColor($color)
@@ -286,6 +305,7 @@ class ImageMagick extends Adapter
      *
      * @param $width
      * @param $height
+     *
      * @return ImageMagick
      */
     public function roundCorners($width, $height)
@@ -293,7 +313,7 @@ class ImageMagick extends Adapter
         $this->saveIfRequired('round_corners_canvas');
 
         //creates the mask for rounded corners
-        $mask = new ImageMagick();
+        $mask = new self();
         $mask->addConvertOption('size', "{$this->getWidth()}x{$this->getHeight()}")
             ->addConvertOption('draw', "'roundRectangle 0,0 {$this->getWidth()},{$this->getHeight()} {$width},{$height}'");
         $mask->addFilter('draw', 'xc:none');
@@ -324,19 +344,20 @@ class ImageMagick extends Adapter
      * @param $image
      * @param null $mode
      * @param bool $relativePath
+     *
      * @return ImageMagick
      */
     public function setBackgroundImage($image, $mode = null, $relativePath = false)
     {
         $imagePath = $relativePath ?
-            PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/")
+            PIMCORE_PROJECT_ROOT . '/' . ltrim($image, '/')
             : $image;
 
         if (is_file($imagePath)) {
             //if a specified file as a background exists
             //creates the temp file for the background
             $newImage = $this->createTmpImage($imagePath, 'background');
-            if ($mode == "cropTopLeft") {
+            if ($mode == 'cropTopLeft') {
                 //crop the background image
                 $newImage->crop(0, 0, $this->getWidth(), $this->getHeight());
             } else {
@@ -355,7 +376,6 @@ class ImageMagick extends Adapter
             $this->imagePath = $this->getOutputPath();
         }
 
-
         return $this;
     }
 
@@ -366,13 +386,14 @@ class ImageMagick extends Adapter
      * @param int $alpha
      * @param string $composite
      * @param string $origin
+     *
      * @return ImageMagick
      */
-    public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
+    public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = 'COMPOSITE_DEFAULT', $origin = 'top-left')
     {
         $this->saveIfRequired('overlay_first_step');
 
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
+        $image = PIMCORE_PROJECT_ROOT . '/' . ltrim($image, '/');
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
@@ -380,18 +401,18 @@ class ImageMagick extends Adapter
 
             //defines the position in order to the origin value
             switch ($origin) {
-                case "top-right":
+                case 'top-right':
                     $x =  $this->getWidth() - $overlayImage->getWidth() - $x;
                     break;
-                case "bottom-left":
+                case 'bottom-left':
                     $y =  $this->getHeight() - $overlayImage->getHeight() - $y;
                     break;
-                case "bottom-right":
-                    $x = $this->getWidth() - $overlayImage->getWidth()  - $x;
+                case 'bottom-right':
+                    $x = $this->getWidth() - $overlayImage->getWidth() - $x;
                     $y = $this->getHeight() - $overlayImage->getHeight() - $y;
                     break;
-                case "center":
-                    $x = round($this->getWidth() / 2)  - round($overlayImage->getWidth() / 2) + $x;
+                case 'center':
+                    $x = round($this->getWidth() / 2) - round($overlayImage->getWidth() / 2) + $x;
                     $y = round($this->getHeight() / 2) - round($overlayImage->getHeight() / 2) + $y;
                     break;
             }
@@ -407,11 +428,12 @@ class ImageMagick extends Adapter
     /**
      * @param $image
      * @param string $composite
+     *
      * @return ImageMagick
      */
-    public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
+    public function addOverlayFit($image, $composite = 'COMPOSITE_DEFAULT')
     {
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
+        $image = PIMCORE_PROJECT_ROOT . '/' . ltrim($image, '/');
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
@@ -429,15 +451,16 @@ class ImageMagick extends Adapter
      * @param int $x
      * @param int $y
      * @param int $overlayOpacity
+     *
      * @return ImageMagick
      */
-    protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT", $x = 0, $y = 0, $overlayOpacity = 100)
+    protected function processOverlay(ImageMagick $overlayImage, $composite = 'COMPOSITE_DEFAULT', $x = 0, $y = 0, $overlayOpacity = 100)
     {
         //sets a value used by the compose option
         $allowedComposeOptions = [
             'hardlight', 'exclusion'
         ];
-        $composite = strtolower(substr(strrchr($composite, "_"), 1));
+        $composite = strtolower(substr(strrchr($composite, '_'), 1));
         $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : 'dissolve';
 
         //save current state of the thumbnail to the tmp file
@@ -459,18 +482,18 @@ class ImageMagick extends Adapter
      * Add mask to the image
      *
      * @param $image
+     *
      * @return ImageMagick
      */
     public function applyMask($image)
     {
         $this->setForceAlpha(true)->saveIfRequired('mask');
 
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
+        $image = PIMCORE_PROJECT_ROOT . '/' . ltrim($image, '/');
 
         $this->addConvertOption('alpha', 'off')->addConvertOption('compose', 'CopyOpacity')
             ->addConvertOption('composite')
             ->addFilter('alpha', $image);
-
 
         return $this;
     }
@@ -482,6 +505,7 @@ class ImageMagick extends Adapter
      * @param $y
      * @param $width
      * @param $height
+     *
      * @return $this
      */
     public function cropPercent($x, $y, $width, $height)
@@ -495,9 +519,10 @@ class ImageMagick extends Adapter
      * Converts the image into a linear-grayscale image.
      *
      * @param string $method
+     *
      * @return ImageMagick
      */
-    public function grayscale($method = "Rec601Luma")
+    public function grayscale($method = 'Rec601Luma')
     {
         $this->addConvertOption('grayscale', $method);
 
@@ -511,7 +536,7 @@ class ImageMagick extends Adapter
      */
     public function sepia()
     {
-        $this->addConvertOption('sepia-tone', "85%");
+        $this->addConvertOption('sepia-tone', '85%');
 
         return $this;
     }
@@ -523,6 +548,7 @@ class ImageMagick extends Adapter
      * @param float $sigma
      * @param float $amount
      * @param float $threshold
+     *
      * @return ImageMagick
      */
     public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05)
@@ -537,6 +563,7 @@ class ImageMagick extends Adapter
      *
      * @param int $radius
      * @param float $sigma
+     *
      * @return $this
      */
     public function gaussianBlur($radius = 0, $sigma = 1.0)
@@ -552,6 +579,7 @@ class ImageMagick extends Adapter
      * @param int $brightness
      * @param int $saturation
      * @param int $hue
+     *
      * @return ImageMagick
      */
     public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100)
@@ -565,13 +593,14 @@ class ImageMagick extends Adapter
      * Creates vertical or horizontal mirror of the image.
      *
      * @param $mode
+     *
      * @return ImageMagick
      */
     public function mirror($mode)
     {
-        if ($mode == "vertical") {
+        if ($mode == 'vertical') {
             $this->addConvertOption('flip');
-        } elseif ($mode == "horizontal") {
+        } elseif ($mode == 'horizontal') {
             $this->addConvertOption('flop');
         }
 
@@ -583,6 +612,7 @@ class ImageMagick extends Adapter
      *
      * @param $name
      * @param null $value
+     *
      * @return ImageMagick
      */
     public function addConvertOption($name, $value = null)
@@ -597,6 +627,7 @@ class ImageMagick extends Adapter
      *
      * @param $name
      * @param null $value
+     *
      * @return ImageMagick
      */
     public function addCompositeOption($name, $value = null)
@@ -611,6 +642,7 @@ class ImageMagick extends Adapter
      *
      * @param $optionName
      * @param $filterValue
+     *
      * @return $this
      */
     public function addFilter($optionName, $filterValue)
@@ -628,6 +660,7 @@ class ImageMagick extends Adapter
      * Returns the filters array
      *
      * @param $optionName
+     *
      * @return array
      */
     public function getConvertFilters($optionName)
@@ -704,6 +737,7 @@ class ImageMagick extends Adapter
      * Convert script path, as a default the adapter is just using 'convert'.
      *
      * @param $convertScriptPath
+     *
      * @return ImageMagick
      */
     public function setConvertScriptPath($convertScriptPath)
@@ -731,7 +765,9 @@ class ImageMagick extends Adapter
      * Composite script path, as a default the adapter is just using 'composite'.
      *
      * @param $compositeScriptPath
+     *
      * @return ImageMagick
+     *
      * @internal param $convertScriptPath
      */
     public function setCompositeScriptPath($compositeScriptPath)
@@ -746,12 +782,13 @@ class ImageMagick extends Adapter
      *
      * @param $imagePath
      * @param $suffix
+     *
      * @return ImageMagick
      */
     protected function createTmpImage($imagePath, $suffix)
     {
         //if a specified file as a overlay exists
-        $tmpImage = new ImageMagick();
+        $tmpImage = new self();
         $tmpImage->load($imagePath);
         //creates the temp file for the background
         $this->setTmpPaths($tmpImage, $suffix);
@@ -763,12 +800,13 @@ class ImageMagick extends Adapter
     /**
      * @param ImageMagick $image
      * @param $suffix
+     *
      * @return $this
      */
     protected function setTmpPaths(ImageMagick $image, $suffix)
     {
         $tmpFilename = "imagemagick_{$suffix}_" . md5($this->imagePath) . '.png';
-        $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+        $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFilename;
         $image->setOutputPath($tmpFilepath);
 
         return $this;
@@ -785,6 +823,7 @@ class ImageMagick extends Adapter
 
     /**
      * @param $path
+     *
      * @return ImageMagick
      */
     public function setOutputPath($path)
@@ -800,11 +839,12 @@ class ImageMagick extends Adapter
      * @param $width
      * @param $height
      * @param $color
+     *
      * @return ImageMagick
      */
     public function generateCanvas($width, $height, $color)
     {
-        $canvas = new ImageMagick();
+        $canvas = new self();
         $canvas->addConvertOption('size', "{$width}x{$height}")
             ->addConvertOption('fill', "\"$color\"")
             ->addFilter('fill', "canvas:{$color}");
@@ -821,6 +861,7 @@ class ImageMagick extends Adapter
      * Merges the image specified as the argument into the main picture.
      *
      * @param ImageMagick $backgroundImage
+     *
      * @return ImageMagick
      */
     public function mergeImage(ImageMagick $backgroundImage)
@@ -839,6 +880,7 @@ class ImageMagick extends Adapter
 
     /**
      * @param $command
+     *
      * @return int
      */
     protected function processCommand($command)
@@ -858,6 +900,7 @@ class ImageMagick extends Adapter
 
     /**
      * @param bool $forceAlpha
+     *
      * @return ImageMagick
      */
     public function setForceAlpha($forceAlpha)
@@ -867,9 +910,9 @@ class ImageMagick extends Adapter
         return $this;
     }
 
-
     /**
      * @param string $suffix a thumbnail identifier
+     *
      * @return $this
      */
     public function saveIfRequired($suffix)
@@ -881,7 +924,7 @@ class ImageMagick extends Adapter
             $this->imagePath = $this->getOutputPath();
             $this->tmpFiles[] = $this->getOutputPath();
         }
-        
+
         return $this;
     }
 }

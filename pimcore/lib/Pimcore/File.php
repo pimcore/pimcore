@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -16,7 +16,6 @@ namespace Pimcore;
 
 class File
 {
-
     /**
      * @var int
      */
@@ -34,25 +33,29 @@ class File
 
     /**
      * @static
+     *
      * @param  $name
+     *
      * @return string
      */
     public static function getFileExtension($name)
     {
         $name = strtolower($name);
-        $parts = explode(".", $name);
+        $parts = explode('.', $name);
 
         if (count($parts) > 1) {
             return strtolower($parts[count($parts) - 1]);
         }
 
-        return "";
+        return '';
     }
 
     /**
      * @static
+     *
      * @param  $tmpFilename
      * @param null $language
+     *
      * @return string
      */
     public static function getValidFilename($tmpFilename, $language = null)
@@ -63,14 +66,16 @@ class File
 
         // keys shouldn't start with a "." (=hidden file) *nix operating systems
         // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
-        $tmpFilename = trim($tmpFilename, ". ");
+        $tmpFilename = trim($tmpFilename, '. ');
 
         return $tmpFilename;
     }
 
     /**
      * @static
+     *
      * @param  $filename
+     *
      * @return bool
      */
     public static function isIncludeable($filename)
@@ -82,21 +87,10 @@ class File
         $isIncludeAble = false;
 
         // use stream_resolve_include_path if PHP is >= 5.3.2 because the performance is better
-        if (function_exists("stream_resolve_include_path")) {
+        if (function_exists('stream_resolve_include_path')) {
             if ($include = stream_resolve_include_path($filename)) {
                 if (@is_readable($include)) {
                     $isIncludeAble = true;
-                }
-            }
-        } else {
-            // this is the fallback for PHP < 5.3.2
-            $include_paths = explode(PATH_SEPARATOR, get_include_path());
-
-            foreach ($include_paths as $path) {
-                $include = $path.DIRECTORY_SEPARATOR.$filename;
-                if (@is_file($include) && @is_readable($include)) {
-                    $isIncludeAble = true;
-                    break;
                 }
             }
         }
@@ -126,6 +120,7 @@ class File
     /**
      * @param $path
      * @param $data
+     *
      * @return int
      */
     public static function put($path, $data)
@@ -134,7 +129,7 @@ class File
             self::mkdir(dirname($path));
         }
 
-        $return = file_put_contents($path, $data, null, File::getContext());
+        $return = file_put_contents($path, $data, null, self::getContext());
         @chmod($path, self::$defaultMode);
 
         return $return;
@@ -148,7 +143,7 @@ class File
     {
         self::put($path, $data);
 
-        if (function_exists("opcache_reset")) {
+        if (function_exists('opcache_reset')) {
             opcache_reset();
         }
     }
@@ -157,6 +152,7 @@ class File
      * @param $path
      * @param null $mode
      * @param bool $recursive
+     *
      * @return bool
      */
     public static function mkdir($path, $mode = null, $recursive = true)
@@ -173,6 +169,7 @@ class File
     /**
      * @param $oldPath
      * @param $newPath
+     *
      * @return bool
      */
     public static function rename($oldPath, $newPath)

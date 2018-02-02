@@ -1,49 +1,88 @@
-language: php
-
 notifications:
   email:
     - travis-ci@pimcore.org
 
+sudo: false
+language: php
+
 php:
-  - 5.6
   - 7
-  - hhvm
+  - 7.1
+  - 7.2
+
+services:
+  - redis
+
+addons:
+  mariadb: '10.1'
+  hosts:
+    - pimcore-test.dev
 
 matrix:
-  allow_failures:
-    - php: hhvm
+  include:
+    - os: linux
+      sudo: required
+      php: 7
+      env:
+          - PIMCORE_TEST_SUITE=rest
+          - PIMCORE_TEST_ENV=http
+    - os: linux
+      sudo: required
+      php: 7.1
+      env:
+          - PIMCORE_TEST_SUITE=rest
+          - PIMCORE_TEST_ENV=http
+    - os: linux
+      sudo: required
+      php: 7.2
+      env:
+          - PIMCORE_TEST_SUITE=rest
+          - PIMCORE_TEST_ENV=http
+    - os: linux
+      php: 7.1
+      env:
+          - PIMCORE_TEST_SUITE=cache
+          - PIMCORE_TEST_GROUP=cache.core.redis
+          - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
+    - os: linux
+      php: 7.1
+      services: ~
+      addons: ~
+      env:
+        - TASK_TESTS=0
+        - TASK_DOCS=1
+      cache:
+        directories:
+          - tmp-docs/pimcore-docs/vendor
+
+cache:
+  directories:
+    - vendor
+
+env:
+  global:
+    - TASK_TESTS=1
+    - TASK_DOCS=0
+    - PIMCORE_ENVIRONMENT=test
+    - PIMCORE_TEST=1
+    - PIMCORE_TEST_URL=http://pimcore-test.dev
+    - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
+    - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
 
 before_install:
-  # analyze ZF usage before running anything else
-  - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
+  - mysql --version
+  - mysql -e "SET GLOBAL innodb_file_format=Barracuda;"
+  - mysql -e "SET GLOBAL innodb_large_prefix=1;"
+  - mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
 
 install:
-  - composer install
+  - if [ $TASK_TESTS == 1 ]; then .travis/setup-tests.sh; fi
+  - if [ $TASK_DOCS == 1 ]; then .ci/setup-docs.sh; fi
 
 before_script:
-  # install apache
-  - sudo apt-get update
-  - sudo apt-get install apache2 libapache2-mod-fastcgi
-  - sudo a2enmod rewrite actions fastcgi alias
-  # customize php settings
-  - sudo chmod 0755 .travis/setup-fpm.sh .travis/setup-hhvm.sh
-  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then .travis/setup-fpm.sh; fi
-  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then .travis/setup-hhvm.sh; fi
-  # configure apache virtual hosts - config was copied in the individual setup scripts above (FPM/HHVM)
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
-  - sudo service apache2 restart
-  # make tests executable
-  - cd tests
-  - sudo chmod 0755 alltests.sh hhvm-all.sh
+  - if [ $TASK_TESTS == 1 ]; then .travis/setup-php.sh; fi
+  - if [ $TASK_TESTS == 1 ]; then .travis/setup-functional-tests.sh; fi
 
 script:
-  - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then ./alltests.sh; fi
-  - if [[ "$TRAVIS_PHP_VERSION" == *"hhvm"* ]]; then ./hhvm-all.sh; fi
-
-after_script:
-  - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/debug.log
-  - cat $TRAVIS_BUILD_DIR/tests/tmp/var/log/php.log
-  - cat $TRAVIS_BUILD_DIR/apache-error.log
-  - cat $TRAVIS_BUILD_DIR/apache-access.log
-  - cat /tmp/hhvm.log
-
+  - if [ $TASK_TESTS == 1 ]; then .travis/run-tests.sh; fi
+  - if [ $TASK_DOCS == 1 ]; then .ci/run-docs.sh; fi

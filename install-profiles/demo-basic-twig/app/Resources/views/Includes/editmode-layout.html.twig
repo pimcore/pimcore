@@ -1,0 +1,30 @@
+{% block editmode_header %}
+    {% if editmode %}
+{# add some wrapping HTML to make it looking nicer in the editmode #}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="{{ asset('static/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ asset('static/css/global.css') }}" rel="stylesheet">
+    <link href="{{ asset('static/css/editmode.css') }}" rel="stylesheet">
+</head>
+<body>
+<div style="max-width: 300px;">
+    <div class="sidebar">
+    {% endif %}
+{% endblock %}
+
+{% block editmode_footer %}
+    {% if editmode %}
+    </div>
+</div>
+</body>
+</html>
+    {% endif %}
+{% endblock %}
+
+
+

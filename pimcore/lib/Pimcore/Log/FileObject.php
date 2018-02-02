@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -47,7 +47,7 @@ class FileObject
             if (!is_dir($folderpath)) {
                 mkdir($folderpath, 0775, true);
             }
-            $this->filename = $folderpath."/".uniqid("fileobject_", true);
+            $this->filename = $folderpath.'/'.uniqid('fileobject_', true);
         }
 
         File::put($this->filename, $this->data);
@@ -66,7 +66,7 @@ class FileObject
      */
     public function getFilename()
     {
-        return str_replace(PIMCORE_DOCUMENT_ROOT."/", "", $this->filename);
+        return str_replace(PIMCORE_PROJECT_ROOT.'/', '', $this->filename);
     }
 
     /**

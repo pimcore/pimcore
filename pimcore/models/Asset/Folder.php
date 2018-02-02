@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -28,18 +29,19 @@ class Folder extends Model\Asset
     /**
      * @var string
      */
-    public $type = "folder";
+    public $type = 'folder';
 
     /**
      * set the children of the document
      *
      * @param $children
-     * @return array
+     *
+     * @return Folder
      */
     public function setChildren($children)
     {
         $this->childs = $children;
-        if (is_array($children) and count($children > 0)) {
+        if (is_array($children) and count($children) > 0) {
             $this->hasChilds = true;
         } else {
             $this->hasChilds = false;

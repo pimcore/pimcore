@@ -1,0 +1,16 @@
+<li class="dropdown">
+    <a href="#" class="dropdown-toggle" id="languageSelector" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+        {{ "Language"|trans }}
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="languageSelector">
+        {# the get_localized_links function is provided by the LanguageSwitcherExtension #}
+        {% for link, text in get_localized_links(document) %}
+
+            <li>
+                <a href="{{ link }}">{{ text }}</a>
+            </li>
+
+        {% endfor %}
+    </ul>
+</li>

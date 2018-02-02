@@ -1,0 +1,46 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # SECURITY
+    #
+
+    Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener: ~
+
+    Pimcore\Bundle\AdminBundle\EventListener\AdminAuthenticationDoubleCheckListener:
+        arguments:
+            $unauthenticatedRoutes: '%pimcore.admin.unauthenticated_routes%'
+
+    #
+    # EXCEPTION HANDLING
+    #
+
+    Pimcore\Bundle\AdminBundle\EventListener\AdminExceptionListener: ~
+
+    #
+    # GRID CONFIG CLEANUP
+    #
+    Pimcore\Bundle\AdminBundle\EventListener\GridConfigListener: ~
+
+    #
+    # IMPORT CONFIG CLEANUP
+    #
+    Pimcore\Bundle\AdminBundle\EventListener\ImportConfigListener: ~
+
+
+    #
+    # MISC
+    #
+
+    Pimcore\Bundle\AdminBundle\EventListener\HttpCacheListener: ~
+
+    Pimcore\Bundle\AdminBundle\EventListener\UserPerspectiveListener:
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: admin }
+
+    Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener: ~

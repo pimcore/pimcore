@@ -1,0 +1,167 @@
+# E-Commerce Framework Price Object/Signature Changes
+
+Following changes might need to be considered: 
+
+- Price objects (`IPrice`) now use a value object instead of floats to represent prices. All calls to `get*Amount()`,
+  `set*Amount()` and all custom calculations need to be updated to work with the `Decimal` value object.
+- Added PHP 7 type hints to interfaces where applicable, especially regarding pricing. You might need to update your
+  implementations to match updated interface definitions. This mainly affects return types of interfaces (e.g. a `PriceInfo`
+  is now forced to return a `IPrice` object for `getTotalPrice()` where it could be `null` previously) and anything working
+  with price amounts (as the `Decimal` value object is used now instead of floats).  
+  If you implement any of the following classes/interfaces in your project, please check they match the new framework
+  definition (see https://github.com/pimcore/pimcore/pull/1701):
+  
+    - `CartManager/AbstractCartItem`
+      - changed: 
+        - `public function getPrice(): IPrice`
+        - `public function getPriceInfo(): IPriceInfo`
+        - `public function getTotalPrice(): IPrice`
+    - `CartManager/CartPriceCalculator`
+      - changed: 
+        - `protected function getDefaultPriceObject(Decimal $amount, Currency $currency): IPrice`
+        - `public function getGrandTotal(): IPrice`
+        - `public function getPriceModifications(): array`
+        - `public function getSubTotal(): IPrice`
+        - `public function getModificators(): array`
+    - `CartManager/CartPriceModificator/IDiscount`
+      - changed: 
+        - `public function setAmount(Decimal $amount)`
+        - `public function getAmount(): Decimal`      
+    - `CartManager/CartPriceModificator/Discount`
+      - changed: 
+        - `public function setAmount(Decimal $amount)`
+        - `public function getAmount(): Decimal` 
+    - `CartManager/CartPriceModificator/IShipping`
+      - changed: 
+        - `public function setCharge(Decimal $charge);`
+        - `public function getCharge(): Decimal;`
+    - `CartManager/CartPriceModificator/Shipping`
+      - changed: 
+        - `public function setCharge(Decimal $charge);`
+        - `public function getCharge(): Decimal;`
+    - `CartManager/ICartItem`
+      - changed: 
+        - `public function getPrice(): IPrice;`
+        - `public function getTotalPrice(): IPrice;`
+        - `public function getPriceInfo(): IPriceInfo;`
+    - `CartManager/ICartPriceCalculator`
+      - changed: 
+        - `public function getSubTotal(): IPrice;`
+        - `public function getGrandTotal(): IPrice;`
+        - `public function getPriceModifications(): array;`
+        - `public function getModificators(): array;`
+    - `OfferTool/DefaultService`
+      - changed: 
+        - `protected function priceTransformationHook(Decimal $price): Decimal`
+    - `PriceSystem/AbstractPriceInfo`
+      - changed:
+        - `public function isMinPrice(): bool`
+        - `public function setPriceSystem(IPriceSystem $priceSystem)`
+        - `public function getPrice(): IPrice`
+        - `public function getTotalPrice(): IPrice`
+    - `PriceSystem/AbstractPriceSystem`
+      - changed: 
+        - `public function getPriceInfo(ICheckoutable $product, $quantityScale = null, $products = null): IPriceInfo`
+        - `protected function initPriceInfoInstance($quantityScale, ICheckoutable $product, $products)`
+        - `abstract public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products);`
+    - `PriceSystem/AttributePriceInfo`
+      - changed: 
+        - `public function getPrice(): IPrice`
+        - `public function getTotalPrice(): IPrice`
+    - `PriceSystem/AttributePriceSystem`
+      - changed: 
+        - `abstract public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products);`  
+        - `protected function calculateAmount(ICheckoutable $product, $products): Decimal`
+        - `protected function getDefaultCurrency(): Currency`
+        - `protected function getPriceClassInstance(Decimal $amount): IPrice`
+    - `PriceSystem/CachingPriceSystem`
+      - changed:
+        - `public function getPriceInfo(ICheckoutable $product, $quantityScale = 1, $products = null): IPriceInfo`
+    - `PriceSystem/IPrice`
+      - changed: 
+        - `public function getAmount(): Decimal;`
+        - `public function getCurrency(): Currency;`
+        - `public function isMinPrice(): bool;`
+        - `public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false);`
+        - `public function getGrossAmount(): Decimal;`
+        - `public function getNetAmount(): Decimal;`
+        - `public function getTaxEntries(): array;`
+        - `public function getTaxEntryCombinationMode(): string;`
+        - `public function setGrossAmount(Decimal $grossAmount, bool $recalc = false);`
+        - `public function setNetAmount(Decimal $netAmount, bool $recalc = false);`
+        - `public function setTaxEntries(array $taxEntries);`
+        - `public function setTaxEntryCombinationMode(string $taxEntryCombinationMode);`
+    - `PriceSystem/IPriceInfo`
+      - changed: 
+        - `public function getPrice(): IPrice`
+        - `public function getTotalPrice(): IPrice`
+        - `public function isMinPrice(): bool;`
+        - `public function setPriceSystem(IPriceSystem $priceSystem);`
+    - `PriceSystem/IPriceSystem`
+      - changed: 
+        - `public function getPriceInfo(ICheckoutable $product, $quantityScale = null, $products = null): IPriceInfo;`
+    - `PriceSystem/LazyLoadingPriceInfo`
+      - changed: 
+        - `public function getPrice(): IPrice`
+    - `PriceSystem/ModificatedPrice`
+      - changed: 
+        - `public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false, string $description = null)`
+    - `PriceSystem/Price`
+      - changed: 
+        - `public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false)`
+        - `public function isMinPrice(): bool`
+        - `public function setAmount(Decimal $amount, string $priceMode = self::PRICE_MODE_GROSS, bool $recalc = false)`
+        - `public function getAmount(): Decimal`
+        - `public function getCurrency(): Currency`
+        - `public function getGrossAmount(): Decimal`
+        - `public function getNetAmount(): Decimal`
+        - `public function getTaxEntries(): array`
+        - `public function getTaxEntryCombinationMode(): string`
+        - `public function setGrossAmount(Decimal $grossAmount, bool $recalc = false)`
+        - `public function setNetAmount(Decimal $netAmount, bool $recalc = false)`
+        - `public function setTaxEntries(array $taxEntries)`
+        - `public function setTaxEntryCombinationMode(string $taxEntryCombinationMode)`
+        - `protected function updateTaxes(string $calculationMode)`
+    - `PriceSystem/TaxManagement/TaxCalculationService`
+      - changed: 
+        - `public function updateTaxes(IPrice $price, string $calculationMode = self::CALCULATION_FROM_NET)`
+        - `protected function calculationFromNet(IPrice $price): IPrice`
+        - `protected function calculationFromGross(IPrice $price): IPrice`
+    - `PriceSystem/TaxManagement/TaxEntry`
+      - changed: 
+        - `public function __construct($percent, Decimal $amount, string $taxId = null, TaxEntryFieldcollection $entry = null)`
+        - `public function setEntry(TaxEntryFieldcollection $entry)`
+        - `public function getEntry(): TaxEntryFieldcollection`
+        - `public function getAmount(): Decimal`
+        - `public function setAmount(Decimal $amount)`
+        - `public function setTaxId(string $taxId = null)`
+    - `PricingManager/Condition/AbstractOrder`
+      - changed: 
+        - `protected function getSalesAmount(IRule $rule): Decimal`
+    - `PricingManager/IPriceInfo`
+      - changed: 
+        - `public function getRules(bool $forceRecalc = false): array;`
+        - `public function setAmount(Decimal $amount);`
+        - `public function getAmount(): Decimal;`
+        - `public function getOriginalPrice(): IPrice;`
+        - `public function getOriginalTotalPrice(): IPrice;`
+        - `public function getEnvironment(): IEnvironment;`
+        - `public function hasDiscount(): bool;`
+        - `public function getDiscount(): IPrice;`
+        - `public function getTotalDiscount(): IPrice;`
+        - `public function hasRulesApplied(): bool;`
+    - `PricingManager/PriceInfo`
+      - changed: 
+        - `public function getEnvironment(): IEnvironment`
+        - `public function getRules(bool $forceRecalc = false): array`
+        - `public function getPrice(): IPrice`
+        - `public function isMinPrice(): bool`
+        - `public function setPriceSystem(IPriceSystem $priceSystem)`
+        - `public function setAmount(Decimal $amount);`
+        - `public function getAmount(): Decimal;`        
+        - `public function getOriginalPrice(): IPrice;`
+        - `public function getOriginalTotalPrice(): IPrice;`
+        - `public function hasDiscount(): bool;`
+        - `public function getDiscount(): IPrice;`        
+        - `public function getTotalDiscount(): IPrice;`
+        - `public function hasRulesApplied(): bool;`

@@ -10,23 +10,25 @@
  *
  * @category   Pimcore
  * @package    Tool
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\Targeting\Rule;
 
 use Pimcore\Model;
+use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Tool\Serialize;
 
 /**
- * @property \Pimcore\Model\Tool\Targeting\Rule $model
+ * @property Rule|Model\Tool\Targeting\Rule\Dao $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)
@@ -35,20 +37,21 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM targeting_rules WHERE id = ?", $this->model->getId());
+        $data = $this->db->fetchRow('SELECT * FROM targeting_rules WHERE id = ?', $this->model->getId());
 
-        if ($data["id"]) {
-            $data["conditions"] = Serialize::unserialize($data["conditions"]);
-            $data["actions"] = (isset($data["actions"]) ? Serialize::unserialize($data["actions"]) : []);
+        if ($data['id']) {
+            $data['conditions'] = (isset($data['conditions']) ? Serialize::unserialize($data['conditions']) : []);
+            $data['actions'] = (isset($data['actions']) ? Serialize::unserialize($data['actions']) : []);
 
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("target with id " . $this->model->getId() . " doesn't exist");
+            throw new \Exception('target with id ' . $this->model->getId() . " doesn't exist");
         }
     }
 
     /**
      * @param string $name
+     *
      * @throws \Exception
      */
     public function getByName($name = null)
@@ -57,29 +60,25 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setName($name);
         }
 
-        $data = $this->db->fetchAll("SELECT id FROM targeting_rules WHERE name = ?", $this->model->getName());
+        $data = $this->db->fetchAll('SELECT id FROM targeting_rules WHERE name = ?', [$this->model->getName()]);
 
         if (count($data) === 1) {
-            $this->getById($data[0]["id"]);
+            $this->getById($data[0]['id']);
         } else {
-            throw new \Exception("target with name " . $this->model->getId() . " doesn't exist or isn't unique");
+            throw new \Exception('target with name ' . $this->model->getId() . " doesn't exist or isn't unique");
         }
     }
 
     /**
      * Save object to database
-     *
-     * @return boolean
-     *
-     * @todo: update and delete don't return anything
      */
     public function save()
     {
         if ($this->model->getId()) {
-            return $this->model->update();
+            $this->model->update();
+        } else {
+            $this->create();
         }
-
-        return $this->create();
     }
 
     /**
@@ -87,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("targeting_rules", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete('targeting_rules', ['id' => $this->model->getId()]);
     }
 
     /**
@@ -97,9 +96,10 @@ class Dao extends Model\Dao\AbstractDao
     {
         try {
             $type = get_object_vars($this->model);
+            $data = [];
 
             foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns("targeting_rules"))) {
+                if (in_array($key, $this->getValidTableColumns('targeting_rules'))) {
                     if (is_array($value) || is_object($value)) {
                         $value = Serialize::serialize($value);
                     }
@@ -110,7 +110,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->update("targeting_rules", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update('targeting_rules', $data, ['id' => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -119,11 +119,11 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return boolean
+     * @return bool
      */
     public function create()
     {
-        $this->db->insert("targeting_rules", []);
+        $this->db->insert('targeting_rules', []);
 
         $this->model->setId($this->db->lastInsertId());
 

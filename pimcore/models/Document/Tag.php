@@ -10,23 +10,32 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Document\Tag\Block\BlockName;
+use Pimcore\Document\Tag\Block\BlockState;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\Document\TagNameEvent;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Webservice;
-use Pimcore\Logger;
+use Pimcore\Templating\Model\ViewModel;
+use Pimcore\Templating\Model\ViewModelInterface;
+use Pimcore\Tool\HtmlUtils;
+use Pimcore\View;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
 abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface
 {
-
     /**
      * Options of the current tag, can contain some configurations for the editmode, or the thumbnail name, ...
      *
@@ -48,9 +57,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $realName;
 
     /**
+     * Contains parent hierarchy names (used when building elements inside a block/areablock hierarchy)
+     *
+     * @var array
+     */
+    private $parentBlockNames = [];
+
+    /**
      * Element belongs to the ID of the document
      *
-     * @var integer
+     * @var int
      */
     protected $documentId;
 
@@ -60,14 +76,14 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $controller;
 
     /**
-     * @var \Pimcore\View
+     * @var ViewModelInterface|View
      */
     protected $view;
 
     /**
      * In Editmode or not
      *
-     * @var boolean
+     * @var bool
      */
     protected $editmode;
 
@@ -84,25 +100,22 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param null $controller
      * @param null $view
      * @param null $editmode
+     *
      * @return mixed
      */
     public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
     {
-        $tagClass = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($type);
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
 
-        // this is the fallback for custom document tags using prefixes
-        // so we need to check if the class exists first
-        if (!\Pimcore\Tool::classExists($tagClass)) {
-            $oldStyleClass = "\\Document_Tag_" . ucfirst($type);
-            if (\Pimcore\Tool::classExists($oldStyleClass)) {
-                $tagClass = $oldStyleClass;
-            }
-        }
-
-        $tag = new $tagClass();
+        /** @var Tag $tag */
+        $tag = $loader->build($type);
         $tag->setName($name);
         $tag->setDocumentId($documentId);
         $tag->setController($controller);
+        if (!$view) {
+            // needed for the RESTImporter. For areabricks define a default implementation. Otherwise cannot find a tag handler.
+            $view = new ViewModel();
+        }
         $tag->setView($view);
         $tag->setEditmode($editmode);
         $tag->setOptions($config);
@@ -115,35 +128,152 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function admin()
     {
+        $options = $this->getEditmodeOptions();
+        $code = $this->outputEditmodeOptions($options, true);
 
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
+
+        $code .= ('<div ' . $attributeString . '></div>');
+
+        return $code;
+    }
+
+    /**
+     * Builds options passed to editmode frontend as JSON config
+     *
+     * @return array
+     */
+    protected function getEditmodeOptions(): array
+    {
+        $options = [
+            'id'        => 'pimcore_editable_' . $this->getName(),
+            'name'      => $this->getName(),
+            'realName'  => $this->getRealName(),
+            'options'   => $this->getOptions(),
+            'data'      => $this->getEditmodeData(),
+            'type'      => $this->getType(),
+            'inherited' => $this->getInherited()
+        ];
+
+        return $options;
+    }
+
+    /**
+     * Builds data used for editmode
+     *
+     * @return mixed
+     */
+    protected function getEditmodeData()
+    {
         // get configuration data for admin
-        if (method_exists($this, "getDataEditmode")) {
+        if (method_exists($this, 'getDataEditmode')) {
             $data = $this->getDataEditmode();
         } else {
             $data = $this->getData();
         }
 
-        $options = [
-            "options" => $this->getOptions(),
-            "data" => $data,
-            "name" => $this->getName(),
-            "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType(),
-            "inherited" => $this->getInherited()
-        ];
-        $options = @\Zend_Json::encode($options, false, ['enableJsonExprFinder' => true]);
+        return $data;
+    }
 
-        $class = "pimcore_editable pimcore_tag_" . $this->getType();
-        if (array_key_exists("class", $this->getOptions())) {
-            $class .= (" " . $this->getOptions()["class"]);
+    /**
+     * Builds attributes used on the editmode HTML element
+     *
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function getEditmodeElementAttributes(array $options): array
+    {
+        if (!isset($options['id'])) {
+            throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable options array', $this->getName()));
         }
 
-        return '
+        $attributes = array_merge($this->getEditmodeBlockStateAttributes(), [
+            'id'    => $options['id'],
+            'class' => implode(' ', $this->getEditmodeElementClasses()),
+        ]);
+
+        return $attributes;
+    }
+
+    protected function getEditmodeBlockStateAttributes(): array
+    {
+        $blockState = $this->getBlockState();
+        $blockNames = array_map(function (BlockName $blockName) {
+            return $blockName->getRealName();
+        }, $blockState->getBlocks());
+
+        $attributes = [
+            'data-name'          => $this->getName(),
+            'data-real-name'     => $this->getRealName(),
+            'data-type'          => $this->getType(),
+            'data-block-names'   => implode(', ', $blockNames),
+            'data-block-indexes' => implode(', ', $blockState->getIndexes())
+        ];
+
+        return $attributes;
+    }
+
+    /**
+     * Builds classes used on the editmode HTML element
+     *
+     * @return array
+     */
+    protected function getEditmodeElementClasses(): array
+    {
+        $classes = [
+            'pimcore_editable',
+            'pimcore_tag_' . $this->getType()
+        ];
+
+        $editableOptions = $this->getOptions();
+        if (isset($editableOptions['class'])) {
+            if (is_array($editableOptions['class'])) {
+                $classes = array_merge($classes, $editableOptions['class']);
+            } else {
+                $classes[] = (string)$editableOptions['class'];
+            }
+
+            $classes[] = (string)$editableOptions['class'];
+        }
+
+        return $classes;
+    }
+
+    /**
+     * Sends data to the output stream
+     *
+     * @param string $value
+     */
+    protected function outputEditmode($value)
+    {
+        if ($this->getEditmode()) {
+            echo $value . "\n";
+        }
+    }
+
+    /**
+     * Push editmode options into the JS config array
+     *
+     * @param array $options
+     * @param bool $return
+     *
+     * @return string
+     */
+    protected function outputEditmodeOptions(array $options, $return = false)
+    {
+        $code = '
             <script type="text/javascript">
-                editableConfigurations.push(' . $options . ');
+                editableConfigurations.push(' . json_encode($options) . ');
             </script>
-            <div id="pimcore_editable_' . $this->getName() . '" class="' . $class . '"></div>
         ';
+
+        if ($return) {
+            return $code;
+        }
+
+        $this->outputEditmode($code);
     }
 
     /**
@@ -164,6 +294,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -174,7 +305,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setDocumentId($id)
@@ -185,7 +317,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getDocumentId()
     {
@@ -202,6 +334,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function setOptions($options)
@@ -213,6 +346,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param \Pimcore\Controller\Action $controller
+     *
      * @return $this
      */
     public function setController($controller)
@@ -231,7 +365,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param \Pimcore\View $view
+     * @param ViewModelInterface|View $view
+     *
      * @return $this
      */
     public function setView($view)
@@ -242,7 +377,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return \Pimcore\View
+     * @return ViewModelInterface|View
      */
     public function getView()
     {
@@ -265,6 +400,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $this->realName = $realName;
     }
 
+    final public function setParentBlockNames(array $parentNames)
+    {
+        $this->parentBlockNames = $parentNames;
+    }
+
+    final public function getParentBlockNames(): array
+    {
+        return $this->parentBlockNames;
+    }
+
     /**
      * Returns only the properties which should be serialized
      *
@@ -274,7 +419,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
 
         // here the "normal" task of __sleep ;-)
-        $blockedVars = ["dao", "controller", "view", "editmode", "options"];
+        $blockedVars = ['dao', 'controller', 'view', 'editmode', 'options'];
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
@@ -292,32 +437,39 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function __toString()
     {
-        $return = "";
+        $result = '';
 
         try {
             if ($this->editmode) {
-                $return = $this->admin();
+                $result = $this->admin();
             } else {
-                $return = $this->frontend();
+                $result = $this->frontend();
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (\Pimcore::inDebugMode()) {
                 // the __toString method isn't allowed to throw exceptions
-                $return = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
+                $result = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
+
+                return $result;
             }
-            Logger::error("to string not possible - " . $e->getMessage());
+
+            Logger::error('toString() returned an exception: {exception}', [
+                'exception' => $e
+            ]);
+
+            return '';
         }
 
-        if (is_string($return) || is_numeric($return)) {
+        if (is_string($result) || is_numeric($result)) {
             // we have to cast to string, because int/float is not auto-converted and throws an exception
-            return (string) $return;
+            return (string) $result;
         }
 
         return '';
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getEditmode()
     {
@@ -325,7 +477,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param boolean $editmode
+     * @param bool $editmode
+     *
      * @return $this
      */
     public function setEditmode($editmode)
@@ -348,6 +501,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @param $ownerDocument
      * @param array $tags
+     *
      * @return array
      */
     public function getCacheTags($ownerDocument, $tags = [])
@@ -363,16 +517,17 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         return [];
     }
 
-
     /**
      * Receives a standard class object from webservice import and fills the current tag's data
      *
      * @abstract
+     *
      * @param Webservice\Data\Document\Element $wsElement
      * @param $document
      * @param array $params,
      * @param $idMapper
      * @param mixed $params
+     *
      * @return Webservice\Data\Document\Element
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
@@ -380,12 +535,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         return $wsElement;
     }
 
-
     /**
      * Returns the current tag's data for web service export
+     *
      * @param $document
      * @param mixed $params
      * @abstract
+     *
      * @return array
      */
     public function getForWebserviceExport($document = null, $params = [])
@@ -397,22 +553,20 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             if ($value instanceof Model\Element\ElementInterface) {
                 $value = $value->getId();
             }
-            $className = Webservice\Data\Mapper::findWebserviceClass($value, "out");
-            $el[$key] = Webservice\Data\Mapper::map($value, $className, "out");
+            $className = Webservice\Data\Mapper::findWebserviceClass($value, 'out');
+            $el[$key] = Webservice\Data\Mapper::map($value, $className, 'out');
         }
 
-        unset($el["dao"]);
-        unset($el["documentId"]);
-        unset($el["controller"]);
-        unset($el["view"]);
-        unset($el["editmode"]);
+        unset($el['dao']);
+        unset($el['documentId']);
+        unset($el['controller']);
+        unset($el['view']);
+        unset($el['editmode']);
 
         $el = Webservice\Data\Mapper::toObject($el);
 
         return $el;
     }
-
-
 
     /**
      * @return bool
@@ -424,6 +578,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param $inherited
+     *
      * @return $this
      */
     public function setInherited($inherited)
@@ -434,7 +589,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getInherited()
     {
@@ -442,53 +597,79 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param $type
-     * @param $name
-     * @param null $document
-     * @return string
-     * @throws \Exception
-     * @throws \Zend_Exception
+     * TODO inject block state via DI
+     *
+     * @return BlockState
      */
-    public static function buildTagName($type, $name, $document = null)
+    protected function getBlockState(): BlockState
     {
-        if (!preg_match("@^[a-zA-Z0-9\-_]+$@", $name)) {
-            throw new \Exception("Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+), your name was: " . $name);
-        }
+        return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+    }
 
-        // check for persona content
-        if ($document && $document instanceof Document\Page && $document->getUsePersona()) {
-            $name = $document->getPersonaElementName($name);
+    /**
+     * Builds a tag name for an editable, taking current
+     * block state (block, index) and targeting into account.
+     *
+     * @param string $type
+     * @param string $name
+     * @param Document|null $document
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function buildTagName(string $type, string $name, Document $document = null)
+    {
+        // do NOT allow dots (.) and colons (:) here as they act as delimiters
+        // for block hierarchy in the new naming scheme (see #1467)!
+        if (!preg_match("@^[a-zA-Z0-9\-_]+$@", $name)) {
+            throw new \InvalidArgumentException(
+                'Only valid CSS class selectors are allowed as the name for an editable (which is basically [a-zA-Z0-9\-_]+). Your name was: ' . $name
+            );
         }
 
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $blocks = \Zend_Registry::get("pimcore_tag_block_current");
 
-            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
-            if (is_array($blocks) and count($blocks) > 0) {
-                if ($type == "block") {
-                    $tmpBlocks = $blocks;
-                    $tmpNumeration = $numeration;
-                    array_pop($tmpBlocks);
-                    array_pop($tmpNumeration);
+        $container      = \Pimcore::getContainer();
+        $blockState     = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
-                    $tmpName = $name;
-                    if (is_array($tmpBlocks)) {
-                        $tmpName = $name . implode("_", $tmpBlocks) . implode("_", $tmpNumeration);
-                    }
-
-                    if ($blocks[count($blocks) - 1] == $tmpName) {
-                        array_pop($blocks);
-                        array_pop($numeration);
-                    }
-                }
-                $name = $name . implode("_", $blocks) . implode("_", $numeration);
-            }
+        // if element not nested inside a hierarchical element (e.g. block), add the
+        // targeting prefix if configured on the document. hasBlocks() determines if
+        // there are any parent blocks for the current element
+        if ($document && $document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
+            $name = $document->getTargetGroupElementName($name);
         }
 
-        if (strlen($name) > 750) {
-            throw new \Exception("Composite name is longer than 750 characters - use shorter names for your editables or reduce amount of nesting levels. Name is: " . $name);
+        $tagName = $namingStrategy->buildTagName($name, $type, $blockState);
+
+        $event = new TagNameEvent($type, $name, $blockState, $tagName, $document);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::TAG_NAME, $event);
+
+        $tagName = $event->getTagName();
+
+        if (strlen($tagName) > 750) {
+            throw new \Exception(sprintf(
+                'Composite name for editable "%s" is longer than 750 characters. Use shorter names for your editables or reduce amount of nesting levels. Name is: %s',
+                $name,
+                $tagName
+            ));
+        }
+
+        return $tagName;
+    }
+
+    public static function buildTagRealName(string $name, Document $document): string
+    {
+        $container  = \Pimcore::getContainer();
+        $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+
+        // if element not nested inside a hierarchical element (e.g. block), add the
+        // targeting prefix if configured on the document. hasBlocks() determines if
+        // there are any parent blocks for the current element
+        if ($document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
+            $name = $document->getTargetGroupElementName($name);
         }
 
         return $name;

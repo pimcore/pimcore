@@ -1,0 +1,55 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    {{ include('Includes/content-default.html.twig') }}
+
+    {% if not success %}
+        {% if submitted %}
+
+            <div class="alert alert-danger">
+                {{ "Sorry, something went wrong, please check the data in the form and try again!"|trans }}.
+                {% if error is defined %}
+                    <br>{{ error }}
+                {% endif %}
+            </div>
+
+            <br />
+            <br />
+
+        {% endif %}
+
+        {# see comment on advanced/objectForm template regarding the form theme #}
+        {% form_theme form 'Form/default.html.twig' %}
+
+        {{ form_start(form, {
+            attr: {
+                class: 'form-horizontal',
+                role: 'form'
+            }
+        }) }}
+
+        {{ form_row(form.gender) }}
+        {{ form_row(form.firstname) }}
+        {{ form_row(form.lastname) }}
+        {{ form_row(form.email) }}
+
+        <br />
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                {{ form_widget(form.submit, {
+                    attr: {
+                        class: 'btn btn-default'
+                    }
+                }) }}
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+
+    {% else %}
+
+        <div class="alert alert-success">{{ "Success, Please check your mailbox!"|trans }}</div>
+
+    {% endif %}
+{% endblock %}

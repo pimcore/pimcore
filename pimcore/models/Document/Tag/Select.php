@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -23,7 +24,6 @@ use Pimcore\Model;
  */
 class Select extends Model\Document\Tag
 {
-
     /**
      * Contains the current selected value
      *
@@ -32,16 +32,18 @@ class Select extends Model\Document\Tag
     public $text;
 
     /**
-     * @see Document\Tag\TagInterface::getType
+     * @see TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "select";
+        return 'select';
     }
 
     /**
-     * @see Document\Tag\TagInterface::getData
+     * @see TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
@@ -50,7 +52,8 @@ class Select extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::frontend
+     * @see TagInterface::frontend
+     *
      * @return string
      */
     public function frontend()
@@ -59,8 +62,10 @@ class Select extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromResource
+     * @see TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -71,8 +76,10 @@ class Select extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromEditmode
+     * @see \TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
@@ -83,7 +90,7 @@ class Select extends Model\Document\Tag
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -95,6 +102,7 @@ class Select extends Model\Document\Tag
      * @param $document
      * @param mixed $params
      * @param null $idMapper
+     *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
@@ -103,7 +111,7 @@ class Select extends Model\Document\Tag
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {
-            throw new \Exception("cannot get values from web service import - invalid data");
+            throw new \Exception('cannot get values from web service import - invalid data');
         }
     }
 }

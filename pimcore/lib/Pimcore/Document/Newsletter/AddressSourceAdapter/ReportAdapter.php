@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -16,21 +16,20 @@ namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\Listing;
+use Pimcore\Model\DataObject\Listing;
+use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface;
 
 class ReportAdapter implements AddressSourceAdapterInterface
 {
-
-    /**
-     * @var int
-     */
-    protected $reportId;
-
     /**
      * @var string[]
      */
     protected $emailFieldName;
+
+    /**
+     * @var CustomReportAdapterInterface
+     */
+    protected $reportAdapter;
 
     /**
      * @var string[]
@@ -48,13 +47,13 @@ class ReportAdapter implements AddressSourceAdapterInterface
     protected $list;
 
     /**
-     * IAddressSourceAdapter constructor.
-     * @param $params
+     * @param $emailFieldName
+     * @param CustomReportAdapterInterface $reportAdapter
      */
-    public function __construct($params)
+    public function __construct($emailFieldName, CustomReportAdapterInterface $reportAdapter)
     {
-        $this->reportId = $params['reportId'];
-        $this->emailFieldName = $params['emailFieldName'];
+        $this->emailFieldName = $emailFieldName;
+        $this->reportAdapter = $reportAdapter;
     }
 
     /**
@@ -62,13 +61,10 @@ class ReportAdapter implements AddressSourceAdapterInterface
      */
     protected function getListing()
     {
-        $config = \Pimcore\Model\Tool\CustomReport\Config::getByName($this->reportId);
-        $configuration = $config->getDataSourceConfig();
-        $adapter = \Pimcore\Model\Tool\CustomReport\Config::getAdapter($configuration, $config);
-        $result = $adapter->getData(null, $this->emailFieldName, 'ASC', null, null);
+        $result = $this->reportAdapter->getData(null, $this->emailFieldName, 'ASC', null, null);
 
         $this->list = $result['data'];
-        $this->elementsTotal = intval($result["total"]);
+        $this->elementsTotal = intval($result['total']);
 
         $this->emailAddresses = [];
         foreach ($this->list as $row) {
@@ -103,6 +99,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
      * returns params to be set on mail for test sending
      *
      * @param string $emailAddress
+     *
      * @return SendingParamContainer
      */
     public function getParamsForTestSending($emailAddress)
@@ -133,6 +130,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
      *
      * @param $limit
      * @param $offset
+     *
      * @return SendingParamContainer[]
      */
     public function getParamsForSingleSending($limit, $offset)

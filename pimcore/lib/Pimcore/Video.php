@@ -8,31 +8,30 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore;
 
-use Pimcore\Logger;
-
 class Video
 {
-
     /**
      * @param null $adapter
+     *
      * @return bool|null|Video\Adapter
+     *
      * @throws \Exception
      */
     public static function getInstance($adapter = null)
     {
         try {
             if ($adapter) {
-                $adapterClass = "\\Pimcore\\Video\\Adapter\\" . $adapter;
+                $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
                 if (Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
-                    throw new \Exception("Video-transcode adapter `" . $adapter . "´ does not exist.");
+                    throw new \Exception('Video-transcode adapter `' . $adapter . '´ does not exist.');
                 }
             } else {
                 if ($adapter = self::getDefaultAdapter()) {
@@ -40,7 +39,7 @@ class Video
                 }
             }
         } catch (\Exception $e) {
-            Logger::crit("Unable to load video adapter: " . $e->getMessage());
+            Logger::crit('Unable to load video adapter: ' . $e->getMessage());
             throw $e;
         }
 
@@ -64,10 +63,10 @@ class Video
      */
     public static function getDefaultAdapter()
     {
-        $adapters = ["Ffmpeg"];
+        $adapters = ['Ffmpeg'];
 
         foreach ($adapters as $adapter) {
-            $adapterClass = "\\Pimcore\\Video\\Adapter\\" . $adapter;
+            $adapterClass = '\\Pimcore\\Video\\Adapter\\' . $adapter;
             if (Tool::classExists($adapterClass)) {
                 try {
                     $adapter = new $adapterClass();

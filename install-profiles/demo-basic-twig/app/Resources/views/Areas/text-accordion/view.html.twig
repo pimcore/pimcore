@@ -1,0 +1,29 @@
+{% set accordionBlock = pimcore_block('accordion') %}
+{% set id = uniqid('accordion-') %}
+
+<section class="area-text-accordion">
+    <div class="panel-group" id="{{ id }}">
+
+        {% for i in pimcore_iterate_block(accordionBlock) %}
+            {% set entryId = id ~ '-' ~ accordionBlock.getCurrent() %}
+            {% set stateClass = (editmode or (accordionBlock.getCurrent() == 0)) ? 'in' %}
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#{{ id }}" href="#{{ entryId }}">
+                            {{ pimcore_input('headline') }}
+                        </a>
+                    </h4>
+                </div>
+
+                <div id="{{ editmode ? '' : entryId }}" class="panel-collapse collapse {{ stateClass }}">
+                    <div class="panel-body">
+                        {{ pimcore_wysiwyg('text') }}
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+</section>

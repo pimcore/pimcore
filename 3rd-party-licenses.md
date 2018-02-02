@@ -8,17 +8,18 @@ License: GPLv3
 pimcore includes the GPLv3 version of the ExtJS JavaScript framework.  
 http://www.sencha.com/license/  
 
-## Zend Framework by Zend Technologies Ltd.
-License: New BSD License  
-http://framework.zend.com/license
+## Symfony 
+License: MIT License  
+http://symfony.com/license
+
+## Doctrine
+License: MIT License
+http://www.doctrine-project.org/
+https://github.com/doctrine/doctrine2/blob/master/LICENSE
 
 ## jQuery by The jQuery Project
 License: MIT or GPLv2  
 http://jquery.org/license
-
-## Symfony 
-License: MIT License  
-http://symfony.com/license
 
 ## CKEditor by Frederico Knabben
 License: LGPL / GPLv2 / MPL  
@@ -59,6 +60,11 @@ http://opensource.org/licenses/BSD-3-Clause
 ## HybridAuth
 License: MIT or GPL-3.0+
 http://hybridauth.sourceforge.net/licenses.html 
+
+## Swiftmailer
+License: MIT
+http://swiftmailer.org/
+https://github.com/swiftmailer/swiftmailer/blob/master/LICENSE
 
 ## Google APIs Client Library for PHP 
 License: Apache 2.0  
@@ -120,7 +126,17 @@ http://opensource.org/licenses/mit-license.php
 License: MIT
 http://opensource.org/licenses/mit-license.php
 
+## neitanod/forceutf8
+License: Revised BSD
+https://github.com/neitanod/forceutf8/
 
+## egulias/email-validator
+License: MIT
+https://github.com/egulias/EmailValidator
+
+## debril/rss-atom-bundle
+License: LGPL-v3
+https://github.com/alexdebril/rss-atom-bundle
 
 ## Disclaimer 
 This information has no guarantee of completeness and is subject to change.  

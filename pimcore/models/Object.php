@@ -10,22 +10,26 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace {
-// this is just an alias ;-)
-    class_alias("Pimcore\\Model\\Object\\AbstractObject", "Pimcore\\Model\\Object");
+    if (version_compare(PHP_VERSION, '7.2.0', '<')) {
+        // this is just an alias ;-)
+        class_alias('Pimcore\\Model\\DataObject\\AbstractObject', 'Pimcore\\Model\\Object');
+    }
 }
-
 
 // the following is for IDEs to support auto-complete
 
 namespace Pimcore\Model {
-    if (!\Pimcore\Tool::classExists("Pimcore\\Model\\Object")) {
-        class Object extends \Pimcore\Model\Object\AbstractObject
-        {
+    if (version_compare(PHP_VERSION, '7.2.0', '<')) {
+        if (!\Pimcore\Tool::classExists('Pimcore\\Model\\Object')) {
+            class Object extends \Pimcore\Model\DataObject\AbstractObject
+            {
+            }
         }
     }
 }

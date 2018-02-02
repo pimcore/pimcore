@@ -10,12 +10,15 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Listing;
 
+use Pimcore\Db\ZendCompatibility\Expression;
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 
@@ -24,8 +27,7 @@ use Pimcore\Model\Document;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
-    /** @var  Callback function */
+    /** @var Callback function */
     protected $onCreateQueryCallback;
 
     /**
@@ -36,13 +38,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $documents = [];
-        $select = (string) $this->getQuery(['id', "type"]);
+        $select = $this->getQuery(['id', 'type']);
 
         $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         foreach ($documentsData as $documentData) {
-            if ($documentData["type"]) {
-                if ($doc = Document::getById($documentData["id"])) {
+            if ($documentData['type']) {
+                if ($doc = Document::getById($documentData['id'])) {
                     $documents[] = $doc;
                 }
             }
@@ -55,13 +57,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @param $columns
-     * @return \Zend_Db_Select
+     *
+     * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */
     public function getQuery($columns)
     {
         $select = $this->db->select();
         $select->from(
-            [ "documents" ], $columns
+            [ 'documents' ],
+            $columns
         );
         $this->addConditions($select);
         $this->addOrder($select);
@@ -83,7 +87,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = (string) $this->getQuery(['id']);
+        $select = $this->getQuery(['id']);
         $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
 
         return $documentIds;
@@ -94,7 +98,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdPathList()
     {
-        $select = (string) $this->getQuery(['id', "CONCAT(path,`key`)"]);
+        $select = $this->getQuery(['id', 'CONCAT(path,`key`)']);
         $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         return $documentIds;
@@ -105,7 +109,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
+        $select = $this->getQuery([new Expression('COUNT(*)')]);
         $amount = (int)$this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;
@@ -116,9 +120,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
-        $select->reset(\Zend_Db_Select::LIMIT_COUNT);
-        $select = (string) $select;
+        $select = $this->getQuery([new Expression('COUNT(*)')]);
+        $select->reset(QueryBuilder::LIMIT_COUNT);
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;

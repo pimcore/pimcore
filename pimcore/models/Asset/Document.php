@@ -10,29 +10,33 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Cache;
-use Pimcore\Model;
-use Pimcore\Tool;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
  */
 class Document extends Model\Asset
 {
-
     /**
      * @var string
      */
-    public $type = "document";
+    public $type = 'document';
 
-    protected function update()
+    /**
+     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     *
+     * @throws \Exception
+     */
+    protected function update($params = [])
     {
         $this->clearThumbnails();
 
@@ -42,7 +46,7 @@ class Document extends Model\Asset
             try {
                 $pageCount = $this->readPageCount($tmpFile);
                 if ($pageCount !== null && $pageCount > 0) {
-                    $this->setCustomSetting("document_page_count", $pageCount);
+                    $this->setCustomSetting('document_page_count', $pageCount);
                 }
             } catch (\Exception $e) {
             }
@@ -50,13 +54,20 @@ class Document extends Model\Asset
             unlink($tmpFile);
         }
 
-        parent::update();
+        parent::update($params);
+    }
+
+    public function delete()
+    {
+        parent::delete();
+        $this->clearThumbnails(true);
     }
 
     /**
      * @todo: Shouldnt' this always return an int?
      *
      * @param null $path
+     *
      * @return int|null
      */
     protected function readPageCount($path = null)
@@ -67,7 +78,7 @@ class Document extends Model\Asset
         }
 
         if (!\Pimcore\Document::isAvailable()) {
-            Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . " no document adapter is available");
+            Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
 
             return null;
         }
@@ -94,7 +105,7 @@ class Document extends Model\Asset
      */
     public function getPageCount()
     {
-        if (!$pageCount = $this->getCustomSetting("document_page_count")) {
+        if (!$pageCount = $this->getCustomSetting('document_page_count')) {
             $pageCount = $this->readPageCount();
         }
 
@@ -105,12 +116,13 @@ class Document extends Model\Asset
      * @param $thumbnailName
      * @param int $page
      * @param bool $deferred $deferred deferred means that the image will be generated on-the-fly (details see below)
+     *
      * @return mixed|string
      */
     public function getImageThumbnail($thumbnailName, $page = 1, $deferred = false)
     {
         if (!\Pimcore\Document::isAvailable()) {
-            Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . " no document adapter is available");
+            Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . ' no document adapter is available');
 
             return new Document\ImageThumbnail(null);
         }
@@ -120,12 +132,13 @@ class Document extends Model\Asset
 
     /**
      * @param null $page
+     *
      * @return mixed|null
      */
     public function getText($page = null)
     {
         if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
-            $cacheKey = "asset_document_text_" . $this->getId() . "_" . ($page ? $page : "all");
+            $cacheKey = 'asset_document_text_' . $this->getId() . '_' . ($page ? $page : 'all');
             if (!$text = Cache::load($cacheKey)) {
                 $document = \Pimcore\Document::getInstance();
                 $text = $document->getText($page, $this->getFileSystemPath());
@@ -134,7 +147,7 @@ class Document extends Model\Asset
 
             return $text;
         } else {
-            Logger::error("Couldn't get text out of document " . $this->getRealFullPath() . " no document adapter is available");
+            Logger::error("Couldn't get text out of document " . $this->getRealFullPath() . ' no document adapter is available');
         }
 
         return null;
@@ -147,14 +160,17 @@ class Document extends Model\Asset
     {
         if ($this->_dataChanged || $force) {
             // video thumbnails and image previews
-            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/document-image-cache/document_" . $this->getId() . "__*");
+            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . '/document-image-cache/document_' . $this->getId() . '__*');
             if (is_array($files)) {
                 foreach ($files as $file) {
                     unlink($file);
                 }
             }
 
-            recursiveDelete($this->getImageThumbnailSavePath());
+            $files = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
+            foreach ($files as $file) {
+                recursiveDelete($file);
+            }
         }
     }
 }

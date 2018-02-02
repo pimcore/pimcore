@@ -10,23 +10,25 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
+use Zend\Paginator\Adapter\AdapterInterface;
+use Zend\Paginator\AdapterAggregateInterface;
 
 /**
+ * @method int load()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int loadIdList()
- */
-/**
  * @method \Pimcore\Model\Asset\Listing\Dao getDao()
  */
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
      * List of assets
@@ -41,21 +43,22 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @var array
      */
     public $validOrderKeys = [
-        "creationDate",
-        "modificationDate",
-        "id",
-        "filename",
-        "type",
-        "parentId",
-        "path",
-        "mimetype"
+        'creationDate',
+        'modificationDate',
+        'id',
+        'filename',
+        'type',
+        'parentId',
+        'path',
+        'mimetype'
     ];
 
     /**
      * Test if the passed key is valid
      *
      * @param string $key
-     * @return boolean
+     *
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
@@ -76,6 +79,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      * @param string $assets
+     *
      * @return $this
      */
     public function setAssets($assets)
@@ -87,7 +91,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      *
-     * Methods for \Zend_Paginator_Adapter_Interface
+     * Methods for \Zend_Paginator_Adapter_Interface | AdapterInterface
      */
 
     /**
@@ -101,6 +105,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @param int $offset
      * @param int $itemCountPerPage
+     *
      * @return Model\Asset[]
      */
     public function getItems($offset, $itemCountPerPage)
@@ -122,7 +127,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * Methods for Iterator
      */
-
     public function rewind()
     {
         $this->getAssets();

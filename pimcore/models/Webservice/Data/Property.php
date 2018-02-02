@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -20,7 +21,6 @@ use Pimcore\Model;
 
 class Property extends Model\Webservice\Data
 {
-    
     /**
      * @var string
      */
@@ -37,12 +37,12 @@ class Property extends Model\Webservice\Data
     public $type;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $inheritable;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $inherited;
 }

@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    User
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -26,12 +27,13 @@ class Folder extends Model\User\AbstractUser
     use Model\Element\ChildsCompatibilityTrait;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $hasChilds;
 
     /**
      * @param $state
+     *
      * @return $this
      */
     public function setHasChilds($state)
@@ -44,7 +46,7 @@ class Folder extends Model\User\AbstractUser
     /**
      * Returns true if the document has at least one child
      *
-     * @return boolean
+     * @return bool
      */
     public function hasChildren()
     {
@@ -52,6 +54,6 @@ class Folder extends Model\User\AbstractUser
             return $this->hasChilds;
         }
 
-        return $this->getDao()->hasChilds();
+        return $this->getDao()->hasChildren();
     }
 }

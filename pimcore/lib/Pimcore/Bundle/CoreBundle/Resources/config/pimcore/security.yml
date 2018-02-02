@@ -1,0 +1,53 @@
+security:
+    providers:
+        pimcore_admin:
+            id: Pimcore\Bundle\AdminBundle\Security\User\UserProvider
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # webdav http basic
+        # TODO check if this config is enough
+        # TODO use http_digest?
+        admin_webdav:
+            pattern: ^/admin/asset/webdav
+            provider: pimcore_admin
+            http_basic: ~
+            logout_on_user_change: true
+
+        # admin form login
+        admin:
+            anonymous: ~
+            pattern: ^/admin
+            # admin firewall is stateless as we open the admin
+            # session on demand for non-blocking parallel requests
+            stateless: true
+            provider: pimcore_admin
+            logout:
+                path:   /admin/logout
+                target: /admin/login
+                success_handler: Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler
+            guard:
+                entry_point: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
+                authenticators:
+                    - Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
+
+        webservice:
+            pattern: ^/webservice
+            stateless: true
+            provider: pimcore_admin
+            guard:
+                authenticators:
+                    - Pimcore\Bundle\AdminBundle\Security\Guard\WebserviceAuthenticator
+
+    access_control:
+        - { path: ^/admin/settings/display-custom-logo, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login/(login|lostpassword|deeplink)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, roles: ROLE_PIMCORE_USER }
+        - { path: ^/webservice, roles: ROLE_PIMCORE_USER }
+
+    role_hierarchy:
+        ROLE_PIMCORE_ADMIN: [ROLE_PIMCORE_USER]

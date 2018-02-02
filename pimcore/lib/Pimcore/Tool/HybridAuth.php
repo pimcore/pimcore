@@ -8,37 +8,35 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
 
-use Pimcore\Logger;
-
 class HybridAuth
 {
     /**
-     * @throws \Zend_Loader_Exception
+     * @throws \Exception
      */
     public static function init()
     {
-        // disable output-cache
-        $front = \Zend_Controller_Front::getInstance();
-        $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");
+        $cacheService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.full_page_cache');
+        $cacheService->disable('HybridAuth');
     }
 
     /**
      * @return mixed|null
+     *
      * @throws \Exception
      */
     public static function getConfiguration()
     {
         $config = null;
-        $configFile = \Pimcore\Config::locateConfigFile("hybridauth.php");
+        $configFile = \Pimcore\Config::locateConfigFile('hybridauth.php');
         if (is_file($configFile)) {
             $config = include($configFile);
-            $config["base_url"] = \Pimcore\Tool::getHostUrl() . "/hybridauth/endpoint";
+            $config['base_url'] = \Pimcore\Tool::getHostUrl() . '/hybridauth/endpoint';
         } else {
             throw new \Exception("HybridAuth configuration not found. Please place it into this file: $configFile");
         }
@@ -65,28 +63,20 @@ class HybridAuth
     /**
      * @param string $provider
      * @param array|null $params
+     *
      * @return \Hybrid_Provider_Adapter
      */
     public static function authenticate($provider, $params = null)
     {
         self::init();
+        static::initializeHybridAuth();
 
-        $adapter = null;
-        try {
-            static::initializeHybridAuth();
-
-            $provider = @trim(strip_tags($provider));
-            $adapter = \Hybrid_Auth::authenticate($provider, $params);
-        } catch (\Exception $e) {
-            Logger::info($e);
-        }
+        $provider = @trim(strip_tags($provider));
+        $adapter = \Hybrid_Auth::authenticate($provider, $params);
 
         return $adapter;
     }
 
-    /**
-     *
-     */
     public static function process()
     {
         self::init();

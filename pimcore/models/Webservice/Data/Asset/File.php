@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -20,7 +21,6 @@ use Pimcore\Model;
 
 class File extends Model\Webservice\Data\Asset
 {
-    
     /**
      * @var string
      */
@@ -34,7 +34,7 @@ class File extends Model\Webservice\Data\Asset
     {
         parent::map($object, $options);
         if (is_array($options)) {
-            if ($options["LIGHT"]) {
+            if ($options['LIGHT']) {
                 return;
             }
         }

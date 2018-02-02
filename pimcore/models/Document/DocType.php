@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -23,11 +24,10 @@ use Pimcore\Model;
  */
 class DocType extends Model\AbstractModel
 {
-
     /**
      * ID of the document-type
      *
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -72,24 +72,30 @@ class DocType extends Model\AbstractModel
     public $type;
 
     /**
-     * @var integer
+     * @var int
      */
     public $priority = 0;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
     /**
+     * @var bool
+     */
+    public $legacy = false;
+
+    /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
      *
-     * @param integer $id
+     * @param int $id
+     *
      * @return DocType
      */
     public static function getById($id)
@@ -136,7 +142,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -161,6 +167,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $action
+     *
      * @return $this
      */
     public function setAction($action)
@@ -172,6 +179,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $controller
+     *
      * @return $this
      */
     public function setController($controller)
@@ -182,7 +190,8 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -194,6 +203,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -205,6 +215,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $template
+     *
      * @return $this
      */
     public function setTemplate($template)
@@ -224,6 +235,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -233,9 +245,9 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-
-     /**
-     * @param integer $priority
+    /**
+     * @param int $priority
+     *
      * @return $this
      */
     public function setPriority($priority)
@@ -246,7 +258,7 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getPriority()
     {
@@ -255,6 +267,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param $module
+     *
      * @return $this
      */
     public function setModule($module)
@@ -274,6 +287,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param $modificationDate
+     *
      * @return $this
      */
     public function setModificationDate($modificationDate)
@@ -293,6 +307,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param $creationDate
+     *
      * @return $this
      */
     public function setCreationDate($creationDate)
@@ -308,5 +323,29 @@ class DocType extends Model\AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLegacy()
+    {
+        return $this->legacy;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getLegacy()
+    {
+        return $this->isLegacy();
+    }
+
+    /**
+     * @param bool $legacy
+     */
+    public function setLegacy($legacy)
+    {
+        $this->legacy = (bool) $legacy;
     }
 }

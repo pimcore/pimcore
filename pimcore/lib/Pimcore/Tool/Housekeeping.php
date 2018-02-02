@@ -8,11 +8,13 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
+
+use Pimcore\Config;
 
 class Housekeeping
 {
@@ -21,27 +23,58 @@ class Housekeeping
      */
     public static function cleanupTmpFiles($lastAccessGreaterThanDays = 90)
     {
-        $directory = new \RecursiveDirectoryIterator(PIMCORE_TEMPORARY_DIRECTORY, \FilesystemIterator::FOLLOW_SYMLINKS);
-        $filter = new \RecursiveCallbackFilterIterator($directory, function ($current, $key, $iterator) use ($lastAccessGreaterThanDays) {
+        self::deleteFilesInFolderOlderThanDays(PIMCORE_TEMPORARY_DIRECTORY, $lastAccessGreaterThanDays);
+    }
 
-            // Skip hidden files and directories.
-            if ($current->getFilename()[0] === '.' || $current->getFilename()[0] === '..') {
-                return false;
-            }
+    /**
+     * @param int $olderThanDays
+     */
+    public static function cleanupSymfonyProfilingData($olderThanDays = 4)
+    {
+        $environments = Config::getEnvironmentConfig()->getProfilerHousekeepingEnvironments();
 
+        foreach ($environments as $environment) {
+            $profilerDir = sprintf('%s/cache/%s/profiler', PIMCORE_PRIVATE_VAR, $environment);
+
+            self::deleteFilesInFolderOlderThanDays($profilerDir, $olderThanDays);
+        }
+    }
+
+    /**
+     * @param $folder
+     * @param $days
+     */
+    protected static function deleteFilesInFolderOlderThanDays($folder, $days)
+    {
+        if (!is_dir($folder)) {
+            return;
+        }
+
+        $directory = new \RecursiveDirectoryIterator($folder);
+        $filter = new \RecursiveCallbackFilterIterator($directory, function (\SplFileInfo $current, $key, $iterator) use ($days) {
             if ($current->isFile()) {
-                if ($current->getATime() < (time()-($lastAccessGreaterThanDays * 86400))) {
+                if ($current->getATime() < (time() - ($days * 86400))) {
                     return true;
                 }
             } else {
                 return true;
             }
+
+            return false;
         });
+
         $iterator = new \RecursiveIteratorIterator($filter);
 
         foreach ($iterator as $file) {
+            /**
+             * @var \SplFileInfo $file
+             */
             if ($file->isFile()) {
                 @unlink($file->getPathname());
+            }
+
+            if (is_dir_empty($file->getPath())) {
+                @rmdir($file->getPath());
             }
         }
     }

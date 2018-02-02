@@ -1,0 +1,41 @@
+_pimcore_service_robots_txt:
+    path: /robots.txt
+    defaults: { _controller: PimcoreCoreBundle:PublicServices:robotsTxt }
+
+_pimcore_service_common_files:
+    path: /{filename}
+    defaults: { _controller: PimcoreCoreBundle:PublicServices:commonFiles }
+    requirements:
+        filename: '(robots\.txt|crossdomain\.xml|favicon\.ico|browserconfig\.xml|wpad\.dat|\.crl)'
+
+_pimcore_service_common_files_apple_touch_icon:
+    path: /{filename}
+    defaults: { _controller: PimcoreCoreBundle:PublicServices:commonFiles }
+    requirements:
+        filename: 'apple\-touch\-icon.*'
+
+_pimcore_service_hybridauth:
+    path: /hybridauth/{placeholder}
+    defaults: { _controller: PimcoreCoreBundle:PublicServices:hybridauth }
+    requirements:
+        placeholder: '.*'
+
+_pimcore_service_qrcode:
+    path: /qr~-~code/{key}
+    defaults: { _controller: PimcoreCoreBundle:PublicServices:qrcode }
+    requirements:
+        key: '[a-zA-Z0-9_\-]+'
+
+_pimcore_service_thumbnail:
+    path: '{prefix}image-thumb__{assetId}__{thumbnailName}/{filename}'
+    defaults: { _controller: PimcoreCoreBundle:PublicServices:thumbnail}
+    requirements:
+        prefix: '.*'
+        assetId: '\d+'
+        thumbnailName: '[a-zA-Z0-9_\-]+'
+        filename: '.*'
+
+# auto loads routes from all bundles in Resources/config/pimcore/routing.yml
+_pimcore_bundle_auto:
+    resource: .
+    type: pimcore_bundle

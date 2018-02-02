@@ -10,31 +10,34 @@
  *
  * @category   Pimcore
  * @package    Version
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model;
 
-use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Tool\Serialize;
 use Pimcore\Config;
+use Pimcore\Event\Model\VersionEvent;
+use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Version\Dao getDao()
  */
 class Version extends AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
-     * @var integer
+     * @var int
      */
     public $cid;
 
@@ -44,7 +47,7 @@ class Version extends AbstractModel
     public $ctype;
 
     /**
-     * @var integer
+     * @var int
      */
     public $userId;
 
@@ -59,7 +62,7 @@ class Version extends AbstractModel
     public $note;
 
     /**
-     * @var integer
+     * @var int
      */
     public $date;
 
@@ -74,23 +77,23 @@ class Version extends AbstractModel
     public $public = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $serialized = false;
 
     /**
      * @var string
      */
-    public $stackTrace = "";
+    public $stackTrace = '';
 
     /**
      * @var bool
      */
     public static $disabled = false;
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Version
      */
     public static function getById($id)
@@ -123,13 +126,12 @@ class Version extends AbstractModel
         self::$disabled = false;
     }
 
-
     /**
      * @throws \Exception
      */
     public function save()
     {
-        \Pimcore::getEventManager()->trigger("version.preSave", $this);
+        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::PRE_SAVE, new VersionEvent($this));
 
         // check if versioning is disabled for this process
         if (self::$disabled) {
@@ -142,7 +144,7 @@ class Version extends AbstractModel
 
         // get stack trace
         try {
-            throw new \Exception("not a real exception ... ;-)");
+            throw new \Exception('not a real exception ... ;-)');
         } catch (\Exception $e) {
             $this->stackTrace = $e->getTraceAsString();
         }
@@ -162,7 +164,7 @@ class Version extends AbstractModel
             $dataString = Serialize::serialize($data);
 
             // revert all changed made by __sleep()
-            if (method_exists($data, "__wakeup")) {
+            if (method_exists($data, '__wakeup')) {
                 $data->__wakeup();
             }
             unset($data->_fulldump);
@@ -180,20 +182,31 @@ class Version extends AbstractModel
 
         // save data to filesystem
         if (!is_writable(dirname($this->getFilePath())) || (is_file($this->getFilePath()) && !is_writable($this->getFilePath()))) {
-            throw new \Exception("Cannot save version for element " . $this->getCid() . " with type " . $this->getCtype() . " because the file " . $this->getFilePath() . " is not writeable.");
+            throw new \Exception('Cannot save version for element ' . $this->getCid() . ' with type ' . $this->getCtype() . ' because the file ' . $this->getFilePath() . ' is not writeable.');
         } else {
             File::put($this->getFilePath(), $dataString);
 
-            // assets are kina special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
-            if ($data instanceof Asset && $data->getType() != "folder") {
-                // append binary data to version file
-                $handle = fopen($this->getBinaryFilePath(), "w", false, File::getContext());
-                $src = $data->getStream();
-                stream_copy_to_stream($src, $handle);
-                fclose($handle);
+            // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
+            if ($data instanceof Asset && $data->getType() != 'folder' && file_exists($data->getFileSystemPath())) {
+                $linked = false;
+
+                // we always try to create a hardlink onto the original file, the asset ensures that not the actual
+                // inodes get overwritten but creates new inodes if the content changes. This is done by deleting the
+                // old file first before opening a new stream -> see Asset::update()
+                if (stream_is_local($this->getBinaryFilePath()) && stream_is_local($data->getFileSystemPath())) {
+                    $linked = link($data->getFileSystemPath(), $this->getBinaryFilePath());
+                }
+
+                if (!$linked) {
+                    // append binary data to version file
+                    $handle = fopen($this->getBinaryFilePath(), 'w', false, File::getContext());
+                    $src = $data->getStream();
+                    stream_copy_to_stream($src, $handle);
+                    fclose($handle);
+                }
             }
         }
-        \Pimcore::getEventManager()->trigger("version.postSave", $this);
+        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_SAVE, new VersionEvent($this));
     }
 
     /**
@@ -201,14 +214,14 @@ class Version extends AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("version.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::PRE_DELETE, new VersionEvent($this));
 
         foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
             if (is_file($path)) {
                 @unlink($path);
             }
 
-            $compressed = $path . ".gz";
+            $compressed = $path . '.gz';
             if (is_file($compressed)) {
                 @unlink($compressed);
             }
@@ -219,7 +232,7 @@ class Version extends AbstractModel
         }
 
         $this->getDao()->delete();
-        \Pimcore::getEventManager()->trigger("version.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_DELETE, new VersionEvent($this));
     }
 
     /**
@@ -239,8 +252,8 @@ class Version extends AbstractModel
                 break;
             }
 
-            if (file_exists($path . ".gz")) {
-                $filePath = $path . ".gz";
+            if (file_exists($path . '.gz')) {
+                $filePath = $path . '.gz';
                 $zipped = true;
                 break;
             }
@@ -253,7 +266,7 @@ class Version extends AbstractModel
         }
 
         if (!$data) {
-            Logger::err("Version: cannot read version data from file system.");
+            Logger::err('Version: cannot read version data from file system.');
             $this->delete();
 
             return;
@@ -263,8 +276,20 @@ class Version extends AbstractModel
             $data = Serialize::unserialize($data);
         }
 
+        if ($data instanceof Concrete) {
+            /** @var $class ClassDefinition */
+            $class = $data->getClass();
+            $fds = $class->getFieldDefinitions();
+            foreach ($fds as $fd) {
+                if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
+                    $data->addLazyLoadedField($fd->getName());
+                    $data->addO__loadedLazyField($fd->getName());
+                }
+            }
+        }
+
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
-            $binaryHandle = fopen($this->getBinaryFilePath(), "r+", false, File::getContext());
+            $binaryHandle = fopen($this->getBinaryFilePath(), 'r+', false, File::getContext());
             $data->setStream($binaryHandle);
         } elseif ($data instanceof Asset && $data->data) {
             // this is for backward compatibility
@@ -277,7 +302,6 @@ class Version extends AbstractModel
         return $data;
     }
 
-
     /**
      * Returns the path on the file system
      *
@@ -286,7 +310,7 @@ class Version extends AbstractModel
     protected function getFilePath()
     {
         $group = floor($this->getCid() / 10000) * 10000;
-        $path = PIMCORE_VERSION_DIRECTORY . "/" . $this->getCtype() . "/g" . $group . "/" . $this->getCid() . "/" . $this->getId();
+        $path = PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/g' . $group . '/' . $this->getCid() . '/' . $this->getId();
         if (!is_dir(dirname($path))) {
             \Pimcore\File::mkdir(dirname($path));
         }
@@ -301,12 +325,12 @@ class Version extends AbstractModel
     {
 
         // compatibility
-        $compatibilityPath = $this->getLegacyFilePath() . ".bin";
+        $compatibilityPath = $this->getLegacyFilePath() . '.bin';
         if (file_exists($compatibilityPath)) {
             return $compatibilityPath;
         }
 
-        return $this->getFilePath() . ".bin";
+        return $this->getFilePath() . '.bin';
     }
 
     /**
@@ -314,20 +338,21 @@ class Version extends AbstractModel
      */
     protected function getLegacyFilePath()
     {
-        return PIMCORE_VERSION_DIRECTORY . "/" . $this->getCtype() . "/" . $this->getId();
+        return PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/' . $this->getId();
     }
 
     /**
      * the cleanup is now done in the maintenance see self::maintenanceCleanUp()
+     *
      * @deprecated
      */
     public function cleanHistory()
     {
-        if ($this->getCtype() == "document") {
+        if ($this->getCtype() == 'document') {
             $conf = Config::getSystemConfig()->documents->versions;
-        } elseif ($this->getCtype() == "asset") {
+        } elseif ($this->getCtype() == 'asset') {
             $conf = Config::getSystemConfig()->assets->versions;
-        } elseif ($this->getCtype() == "object") {
+        } elseif ($this->getCtype() == 'object') {
             $conf = Config::getSystemConfig()->objects->versions;
         } else {
             return;
@@ -351,7 +376,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getCid()
     {
@@ -359,7 +384,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getDate()
     {
@@ -367,7 +392,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -383,7 +408,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getUserId()
     {
@@ -392,6 +417,7 @@ class Version extends AbstractModel
 
     /**
      * @param $cid
+     *
      * @return $this
      */
     public function setCid($cid)
@@ -402,7 +428,8 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param integer $date
+     * @param int $date
+     *
      * @return $this
      */
     public function setDate($date)
@@ -413,7 +440,8 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -425,6 +453,7 @@ class Version extends AbstractModel
 
     /**
      * @param string $note
+     *
      * @return $this
      */
     public function setNote($note)
@@ -435,7 +464,8 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param integer $userId
+     * @param int $userId
+     *
      * @return $this
      */
     public function setUserId($userId)
@@ -464,6 +494,7 @@ class Version extends AbstractModel
 
     /**
      * @param mixed $data
+     *
      * @return $this
      */
     public function setData($data)
@@ -474,7 +505,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getSerialized()
     {
@@ -482,7 +513,8 @@ class Version extends AbstractModel
     }
 
     /**
-     * @param boolean $serialized
+     * @param bool $serialized
+     *
      * @return $this
      */
     public function setSerialized($serialized)
@@ -502,6 +534,7 @@ class Version extends AbstractModel
 
     /**
      * @param string $ctype
+     *
      * @return $this
      */
     public function setCtype($ctype)
@@ -521,6 +554,7 @@ class Version extends AbstractModel
 
     /**
      * @param User $user
+     *
      * @return $this
      */
     public function setUser($user)
@@ -548,6 +582,7 @@ class Version extends AbstractModel
 
     /**
      * @param bool $public
+     *
      * @return $this
      */
     public function setPublic($public)
@@ -557,7 +592,6 @@ class Version extends AbstractModel
         return $this;
     }
 
-
     public function maintenanceCompress()
     {
         $perIteration = 100;
@@ -565,18 +599,18 @@ class Version extends AbstractModel
         $overallCounter = 0;
 
         $list = new Version\Listing();
-        $list->setCondition("date < " . (time() - 86400*30));
-        $list->setOrderKey("date");
-        $list->setOrder("DESC");
+        $list->setCondition('date < ' . (time() - 86400 * 30));
+        $list->setOrderKey('date');
+        $list->setOrder('DESC');
         $list->setLimit($perIteration);
 
         $total = $list->getTotalCount();
-        $iterations = ceil($total/$perIteration);
+        $iterations = ceil($total / $perIteration);
 
-        for ($i=0; $i<$iterations; $i++) {
-            Logger::debug("iteration " . ($i+1) . " of " . $iterations);
+        for ($i=0; $i < $iterations; $i++) {
+            Logger::debug('iteration ' . ($i + 1) . ' of ' . $iterations);
 
-            $list->setOffset($i*$perIteration);
+            $list->setOffset($i * $perIteration);
 
             $versions = $list->load();
 
@@ -589,14 +623,11 @@ class Version extends AbstractModel
 
                     $alreadyCompressedCounter = 0;
 
-                    Logger::debug("version compressed:" . $version->getFilePath());
+                    Logger::debug('version compressed:' . $version->getFilePath());
+                    Logger::debug('Waiting 1 sec to not kill the server...');
+                    sleep(1);
                 } else {
                     $alreadyCompressedCounter++;
-                }
-
-                if ($overallCounter % 10 == 0) {
-                    Logger::debug("Waiting 5 secs to not kill the server...");
-                    sleep(5);
                 }
             }
 
@@ -607,36 +638,33 @@ class Version extends AbstractModel
             // is would be very unusual that older versions are not already compressed, so we assume that only new
             // versions need to be compressed, that's not perfect but a compromise we can (hopefully) live with.
             if ($alreadyCompressedCounter > 100) {
-                Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
+                Logger::debug('Over ' . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
 
                 return;
             }
         }
     }
 
-    /**
-     *
-     */
     public function maintenanceCleanUp()
     {
-        $conf["document"] = Config::getSystemConfig()->documents->versions;
-        $conf["asset"] = Config::getSystemConfig()->assets->versions;
-        $conf["object"] = Config::getSystemConfig()->objects->versions;
+        $conf['document'] = Config::getSystemConfig()->documents->versions;
+        $conf['asset'] = Config::getSystemConfig()->assets->versions;
+        $conf['object'] = Config::getSystemConfig()->objects->versions;
 
         $elementTypes = [];
 
         foreach ($conf as $elementType => $tConf) {
             if (intval($tConf->days) > 0) {
-                $versioningType = "days";
+                $versioningType = 'days';
                 $value = intval($tConf->days);
             } else {
-                $versioningType = "steps";
+                $versioningType = 'steps';
                 $value = intval($tConf->steps);
             }
 
             if ($versioningType) {
                 $elementTypes[] = [
-                    "elementType" => $elementType,
+                    'elementType' => $elementType,
                     $versioningType => $value
                 ];
             }
@@ -646,12 +674,12 @@ class Version extends AbstractModel
 
         while (true) {
             $versions = $this->getDao()->maintenanceGetOutdatedVersions($elementTypes, $ignoredIds);
-            if (count($versions) ==  0) {
+            if (count($versions) == 0) {
                 break;
             }
             $counter = 0;
 
-            Logger::debug("versions to check: " . count($versions));
+            Logger::debug('versions to check: ' . count($versions));
             if (is_array($versions) && !empty($versions)) {
                 $totalCount = count($versions);
                 foreach ($versions as $index => $id) {
@@ -659,7 +687,7 @@ class Version extends AbstractModel
                         $version = Version::getById($id);
                     } catch (\Exception $e) {
                         $ignoredIds[] = $id;
-                        Logger::debug("Version with " . $id . " not found\n");
+                        Logger::debug('Version with ' . $id . " not found\n");
                         continue;
                     }
                     $counter++;
@@ -670,28 +698,34 @@ class Version extends AbstractModel
                         continue;
                     }
 
-                    if ($version->getCtype() == "document") {
+                    // do not delete versions referenced in the scheduler
+                    if ($this->getDao()->isVersionUsedInScheduler($version)) {
+                        $ignoredIds[] = $version->getId();
+                        continue;
+                    }
+
+                    if ($version->getCtype() == 'document') {
                         $element = Document::getById($version->getCid());
-                    } elseif ($version->getCtype() == "asset") {
+                    } elseif ($version->getCtype() == 'asset') {
                         $element = Asset::getById($version->getCid());
-                    } elseif ($version->getCtype() == "object") {
-                        $element = Object::getById($version->getCid());
+                    } elseif ($version->getCtype() == 'object') {
+                        $element = DataObject::getById($version->getCid());
                     }
 
                     if ($element instanceof ElementInterface) {
-                        Logger::debug("currently checking Element-ID: " . $element->getId() . " Element-Type: " . Element\Service::getElementType($element) . " in cycle: " . $counter . "/" . $totalCount);
+                        Logger::debug('currently checking Element-ID: ' . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element) . ' in cycle: ' . $counter . '/' . $totalCount);
 
                         if ($element->getModificationDate() >= $version->getDate()) {
                             // delete version if it is outdated
-                            Logger::debug("delete version: " . $version->getId() . " because it is outdated");
+                            Logger::debug('delete version: ' . $version->getId() . ' because it is outdated');
                             $version->delete();
                         } else {
                             $ignoredIds[] = $version->getId();
-                            Logger::debug("do not delete version (" . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . " Element-Type: " . Element\Service::getElementType($element));
+                            Logger::debug('do not delete version (' . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element));
                         }
                     } else {
                         // delete version if the corresponding element doesn't exist anymore
-                        Logger::debug("delete version (" . $version->getId() . ") because the corresponding element doesn't exist anymore");
+                        Logger::debug('delete version (' . $version->getId() . ") because the corresponding element doesn't exist anymore");
                         $version->delete();
                     }
 

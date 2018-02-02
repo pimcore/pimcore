@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -54,6 +54,7 @@ class ConsoleColorFormatter extends LineFormatter
      * Formats a log record.
      *
      * @param  array $record A record to format
+     *
      * @return mixed The formatted record
      */
     public function format(array $record)

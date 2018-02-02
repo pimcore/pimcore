@@ -8,27 +8,27 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
 
 use Pimcore\Document\Newsletter\SendingParamContainer;
-use Pimcore\Mail;
-use Pimcore\Tool;
-use Pimcore\Model\Object;
-use Pimcore\Model\Document;
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Mail;
+use Pimcore\Model;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
+use Pimcore\Tool;
 
 class Newsletter
 {
-    const SENDING_MODE_BATCH = "batch";
-    const SENDING_MODE_SINGLE = "single";
+    const SENDING_MODE_BATCH = 'batch';
+    const SENDING_MODE_SINGLE = 'single';
 
     /**
-     * @var Object\ClassDefinition
+     * @var DataObject\ClassDefinition
      */
     protected $class;
 
@@ -36,6 +36,7 @@ class Newsletter
      * @param Document\Newsletter $newsletterDocument
      * @param SendingParamContainer|null $sendingContainer
      * @param string|null $hostUrl
+     *
      * @return Mail
      */
     public static function prepareMail(Document\Newsletter $newsletterDocument, SendingParamContainer $sendingContainer = null, $hostUrl = null)
@@ -44,7 +45,7 @@ class Newsletter
         $mail->setIgnoreDebugMode(true);
 
         if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
-            $mail->init("newsletter");
+            $mail->init('newsletter');
         }
 
         if (!Tool::getHostUrl() && $hostUrl) {
@@ -63,24 +64,28 @@ class Newsletter
         // render the document and rewrite the links (if analytics is enabled)
         if ($newsletterDocument->getEnableTrackingParameters()) {
             if ($contentHTML) {
-                include_once("simple_html_dom.php");
+                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
 
                 $html = str_get_html($contentHTML);
                 if ($html) {
-                    $links = $html->find("a");
+                    $links = $html->find('a');
                     foreach ($links as $link) {
-                        if (preg_match("/^(mailto)/", trim(strtolower($link->href)))) {
+                        if (preg_match('/^(mailto|#)/', trim(strtolower($link->href)))) {
+                            // No tracking for mailto and hash only links
                             continue;
                         }
-
-                        $glue = "?";
-                        if (strpos($link->href, "?")) {
-                            $glue = "&";
+                        $urlParts = parse_url($link->href);
+                        $glue = '?';
+                        $params = 'utm_source=' . $newsletterDocument->getTrackingParameterSource() .
+                                    '&utm_medium=' . $newsletterDocument->getTrackingParameterMedium() .
+                                    '&utm_campaign=' . $newsletterDocument->getTrackingParameterName();
+                        if (isset($urlParts['query'])) {
+                            $glue = '&';
                         }
-                        $link->href = $link->href . $glue .
-                            "utm_source=" . $newsletterDocument->getTrackingParameterSource() .
-                            "&utm_medium=" . $newsletterDocument->getTrackingParameterMedium() .
-                            "&utm_campaign=" . $newsletterDocument->getTrackingParameterName();
+                        $link->href = preg_replace('/[#].+$/', '', $link->href).$glue.$params;
+                        if (isset($urlParts['fragment'])) {
+                            $link->href .= '#'.$urlParts['fragment'];
+                        }
                     }
 
                     $contentHTML = $html->save();
@@ -109,47 +114,55 @@ class Newsletter
         $mailAddress = $sendingContainer->getEmail();
         if (!empty($mailAddress)) {
             $mail->setTo($mailAddress);
-            $mail->sendWithoutRendering();
 
-            Logger::info("Sent newsletter to: " . self::obfuscateEmail($mailAddress) . " [" . $mail->getDocument()->getId() . "]");
+            $mailer = null;
+            //check if newsletter specific mailer is needed
+            if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+                $mailer = \Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
+            }
+
+            $mail->sendWithoutRendering($mailer);
+
+            Logger::info('Sent newsletter to: ' . self::obfuscateEmail($mailAddress) . ' [' . $mail->getDocument()->getId() . ']');
         } else {
-            Logger::warn("No E-Mail Address given - cannot send mail. [" . $mail->getDocument()->getId() . "]");
+            Logger::warn('No E-Mail Address given - cannot send mail. [' . $mail->getDocument()->getId() . ']');
         }
     }
 
     /**
      * @param $email
+     *
      * @return mixed
      */
     protected static function obfuscateEmail($email)
     {
-        $email = substr_replace($email, ".xxx", strrpos($email, "."));
+        $email = substr_replace($email, '.xxx', strrpos($email, '.'));
 
         return $email;
     }
 
     /**
      * @param Model\Tool\Newsletter\Config $newsletter
-     * @param Object\Concrete $object
+     * @param DataObject\Concrete $object
      * @param null $emailAddress
      * @param null $hostUrl
      */
     public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null)
     {
         $params = [
-            "gender" => $object->getGender(),
+            'gender' => $object->getGender(),
             'firstname' => $object->getFirstname(),
             'lastname' => $object->getLastname(),
-            "email" => $object->getEmail(),
-            'token' => $object->getProperty("token"),
-            "object" => $object
+            'email' => $object->getEmail(),
+            'token' => $object->getProperty('token'),
+            'object' => $object
         ];
 
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
 
         if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
-            $mail->init("newsletter");
+            $mail->init('newsletter');
         }
 
         if (!Tool::getHostUrl() && $hostUrl) {
@@ -167,21 +180,21 @@ class Newsletter
         // render the document and rewrite the links (if analytics is enabled)
         if ($newsletter->getGoogleAnalytics()) {
             if ($content = $mail->getBodyHtmlRendered()) {
-                include_once("simple_html_dom.php");
+                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
 
                 $html = str_get_html($content);
                 if ($html) {
-                    $links = $html->find("a");
+                    $links = $html->find('a');
                     foreach ($links as $link) {
-                        if (preg_match("/^(mailto)/", trim(strtolower($link->href)))) {
+                        if (preg_match('/^(mailto)/', trim(strtolower($link->href)))) {
                             continue;
                         }
 
-                        $glue = "?";
-                        if (strpos($link->href, "?")) {
-                            $glue = "&";
+                        $glue = '?';
+                        if (strpos($link->href, '?')) {
+                            $glue = '&';
                         }
-                        $link->href = $link->href . $glue . "utm_source=Newsletter&utm_medium=Email&utm_campaign=" . $newsletter->getName();
+                        $link->href = $link->href . $glue . 'utm_source=Newsletter&utm_medium=Email&utm_campaign=' . $newsletter->getName();
                     }
                     $content = $html->save();
 
@@ -198,20 +211,21 @@ class Newsletter
 
     /**
      * @param null $classId
+     *
      * @throws \Exception
      */
     public function __construct($classId = null)
     {
         $class = null;
         if (is_string($classId)) {
-            $class = Object\ClassDefinition::getByName($classId);
+            $class = DataObject\ClassDefinition::getByName($classId);
         } elseif (is_int($classId)) {
-            $class = Object\ClassDefinition::getById($classId);
+            $class = DataObject\ClassDefinition::getById($classId);
         } elseif ($classId !== null) {
-            throw new \Exception("No valid class identifier given (class name or ID)");
+            throw new \Exception('No valid class identifier given (class name or ID)');
         }
 
-        if ($class instanceof Object\ClassDefinition) {
+        if ($class instanceof DataObject\ClassDefinition) {
             $this->setClass($class);
         }
     }
@@ -221,20 +235,21 @@ class Newsletter
      */
     protected function getClassName()
     {
-        return "\\Pimcore\\Model\\Object\\" . ucfirst($this->getClass()->getName());
+        return '\\Pimcore\\Model\\DataObject\\' . ucfirst($this->getClass()->getName());
     }
 
     /**
      * @param array $params
+     *
      * @return bool
      */
     public function checkParams($params)
     {
-        if (!array_key_exists("email", $params)) {
+        if (!array_key_exists('email', $params)) {
             return false;
         }
 
-        if (strlen($params["email"]) < 6 || !strpos($params["email"], "@") || !strpos($params["email"], ".")) {
+        if (strlen($params['email']) < 6 || !strpos($params['email'], '@') || !strpos($params['email'], '.')) {
             return false;
         }
 
@@ -243,7 +258,9 @@ class Newsletter
 
     /**
      * @param $params
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function subscribe($params)
@@ -253,7 +270,7 @@ class Newsletter
         $object = new $className;
 
         // check for existing e-mail
-        $existingObject = $className::getByEmail($params["email"], 1);
+        $existingObject = $className::getByEmail($params['email'], 1);
         if ($existingObject) {
             // if there's an existing user with this email address, do not overwrite the contents, but create a new
             // version which will be published as soon as the contact gets verified (token/email)
@@ -262,7 +279,7 @@ class Newsletter
             //throw new \Exception("email address '" . $params["email"] . "' already exists");
         }
 
-        if (!array_key_exists("email", $params)) {
+        if (!array_key_exists('email', $params)) {
             throw new \Exception("key 'email' is a mandatory parameter");
         }
 
@@ -278,20 +295,20 @@ class Newsletter
         $object->setUserModification(0);
         $object->setUserOwner(0);
         $object->setPublished(true);
-        $object->setKey(\Pimcore\File::getValidFilename($object->getEmail() . "~" . substr(uniqid(), -3)));
+        $object->setKey(\Pimcore\File::getValidFilename($object->getEmail() . '~' . substr(uniqid(), -3)));
 
         if (!$onlyCreateVersion) {
             $object->save();
         }
 
         // generate token
-        $token = base64_encode(\Zend_Json::encode([
-            "salt" => md5(microtime()),
-            "email" => $object->getEmail(),
-            "id" => $object->getId()
+        $token = base64_encode(json_encode([
+            'salt' => md5(microtime()),
+            'email' => $object->getEmail(),
+            'id' => $object->getId()
         ]));
-        $token = str_replace("=", "~", $token); // base64 can contain = which isn't safe in URL's
-        $object->setProperty("token", "text", $token);
+        $token = str_replace('=', '~', $token); // base64 can contain = which isn't safe in URL's
+        $object->setProperty('token', 'text', $token);
 
         if (!$onlyCreateVersion) {
             $object->save();
@@ -299,7 +316,7 @@ class Newsletter
             $object->saveVersion(true, true);
         }
 
-        $this->addNoteOnObject($object, "subscribe");
+        $this->addNoteOnObject($object, 'subscribe');
 
         return $object;
     }
@@ -308,17 +325,18 @@ class Newsletter
      * @param $object
      * @param $mailDocument
      * @param array $params
+     *
      * @throws \Exception
      */
     public function sendConfirmationMail($object, $mailDocument, $params = [])
     {
         $defaultParameters = [
-            "gender" => $object->getGender(),
+            'gender' => $object->getGender(),
             'firstname' => $object->getFirstname(),
             'lastname' => $object->getLastname(),
-            "email" => $object->getEmail(),
-            'token' => $object->getProperty("token"),
-            "object" => $object
+            'email' => $object->getEmail(),
+            'token' => $object->getProperty('token'),
+            'object' => $object
         ];
 
         $params = array_merge($defaultParameters, $params);
@@ -332,23 +350,23 @@ class Newsletter
 
     /**
      * @param $token
+     *
      * @return bool
-     * @throws \Zend_Json_Exception
      */
     public function getObjectByToken($token)
     {
         $originalToken = $token;
-        $token = str_replace("~", "=", $token); // base64 can contain = which isn't safe in URL's
+        $token = str_replace('~', '=', $token); // base64 can contain = which isn't safe in URL's
 
-        $data = \Zend_Json::decode(base64_decode($token));
+        $data = json_decode(base64_decode($token), true);
         if ($data) {
-            if ($object = Object::getById($data["id"])) {
+            if ($object = DataObject::getById($data['id'])) {
                 if ($version = $object->getLatestVersion()) {
                     $object = $version->getData();
                 }
 
-                if ($object->getProperty("token") == $originalToken) {
-                    if ($object->getEmail() == $data["email"]) {
+                if ($object->getProperty('token') == $originalToken) {
+                    if ($object->getEmail() == $data['email']) {
                         return $object;
                     }
                 }
@@ -360,6 +378,7 @@ class Newsletter
 
     /**
      * @param string $token
+     *
      * @return bool
      */
     public function confirm($token)
@@ -374,7 +393,7 @@ class Newsletter
             $object->setNewsletterConfirmed(true);
             $object->save();
 
-            $this->addNoteOnObject($object, "confirm");
+            $this->addNoteOnObject($object, 'confirm');
 
             return true;
         }
@@ -384,6 +403,7 @@ class Newsletter
 
     /**
      * @param string $token
+     *
      * @return bool
      */
     public function unsubscribeByToken($token)
@@ -398,6 +418,7 @@ class Newsletter
 
     /**
      * @param string $email
+     *
      * @return bool
      */
     public function unsubscribeByEmail($email)
@@ -415,9 +436,9 @@ class Newsletter
         return false;
     }
 
-
     /**
      * @param $object
+     *
      * @return bool
      */
     public function unsubscribe($object)
@@ -426,7 +447,7 @@ class Newsletter
             $object->setNewsletterActive(false);
             $object->save();
 
-            $this->addNoteOnObject($object, "unsubscribe");
+            $this->addNoteOnObject($object, 'unsubscribe');
 
             return true;
         }
@@ -443,13 +464,13 @@ class Newsletter
         $note = new Model\Element\Note();
         $note->setElement($object);
         $note->setDate(time());
-        $note->setType("newsletter");
+        $note->setType('newsletter');
         $note->setTitle($title);
         $note->setUser(0);
         $note->setData([
-            "ip" => [
-                "type" => "text",
-                "data" => Tool::getClientIp()
+            'ip' => [
+                'type' => 'text',
+                'data' => Tool::getClientIp()
             ]
         ]);
         $note->save();
@@ -460,12 +481,13 @@ class Newsletter
      * exists in the database.
      *
      * @param array $params
+     *
      * @return bool
      */
     public function isEmailExists($params)
     {
         $className = $this->getClassName();
-        $existingObject = $className::getByEmail($params["email"], 1);
+        $existingObject = $className::getByEmail($params['email'], 1);
         if ($existingObject) {
             return true;
         }
@@ -474,7 +496,7 @@ class Newsletter
     }
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param DataObject\ClassDefinition $class
      */
     public function setClass($class)
     {
@@ -482,7 +504,7 @@ class Newsletter
     }
 
     /**
-     * @return Object\ClassDefinition
+     * @return DataObject\ClassDefinition
      */
     public function getClass()
     {

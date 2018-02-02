@@ -1,0 +1,75 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    {{ include('Includes/content-default.html.twig') }}
+
+    {% if not success %}
+
+        {# see comment on objectForm template regarding the form theme #}
+        {% form_theme form 'Form/default.html.twig' %}
+
+        {{ form_start(form, {
+            attr: {
+                class: 'form-horizontal',
+                role: 'form'
+            }
+        }) }}
+
+        <div class="row">
+            <div class="col-md-9">
+                {{ form_row(form.gender) }}
+                {{ form_row(form.firstname) }}
+                {{ form_row(form.lastname) }}
+                {{ form_row(form.email) }}
+            </div>
+            <div class="col-md-3">
+                <h4>{{ "Click one of the following logos to auto-fill the form with your data"|trans }}</h4>
+                <a href="?provider=Facebook"><img style="max-width: 20%;" src="/static/img/social-icons/facebook.png"></a>
+                <a href="?provider=Twitter"><img style="max-width: 20%;" src="/static/img/social-icons/twitter.png"></a>
+                <a href="?provider=Google"><img style="max-width: 20%;" src="/static/img/social-icons/google.png"></a>
+                <a href="?provider=Google"><img style="max-width: 20%;" src="/static/img/social-icons/youtube.png"></a>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="form-group">
+                <h2>{{ form.message.vars['label'] }}</h2>
+
+                {{ form_widget(form.message, {
+                    attr: {
+                        style: 'height: 300px',
+                        class: 'form-control'
+                    }
+                }) }}
+            </div>
+        </div>
+
+        <br/>
+
+        <div class="col-lg-12 form-group">
+            {{ form_widget(form.submit, {
+                attr: {
+                    class: 'btn btn-default'
+                }
+            }) }}
+        </div>
+
+        {{ form_end(form) }}
+
+    {% else %}
+
+        <h2>{{ "Thank you very much"|trans }}</h2>
+        <p>
+            We received the following information from you:
+
+            <br/>
+            <br/>
+
+            <b>Firstname: </b> {{ firstname }}<br/>
+            <b>Lastname: </b> {{ lastname }}<br/>
+            <b>E-Mail: </b> {{ email }}<br/>
+        </p>
+
+    {% endif %}
+
+{% endblock %}

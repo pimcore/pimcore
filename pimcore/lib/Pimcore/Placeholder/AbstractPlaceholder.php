@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -34,9 +34,9 @@ abstract class AbstractPlaceholder
 
     /**
      * The config object passed from the placeholder
-     * If no config object was passed a empty \Zend_Config_Json is passed
+     * If no config object was passed a empty \Pimcore\Config\Config is passed
      *
-     * @var \Zend_Config_Json
+     * @var \Pimcore\Config\Config
      */
     protected $placeholderConfig = null;
 
@@ -62,12 +62,13 @@ abstract class AbstractPlaceholder
     protected $contentString = null;
 
     /**
-     * @var \Zend_Locale
+     * @var string
      */
     protected $locale = null;
 
     /**
      * @param $string
+     *
      * @return $this
      */
     public function setPlaceholderString($string)
@@ -87,6 +88,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $key
+     *
      * @return $this
      */
     public function setPlaceholderKey($key)
@@ -107,10 +109,11 @@ abstract class AbstractPlaceholder
     }
 
     /**
-     * @param \Zend_Config_Json $config
+     * @param \Pimcore\Config\Config $config
+     *
      * @return $this
      */
-    public function setPlaceholderConfig(\Zend_Config_Json $config)
+    public function setPlaceholderConfig(\Pimcore\Config\Config $config)
     {
         $this->placeholderConfig = $config;
 
@@ -120,7 +123,7 @@ abstract class AbstractPlaceholder
     /**
      * Returns the Placeholder config object
      *
-     * @return \Zend_Config_Json
+     * @return \Pimcore\Config\Config
      */
     public function getPlaceholderConfig()
     {
@@ -129,6 +132,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $params
+     *
      * @return $this
      */
     public function setParams($params)
@@ -154,6 +158,7 @@ abstract class AbstractPlaceholder
      * Returns a specific parameter
      *
      * @param string $key
+     *
      * @return mixed
      */
     public function getParam($key)
@@ -167,6 +172,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $contentString
+     *
      * @return $this
      */
     public function setContentString($contentString)
@@ -200,6 +206,7 @@ abstract class AbstractPlaceholder
 
     /**
      * @param $document
+     *
      * @return $this
      */
     public function setDocument($document)
@@ -224,7 +231,7 @@ abstract class AbstractPlaceholder
     /**
      * Returns the current locale
      *
-     * @return \Zend_Locale
+     * @return string
      */
     public function getLocale()
     {
@@ -239,28 +246,26 @@ abstract class AbstractPlaceholder
      * Try to set the locale from different sources
      *
      * @param $locale
+     *
      * @return $this
      */
     public function setLocale($locale = null)
     {
-        if ($locale instanceof \Zend_Locale) {
+        if (is_string($locale)) {
             $this->locale = $locale;
-        } elseif (is_string($locale)) {
-            $this->locale = new \Zend_Locale($locale);
         } elseif ($this->getParam('locale') || $this->getParam('language')) {
             $this->setLocale(($this->getParam('locale')) ? $this->getParam('locale') : $this->getParam('language'));
         } else {
             $document = $this->getDocument();
-            if ($document instanceof Document && $document->getProperty("language")) {
-                $this->setLocale($document->getProperty("language"));
+            if ($document instanceof Document && $document->getProperty('language')) {
+                $this->setLocale($document->getProperty('language'));
             }
 
-            if (is_null($this->locale)) { //last chance -> get it from registry or use the first Language defined in the system settings
-                if (\Zend_Registry::isRegistered("Zend_Locale")) {
-                    $this->locale = \Zend_Registry::get("Zend_Locale");
-                } else {
+            if (is_null($this->locale)) { //last chance -> get it from service container or use the first Language defined in the system settings
+                $this->locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                if (!$this->locale) {
                     list($language) = \Pimcore\Tool::getValidLanguages();
-                    $this->locale = new \Zend_Locale($language);
+                    $this->locale = $language;
                 }
             }
         }
@@ -288,11 +293,11 @@ abstract class AbstractPlaceholder
         return '';
     }
 
-
     /**
      * Has to return an appropriate value for a test replacement
      *
      * @abstract
+     *
      * @return string
      */
     abstract public function getTestValue();
@@ -301,6 +306,7 @@ abstract class AbstractPlaceholder
      * Has to return the placeholder with the corresponding value
      *
      * @abstract
+     *
      * @return string
      */
     abstract public function getReplacement();

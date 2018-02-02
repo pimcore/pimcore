@@ -8,12 +8,14 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Console;
 
+use Pimcore\Event\System\ConsoleEvent;
+use Pimcore\Event\SystemEvents;
 use Symfony\Component\Console\Command\Command;
 
 trait ConsoleCommandPluginTrait
@@ -22,25 +24,21 @@ trait ConsoleCommandPluginTrait
 
     /**
      * Handle system.console.init event and register console commands to the console application
-     *
-     * @throws \Zend_EventManager_Exception_InvalidArgumentException
      */
     public function initConsoleCommands()
     {
         if (static::isCli()) {
-            \Pimcore::getEventManager()->attach('system.console.init', [$this, 'handleSystemConsoleInitEvent']);
+            \Pimcore::getEventDispatcher()->addListener(SystemEvents::CONSOLE_INIT, [$this, 'handleSystemConsoleInitEvent']);
         }
     }
 
     /**
-     * system.console.init event handler
-     *
-     * @param \Zend_EventManager_Event $e
+     * @param ConsoleEvent $e
      */
-    public function handleSystemConsoleInitEvent(\Zend_EventManager_Event $e)
+    public function handleSystemConsoleInitEvent(ConsoleEvent $e)
     {
         /** @var Application $application */
-        $application = $e->getTarget();
+        $application = $e->getApplication();
         $application->addCommands($this->getConsoleCommands());
     }
 

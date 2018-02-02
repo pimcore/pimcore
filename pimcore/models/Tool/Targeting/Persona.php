@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Tool
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -19,11 +20,12 @@ namespace Pimcore\Model\Tool\Targeting;
 use Pimcore\Model;
 
 /**
+ * @deprecated Use TargetGroup instead. Will be removed in Pimcore 6.
+ *
  * @method \Pimcore\Model\Tool\Targeting\Persona\Dao getDao()
  */
 class Persona extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -37,7 +39,7 @@ class Persona extends Model\AbstractModel
     /**
      * @var string
      */
-    public $description = "";
+    public $description = '';
 
     /**
      * @var int
@@ -50,12 +52,15 @@ class Persona extends Model\AbstractModel
     public $active = true;
 
     /**
+     * @deprecated Conditions are not supported anymore and will not ne persisted. Property will be removed in Pimcore 6.
+     *
      * @var array
      */
     public $conditions = [];
 
     /**
      * @param $id
+     *
      * @return null|Persona
      */
     public static function getById($id)
@@ -73,19 +78,18 @@ class Persona extends Model\AbstractModel
 
     /**
      * add the persona to the current user
+     *
      * @param $id
      */
     public static function fire($id)
     {
-        $front = \Zend_Controller_Front::getInstance();
-        $plugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Targeting");
-        if ($plugin instanceof \Pimcore\Controller\Plugin\Targeting) {
-            $plugin->addPersona($id);
-        }
+        $targetingService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.targeting');
+        $targetingService->addPersona($id);
     }
 
     /**
      * @param $id
+     *
      * @return bool
      */
     public static function isIdActive($id)
@@ -100,6 +104,7 @@ class Persona extends Model\AbstractModel
 
     /**
      * @param $description
+     *
      * @return $this
      */
     public function setDescription($description)
@@ -119,6 +124,7 @@ class Persona extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -138,6 +144,7 @@ class Persona extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -155,9 +162,11 @@ class Persona extends Model\AbstractModel
         return $this->name;
     }
 
-
     /**
+     * @deprecated Conditions are not supported anymore and will not ne persisted. Method will be removed in Pimcore 6.
+     *
      * @param $conditions
+     *
      * @return $this
      */
     public function setConditions($conditions)
@@ -171,6 +180,8 @@ class Persona extends Model\AbstractModel
     }
 
     /**
+     * @deprecated Conditions are not supported anymore and will not ne persisted. Method will be removed in Pimcore 6.
+     *
      * @return array
      */
     public function getConditions()
@@ -195,7 +206,7 @@ class Persona extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $active
+     * @param bool $active
      */
     public function setActive($active)
     {
@@ -203,7 +214,7 @@ class Persona extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getActive()
     {

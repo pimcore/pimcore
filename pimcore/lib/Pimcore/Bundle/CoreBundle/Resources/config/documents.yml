@@ -1,0 +1,95 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # DOCUMENT TAG HANDLING (EDITABLES)
+    #
+
+    # the used naming strategy will be aliased to "pimcore.document.tag.naming.strategy" by the extension based on
+    # the pimcore.documents.editables.naming_strategy config value
+    Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface: '@pimcore.document.tag.naming.strategy'
+
+    pimcore.document.tag.naming.strategy.legacy:
+        class: Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy
+
+    pimcore.document.tag.naming.strategy.nested:
+        class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
+
+    pimcore.document.tag.block_state_stack:
+        alias: Pimcore\Document\Tag\Block\BlockStateStack
+        public: true
+
+    Pimcore\Document\Tag\Block\BlockStateStack: ~
+
+    # get default tag handler when type hinting against interface
+    Pimcore\Document\Tag\TagHandlerInterface: '@Pimcore\Document\Tag\DelegatingTagHandler'
+
+    # public alias to delegating tag handler
+    pimcore.document.tag.handler:
+        alias: Pimcore\Document\Tag\DelegatingTagHandler
+        public: true
+
+    # delegating tag handler holds a collection of tag handlers it delegates to (e.g. default and legacy)
+    Pimcore\Document\Tag\DelegatingTagHandler:
+        class: Pimcore\Document\Tag\DelegatingTagHandler
+        calls:
+            - [addHandler, ['@Pimcore\Document\Tag\TagHandler']]
+
+    # default tag handler rendering pimcore5+ tags
+    Pimcore\Document\Tag\TagHandler:
+        public: false
+        arguments:
+            $templating: '@templating'
+            $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
+        calls:
+            - [setResponseStack, ['@Pimcore\Http\ResponseStack']] # TODO Pimcore 6 add as constructor dependency
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: pimcore }
+
+
+    #
+    # AREABRICKS
+    #
+
+    pimcore.area.brick_manager: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+
+    # scoped container containing only the registered area bricks
+    # will be configured in areabrick pass
+    pimcore.document.areabrick.brick_locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        public: false
+        tags: ['container.service_locator']
+
+    Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+    Pimcore\Extension\Document\Areabrick\AreabrickManager:
+        arguments:
+            $container: '@pimcore.document.areabrick.brick_locator'
+
+
+    #
+    # DOCUMENT RELATED SERVICES
+    #
+
+    # TODO inject user?
+    Pimcore\Model\Document\Service:
+        public: true
+
+    Pimcore\Document\Renderer\DocumentRenderer:
+        arguments:
+            $fragmentRenderer: '@fragment.renderer.inline'
+
+
+    #
+    # DOCUMENT TAG MIGRATION
+    #
+
+    pimcore.document.tag.naming.migration.strategy.analyze:
+        class: Pimcore\Document\Tag\NamingStrategy\Migration\AnalyzeMigrationStrategy
+        arguments:
+            $db: '@database_connection'
+
+    pimcore.document.tag.naming.migration.strategy.render:
+        class: Pimcore\Document\Tag\NamingStrategy\Migration\RenderMigrationStrategy

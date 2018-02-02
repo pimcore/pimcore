@@ -10,20 +10,22 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Model;
+use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
-class Block extends Model\Document\Tag
+class Block extends Model\Document\Tag implements BlockInterface
 {
-
     /**
      * Contains an array of indices, which represent the order of the elements in the block
      *
@@ -34,7 +36,7 @@ class Block extends Model\Document\Tag
     /**
      * Current step of the block while iteration
      *
-     * @var integer
+     * @var int
      */
     public $current = 0;
 
@@ -44,16 +46,18 @@ class Block extends Model\Document\Tag
     public $suffixes = [];
 
     /**
-     * @see Document\Tag\TagInterface::getType
+     * @see TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "block";
+        return 'block';
     }
 
     /**
-     * @see Document\Tag\TagInterface::getData
+     * @see TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
@@ -62,7 +66,7 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::admin
+     * @see TagInterface::admin
      */
     public function admin()
     {
@@ -70,7 +74,7 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::frontend
+     * @see TagInterface::frontend
      */
     public function frontend()
     {
@@ -79,8 +83,10 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromResource
+     * @see TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -91,8 +97,10 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromEditmode
+     * @see TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
@@ -107,8 +115,8 @@ class Block extends Model\Document\Tag
      */
     public function setDefault()
     {
-        if (empty($this->indices) && isset($this->options["default"]) && $this->options["default"]) {
-            for ($i = 0; $i < intval($this->options["default"]); $i++) {
+        if (empty($this->indices) && isset($this->options['default']) && $this->options['default']) {
+            for ($i = 0; $i < intval($this->options['default']); $i++) {
                 $this->indices[$i] = $i + 1;
             }
         }
@@ -118,12 +126,13 @@ class Block extends Model\Document\Tag
 
     /**
      * Loops through the block
-     * @return boolean
+     *
+     * @return bool
      */
     public function loop()
     {
         $manual = false;
-        if (array_key_exists("manual", $this->options) && $this->options["manual"] == true) {
+        if (array_key_exists('manual', $this->options) && $this->options['manual'] == true) {
             $manual = true;
         }
 
@@ -140,7 +149,7 @@ class Block extends Model\Document\Tag
             }
         }
 
-        if ($this->current < count($this->indices) && $this->current < $this->options["limit"]) {
+        if ($this->current < count($this->indices) && $this->current < $this->options['limit']) {
             if (!$manual) {
                 $this->blockConstruct();
                 $this->blockStart();
@@ -158,13 +167,30 @@ class Block extends Model\Document\Tag
 
     /**
      * Alias for loop
+     *
      * @deprecated
      * @see loop()
-     * @return boolean
+     *
+     * @return bool
      */
     public function enumerate()
     {
         return $this->loop();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getEditmodeElementAttributes(array $options): array
+    {
+        $attributes = parent::getEditmodeElementAttributes($options);
+
+        $attributes = array_merge($attributes, [
+            'name' => $this->getName(),
+            'type' => $this->getType()
+        ]);
+
+        return $attributes;
     }
 
     /**
@@ -174,46 +200,16 @@ class Block extends Model\Document\Tag
      */
     public function start()
     {
-        $this->setupStaticEnvironment();
+        $options = $this->getEditmodeOptions();
+        $this->outputEditmodeOptions($options);
 
-        // get configuration data for admin
-        if (method_exists($this, "getDataEditmode")) {
-            $data = $this->getDataEditmode();
-        } else {
-            $data = $this->getData();
-        }
+        // set name suffix for the whole block element, this will be added to all child elements of the block
+        $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
 
-        $options = [
-            "options" => $this->getOptions(),
-            "data" => $data,
-            "name" => $this->getName(),
-            "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType(),
-            "inherited" => $this->getInherited()
-        ];
-        $options = @\Zend_Json::encode($options);
-        //$options = base64_encode($options);
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        $this->outputEditmode('
-            <script type="text/javascript">
-                editableConfigurations.push('.$options.');
-            </script>
-        ');
-
-        // set name suffix for the whole block element, this will be addet to all child elements of the block
-        $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
-        }
-        $suffixes[] = $this->getName();
-        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
-
-        $class = "pimcore_editable pimcore_tag_" . $this->getType();
-        if (array_key_exists("class", $this->getOptions())) {
-            $class .= (" " . $this->getOptions()["class"]);
-        }
-
-        $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="' . $class . '" type="' . $this->getType() . '">');
+        $this->outputEditmode('<div ' . $attributeString . '>');
 
         return $this;
     }
@@ -225,37 +221,28 @@ class Block extends Model\Document\Tag
     {
         $this->current = 0;
 
-        // remove the suffix which was set by self::start()
-        $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
-            array_pop($suffixes);
-        }
-        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        // remove the current block which was set by $this->start()
+        $this->getBlockState()->popBlock();
 
-        $this->outputEditmode("</div>");
+        $this->outputEditmode('</div>');
     }
 
     /**
-     *
+     * Called before the block is rendered
      */
     public function blockConstruct()
     {
-
-        // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
-        $suffixes[] = $this->indices[$this->current];
-        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        // set the current block suffix for the child elements (0, 1, 3, ...)
+        // this will be removed in blockDestruct
+        $this->getBlockState()->pushIndex($this->indices[$this->current]);
     }
 
     /**
-     *
+     * Called when the block was rendered
      */
     public function blockDestruct()
     {
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
-        array_pop($suffixes);
-        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        $this->getBlockState()->popIndex();
     }
 
     /**
@@ -263,15 +250,31 @@ class Block extends Model\Document\Tag
      */
     public function blockStart()
     {
-        $this->outputEditmode('<div class="pimcore_block_entry ' . $this->getName() . '" key="' . $this->indices[$this->current] . '">');
-        $this->outputEditmode('<div class="pimcore_block_buttons_' . $this->getName() . ' pimcore_block_buttons">');
-        $this->outputEditmode('<div class="pimcore_block_amount_' . $this->getName() . ' pimcore_block_amount"></div>');
-        $this->outputEditmode('<div class="pimcore_block_plus_' . $this->getName() . ' pimcore_block_plus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus_' . $this->getName() . ' pimcore_block_minus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_up_' . $this->getName() . ' pimcore_block_up"></div>');
-        $this->outputEditmode('<div class="pimcore_block_down_' . $this->getName() . ' pimcore_block_down"></div>');
-        $this->outputEditmode('<div class="pimcore_block_clear"></div>');
-        $this->outputEditmode('</div>');
+        $attributes = [
+            'data-name'      => $this->getName(),
+            'data-real-name' => $this->getRealName(),
+        ];
+
+        $outerAttributes = [
+            'key' => $this->indices[$this->current]
+        ];
+
+        $attr  = HtmlUtils::assembleAttributeString($attributes);
+        $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
+
+        // outer element
+        $this->outputEditmode('<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
+
+        $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
+
+        $this->outputEditmode('<div class="pimcore_block_amount" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_down" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
+
+        $this->outputEditmode('</div>'); // .pimcore_block_buttons
 
         $this->current++;
     }
@@ -281,58 +284,19 @@ class Block extends Model\Document\Tag
      */
     public function blockEnd()
     {
+        // close outer element
         $this->outputEditmode('</div>');
     }
 
     /**
-     * Sends data to the output stream
-     *
-     * @param string $v
-     */
-    public function outputEditmode($v)
-    {
-        if ($this->getEditmode()) {
-            echo $v . "\n";
-        }
-    }
-
-    /**
-     * Setup some settings that are needed for blocks
-     */
-    public function setupStaticEnvironment()
-    {
-
-        // setup static environment for blocks
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $current = \Zend_Registry::get("pimcore_tag_block_current");
-            if (!is_array($current)) {
-                $current = [];
-            }
-        } else {
-            $current = [];
-        }
-
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
-            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
-            if (!is_array($numeration)) {
-                $numeration = [];
-            }
-        } else {
-            $numeration = [];
-        }
-
-        \Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
-        \Zend_Registry::set("pimcore_tag_block_current", $current);
-    }
-
-    /**
      * @param array $options
+     *
      * @return $this
      */
     public function setOptions($options)
     {
-        if (empty($options["limit"])) {
-            $options["limit"] = 1000000;
+        if (empty($options['limit'])) {
+            $options['limit'] = 1000000;
         }
 
         $this->options = $options;
@@ -343,7 +307,7 @@ class Block extends Model\Document\Tag
     /**
      * Return the amount of block elements
      *
-     * @return integer
+     * @return int
      */
     public function getCount()
     {
@@ -353,17 +317,17 @@ class Block extends Model\Document\Tag
     /**
      * Return current iteration step
      *
-     * @return integer
+     * @return int
      */
     public function getCurrent()
     {
-        return $this->current-1;
+        return $this->current - 1;
     }
 
     /**
      * Return current index
      *
-     * @return integer
+     * @return int
      */
     public function getCurrentIndex()
     {
@@ -388,9 +352,12 @@ class Block extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @oaram $document
+     * @param null $document
      * @param mixed $params
      * @param null $idMapper
+     *
+     * @return Model\Webservice\Data\Document\Element|void
+     *
      * @throws \Exception
      *
      * @todo replace and with &&
@@ -398,11 +365,11 @@ class Block extends Model\Document\Tag
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
-        if (($data->indices === null or is_array($data->indices)) and ($data->current==null or is_numeric($data->current))) {
+        if (($data->indices === null or is_array($data->indices)) and ($data->current == null or is_numeric($data->current))) {
             $this->indices = $data->indices;
             $this->current = $data->current;
         } else {
-            throw new \Exception("cannot get  values from web service import - invalid data");
+            throw new \Exception('cannot get  values from web service import - invalid data');
         }
     }
 
@@ -411,15 +378,14 @@ class Block extends Model\Document\Tag
      */
     public function getElements()
     {
-        // init
-        $doc = Model\Document\Page::getById($this->getDocumentId());
+        $document = Model\Document\Page::getById($this->getDocumentId());
 
-        $suffixes = (array)$this->suffixes;
-        $suffixes[] = $this->getName();
+        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames[] = $this->getName();
 
         $list = [];
         foreach ($this->getData() as $index) {
-            $list[] = new Block\Item($doc, $index, $suffixes);
+            $list[] = new Block\Item($document, $parentBlockNames, (int)$index);
         }
 
         return $list;

@@ -1,0 +1,16 @@
+{% set headline = pimcore_input('headline') %}
+{% set lead = pimcore_wysiwyg('lead', {
+    height: 100
+}) %}
+
+{% if editmode or not headline.isEmpty() %}
+    <div class="page-header">
+        <h2>{{ headline|raw }}</h2>
+    </div>
+{% endif %}
+
+{% if editmode or not lead.isEmpty() %}
+    <div class="lead">
+        {{ lead|raw }}
+    </div>
+{% endif %}

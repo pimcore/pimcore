@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -19,9 +19,8 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\WebsiteSetting\Listing\Dao getDao()
  */
-class Listing extends Model\Listing\AbstractListing
+class Listing extends Model\Listing\JsonListing
 {
-
     /**
      * Contains the results of the list. They are all an instance of WebsiteSetting
      *
@@ -32,8 +31,8 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * Tests if the given key is an valid order key to sort the results
      *
-     * @todo remove the dummy-always-true rule
      * @param $key
+     *
      * @return bool
      */
     public function isValidOrderKey($key)

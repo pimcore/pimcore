@@ -8,24 +8,23 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Search\Backend\Data\Listing;
 
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
-use Pimcore\Model\Search;
 use Pimcore\Logger;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
+use Pimcore\Model\Search;
 
 /**
  * @property \Pimcore\Model\Search\Backend\Data\Listing $model
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
-
     /**
      * Loads a list of entries for the specicifies parameters, returns an array of Search\Backend\Data
      *
@@ -34,17 +33,17 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     public function load()
     {
         $entries = [];
-        $data = $this->db->fetchAll("SELECT * FROM search_backend_data" .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $data = $this->db->fetchAll('SELECT * FROM search_backend_data' .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($data as $entryData) {
-            if ($entryData['maintype']=='document') {
+            if ($entryData['maintype'] == 'document') {
                 $element = Document::getById($entryData['id']);
-            } elseif ($entryData['maintype']=='asset') {
+            } elseif ($entryData['maintype'] == 'asset') {
                 $element = Asset::getById($entryData['id']);
-            } elseif ($entryData['maintype']=='object') {
-                $element = Object::getById($entryData['id']);
+            } elseif ($entryData['maintype'] == 'object') {
+                $element = DataObject::getById($entryData['id']);
             } else {
-                Logger::err("unknown maintype ");
+                Logger::err('unknown maintype ');
             }
             if ($element) {
                 $entry = new Search\Backend\Data();
@@ -56,7 +55,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
                 $entry->setUserModification($entryData['userModification']);
                 $entry->setCreationDate($entryData['creationDate']);
                 $entry->setModificationDate($entryData['modificationDate']);
-                $entry->setPublished($entryData['published']=== 0 ? false : true);
+                $entry->setPublished($entryData['published'] === 0 ? false : true);
                 $entries[]=$entry;
             }
         }
@@ -70,7 +69,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM search_backend_data" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+        $amount = $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
 
         return $amount;
     }
@@ -84,7 +83,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
             return count($this->model->getEntries());
         }
 
-        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM search_backend_data "  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $amount = $this->db->fetchOne('SELECT COUNT(*) as amount FROM search_backend_data '  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $amount;
     }
@@ -95,9 +94,9 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     protected function getCondition()
     {
         if ($cond = $this->model->getCondition()) {
-            return " WHERE " . $cond . " ";
+            return ' WHERE ' . $cond . ' ';
         }
 
-        return "";
+        return '';
     }
 }

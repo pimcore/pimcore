@@ -10,22 +10,22 @@
  *
  * @category   Pimcore
  * @package    Translation
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Translation;
 
+use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Tool;
-use Pimcore\File;
 
 /**
  * @method \Pimcore\Model\Translation\AbstractTranslation\Dao getDao()
  */
 abstract class AbstractTranslation extends Model\AbstractModel implements TranslationInterface
 {
-
     /**
      * @var string
      */
@@ -37,14 +37,22 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public $translations;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
+
+    /**
+     * @inheritDoc
+     */
+    public static function isValidLanguage($locale): bool
+    {
+        return in_array($locale, (array)static::getLanguages());
+    }
 
     /**
      * @return string
@@ -56,6 +64,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @param $key
+     *
      * @return $this
      */
     public function setKey($key)
@@ -75,6 +84,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @param $translations
+     *
      * @return $this
      */
     public function setTranslations($translations)
@@ -85,7 +95,8 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @return integer
+     * @return int
+     *
      * @deprecated use getCreationDate or getModificationDate instead
      */
     public function getDate()
@@ -95,6 +106,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @param $date
+     *
      * @return $this
      */
     public function setDate($date)
@@ -114,6 +126,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @param $date
+     *
      * @return $this
      */
     public function setCreationDate($date)
@@ -133,6 +146,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @param $date
+     *
      * @return $this
      */
     public function setModificationDate($date)
@@ -141,7 +155,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
         return $this;
     }
-
 
     /**
      * @param string $language
@@ -154,6 +167,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     /**
      * @param  $language
+     *
      * @return array
      */
     public function getTranslation($language)
@@ -161,40 +175,53 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $this->translations[$language];
     }
 
+    /**
+     * @param string $language
+     *
+     * @return bool
+     */
+    public function hasTranslation($language)
+    {
+        return isset($this->translations[$language]);
+    }
+
     public static function clearDependentCache()
     {
-        \Pimcore\Cache::clearTags(["translator", "translate"]);
+        \Pimcore\Cache::clearTags(['translator', 'translate']);
     }
 
     /**
      * @static
+     *
      * @param $key
+     *
      * @return string
      */
     protected static function getValidTranslationKey($key)
     {
-        return mb_strtolower($key);
+        return $key;
     }
 
     /**
      * @param $id
      * @param bool $create
      * @param bool $returnIdIfEmpty
+     *
      * @return static
+     *
      * @throws \Exception
-     * @throws \Zend_Exception
+     * @throws \Exception
      */
     public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
     {
-        $cacheKey = "translation_" . $id;
-        if (\Zend_Registry::isRegistered($cacheKey)) {
-            return \Zend_Registry::get($cacheKey);
+        $cacheKey = 'translation_' . $id;
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            return \Pimcore\Cache\Runtime::get($cacheKey);
         }
 
         $translation = new static();
 
         $idOriginal = $id;
-        $id = mb_strtolower($id);
 
         $languages = static::getLanguages();
 
@@ -210,7 +237,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
                 $translations = [];
                 foreach ($languages as $lang) {
-                    $translations[$lang] = "";
+                    $translations[$lang] = '';
                 }
                 $translation->setTranslations($translations);
                 $translation->save();
@@ -228,7 +255,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         // add to key cache
-        \Zend_Registry::set($cacheKey, $translation);
+        \Pimcore\Cache\Runtime::set($cacheKey, $translation);
 
         return $translation;
     }
@@ -237,19 +264,21 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * Static Helper to get the translation of the current locale
      *
      * @static
+     *
      * @param $id - translation key
      * @param bool $create - creates an empty translation entry if the key doesn't exists
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
      * @param string $language
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
     {
         if (!$language) {
-            try {
-                $language = (string) \Zend_Registry::get('Zend_Locale');
-            } catch (\Exception $e) {
+            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            if (!$language) {
                 throw new \Exception("Couldn't determine current language.");
             }
         }
@@ -257,10 +286,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
     }
 
-
-    /**
-     *
-     */
     public function save()
     {
         if (!$this->getCreationDate()) {
@@ -272,6 +297,14 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         $this->getDao()->save();
+
+        self::clearDependentCache();
+    }
+
+    public function delete()
+    {
+        $this->getDao()->delete();
+        self::clearDependentCache();
     }
 
     /**
@@ -279,10 +312,13 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * The CSV file has to have the same format as an Pimcore translation-export-file
      *
      * @static
+     *
      * @param $file - path to the csv file
      * @param bool $replaceExistingTranslations
      * @param array $languages
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null)
@@ -298,22 +334,22 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             $tmpData = file_get_contents($file);
 
             //replace magic excel bytes
-            $tmpData = str_replace("\xEF\xBB\xBF", "", $tmpData);
+            $tmpData = str_replace("\xEF\xBB\xBF", '', $tmpData);
 
             //convert to utf-8 if needed
             $tmpData = Tool\Text::convertToUTF8($tmpData);
 
             //store data for further usage
-            $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations";
+            $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations';
             File::put($importFile, $tmpData);
 
-            $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original";
+            $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original';
             File::put($importFileOriginal, $tmpData);
 
             // determine csv type
-            $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original");
+            $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original');
             //read data
-            if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations", "r")) !== false) {
+            if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations', 'r')) !== false) {
                 while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                     $data[] = $rowData;
                 }
@@ -331,11 +367,11 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                 foreach ($data as $row) {
                     $keyValueArray = [];
                     for ($counter = 0; $counter < count($row); $counter++) {
-                        $rd = str_replace("&quot;", '"', $row[$counter]);
+                        $rd = str_replace('&quot;', '"', $row[$counter]);
                         $keyValueArray[$keys[$counter]] = $rd;
                     }
 
-                    $textKey = $keyValueArray["key"];
+                    $textKey = $keyValueArray['key'];
                     if ($textKey) {
                         $t = static::getByKey($textKey, true);
                         $dirty = false;
@@ -356,10 +392,10 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                                     } elseif ($t->getTranslation($key) != $value && $value) {
                                         $delta[]=
                                             [
-                                                "lg" => $key,
-                                                "key" => $textKey,
-                                                "text" => $t->getTranslation($key),
-                                                "csv" =>  $value
+                                                'lg' => $key,
+                                                'key' => $textKey,
+                                                'text' => $t->getTranslation($key),
+                                                'csv' =>  $value
                                             ];
                                     }
                                 }
@@ -367,7 +403,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                         }
 
                         if ($dirty) {
-                            if ($keyValueArray['creationDate']) {
+                            if (array_key_exists('creationDate', $keyValueArray) && $keyValueArray['creationDate']) {
                                 $t->setCreationDate($keyValueArray['creationDate']);
                             }
                             $t->setModificationDate(time()); //ignore modificationDate from file
@@ -377,7 +413,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                 }
                 Model\Translation\AbstractTranslation::clearDependentCache();
             } else {
-                throw new \Exception("less than 2 rows of data - nothing to import");
+                throw new \Exception('less than 2 rows of data - nothing to import');
             }
         } else {
             throw new \Exception("$file is not readable");
@@ -385,7 +421,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
         return $delta;
     }
-
 
     /**
      * @param $data

@@ -8,20 +8,22 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Web2Print\Processor;
 
 use Pimcore\Config;
-use \Pimcore\Model\Document;
-use Pimcore\Web2Print\Processor;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\PrintConfigEvent;
 use Pimcore\Logger;
+use Pimcore\Model\Document;
+use Pimcore\Tool\Console;
+use Pimcore\Web2Print\Processor;
 
 class WkHtmlToPdf extends Processor
 {
-
     /**
      * @var string
      */
@@ -30,8 +32,9 @@ class WkHtmlToPdf extends Processor
     /**
      * @var string
      */
-    private $options = "";
+    private $options = '';
 
+    protected $config = [];
 
     /**
      * @param string $wkhtmltopdfBin
@@ -41,10 +44,12 @@ class WkHtmlToPdf extends Processor
     {
         $web2printConfig = Config::getWeb2PrintConfig();
 
-        if (empty($wkhtmltopdfBin)) {
-            $this->wkhtmltopdfBin = $web2printConfig->wkhtmltopdfBin;
-        } else {
+        if (!empty($wkhtmltopdfBin)) {
             $this->wkhtmltopdfBin = $wkhtmltopdfBin;
+        } elseif ($web2printConfig->wkhtmltopdfBin) {
+            $this->wkhtmltopdfBin = $web2printConfig->wkhtmltopdfBin;
+        } elseif ($determined = Console::getExecutable('wkhtmltopdf')) {
+            $this->wkhtmltopdfBin = $determined;
         }
 
         if (empty($options)) {
@@ -55,52 +60,54 @@ class WkHtmlToPdf extends Processor
 
         if ($options) {
             foreach ($options as $key => $value) {
-                $this->options .= " --" . (string)$key;
-                if ($value !== null && $value !== "") {
-                    $this->options .= " " . (string)$value;
+                $this->options .= ' --' . (string)$key;
+                if ($value !== null && $value !== '') {
+                    $this->options .= ' ' . (string)$value;
                 }
             }
         } else {
-            $this->options = "";
+            $this->options = '';
         }
     }
 
     /**
      * @param Document\PrintAbstract $document
      * @param $config
+     *
      * @return string
+     *
      * @throws \Exception
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
+        $this->config = $config;
         $web2printConfig = Config::getWeb2PrintConfig();
 
-        $params = [];
-        $this->updateStatus($document->getId(), 10, "start_html_rendering");
+        $params = ['document' => $document];
+        $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
-        $placeholder = new \Pimcore\Placeholder();
-        $html = $placeholder->replacePlaceholders($html);
-        $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $document, $web2printConfig->wkhtml2pdfHostname);
 
-        $this->updateStatus($document->getId(), 40, "finished_html_rendering");
+        $params['hostUrl'] = $config->protocol . '://' . $config->hostName;
+        if ($web2printConfig->wkhtml2pdfHostname) {
+            $params['hostUrl'] = $config->protocol . '://' . $web2printConfig->wkhtml2pdfHostname;
+        }
 
-        file_put_contents(PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "wkhtmltorpdf-input.html", $html);
-
-        $this->updateStatus($document->getId(), 45, "saved_html_file");
+        $html = $this->processHtml($html, $params);
+        $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
         try {
-            $this->updateStatus($document->getId(), 50, "pdf_conversion");
+            $this->updateStatus($document->getId(), 50, 'pdf_conversion');
 
             $pdf = $this->fromStringToStream($html);
 
-            $this->updateStatus($document->getId(), 100, "saving_pdf_document");
+            $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error($e);
             $document->setLastGenerateMessage($e->getMessage());
-            throw new \Exception("Error during REST-Request:" . $e->getMessage());
+            throw new \Exception('Error during REST-Request:' . $e->getMessage());
         }
 
-        $document->setLastGenerateMessage("");
+        $document->setLastGenerateMessage('');
 
         return $pdf;
     }
@@ -110,7 +117,13 @@ class WkHtmlToPdf extends Processor
      */
     public function getProcessingOptions()
     {
-        return [];
+        $event = new PrintConfigEvent($this, [
+            'options' => []
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+
+        return (array)$event->getArgument('options');
     }
 
     /**
@@ -130,18 +143,40 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * @param string $htmlString
-     * @param string $dstFile
+     * returns the path to the generated pdf file
+     *
+     * @param string $html
+     * @param array $params
+     * @param bool $returnFilePath return the path to the pdf file or the content
+     *
      * @return string
      */
-    public function fromStringToFile($htmlString, $dstFile = null)
+    public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
-        $id = uniqid();
-        $tmpHtmlFile = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . $id . ".htm";
-        file_put_contents($tmpHtmlFile, $htmlString);
-        $srcUrl = $this->getTempFileUrl() . basename($tmpHtmlFile);
+        if ($params['adapterConfig']) {
+            $this->setOptions($params['adapterConfig']);
+        }
+        $html = $this->processHtml($html, $params);
 
-        $pdfFile = $this->convert($srcUrl, $dstFile);
+        if ($returnFilePath) {
+            return $this->fromStringToFile($html, $params['dstFile']);
+        } else {
+            return $this->fromStringToStream($html);
+        }
+    }
+
+    /**
+     * @param string $htmlString
+     * @param string $dstFile
+     *
+     * @return string
+     */
+    protected function fromStringToFile($htmlString, $dstFile = null)
+    {
+        $id = uniqid('web2print_');
+        $tmpHtmlFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . $id . '.htm';
+        file_put_contents($tmpHtmlFile, $htmlString);
+        $pdfFile = $this->convert($tmpHtmlFile, $dstFile);
 
         @unlink($tmpHtmlFile);
 
@@ -150,9 +185,10 @@ class WkHtmlToPdf extends Processor
 
     /**
      * @param string $htmlString
+     *
      * @return string
      */
-    public function fromStringToStream($htmlString)
+    protected function fromStringToStream($htmlString)
     {
         $tmpFile = $this->fromStringToFile($htmlString);
         $stream = file_get_contents($tmpFile);
@@ -161,53 +197,49 @@ class WkHtmlToPdf extends Processor
         return $stream;
     }
 
-
     /**
      * @param string $srcUrl
      * @param string $dstFile
+     *
      * @return string
+     *
      * @throws \Exception
      */
     protected function convert($srcUrl, $dstFile = null)
     {
-        $outputFile = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "wkhtmltopdf.out";
         if (empty($dstFile)) {
-            $dstFile = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . uniqid() . ".pdf";
+            $dstFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
         }
 
         if (empty($srcUrl) || empty($dstFile) || empty($this->wkhtmltopdfBin)) {
-            throw new \Exception("srcUrl || dstFile || wkhtmltopdfBin is empty!");
+            throw new \Exception('srcUrl || dstFile || wkhtmltopdfBin is empty!');
         }
 
         $retVal = 0;
-        $cmd = $this->wkhtmltopdfBin . " " . $this->options . " " . escapeshellarg($srcUrl) . " " . escapeshellarg($dstFile) . " > " . $outputFile;
-        system($cmd, $retVal);
-        $output = file_get_contents($outputFile);
-        @unlink($outputFile);
+
+        $event = new PrintConfigEvent($this, [
+            'wkhtmltopdfBin' => $this->wkhtmltopdfBin,
+            'options' => $this->options,
+            'srcUrl' => $srcUrl,
+            'dstFile' => $dstFile,
+            'config' => $this->config
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
+
+        $params = $event->getArguments();
+
+        if ($params['cmd']) {
+            $cmd = $params['cmd'];
+        } else {
+            $cmd = $params['wkhtmltopdfBin'] . ' ' . $params['options'] . ' ' . escapeshellarg($params['srcUrl']) . ' ' . escapeshellarg($params['dstFile']);
+        }
+
+        exec($cmd, $output, $retVal);
 
         if ($retVal != 0 && $retVal != 1) {
-            throw new \Exception("wkhtmltopdf reported error (" . $retVal . "): \n" . $output . "\ncommand was:" . $cmd);
+            throw new \Exception('wkhtmltopdf reported error (' . $retVal . "): \n" . $output . "\ncommand was:" . $cmd);
         }
 
         return $dstFile;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getTempFileUrl()
-    {
-        $web2printConfig = Config::getWeb2PrintConfig();
-        if ($web2printConfig->wkhtml2pdfHostname) {
-            return $web2printConfig->wkhtml2pdfHostname . "/website/var/tmp/";
-        } elseif (\Pimcore\Config::getSystemConfig()->general->domain) {
-            $hostname = \Pimcore\Config::getSystemConfig()->general->domain;
-        } else {
-            $hostname = $_SERVER["HTTP_HOST"];
-        }
-
-        $protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
-
-        return $protocol . "://" . $hostname . "/website/var/tmp/";
     }
 }

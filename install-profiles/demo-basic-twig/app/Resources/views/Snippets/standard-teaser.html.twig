@@ -1,0 +1,43 @@
+{% set suffix = suffix ?? '' %}
+
+{% if suffix is empty and editmode %}
+    <style type="text/css">
+        .teaser {
+            max-width: 250px;
+        }
+
+        .teaser img {
+            max-width: 100%;
+        }
+    </style>
+{% endif %}
+
+<div class="teaser">
+    {% set circle = pimcore_checkbox('circle' ~ suffix) %}
+
+    {{ pimcore_image('image' ~ suffix, {
+        thumbnail: 'standardTeaser',
+        class: circle.isChecked() ? 'img-circle'
+    }) }}
+
+    {% if editmode %}
+        <div class="editmode-label">
+            <label>Image-Circle:</label>
+            {{ circle }}
+        </div>
+    {% endif %}
+
+    <h2>{{ pimcore_input('headline' ~ suffix) }}</h2>
+
+    <div>
+        {{ pimcore_wysiwyg('text' ~ suffix, {
+            height: 100
+        }) }}
+    </div>
+
+    <p>
+        {{ pimcore_link('link' ~ suffix, {
+            class: 'btn btn-default'
+        }) }}
+    </p>
+</div>

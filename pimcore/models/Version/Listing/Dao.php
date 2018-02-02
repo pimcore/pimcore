@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Schedule
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -23,16 +24,15 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
     /**
-     * Loads a list of thumanils for the specicifies parameters, returns an array of Schedule\Task elements
+     * Loads a list of versions for the specicified parameters, returns an array of Version elements
      *
      * @return array
      */
     public function load()
     {
         $versions = [];
-        $data = $this->db->fetchCol("SELECT id FROM versions" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $data = $this->db->fetchCol('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($data as $id) {
             $versions[] = Model\Version::getById($id);
@@ -49,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM versions " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM versions ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 

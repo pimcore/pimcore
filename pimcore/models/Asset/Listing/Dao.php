@@ -10,12 +10,15 @@
  *
  * @category   Pimcore
  * @package    Asset
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Asset\Listing;
 
+use Pimcore\Db\ZendCompatibility\Expression;
+use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 
 /**
@@ -23,10 +26,8 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    
-    /** @var  Callback function */
+    /** @var Callback function */
     protected $onCreateQueryCallback;
-
 
     /**
      * Get the assets from database
@@ -37,12 +38,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $assets = [];
 
-        $select = (string) $this->getQuery(['id', "type"]);
+        $select = $this->getQuery(['id', 'type']);
         $assetsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         foreach ($assetsData as $assetData) {
-            if ($assetData["type"]) {
-                if ($asset = Model\Asset::getById($assetData["id"])) {
+            if ($assetData['type']) {
+                if ($asset = Model\Asset::getById($assetData['id'])) {
                     $assets[] = $asset;
                 }
             }
@@ -55,13 +56,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @param $columns
-     * @return \Zend_Db_Select
+     *
+     * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */
     public function getQuery($columns)
     {
         $select = $this->db->select();
         $select->from(
-            [ "assets" ], $columns
+            [ 'assets' ],
+            $columns
         );
         $this->addConditions($select);
         $this->addOrder($select);
@@ -83,7 +86,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = (string) $this->getQuery(['id', "type"]);
+        $select = $this->getQuery(['id', 'type']);
         $assetIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
 
         return $assetIds;
@@ -94,7 +97,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        $select = (string) $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
+        $select = $this->getQuery([new Expression('COUNT(*)')]);
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;
@@ -105,10 +108,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
-        $select->reset(\Zend_Db_Select::LIMIT_COUNT);
-        $select->reset(\Zend_Db_Select::LIMIT_OFFSET);
-        $select = (string) $select;
+        $select = $this->getQuery([new Expression('COUNT(*)')]);
+        $select->reset(QueryBuilder::LIMIT_COUNT);
+        $select->reset(QueryBuilder::LIMIT_OFFSET);
+        $select->reset(QueryBuilder::ORDER);
+
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;

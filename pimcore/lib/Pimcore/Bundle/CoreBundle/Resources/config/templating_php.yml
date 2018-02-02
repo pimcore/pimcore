@@ -1,0 +1,141 @@
+imports:
+    # php aliases are only imported if this file is loaded
+    - { resource: templating_php_aliases.yml }
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # public alias to PHP engine
+    pimcore.templating.engine.php:
+        alias: templating.engine.php
+        public: true
+
+    #
+    # HELPER BROKERS
+    #
+
+    Pimcore\Templating\HelperBroker\HelperShortcuts:
+        public: false
+        tags:
+            - { name: pimcore.templating.helper_broker, priority: 25 }
+
+    Pimcore\Templating\HelperBroker\TemplatingHelper:
+        public: false
+        tags:
+            - { name: pimcore.templating.helper_broker, priority: 20 }
+
+    Pimcore\Templating\HelperBroker\DocumentTag:
+        public: false
+        tags:
+            - { name: pimcore.templating.helper_broker, priority: 10 }
+
+    Pimcore\Templating\HelperBroker\DocumentMethod:
+        public: false
+        tags:
+            - { name: pimcore.templating.helper_broker, priority: 5 }
+
+    #
+    # VIEW HELPERS
+    #
+
+    Pimcore\Templating\Helper\Action:
+        tags:
+            - { name: templating.helper, alias: action }
+
+    Pimcore\Templating\Helper\GetParam:
+        tags:
+            - { name: templating.helper, alias: getParam }
+
+    Pimcore\Templating\Helper\GetAllParams:
+        tags:
+            - { name: templating.helper, alias: getAllParams }
+
+    Pimcore\Templating\Helper\Glossary:
+        tags:
+            - { name: templating.helper, alias: glossary }
+
+    Pimcore\Templating\Helper\Inc:
+        tags:
+            - { name: templating.helper, alias: inc }
+
+    Pimcore\Templating\Helper\PimcoreUrl:
+        class: Pimcore\Templating\Helper\PimcoreUrl
+        arguments:
+            $generator: '@router'
+        tags:
+            - { name: templating.helper, alias: pimcoreUrl }
+
+    Pimcore\Templating\Helper\Placeholder:
+        tags:
+            - { name: templating.helper, alias: placeholder }
+
+    Pimcore\Templating\Helper\HeadTitle:
+        tags:
+            - { name: templating.helper, alias: headTitle }
+
+    Pimcore\Templating\Helper\HeadLink:
+        tags:
+            - { name: templating.helper, alias: headLink }
+
+    Pimcore\Templating\Helper\HeadScript:
+        tags:
+            - { name: templating.helper, alias: headScript }
+
+    Pimcore\Templating\Helper\InlineScript:
+        tags:
+            - { name: templating.helper, alias: inlineScript }
+
+    Pimcore\Templating\Helper\HeadStyle:
+        tags:
+            - { name: templating.helper, alias: headStyle }
+
+    Pimcore\Templating\Helper\HeadMeta:
+        tags:
+            - { name: templating.helper, alias: headMeta }
+
+    Pimcore\Templating\Helper\WebLink:
+        tags:
+            - { name: templating.helper, alias: webLink }
+
+    Pimcore\Templating\Helper\Device:
+        tags:
+            - { name: templating.helper, alias: device }
+
+    Pimcore\Templating\Helper\Cache:
+        tags:
+            - { name: templating.helper, alias: cache }
+
+    Pimcore\Templating\Helper\Navigation:
+        lazy: true
+        arguments:
+            $rendererLocator: '@pimcore.templating.navigation.renderer_locator'
+        tags:
+            - { name: templating.helper, alias: navigation }
+
+    Pimcore\Templating\Helper\WebsiteConfig:
+        tags:
+            - { name: templating.helper, alias: websiteConfig }
+
+    pimcore.templating.view_helper.translate:
+        class: Pimcore\Templating\Helper\Translate
+        tags:
+            - { name: templating.helper, alias: translate }
+        calls:
+            - [setDomain, ['messages']]
+
+    pimcore.templating.view_helper.translate_admin:
+        class: Pimcore\Templating\Helper\Translate
+        calls:
+            - [setDomain, ['admin']]
+        tags:
+            - { name: templating.helper, alias: translateAdmin }
+
+    #
+    # TOOLS
+    #
+
+    # container service for placeholder view helpers > creates placeholder container for every view helper type
+    Pimcore\Templating\Helper\Placeholder\ContainerService:
+        public: false

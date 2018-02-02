@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -10,24 +10,28 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Snippet;
 
 use Pimcore\Model;
+use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
  * @property \Pimcore\Model\Document\Snippet $model
  */
-class Dao extends Model\Document\PageSnippet\Dao
+class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface
 {
+    use Model\Document\Targeting\TargetingDocumentDaoTrait;
 
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param integer $id
+     * @param int $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)
@@ -42,10 +46,10 @@ class Dao extends Model\Document\PageSnippet\Dao
                 LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                     WHERE documents.id = ?", $this->model->getId());
 
-            if ($data["id"] > 0) {
+            if ($data['id'] > 0) {
                 $this->assignVariablesToModel($data);
             } else {
-                throw new \Exception("Snippet with the ID " . $this->model->getId() . " doesn't exists");
+                throw new \Exception('Snippet with the ID ' . $this->model->getId() . " doesn't exists");
             }
 
             $this->assignVariablesToModel($data);
@@ -65,8 +69,8 @@ class Dao extends Model\Document\PageSnippet\Dao
         try {
             parent::create();
 
-            $this->db->insert("documents_snippet", [
-                "id" => $this->model->getId()
+            $this->db->insert('documents_snippet', [
+                'id' => $this->model->getId()
             ]);
         } catch (\Exception $e) {
             throw $e;
@@ -81,7 +85,7 @@ class Dao extends Model\Document\PageSnippet\Dao
     public function delete()
     {
         try {
-            $this->db->delete("documents_snippet", $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->delete('documents_snippet', ['id' => $this->model->getId()]);
             parent::delete();
         } catch (\Exception $e) {
             throw $e;

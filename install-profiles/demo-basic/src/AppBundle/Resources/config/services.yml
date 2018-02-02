@@ -1,0 +1,112 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    AppBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    AppBundle\Command\:
+        resource: '../../Command'
+
+
+    #
+    # TEMPLATING
+    #
+
+    # a sample areabrick which is manually registered
+    AppBundle\Document\Areabrick\Blockquote:
+        tags:
+            - { name: pimcore.area.brick, id: blockquote }
+
+    # a sample templating helper
+    AppBundle\Templating\Helper\LanguageSwitcher:
+        # templating helpers need to be public as they
+        # are fetched from the container on demand
+        public: true
+        tags:
+            - { name: templating.helper, alias: languageSwitcher }
+
+
+    #
+    # SECURITY/LOGIN SERVICES
+    #
+    # The services defined below are referenced from pimcore/security.yml.
+    #
+
+    # The user provider loads users by Username.
+    # Pimcore provides a simple ObjectUserProvider which is able to load users from a specified class by a configured
+    # field. The app.security.user_provider will load users from the AppBundle\Model\DataObject\User by looking at
+    # their username field.
+    app.security.user_provider:
+        class: Pimcore\Security\User\ObjectUserProvider
+        arguments:
+            - 'AppBundle\Model\DataObject\User'
+            - 'username'
+
+    # The encoder factory is responsible for verifying the password hash for a given user. As we need some special
+    # handling to be able to work with the password field, we use the UserAwareEncoderFactory to buiild a dedicated
+    # encoder per user. This service is configured in pimcore.security.encoder_factories to handle our user model.
+    app.security.password_encoder_factory:
+        class: Pimcore\Security\Encoder\Factory\UserAwareEncoderFactory
+        arguments:
+            - Pimcore\Security\Encoder\PasswordFieldEncoder
+            - ['password']
+
+
+    #
+    # SITEMAPS
+    #
+
+    # Link generator for the News class. This generator is configured on the News class definition. See
+    # https://pimcore.com/docs/5.1.x/Development_Documentation/Objects/Object_Classes/Class_Settings/Link_Generator.html
+    # for details
+    AppBundle\LinkGenerator\NewsLinkGenerator:
+        public: true
+
+    # Processor adds Google Image tags to news entries
+    AppBundle\Sitemaps\Processor\NewsImageProcessor: ~
+
+    # The actual news sitemaps generator. This generator is registered in pimcore/config.yml. Filters exclude certain
+    # entries from being published (e.g. the PublishedFilter excludes unpublished elements) and processors enrich
+    # generated entries (e.g. the ModificationDateProcessor adds the modification date property).
+    AppBundle\Sitemaps\NewsGenerator:
+        arguments:
+            $filters:
+                - '@Pimcore\Sitemap\Element\Filter\PublishedFilter'
+                - '@Pimcore\Sitemap\Element\Filter\PropertiesFilter'
+            $processors:
+                - '@Pimcore\Sitemap\Element\Processor\ModificationDateProcessor'
+                - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
+                - '@AppBundle\Sitemaps\Processor\NewsImageProcessor'
+
+
+    #
+    # EXAMPLES
+    #
+
+    # Example event listener for objects
+    # the tag isn't necessary as autoconfigure is turned on for this
+    # file but it is added here for demonstration purposes
+    AppBundle\EventListener\TestListener:
+        tags:
+            - { name: kernel.event_subscriber }

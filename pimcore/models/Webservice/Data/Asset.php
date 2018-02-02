@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Webservice
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -21,14 +22,13 @@ use Pimcore\Model\Webservice;
 
 class Asset extends Model\Webservice\Data
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
     /**
-     * @var integer
+     * @var int
      */
     public $parentId;
 
@@ -53,22 +53,22 @@ class Asset extends Model\Webservice\Data
     public $mimetype;
 
     /**
-     * @var integer
+     * @var int
      */
     public $creationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $modificationDate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $userOwner;
 
     /**
-     * @var integer
+     * @var int
      */
     public $userModification;
 
@@ -82,13 +82,10 @@ class Asset extends Model\Webservice\Data
      */
     public $customSettings;
 
-
     /**
      * @var
      */
     public $metadata;
-
-
 
     /**
      * @param $object
@@ -102,9 +99,9 @@ class Asset extends Model\Webservice\Data
         if (!empty($settings)) {
             $this->customSettings = $settings;
         }
-        
+
         $keys = get_object_vars($this);
-        if (array_key_exists("childs", $keys)) {
+        if (array_key_exists('childs', $keys)) {
             if ($object->hasChilds()) {
                 $this->childs = [];
                 foreach ($object->getChilds() as $child) {
@@ -124,6 +121,7 @@ class Asset extends Model\Webservice\Data
      * @param $object
      * @param bool $disableMappingExceptions
      * @param null $idMapper
+     *
      * @throws \Exception
      */
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)

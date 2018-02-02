@@ -8,25 +8,27 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\WorkflowManagement\Workflow\Manager;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete as ConcreteObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\User;
 use Pimcore\WorkflowManagement\Workflow;
-use Pimcore\Model\Object\Concrete as ConcreteObject;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
 
 class Factory
 {
     /**
      * @static
+     *
      * @param AbstractElement|Asset|Document|ConcreteObject $element
      * @param User $user
+     *
      * @return \Pimcore\WorkflowManagement\Workflow\Manager
      */
     public static function getManager(AbstractElement $element, User $user = null)

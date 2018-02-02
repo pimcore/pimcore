@@ -1,0 +1,52 @@
+
+
+# CKEDITOR (use builder: http://ckeditor.com/builder);
+
+upload build-config.js
+
+OR:
+
++ select "full" distribution
+
+Add plugins:
++ plugin sourcedialog
++ plugin tableresize
+
+Remove plugins:
+- About CKEditor
+- Content Templates
+- File Browser
+- Flash Dialog
+- Form Elements
+- Insert Smiley
+- Magic Line
+- Maximize
+- New Page
+- Preview
+- Print
+- Save
+- SpellCheckAsYouType (SCAYT)
+
+Delete: samples/
+
+# EXT JS
+needed components:
+\build\ext-all.js
+\build\ext-all-debug.js
+\build\classic\theme-triton
+\build\classic\locale
+\packages\ux\classic\src => ux
+\packages\build\charts\classic\ => packages\charts\classic (only JS)
+\packages\build\charts\classic\triton\ copy over ext\classic\theme-triton
+
++ OpenSans Fonts from the installation package have been modified since they need the 'embed' flag for IE11
+
+# styling (see commit 8.9.2015 - rev. 4f2d49a8f567fb1b7978022f644a748a9e0b6afb)
+
+#5fa2dd => #3c3f41
+#eaeff4 => #e4e4e4
+#7fb5e4 => #3c3f41
+
+# fixes the problem with font-rendering in chrome (gray instead of black)
+fonts/OpenSans-LightItalic.ttf => fonts/OpenSans-Italic.ttf
+fonts/OpenSans-Light.ttf => fonts/OpenSans-Regular.ttf

@@ -1,0 +1,3 @@
+imports:
+    - { resource: default.yml }
+    - { resource: security.yml }

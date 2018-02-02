@@ -8,27 +8,30 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\CryptoException;
+use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
-use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
 
 class Authentication
 {
-
     /**
      * @param $username
      * @param $password
+     *
      * @return null|User
      */
     public static function authenticatePlaintext($username, $password)
     {
+        /** @var User $user */
         $user = User::getByName($username);
 
         // user needs to be active, needs a password and an ID (do not allow system user to login, ...)
@@ -43,18 +46,29 @@ class Authentication
 
     /**
      * @static
-     * @throws \Exception
+     *
+     * @param Request $request
+     *
      * @return User
      */
-    public static function authenticateSession()
+    public static function authenticateSession(Request $request = null)
     {
-        if (!isset($_COOKIE["pimcore_admin_sid"]) && !isset($_REQUEST["pimcore_admin_sid"])) {
+        if (null === $request) {
+            $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
+
+            if (null === $request) {
+                return null;
+            }
+        }
+
+        if (!Session::requestHasSessionId($request, true)) {
             // if no session cookie / ID no authentication possible, we don't need to start a session
             return null;
         }
 
         $session = Session::getReadOnly();
-        $user = $session->user;
+        $user = $session->get('user');
+
         if ($user instanceof User) {
             // renew user
             $user = User::getById($user->getId());
@@ -69,7 +83,9 @@ class Authentication
 
     /**
      * @static
+     *
      * @throws \Exception
+     *
      * @return User
      */
     public static function authenticateHttpBasic()
@@ -90,8 +106,8 @@ class Authentication
         }
 
         $auth->requireLogin();
-        $response->setBody("Authentication required");
-        Logger::error("Authentication Basic (WebDAV) required");
+        $response->setBody('Authentication required');
+        Logger::error('Authentication Basic (WebDAV) required');
         \Sabre\HTTP\Sapi::sendResponse($response);
         die();
     }
@@ -100,6 +116,7 @@ class Authentication
      * @param $username
      * @param $token
      * @param bool $adminRequired
+     *
      * @return null|User
      */
     public static function authenticateToken($username, $token, $adminRequired = false)
@@ -112,11 +129,16 @@ class Authentication
             }
 
             $passwordHash = $user->getPassword();
-            $decrypted = self::tokenDecrypt($passwordHash, $token);
+
+            try {
+                $decrypted = self::tokenDecrypt($passwordHash, $token);
+            } catch (CryptoException $e) {
+                return null;
+            }
 
             $timestamp = $decrypted[0];
             $timeZone = date_default_timezone_get();
-            date_default_timezone_set("UTC");
+            date_default_timezone_set('UTC');
 
             if ($timestamp > time() or $timestamp < (time() - (60 * 30))) {
                 return null;
@@ -132,6 +154,7 @@ class Authentication
     /**
      * @param User $user
      * @param $password
+     *
      * @return bool
      */
     public static function verifyPassword($user, $password)
@@ -154,6 +177,7 @@ class Authentication
 
     /**
      * @param $user
+     *
      * @return bool
      */
     public static function isValidUser($user)
@@ -168,14 +192,16 @@ class Authentication
     /**
      * @param $username
      * @param $plainTextPassword
+     *
      * @return bool|false|string
+     *
      * @throws \Exception
      */
     public static function getPasswordHash($username, $plainTextPassword)
     {
         $hash = password_hash(self::preparePlainTextPassword($username, $plainTextPassword), PASSWORD_DEFAULT);
         if (!$hash) {
-            throw new \Exception("Unable to create password hash for user: " . $username);
+            throw new \Exception('Unable to create password hash for user: ' . $username);
         }
 
         return $hash;
@@ -184,22 +210,28 @@ class Authentication
     /**
      * @param $username
      * @param $plainTextPassword
+     *
      * @return string
      */
     public static function preparePlainTextPassword($username, $plainTextPassword)
     {
         // plaintext password is prepared as digest A1 hash, this is to be backward compatible because this was
         // the former hashing algorithm in pimcore (< version 2.1.1)
-        return md5($username . ":pimcore:" . $plainTextPassword);
+        return md5($username . ':pimcore:' . $plainTextPassword);
     }
 
     /**
      * @param $username
      * @param $passwordHash
+     *
      * @return string
      */
     public static function generateToken($username, $passwordHash)
     {
+        if (empty($passwordHash)) {
+            throw new \InvalidArgumentException('Can\'t generate token for an empty password');
+        }
+
         $data = time() - 1 . '|' . $username;
         $token = Crypto::encryptWithPassword($data, $passwordHash);
 
@@ -209,12 +241,13 @@ class Authentication
     /**
      * @param $passwordHash
      * @param $token
+     *
      * @return array
      */
     public static function tokenDecrypt($passwordHash, $token)
     {
         $decrypted = Crypto::decryptWithPassword($token, $passwordHash);
 
-        return explode("|", $decrypted);
+        return explode('|', $decrypted);
     }
 }

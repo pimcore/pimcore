@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -20,7 +20,8 @@ use Pimcore\Model\AbstractModel;
  * Class AbstractListing
  *
  * @package Pimcore\Model\Listing
- * @method \Zend_Db_Select getQuery()
+ *
+ * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
  */
 abstract class JsonListing extends AbstractModel
 {

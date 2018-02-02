@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    User
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -20,23 +21,19 @@ use Pimcore\Model;
 use Pimcore\Model\User\Workspace;
 
 /**
- * @property \Pimcore\Model\User\Workspace\Object $model
+ * @property \Pimcore\Model\User\Workspace\DataObject $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
-    /**
-     *
-     */
     public function save()
     {
-        $tableName = "";
+        $tableName = '';
         if ($this->model instanceof Workspace\Asset) {
-            $tableName = "users_workspaces_asset";
+            $tableName = 'users_workspaces_asset';
         } elseif ($this->model instanceof Workspace\Document) {
-            $tableName = "users_workspaces_document";
-        } elseif ($this->model instanceof Workspace\Object) {
-            $tableName = "users_workspaces_object";
+            $tableName = 'users_workspaces_document';
+        } elseif ($this->model instanceof Workspace\DataObject) {
+            $tableName = 'users_workspaces_object';
         }
 
         $data = [];

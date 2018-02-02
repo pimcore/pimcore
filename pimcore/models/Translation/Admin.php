@@ -10,13 +10,13 @@
  *
  * @category   Pimcore
  * @package    Translation
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Translation;
 
-use Pimcore\Model;
 use Pimcore\Tool;
 
 /**
@@ -27,7 +27,7 @@ class Admin extends AbstractTranslation
     /**
      * @return array
      */
-    protected static function getLanguages()
+    public static function getLanguages(): array
     {
         return \Pimcore\Tool\Admin::getLanguages();
     }
@@ -37,24 +37,29 @@ class Admin extends AbstractTranslation
      * @param bool $create
      * @param bool $returnIdIfEmpty
      * @param null $language
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
     {
+        $language = null;
+
         if ($user = Tool\Admin::getCurrentUser()) {
             $language = $user->getLanguage();
         } elseif ($user = Tool\Authentication::authenticateSession()) {
             $language = $user->getLanguage();
-        } elseif (\Zend_Registry::isRegistered("Zend_Locale")) {
-            $language = (string) \Zend_Registry::get("Zend_Locale");
+        }
+
+        if (!$language) {
+            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
         }
 
         if (!in_array($language, Tool\Admin::getLanguages())) {
             $config = \Pimcore\Config::getSystemConfig();
             $language = $config->general->language;
         }
-
 
         return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
     }

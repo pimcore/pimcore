@@ -8,34 +8,33 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
 
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Text\Csv;
 
 class Admin
 {
-
     /**
      * Finds the translation file for a given language
      *
      * @static
+     *
      * @param  string $language
+     *
      * @return string
      */
     public static function getLanguageFile($language)
     {
-
-        //first try website languages dir, as fallback the core dir
-        $languageFile = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $language . ".json";
-        if (!is_file($languageFile)) {
-            $languageFile =  PIMCORE_PATH . "/config/texts/" . $language . ".json";
-        }
+        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
+        $languageFile = \Pimcore::getKernel()->locateResource($baseResource . '/' . $language . '.json');
 
         return $languageFile;
     }
@@ -44,20 +43,24 @@ class Admin
      * finds installed languages
      *
      * @static
+     *
      * @return array
      */
     public static function getLanguages()
     {
+        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
+        $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
+
         $languages = [];
-        $languageDirs = [PIMCORE_PATH . "/config/texts/", PIMCORE_CONFIGURATION_DIRECTORY . "/texts/"];
+        $languageDirs = [$languageDir];
         foreach ($languageDirs as $filesDir) {
             if (is_dir($filesDir)) {
                 $files = scandir($filesDir);
                 foreach ($files as $file) {
-                    if (is_file($filesDir . $file)) {
-                        $parts = explode(".", $file);
-                        if ($parts[1] == "json") {
-                            if (\Zend_Locale::isLocale($parts[0])) {
+                    if (is_file($filesDir . '/' . $file)) {
+                        $parts = explode('.', $file);
+                        if ($parts[1] == 'json') {
+                            if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($parts[0])) {
                                 $languages[] = $parts[0];
                             }
                         }
@@ -71,37 +74,39 @@ class Admin
 
     /**
      * @static
+     *
      * @param  $scriptContent
+     *
      * @return mixed
      */
     public static function getMinimizedScriptPath($scriptContent)
     {
-        $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/minified_javascript_core_".md5($scriptContent).".js";
+        $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_javascript_core_'.md5($scriptContent).'.js';
 
         if (!is_file($scriptPath)) {
             File::put($scriptPath, $scriptContent);
         }
 
         $params = [
-            "scripts" =>  basename($scriptPath),
-            "_dc" => \Pimcore\Version::getRevision()
+            'scripts' =>  basename($scriptPath),
+            '_dc' => \Pimcore\Version::getRevision()
         ];
 
-        return "/admin/misc/script-proxy?" . array_toquerystring($params);
+        return '/admin/misc/script-proxy?' . array_toquerystring($params);
     }
-
 
     /**
      * @param $file
+     *
      * @return \stdClass
      */
     public static function determineCsvDialect($file)
     {
 
         // minimum 10 lines, to be sure take more
-        $sample = "";
-        for ($i=0; $i<10; $i++) {
-            $sample .= implode("", array_slice(file($file), 0, 11)); // grab 20 lines
+        $sample = '';
+        for ($i=0; $i < 10; $i++) {
+            $sample .= implode('', array_slice(file($file), 0, 11)); // grab 20 lines
         }
 
         try {
@@ -110,35 +115,43 @@ class Admin
         } catch (\Exception $e) {
             // use default settings
             $dialect = new \stdClass();
+            $dialect->delimiter = ';';
+            $dialect->quotechar = '"';
+            $dialect->escapechar = '\\';
         }
 
         // validity check
-        if (!in_array($dialect->delimiter, [";", ",", "\t", "|", ":"])) {
-            $dialect->delimiter = ";";
+        if (!in_array($dialect->delimiter, [';', ',', "\t", '|', ':'])) {
+            $dialect->delimiter = ';';
         }
 
         return $dialect;
     }
 
-
     /**
      * @static
+     *
      * @return string
      */
     public static function getMaintenanceModeFile()
     {
-        return PIMCORE_CONFIGURATION_DIRECTORY . "/maintenance.php";
+        return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance.php';
+    }
+
+    public static function getMaintenanceModeScheduleLoginFile()
+    {
+        return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';
     }
 
     /**
      * @param null $sessionId
+     *
      * @throws \Exception
-     * @throws \Zend_Config_Exception
      */
-    public static function activateMaintenanceMode($sessionId = null)
+    public static function activateMaintenanceMode($sessionId)
     {
         if (empty($sessionId)) {
-            $sessionId = session_id();
+            $sessionId = Session::getSessionId();
         }
 
         if (empty($sessionId)) {
@@ -146,12 +159,12 @@ class Admin
         }
 
         File::putPhpFile(self::getMaintenanceModeFile(), to_php_data_file_format([
-            "sessionId" => $sessionId
+            'sessionId' => $sessionId
         ]));
 
         @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
 
-        \Pimcore::getEventManager()->trigger("system.maintenance.activate");
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_ACTIVATE);
     }
 
     /**
@@ -161,11 +174,12 @@ class Admin
     {
         @unlink(self::getMaintenanceModeFile());
 
-        \Pimcore::getEventManager()->trigger("system.maintenance.deactivate");
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
     }
 
     /**
      * @static
+     *
      * @return bool
      */
     public static function isInMaintenanceMode()
@@ -174,7 +188,7 @@ class Admin
 
         if (is_file($file)) {
             $conf = include($file);
-            if (isset($conf["sessionId"])) {
+            if (isset($conf['sessionId'])) {
                 return true;
             } else {
                 @unlink($file);
@@ -184,62 +198,71 @@ class Admin
         return false;
     }
 
+    public static function isMaintenanceModeScheduledForLogin(): bool
+    {
+        $file = self::getMaintenanceModeScheduleLoginFile();
+
+        if (is_file($file)) {
+            $conf = include($file);
+            if (isset($conf['schedule']) && $conf['schedule']) {
+                return true;
+            } else {
+                @unlink($file);
+            }
+        }
+
+        return false;
+    }
+
+    public static function scheduleMaintenanceModeOnLogin()
+    {
+        File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
+            'schedule' => true
+        ]));
+
+        @chmod(self::getMaintenanceModeScheduleLoginFile(), 0777); // so it can be removed also via FTP, ...
+
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
+    }
+
+    public static function unscheduleMaintenanceModeOnLogin()
+    {
+        @unlink(self::getMaintenanceModeScheduleLoginFile());
+
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_UNSCHEDULE_LOGIN);
+    }
+
     /**
      * @static
+     *
      * @return \Pimcore\Model\User
      */
     public static function getCurrentUser()
     {
-        if (\Zend_Registry::isRegistered("pimcore_admin_user")) {
-            $user = \Zend_Registry::get("pimcore_admin_user");
-
-            return $user;
-        }
-
-        return null;
+        return \Pimcore::getContainer()
+            ->get(TokenStorageUserResolver::class)
+            ->getUser();
     }
-
 
     /**
      * @return true if in EXT JS5 mode
      */
     public static function isExtJS6()
     {
-        if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] == 6) {
-            return true;
-        }
-
-        if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] < 6) {
-            return false;
-        }
-
-        if (isset($_REQUEST["extjs3"])) {
-            return false;
-        }
-
-        if (isset($_REQUEST["extjs6"])) {
-            return true;
-        }
-
-        $config = \Pimcore\Config::getSystemConfig();
-        $mainSwitch = $config->general->extjs6;
-        if ($mainSwitch) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
      * @param User $user
      * @param string|array $languages
      * @param bool $returnLanguageArray
+     *
      * @return string
      */
     public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
     {
         if (!is_array($languages)) {
-            $languages = explode(",", $languages);
+            $languages = explode(',', $languages);
         }
 
         $contentLanguages = $user->getContentLanguages();
@@ -248,10 +271,15 @@ class Admin
             $newLanguages = array_diff($languages, $contentLanguages);
             $languages = array_merge($contentLanguages, $newLanguages);
         }
+
+        if (in_array('default', $languages)) {
+            $languages = array_diff($languages, ['default']);
+            array_unshift($languages, 'default');
+        }
         if ($returnLanguageArray) {
             return $languages;
         }
 
-        return implode(",", $languages);
+        return implode(',', $languages);
     }
 }

@@ -1,0 +1,44 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # APPLICATION LOGGER
+    #
+
+    pimcore.app_logger: '@pimcore.app_logger.default'
+    pimcore.app_logger.default: '@Pimcore\Log\ApplicationLogger'
+
+    # Monolog processors for the application logger. Autoconfigure is set to false as we don't
+    # want Symfony to auto-register them for all handlers (this isn't the case at the moment as
+    # there is no interface for a processor, but in case support for autoconfiguration is added
+    # we want to keep those processors only for the application logger.
+
+    # ApplicationLoggerProcessor prepares data for the DB handler. This basically
+    # mimics functionality from the ApplicationLogger itself to be used from any
+    # monolog handler.
+    Pimcore\Log\Processor\ApplicationLoggerProcessor:
+        public: false
+
+    # IntrospectionProcessor adds data regarding called function/line. The skipClassesPartials makes sure
+    # we skip the stack frame when called through ApplicationLogger.
+    pimcore.app_logger.introspection_processor:
+        class: Monolog\Processor\IntrospectionProcessor
+        public: false
+        autoconfigure: false
+        arguments:
+            $level: 'DEBUG'
+            $skipClassesPartials:
+                - 'Pimcore\Log\ApplicationLogger'
+
+    # the DB write handler
+    Pimcore\Log\Handler\ApplicationLoggerDb:
+        calls:
+            - [pushProcessor, ['@monolog.processor.psr_log_message']]
+            - [pushProcessor, ['@Pimcore\Log\Processor\ApplicationLoggerProcessor']]
+            - [pushProcessor, ['@pimcore.app_logger.introspection_processor']]
+
+    Pimcore\Log\ApplicationLogger:
+        calls:
+            - [addWriter, ['@Pimcore\Log\Handler\ApplicationLoggerDb']]

@@ -10,32 +10,31 @@
  *
  * @category   Pimcore
  * @package    Tool
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Tool\Targeting\Rule\Listing;
 
 use Pimcore\Model;
+use Pimcore\Model\Tool\Targeting\Rule;
 
 /**
  * @property \Pimcore\Model\Tool\Targeting\Rule\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
     /**
-     * Loads a list of document-types for the specicifies parameters, returns an array of Document\DocType elements
-     *
-     * @return array
+     * @return Rule[]
      */
     public function load()
     {
-        $targetsData = $this->db->fetchCol("SELECT id FROM targeting_rules" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $ids = $this->db->fetchCol('SELECT id FROM targeting_rules' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $targets = [];
-        foreach ($targetsData as $targetData) {
-            $targets[] = Model\Tool\Targeting\Rule::getById($targetData);
+        foreach ($ids as $id) {
+            $targets[] = Rule::getById($id);
         }
 
         $this->model->setTargets($targets);

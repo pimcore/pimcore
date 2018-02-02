@@ -1,0 +1,19 @@
+imports:
+    - { resource: filter_service_filter_types.yml }
+
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # FILTER SERVICE
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService:
+        arguments:
+            - '@Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper'
+            - []
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterGroupHelper: ~

@@ -1,0 +1,42 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+
+    {% if editmode %}
+        <div class="alert alert-info">
+            Specify the parent folder here (default is home)
+            {{ pimcore_href('parentFolder') }}
+        </div>
+    {% endif %}
+
+    <div class="row">
+        {% set thumbnailOptions = {
+            width: 180,
+            height: 180,
+            cover: true
+        } %}
+
+        {% for asset in list %}
+            {# @var asset \Pimcore\Model\Asset #}
+
+            {% if asset.getType() in ['video', 'image', 'document'] %}
+                <div class="col-xs-3" style="padding-bottom: 10px">
+
+                    {% if asset is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
+
+                        {{ asset.getThumbnail(thumbnailOptions).getHTML({ class: 'thumbnail' })|raw }}
+
+                    {% else %}
+
+                        {% set thumbnail = asset.getImageThumbnail(thumbnailOptions) %}
+                        <img src="{{ thumbnail|raw }}" class="thumbnail" width="180" height="180">
+
+                    {% endif %}
+
+                </div>
+            {% endif %}
+        {% endfor %}
+
+    </div>
+
+{% endblock %}

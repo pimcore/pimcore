@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -21,9 +21,8 @@ use Pimcore\Logger;
  */
 class WebsiteSetting extends AbstractModel
 {
-
     /**
-     * @var integer
+     * @var int
      */
     public $id;
 
@@ -31,6 +30,11 @@ class WebsiteSetting extends AbstractModel
      * @var string
      */
     public $name;
+
+    /**
+     * @var string
+     */
+    public $language;
 
     /**
      * @var
@@ -57,55 +61,93 @@ class WebsiteSetting extends AbstractModel
      */
     public $modificationDate;
 
-
+    /**
+     * this is a small per request cache to know which website setting is which is, this info is used in self::getByName()
+     *
+     * @var array
+     */
+    protected static $nameIdMappingCache = [];
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return WebsiteSetting
      */
     public static function getById($id)
     {
-        $setting = new self();
-
-        $setting->setId(intval($id));
-        $setting->getDao()->getById();
-
-        return $setting;
-    }
-
-    /**
-     * @param string $name
-     * @param null $siteId
-     * @return WebsiteSetting
-     */
-    public static function getByName($name, $siteId = null)
-    {
-
-        // create a tmp object to obtain the id
-        $setting = new self();
+        $cacheKey = 'website_setting_' . $id;
 
         try {
-            $setting->getDao()->getByName($name, $siteId);
+            $setting = \Pimcore\Cache\Runtime::get($cacheKey);
+            if (!$setting) {
+                throw new \Exception('Website setting in registry is null');
+            }
         } catch (\Exception $e) {
-            Logger::error($e);
-
-            return null;
+            $setting = new self();
+            $setting->setId(intval($id));
+            $setting->getDao()->getById();
+            \Pimcore\Cache\Runtime::set($cacheKey, $setting);
         }
 
         return $setting;
     }
 
     /**
-     * @return integer
+     * @param string $name name of the config
+     * @param null $siteId site ID
+     * @param null $language language, if property cannot be found the value of property without language is returned
+     * @param null $fallbackLanguage fallback language
+     *
+     * @return null|WebsiteSetting
+     */
+    public static function getByName($name, $siteId = null, $language = null, $fallbackLanguage = null)
+    {
+        $nameCacheKey = $name . '~~~' . $siteId . '~~~' . $language;
+
+        // check if pimcore already knows the id for this $name, if yes just return it
+        if (array_key_exists($nameCacheKey, self::$nameIdMappingCache)) {
+            return self::getById(self::$nameIdMappingCache[$nameCacheKey]);
+        }
+
+        // create a tmp object to obtain the id
+        $setting = new self();
+
+        try {
+            $setting->getDao()->getByName($name, $siteId, $language);
+        } catch (\Exception $e) {
+            Logger::warning($e->getMessage());
+
+            if ($language != $fallbackLanguage) {
+                $result = self::getByName($name, $siteId, $fallbackLanguage, $fallbackLanguage);
+
+                return $result;
+            }
+
+            return null;
+        }
+
+        // to have a singleton in a way. like all instances of Element\ElementInterface do also, like DataObject\AbstractObject
+        if ($setting->getId() > 0) {
+            // add it to the mini-per request cache
+            self::$nameIdMappingCache[$nameCacheKey] = $setting->getId();
+
+            return self::getById($setting->getId());
+        }
+
+        return $setting;
+    }
+
+    /**
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
-
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return $this
      */
     public function setId($id)
@@ -115,9 +157,9 @@ class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -137,6 +179,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $creationDate
+     *
      * @return $this
      */
     public function setCreationDate($creationDate)
@@ -156,6 +199,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $data
+     *
      * @return $this
      */
     public function setData($data)
@@ -175,6 +219,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $modificationDate
+     *
      * @return $this
      */
     public function setModificationDate($modificationDate)
@@ -194,6 +239,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $siteId
+     *
      * @return $this
      */
     public function setSiteId($siteId)
@@ -213,6 +259,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param $type
+     *
      * @return $this
      */
     public function setType($type)
@@ -230,8 +277,24 @@ class WebsiteSetting extends AbstractModel
         return $this->type;
     }
 
+    /**
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * @param string $language
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+    }
+
     public function clearDependentCache()
     {
-        \Pimcore\Cache::clearTag("website_config");
+        \Pimcore\Cache::clearTag('website_config');
     }
 }

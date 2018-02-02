@@ -10,34 +10,36 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Tool;
-use Pimcore\Model;
+use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\ExtensionManager;
-use Pimcore\Model\Document;
+use Pimcore\Model;
+use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
 class Area extends Model\Document\Tag
 {
-
     /**
      * @see Model\Document\Tag\TagInterface::getType
+     *
      * @return string
      */
     public function getType()
     {
-        return "area";
+        return 'area';
     }
 
     /**
      * @see Model\Document\Tag\TagInterface::getData
+     *
      * @return mixed
      */
     public function getData()
@@ -50,43 +52,17 @@ class Area extends Model\Document\Tag
      */
     public function admin()
     {
-        // get configuration data for admin
-        if (method_exists($this, "getDataEditmode")) {
-            $data = $this->getDataEditmode();
-        } else {
-            $data = $this->getData();
-        }
+        $options = $this->getEditmodeOptions();
+        $this->outputEditmodeOptions($options);
 
-        $options = [
-            "options" => $this->getOptions(),
-            "data" => $data,
-            "name" => $this->getName(),
-            "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType(),
-            "inherited" => $this->getInherited()
-        ];
-        $options = @\Zend_Json::encode($options, false, ['enableJsonExprFinder' => true]);
+        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        if ($this->editmode) {
-            $class = "pimcore_editable pimcore_tag_" . $this->getType();
-            if (array_key_exists("class", $this->getOptions())) {
-                $class .= (" " . $this->getOptions()["class"]);
-            }
-
-            echo '
-                <script type="text/javascript">
-                    editableConfigurations.push(' . $options . ');
-                </script>
-                <div id="pimcore_editable_' . $this->getName() . '" class="' . $class . '">
-            ';
-        }
-
+        $this->outputEditmode('<div ' . $attributeString . '>');
 
         $this->frontend();
 
-        if ($this->editmode) {
-            echo '</div>';
-        }
+        $this->outputEditmode('</div>');
     }
 
     /**
@@ -96,169 +72,56 @@ class Area extends Model\Document\Tag
     {
         $count = 0;
         $options = $this->getOptions();
+
+        // TODO inject area handler via DI when tags are built through container
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+
         // don't show disabled bricks
-        if (!ExtensionManager::isEnabled("brick", $options["type"]) && $options['dontCheckEnabled'] != true) {
+        if (!$tagHandler->isBrickEnabled($this, $options['type'] && $options['dontCheckEnabled'] != true)) {
             return;
         }
 
-        $this->setupStaticEnvironment();
-        $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
-        }
-        $suffixes[] = $this->getName();
-        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
-
+        // push current block name
+        $blockState = $this->getBlockState();
+        $blockState->pushBlock(BlockName::createFromTag($this));
 
         $this->current = $count;
-
 
         // create info object and assign it to the view
         $info = null;
         try {
             $info = new Area\Info();
+            $info->setId($options['type']);
             $info->setTag($this);
-            $info->setId($options["type"]);
             $info->setIndex($count);
-            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", ExtensionManager::getPathForExtension($options["type"], "brick")));
-            $info->setConfig(ExtensionManager::getBrickConfig($options["type"]));
         } catch (\Exception $e) {
             $info = null;
         }
 
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
-        $suffixes[] = 1;
-        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        // start at first index
+        $blockState->pushIndex(1);
 
-        if ($this->getView() instanceof \Zend_View) {
-            $this->getView()->brick = $info;
-            $areas = $this->getAreaDirs();
-
-            $view = $areas[$options["type"]] . "/view.php";
-            $action = $areas[$options["type"]] . "/action.php";
-            $edit = $areas[$options["type"]] . "/edit.php";
-            $options = $this->getOptions();
-            $params = [];
-            if (is_array($options["params"]) && array_key_exists($options["type"], $options["params"])) {
-                if (is_array($options["params"][$options["type"]])) {
-                    $params = $options["params"][$options["type"]];
-                }
-            }
-
-            // assign parameters to view
-            foreach ($params as $key => $value) {
-                $this->getView()->assign($key, $value);
-            }
-
-            // check for action file
-            if (is_file($action)) {
-                include_once($action);
-
-
-                $actionClassFound = true;
-
-                $actionClass = preg_replace_callback("/[\-_][a-z]/", function ($matches) {
-                    $replacement = str_replace(["-", "_"], "", $matches[0]);
-
-                    return strtoupper($replacement);
-                }, ucfirst($options["type"]));
-
-                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . $actionClass;
-
-                if (!Tool::classExists($actionClassname, false)) {
-                    // also check the legacy prefixed class name, as this is used by some plugins
-                    $actionClassname = "\\Document_Tag_Area_" . ucfirst($options["type"]);
-                    if (!Tool::classExists($actionClassname, false)) {
-                        $actionClassFound = false;
-                    }
-                }
-
-                if ($actionClassFound) {
-                    $actionObject = new $actionClassname();
-
-                    if ($actionObject instanceof Area\AbstractArea) {
-                        $actionObject->setView($this->getView());
-
-                        $areaConfig = new \Zend_Config_Xml($areas[$options["type"]] . "/area.xml");
-                        $actionObject->setConfig($areaConfig);
-
-                        // params
-                        $params = array_merge($this->view->getAllParams(), $params);
-                        $actionObject->setParams($params);
-
-                        if ($info) {
-                            $actionObject->setBrick($info);
-                        }
-
-                        if (method_exists($actionObject, "action")) {
-                            $actionObject->action();
-                        }
-
-                        $this->getView()->assign('actionObject', $actionObject);
-                    }
-                }
-            }
-
-            if (is_file($view)) {
-                $editmode = $this->getView()->editmode;
-
-                if (method_exists($actionObject, "getBrickHtmlTagOpen")) {
-                    echo $actionObject->getBrickHtmlTagOpen($this);
-                } else {
-                    echo '<div class="pimcore_area_' . $options["type"] . ' pimcore_area_content">';
-                }
-
-                if (is_file($edit) && $editmode) {
-                    echo '<div class="pimcore_area_edit_button"></div>';
-
-                    // forces the editmode in view.php independent if there's an edit.php or not
-                    if (!array_key_exists("forceEditInView", $params) || !$params["forceEditInView"]) {
-                        $this->getView()->editmode = false;
-                    }
-                }
-
-                $this->getView()->template($view);
-
-                if (is_file($edit) && $editmode) {
-                    $this->getView()->editmode = true;
-
-                    echo '<div class="pimcore_area_editmode pimcore_area_editmode_hidden">';
-                    $this->getView()->template($edit);
-                    echo '</div>';
-                }
-
-                if (method_exists($actionObject, "getBrickHtmlTagClose")) {
-                    echo $actionObject->getBrickHtmlTagClose($this);
-                } else {
-                    echo '</div>';
-                }
-
-
-                if (is_object($actionObject) && method_exists($actionObject, "postRenderAction")) {
-                    $actionObject->postRenderAction();
-                }
+        $params = [];
+        if (is_array($options['params']) && array_key_exists($options['type'], $options['params'])) {
+            if (is_array($options['params'][$options['type']])) {
+                $params = $options['params'][$options['type']];
             }
         }
 
+        $info->setParams($params);
 
-        $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_numeration')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
-            array_pop($suffixes);
-        }
-        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        $tagHandler->renderAreaFrontend($info);
 
-        $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
-            array_pop($suffixes);
-        }
-        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        // remove current block and index from stack
+        $blockState->popIndex();
+        $blockState->popBlock();
     }
 
     /**
      * @see Model\Document\Tag\TagInterface::setDataFromResource
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromResource($data)
@@ -268,41 +131,14 @@ class Area extends Model\Document\Tag
 
     /**
      * @see Model\Document\Tag\TagInterface::setDataFromEditmode
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function setDataFromEditmode($data)
     {
         return $this;
-    }
-
-    /**
-     * Setup some settings that are needed for blocks
-     */
-    public function setupStaticEnvironment()
-    {
-
-        // setup static environment for blocks
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $current = \Zend_Registry::get("pimcore_tag_block_current");
-            if (!is_array($current)) {
-                $current = [];
-            }
-        } else {
-            $current = [];
-        }
-
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
-            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
-            if (!is_array($numeration)) {
-                $numeration = [];
-            }
-        } else {
-            $numeration = [];
-        }
-
-        \Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
-        \Zend_Registry::set("pimcore_tag_block_current", $current);
     }
 
     /**
@@ -314,6 +150,8 @@ class Area extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return array
      */
     public function getAreaDirs()
@@ -322,6 +160,8 @@ class Area extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return array|mixed
      */
     public function getBrickConfigs()
@@ -330,18 +170,27 @@ class Area extends Model\Document\Tag
     }
 
     /**
-     * @param $name
+     * Gets an element from the referenced brick. E.g. if you have an area "myArea" which defines "gallery-single-images"
+     * as used areabrick and this areabrick defines a block "gallery", you can use $area->getElement('gallery') to get
+     * an instance of the block element.
+     *
+     * @param string $name
      *
      * @return Model\Document\Tag
      */
-    public function getElement($name)
+    public function getElement(string $name)
     {
-        // init
-        $doc = Model\Document\Page::getById($this->getDocumentId());
-        $id = sprintf('%s%s%d', $name, $this->getName(), 1);
-        $element = $doc->getElement($id);
+        $document       = Model\Document\Page::getById($this->getDocumentId());
+        $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
+
+        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames[] = $this->getName();
+
+        $id      = $namingStrategy->buildChildElementTagName($name, 'area', $parentBlockNames, 1);
+        $element = $document->getElement($id);
+
         if ($element) {
-            $element->suffixes = [ $this->getName() ];
+            $element->setParentBlockNames($parentBlockNames);
         }
 
         return $element;

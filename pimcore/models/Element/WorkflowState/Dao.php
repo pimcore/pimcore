@@ -10,35 +10,33 @@
  *
  * @category   Pimcore
  * @package    Element
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Element\WorkflowState;
 
 use Pimcore\Model;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 
 /**
  * @property \Pimcore\Model\Element\WorkflowState $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * @param $cid
      * @param $ctype
      * @param $workflowId
+     *
      * @throws \Exception
      */
     public function getByPrimary($cid, $ctype, $workflowId)
     {
-        $data = $this->db->fetchRow("SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflowId = ?", [$cid, $ctype, $workflowId]);
+        $data = $this->db->fetchRow('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflowId = ?', [$cid, $ctype, $workflowId]);
 
-        if (!$data["cid"]) {
-            throw new \Exception("WorkflowStatus item with cid " . $cid . " and ctype " . $ctype . " not found");
+        if (!$data['cid']) {
+            throw new \Exception('WorkflowStatus item with cid ' . $cid . ' and ctype ' . $ctype . ' not found');
         }
         $this->assignVariablesToModel($data);
     }
@@ -46,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return boolean
+     * @return bool
      *
      * @todo: not all save methods return a boolean, why this one?
      */
@@ -56,12 +54,12 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = [];
         foreach ($dataAttributes as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns("element_workflow_state"))) {
+            if (in_array($key, $this->getValidTableColumns('element_workflow_state'))) {
                 $data[$key] = $value;
             }
         }
 
-        $this->db->insertOrUpdate("element_workflow_state", $data);
+        $this->db->insertOrUpdate('element_workflow_state', $data);
 
         return true;
     }
@@ -71,6 +69,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete("element_workflow_state", $this->db->quoteInto("cid = ?", $this->model->getCid()) . " AND " . $this->db->quoteInto("ctype = ?", $this->model->getCtype()));
+        $this->db->delete('element_workflow_state', [
+            'cid' => $this->model->getCid(),
+            'ctype' => $this->model->getCtype()
+        ]);
     }
 }

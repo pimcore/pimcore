@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Staticroute
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -24,14 +25,10 @@ use Pimcore\Model\Workflow;
  */
 class Dao extends Model\Dao\PhpArrayTable
 {
-
-    /**
-     *
-     */
     public function configure()
     {
         parent::configure();
-        $this->setFile("workflowmanagement");
+        $this->setFile('workflowmanagement');
     }
 
     /**
@@ -45,7 +42,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $workflows = [];
         foreach ($workflowsData as $workflowData) {
-            $workflows[] = Model\Workflow::getById($workflowData["id"]);
+            $workflows[] = Model\Workflow::getById($workflowData['id']);
         }
 
         $this->model->setWorkflows($workflows);

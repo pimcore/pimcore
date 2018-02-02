@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -16,11 +16,16 @@ namespace Pimcore\Tool;
 
 class Serialize
 {
-
+    /**
+     * @var array
+     */
+    protected static $loopFilterProcessedObjects = [];
 
     /**
      * @static
+     *
      * @param mixed $data
+     *
      * @return string
      */
     public static function serialize($data)
@@ -30,7 +35,9 @@ class Serialize
 
     /**
      * @static
+     *
      * @param $data
+     *
      * @return mixed
      */
     public static function unserialize($data)
@@ -42,16 +49,22 @@ class Serialize
         return $data;
     }
 
-
     /**
-     * @var array
+     * Shortcut to access the admin serializer
+     *
+     * @return \Symfony\Component\Serializer\Serializer
      */
-    protected static $loopFilterProcessedObjects = [];
+    public static function getAdminSerializer()
+    {
+        return \Pimcore::getContainer()->get('pimcore_admin.serializer');
+    }
 
     /**
      * this is a special json encoder that avoids recursion errors
      * especially for pimcore models that contain massive self referencing objects
+     *
      * @param $data
+     *
      * @return string
      */
     public static function removeReferenceLoops($data)
@@ -62,6 +75,7 @@ class Serialize
 
     /**
      * @param $element
+     *
      * @return mixed
      */
     protected static function loopFilterCycles($element)
@@ -71,7 +85,11 @@ class Serialize
                 $value = self::loopFilterCycles($value);
             }
         } elseif (is_object($element)) {
-            $clone = clone $element; // do not modify the original object
+            try {
+                $clone = clone $element; // do not modify the original object
+            } catch (\Throwable $e) {
+                return sprintf('"* NON-CLONEABLE (%s): %s *"', get_class($element), $e->getMessage());
+            }
 
             if (in_array($element, self::$loopFilterProcessedObjects, true)) {
                 return '"* RECURSION (' . get_class($element) . ') *"';

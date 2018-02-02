@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -25,6 +25,7 @@ abstract class Adapter
 
     /**
      * @param $path
+     *
      * @return string
      */
     protected function preparePath($path)
@@ -32,7 +33,7 @@ abstract class Adapter
         if (!stream_is_local($path)) {
             // gs is only able to deal with local files
             // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/imagick-tmp-" . uniqid() . "." . File::getFileExtension($path);
+            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
             copy($path, $tmpFilePath);
             $path = $tmpFilePath;
             $this->tmpFiles[] = $path;
@@ -53,9 +54,6 @@ abstract class Adapter
         }
     }
 
-    /**
-     *
-     */
     public function __destruct()
     {
         $this->removeTmpFiles();

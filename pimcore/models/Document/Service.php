@@ -10,32 +10,46 @@
  *
  * @category   Pimcore
  * @package    Document
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Document\Renderer\DocumentRenderer;
+use Pimcore\Document\Renderer\DocumentRendererInterface;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Exception\MissingDependencyException;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
-use Pimcore\View;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
+ * @method array getTranslations(Document $document)
+ * @method addTranslation(Document $document, Document $translation, $language = null)
+ * @method removeTranslation(Document $document)
+ * @method int getTranslationSourceId(Document $document)
  */
 class Service extends Model\Element\Service
 {
-
     /**
-     * @var User
+     * @var Model\User
      */
     protected $_user;
     /**
      * @var array
      */
     protected $_copyRecursiveIds;
+
+    /**
+     * @var Document[]
+     */
+    protected $nearestPathCache;
 
     /**
      * @param null $user
@@ -46,123 +60,47 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * static function to render a document outside of a view
+     * Renders a document outside of a view with support for legacy documents
+     *
+     * Parameter order was kept for BC (useLayout before query and options).
      *
      * @static
-     * @param Document $document
-     * @param array $params
+     *
+     * @param Document\PageSnippet $document
+     * @param array $attributes
      * @param bool $useLayout
+     * @param array $query
+     * @param array $options
+     *
      * @return string
      */
-    public static function render(Document $document, $params = [], $useLayout = false)
+    public static function render(Document\PageSnippet $document, array $attributes = [], $useLayout = false, array $query = [], array $options = []): string
     {
-        $layout = null;
-        $existingActionHelper = null;
+        $container = \Pimcore::getContainer();
 
-        if (\Zend_Controller_Action_HelperBroker::hasHelper("layout")) {
-            $existingActionHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("layout");
-        }
-        $layoutInCurrentAction = (\Zend_Layout::getMvcInstance() instanceof \Zend_Layout) ? \Zend_Layout::getMvcInstance()->getLayout() : false;
+        /** @var DocumentRendererInterface $renderer */
+        $renderer = null;
 
-        $viewHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
-        if ($viewHelper) {
-            if ($viewHelper->view === null) {
-                $viewHelper->initView(PIMCORE_WEBSITE_PATH . "/views");
+        if ($document->doRenderWithLegacyStack()) {
+            $serviceId = 'pimcore.legacy.document.renderer';
+            if (!$container->has($serviceId)) {
+                throw new MissingDependencyException(sprintf(
+                    'Document %d (%s) is expected to be rendered with the legacy renderer, but legacy renderer does not exist as service "%s"',
+                    $document->getId(),
+                    $document->getFullPath(),
+                    $serviceId
+                ));
             }
-            $view = $viewHelper->view;
+
+            $renderer = $container->get($serviceId);
         } else {
-            $view = new \Pimcore\View();
+            $renderer = $container->get(DocumentRenderer::class);
         }
 
-        // add the view script path from the website module to the view, because otherwise it's not possible to call
-        // this method out of other modules to render documents, eg. sending e-mails out of an plugin with Pimcore_Mail
-        $moduleDirectory = \Zend_Controller_Front::getInstance()->getModuleDirectory($document->getModule());
-        if (!empty($moduleDirectory)) {
-            $view->addScriptPath($moduleDirectory . "/views/layouts");
-            $view->addScriptPath($moduleDirectory . "/views/scripts");
-        } else {
-            $view->addScriptPath(PIMCORE_FRONTEND_MODULE . "/views/layouts");
-            $view->addScriptPath(PIMCORE_FRONTEND_MODULE . "/views/scripts");
-        }
+        // keep useLayout compatibility
+        $attributes['_useLayout'] = $useLayout;
 
-        $documentBackup = null;
-        if ($view->document) {
-            $documentBackup = $view->document;
-        }
-        $view->document = $document;
-
-        if ($useLayout) {
-            if (!$layout = \Zend_Layout::getMvcInstance()) {
-                $layout = \Zend_Layout::startMvc();
-                $layout->setViewSuffix(View::getViewScriptSuffix());
-                if ($layoutHelper = $view->getHelper("layout")) {
-                    $layoutHelper->setLayout($layout);
-                }
-            }
-            $layout->setLayout("--modification-indicator--");
-        }
-
-        $params["document"] = $document;
-
-        foreach ($params as $key => $value) {
-            if (!$view->$key) {
-                $view->$key = $value;
-            }
-        }
-
-        $content = $view->action($document->getAction(), $document->getController(), $document->getModule(), $params);
-
-        //has to be called after $view->action so we can determine if a layout is enabled in $view->action()
-        if ($useLayout) {
-            if ($layout instanceof \Zend_Layout) {
-                $layout->{$layout->getContentKey()} = $content;
-                if (is_array($params)) {
-                    foreach ($params as $key => $value) {
-                        $layout->getView()->$key = $value;
-                    }
-                }
-
-                // when using Document\Service::render() you have to set a layout in the view ($this->layout()->setLayout("mylayout"))
-                if ($layout->getLayout() != "--modification-indicator--") {
-                    $content = $layout->render();
-                }
-
-                //deactivate the layout if it was not activated in the called action
-                //otherwise we would activate the layout in the called action
-                \Zend_Layout::resetMvcInstance();
-                if (!$layoutInCurrentAction) {
-                    $layout->disableLayout();
-                } else {
-                    $layout = \Zend_Layout::startMvc();
-                    $layout->setViewSuffix(View::getViewScriptSuffix()); // set pimcore specifiy view suffix
-                    $layout->setLayout($layoutInCurrentAction);
-                    $view->getHelper("Layout")->setLayout($layout);
-
-                    if ($existingActionHelper) {
-                        \Zend_Controller_Action_HelperBroker::removeHelper("layout");
-                        \Zend_Controller_Action_HelperBroker::addHelper($existingActionHelper);
-
-                        $pluginClass = $layout->getPluginClass();
-                        $front = $existingActionHelper->getFrontController();
-                        if ($front->hasPlugin($pluginClass)) {
-                            $plugin = $front->getPlugin($pluginClass);
-                            $plugin->setLayoutActionHelper($existingActionHelper);
-                        }
-                    }
-                }
-                $layout->{$layout->getContentKey()} = null; //reset content
-            }
-        }
-
-        if ($documentBackup) {
-            $view->document = $documentBackup;
-        }
-
-        if (\Pimcore\Config::getSystemConfig()->outputfilters->less) {
-            $content = \Pimcore\Tool\Less::processHtml($content);
-        }
-
-        return $content;
+        return $renderer->render($document, $attributes, $query, $options);
     }
 
     /**
@@ -177,16 +115,16 @@ class Service extends Model\Element\Service
         if ($document instanceof Document) {
             $document->save();
             $saved++;
-            if ($saved%$collectGarbageAfterIteration === 0) {
+            if ($saved % $collectGarbageAfterIteration === 0) {
                 \Pimcore::collectGarbage();
             }
         }
 
-        foreach ($document->getChilds() as $child) {
+        foreach ($document->getChildren() as $child) {
             if (!$child->hasChilds()) {
                 $child->save();
                 $saved++;
-                if ($saved%$collectGarbageAfterIteration === 0) {
+                if ($saved % $collectGarbageAfterIteration === 0) {
                     \Pimcore::collectGarbage();
                 }
             }
@@ -199,6 +137,7 @@ class Service extends Model\Element\Service
     /**
      * @param  Document $target
      * @param  Document $source
+     *
      * @return Document copied document
      */
     public function copyRecursive($target, $source)
@@ -212,24 +151,23 @@ class Service extends Model\Element\Service
             return;
         }
 
-
-        if (method_exists($source, "getElements")) {
+        if (method_exists($source, 'getElements')) {
             $source->getElements();
         }
 
         $source->getProperties();
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->id = null;
-        $new->setChilds(null);
-        $new->setKey(Element\Service::getSaveCopyName("document", $new->getKey(), $target));
+        $new->setChildren(null);
+        $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
-        if (method_exists($new, "setPrettyUrl")) {
+        if (method_exists($new, 'setPrettyUrl')) {
             $new->setPrettyUrl(null);
         }
 
@@ -238,16 +176,16 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChilds() as $child) {
+        foreach ($source->getChildren() as $child) {
             $this->copyRecursive($new, $child);
         }
 
         $this->updateChilds($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventManager()->trigger('document.postCopy', $new, [
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]);
+        ]));
 
         return $new;
     }
@@ -257,21 +195,23 @@ class Service extends Model\Element\Service
      * @param $source
      * @param bool $enableInheritance
      * @param bool $resetIndex
+     *
      * @return Document
+     *
      * @throws \Exception
      */
     public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false)
     {
-        if (method_exists($source, "getElements")) {
+        if (method_exists($source, 'getElements')) {
             $source->getElements();
         }
 
         $source->getProperties();
 
-        $new = clone $source;
+        $new = Element\Service::cloneMe($source);
         $new->id = null;
         $new->setChilds(null);
-        $new->setKey(Element\Service::getSaveCopyName("document", $new->getKey(), $target));
+        $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
@@ -284,7 +224,7 @@ class Service extends Model\Element\Service
             $new->setIndex($new->getDao()->getNextIndex());
         }
 
-        if (method_exists($new, "setPrettyUrl")) {
+        if (method_exists($new, 'setPrettyUrl')) {
             $new->setPrettyUrl(null);
         }
 
@@ -298,9 +238,9 @@ class Service extends Model\Element\Service
         $this->updateChilds($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventManager()->trigger('document.postCopy', $new, [
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]);
+        ]));
 
         return $new;
     }
@@ -308,7 +248,9 @@ class Service extends Model\Element\Service
     /**
      * @param $target
      * @param $source
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function copyContents($target, $source)
@@ -316,7 +258,7 @@ class Service extends Model\Element\Service
 
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
-            throw new \Exception("Source and target have to be the same type");
+            throw new \Exception('Source and target have to be the same type');
         }
 
         if ($source instanceof Document\PageSnippet) {
@@ -353,6 +295,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param Document $document
+     *
      * @return array
      */
     public static function gridDocumentData($document)
@@ -360,12 +303,12 @@ class Service extends Model\Element\Service
         $data = Element\Service::gridElementData($document);
 
         if ($document instanceof Document\Page) {
-            $data["title"] = $document->getTitle();
-            $data["description"] = $document->getDescription();
+            $data['title'] = $document->getTitle();
+            $data['description'] = $document->getDescription();
         } else {
-            $data["title"] = "";
-            $data["description"] = "";
-            $data["name"] = "";
+            $data['title'] = '';
+            $data['description'] = '';
+            $data['name'] = '';
         }
 
         return $data;
@@ -373,7 +316,9 @@ class Service extends Model\Element\Service
 
     /**
      * @static
+     *
      * @param $doc
+     *
      * @return mixed
      */
     public static function loadAllDocumentFields($doc)
@@ -382,7 +327,7 @@ class Service extends Model\Element\Service
 
         if ($doc instanceof Document\PageSnippet) {
             foreach ($doc->getElements() as $name => $data) {
-                if (method_exists($data, "load")) {
+                if (method_exists($data, 'load')) {
                     $data->load();
                 }
             }
@@ -393,8 +338,10 @@ class Service extends Model\Element\Service
 
     /**
      * @static
+     *
      * @param $path
      * @param $type
+     *
      * @return bool
      */
     public static function pathExists($path, $type = null)
@@ -417,6 +364,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param $type
+     *
      * @return bool
      */
     public static function isValidType($type)
@@ -434,9 +382,11 @@ class Service extends Model\Element\Service
      *  "object" => array(...),
      *  "asset" => array(...)
      * )
+     *
      * @param $document
      * @param $rewriteConfig
      * @param array $params
+     *
      * @return Document
      */
     public static function rewriteIds($document, $rewriteConfig, $params = [])
@@ -444,14 +394,14 @@ class Service extends Model\Element\Service
 
         // rewriting elements only for snippets and pages
         if ($document instanceof Document\PageSnippet) {
-            if (array_key_exists("enableInheritance", $params) && $params["enableInheritance"]) {
+            if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {
                 $elements = $document->getElements();
                 $changedElements = [];
                 $contentMaster = $document->getContentMasterDocument();
                 if ($contentMaster instanceof Document\PageSnippet) {
                     $contentMasterElements = $contentMaster->getElements();
                     foreach ($contentMasterElements as $contentMasterElement) {
-                        if (method_exists($contentMasterElement, "rewriteIds")) {
+                        if (method_exists($contentMasterElement, 'rewriteIds')) {
                             $element = clone $contentMasterElement;
                             $element->rewriteIds($rewriteConfig);
 
@@ -468,7 +418,7 @@ class Service extends Model\Element\Service
             } else {
                 $elements = $document->getElements();
                 foreach ($elements as &$element) {
-                    if (method_exists($element, "rewriteIds")) {
+                    if (method_exists($element, 'rewriteIds')) {
                         $element->rewriteIds($rewriteConfig);
                     }
                 }
@@ -476,12 +426,12 @@ class Service extends Model\Element\Service
 
             $document->setElements($elements);
         } elseif ($document instanceof Document\Hardlink) {
-            if (array_key_exists("document", $rewriteConfig) && $document->getSourceId() && array_key_exists((int) $document->getSourceId(), $rewriteConfig["document"])) {
-                $document->setSourceId($rewriteConfig["document"][(int) $document->getSourceId()]);
+            if (array_key_exists('document', $rewriteConfig) && $document->getSourceId() && array_key_exists((int) $document->getSourceId(), $rewriteConfig['document'])) {
+                $document->setSourceId($rewriteConfig['document'][(int) $document->getSourceId()]);
             }
         } elseif ($document instanceof Document\Link) {
-            if (array_key_exists("document", $rewriteConfig) && $document->getLinktype() == "internal" && $document->getInternalType() == "document" && array_key_exists((int) $document->getInternal(), $rewriteConfig["document"])) {
-                $document->setInternal($rewriteConfig["document"][(int) $document->getInternal()]);
+            if (array_key_exists('document', $rewriteConfig) && $document->getLinktype() == 'internal' && $document->getInternalType() == 'document' && array_key_exists((int) $document->getInternal(), $rewriteConfig['document'])) {
+                $document->setInternal($rewriteConfig['document'][(int) $document->getInternal()]);
             }
         }
 
@@ -497,13 +447,14 @@ class Service extends Model\Element\Service
 
     /**
      * @param $url
+     *
      * @return Document
      */
     public static function getByUrl($url)
     {
         $urlParts = parse_url($url);
-        if ($urlParts["path"]) {
-            $document = Document::getByPath($urlParts["path"]);
+        if ($urlParts['path']) {
+            $document = Document::getByPath($urlParts['path']);
 
             // search for a page in a site
             if (!$document) {
@@ -511,8 +462,8 @@ class Service extends Model\Element\Service
                 $sitesObjects = $sitesList->load();
 
                 foreach ($sitesObjects as $site) {
-                    if ($site->getRootDocument() && (in_array($urlParts["host"], $site->getDomains()) || $site->getMainDomain() == $urlParts["host"])) {
-                        if ($document = Document::getByPath($site->getRootDocument() . $urlParts["path"])) {
+                    if ($site->getRootDocument() && (in_array($urlParts['host'], $site->getDomains()) || $site->getMainDomain() == $urlParts['host'])) {
+                        if ($document = Document::getByPath($site->getRootDocument() . $urlParts['path'])) {
                             break;
                         }
                     }
@@ -526,16 +477,18 @@ class Service extends Model\Element\Service
     /**
      * @param $item
      * @param int $nr
+     *
      * @return mixed|string
+     *
      * @throws \Exception
      */
     public static function getUniqueKey($item, $nr = 0)
     {
         $list = new Listing();
         $list->setUnpublished(true);
-        $key = Element\Service::getValidKey($item->getKey(), "document");
+        $key = Element\Service::getValidKey($item->getKey(), 'document');
         if (!$key) {
-            throw new \Exception("No item key set.");
+            throw new \Exception('No item key set.');
         }
         if ($nr) {
             $key = $key . '_' . $nr;
@@ -543,7 +496,7 @@ class Service extends Model\Element\Service
 
         $parent = $item->getParent();
         if (!$parent) {
-            throw new \Exception("You have to set a parent document to determine a unique Key");
+            throw new \Exception('You have to set a parent document to determine a unique Key');
         }
 
         if (!$item->getId()) {
@@ -558,5 +511,81 @@ class Service extends Model\Element\Service
         }
 
         return $key;
+    }
+
+    /**
+     * Get the nearest document by path. Used to match nearest document for a static route.
+     *
+     * @param string|Request $path
+     * @param bool $ignoreHardlinks
+     * @param array $types
+     *
+     * @return Document|Document\PageSnippet|null
+     */
+    public function getNearestDocumentByPath($path, $ignoreHardlinks = false, $types = [])
+    {
+        if ($path instanceof Request) {
+            $path = urldecode($path->getPathInfo());
+        }
+
+        $cacheKey = $ignoreHardlinks . implode('-', $types);
+        $document = null;
+
+        if (isset($this->nearestPathCache[$cacheKey])) {
+            $document = $this->nearestPathCache[$cacheKey];
+        } else {
+            $paths    = ['/'];
+            $tmpPaths = [];
+
+            $pathParts = explode('/', $path);
+            foreach ($pathParts as $pathPart) {
+                $tmpPaths[] = $pathPart;
+
+                $t = implode('/', $tmpPaths);
+                if (!empty($t)) {
+                    $paths[] = $t;
+                }
+            }
+
+            $paths = array_reverse($paths);
+            foreach ($paths as $p) {
+                if ($document = Document::getByPath($p)) {
+                    if (empty($types) || in_array($document->getType(), $types)) {
+                        $document = $this->nearestPathCache[$cacheKey] = $document;
+                        break;
+                    }
+                } elseif (Model\Site::isSiteRequest()) {
+                    // also check for a pretty url in a site
+                    $site = Model\Site::getCurrentSite();
+
+                    // undo the changed made by the site detection in self::match()
+                    $originalPath = preg_replace('@^' . $site->getRootPath() . '@', '', $p);
+
+                    $sitePrettyDocId = $this->getDao()->getDocumentIdByPrettyUrlInSite($site, $originalPath);
+                    if ($sitePrettyDocId) {
+                        if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
+                            $document = $this->nearestPathCache[$cacheKey] = $sitePrettyDoc;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($document) {
+            if (!$ignoreHardlinks) {
+                if ($document instanceof Document\Hardlink) {
+                    if ($hardLinkedDocument = Document\Hardlink\Service::getNearestChildByPath($document, $path)) {
+                        $document = $hardLinkedDocument;
+                    } else {
+                        $document = Document\Hardlink\Service::wrap($document);
+                    }
+                }
+            }
+
+            return $document;
+        }
+
+        return null;
     }
 }

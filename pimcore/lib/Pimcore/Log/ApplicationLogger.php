@@ -8,21 +8,19 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Log;
 
+use Monolog\Logger;
+use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Psr\Log\LoggerInterface;
-use Pimcore\Logger;
+use Psr\Log\LogLevel;
 
-class ApplicationLogger /*implements LoggerInterface*/
+class ApplicationLogger implements LoggerInterface
 {
-
-    // we cannot implement LoggerInterface because then we wouldn't able to be compatible with the old logger
-    // but we are definitely PSR-3 compatible
-
     /**
      * @var null
      */
@@ -55,39 +53,27 @@ class ApplicationLogger /*implements LoggerInterface*/
 
     /**
      * @param string $component
-     * @param boolean $initDbHandler
+     * @param bool $initDbHandler
+     *
      * @return ApplicationLogger
      */
-    public static function getInstance($component = "default", $initDbHandler = false)
+    public static function getInstance($component = 'default', $initDbHandler = false)
     {
-        if (array_key_exists($component, self::$instances)) {
-            return self::$instances[$component];
+        $container   = \Pimcore::getContainer();
+        $containerId = 'pimcore.app_logger.' . $component;
+
+        if ($container->has($containerId)) {
+            $logger = $container->get($containerId);
+        } else {
+            $logger = new self;
+            if ($initDbHandler) {
+                $logger->addWriter($container->get(ApplicationLoggerDb::class));
+            }
+
+            $container->set($containerId, $logger);
         }
 
-        $logger = new self;
         $logger->setComponent($component);
-
-        if ($initDbHandler) {
-            $logger->addWriter(new \Pimcore\Log\Handler\ApplicationLoggerDb());
-        }
-
-        self::$instances[$component] = $logger;
-
-        return $logger;
-    }
-
-    /**
-     * Shorthand to get a Db Logger
-     *
-     * @param string $component
-     * @param string $logLevel
-     *
-     * @return static
-     * @throws \Zend_Log_Exception
-     */
-    public static function getDbLogger($component = null, $logLevel = "error")
-    {
-        $logger = self::getInstance($component, true);
 
         return $logger;
     }
@@ -99,25 +85,25 @@ class ApplicationLogger /*implements LoggerInterface*/
     {
         if ($writer instanceof \Zend_Log_Writer_Abstract) {
             // ZF compatibility
-            if (!isset($this->loggers["default-zend"])) {
+            if (!isset($this->loggers['default-zend'])) {
                 // auto init Monolog logger
-                $this->loggers["default-zend"] = new \Zend_Log();
+                $this->loggers['default-zend'] = new \Zend_Log();
             }
-            $this->loggers["default-zend"]->addWriter($writer);
+            $this->loggers['default-zend']->addWriter($writer);
         } elseif ($writer instanceof \Monolog\Handler\HandlerInterface) {
-            if (!isset($this->loggers["default-monolog"])) {
+            if (!isset($this->loggers['default-monolog'])) {
                 // auto init Monolog logger
-                $this->loggers["default-monolog"] = new \Monolog\Logger('app');
+                $this->loggers['default-monolog'] = new \Monolog\Logger('app');
             }
-            $this->loggers["default-monolog"]->pushHandler($writer);
+            $this->loggers['default-monolog']->pushHandler($writer);
         } elseif ($writer instanceof \Psr\Log\LoggerInterface) {
             $this->loggers[] = $writer;
         }
     }
 
-
-
     /**
+     * @deprecated
+     *
      * @param string $component
      */
     public function setComponent($component)
@@ -126,6 +112,8 @@ class ApplicationLogger /*implements LoggerInterface*/
     }
 
     /**
+     * @deprecated
+     *
      * @param \Pimcore\Log\FileObject | string $fileObject
      */
     public function setFileObject($fileObject)
@@ -134,13 +122,15 @@ class ApplicationLogger /*implements LoggerInterface*/
     }
 
     /**
-     * @param \\Pimcore\Model\Object\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
+     * @deprecated
+     *
+     * @param \\Pimcore\Model\DataObject\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
      */
     public function setRelatedObject($relatedObject)
     {
         $this->relatedObject = $relatedObject;
 
-        if ($this->relatedObject instanceof \Pimcore\Model\Object\AbstractObject) {
+        if ($this->relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject) {
             $this->relatedObjectType = 'object';
         } elseif ($this->relatedObject instanceof \Pimcore\Model\Asset) {
             $this->relatedObjectType = 'asset';
@@ -155,29 +145,31 @@ class ApplicationLogger /*implements LoggerInterface*/
      * @param mixed $level
      * @param string $message
      * @param array $context
+     *
      * @return null
      */
     public function log($level, $message, array $context = [])
     {
-        if (!isset($context["component"])) {
-            $context["component"] = $this->component;
+        if (!isset($context['component'])) {
+            $context['component'] = $this->component;
         }
 
-        if (!isset($context["fileObject"]) && $this->fileObject) {
-            $context["fileObject"] = $this->fileObject;
+        if (!isset($context['fileObject']) && $this->fileObject) {
+            $context['fileObject'] = $this->fileObject;
+            $this->fileObject = null;
         }
 
-        if (isset($context["fileObject"])) {
-            if (is_string($context["fileObject"])) {
-                $context["fileObject"] = \Pimcore\Tool::getHostUrl() . "/" . str_replace(PIMCORE_DOCUMENT_ROOT, '', $context["fileObject"]);
+        if (isset($context['fileObject'])) {
+            if (is_string($context['fileObject'])) {
+                $context['fileObject'] = str_replace(PIMCORE_PROJECT_ROOT, '', $context['fileObject']);
             } else {
-                $context["fileObject"] = \Pimcore\Tool::getHostUrl() . "/" . str_replace(PIMCORE_DOCUMENT_ROOT, '', $context["fileObject"]->getFilename());
+                $context['fileObject'] = str_replace(PIMCORE_PROJECT_ROOT, '', $context['fileObject']->getFilename());
             }
         }
 
         $relatedObject = null;
-        if (isset($context["relatedObject"])) {
-            $relatedObject = $context["relatedObject"];
+        if (isset($context['relatedObject'])) {
+            $relatedObject = $context['relatedObject'];
         }
 
         if (!$relatedObject && $this->relatedObject) {
@@ -185,12 +177,12 @@ class ApplicationLogger /*implements LoggerInterface*/
         }
 
         if ($relatedObject) {
-            if ($relatedObject instanceof \Pimcore\Model\Object\AbstractObject or $relatedObject instanceof \Pimcore\Model\Document or $relatedObject instanceof \Pimcore\Model\Asset) {
+            if ($relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject or $relatedObject instanceof \Pimcore\Model\Document or $relatedObject instanceof \Pimcore\Model\Asset) {
                 $relatedObject = $relatedObject->getId();
             }
             if (is_numeric($relatedObject)) {
-                $context["relatedObject"] = $relatedObject;
-                $context["relatedObjectType"] = $this->relatedObjectType;
+                $context['relatedObject'] = $relatedObject;
+                $context['relatedObjectType'] = $this->relatedObjectType;
             }
         }
 
@@ -201,7 +193,7 @@ class ApplicationLogger /*implements LoggerInterface*/
                 $logger->log($level, $message, $context);
             } elseif ($logger instanceof \Zend_Log) {
                 // zf compatibility
-                $zendLoggerPsr3Mapping = array_flip(Logger::getZendLoggerPsr3Mapping());
+                $zendLoggerPsr3Mapping = array_flip(self::getZendLoggerPsr3Mapping());
                 $prio = $zendLoggerPsr3Mapping[$level];
                 $logger->log($message, $prio, $context);
             }
@@ -239,7 +231,7 @@ class ApplicationLogger /*implements LoggerInterface*/
         }
 
         $normalizeFile = function ($filename) {
-            return str_replace(PIMCORE_DOCUMENT_ROOT . '/', '', $filename);
+            return str_replace(PIMCORE_PROJECT_ROOT . '/', '', $filename);
         };
 
         $source = '';
@@ -248,9 +240,8 @@ class ApplicationLogger /*implements LoggerInterface*/
                 // called from a class method
                 // ClassName->methodName():line
                 $source = sprintf(
-                    '%s%s%s():%d',
+                    '%s::%s:%d',
                     $previousCall['class'],
-                    $previousCall['type'],
                     $previousCall['function'],
                     $logCall['line']
                 );
@@ -258,7 +249,7 @@ class ApplicationLogger /*implements LoggerInterface*/
                 // called from a function
                 // filename.php::functionName():line
                 $source = sprintf(
-                    '%s::%s():%d',
+                    '%s::%s:%d',
                     $normalizeFile($previousCall['file']),
                     $previousCall['function'],
                     $logCall['line']
@@ -280,66 +271,74 @@ class ApplicationLogger /*implements LoggerInterface*/
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function emergency($message)
+    public function emergency($message, array $context = [])
     {
-        $this->handleLog("emergency", $message, func_get_args());
+        $this->handleLog('emergency', $message, func_get_args());
     }
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function critical($message)
+    public function critical($message, array $context = [])
     {
-        $this->handleLog("critical", $message, func_get_args());
+        $this->handleLog('critical', $message, func_get_args());
     }
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function error($message)
+    public function error($message, array $context = [])
     {
-        $this->handleLog("error", $message, func_get_args());
+        $this->handleLog('error', $message, func_get_args());
     }
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function alert($message)
+    public function alert($message, array $context = [])
     {
-        $this->handleLog("alert", $message, func_get_args());
+        $this->handleLog('alert', $message, func_get_args());
     }
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function warning($message)
+    public function warning($message, array $context = [])
     {
-        $this->handleLog("warning", $message, func_get_args());
+        $this->handleLog('warning', $message, func_get_args());
     }
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function notice($message)
+    public function notice($message, array $context = [])
     {
-        $this->handleLog("notice", $message, func_get_args());
+        $this->handleLog('notice', $message, func_get_args());
     }
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function info($message)
+    public function info($message, array $context = [])
     {
-        $this->handleLog("info", $message, func_get_args());
+        $this->handleLog('info', $message, func_get_args());
     }
 
     /**
      * @param string $message
+     * @param array $context
      */
-    public function debug($message)
+    public function debug($message, array $context = [])
     {
-        $this->handleLog("debug", $message, func_get_args());
+        $this->handleLog('debug', $message, func_get_args());
     }
 
     /**
@@ -356,19 +355,19 @@ class ApplicationLogger /*implements LoggerInterface*/
                 // standard PSR-3 -> $context is an array
                 $context = $params[1];
             } elseif ($params[1] instanceof \Pimcore\Model\Element\ElementInterface) {
-                $context["relatedObject"] = $params[1];
+                $context['relatedObject'] = $params[1];
             }
         }
 
         if (isset($params[2])) {
-            if ($params[2] instanceof \Pimcore\Log\FileObject) {
-                $context["fileObject"] = $params[2];
+            if ($params[2] instanceof FileObject) {
+                $context['fileObject'] = $params[2];
             }
         }
 
         if (isset($params[3])) {
             if (is_string($params[3])) {
-                $context["component"] = $params[3];
+                $context['component'] = $params[3];
             }
         }
 
@@ -377,34 +376,87 @@ class ApplicationLogger /*implements LoggerInterface*/
 
     /**
      * @param $message
-     * @param $exceptionObject
+     * @param \Throwable $exceptionObject
      * @param string $priority
      * @param null $relatedObject
      * @param null $component
      */
-     public function logException($message, $exceptionObject, $priority = "alert", $relatedObject = null, $component = null)
-     {
-         if (is_null($priority)) {
-             $priority = Zend_Log::ALERT;
-         }
+    public function logException($message, $exceptionObject, $priority = 'alert', $relatedObject = null, $component = null)
+    {
+        if (is_null($priority)) {
+            $priority = 'alert';
+        }
 
-         $message .= ' : '.$exceptionObject->getMessage();
+        $message .= ' : '.$exceptionObject->getMessage();
 
-         //workaround to prevent "nesting level to deep" errors when used var_export()
-         ob_start();
-         var_dump($exceptionObject);
-         $dataDump = ob_get_clean();
+        $fileObject = self::createExceptionFileObject($exceptionObject);
 
-         if (!$dataDump) {
-             $dataDump = $exceptionObject->getMessage();
-         }
-
-         $fileObject = new \Pimcore\Log\FileObject($dataDump);
-
-         $this->log($priority, $message, [
-             "relatedObject" => $relatedObject,
-             "fileObject" => $fileObject,
-             "component" => $component
+        $this->log($priority, $message, [
+            'relatedObject' => $relatedObject,
+            'fileObject'    => $fileObject,
+            'component'     => $component
          ]);
-     }
+    }
+
+    /**
+     * Logs a throwable to a given logger. This can be used to format an exception in the same format
+     * as the logException method to any PSR/monolog logger (e.g. when consumed via DI)
+     *
+     * @param LoggerInterface $logger
+     * @param string $message
+     * @param \Throwable $exception
+     * @param mixed $level
+     * @param null $relatedObject
+     * @param array $context
+     */
+    public static function logExceptionObject(
+        LoggerInterface $logger,
+        string $message,
+        \Throwable $exception,
+        $level = Logger::ALERT,
+        $relatedObject = null,
+        array $context = []
+    ) {
+        $message .= ' : ' . $exception->getMessage();
+
+        $fileObject = self::createExceptionFileObject($exception);
+
+        $logger->log($level, $message, array_merge([
+            'relatedObject' => $relatedObject,
+            'fileObject'    => $fileObject,
+        ], $context));
+    }
+
+    private static function createExceptionFileObject(\Throwable $exceptionObject)
+    {
+        //workaround to prevent "nesting level to deep" errors when used var_export()
+        ob_start();
+        var_dump($exceptionObject);
+        $dataDump = ob_get_clean();
+
+        if (!$dataDump) {
+            $dataDump = $exceptionObject->getMessage();
+        }
+
+        return new FileObject($dataDump);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getZendLoggerPsr3Mapping()
+    {
+        // the index numer represents the Zend_Log level, e.g.: Zend_Log::EMERG
+        // we don't use the contants here, to avoid a dependency on ZF in v5-only mode
+        return [
+            7 => LogLevel::DEBUG,
+            6 => LogLevel::INFO,
+            5 => LogLevel::NOTICE,
+            4 => LogLevel::WARNING,
+            3 => LogLevel::ERROR,
+            2 => LogLevel::CRITICAL,
+            1 => LogLevel::ALERT,
+            0 => LogLevel::EMERGENCY
+        ];
+    }
 }

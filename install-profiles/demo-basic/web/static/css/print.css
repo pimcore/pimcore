@@ -1,0 +1,11 @@
+.navbar-wrapper, .sidebar, .filters, .pagination, .breadcrumb-footer , footer {
+    display: none;
+}
+a {
+    color: #337ab7;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+}

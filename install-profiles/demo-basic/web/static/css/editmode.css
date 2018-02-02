@@ -1,0 +1,81 @@
+
+.editmode-label {
+    margin-bottom: 3px;
+}
+
+.editmode-label label {
+    padding-right: 5px;
+}
+
+
+.teaser {
+    text-align: left;
+}
+
+.area-gallery-single-images .pimcore_block_entry {
+    float:left;
+    clear: none;
+    width: 22%;
+    height: 180px;
+}
+
+.area-gallery-single-images .pimcore_block_entry .col-md-3  {
+    width: 95%;
+}
+
+.editable-roundup h2
+{
+    font-size: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+#content h1, #myCarousel h1 {
+    font-size: 36px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+#content h2, .teaser h2 {
+    font-size: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.jumbotron h2 {
+    font-size: 30px;
+}
+
+.teaser {
+    text-align: center;
+}
+
+.gallery .carousel-inner .item img {
+    min-width: 100%;
+    height: auto;
+}
+
+.teaser-icon > .icon > .image {
+    line-height: normal;
+    padding-top: 20px;
+}
+
+.teaser-icon .icon .pimcore_tag_select {
+    position: absolute;
+    right: -30px;
+    top: 25px;
+}
+
+.teaser-icon .icon .image input {
+    visibility: hidden;
+}
+
+.glyphicon-selection .x-combo-list-item, .glyphicon-selection .x-boundlist-item {
+    font-family: 'Glyphicons Halflings' !important;
+    font-size: 25px !important;
+}
+
+.carousel-caption .pimcore_tag_image {
+    position: absolute;
+    top: 0px;
+}

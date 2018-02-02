@@ -10,7 +10,8 @@
  *
  * @category   Pimcore
  * @package    Tool
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -23,16 +24,15 @@ use Pimcore\Model;
  */
 class Config extends Model\AbstractModel
 {
+    /**
+     * @var string
+     */
+    public $name = '';
 
     /**
      * @var string
      */
-    public $name = "";
-
-    /**
-     * @var string
-     */
-    public $sql = "";
+    public $sql = '';
 
     /**
      * @var string[]
@@ -47,22 +47,22 @@ class Config extends Model\AbstractModel
     /**
      * @var string
      */
-    public $niceName = "";
+    public $niceName = '';
 
     /**
      * @var string
      */
-    public $group = "";
+    public $group = '';
 
     /**
      * @var string
      */
-    public $groupIconClass = "";
+    public $groupIconClass = '';
 
     /**
      * @var string
      */
-    public $iconClass = "";
+    public $iconClass = '';
 
     /**
      * @var bool
@@ -111,6 +111,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return null|Config
      */
     public static function getByName($name)
@@ -137,8 +138,8 @@ class Config extends Model\AbstractModel
 
         foreach ($items as $item) {
             $reports[] = [
-                "id" => $item->getName(),
-                "text" => $item->getName()
+                'id' => $item->getName(),
+                'text' => $item->getName()
             ];
         }
 
@@ -148,14 +149,26 @@ class Config extends Model\AbstractModel
     /**
      * @param $configuration
      * @param null $fullConfig
-     * @return mixed
+     *
+     * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
+     *
+     * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface
      */
     public static function getAdapter($configuration, $fullConfig = null)
     {
-        $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
-        $adapter = "\\Pimcore\\Model\\Tool\\CustomReport\\Adapter\\{$type}";
+        $type = $configuration->type ? $configuration->type : 'sql';
+        $serviceLocator = \Pimcore::getContainer()->get('pimcore.custom_report.adapter.factories');
 
-        return new $adapter($configuration, $fullConfig);
+        if (!$serviceLocator->has($type)) {
+            throw new \RuntimeException(sprintf('Could not find Custom Report Adapter with type %s', $type));
+        }
+
+        /**
+         * @var $factory Model\Tool\CustomReport\Adapter\CustomReportAdapterFactoryInterface
+         */
+        $factory = $serviceLocator->get($type);
+
+        return $factory->create($configuration, $fullConfig);
     }
 
     /**
@@ -271,7 +284,7 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param boolean $menuShortcut
+     * @param bool $menuShortcut
      */
     public function setMenuShortcut($menuShortcut)
     {
@@ -279,13 +292,12 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getMenuShortcut()
     {
         return $this->menuShortcut;
     }
-
 
     /**
      * @param \string[] $dataSourceConfig

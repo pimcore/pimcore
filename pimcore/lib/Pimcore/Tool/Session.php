@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -8,244 +11,130 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Tool;
 
-use Pimcore\Logger;
+use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler;
+use Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandlerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Session
 {
-
     /**
-     * contains the session namespace objects
-     * @var array
+     * @var AdminSessionHandlerInterface
      */
-    protected static $sessions = [];
+    private static $handler;
 
-    /**
-     * contains how many sessions are currently open, this is important, because writeClose() must not be called if
-     * there is still an open session, this is especially important if something doesn't use the method use() but get()
-     * so the session isn't closed automatically after the action is done
-     */
-    protected static $openedSessions = 0;
-
-    /**
-     * when using mod_php, session_start() always adds an Set-Cookie header when called,
-     * this is the case in self::get(), so depending on how often self::get() is called the more
-     * header will get added to the response, so we clean them up in Pimcore::outputBufferEnd()
-     * to avoid problems with (reverse-)proxies such as Varnish who do not like too much Set-Cookie headers
-     * @var bool
-     */
-    protected static $sessionCookieCleanupNeeded = false;
-
-    /**
-     * @var array
-     */
-    protected static $options = [
-        "throw_startup_exceptions" => false,
-        "name" => "pimcore_admin_sid",
-        "strict" => false,
-        "use_trans_sid" => false,
-        "use_only_cookies" => false,
-        "cookie_httponly" => true
-    ];
-
-    /**
-     * @var array
-     */
-    protected static $restoreSession = [];
-
-    /**
-     * @param $name
-     * @param $value
-     */
-    public static function setOption($name, $value)
+    public static function getHandler(): AdminSessionHandlerInterface
     {
-        self::$options[$name] = $value;
-    }
-
-    /**
-     * @param $name
-     * @return mixed
-     */
-    public static function getOption($name)
-    {
-        if (isset(self::$options[$name])) {
-            return self::$options[$name];
+        if (null === static::$handler) {
+            static::$handler = \Pimcore::getContainer()->get(AdminSessionHandler::class);
         }
 
-        return null;
+        return static::$handler;
+    }
+
+    public static function setHandler(AdminSessionHandlerInterface $handler)
+    {
+        static::$handler = $handler;
     }
 
     /**
      * @param $func
      * @param string $namespace
+     *
      * @return mixed
      */
-    public static function useSession($func, $namespace = "pimcore_admin")
+    public static function useSession($func, string $namespace = 'pimcore_admin')
     {
-        $ret = $func(self::get($namespace));
-        self::writeClose();
-
-        return $ret;
+        return static::getHandler()->useSessionAttributeBag($func, $namespace);
     }
 
     /**
-     * @param string $namespace
-     * @param bool $readOnly
-     * @return \Zend_Session_Namespace
-     * @throws \Zend_Session_Exception
+     * @return string
      */
-    public static function get($namespace = "pimcore_admin", $readOnly = false)
+    public static function getSessionId()
     {
-        $initSession = !\Zend_Session::isStarted();
-        $forceStart = !$readOnly; // we don't force the session to start in read-only mode (default behavior)
-        $sName = self::getOption("name");
-
-        if (self::backupForeignSession()) {
-            $initSession = true;
-            $forceStart = true;
-        }
-
-        if ($initSession) {
-            \Zend_Session::setOptions(self::$options);
-        }
-
-        try {
-            try {
-                if ($initSession) {
-                    // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
-                    if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
-                        // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                        \Zend_Session::setId($_REQUEST[$sName]);
-                    }
-                }
-            } catch (\Exception $e) {
-                Logger::error("Problem while starting session");
-                Logger::error($e);
-            }
-        } catch (\Exception $e) {
-            Logger::emergency("there is a problem with admin session");
-            die();
-        }
-
-        if ($initSession) {
-            \Zend_Session::start();
-        }
-
-        if ($forceStart) {
-            @session_start();
-            self::$sessionCookieCleanupNeeded = true;
-        }
-
-        if (!array_key_exists($namespace, self::$sessions) || !self::$sessions[$namespace] instanceof \Zend_Session_Namespace) {
-            try {
-                self::$sessions[$namespace] = new Session\Container($namespace);
-            } catch (\Exception $e) {
-                // invalid session, regenerate the session, and return a dummy object
-                \Zend_Session::regenerateId();
-
-                return new \stdClass();
-            }
-        }
-
-        self::$openedSessions++;
-
-        self::$sessions[$namespace]->unlock();
-
-        return self::$sessions[$namespace];
+        return static::getHandler()->getSessionId();
     }
 
     /**
-     * @param string $namespace
-     * @return \stdClass
+     * @return string
      */
-    public static function getReadOnly($namespace = "pimcore_admin")
+    public static function getSessionName()
     {
-        $session = self::get($namespace, true);
-        $session->lock();
-        self::writeClose();
-
-        return $session;
+        return static::getHandler()->getSessionName();
     }
 
     /**
+     * @return bool
+     */
+    public static function invalidate(): bool
+    {
+        return static::getHandler()->invalidate();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function regenerateId(): bool
+    {
+        return static::getHandler()->regenerateId();
+    }
+
+    /**
+     * @param Request $request
+     * @param bool    $checkRequestParams
      *
+     * @return bool
+     */
+    public static function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
+    {
+        return static::getHandler()->requestHasSessionId($request, $checkRequestParams);
+    }
+
+    /**
+     * @param Request $request
+     * @param bool    $checkRequestParams
+     *
+     * @return string
+     */
+    public static function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false)
+    {
+        return static::getHandler()->getSessionIdFromRequest($request, $checkRequestParams);
+    }
+
+    /**
+     * Start session and get an attribute bag
+     *
+     * @param string $namespace
+     *
+     * @return AttributeBagInterface
+     */
+    public static function get(string $namespace = 'pimcore_admin'): AttributeBagInterface
+    {
+        return static::getHandler()->loadAttributeBag($namespace);
+    }
+
+    /**
+     * @param string $namespace
+     *
+     * @return AttributeBagInterface
+     */
+    public static function getReadOnly(string $namespace = 'pimcore_admin'): AttributeBagInterface
+    {
+        return static::getHandler()->getReadOnlyAttributeBag($namespace);
+    }
+
+    /**
+     * Saves the session if it is the last admin session which was opene
      */
     public static function writeClose()
     {
-        self::$openedSessions--;
-
-        if (!self::$openedSessions) { // do not write session data if there's still an open session
-            session_write_close();
-
-            self::restoreForeignSession();
-        }
-    }
-
-    /**
-     * @throws \Zend_Session_Exception
-     */
-    public static function regenerateId()
-    {
-        \Zend_Session::regenerateId();
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isSessionCookieCleanupNeeded()
-    {
-        return self::$sessionCookieCleanupNeeded;
-    }
-
-    /**
-     * @return bool
-     */
-    protected static function backupForeignSession()
-    {
-        $sName = self::getOption("name");
-        if ($sName != session_name()) {
-            // there's a different session in use, stop it and restart the admin session
-            self::$restoreSession = [
-                "name" => session_name(),
-                "id" => session_id()
-            ];
-
-            if (session_id()) {
-                @session_write_close();
-            }
-            if (isset($_COOKIE[$sName])) {
-                session_id($_COOKIE[$sName]);
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    protected static function restoreForeignSession()
-    {
-        if (!empty(self::$restoreSession)) {
-            session_write_close();
-
-            session_name(self::$restoreSession["name"]);
-
-            if (isset(self::$restoreSession["id"]) && !empty(self::$restoreSession["id"])) {
-                session_id(self::$restoreSession["id"]);
-                @session_start();
-            }
-
-            return true;
-        }
-
-        return false;
+        return static::getHandler()->writeClose();
     }
 }

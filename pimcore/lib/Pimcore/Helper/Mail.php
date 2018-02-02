@@ -8,15 +8,15 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Helper;
 
 use Pimcore\Mail as MailClient;
-use Pimcore\Tool;
 use Pimcore\Model;
+use Pimcore\Tool;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 class Mail
@@ -24,7 +24,9 @@ class Mail
     /**
      * @param $type
      * @param MailClient $mail
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function getDebugInformation($type, MailClient $mail)
@@ -35,8 +37,6 @@ class Mail
             throw new \Exception('$type has to be "html" or "text"');
         }
 
-        $temporaryStorage = $mail->getTemporaryStorage();
-
         //generating html debug info
         if ($type == 'html') {
             $debugInformation = '<br/><br/><table class="pimcore_debug_information">
@@ -45,17 +45,17 @@ class Mail
             $debugInformation .= '<tr><td class="pimcore_label_column">From:</td><td>';
 
             if ($mail->getFrom()) {
-                $debugInformation .= $mail->getFrom();
-            } else {
-                $defaultFrom = $mail->getDefaultFrom();
-                $debugInformation .= $defaultFrom["email"] . '<br/>Info: No "from" email address given so the default "from" email address is used from "Settings" -> "System" -> "Email Settings" )';
+                $debugInformation .= self::formatDebugReceivers($mail->getFrom());
             }
             $debugInformation .= '</td></tr>';
 
-            foreach (['To', 'Cc', 'Bcc'] as $key) {
-                if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
+            foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
+                $getterName = 'get' . $key;
+                $addresses = $mail->$getterName();
+
+                if ($addresses) {
                     $debugInformation .= '<tr><td class="pimcore_label_column">' . $key . ': </td>';
-                    $debugInformation .= '<td>' . self::formatDebugReceivers($temporaryStorage[$key]) . '</td></tr>';
+                    $debugInformation .= '<td>' . self::formatDebugReceivers($addresses) . '</td></tr>';
                 }
             }
 
@@ -64,17 +64,16 @@ class Mail
             //generating text debug info
             $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
             if ($mail->getFrom()) {
-                $debugInformation .= 'From: ' . $mail->getFrom(). "\r\n";
-            } else {
-                $defaultFrom = $mail->getDefaultFrom();
-                $debugInformation .= 'From: ' . $defaultFrom["email"] . ' (Info: No "from" email address given so the default "from" email address is used from "Settings" -> "System" -> "Email Settings" )'. "\r\n";
+                $debugInformation .= 'From: ' . self::formatDebugReceivers($mail->getFrom()) . "\r\n";
             }
 
             //generating text debug info
-            $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
-            foreach (['To', 'Cc', 'Bcc'] as $key) {
-                if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
-                    $debugInformation .= "$key: " . self::formatDebugReceivers($temporaryStorage[$key]) . "\r\n";
+            foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
+                $getterName = 'get' . $key;
+                $addresses = $mail->$getterName();
+
+                if ($addresses) {
+                    $debugInformation .= "$key: " . self::formatDebugReceivers($addresses) . "\r\n";
                 }
             }
         }
@@ -82,11 +81,11 @@ class Mail
         return $debugInformation;
     }
 
-
     /**
      * Return the basic css styles for the html debug information
      *
      * @static
+     *
      * @return string
      */
     public static function getDebugInformationCssStyle()
@@ -125,31 +124,31 @@ CSS;
      * Helper to format the receivers for the debug email and logging
      *
      * @param array $receivers
+     *
      * @return string
      */
     protected static function formatDebugReceivers(array $receivers)
     {
         $tmpString = '';
-        foreach ($receivers as $entry) {
-            if (isset($entry['email'])) {
-                $tmpString .= $entry['email'];
-                if (isset($entry['name'])) {
-                    $tmpString .= " (" . $entry["name"] . ")";
-                }
-                $tmpString .= ", ";
+        foreach ($receivers as $mail => $name) {
+            $tmpString .= $mail;
+            if (isset($name)) {
+                $tmpString .= ' (' . $name . ')';
             }
+            $tmpString .= ', ';
         }
         $tmpString = substr($tmpString, 0, strrpos($tmpString, ','));
 
         return $tmpString;
     }
 
-
     /**
      * @param MailClient $mail
+     * @param $recipients array
+     *
      * @return Model\Tool\Email\Log
      */
-    public static function logEmail(MailClient $mail)
+    public static function logEmail(MailClient $mail, $recipients)
     {
         $emailLog = new Model\Tool\Email\Log();
         $document = $mail->getDocument();
@@ -173,32 +172,25 @@ CSS;
 
         $mailFrom = $mail->getFrom();
         if ($mailFrom) {
-            $emailLog->setFrom($mailFrom);
-        } else {
-            $defaultFrom = $mail->getDefaultFrom();
-            $tmpString = $defaultFrom['email'];
-            if ($defaultFrom['name']) {
-                $tmpString .= " (" . $defaultFrom["name"] . ")";
-            }
-            $emailLog->setFrom($tmpString);
+            $emailLog->setFrom(self::formatDebugReceivers($mailFrom));
         }
 
-
-        $html = $mail->getBodyHtml();
-        if ($html instanceof \Zend_Mime_Part) {
-            $emailLog->setBodyHtml($html->getRawContent());
+        $html = $mail->getBody();
+        if ($html) {
+            $emailLog->setBodyHtml($html);
         }
 
-        $text = $mail->getBodyText();
-        if ($text instanceof \Zend_Mime_Part) {
-            $emailLog->setBodyText($text->getRawContent());
+        $text = $mail->getBodyTextMimePart();
+        if ($text) {
+            $emailLog->setBodyText($text->getBody());
         }
 
-        $temporaryStorage = $mail->getTemporaryStorage();
-        foreach (['To', 'Cc', 'Bcc'] as $key) {
-            if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
+        foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
+            $addresses = isset($recipients[$key]) ? $recipients[$key] : null;
+
+            if ($addresses) {
                 if (method_exists($emailLog, 'set' . $key)) {
-                    $emailLog->{"set$key"}(self::formatDebugReceivers($temporaryStorage[$key]));
+                    $emailLog->{"set$key"}(self::formatDebugReceivers($addresses));
                 }
             }
         }
@@ -212,7 +204,9 @@ CSS;
      * @param $string
      * @param null $document
      * @param null $hostUrl
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public static function setAbsolutePaths($string, $document = null, $hostUrl = null)
@@ -221,20 +215,20 @@ CSS;
             throw new \Exception('$document has to be an instance of Document');
         }
 
-        $replacePrefix = "";
+        $replacePrefix = '';
 
         if (!$hostUrl && $document) {
             // try to determine if the newsletter is within a site
             $site = \Pimcore\Tool\Frontend::getSiteForDocument($document);
             if ($site) {
-                $hostUrl = "http://" . $site->getMainDomain();
+                $hostUrl = \Pimcore\Tool::getRequestScheme() . '://' . $site->getMainDomain();
                 $replacePrefix = $site->getRootPath();
             }
+        }
 
-            // fallback
-            if (!$hostUrl) {
-                $hostUrl = \Pimcore\Tool::getHostUrl();
-            }
+        // fallback
+        if (!$hostUrl) {
+            $hostUrl = \Pimcore\Tool::getHostUrl();
         }
 
         //matches all links
@@ -244,18 +238,21 @@ CSS;
                 $path = $matches[2][$key];
 
                 if (strpos($path, '//') === 0) {
-                    $absolutePath = "http:" . $path;
+                    $absolutePath = 'http:' . $path;
                 } elseif (strpos($path, '/') === 0) {
-                    $absolutePath = preg_replace("@^" . $replacePrefix . "/@", "/", $path);
+                    $absolutePath = preg_replace('@^' . $replacePrefix . '/@', '/', $path);
                     $absolutePath = $hostUrl . $absolutePath;
                 } else {
                     $absolutePath = $hostUrl . "/$path";
+                    if ($path[0] == '?') {
+                        $absolutePath = $hostUrl . $document . $path;
+                    }
                     $netUrl = new \Net_URL2($absolutePath);
                     $absolutePath = $netUrl->getNormalizedURL();
                 }
 
                 $path = preg_quote($path);
-                $string = preg_replace("!([\"'])$path([\"'])!is", "\\1" . $absolutePath . "\\2", $string);
+                $string = preg_replace("!([\"'])$path([\"'])!is", '\\1' . $absolutePath . '\\2', $string);
             }
         }
 
@@ -263,7 +260,12 @@ CSS;
         foreach ((array)$matches[1] as $i => $value) {
             $parts = explode(',', $value);
             foreach ($parts as $key => $v) {
-                $parts[$key] = $hostUrl.trim($v);
+                $v = trim($v);
+                // ignore absolute urls
+                if (strpos($v, 'http://') === 0 || strpos($v, 'https://') === 0 || strpos($v, '//') === 0) {
+                    continue;
+                }
+                $parts[$key] = $hostUrl.$v;
             }
             $s = ' srcset="'.implode(', ', $parts).'" ';
             if ($matches[0][$i]) {
@@ -274,11 +276,12 @@ CSS;
         return $string;
     }
 
-
     /**
      * @param $string
      * @param null $document
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public static function embedAndModifyCss($string, $document = null)
@@ -290,30 +293,25 @@ CSS;
         //matches all <link> Tags
         preg_match_all("@<link.*?href\s*=\s*[\"'](.*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
         if (!empty($matches[0])) {
-            $css = "";
+            $css = '';
 
             foreach ($matches[0] as $key => $value) {
                 $fullMatch = $matches[0][$key];
                 $path = $matches[1][$key];
 
-                $fileContent = "";
+                $fileContent = '';
                 $fileInfo = [];
                 if (stream_is_local($path)) {
                     $fileInfo = self::getNormalizedFileInfo($path, $document);
-                    if (in_array($fileInfo['fileExtension'], ['css', 'less'])) {
-                        if (is_readable($fileInfo['filePathNormalized'])) {
-                            if ($fileInfo['fileExtension'] == 'css') {
-                                $fileContent = file_get_contents($fileInfo['filePathNormalized']);
-                            } else {
-                                $fileContent = \Pimcore\Tool\Less::compile($fileInfo['filePathNormalized']);
-                                $fileContent = str_replace('/**** compiled with lessphp ****/', '', $fileContent);
-                            }
+                    if ($fileInfo['fileExtension'] == 'css' && is_readable($fileInfo['filePathNormalized'])) {
+                        if ($fileInfo['fileExtension'] == 'css') {
+                            $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                         }
                     }
-                } elseif (strpos($path, "http") === 0) {
+                } elseif (strpos($path, 'http') === 0) {
                     $fileContent = \Pimcore\Tool::getHttpData($path);
                     $fileInfo = [
-                        "fileUrlNormalized" => $path
+                        'fileUrlNormalized' => $path
                     ];
                 }
 
@@ -337,13 +335,14 @@ CSS;
         return $string;
     }
 
-
     /**
      * Normalizes the css content (replaces images with the full path including the host)
      *
      * @static
+     *
      * @param string $content
      * @param array $fileInfo
+     *
      * @return string
      */
     public static function normalizeCssContent($content, array $fileInfo)
@@ -364,18 +363,19 @@ CSS;
                     $imageUrl = $netUrl->getNormalizedURL();
                 }
 
-                $content = str_replace($fullMatch, " url(" . $imageUrl . ") ", $content);
+                $content = str_replace($fullMatch, ' url(' . $imageUrl . ') ', $content);
             }
         }
 
         return $content;
     }
 
-
     /**
      * @param $path
      * @param null $document
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public static function getNormalizedFileInfo($path, $document = null)
@@ -392,11 +392,10 @@ CSS;
             $fileInfo['fileUrl'] = $hostUrl . $path;
         }
 
-
         $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
         $netUrl = new \Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
-        $fileInfo['filePathNormalized'] = PIMCORE_DOCUMENT_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
+        $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
 
         return $fileInfo;
     }

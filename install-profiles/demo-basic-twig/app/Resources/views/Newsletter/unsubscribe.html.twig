@@ -1,0 +1,47 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    {{ include('Includes/content-default.html.twig') }}
+
+    {% if not success %}
+        {% if unsubscribeMethod is not empty %}
+            <div class="alert alert-danger">
+                {% if unsubscribeMethod == 'email' %}
+                    Sorry, we don't have your address in our database.
+                {% else %}
+                    Sorry, your unsubscribe token is invalid, try to remove your address manually.
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {# see comment on advanced/objectForm template regarding the form theme #}
+        {% form_theme form 'Form/default.html.twig' %}
+
+        {{ form_start(form, {
+            attr: {
+                class: 'form-horizontal',
+                role: 'form'
+            }
+        }) }}
+
+        {{ form_row(form.email) }}
+
+        <br />
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                {{ form_widget(form.submit, {
+                    attr: {
+                        class: 'btn btn-default'
+                    }
+                }) }}
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+    {% else %}
+        <div class="alert alert-success">
+            <h2>Unsubscribed</h2>
+        </div>
+    {% endif %}
+{% endblock %}

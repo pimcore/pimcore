@@ -1,0 +1,53 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # public alias to the delegating engine
+    pimcore.templating.engine.delegating:
+        alias: templating.engine.delegating
+        public: true
+
+    # RENDERERS
+
+    Pimcore\Templating\Renderer\ActionRenderer:
+        arguments:
+            $actionsHelper: '@templating.helper.actions'
+
+    Pimcore\Templating\Renderer\IncludeRenderer: ~
+
+    Pimcore\Templating\Renderer\TagRenderer:
+        arguments:
+            $tagLoader: '@pimcore.implementation_loader.document.tag'
+        calls:
+            - [setLogger, ['@logger']]
+
+
+    # NAVIGATION
+
+    # renderer locator collecting all registered renderers
+    pimcore.templating.navigation.renderer_locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']
+        arguments: [[]]
+
+    Pimcore\Navigation\Builder: ~
+
+    Pimcore\Navigation\Renderer\Menu:
+        arguments:
+            $templatingEngine: '@templating.engine.delegating'
+        tags:
+            - { name: pimcore.navigation.renderer, alias: menu }
+
+    Pimcore\Navigation\Renderer\Breadcrumbs:
+        arguments:
+            $templatingEngine: '@templating.engine.delegating'
+        tags:
+            - { name: pimcore.navigation.renderer, alias: breadcrumbs }
+
+
+    # GLOSSARY
+
+    Pimcore\Tool\Glossary\Processor:
+        public: false

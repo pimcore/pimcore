@@ -10,20 +10,18 @@
  *
  * @category   Pimcore
  * @package    User
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Model\User\Workspace;
-
-use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\User\Workspace\Dao getDao()
  */
 class Document extends AbstractWorkspace
 {
-
     /**
      * @var bool
      */
@@ -36,6 +34,7 @@ class Document extends AbstractWorkspace
 
     /**
      * @param $save
+     *
      * @return $this
      */
     public function setSave($save)
@@ -46,7 +45,7 @@ class Document extends AbstractWorkspace
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getSave()
     {
@@ -55,6 +54,7 @@ class Document extends AbstractWorkspace
 
     /**
      * @param $unpublish
+     *
      * @return $this
      */
     public function setUnpublish($unpublish)
@@ -65,7 +65,7 @@ class Document extends AbstractWorkspace
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getUnpublish()
     {

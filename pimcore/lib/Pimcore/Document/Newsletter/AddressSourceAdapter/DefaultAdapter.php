@@ -8,7 +8,7 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
@@ -16,12 +16,11 @@ namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\Listing;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Listing;
 
 class DefaultAdapter implements AddressSourceAdapterInterface
 {
-
     /**
      * @var string
      */
@@ -35,7 +34,7 @@ class DefaultAdapter implements AddressSourceAdapterInterface
     /**
      * @var int[]
      */
-    protected $personas;
+    protected $targetGroups = [];
 
     /**
      * @var int
@@ -49,13 +48,14 @@ class DefaultAdapter implements AddressSourceAdapterInterface
 
     /**
      * IAddressSourceAdapter constructor.
+     *
      * @param $params
      */
     public function __construct($params)
     {
-        $this->class = $params['class'];
-        $this->condition = empty($params['condition']) ? $params['objectFilterSQL'] : $params['condition'];
-        $this->personas = $params['personas'];
+        $this->class        = $params['class'];
+        $this->condition    = empty($params['condition']) ? $params['objectFilterSQL'] : $params['condition'];
+        $this->targetGroups = $params['target_groups'] ?? [];
     }
 
     /**
@@ -64,43 +64,104 @@ class DefaultAdapter implements AddressSourceAdapterInterface
     protected function getListing()
     {
         if (empty($this->list)) {
-            $objectList = "\\Pimcore\\Model\\Object\\" . ucfirst($this->class) . "\\Listing";
+            $objectList = '\\Pimcore\\Model\\DataObject\\' . ucfirst($this->class) . '\\Listing';
             $this->list = new $objectList();
 
-            $conditions = ["(newsletterActive = 1 AND newsletterConfirmed = 1)"];
+            $conditions = ['(newsletterActive = 1 AND newsletterConfirmed = 1)'];
             if ($this->condition) {
-                $conditions[] = "(" . $this->condition . ")";
+                $conditions[] = '(' . $this->condition . ')';
             }
-            if ($this->personas) {
-                $class = ClassDefinition::getByName($this->class);
-                if ($class && $class->getFieldDefinition("persona")) {
-                    $personas = [];
 
-                    if ($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Persona) {
-                        foreach ($this->personas as $value) {
-                            if (!empty($value)) {
-                                $personas[] = $this->list->quote($value);
-                            }
-                        }
-                        $conditions[] = "persona IN (" . implode(",", $personas) . ")";
-                    } elseif ($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Personamultiselect) {
-                        $personasCondition = [];
-                        foreach ($this->personas as $value) {
-                            $personasCondition[] = "persona LIKE " . $this->list->quote("%," . $value .  ",%");
-                        }
-                        $conditions[] = "(" . implode(" OR ", $personasCondition). ")";
-                    }
+            if ($this->targetGroups) {
+                $class = ClassDefinition::getByName($this->class);
+
+                if ($class) {
+                    $conditions = $this->addTargetGroupConditions($class, $conditions);
+                    $conditions = $this->addPersonaConditions($class, $conditions);
                 }
             }
 
-            $this->list->setCondition(implode(" AND ", $conditions));
-            $this->list->setOrderKey("email");
-            $this->list->setOrder("ASC");
+            $this->list->setCondition(implode(' AND ', $conditions));
+            $this->list->setOrderKey('email');
+            $this->list->setOrder('ASC');
 
             $this->elementsTotal = $this->list->getTotalCount();
         }
 
         return $this->list;
+    }
+
+    /**
+     * Handle target group filters
+     *
+     * @param ClassDefinition $class
+     * @param array $conditions
+     *
+     * @return array
+     */
+    protected function addTargetGroupConditions(ClassDefinition $class, array $conditions): array
+    {
+        if (!$class->getFieldDefinition('targetGroup')) {
+            return $conditions;
+        }
+
+        $fieldDefinition = $class->getFieldDefinition('targetGroup');
+        if ($fieldDefinition instanceof ClassDefinition\Data\TargetGroup) {
+            $targetGroups = [];
+            foreach ($this->targetGroups as $value) {
+                if (!empty($value)) {
+                    $targetGroups[] = $this->list->quote($value);
+                }
+            }
+
+            $conditions[] = 'targetGroup IN (' . implode(',', $targetGroups) . ')';
+        } elseif ($fieldDefinition instanceof ClassDefinition\Data\TargetGroupMultiselect) {
+            $targetGroupsCondition = [];
+            foreach ($this->targetGroups as $value) {
+                $targetGroupsCondition[] = 'targetGroup LIKE ' . $this->list->quote('%,' . $value . ',%');
+            }
+
+            $conditions[] = '(' . implode(' OR ', $targetGroupsCondition) . ')';
+        }
+
+        return $conditions;
+    }
+
+    /**
+     * Handle deprecated persona filters. Note that this only handles the field "persona" which
+     * can either be Persona or Personamultiselect. The class parameter is only handled as target_groups.
+     *
+     * @param ClassDefinition $class
+     * @param array $conditions
+     *
+     * @return array
+     */
+    protected function addPersonaConditions(ClassDefinition $class, array $conditions): array
+    {
+        if (!$class->getFieldDefinition('persona')) {
+            return $conditions;
+        }
+
+        $fieldDefinition = $class->getFieldDefinition('persona');
+        if ($fieldDefinition instanceof ClassDefinition\Data\Persona) {
+            $personas = [];
+            foreach ($this->targetGroups as $value) {
+                if (!empty($value)) {
+                    $personas[] = $this->list->quote($value);
+                }
+            }
+
+            $conditions[] = 'persona IN (' . implode(',', $personas) . ')';
+        } elseif ($fieldDefinition instanceof ClassDefinition\Data\Personamultiselect) {
+            $personasCondition = [];
+            foreach ($this->targetGroups as $value) {
+                $personasCondition[] = 'persona LIKE ' . $this->list->quote('%,' . $value . ',%');
+            }
+
+            $conditions[] = '(' . implode(' OR ', $personasCondition) . ')';
+        }
+
+        return $conditions;
     }
 
     /**
@@ -114,10 +175,14 @@ class DefaultAdapter implements AddressSourceAdapterInterface
         $ids = $listing->loadIdList();
 
         $class = ClassDefinition::getByName($this->class);
-        $tableName = "object_" . $class->getId();
+        $tableName = 'object_' . $class->getId();
 
-        $db = \Pimcore\Db::get();
-        $emails = $db->fetchCol("SELECT email FROM $tableName WHERE o_id IN (" . implode(",", $ids) . ")");
+        $emails = [];
+
+        if (count($ids) > 0) {
+            $db = \Pimcore\Db::get();
+            $emails = $db->fetchCol("SELECT email FROM $tableName WHERE o_id IN (" . implode(',', $ids) . ')');
+        }
 
         $containers = [];
         foreach ($emails as $email) {
@@ -131,12 +196,13 @@ class DefaultAdapter implements AddressSourceAdapterInterface
      * returns params to be set on mail for test sending
      *
      * @param string $emailAddress
+     *
      * @return SendingParamContainer
      */
     public function getParamsForTestSending($emailAddress)
     {
         $listing = $this->getListing();
-        $listing->setOrderKey("RAND()", false);
+        $listing->setOrderKey('RAND()', false);
         $listing->setLimit(1);
         $listing->setOffset(0);
 
@@ -164,6 +230,7 @@ class DefaultAdapter implements AddressSourceAdapterInterface
      *
      * @param $limit
      * @param $offset
+     *
      * @return SendingParamContainer[]
      */
     public function getParamsForSingleSending($limit, $offset)
@@ -177,12 +244,12 @@ class DefaultAdapter implements AddressSourceAdapterInterface
 
         foreach ($objects as $object) {
             $containers[] = new SendingParamContainer($object->getEmail(), [
-                "gender" => method_exists($object, "getGender") ? $object->getGender() : "",
-                'firstname' => method_exists($object, "getFirstname") ? $object->getFirstname() : "",
-                'lastname' => method_exists($object, "getLastname") ? $object->getLastname() : "",
-                "email" => $object->getEmail(),
-                'token' => $object->getProperty("token"),
-                "object" => $object
+                'gender' => method_exists($object, 'getGender') ? $object->getGender() : '',
+                'firstname' => method_exists($object, 'getFirstname') ? $object->getFirstname() : '',
+                'lastname' => method_exists($object, 'getLastname') ? $object->getLastname() : '',
+                'email' => $object->getEmail(),
+                'token' => $object->getProperty('token'),
+                'object' => $object
             ]);
         }
 

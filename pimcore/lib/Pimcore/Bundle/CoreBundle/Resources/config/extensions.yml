@@ -1,0 +1,48 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # EXTENSIONS
+    #
+
+    # extension manager config will be built on kernel boot and injected
+    # into the container at runtime
+    Pimcore\Extension\Config:
+        public: true
+        synthetic: true
+
+    #
+    # PIMCORE BUNDLES
+    #
+
+    Pimcore\Extension\Bundle\PimcoreBundleLocator:
+        arguments:
+            $paths: '%pimcore.extensions.bundles.search_paths%'
+            $handleComposer: '%pimcore.extensions.bundles.handle_composer%'
+
+    Pimcore\Extension\Bundle\Config\StateConfig: ~
+
+    Pimcore\Extension\Bundle\PimcoreBundleManager:
+        public: true
+
+
+    #
+    # MISC EXTENSION RELATED SERVICES
+    #
+
+    Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface: '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
+    Pimcore\HttpKernel\BundleLocator\BundleLocator: ~
+
+    Pimcore\HttpKernel\WebPathResolver: ~
+
+    Pimcore\Composer\PackageInfo: ~
+
+    Pimcore\Config\BundleConfigLocator: ~
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange: ~
+
+    Pimcore\Tool\AssetsInstaller:
+        public: true

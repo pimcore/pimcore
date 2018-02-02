@@ -1,4 +1,16 @@
 <?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
 
 // original by:
 // Author prajwala
@@ -12,7 +24,6 @@ namespace Pimcore\Tool\Text;
 
 class HtmlCutString
 {
-
     /**
      * @param $string
      * @param $limit
@@ -57,6 +68,7 @@ class HtmlCutString
     /**
      * @param $parseDiv
      * @param $newParent
+     *
      * @return bool
      */
     public function searchEnd($parseDiv, $newParent)
@@ -99,6 +111,7 @@ class HtmlCutString
 /**
  * @param $string
  * @param $limit
+ *
  * @return string
  */
 function cut_html_string($string, $limit)
