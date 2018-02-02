@@ -599,17 +599,19 @@ class Requirements
         $checks[] = new Check([
             'name' => 'Intl',
             'link' => 'http://www.php.net/intl',
-            'state' => class_exists('Locale') ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => extension_loaded('intl') ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // Locales
-        $fmt = new \IntlDateFormatter('de', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, 'Europe/Vienna', \IntlDateFormatter::GREGORIAN, 'EEEE');
-        $checks[] = new Check([
-            'name' => 'locales-all',
-            'link' => 'https://packages.debian.org/en/stable/locales-all',
-            'state' => ($fmt->format(new \DateTime('next tuesday')) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
-            'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all)."
-        ]);
+        if(extension_loaded('intl')) {
+            $fmt = new \IntlDateFormatter('de', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, 'Europe/Vienna', \IntlDateFormatter::GREGORIAN, 'EEEE');
+            $checks[] = new Check([
+                'name' => 'locales-all',
+                'link' => 'https://packages.debian.org/en/stable/locales-all',
+                'state' => ($fmt->format(new \DateTime('next tuesday')) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
+                'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all)."
+            ]);
+        }
 
         // Imagick
         $checks[] = new Check([
