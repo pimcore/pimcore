@@ -1,0 +1,99 @@
+._ptg-toolbar {
+  display: block;
+  width: 450px;
+  position: absolute;
+  right: 0;
+  top: 0px;
+  z-index: 100;
+  background: rgba(68, 68, 68, 0.97);
+  border-bottom-left-radius: 4px;
+  font: 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  color: #fff; }
+  ._ptg-toolbar._ptg-toolbar--hidden {
+    right: -414px; }
+  ._ptg-toolbar ._ptg-toolbar__trigger {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 36px;
+    height: 100%;
+    background: #222;
+    border-bottom-left-radius: 4px;
+    cursor: pointer; }
+  ._ptg-toolbar ._ptg-toolbar__trigger-icon {
+    display: block;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    text-align: center; }
+    ._ptg-toolbar ._ptg-toolbar__trigger-icon._ptg-toolbar__trigger-icon--target {
+      top: 0;
+      left: 0; }
+    ._ptg-toolbar ._ptg-toolbar__trigger-icon._ptg-toolbar__trigger-icon--close {
+      bottom: 0;
+      left: 0;
+      background: #444;
+      cursor: pointer;
+      border-bottom-left-radius: 4px; }
+      ._ptg-toolbar ._ptg-toolbar__trigger-icon._ptg-toolbar__trigger-icon--close:hover {
+        background: #626262; }
+    ._ptg-toolbar ._ptg-toolbar__trigger-icon svg {
+      display: inline-block;
+      height: 18px;
+      max-height: 18px;
+      margin-top: 10px; }
+  ._ptg-toolbar ._ptg-toolbar__content {
+    margin-left: 36px; }
+    ._ptg-toolbar ._ptg-toolbar__content ._ptg-toolbar__content-inner {
+      padding: 15px; }
+    ._ptg-toolbar ._ptg-toolbar__content h1 {
+      font-size: 18px;
+      margin-top: 0; }
+    ._ptg-toolbar ._ptg-toolbar__content h2 {
+      font-size: 14px; }
+      ._ptg-toolbar ._ptg-toolbar__content h2 ._ptg-toolbar__label {
+        position: relative;
+        top: -1px; }
+    ._ptg-toolbar ._ptg-toolbar__content table {
+      width: 100%; }
+      ._ptg-toolbar ._ptg-toolbar__content table td, ._ptg-toolbar ._ptg-toolbar__content table th {
+        padding: 3px 0; }
+  ._ptg-toolbar ._ptg-toolbar__table__col-number {
+    text-align: right; }
+  ._ptg-toolbar ._ptg-toolbar__table__col-right {
+    text-align: right; }
+  ._ptg-toolbar ._ptg-toolbar__table__row-with-details__trigger {
+    cursor: pointer; }
+  ._ptg-toolbar ._ptg-toolbar__table__row-with-details__trigger-arrow {
+    display: inline-block; }
+  ._ptg-toolbar ._ptg-toolbar__table__row-details td:first-child {
+    padding-left: 10px; }
+  ._ptg-toolbar ._ptg-toolbar__table__row-details._ptg-toolbar__table__row-details--collapsed {
+    display: none; }
+  ._ptg-toolbar ._ptg-toolbar__label,
+  ._ptg-toolbar ._ptg-toolbar__metric {
+    font: 11px Menlo, Monaco, Consolas, "Courier New", monospace; }
+  ._ptg-toolbar ._ptg-toolbar__label {
+    display: inline-block;
+    padding: 3px 5px;
+    background: #888;
+    border-radius: 1px; }
+    ._ptg-toolbar ._ptg-toolbar__label._ptg-toolbar__label--target-group {
+      background: #4f805d; }
+    ._ptg-toolbar ._ptg-toolbar__label._ptg-toolbar__label--rule {
+      background: #a46a1f; }
+  ._ptg-toolbar ._ptg-toolbar__metric {
+    display: inline-block;
+    margin: 0 5px 3px 0;
+    border-radius: 1px; }
+  ._ptg-toolbar ._ptg-toolbar__metric__label,
+  ._ptg-toolbar ._ptg-toolbar__metric__value {
+    display: inline-block;
+    padding: 3px 5px;
+    background: #333;
+    border-top-left-radius: 1px;
+    border-bottom-left-radius: 1px; }
+  ._ptg-toolbar ._ptg-toolbar__metric__label {
+    background: #656565;
+    border-top-right-radius: 1px;
+    border-bottom-right-radius: 1px; }
