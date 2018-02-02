@@ -137,3 +137,12 @@ See the following resources for further details:
 * [Action Handlers](./07_Action_Handlers.md)
 * [Targeting Storage](./09_Targeting_Storage.md)
 * [Frontend Javascript](./11_Frontend_Javascript.md)
+
+
+## Debugging Targeting Data
+
+As shown above, targeting date is added to the Symfony profiler. In addition you can enable a dedicated targeting toolbar
+which also works outside the `dev` environment when you are logged into the admin interface. The toolbar is only shown if
+a `pimcore_targeting_debug` cookie exists and is set to true. You can do so with the following bookmarklet:
+
+* <a href="javascript:(function()%7Bdocument.cookie %3D 'pimcore_targeting_debug%3D1%3B path%3D%2F'%7D)()">Enable Pimcore Targeting Toolbar</a> 

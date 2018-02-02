@@ -132,6 +132,9 @@
                     if (toolbar) {
                         toolbar.parentNode.removeChild(toolbar);
                     }
+
+                    // delete cookie to disable toolbar
+                    document.cookie = 'pimcore_targeting_debug=; path=/'
                 });
             });
 
