@@ -35,3 +35,7 @@ services:
     # as otherwise the placeholder block would be rendered before any
     # content was added (e.g. headTitle)
     Phive\Twig\Extensions\Deferred\DeferredExtension: ~
+
+    # provides truncate and wordwrap filters
+    Twig_Extensions_Extension_Text:
+        class: Twig_Extensions_Extension_Text

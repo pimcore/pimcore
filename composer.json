@@ -111,6 +111,7 @@
     "symfony/swiftmailer-bundle": "^2.6.4",
     "symfony/symfony": "3.4.*",
     "tijsverkoyen/css-to-inline-styles": "~1.5",
+    "twig/extensions": "^1.5",
     "twig/twig": "^2.0",
     "vrana/adminer": "~4.2",
     "vrana/jush": "*",
