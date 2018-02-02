@@ -32,28 +32,21 @@ $color-rule: #a46a1f;
         background: #222;
         border-bottom-left-radius: 4px;
         cursor: pointer;
+    }
 
-        ._ptg-toolbar__icon {
-            display: block;
-            position: absolute;
-            width: $triggerWidth;
-            height: $triggerWidth;
-            text-align: center;
+    ._ptg-toolbar__trigger-icon {
+        display: block;
+        position: absolute;
+        width: $triggerWidth;
+        height: $triggerWidth;
+        text-align: center;
 
-            svg {
-                display: inline-block;
-                height: 18px;
-                max-height: 18px;
-                margin-top: 10px;
-            }
-        }
-
-        ._ptg-toolbar__icon--target {
+        &._ptg-toolbar__trigger-icon--target {
             top: 0;
             left: 0;
         }
 
-        ._ptg-toolbar__icon--close {
+        &._ptg-toolbar__trigger-icon--close {
             bottom: 0;
             left: 0;
             background: #444;
@@ -63,6 +56,13 @@ $color-rule: #a46a1f;
             &:hover {
                 background: #626262;
             }
+        }
+
+        svg {
+            display: inline-block;
+            height: 18px;
+            max-height: 18px;
+            margin-top: 10px;
         }
     }
 
@@ -96,42 +96,29 @@ $color-rule: #a46a1f;
         }
     }
 
-    ._ptg-toolbar__table {
-        ._ptg-toolbar__table__col-number {
-            text-align: right;
-        }
-
-        ._ptg-toolbar__table__col-right {
-            text-align: right;
-        }
-
-        tr {
-            &._ptg-toolbar__table__row-details--collapsed {
-                display: none;
-            }
-        }
-
-        ._ptg-toolbar__table__row-with-details__trigger {
-            cursor: pointer;
-
-            ._ptg-toolbar__table__row-with-details__trigger-arrow {
-                display: inline-block;
-            }
-        }
-
-        ._ptg-toolbar__table__row-details {
-            td:first-child {
-                padding-left: 10px;
-            }
-        }
+    ._ptg-toolbar__table__col-number {
+        text-align: right;
     }
 
-    ._ptg-toolbar__list {
-        list-style: none;
-        padding: 0;
+    ._ptg-toolbar__table__col-right {
+        text-align: right;
+    }
 
-        li {
-            margin-bottom: 6px;
+    ._ptg-toolbar__table__row-with-details__trigger {
+        cursor: pointer;
+    }
+
+    ._ptg-toolbar__table__row-with-details__trigger-arrow {
+        display: inline-block;
+    }
+
+    ._ptg-toolbar__table__row-details {
+        td:first-child {
+            padding-left: 10px;
+        }
+
+        &._ptg-toolbar__table__row-details--collapsed {
+            display: none;
         }
     }
 
@@ -159,20 +146,20 @@ $color-rule: #a46a1f;
         display: inline-block;
         margin: 0 5px 3px 0;
         border-radius: 1px;
+    }
 
-        ._ptg-toolbar__metric__label,
-        ._ptg-toolbar__metric__value {
-            display: inline-block;
-            padding: 3px 5px;
-            background: #333;
-            border-top-left-radius: 1px;
-            border-bottom-left-radius: 1px;
-        }
+    ._ptg-toolbar__metric__label,
+    ._ptg-toolbar__metric__value {
+        display: inline-block;
+        padding: 3px 5px;
+        background: #333;
+        border-top-left-radius: 1px;
+        border-bottom-left-radius: 1px;
+    }
 
-        ._ptg-toolbar__metric__label {
-            background: #656565;
-            border-top-right-radius: 1px;
-            border-bottom-right-radius: 1px;
-        }
+    ._ptg-toolbar__metric__label {
+        background: #656565;
+        border-top-right-radius: 1px;
+        border-bottom-right-radius: 1px;
     }
 }

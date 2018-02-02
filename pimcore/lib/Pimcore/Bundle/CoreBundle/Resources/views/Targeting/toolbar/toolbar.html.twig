@@ -1,11 +1,11 @@
 {% spaceless %}
 <div id="_ptg-toolbar-{{ token }}" class="_ptg-toolbar _ptg-toolbar--hidden">
     <div class="_ptg-toolbar__trigger" title="{% trans from 'admin' %}targeting{% endtrans %}">
-        <span class="_ptg-toolbar__icon _ptg-toolbar__icon--target">
+        <span class="_ptg-toolbar__trigger-icon _ptg-toolbar__trigger-icon--target">
             {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
         </span>
 
-        <a class="_ptg-toolbar__icon _ptg-toolbar__icon--close" data-selector="#_ptg-toolbar-{{ token }}" title="Close Toolbar">
+        <a class="_ptg-toolbar__trigger-icon _ptg-toolbar__trigger-icon--close" data-selector="#_ptg-toolbar-{{ token }}" title="Close Toolbar">
             {{ include('@PimcoreCore/Targeting/toolbar/icon/close.svg.twig') }}
         </a>
     </div>
