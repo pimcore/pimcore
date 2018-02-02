@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Pimcore\Targeting\DataLoader;
 use Pimcore\Targeting\DataProvider\Piwik;
+use Pimcore\Targeting\Debug\TargetingDataCollector;
 use Pimcore\Targeting\EventListener\TargetingListener;
 use Pimcore\Targeting\VisitorInfoResolver;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -47,6 +48,7 @@ class DebugStopwatchPass implements CompilerPassInterface
             DataLoader::class,
             VisitorInfoResolver::class,
             TargetingListener::class,
+            TargetingDataCollector::class,
             Piwik::class,
         ];
 

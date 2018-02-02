@@ -17,8 +17,6 @@ services:
                 priority: 500
 
     Pimcore\Bundle\CoreBundle\DataCollector\PimcoreTargetingDataCollector:
-        arguments:
-            $stopwatch: '@?debug.stopwatch'
         tags:
             -
                 name:     data_collector
