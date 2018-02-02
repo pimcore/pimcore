@@ -78,6 +78,60 @@
                     }
                 });
             });
+
+            var detailRowCollapsedClass = '_ptg-toolbar__table__row-details--collapsed';
+            document.querySelectorAll('._ptg-toolbar__table__row-with-details').forEach(function (row) {
+                var index = row.getAttribute('data-index');
+                if (!index) {
+                    return;
+                }
+
+                var trigger = row.querySelector('._ptg-toolbar__table__row-with-details__trigger');
+                if (!trigger) {
+                    return;
+                }
+
+                var detailRows = row.parentElement.querySelectorAll('._ptg-toolbar__table__row-details[data-index="' + index + '"]');
+                if (0 === detailRows.length) {
+                    return;
+                }
+
+                var arrow = document.createElement('span');
+                util.addClass(arrow, '_ptg-toolbar__table__row-with-details__trigger-arrow');
+
+                var toggleDetails = function (show) {
+                    if (show) {
+                        arrow.innerHTML = '▼';
+                        arrow.setAttribute('data-collapsed', '0');
+
+                        detailRows.forEach(function (detailRow) {
+                            util.removeClass(detailRow, detailRowCollapsedClass);
+                        });
+                    } else {
+                        arrow.innerHTML = '▶';
+                        arrow.setAttribute('data-collapsed', '1');
+
+                        detailRows.forEach(function(detailRow) {
+                            util.addClass(detailRow, detailRowCollapsedClass);
+                        });
+                    }
+                };
+
+                toggleDetails(false);
+                trigger.appendChild(arrow);
+
+                util.addEventListener(trigger, 'click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var collapsed = arrow.getAttribute('data-collapsed');
+                    if ('1' === collapsed) {
+                        toggleDetails(true);
+                    } else {
+                        toggleDetails(false);
+                    }
+                });
+            });
         });
 
     }(window, document));

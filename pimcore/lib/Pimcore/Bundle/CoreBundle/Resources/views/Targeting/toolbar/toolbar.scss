@@ -2,7 +2,7 @@
 // `sass --sourcemap=none toolbar.scss toolbar.css`
 // and commit the built CSS file
 
-$width: 400px;
+$width: 450px;
 $triggerWidth: 36px;
 $color-target-group: #4f805d;
 $color-rule: #a46a1f;
@@ -15,7 +15,6 @@ $color-rule: #a46a1f;
     top: 0px;
     z-index: 100;
     background: rgba(68, 68, 68, 0.97); // #444
-    border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
     font: 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
     color: #fff;
@@ -32,7 +31,6 @@ $color-rule: #a46a1f;
         width: $triggerWidth;
         height: 100%;
         background: #222;
-        border-top-left-radius: 4px;
         border-bottom-left-radius: 4px;
         cursor: pointer;
 
@@ -62,6 +60,10 @@ $color-rule: #a46a1f;
             background: #444;
             cursor: pointer;
             border-bottom-left-radius: 4px;
+
+            &:hover {
+                background: #626262;
+            }
         }
     }
 
@@ -72,8 +74,18 @@ $color-rule: #a46a1f;
             padding: 15px;
         }
 
+        h1 {
+            font-size: 18px;
+            margin-top: 0;
+        }
+
         h2 {
             font-size: 14px;
+
+            ._ptg-toolbar__label {
+                position: relative;
+                top: -1px;
+            }
         }
 
         table {
@@ -93,6 +105,28 @@ $color-rule: #a46a1f;
         ._ptg-toolbar__table__col-right {
             text-align: right;
         }
+
+        tr {
+            transition: 0.3s ease-in-out;
+
+            &._ptg-toolbar__table__row-details--collapsed {
+                display: none;
+            }
+        }
+
+        ._ptg-toolbar__table__row-with-details__trigger {
+            cursor: pointer;
+
+            ._ptg-toolbar__table__row-with-details__trigger-arrow {
+                display: inline-block;
+            }
+        }
+
+        ._ptg-toolbar__table__row-details {
+            td:first-child {
+                padding-left: 10px;
+            }
+        }
     }
 
     ._ptg-toolbar__list {
@@ -104,12 +138,16 @@ $color-rule: #a46a1f;
         }
     }
 
+    ._ptg-toolbar__label,
+    ._ptg-toolbar__metric {
+        font: 11px Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+
     ._ptg-toolbar__label {
-        font-size: 11px;
-        font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
         display: inline-block;
         padding: 3px 5px;
         background: #888;
+        border-radius: 1px;
 
         &._ptg-toolbar__label--target-group {
             background: $color-target-group;
@@ -117,6 +155,27 @@ $color-rule: #a46a1f;
 
         &._ptg-toolbar__label--rule {
             background: $color-rule;
+        }
+    }
+
+    ._ptg-toolbar__metric {
+        display: inline-block;
+        margin: 0 5px 3px 0;
+        border-radius: 1px;
+
+        ._ptg-toolbar__metric__label,
+        ._ptg-toolbar__metric__value {
+            display: inline-block;
+            padding: 3px 5px;
+            background: #333;
+            border-top-left-radius: 1px;
+            border-bottom-left-radius: 1px;
+        }
+
+        ._ptg-toolbar__metric__label {
+            background: #656565;
+            border-top-right-radius: 1px;
+            border-bottom-right-radius: 1px;
         }
     }
 }

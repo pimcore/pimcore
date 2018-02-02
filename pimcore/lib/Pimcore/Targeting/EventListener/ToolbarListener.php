@@ -122,10 +122,11 @@ class ToolbarListener implements EventSubscriberInterface
         $tdc = $this->targetingDataCollector;
 
         $data = [
-            'token'               => $token,
-            'targetGroups'        => $tdc->collectTargetGroups($visitorInfo),
-            'rules'               => $tdc->collectMatchedRules($visitorInfo),
-            'documentTargetGroup' => $tdc->collectDocumentTargetGroup($document),
+            'token'                => $token,
+            'visitorInfo'          => $tdc->collectVisitorInfo($visitorInfo),
+            'targetGroups'         => $tdc->collectTargetGroups($visitorInfo),
+            'rules'                => $tdc->collectMatchedRules($visitorInfo),
+            'documentTargetGroup'  => $tdc->collectDocumentTargetGroup($document),
             'documentTargetGroups' => $tdc->collectDocumentTargetGroupMapping(),
         ];
 
