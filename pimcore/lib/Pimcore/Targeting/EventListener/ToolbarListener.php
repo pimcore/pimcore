@@ -18,8 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Response\CodeInjector;
+use Pimcore\Model\Document;
+use Pimcore\Targeting\Debug\TargetingDataCollector;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool\Authentication;
@@ -34,6 +37,21 @@ class ToolbarListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
+     * @var VisitorInfoStorageInterface
+     */
+    private $visitorInfoStorage;
+
+    /**
+     * @var DocumentResolver
+     */
+    private $documentResolver;
+
+    /**
+     * @var TargetingDataCollector
+     */
+    private $targetingDataCollector;
+
+    /**
      * @var EngineInterface
      */
     private $templatingEngine;
@@ -43,20 +61,19 @@ class ToolbarListener implements EventSubscriberInterface
      */
     private $codeInjector;
 
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
-
     public function __construct(
+        VisitorInfoStorageInterface $visitorInfoStorage,
+        DocumentResolver $documentResolver,
+        TargetingDataCollector $targetingDataCollector,
         EngineInterface $templatingEngine,
-        CodeInjector $codeInjector,
-        VisitorInfoStorageInterface $visitorInfoStorage
+        CodeInjector $codeInjector
     )
     {
-        $this->templatingEngine   = $templatingEngine;
-        $this->codeInjector       = $codeInjector;
-        $this->visitorInfoStorage = $visitorInfoStorage;
+        $this->visitorInfoStorage     = $visitorInfoStorage;
+        $this->documentResolver       = $documentResolver;
+        $this->targetingDataCollector = $targetingDataCollector;
+        $this->templatingEngine       = $templatingEngine;
+        $this->codeInjector           = $codeInjector;
     }
 
     public static function getSubscribedEvents()
@@ -88,20 +105,36 @@ class ToolbarListener implements EventSubscriberInterface
             return;
         }
 
+        $document    = $this->documentResolver->getDocument($request);
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
+        $data        = $this->collectTemplateData($visitorInfo, $document);
 
         $this->injectToolbar(
             $event->getResponse(),
-            $visitorInfo
+            $data
         );
     }
 
-    private function injectToolbar(Response $response, VisitorInfo $visitorInfo)
+    private function collectTemplateData(VisitorInfo $visitorInfo, Document $document = null)
     {
         $token = substr(hash('sha256', uniqid((string)mt_rand(), true)), 0, 6);
-        $code  = $this->templatingEngine->render('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', [
-            'token' => $token
-        ]);
+
+        $tdc = $this->targetingDataCollector;
+
+        $data = [
+            'token'               => $token,
+            'targetGroups'        => $tdc->collectTargetGroups($visitorInfo),
+            'rules'               => $tdc->collectMatchedRules($visitorInfo),
+            'documentTargetGroup' => $tdc->collectDocumentTargetGroup($document),
+            'documentTargetGroups' => $tdc->collectDocumentTargetGroupMapping(),
+        ];
+
+        return $data;
+    }
+
+    private function injectToolbar(Response $response, array $data)
+    {
+        $code = $this->templatingEngine->render('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', $data);
 
         $this->codeInjector->inject(
             $response,
