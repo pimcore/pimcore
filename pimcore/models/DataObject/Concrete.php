@@ -143,7 +143,7 @@ class Concrete extends AbstractObject
 
     /**
      * @param $isUpdate
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
      */
