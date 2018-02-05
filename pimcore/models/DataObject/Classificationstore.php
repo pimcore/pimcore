@@ -180,7 +180,7 @@ class Classificationstore extends Model\AbstractModel
 	    $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
 	    $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 	    if($dataDefinition instanceof Model\DataObject\ClassDefinition\Data\BooleanSelect) {
-		    $nonEmpty = ! $dataDefinition->isEmpty($value);
+		    $nonEmpty = true;
 	    }
 
         if ($nonEmpty || $value) {
