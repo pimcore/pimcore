@@ -603,7 +603,7 @@ class Requirements
         ]);
 
         // Locales
-        if(extension_loaded('intl')) {
+        if (extension_loaded('intl')) {
             $fmt = new \IntlDateFormatter('de', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, 'Europe/Vienna', \IntlDateFormatter::GREGORIAN, 'EEEE');
             $checks[] = new Check([
                 'name' => 'locales-all',

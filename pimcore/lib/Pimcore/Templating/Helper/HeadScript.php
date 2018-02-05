@@ -132,8 +132,7 @@ class HeadScript extends CacheBusterAware
     public function __construct(
         ContainerService $containerService,
         WebLink $webLinkHelper
-    )
-    {
+    ) {
         parent::__construct($containerService);
 
         $this->webLinkHelper = $webLinkHelper;
