@@ -162,7 +162,14 @@ class Dao extends Model\Dao\AbstractDao
             $value = $fd->getDataFromResource($value, $object);
 
             $language = $item['language'];
-            $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language);
+            
+            $forceCreateItem = false;
+
+            // CS item must be created in case of "false" or "null" value in booleanSelect too
+	        if($fd instanceof DataObject\ClassDefinition\Data\BooleanSelect && empty($value)) {
+		        $forceCreateItem = true;
+	        }
+            $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language, $forceCreateItem);
         }
 
         $groupsTableName = $this->getGroupsTableName();
