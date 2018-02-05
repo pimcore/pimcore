@@ -151,14 +151,16 @@ class Classificationstore extends Model\AbstractModel
     }
 
     /**
-     * @param $groupId
-     * @param $keyId
-     * @param $value
-     * @param null $language
-     *
-     * @return $this
-     */
-    public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null)
+	 * @param $groupId
+	 * @param $keyId
+	 * @param $value
+	 * @param null $language
+	 * @param bool $forceCreateItem
+	 *
+	 * @return $this
+	 * @throws \Exception
+	 */
+    public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null, $forceCreateItem = false)
     {
         if (!$groupId) {
             throw new \Exception('groupId not valid');
@@ -171,7 +173,7 @@ class Classificationstore extends Model\AbstractModel
         $language  = $this->getLanguage($language);
 
         // treat value "0" nonempty
-        $nonEmpty = (is_string($value) || is_numeric($value)) && strlen($value) > 0;
+        $nonEmpty = ((is_string($value) || is_numeric($value)) && strlen($value) > 0) || $forceCreateItem;
 
         if ($nonEmpty || $value) {
             $this->items[$groupId][$keyId][$language] = $value;
