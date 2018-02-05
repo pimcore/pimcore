@@ -50,11 +50,8 @@ class MigrateElementNamesCommand extends AbstractCommand
      */
     private $runCommand = true;
 
-    public function __construct(
-        Db\Connection $db,
-        NamingStrategyInterface $namingStrategy
-    ) {
-        $this->db             = $db;
+    public function __construct(NamingStrategyInterface $namingStrategy)
+    {
         $this->namingStrategy = $namingStrategy;
 
         parent::__construct();
@@ -109,6 +106,8 @@ class MigrateElementNamesCommand extends AbstractCommand
 
             return 1;
         }
+
+        $this->db = $this->getContainer()->get(Db\Connection::class);
 
         $qb   = $this->buildQuery();
         $stmt = $qb->execute();

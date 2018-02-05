@@ -17,7 +17,8 @@ services:
 
     Pimcore\Twig\Extension\DocumentTagExtension: ~
 
-    Pimcore\Twig\Extension\SubrequestExtension: ~
+    Pimcore\Twig\Extension\SubrequestExtension:
+        lazy: true
 
     Pimcore\Twig\Extension\PimcoreObjectExtension: ~
 
