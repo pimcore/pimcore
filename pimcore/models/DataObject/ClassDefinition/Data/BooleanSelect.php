@@ -270,8 +270,7 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
      */
     public function isEmpty($data)
     {
-    	// For all 3 states never empty
-        return false;
+        return $data !== true && $data !== false;
     }
 
     /**
