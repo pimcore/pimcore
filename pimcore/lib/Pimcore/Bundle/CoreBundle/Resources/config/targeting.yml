@@ -56,10 +56,7 @@ services:
 
     Pimcore\Targeting\VisitorInfoStorageInterface: '@Pimcore\Targeting\VisitorInfoStorage'
     Pimcore\Targeting\VisitorInfoStorage: ~
-
-    Pimcore\Targeting\VisitorInfoResolver:
-        calls:
-            - [setStopwatch, ['@?debug.stopwatch']]
+    Pimcore\Targeting\VisitorInfoResolver: ~
 
 
     #
@@ -72,9 +69,7 @@ services:
             $filename: '%pimcore.geoip.db_file%'
 
     Pimcore\Targeting\DataLoaderInterface: '@Pimcore\Targeting\DataLoader'
-    Pimcore\Targeting\DataLoader:
-        calls:
-            - [setStopwatch, ['@?debug.stopwatch']]
+    Pimcore\Targeting\DataLoader: ~
 
     Pimcore\Targeting\DataProvider\GeoIp:
         calls:
@@ -87,10 +82,7 @@ services:
             - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]
             - [setCachePool, ['@Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface']]
 
-    Pimcore\Targeting\DataProvider\Piwik:
-        calls:
-            - [setStopwatch, ['@?debug.stopwatch']]
-
+    Pimcore\Targeting\DataProvider\Piwik: ~
     Pimcore\Targeting\DataProvider\TargetingStorage: ~
 
     Pimcore\Targeting\Service\VisitedPagesCounter: ~
