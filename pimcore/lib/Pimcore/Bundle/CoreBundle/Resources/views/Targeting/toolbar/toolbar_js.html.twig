@@ -1,0 +1,198 @@
+<script type="text/javascript">
+    (function (window, document, undefined) {
+        'use strict';
+
+        var util = {
+            addEventListener: function (el, eventName, handler) {
+                if (el.addEventListener) {
+                    el.addEventListener(eventName, handler);
+                } else {
+                    el.attachEvent('on' + eventName, function () {
+                        handler.call(el);
+                    });
+                }
+            },
+
+            removeEventListener: function (el, eventName, handler) {
+                if (el.removeEventListener)
+                    el.removeEventListener(eventName, handler);
+                else
+                    el.detachEvent('on' + eventName, handler);
+            },
+
+            addClass: function (el, className) {
+                if (el.classList) {
+                    el.classList.add(className);
+                } else {
+                    el.className += ' ' + className;
+                }
+            },
+
+            hasClass: function (el, className) {
+                if (el.classList) {
+                    return el.classList.contains(className);
+                } else {
+                    return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+                }
+            },
+
+            removeClass: function (el, className) {
+                if (el.classList) {
+                    el.classList.remove(className);
+                } else {
+                    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+                }
+            },
+
+            featureDetect: (function () {
+                // most tests come from to modernizr (MIT license)
+                // https://github.com/Modernizr/Modernizr/tree/master/feature-detects
+                var tests = {
+                    localStorage: function () {
+                        var v = 'test';
+
+                        try {
+                            localStorage.setItem(v, v);
+                            localStorage.removeItem(v);
+
+                            return true;
+                        } catch (e) {
+                            return false;
+                        }
+                    }
+                };
+
+                var results = {};
+
+                return function (type) {
+                    if ('undefined' === typeof tests[type]) {
+                        throw new Error('Test ' + type + ' is not defined');
+                    }
+
+                    if ('undefined' === typeof results[type]) {
+                        results[type] = tests[type].call();
+                    }
+
+                    return results[type];
+                };
+            }())
+        };
+
+        util.addEventListener(document, 'DOMContentLoaded', function () {
+            var localStorageStateKey = 'pimcore/targeting/toolbar/displayState';
+            var hiddenClass = '_ptg-toolbar--hidden';
+
+            // whole toolbar
+            document.querySelectorAll('._ptg-toolbar__trigger').forEach(function (trigger) {
+                var toolbar = trigger.parentNode;
+
+                var showToolbar = function(show) {
+                    if (show) {
+                        util.removeClass(toolbar, hiddenClass);
+                    } else {
+                        util.addClass(toolbar, hiddenClass);
+                    }
+
+                    if (util.featureDetect('localStorage')) {
+                        localStorage.setItem(localStorageStateKey, show ? 'block' : 'none');
+                    }
+                };
+
+                if (util.featureDetect('localStorage')) {
+                    var state = localStorage.getItem(localStorageStateKey);
+                    if ('block' === state) {
+                        showToolbar(true);
+                    }
+                }
+
+                util.addEventListener(trigger, 'click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (util.hasClass(toolbar, hiddenClass)) {
+                        showToolbar(true);
+                    } else {
+                        showToolbar(false);
+                    }
+                });
+            });
+
+            // close icon
+            document.querySelectorAll('._ptg-toolbar__trigger-icon--close').forEach(function (close) {
+                util.addEventListener(close, 'click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var selector = this.getAttribute('data-selector');
+                    if (!selector) {
+                        return;
+                    }
+
+                    var toolbar = document.querySelector(selector);
+                    if (toolbar) {
+                        toolbar.parentNode.removeChild(toolbar);
+                    }
+
+                    // delete cookie to disable toolbar
+                    document.cookie = 'pimcore_targeting_debug=; path=/'
+                });
+            });
+
+            // collapsible detail table rows
+            var detailRowCollapsedClass = '_ptg-toolbar__table__row-details--collapsed';
+            document.querySelectorAll('._ptg-toolbar__table__row-with-details').forEach(function (row) {
+                var index = row.getAttribute('data-index');
+                if (!index) {
+                    return;
+                }
+
+                var trigger = row.querySelector('._ptg-toolbar__table__row-with-details__trigger');
+                if (!trigger) {
+                    return;
+                }
+
+                var detailRows = row.parentElement.querySelectorAll('._ptg-toolbar__table__row-details[data-index="' + index + '"]');
+                if (0 === detailRows.length) {
+                    return;
+                }
+
+                var arrow = document.createElement('span');
+                util.addClass(arrow, '_ptg-toolbar__table__row-with-details__trigger-arrow');
+
+                var toggleDetails = function (show) {
+                    if (show) {
+                        arrow.innerHTML = '▼';
+                        arrow.setAttribute('data-collapsed', '0');
+
+                        detailRows.forEach(function (detailRow) {
+                            util.removeClass(detailRow, detailRowCollapsedClass);
+                        });
+                    } else {
+                        arrow.innerHTML = '▶';
+                        arrow.setAttribute('data-collapsed', '1');
+
+                        detailRows.forEach(function(detailRow) {
+                            util.addClass(detailRow, detailRowCollapsedClass);
+                        });
+                    }
+                };
+
+                toggleDetails(false);
+                trigger.appendChild(arrow);
+
+                util.addEventListener(trigger, 'click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var collapsed = arrow.getAttribute('data-collapsed');
+                    if ('1' === collapsed) {
+                        toggleDetails(true);
+                    } else {
+                        toggleDetails(false);
+                    }
+                });
+            });
+        });
+
+    }(window, document));
+</script>

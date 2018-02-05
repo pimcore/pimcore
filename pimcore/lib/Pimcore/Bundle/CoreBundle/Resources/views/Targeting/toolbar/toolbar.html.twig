@@ -1,0 +1,206 @@
+{% spaceless %}
+<div id="_ptg-toolbar-{{ token }}" class="_ptg-toolbar _ptg-toolbar--hidden">
+    <div class="_ptg-toolbar__trigger" title="{% trans from 'admin' %}targeting{% endtrans %}">
+        <span class="_ptg-toolbar__trigger-icon _ptg-toolbar__trigger-icon--target">
+            {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
+        </span>
+
+        <a class="_ptg-toolbar__trigger-icon _ptg-toolbar__trigger-icon--close" data-selector="#_ptg-toolbar-{{ token }}" title="Close Toolbar">
+            {{ include('@PimcoreCore/Targeting/toolbar/icon/close.svg.twig') }}
+        </a>
+    </div>
+
+    <div class="_ptg-toolbar__content">
+        <div class="_ptg-toolbar__content-inner">
+            <h1>Targeting</h1>
+
+            <table class="_ptg-toolbar__table">
+                {% if documentTargetGroup is not null %}
+                    <tr>
+                        <th>Document Target Group</th>
+                        <td class="_ptg-toolbar__table__col-right">
+                            <span class="_ptg-toolbar__label _ptg-toolbar__label--target-group">{{ documentTargetGroup.name }}</span>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                <tr>
+                    <th>Visitor ID</th>
+                    <td class="_ptg-toolbar__table__col-right">
+                        {% if visitorInfo.visitorId is not empty %}
+                            <span class="_ptg-toolbar__label">{{ visitorInfo.visitorId }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Session ID</th>
+                    <td class="_ptg-toolbar__table__col-right">
+                        {% if visitorInfo.sessionId is not empty %}
+                            <span class="_ptg-toolbar__label">{{ visitorInfo.sessionId }}</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+
+            {% if rules is not empty %}
+                <h2>
+                    Matched Rules
+                    <span class="_ptg-toolbar__label">{{ rules|length }}</span>
+                </h2>
+
+                <table class="_ptg-toolbar__table">
+                    {% for rule in rules %}
+
+                        <tr class="_ptg-toolbar__table__row-with-details" data-index="{{ loop.index }}">
+                            <td>
+                                <span class="_ptg-toolbar__label _ptg-toolbar__label--rule _ptg-toolbar__table__row-with-details__trigger">
+                                    {{ rule.name }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="_ptg-toolbar__table__row-details _ptg-toolbar__table__row-details--collapsed" data-index="{{ loop.index }}">
+                            <td>
+                                <span class="_ptg-toolbar__metric">
+                                    <span class="_ptg-toolbar__metric__label">
+                                        Rule ID
+                                    </span>
+                                    <span class="_ptg-toolbar__metric__value">
+                                        {{ rule.id }}
+                                    </span>
+                                </span>
+
+                                {% if rule.duration is not null %}
+                                <span class="_ptg-toolbar__metric">
+                                    <span class="_ptg-toolbar__metric__label">
+                                        Duration
+                                    </span>
+                                    <span class="_ptg-toolbar__metric__value">
+                                        {{ rule.duration|round(2) }} ms
+                                    </span>
+                                </span>
+                                {% endif %}
+
+                                <span class="_ptg-toolbar__metric">
+                                    <span class="_ptg-toolbar__metric__label">
+                                        Conditions
+                                    </span>
+                                    <span class="_ptg-toolbar__metric__value">
+                                        {{ rule.conditions|length }}
+                                    </span>
+                                </span>
+
+                                <span class="_ptg-toolbar__metric">
+                                    <span class="_ptg-toolbar__metric__label">
+                                        Actions
+                                    </span>
+                                    <span class="_ptg-toolbar__metric__value">
+                                        {{ rule.actions|length }}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                </table>
+            {% endif %}
+
+            {% if targetGroups is not empty %}
+                <h2>
+                    Assigned Target Groups
+                    <span class="_ptg-toolbar__label">{{ targetGroups|length }}</span>
+                </h2>
+
+                <table class="_ptg-toolbar__table">
+                    {% for targetGroup in targetGroups %}
+                        <tr class="_ptg-toolbar__table__row-with-details" data-index="{{ loop.index }}">
+                            <td>
+                                <span class="_ptg-toolbar__label _ptg-toolbar__label--target-group _ptg-toolbar__table__row-with-details__trigger">
+                                    {{ targetGroup.name }}
+                                </span>
+                            </td>
+                            <td class="_ptg-toolbar__table__col-number">
+                                <span class="_ptg-toolbar__label" title="Threshold: {{ targetGroup.threshold }}">{{ targetGroup.count }}</span>
+                            </td>
+                        </tr>
+
+                        <tr class="_ptg-toolbar__table__row-details _ptg-toolbar__table__row-details--collapsed" data-index="{{ loop.index }}">
+                            <td colspan="2">
+                                <span class="_ptg-toolbar__metric">
+                                    <span class="_ptg-toolbar__metric__label">
+                                        Target Group ID
+                                    </span>
+                                    <span class="_ptg-toolbar__metric__value">
+                                        {{ targetGroup.id }}
+                                    </span>
+                                </span>
+
+                                <span class="_ptg-toolbar__metric">
+                                    <span class="_ptg-toolbar__metric__label">
+                                        Threshold
+                                    </span>
+                                    <span class="_ptg-toolbar__metric__value">
+                                        {{ targetGroup.threshold }}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+
+            {% if documentTargetGroups is not empty %}
+                <h2>
+                    Document Target Groups
+                    <span class="_ptg-toolbar__label">{{ documentTargetGroups|length }}</span>
+                </h2>
+
+                <table class="_ptg-toolbar__table">
+                    {% for assignment in documentTargetGroups %}
+                        <tr class="_ptg-toolbar__table__row-with-details" data-index="{{ loop.index }}">
+                            <td>
+                                <span class="_ptg-toolbar__label _ptg-toolbar__table__row-with-details__trigger" title="{{ assignment.document.path }}">
+                                    {{ assignment.document.path|truncate(32) }}
+                                </span>
+                            </td>
+                            <td class="_ptg-toolbar__table__col-right">
+                                <span class="_ptg-toolbar__label _ptg-toolbar__label--target-group">{{ assignment.targetGroup.name }}</span>
+                            </td>
+                        </tr>
+
+                        <tr class="_ptg-toolbar__table__row-details _ptg-toolbar__table__row-details--collapsed" data-index="{{ loop.index }}">
+                            <td colspan="2">
+                                <span class="_ptg-toolbar__metric">
+                                    <span class="_ptg-toolbar__metric__label">
+                                        Document ID
+                                    </span>
+                                    <span class="_ptg-toolbar__metric__value">
+                                        {{ assignment.document.id }}
+                                    </span>
+                                </span>
+
+                                <span class="_ptg-toolbar__metric">
+                                    <span class="_ptg-toolbar__metric__label">
+                                        Target Group ID
+                                    </span>
+                                    <span class="_ptg-toolbar__metric__value">
+                                        {{ assignment.targetGroup.id }}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endspaceless %}
+<style type="text/css">
+    {{ include('@PimcoreCore/Targeting/toolbar/toolbar.css') }}
+</style>
+{{ include('@PimcoreCore/Targeting/toolbar/toolbar_js.html.twig') }}

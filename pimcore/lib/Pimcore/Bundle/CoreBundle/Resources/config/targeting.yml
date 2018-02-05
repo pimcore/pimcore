@@ -133,3 +133,9 @@ services:
     #
 
     Pimcore\Targeting\Code\TargetingCodeGenerator: ~
+
+    #
+    # TOOLBAR AND PROFILER
+    #
+
+    Pimcore\Targeting\Debug\TargetingDataCollector: ~

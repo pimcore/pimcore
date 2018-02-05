@@ -107,7 +107,7 @@
                             <tr>
                                 <th>{{ rule.id }}</th>
                                 <td>{{ rule.name }}</td>
-                                <td>{{ rule.duration }} ms</td>
+                                <td>{{ rule.duration|round(2) }} ms</td>
                                 <td>{{ profiler_dump(rule.conditions, maxDepth=maxDepth|default(0)) }}</td>
                                 <td>{{ profiler_dump(rule.actions, maxDepth=maxDepth|default(0)) }}</td>
                             </tr>
