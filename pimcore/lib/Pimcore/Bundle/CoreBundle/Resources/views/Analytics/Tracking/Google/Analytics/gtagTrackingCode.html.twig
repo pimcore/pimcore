@@ -1,0 +1,22 @@
+{% block beforeScriptTag %}{{ blocks.beforeScriptTag|raw }}{% endblock %}
+
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ trackId }}"></script>
+<script>
+    {% block beforeScript %}{{ blocks.beforeScript|raw }}{% endblock %}
+    {% block beforeInit %}{{ blocks.beforeInit|raw }}{% endblock %}
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    {% block beforeTrack %}{{ blocks.beforeTrack|raw }}{% endblock %}
+
+    {% block track %}
+    gtag('config', '{{ trackId }}', {{ gtagConfig|json_encode()|raw }});
+    {% endblock %}
+
+    {% block afterTrack %}{{ blocks.afterTrack|raw }}{% endblock %}
+    {% block afterScript %}{{ blocks.afterScript|raw }}{% endblock %}
+</script>
+
+{% block afterScriptTag %}{{ blocks.afterScriptTag|raw }}{% endblock %}
