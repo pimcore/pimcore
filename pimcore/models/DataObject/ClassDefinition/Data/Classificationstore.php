@@ -308,8 +308,15 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
                         $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
                         $activeGroups[$groupId] = true;
+                        
+                        $forceCreateItem = false;
 
-                        $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language);
+	                    // CS item must be created in case of "false" or "null" value in booleanSelect too
+                        if($dataDefinition instanceof BooleanSelect && empty($dataFromEditMode)) {
+                        	$forceCreateItem = true;
+                        }
+
+                        $classificationStore->setLocalizedKeyValue($groupId, $keyId, $dataFromEditMode, $language, $forceCreateItem);
                     }
                 }
             }
