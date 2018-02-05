@@ -137,6 +137,12 @@ pimcore.report.analytics.settings = Class.create({
                         value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
                     },{
                         xtype: "checkbox",
+                        fieldLabel: t("analytics_gtag_code"),
+                        name: "gtagcode_" + id,
+                        id: "report_settings_analytics_gtagcode_" + id,
+                        checked: this.parent.getValue("analytics.sites." + key + ".gtagcode")
+                    },{
+                        xtype: "checkbox",
                         fieldLabel: t("analytics_asynchronous_code"),
                         name: "asynchronouscode_" + id,
                         id: "report_settings_analytics_asynchronouscode_" + id,
@@ -240,6 +246,7 @@ pimcore.report.analytics.settings = Class.create({
             sitesData[key] = {
                 profile: Ext.getCmp("report_settings_analytics_profile_" + id).getValue(),
                 trackid: Ext.getCmp("report_settings_analytics_trackid_" + id).getValue(),
+                gtagcode: Ext.getCmp("report_settings_analytics_gtagcode_" + id).getValue(),
                 asynchronouscode: Ext.getCmp("report_settings_analytics_asynchronouscode_" + id).getValue(),
                 retargetingcode: Ext.getCmp("report_settings_analytics_retargetingcode_" + id).getValue(),
                 additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + id).getValue(),
