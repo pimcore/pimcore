@@ -49,9 +49,7 @@
 # composer
 /composer.lock
 /composer.phar
-!/vendor
-/vendor/*
-!/vendor/.gitkeep
+/vendor/
 
 # PhpStorm / IDEA
 .idea
