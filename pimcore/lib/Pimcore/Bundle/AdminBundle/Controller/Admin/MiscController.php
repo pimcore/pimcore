@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Db;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -448,12 +449,12 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-delete")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
+ * @Route("/fileexplorer-delete")
+ *
+ * @param Request $request
+ *
+ * @return JsonResponse
+ */
     public function fileexplorerDeleteAction(Request $request)
     {
         $this->checkPermission('fileexplorer');
@@ -464,6 +465,29 @@ class MiscController extends AdminController
                 unlink($file);
                 $success = true;
             }
+        }
+
+        return $this->adminJson([
+            'success' => $success
+        ]);
+    }
+
+    /**
+     * @Route("/fileexplorer-rename")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function fileexplorerRenameAction(Request $request)
+    {
+        $this->checkPermission('fileexplorer');
+
+        if ($request->get('path') && $request->get('newPath')) {
+            $file = $this->getFileexplorerPath($request, 'path');
+            $newFile = $this->getFileexplorerPath($request, 'newPath');
+
+            $success = rename($file, $newFile);
         }
 
         return $this->adminJson([
