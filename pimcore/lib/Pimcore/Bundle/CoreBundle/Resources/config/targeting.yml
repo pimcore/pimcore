@@ -127,6 +127,8 @@ services:
     Pimcore\Targeting\Document\DocumentTargetingConfigurator:
         public: true
 
+    Pimcore\Targeting\Document\DocumentTargetingOverrideHandler: ~
+
 
     #
     # TARGETING CODE
