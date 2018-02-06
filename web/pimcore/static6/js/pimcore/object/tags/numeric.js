@@ -14,9 +14,9 @@
 pimcore.registerNS("pimcore.object.tags.numeric");
 pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
 
-    type:"numeric",
+    type: "numeric",
 
-    initialize:function (data, fieldConfig) {
+    initialize: function (data, fieldConfig) {
 
         this.defaultValue = null;
         if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
@@ -28,10 +28,14 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
-    getGridColumnEditor:function (field) {
+    getGridColumnEditor: function (field) {
         var editorConfig = {};
 
         var decimalPrecision = 20;
+
+        if (field.layout.noteditable) {
+            return null;
+        }
 
         if (field.config) {
             if (field.config.width) {
@@ -39,16 +43,26 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
                     editorConfig.width = field.config.width;
                 }
             }
-
-            if (field.config.decimalPrecision) {
-                if (intval(field.config.decimalPrecision) > 0) {
-                    decimalPrecision = field.config.decimalPrecision;
-                }
-            }
         }
 
-        if (field.layout.noteditable) {
-            return null;
+        if (field.layout["unsigned"]) {
+            editorConfig.minValue = 0;
+        }
+
+        if (is_numeric(field.layout["minValue"])) {
+            editorConfig.minValue = field.layout.minValue;
+        }
+
+        if (is_numeric(field.layout["maxValue"])) {
+            editorConfig.maxValue = field.layout.maxValue;
+        }
+
+        if (field.layout["integer"]) {
+            editorConfig.decimalPrecision = 0;
+        } else if (field.layout["decimalPrecision"]) {
+            editorConfig.decimalPrecision = field.layout["decimalPrecision"];
+        } else {
+            editorConfig.decimalPrecision = 20;
         }
 
         if (field.type == "numeric") {
@@ -59,16 +73,16 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
-    getGridColumnFilter:function (field) {
-        return {type:'numeric', dataIndex:field.key};
+    getGridColumnFilter: function (field) {
+        return {type: 'numeric', dataIndex: field.key};
     },
 
-    getLayoutEdit:function () {
+    getLayoutEdit: function () {
 
         var input = {
-            fieldLabel:this.fieldConfig.title,
-            name:this.fieldConfig.name,
-            componentCls:"object_field"
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
+            componentCls: "object_field"
         };
 
         if (!isNaN(this.data)) {
@@ -111,12 +125,12 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     },
 
 
-    getLayoutShow:function () {
+    getLayoutShow: function () {
 
         var input = {
-            fieldLabel:this.fieldConfig.title,
-            name:this.fieldConfig.name,
-            componentCls:"object_field"
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
+            componentCls: "object_field"
         };
 
         if (!isNaN(this.data)) {
@@ -139,7 +153,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getValue:function () {
+    getValue: function () {
         if (this.isRendered()) {
             var value = this.component.getValue();
             if (value == null) {
@@ -152,13 +166,13 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         return this.data;
     },
 
-    getName:function () {
+    getName: function () {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory:function () {
+    isInvalidMandatory: function () {
 
-        if (!this.isRendered() && (!empty(this.getInitialData() || this.getInitialData() === 0) )) {
+        if (!this.isRendered() && (!empty(this.getInitialData() || this.getInitialData() === 0))) {
             return false;
         } else if (!this.isRendered()) {
             return true;
@@ -170,10 +184,10 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         return true;
     },
 
-    isDirty:function () {
+    isDirty: function () {
         var dirty = false;
 
-        if(this.defaultValue) {
+        if (this.defaultValue) {
             return true;
         }
 
