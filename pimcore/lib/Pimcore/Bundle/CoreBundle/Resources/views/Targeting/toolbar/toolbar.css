@@ -58,12 +58,6 @@
       width: 100%; }
       ._ptg-toolbar ._ptg-toolbar__content table td, ._ptg-toolbar ._ptg-toolbar__content table th {
         padding: 3px 0; }
-    ._ptg-toolbar ._ptg-toolbar__content form label {
-      display: block; }
-    ._ptg-toolbar ._ptg-toolbar__content form input,
-    ._ptg-toolbar ._ptg-toolbar__content form select,
-    ._ptg-toolbar ._ptg-toolbar__content form button {
-      color: #000; }
   ._ptg-toolbar ._ptg-toolbar__table__col-number {
     text-align: right; }
   ._ptg-toolbar ._ptg-toolbar__table__col-right {
@@ -71,7 +65,8 @@
   ._ptg-toolbar ._ptg-toolbar__table__row-with-details__trigger {
     cursor: pointer; }
   ._ptg-toolbar ._ptg-toolbar__table__row-with-details__trigger-arrow {
-    display: inline-block; }
+    display: inline-block;
+    margin-left: 4px; }
   ._ptg-toolbar ._ptg-toolbar__table__row-details td:first-child {
     padding-left: 10px; }
   ._ptg-toolbar ._ptg-toolbar__table__row-details._ptg-toolbar__table__row-details--collapsed {
@@ -103,3 +98,26 @@
     background: #656565;
     border-top-right-radius: 1px;
     border-bottom-right-radius: 1px; }
+  ._ptg-toolbar ._ptg-toolbar__override-form label {
+    display: block;
+    margin: 10px 0 3px 0; }
+  ._ptg-toolbar ._ptg-toolbar__override-form input,
+  ._ptg-toolbar ._ptg-toolbar__override-form select {
+    color: #000;
+    background: #fff;
+    padding: 3px 5px; }
+  ._ptg-toolbar ._ptg-toolbar__override-form button {
+    display: inline-block;
+    margin: 0 3px 0 0;
+    padding: 6px 15px;
+    background: #838383;
+    border-radius: 2px;
+    border: 0;
+    color: #f5f5f5;
+    font-size: 12px; }
+    ._ptg-toolbar ._ptg-toolbar__override-form button:hover {
+      cursor: pointer;
+      opacity: 0.8;
+      text-decoration: none; }
+  ._ptg-toolbar ._ptg-toolbar__override-form ._ptg-toolbar__override-form__button-row {
+    margin-top: 12px; }

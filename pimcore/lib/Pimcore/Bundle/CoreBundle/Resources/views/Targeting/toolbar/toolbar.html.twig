@@ -65,16 +65,6 @@
                     </table>
                 {% endblock %}
 
-                {% block overrides %}
-                    <h2>Overrides</h2>
-
-                    {% block overrideForm %}
-                        {{ form_start(overrideForm) }}
-                        {{ form_widget(overrideForm) }}
-                        {{ form_end(overrideForm) }}
-                    {% endblock %}
-                {% endblock %}
-
                 {% block rules %}
                     {% if rules is not empty %}
                         <h2>
@@ -170,6 +160,21 @@
                     {% endif %}
                 {% endblock %}
 
+                {% block overrides %}
+                    <h2>Overrides</h2>
+
+                    {% block overrideForm %}
+                        {{ form_start(overrideForm, { attr: { class: '_ptg-toolbar__override-form' }}) }}
+                        {{ form_widget(overrideForm) }}
+
+                        <div class="_ptg-toolbar__override-form__button-row">
+                            <button type="submit" value="">Apply</button>
+                            <button type="reset" value="">Reset</button>
+                        </div>
+
+                        {{ form_end(overrideForm) }}
+                    {% endblock %}
+                {% endblock %}
             </div>
         </div>
     </div>

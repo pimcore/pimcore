@@ -94,18 +94,6 @@ $color-rule: #a46a1f;
                 padding: 3px 0;
             }
         }
-
-        form {
-            label {
-                display: block;
-            }
-
-            input,
-            select,
-            button {
-                color: #000;
-            }
-        }
     }
 
     ._ptg-toolbar__table__col-number {
@@ -122,6 +110,7 @@ $color-rule: #a46a1f;
 
     ._ptg-toolbar__table__row-with-details__trigger-arrow {
         display: inline-block;
+        margin-left: 4px;
     }
 
     ._ptg-toolbar__table__row-details {
@@ -173,5 +162,40 @@ $color-rule: #a46a1f;
         background: #656565;
         border-top-right-radius: 1px;
         border-bottom-right-radius: 1px;
+    }
+
+    ._ptg-toolbar__override-form {
+        label {
+            display: block;
+            margin: 10px 0 3px 0;
+        }
+
+        input,
+        select {
+            color: #000;
+            background: #fff;
+            padding: 3px 5px;
+        }
+
+        button {
+            display: inline-block;
+            margin: 0 3px 0 0;
+            padding: 6px 15px;
+            background: #838383;
+            border-radius: 2px;
+            border: 0;
+            color: #f5f5f5;
+            font-size: 12px;
+
+            &:hover {
+                cursor: pointer;
+                opacity: 0.8;
+                text-decoration: none;
+            }
+        }
+
+        ._ptg-toolbar__override-form__button-row {
+            margin-top: 12px;
+        }
     }
 }

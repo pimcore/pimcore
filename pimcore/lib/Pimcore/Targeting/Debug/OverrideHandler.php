@@ -77,8 +77,6 @@ class OverrideHandler
             $handler->buildOverrideForm($formBuilder, $request);
         }
 
-        $formBuilder->add('submit', SubmitType::class);
-
         return $formBuilder->getForm();
     }
 
