@@ -150,14 +150,15 @@ class Classificationstore extends Model\AbstractModel
         return 'default';
     }
 
-    /**
-     * @param $groupId
-     * @param $keyId
-     * @param $value
-     * @param null $language
-     *
-     * @return $this
-     */
+	/**
+	 * @param $groupId
+	 * @param $keyId
+	 * @param $value
+	 * @param null $language
+	 *
+	 * @return $this
+	 * @throws \Exception
+	 */
     public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null)
     {
         if (!$groupId) {
@@ -170,8 +171,17 @@ class Classificationstore extends Model\AbstractModel
 
         $language  = $this->getLanguage($language);
 
-        // treat value "0" nonempty
-        $nonEmpty = (is_string($value) || is_numeric($value)) && strlen($value) > 0;
+	    // treat value "0" nonempty
+	    $nonEmpty = (is_string($value) || is_numeric($value)) && strlen($value) > 0;
+
+	    // Workaround for booleanSelect
+	    // @TODO Find a better solution for using isEmpty() in all ClassDefintion DataTypes
+
+	    $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
+	    $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+	    if($dataDefinition instanceof Model\DataObject\ClassDefinition\Data\BooleanSelect) {
+		    $nonEmpty = true;
+	    }
 
         if ($nonEmpty || $value) {
             $this->items[$groupId][$keyId][$language] = $value;
