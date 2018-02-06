@@ -1289,7 +1289,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $document = Document::getById($request->get('id'));
         if ($document) {
             $service = new Document\Service;
-            $translations = $service->getTranslations($document->getParent());
+            $translations = $service->getTranslations($document->getId() === 1 ? $document : $document->getParent());
             if (isset($translations[$request->get('language')])) {
                 $targetDocument = Document::getById($translations[$request->get('language')]);
                 $targetPath = $targetDocument->getRealFullPath();
