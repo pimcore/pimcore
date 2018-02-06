@@ -90,6 +90,7 @@ On Debian based systems, you can use the following command to install all requir
 - advpng
 - cjpeg ([MozJPEG](https://github.com/mozilla/mozjpeg))
 - exiftool
+- SQIP - SVG Placeholder
 
 Please visit [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md) for additional information. 
 
