@@ -29,7 +29,7 @@ class BlogController extends FrontendController
         );
     }
 ```
-## Advaced example
+## Advanced example
 
 ```php
 class BlogController extends FrontendController
