@@ -37,6 +37,7 @@ The biggest advantages of using that instead of (for example) the href editable:
 | `deferred`                     | bool    | Set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                         |
 | `class`                        | string  | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                                       |
 | `lowQualityPlaceholder`        | bool    | Put's a small SVG/JPEG placeholder image into the `src` (data-uri), the real image path is placed in `data-src` and `data-srcset`. (requires [SQIP](https://github.com/technopagan/sqip) or [Imagick](http://php.net/imagick), details see [setup of additional tools](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)                                                                    |
+| `predefinedDataTemplates`        | array    | Add predefined config sets for hotspots and images |
 
 You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
 
@@ -287,7 +288,45 @@ All dimensions are in percent and therefore independent from the image size, you
             "title" => "Drag your image here",
             "width" => 400,
             "height" => 400,
-            "thumbnail" => "content"
+            "thumbnail" => "content",
+            /* 
+            //adds predefined config sets
+            "predefinedDataTemplates" => [
+                            "marker" => [
+                                [
+                                    "menuName" => "marker config 1",
+                                    "name" => "marker name",
+                                    "data" => [
+                                        [
+                                            "name" => "my textfield",
+                                            "type" => "textfield"
+                                        ],
+                                        [
+                                            "name" => "my asset href",
+                                            "type" => "asset",
+                                            "value" => "/testimage1.jpg"
+                                        ]
+                                    ]
+                                ]
+                            ],
+                            "hotspot" => [
+                                [
+                                    "menuName" => "hotspot config 1",
+                                    "name" => "hotspot name",
+                                    "data" => [
+                                        [
+                                            "name" => "my textfield",
+                                            "type" => "textfield"
+                                        ],
+                                        [
+                                            "name" => "my asset href",
+                                            "type" => "asset",
+                                            "value" => "/testimage1.jpg"
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]*/
         ]); ?>
         
         <?php if(!$this->editmode): ?>

@@ -451,7 +451,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                     cropTop: this.datax.cropTop,
                     cropLeft: this.datax.cropLeft,
                     cropPercent: this.datax.cropPercent
-                }
+                },
+                predefinedDataTemplates : this.options.predefinedDataTemplates
             }
 
         );
