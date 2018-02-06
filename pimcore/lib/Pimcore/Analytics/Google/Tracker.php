@@ -173,7 +173,7 @@ class Tracker extends AbstractTracker
             $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig->universal_configuration ?? null, [
                 'anonymize_ip' => true
             ]);
-        } else if ($siteConfig->asynchronouscode || $siteConfig->retargetingcode) {
+        } elseif ($siteConfig->asynchronouscode || $siteConfig->retargetingcode) {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/asynchronousTrackingCode.html.twig';
         } else {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig';

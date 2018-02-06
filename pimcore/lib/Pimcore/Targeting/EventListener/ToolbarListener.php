@@ -67,8 +67,7 @@ class ToolbarListener implements EventSubscriberInterface
         TargetingDataCollector $targetingDataCollector,
         EngineInterface $templatingEngine,
         CodeInjector $codeInjector
-    )
-    {
+    ) {
         $this->visitorInfoStorage     = $visitorInfoStorage;
         $this->documentResolver       = $documentResolver;
         $this->targetingDataCollector = $targetingDataCollector;

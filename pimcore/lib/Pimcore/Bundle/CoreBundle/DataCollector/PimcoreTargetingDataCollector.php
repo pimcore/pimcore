@@ -45,8 +45,7 @@ class PimcoreTargetingDataCollector extends DataCollector
         VisitorInfoStorageInterface $visitorInfoStorage,
         DocumentResolver $documentResolver,
         TargetingDataCollector $targetingDataCollector
-    )
-    {
+    ) {
         $this->visitorInfoStorage     = $visitorInfoStorage;
         $this->documentResolver       = $documentResolver;
         $this->targetingDataCollector = $targetingDataCollector;

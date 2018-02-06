@@ -48,8 +48,7 @@ class TargetingDataCollector
     public function __construct(
         TargetingStorageInterface $targetingStorage,
         DocumentTargetingConfigurator $targetingConfigurator
-    )
-    {
+    ) {
         $this->targetingStorage      = $targetingStorage;
         $this->targetingConfigurator = $targetingConfigurator;
     }
