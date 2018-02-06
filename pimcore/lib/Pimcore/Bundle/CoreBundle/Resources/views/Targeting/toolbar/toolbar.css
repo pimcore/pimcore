@@ -9,8 +9,10 @@
   border-bottom-left-radius: 4px;
   font: 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
   color: #fff; }
-  ._ptg-toolbar._ptg-toolbar--hidden {
+  ._ptg-toolbar._ptg-toolbar--collapsed {
     right: -414px; }
+  ._ptg-toolbar ._ptg-toolbar--hidden {
+    display: none !important; }
   ._ptg-toolbar ._ptg-toolbar__trigger {
     position: absolute;
     left: 0;

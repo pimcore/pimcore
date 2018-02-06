@@ -19,8 +19,12 @@ $color-rule: #a46a1f;
     font: 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
     color: #fff;
 
-    &._ptg-toolbar--hidden {
+    &._ptg-toolbar--collapsed {
         right: $triggerWidth - $width;
+    }
+
+    ._ptg-toolbar--hidden {
+        display: none !important;
     }
 
     ._ptg-toolbar__trigger {

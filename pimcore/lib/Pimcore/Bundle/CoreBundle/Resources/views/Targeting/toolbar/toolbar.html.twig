@@ -13,7 +13,7 @@
 
 {% block toolbar %}
     {% spaceless %}
-    <div id="_ptg-toolbar-{{ token }}" class="_ptg-toolbar _ptg-toolbar--hidden">
+    <div id="_ptg-toolbar-{{ token }}" class="_ptg-toolbar _ptg-toolbar--collapsed">
         <div class="_ptg-toolbar__trigger" title="{% trans from 'admin' %}targeting{% endtrans %}">
                 <span class="_ptg-toolbar__trigger-icon _ptg-toolbar__trigger-icon--target">
                     {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
@@ -169,7 +169,7 @@
 
                         <div class="_ptg-toolbar__override-form__button-row">
                             <button type="submit" value="">Apply</button>
-                            <button type="reset" value="">Reset</button>
+                            <button type="reset" value="" class="_ptg-toolbar--hidden">Reset</button>
                         </div>
 
                         {{ form_end(overrideForm) }}
