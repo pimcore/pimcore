@@ -72,6 +72,7 @@ class PdfReactor8 extends Processor
             "document" => $document
         ]);
 
+        $reactorConfig = $returnValueContainer->getData();
         try {
             $progress = new \stdClass();
             $progress->finished = false;
