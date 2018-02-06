@@ -1,10 +1,23 @@
+{% import _self as toolbar %}
+
+{% macro label(value, classes, attributes) %}
+    <span class="_ptg-toolbar__label {{ classes is not empty ? classes|join(' ') }}" {%- for attr, val in attributes %} {{ attr }}="{{ val }}"{% endfor -%}>{{ value }}</span>
+{% endmacro %}
+
+{% macro metric(label, value) %}
+    <span class="_ptg-toolbar__metric">
+        <span class="_ptg-toolbar__metric__label">{{ label }}</span>
+        <span class="_ptg-toolbar__metric__value">{{ value }}</span>
+    </span>
+{% endmacro %}
+
 {% block toolbar %}
     {% spaceless %}
     <div id="_ptg-toolbar-{{ token }}" class="_ptg-toolbar _ptg-toolbar--hidden">
         <div class="_ptg-toolbar__trigger" title="{% trans from 'admin' %}targeting{% endtrans %}">
-            <span class="_ptg-toolbar__trigger-icon _ptg-toolbar__trigger-icon--target">
-                {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
-            </span>
+                <span class="_ptg-toolbar__trigger-icon _ptg-toolbar__trigger-icon--target">
+                    {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
+                </span>
 
             <a class="_ptg-toolbar__trigger-icon _ptg-toolbar__trigger-icon--close" data-selector="#_ptg-toolbar-{{ token }}" title="Close Toolbar">
                 {{ include('@PimcoreCore/Targeting/toolbar/icon/close.svg.twig') }}
@@ -22,7 +35,7 @@
                                 <tr>
                                     <th>Document Target Group</th>
                                     <td class="_ptg-toolbar__table__col-right">
-                                        <span class="_ptg-toolbar__label _ptg-toolbar__label--target-group">{{ documentTargetGroup.name }}</span>
+                                        {{ toolbar.label(documentTargetGroup.name, ['_ptg-toolbar__label--target-group']) }}
                                     </td>
                                 </tr>
                             {% endif %}
@@ -31,7 +44,7 @@
                                 <th>Visitor ID</th>
                                 <td class="_ptg-toolbar__table__col-right">
                                     {% if visitorInfo.visitorId is not empty %}
-                                        <span class="_ptg-toolbar__label">{{ visitorInfo.visitorId }}</span>
+                                        {{ toolbar.label(visitorInfo.visitorId) }}
                                     {% else %}
                                         -
                                     {% endif %}
@@ -42,7 +55,7 @@
                                 <th>Session ID</th>
                                 <td class="_ptg-toolbar__table__col-right">
                                     {% if visitorInfo.sessionId is not empty %}
-                                        <span class="_ptg-toolbar__label">{{ visitorInfo.sessionId }}</span>
+                                        {{ toolbar.label(visitorInfo.sessionId) }}
                                     {% else %}
                                         -
                                     {% endif %}
@@ -66,7 +79,7 @@
                     {% if rules is not empty %}
                         <h2>
                             Matched Rules
-                            <span class="_ptg-toolbar__label">{{ rules|length }}</span>
+                            {{ toolbar.label(rules|length) }}
                         </h2>
 
                         <table class="_ptg-toolbar__table">
@@ -74,50 +87,19 @@
                                 {% for rule in rules %}
                                     <tr class="_ptg-toolbar__table__row-with-details" data-index="{{ loop.index }}">
                                         <td>
-                                            <span class="_ptg-toolbar__label _ptg-toolbar__label--rule _ptg-toolbar__table__row-with-details__trigger">
-                                                {{ rule.name }}
-                                            </span>
+                                            {{ toolbar.label(rule.name, ['_ptg-toolbar__label--rule', '_ptg-toolbar__table__row-with-details__trigger']) }}
                                         </td>
                                     </tr>
                                     <tr class="_ptg-toolbar__table__row-details _ptg-toolbar__table__row-details--collapsed" data-index="{{ loop.index }}">
                                         <td>
-                                            <span class="_ptg-toolbar__metric">
-                                                <span class="_ptg-toolbar__metric__label">
-                                                    Rule ID
-                                                </span>
-                                                <span class="_ptg-toolbar__metric__value">
-                                                    {{ rule.id }}
-                                                </span>
-                                            </span>
+                                            {{ toolbar.metric('Rule ID', rule.id) }}
 
                                             {% if rule.duration is not null %}
-                                            <span class="_ptg-toolbar__metric">
-                                                <span class="_ptg-toolbar__metric__label">
-                                                    Duration
-                                                </span>
-                                                <span class="_ptg-toolbar__metric__value">
-                                                    {{ rule.duration|round(2) }} ms
-                                                </span>
-                                            </span>
+                                                {{ toolbar.metric('Duration', rule.duration|round(2) ~ ' ms') }}
                                             {% endif %}
 
-                                            <span class="_ptg-toolbar__metric">
-                                                <span class="_ptg-toolbar__metric__label">
-                                                    Conditions
-                                                </span>
-                                                <span class="_ptg-toolbar__metric__value">
-                                                    {{ rule.conditions|length }}
-                                                </span>
-                                            </span>
-
-                                            <span class="_ptg-toolbar__metric">
-                                                <span class="_ptg-toolbar__metric__label">
-                                                    Actions
-                                                </span>
-                                                <span class="_ptg-toolbar__metric__value">
-                                                    {{ rule.actions|length }}
-                                                </span>
-                                            </span>
+                                            {{ toolbar.metric('Conditions', rule.conditions|length) }}
+                                            {{ toolbar.metric('Actions', rule.actions|length) }}
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -130,7 +112,7 @@
                     {% if targetGroups is not empty %}
                         <h2>
                             Assigned Target Groups
-                            <span class="_ptg-toolbar__label">{{ targetGroups|length }}</span>
+                            {{ toolbar.label(targetGroups|length) }}
                         </h2>
 
                         <table class="_ptg-toolbar__table">
@@ -138,34 +120,17 @@
                                 {% for targetGroup in targetGroups %}
                                     <tr class="_ptg-toolbar__table__row-with-details" data-index="{{ loop.index }}">
                                         <td>
-                                            <span class="_ptg-toolbar__label _ptg-toolbar__label--target-group _ptg-toolbar__table__row-with-details__trigger">
-                                                {{ targetGroup.name }}
-                                            </span>
+                                            {{ toolbar.label(targetGroup.name, ['_ptg-toolbar__label--target-group', '_ptg-toolbar__table__row-with-details__trigger']) }}
                                         </td>
                                         <td class="_ptg-toolbar__table__col-number">
-                                            <span class="_ptg-toolbar__label" title="Threshold: {{ targetGroup.threshold }}">{{ targetGroup.count }}</span>
+                                            {{ toolbar.label(targetGroup.count) }}
                                         </td>
                                     </tr>
 
                                     <tr class="_ptg-toolbar__table__row-details _ptg-toolbar__table__row-details--collapsed" data-index="{{ loop.index }}">
                                         <td colspan="2">
-                                            <span class="_ptg-toolbar__metric">
-                                                <span class="_ptg-toolbar__metric__label">
-                                                    Target Group ID
-                                                </span>
-                                                <span class="_ptg-toolbar__metric__value">
-                                                    {{ targetGroup.id }}
-                                                </span>
-                                            </span>
-
-                                            <span class="_ptg-toolbar__metric">
-                                                <span class="_ptg-toolbar__metric__label">
-                                                    Threshold
-                                                </span>
-                                                <span class="_ptg-toolbar__metric__value">
-                                                    {{ targetGroup.threshold }}
-                                                </span>
-                                            </span>
+                                            {{ toolbar.metric('Target Group ID', targetGroup.id) }}
+                                            {{ toolbar.metric('Threshold', targetGroup.threshold) }}
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -178,7 +143,7 @@
                     {% if documentTargetGroups is not empty %}
                         <h2>
                             Document Target Groups
-                            <span class="_ptg-toolbar__label">{{ documentTargetGroups|length }}</span>
+                            {{ toolbar.label(documentTargetGroups|length) }}
                         </h2>
 
                         <table class="_ptg-toolbar__table">
@@ -186,34 +151,17 @@
                                 {% for assignment in documentTargetGroups %}
                                     <tr class="_ptg-toolbar__table__row-with-details" data-index="{{ loop.index }}">
                                         <td>
-                                            <span class="_ptg-toolbar__label _ptg-toolbar__table__row-with-details__trigger" title="{{ assignment.document.path }}">
-                                                {{ assignment.document.path|truncate(32) }}
-                                            </span>
+                                            {{ toolbar.label(assignment.document.path|truncate(32), ['_ptg-toolbar__table__row-with-details__trigger'], { title: assignment.document.path }) }}
                                         </td>
                                         <td class="_ptg-toolbar__table__col-right">
-                                            <span class="_ptg-toolbar__label _ptg-toolbar__label--target-group">{{ assignment.targetGroup.name }}</span>
+                                            {{ toolbar.label(assignment.targetGroup.name, ['_ptg-toolbar__label--target-group']) }}
                                         </td>
                                     </tr>
 
                                     <tr class="_ptg-toolbar__table__row-details _ptg-toolbar__table__row-details--collapsed" data-index="{{ loop.index }}">
                                         <td colspan="2">
-                                            <span class="_ptg-toolbar__metric">
-                                                <span class="_ptg-toolbar__metric__label">
-                                                    Document ID
-                                                </span>
-                                                <span class="_ptg-toolbar__metric__value">
-                                                    {{ assignment.document.id }}
-                                                </span>
-                                            </span>
-
-                                            <span class="_ptg-toolbar__metric">
-                                                <span class="_ptg-toolbar__metric__label">
-                                                    Target Group ID
-                                                </span>
-                                                <span class="_ptg-toolbar__metric__value">
-                                                    {{ assignment.targetGroup.id }}
-                                                </span>
-                                            </span>
+                                            {{ toolbar.metric('Document ID', assignment.document.id) }}
+                                            {{ toolbar.metric('Target Group ID', assignment.targetGroup.id) }}
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -221,6 +169,7 @@
                         </table>
                     {% endif %}
                 {% endblock %}
+
             </div>
         </div>
     </div>
