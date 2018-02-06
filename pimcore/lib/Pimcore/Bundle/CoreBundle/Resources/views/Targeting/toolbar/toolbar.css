@@ -58,6 +58,12 @@
       width: 100%; }
       ._ptg-toolbar ._ptg-toolbar__content table td, ._ptg-toolbar ._ptg-toolbar__content table th {
         padding: 3px 0; }
+    ._ptg-toolbar ._ptg-toolbar__content form label {
+      display: block; }
+    ._ptg-toolbar ._ptg-toolbar__content form input,
+    ._ptg-toolbar ._ptg-toolbar__content form select,
+    ._ptg-toolbar ._ptg-toolbar__content form button {
+      color: #000; }
   ._ptg-toolbar ._ptg-toolbar__table__col-number {
     text-align: right; }
   ._ptg-toolbar ._ptg-toolbar__table__col-right {

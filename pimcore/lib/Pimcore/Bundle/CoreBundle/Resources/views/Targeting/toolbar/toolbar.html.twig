@@ -47,6 +47,14 @@
                 </tr>
             </table>
 
+            <h2>Overrides</h2>
+
+            {% block overrideForm %}
+                {{ form_start(overrideForm) }}
+                {{ form_widget(overrideForm) }}
+                {{ form_end(overrideForm) }}
+            {% endblock %}
+
             {% if rules is not empty %}
                 <h2>
                     Matched Rules

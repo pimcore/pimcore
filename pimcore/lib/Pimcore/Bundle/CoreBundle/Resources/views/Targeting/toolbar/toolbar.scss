@@ -94,6 +94,18 @@ $color-rule: #a46a1f;
                 padding: 3px 0;
             }
         }
+
+        form {
+            label {
+                display: block;
+            }
+
+            input,
+            select,
+            button {
+                color: #000;
+            }
+        }
     }
 
     ._ptg-toolbar__table__col-number {

@@ -139,3 +139,7 @@ services:
     #
 
     Pimcore\Targeting\Debug\TargetingDataCollector: ~
+
+    Pimcore\Targeting\Debug\OverrideHandler:
+        arguments:
+            $overrideHandlers: !tagged pimcore.targeting.override_handler

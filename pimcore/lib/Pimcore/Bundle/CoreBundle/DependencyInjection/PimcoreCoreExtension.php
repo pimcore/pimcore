@@ -29,6 +29,7 @@ use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
+use Pimcore\Targeting\OverrideHandlerInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
@@ -130,6 +131,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         }
 
         $this->addContextRoutes($container, $config['context']);
+
+        $container
+            ->registerForAutoconfiguration(OverrideHandlerInterface::class)
+                ->addTag('pimcore.targeting.override_handler');
     }
 
     /**
