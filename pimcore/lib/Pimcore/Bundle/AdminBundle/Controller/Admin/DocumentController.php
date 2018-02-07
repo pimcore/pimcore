@@ -85,18 +85,17 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
+        $limit  = intval($allParams['limit'] ?? 100000000);
+        $offset = intval($allParams['start'] ?? 0);
+
         $document = Document::getById($allParams['node']);
+        if (!$document) {
+            throw $this->createNotFoundException('Document was not found');
+        }
 
         $documents = [];
         $cv = false;
         if ($document->hasChildren()) {
-            $limit = intval($allParams['limit']);
-            if (!$allParams['limit']) {
-                $limit = 100000000;
-            }
-
-            $offset = intval($allParams['start']);
-
             if ($allParams['view']) {
                 $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
             }
@@ -124,11 +123,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $list);
 
             $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $childsList,
+                'list' => $list,
                 'context' => $allParams
             ]);
+
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
-            $childsList = $beforeListLoadEvent->getArgument('list');
+            $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
 
