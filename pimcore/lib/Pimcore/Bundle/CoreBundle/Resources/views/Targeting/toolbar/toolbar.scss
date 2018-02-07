@@ -82,9 +82,7 @@ $color-rule: #a46a1f;
             margin-top: 0;
         }
 
-        h2 {
-            font-size: 14px;
-            margin: 20px 0 5px 0;
+        h2, h3 {
             padding-bottom: 3px;
             border-bottom: 1px dotted #686868;
 
@@ -92,6 +90,16 @@ $color-rule: #a46a1f;
                 position: relative;
                 top: -1px;
             }
+        }
+
+        h2 {
+            font-size: 14px;
+            margin: 20px 0 5px 0;
+        }
+
+        h3 {
+            font-size: 13px;
+            margin: 15px 0 5px 0;
         }
 
         table {
@@ -115,6 +123,10 @@ $color-rule: #a46a1f;
         td:first-child {
             padding-left: 10px;
         }
+    }
+
+    ._ptgtb__storage {
+        padding: 0 0 0 15px;
     }
 
     ._ptgtb__collapse--collapsed {
@@ -215,5 +227,11 @@ $color-rule: #a46a1f;
         ._ptgtb__override-form__button-row {
             margin-top: 12px;
         }
+    }
+
+    .sf-dump {
+        font-size: 11px;
+        background: #2f2f2f;
+        border: none;
     }
 }

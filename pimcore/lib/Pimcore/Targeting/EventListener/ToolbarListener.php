@@ -186,6 +186,7 @@ class ToolbarListener implements EventSubscriberInterface
             'rules'                => $tdc->collectMatchedRules($visitorInfo),
             'documentTargetGroup'  => $tdc->collectDocumentTargetGroup($document),
             'documentTargetGroups' => $tdc->collectDocumentTargetGroupMapping(),
+            'storage'              => $tdc->collectStorage($visitorInfo),
         ];
 
         return $data;

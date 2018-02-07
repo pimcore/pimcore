@@ -32,6 +32,8 @@ services:
 
     Pimcore\Twig\Extension\WebsiteConfigExtension: ~
 
+    Pimcore\Twig\Extension\DumpExtension: ~
+
     # the deferred extension is needed for placeholder helpers to work
     # as otherwise the placeholder block would be rendered before any
     # content was added (e.g. headTitle)
