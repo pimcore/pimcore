@@ -1,4 +1,4 @@
-._ptg-toolbar {
+._ptgtb {
   display: block;
   width: 450px;
   position: fixed;
@@ -9,11 +9,11 @@
   border-bottom-left-radius: 4px;
   font: 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
   color: #fff; }
-  ._ptg-toolbar._ptg-toolbar--collapsed {
+  ._ptgtb._ptgtb--collapsed {
     right: -414px; }
-  ._ptg-toolbar ._ptg-toolbar--hidden {
+  ._ptgtb ._ptgtb--hidden {
     display: none !important; }
-  ._ptg-toolbar ._ptg-toolbar__trigger {
+  ._ptgtb ._ptgtb__trigger {
     position: absolute;
     left: 0;
     top: 0;
@@ -22,93 +22,93 @@
     background: #222;
     border-bottom-left-radius: 4px;
     cursor: pointer; }
-  ._ptg-toolbar ._ptg-toolbar__trigger-icon {
+  ._ptgtb ._ptgtb__trigger-icon {
     display: block;
     position: absolute;
     width: 36px;
     height: 36px;
     text-align: center; }
-    ._ptg-toolbar ._ptg-toolbar__trigger-icon._ptg-toolbar__trigger-icon--target {
+    ._ptgtb ._ptgtb__trigger-icon._ptgtb__trigger-icon--target {
       top: 0;
       left: 0; }
-    ._ptg-toolbar ._ptg-toolbar__trigger-icon._ptg-toolbar__trigger-icon--close {
+    ._ptgtb ._ptgtb__trigger-icon._ptgtb__trigger-icon--close {
       bottom: 0;
       left: 0;
       background: #444;
       cursor: pointer;
       border-bottom-left-radius: 4px; }
-      ._ptg-toolbar ._ptg-toolbar__trigger-icon._ptg-toolbar__trigger-icon--close:hover {
+      ._ptgtb ._ptgtb__trigger-icon._ptgtb__trigger-icon--close:hover {
         background: #626262; }
-    ._ptg-toolbar ._ptg-toolbar__trigger-icon svg {
+    ._ptgtb ._ptgtb__trigger-icon svg {
       display: inline-block;
       height: 18px;
       max-height: 18px;
       margin-top: 10px; }
-  ._ptg-toolbar ._ptg-toolbar__content {
+  ._ptgtb ._ptgtb__content {
     margin-left: 36px; }
-    ._ptg-toolbar ._ptg-toolbar__content ._ptg-toolbar__content-inner {
+    ._ptgtb ._ptgtb__content ._ptgtb__content-inner {
       padding: 15px; }
-    ._ptg-toolbar ._ptg-toolbar__content h1 {
+    ._ptgtb ._ptgtb__content h1 {
       font-size: 18px;
       margin-top: 0; }
-    ._ptg-toolbar ._ptg-toolbar__content h2 {
+    ._ptgtb ._ptgtb__content h2 {
       font-size: 14px; }
-      ._ptg-toolbar ._ptg-toolbar__content h2 ._ptg-toolbar__label {
+      ._ptgtb ._ptgtb__content h2 ._ptgtb__label {
         position: relative;
         top: -1px; }
-    ._ptg-toolbar ._ptg-toolbar__content table {
+    ._ptgtb ._ptgtb__content table {
       width: 100%; }
-      ._ptg-toolbar ._ptg-toolbar__content table td, ._ptg-toolbar ._ptg-toolbar__content table th {
+      ._ptgtb ._ptgtb__content table td, ._ptgtb ._ptgtb__content table th {
         padding: 3px 0; }
-  ._ptg-toolbar ._ptg-toolbar__table__col-number {
+  ._ptgtb ._ptgtb__table__col-number {
     text-align: right; }
-  ._ptg-toolbar ._ptg-toolbar__table__col-right {
+  ._ptgtb ._ptgtb__table__col-right {
     text-align: right; }
-  ._ptg-toolbar ._ptg-toolbar__table__row-with-details__trigger {
+  ._ptgtb ._ptgtb__table__row-with-details__trigger {
     cursor: pointer; }
-  ._ptg-toolbar ._ptg-toolbar__table__row-with-details__trigger-arrow {
+  ._ptgtb ._ptgtb__table__row-with-details__trigger-arrow {
     display: inline-block;
     margin-left: 4px; }
-  ._ptg-toolbar ._ptg-toolbar__table__row-details td:first-child {
+  ._ptgtb ._ptgtb__table__row-details td:first-child {
     padding-left: 10px; }
-  ._ptg-toolbar ._ptg-toolbar__table__row-details._ptg-toolbar__table__row-details--collapsed {
+  ._ptgtb ._ptgtb__table__row-details._ptgtb__table__row-details--collapsed {
     display: none; }
-  ._ptg-toolbar ._ptg-toolbar__label,
-  ._ptg-toolbar ._ptg-toolbar__metric {
+  ._ptgtb ._ptgtb__label,
+  ._ptgtb ._ptgtb__metric {
     font: 11px Menlo, Monaco, Consolas, "Courier New", monospace; }
-  ._ptg-toolbar ._ptg-toolbar__label {
+  ._ptgtb ._ptgtb__label {
     display: inline-block;
     padding: 3px 5px;
     background: #888;
     border-radius: 1px; }
-    ._ptg-toolbar ._ptg-toolbar__label._ptg-toolbar__label--target-group {
+    ._ptgtb ._ptgtb__label._ptgtb__label--target-group {
       background: #4f805d; }
-    ._ptg-toolbar ._ptg-toolbar__label._ptg-toolbar__label--rule {
+    ._ptgtb ._ptgtb__label._ptgtb__label--rule {
       background: #a46a1f; }
-  ._ptg-toolbar ._ptg-toolbar__metric {
+  ._ptgtb ._ptgtb__metric {
     display: inline-block;
     margin: 0 5px 3px 0;
     border-radius: 1px; }
-  ._ptg-toolbar ._ptg-toolbar__metric__label,
-  ._ptg-toolbar ._ptg-toolbar__metric__value {
+  ._ptgtb ._ptgtb__metric__label,
+  ._ptgtb ._ptgtb__metric__value {
     display: inline-block;
     padding: 3px 5px;
     background: #333;
     border-top-left-radius: 1px;
     border-bottom-left-radius: 1px; }
-  ._ptg-toolbar ._ptg-toolbar__metric__label {
+  ._ptgtb ._ptgtb__metric__label {
     background: #656565;
     border-top-right-radius: 1px;
     border-bottom-right-radius: 1px; }
-  ._ptg-toolbar ._ptg-toolbar__override-form label {
+  ._ptgtb ._ptgtb__override-form label {
     display: block;
     margin: 10px 0 3px 0; }
-  ._ptg-toolbar ._ptg-toolbar__override-form input,
-  ._ptg-toolbar ._ptg-toolbar__override-form select {
+  ._ptgtb ._ptgtb__override-form input,
+  ._ptgtb ._ptgtb__override-form select {
     color: #000;
     background: #fff;
     padding: 3px 5px; }
-  ._ptg-toolbar ._ptg-toolbar__override-form button {
+  ._ptgtb ._ptgtb__override-form button {
     display: inline-block;
     margin: 0 3px 0 0;
     padding: 6px 15px;
@@ -117,9 +117,9 @@
     border: 0;
     color: #f5f5f5;
     font-size: 12px; }
-    ._ptg-toolbar ._ptg-toolbar__override-form button:hover {
+    ._ptgtb ._ptgtb__override-form button:hover {
       cursor: pointer;
       opacity: 0.8;
       text-decoration: none; }
-  ._ptg-toolbar ._ptg-toolbar__override-form ._ptg-toolbar__override-form__button-row {
+  ._ptgtb ._ptgtb__override-form ._ptgtb__override-form__button-row {
     margin-top: 12px; }

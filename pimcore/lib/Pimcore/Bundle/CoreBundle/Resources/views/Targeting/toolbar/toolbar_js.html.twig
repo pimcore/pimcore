@@ -88,10 +88,10 @@
 
         util.addEventListener(document, 'DOMContentLoaded', function () {
             var localStorageStateKey = 'pimcore/targeting/toolbar/displayState';
-            var collapsedClass = '_ptg-toolbar--collapsed';
+            var collapsedClass = '_ptgtb--collapsed';
 
             // whole toolbar
-            document.querySelectorAll('._ptg-toolbar__trigger').forEach(function (trigger) {
+            document.querySelectorAll('._ptgtb__trigger').forEach(function (trigger) {
                 var toolbar = trigger.parentNode;
 
                 var showToolbar = function(show) {
@@ -126,7 +126,7 @@
             });
 
             // close icon
-            document.querySelectorAll('._ptg-toolbar__trigger-icon--close').forEach(function (close) {
+            document.querySelectorAll('._ptgtb__trigger-icon--close').forEach(function (close) {
                 util.addEventListener(close, 'click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -147,25 +147,25 @@
             });
 
             // collapsible detail table rows
-            var detailRowCollapsedClass = '_ptg-toolbar__table__row-details--collapsed';
-            document.querySelectorAll('._ptg-toolbar__table__row-with-details').forEach(function (row) {
+            var detailRowCollapsedClass = '_ptgtb__table__row-details--collapsed';
+            document.querySelectorAll('._ptgtb__table__row-with-details').forEach(function (row) {
                 var index = row.getAttribute('data-index');
                 if (!index) {
                     return;
                 }
 
-                var trigger = row.querySelector('._ptg-toolbar__table__row-with-details__trigger');
+                var trigger = row.querySelector('._ptgtb__table__row-with-details__trigger');
                 if (!trigger) {
                     return;
                 }
 
-                var detailRows = row.parentElement.querySelectorAll('._ptg-toolbar__table__row-details[data-index="' + index + '"]');
+                var detailRows = row.parentElement.querySelectorAll('._ptgtb__table__row-details[data-index="' + index + '"]');
                 if (0 === detailRows.length) {
                     return;
                 }
 
                 var arrow = document.createElement('span');
-                util.addClass(arrow, '_ptg-toolbar__table__row-with-details__trigger-arrow');
+                util.addClass(arrow, '_ptgtb__table__row-with-details__trigger-arrow');
 
                 var toggleDetails = function (show) {
                     if (show) {
@@ -203,7 +203,7 @@
 
             // override form
             (function() {
-                var form = document.querySelector('._ptg-toolbar__override-form');
+                var form = document.querySelector('._ptgtb__override-form');
                 if (!form) {
                     return;
                 }
@@ -218,7 +218,7 @@
                     return;
                 }
 
-                util.removeClass(resetButton, '_ptg-toolbar--hidden');
+                util.removeClass(resetButton, '_ptgtb--hidden');
                 util.addEventListener(resetButton, 'click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();

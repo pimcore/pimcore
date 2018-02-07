@@ -7,7 +7,7 @@ $triggerWidth: 36px;
 $color-target-group: #4f805d;
 $color-rule: #a46a1f;
 
-._ptg-toolbar {
+._ptgtb {
     display: block;
     width: $width;
     position: fixed;
@@ -19,15 +19,15 @@ $color-rule: #a46a1f;
     font: 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
     color: #fff;
 
-    &._ptg-toolbar--collapsed {
+    &._ptgtb--collapsed {
         right: $triggerWidth - $width;
     }
 
-    ._ptg-toolbar--hidden {
+    ._ptgtb--hidden {
         display: none !important;
     }
 
-    ._ptg-toolbar__trigger {
+    ._ptgtb__trigger {
         position: absolute;
         left: 0;
         top: 0;
@@ -38,19 +38,19 @@ $color-rule: #a46a1f;
         cursor: pointer;
     }
 
-    ._ptg-toolbar__trigger-icon {
+    ._ptgtb__trigger-icon {
         display: block;
         position: absolute;
         width: $triggerWidth;
         height: $triggerWidth;
         text-align: center;
 
-        &._ptg-toolbar__trigger-icon--target {
+        &._ptgtb__trigger-icon--target {
             top: 0;
             left: 0;
         }
 
-        &._ptg-toolbar__trigger-icon--close {
+        &._ptgtb__trigger-icon--close {
             bottom: 0;
             left: 0;
             background: #444;
@@ -70,10 +70,10 @@ $color-rule: #a46a1f;
         }
     }
 
-    ._ptg-toolbar__content {
+    ._ptgtb__content {
         margin-left: $triggerWidth;
 
-        ._ptg-toolbar__content-inner {
+        ._ptgtb__content-inner {
             padding: 15px;
         }
 
@@ -85,7 +85,7 @@ $color-rule: #a46a1f;
         h2 {
             font-size: 14px;
 
-            ._ptg-toolbar__label {
+            ._ptgtb__label {
                 position: relative;
                 top: -1px;
             }
@@ -100,61 +100,61 @@ $color-rule: #a46a1f;
         }
     }
 
-    ._ptg-toolbar__table__col-number {
+    ._ptgtb__table__col-number {
         text-align: right;
     }
 
-    ._ptg-toolbar__table__col-right {
+    ._ptgtb__table__col-right {
         text-align: right;
     }
 
-    ._ptg-toolbar__table__row-with-details__trigger {
+    ._ptgtb__table__row-with-details__trigger {
         cursor: pointer;
     }
 
-    ._ptg-toolbar__table__row-with-details__trigger-arrow {
+    ._ptgtb__table__row-with-details__trigger-arrow {
         display: inline-block;
         margin-left: 4px;
     }
 
-    ._ptg-toolbar__table__row-details {
+    ._ptgtb__table__row-details {
         td:first-child {
             padding-left: 10px;
         }
 
-        &._ptg-toolbar__table__row-details--collapsed {
+        &._ptgtb__table__row-details--collapsed {
             display: none;
         }
     }
 
-    ._ptg-toolbar__label,
-    ._ptg-toolbar__metric {
+    ._ptgtb__label,
+    ._ptgtb__metric {
         font: 11px Menlo, Monaco, Consolas, "Courier New", monospace;
     }
 
-    ._ptg-toolbar__label {
+    ._ptgtb__label {
         display: inline-block;
         padding: 3px 5px;
         background: #888;
         border-radius: 1px;
 
-        &._ptg-toolbar__label--target-group {
+        &._ptgtb__label--target-group {
             background: $color-target-group;
         }
 
-        &._ptg-toolbar__label--rule {
+        &._ptgtb__label--rule {
             background: $color-rule;
         }
     }
 
-    ._ptg-toolbar__metric {
+    ._ptgtb__metric {
         display: inline-block;
         margin: 0 5px 3px 0;
         border-radius: 1px;
     }
 
-    ._ptg-toolbar__metric__label,
-    ._ptg-toolbar__metric__value {
+    ._ptgtb__metric__label,
+    ._ptgtb__metric__value {
         display: inline-block;
         padding: 3px 5px;
         background: #333;
@@ -162,13 +162,13 @@ $color-rule: #a46a1f;
         border-bottom-left-radius: 1px;
     }
 
-    ._ptg-toolbar__metric__label {
+    ._ptgtb__metric__label {
         background: #656565;
         border-top-right-radius: 1px;
         border-bottom-right-radius: 1px;
     }
 
-    ._ptg-toolbar__override-form {
+    ._ptgtb__override-form {
         label {
             display: block;
             margin: 10px 0 3px 0;
@@ -198,7 +198,7 @@ $color-rule: #a46a1f;
             }
         }
 
-        ._ptg-toolbar__override-form__button-row {
+        ._ptgtb__override-form__button-row {
             margin-top: 12px;
         }
     }
