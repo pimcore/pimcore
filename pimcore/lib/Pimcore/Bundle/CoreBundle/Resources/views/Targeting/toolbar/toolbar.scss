@@ -38,24 +38,22 @@ $color-rule: #a46a1f;
         cursor: pointer;
     }
 
-    ._ptgtb__trigger-icon {
+    ._ptgtb__toolbar-icon {
         display: block;
         position: absolute;
+        top: 0;
         width: $triggerWidth;
         height: $triggerWidth;
         text-align: center;
 
-        &._ptgtb__trigger-icon--target {
-            top: 0;
+        &._ptgtb__toolbar-icon--target {
+            top: 5px;
             left: 0;
         }
 
-        &._ptgtb__trigger-icon--close {
-            bottom: 0;
-            left: 0;
-            background: #444;
+        &._ptgtb__toolbar-icon--close {
+            right: 0;
             cursor: pointer;
-            border-bottom-left-radius: 4px;
 
             &:hover {
                 background: #626262;

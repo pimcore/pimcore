@@ -4,14 +4,14 @@
     {% spaceless %}
     <div id="_ptgtb-{{ token }}" class="_ptgtb _ptgtb--collapsed">
         <div class="_ptgtb__trigger" title="{% trans from 'admin' %}targeting{% endtrans %}">
-                <span class="_ptgtb__trigger-icon _ptgtb__trigger-icon--target">
-                    {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
-                </span>
-
-            <a class="_ptgtb__trigger-icon _ptgtb__trigger-icon--close" data-selector="#_ptgtb-{{ token }}" title="Close Toolbar">
-                {{ include('@PimcoreCore/Targeting/toolbar/icon/close.svg.twig') }}
-            </a>
+            <span class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--target">
+                {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
+            </span>
         </div>
+
+        <a class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--close" data-selector="#_ptgtb-{{ token }}" title="Close Toolbar">
+            {{ include('@PimcoreCore/Targeting/toolbar/icon/close.svg.twig') }}
+        </a>
 
         <div class="_ptgtb__content">
             <div class="_ptgtb__content-inner">
