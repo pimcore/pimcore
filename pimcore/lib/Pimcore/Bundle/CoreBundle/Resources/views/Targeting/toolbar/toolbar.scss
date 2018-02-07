@@ -12,7 +12,7 @@ $color-rule: #a46a1f;
     width: $width;
     position: fixed;
     right: 0;
-    top: 0px;
+    top: 0;
     z-index: 10000;
     background: rgba(68, 68, 68, 0.97); // #444
     border-bottom-left-radius: 4px;
@@ -41,7 +41,6 @@ $color-rule: #a46a1f;
     ._ptgtb__toolbar-icon {
         display: block;
         position: absolute;
-        top: 0;
         width: $triggerWidth;
         height: $triggerWidth;
         text-align: center;
@@ -51,8 +50,16 @@ $color-rule: #a46a1f;
             left: 0;
         }
 
+        &._ptgtb__toolbar-icon--collapse {
+            bottom: 0;
+            left: 0;
+            transform: rotate(180deg);
+            transition: 0.3s ease-in-out;
+        }
+
         &._ptgtb__toolbar-icon--close,
         &._ptgtb__toolbar-icon--advanced-features {
+            top: 0;
             cursor: pointer;
 
             &:hover {
@@ -79,6 +86,10 @@ $color-rule: #a46a1f;
             max-height: 18px;
             margin-top: 10px;
         }
+    }
+
+    &._ptgtb--collapsed ._ptgtb__toolbar-icon._ptgtb__toolbar-icon--collapse {
+        transform: rotate(0);
     }
 
     ._ptgtb__content {
