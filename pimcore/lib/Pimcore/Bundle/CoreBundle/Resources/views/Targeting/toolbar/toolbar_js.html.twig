@@ -1,3 +1,8 @@
+{#
+    CAUTION: The debug profiler listener just blindly strips all newlines from the generated code. This means you can't
+    use // comments here as they would break the generated code. Use /* */ comments if needed or refactor the "minifying"
+    to use a decent JS processor (e.g. uglify, webpack).
+#}
 <script type="text/javascript">
     (function (window, document, undefined) {
         'use strict';
@@ -45,8 +50,7 @@
             },
 
             featureDetect: (function () {
-                // most tests come from to modernizr (MIT license)
-                // https://github.com/Modernizr/Modernizr/tree/master/feature-detects
+                /* most tests come from to modernizr (MIT license) - https://github.com/Modernizr/Modernizr/tree/master/feature-detects */
                 var tests = {
                     localStorage: function () {
                         var v = 'test';
@@ -87,7 +91,7 @@
         };
 
         util.addEventListener(document, 'DOMContentLoaded', function () {
-            // whole toolbar
+            /* whole toolbar */
             document.querySelectorAll('._ptgtb__trigger').forEach(function (trigger) {
                 var localStorageStateKey = 'pimcore/targeting/toolbar/displayState';
                 var collapsedClass = '_ptgtb--collapsed';
@@ -122,7 +126,7 @@
                 });
             });
 
-            // close icon
+            /* close icon */
             document.querySelectorAll('._ptgtb__toolbar-icon--close').forEach(function (close) {
                 util.addEventListener(close, 'click', function (e) {
                     e.preventDefault();
@@ -138,12 +142,12 @@
                         toolbar.parentNode.removeChild(toolbar);
                     }
 
-                    // delete cookie to disable toolbar
+                    /* delete cookie to disable toolbar */
                     document.cookie = 'pimcore_targeting_debug=; path=/'
                 });
             });
 
-            // collapsible sections with support to store their state in local storage
+            /* collapsible sections with support to store their state in local storage */
             document.querySelectorAll('[data-ptgtb-toggle="collapse"]').forEach(function (trigger) {
                 var targetSelector = trigger.getAttribute('data-ptgtb-target');
                 if (!targetSelector) {
@@ -155,8 +159,8 @@
                     return;
                 }
 
-                // define a state storage key if localStorage is available and
-                // data-ptgtb-collapse-store is set
+                /* define a state storage key if localStorage is available and */
+                /* data-ptgtb-collapse-store is set */
                 var stateStorageKey = null;
                 if (util.featureDetect('localStorage')) {
                     stateStorageKey = trigger.getAttribute('data-ptgtb-collapse-store');
@@ -171,7 +175,7 @@
                 var arrow = document.createElement('span');
                 util.addClass(arrow, '_ptgtb__collapse__arrow');
 
-                // show arrow only if data-ptgtb-arrow is not set to false
+                /* show arrow only if data-ptgtb-arrow is not set to false */
                 (function() {
                     var attribute = trigger.getAttribute('data-ptgtb-arrow');
                     if (null !== attribute && 'false' === attribute) {
@@ -203,7 +207,7 @@
                     }
                 };
 
-                // use stored state if defined and there is a stored state
+                /* use stored state if defined and there is a stored state */
                 var storedState = null;
                 if (stateStorageKey) {
                     if (storedState = localStorage.getItem(stateStorageKey)) {
@@ -214,11 +218,11 @@
                 if (!storedState) {
                     var defaultState = trigger.getAttribute('data-ptgtb-collapse-default');
 
-                    // use default state if defined and no stored state was set
+                    /* use default state if defined and no stored state was set */
                     if (defaultState) {
                         toggle('collapse' !== defaultState);
                     } else {
-                        // initialize arrow state from target state
+                        /* initialize arrow state from target state */
                         toggle(!util.hasClass(target, targetCollapsedClass));
                     }
                 }
@@ -231,14 +235,14 @@
                 });
             });
 
-            // override form
+            /* override form */
             (function() {
                 var form = document.querySelector('._ptgtb__override-form');
                 if (!form) {
                     return;
                 }
 
-                // handle reset button only in browsers supporting URLSearchParams and Array.from
+                /* handle reset button only in browsers supporting URLSearchParams and Array.from */
                 if (!util.featureDetect('urlsearchparams') || !util.featureDetect('arrayfrom')) {
                     return;
                 }
