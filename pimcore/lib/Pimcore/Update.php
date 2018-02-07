@@ -14,7 +14,9 @@
 
 namespace Pimcore;
 
+use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Composer\Config\ConfigMerger;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Process\Process;
 
 class Update
@@ -389,6 +391,25 @@ class Update
         }
 
         self::composerUpdate(['--no-scripts']);
+
+
+        // remove terminate and exception event listeners for the current env as they break with a
+        // cleared container - see #2434
+        $eventDispatcher = \Pimcore::getEventDispatcher();
+        foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
+            $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);
+        }
+
+        foreach ($eventDispatcher->getListeners(KernelEvents::EXCEPTION) as $listener) {
+            $eventDispatcher->removeListener(KernelEvents::EXCEPTION, $listener);
+        }
+
+        // clear symfony cache
+        $symfonyCacheClearer = new CacheClearer();
+        $symfonyCacheClearer->clear(\Pimcore::getKernel()->getEnvironment(), [
+            // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
+            'no-warmup' => true
+        ]);
     }
 
     public static function clearOPCaches()
