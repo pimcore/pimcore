@@ -128,7 +128,7 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    var selector = this.getAttribute('data-selector');
+                    var selector = this.getAttribute('data-ptgtb-target');
                     if (!selector) {
                         return;
                     }
@@ -171,16 +171,29 @@
                 var arrow = document.createElement('span');
                 util.addClass(arrow, '_ptgtb__collapse__arrow');
 
+                // show arrow only if data-ptgtb-arrow is not set to false
+                (function() {
+                    var attribute = trigger.getAttribute('data-ptgtb-arrow');
+                    if (null !== attribute && 'false' === attribute) {
+                        return;
+                    }
+
+                    trigger.appendChild(arrow);
+                }());
+
+                var triggerCollapsedClass = '_ptgtb__collapse__trigger--collapsed';
                 var targetCollapsedClass = '_ptgtb__collapse--collapsed';
                 var arrowCollapsedClass = '_ptgtb__collapse__arrow--collapsed';
 
                 var toggle = function (state, updateStore) {
                     if (state) {
                         arrow.innerHTML = '▼';
+                        util.removeClass(trigger, triggerCollapsedClass);
                         util.removeClass(arrow, arrowCollapsedClass);
                         util.removeClass(target, targetCollapsedClass);
                     } else {
                         arrow.innerHTML = '▶';
+                        util.addClass(trigger, triggerCollapsedClass);
                         util.addClass(arrow, arrowCollapsedClass);
                         util.addClass(target, targetCollapsedClass);
                     }
@@ -189,8 +202,6 @@
                         localStorage.setItem(stateStorageKey, state ? 'show' : 'collapse');
                     }
                 };
-
-                trigger.appendChild(arrow);
 
                 // use stored state if defined and there is a stored state
                 var storedState = null;

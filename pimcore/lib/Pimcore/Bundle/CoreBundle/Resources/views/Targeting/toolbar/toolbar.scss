@@ -51,12 +51,25 @@ $color-rule: #a46a1f;
             left: 0;
         }
 
-        &._ptgtb__toolbar-icon--close {
-            right: 0;
+        &._ptgtb__toolbar-icon--close,
+        &._ptgtb__toolbar-icon--advanced-features {
             cursor: pointer;
 
             &:hover {
                 background: #626262;
+            }
+        }
+
+        &._ptgtb__toolbar-icon--close {
+            right: 0;
+        }
+
+        &._ptgtb__toolbar-icon--advanced-features {
+            right: $triggerWidth;
+            background: #626262;
+
+            &._ptgtb__collapse__trigger--collapsed {
+                background: transparent;
             }
         }
 
@@ -87,6 +100,7 @@ $color-rule: #a46a1f;
             ._ptgtb__label {
                 position: relative;
                 top: -1px;
+                margin-left: 3px;
             }
         }
 

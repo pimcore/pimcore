@@ -9,13 +9,26 @@
             </span>
         </div>
 
-        <a class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--close" data-selector="#_ptgtb-{{ token }}" title="Close Toolbar">
+        <a class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--close" data-ptgtb-target="#_ptgtb-{{ token }}" title="Close Toolbar">
             {{ include('@PimcoreCore/Targeting/toolbar/icon/close.svg.twig') }}
+        </a>
+
+        <a
+            class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--advanced-features"
+            title="Toggle Advanced Features"
+            data-ptgtb-toggle="collapse"
+            data-ptgtb-target="._ptgtb__advanced"
+            data-ptgtb-collapse-store="advanced"
+            data-ptgtb-arrow="false"
+            >
+            {{ include('@PimcoreCore/Targeting/toolbar/icon/advanced_features.svg.twig') }}
         </a>
 
         <div class="_ptgtb__content">
             <div class="_ptgtb__content-inner">
-                <h1>Targeting</h1>
+                <h1>
+                    Targeting
+                </h1>
 
                 {% block overview %}
                     <table class="_ptgtb__table">
@@ -171,62 +184,66 @@
                     {% endif %}
                 {% endblock %}
 
-                {% block visitorInfo %}
-                    <h2
-                        class="_ptgtb__collapse__trigger--block"
-                        data-ptgtb-toggle="collapse"
-                        data-ptgtb-target="#{{ toolbar.identifier(token, 'visitor-info') }}"
-                        data-ptgtb-collapse-default="collapse"
-                        data-ptgtb-collapse-store="visitor-info"
-                    >
-                        Visitor Info
-                    </h2>
-                    <div id="{{ toolbar.identifier(token, 'visitor-info') }}">
-                        {{ pimcore_dump({ data: visitorInfo.data, actions: visitorInfo.actions }) }}
-                    </div>
-                {% endblock %}
-
-                {% block storage %}
-                    <h2
-                        class="_ptgtb__collapse__trigger--block"
-                        data-ptgtb-toggle="collapse"
-                        data-ptgtb-target="#{{ toolbar.identifier(token, 'storage') }}"
-                        data-ptgtb-collapse-default="collapse"
-                        data-ptgtb-collapse-store="storage"
-                    >
-                        Storage
-                    </h2>
-                    <div id="{{ toolbar.identifier(token, 'storage') }}" class="_ptgtb__storage">
-
-                        {% block visitorStorage %}
-                        <h3
-                            class="_ptgtb__collapse__trigger--block"
-                            data-ptgtb-toggle="collapse"
-                            data-ptgtb-target="#{{ toolbar.identifier(token, 'storage-visitor') }}"
-                            data-ptgtb-collapse-store="storage-visitor"
-                        >
-                            Visitor Storage
-                        </h3>
-                        <div id="{{ toolbar.identifier(token, 'storage-visitor') }}">
-                            {{ pimcore_dump(storage.visitor) }}
-                        </div>
+                <div class="_ptgtb__advanced">
+                    {% block advanced %}
+                        {% block visitorInfo %}
+                            <h2
+                                class="_ptgtb__collapse__trigger--block"
+                                data-ptgtb-toggle="collapse"
+                                data-ptgtb-target="#{{ toolbar.identifier(token, 'visitor-info') }}"
+                                data-ptgtb-collapse-default="collapse"
+                                data-ptgtb-collapse-store="visitor-info"
+                            >
+                                Visitor Info
+                            </h2>
+                            <div id="{{ toolbar.identifier(token, 'visitor-info') }}">
+                                {{ pimcore_dump({ data: visitorInfo.data, actions: visitorInfo.actions }) }}
+                            </div>
                         {% endblock %}
 
-                        {% block sessionStorage %}
-                        <h3
-                            class="_ptgtb__collapse__trigger--block"
-                            data-ptgtb-toggle="collapse"
-                            data-ptgtb-target="#{{ toolbar.identifier(token, 'storage-session') }}"
-                            data-ptgtb-collapse-store="storage-session"
-                        >
-                            Session Storage
-                        </h3>
-                        <div id="{{ toolbar.identifier(token, 'storage-session') }}">
-                            {{ pimcore_dump(storage.session) }}
-                        </div>
+                        {% block storage %}
+                            <h2
+                                class="_ptgtb__collapse__trigger--block"
+                                data-ptgtb-toggle="collapse"
+                                data-ptgtb-target="#{{ toolbar.identifier(token, 'storage') }}"
+                                data-ptgtb-collapse-default="collapse"
+                                data-ptgtb-collapse-store="storage"
+                            >
+                                Storage
+                            </h2>
+                            <div id="{{ toolbar.identifier(token, 'storage') }}" class="_ptgtb__storage">
+
+                                {% block visitorStorage %}
+                                    <h3
+                                        class="_ptgtb__collapse__trigger--block"
+                                        data-ptgtb-toggle="collapse"
+                                        data-ptgtb-target="#{{ toolbar.identifier(token, 'storage-visitor') }}"
+                                        data-ptgtb-collapse-store="storage-visitor"
+                                    >
+                                        Visitor Storage
+                                    </h3>
+                                    <div id="{{ toolbar.identifier(token, 'storage-visitor') }}">
+                                        {{ pimcore_dump(storage.visitor) }}
+                                    </div>
+                                {% endblock %}
+
+                                {% block sessionStorage %}
+                                    <h3
+                                        class="_ptgtb__collapse__trigger--block"
+                                        data-ptgtb-toggle="collapse"
+                                        data-ptgtb-target="#{{ toolbar.identifier(token, 'storage-session') }}"
+                                        data-ptgtb-collapse-store="storage-session"
+                                    >
+                                        Session Storage
+                                    </h3>
+                                    <div id="{{ toolbar.identifier(token, 'storage-session') }}">
+                                        {{ pimcore_dump(storage.session) }}
+                                    </div>
+                                {% endblock %}
+                            </div>
                         {% endblock %}
-                    </div>
-                {% endblock %}
+                    {% endblock %}
+                </div>
 
                 {% block overrides %}
                     <h2
