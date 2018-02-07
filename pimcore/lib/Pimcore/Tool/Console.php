@@ -148,15 +148,18 @@ class Console
     protected static function setupComposer()
     {
         // composer needs either COMPOSER_HOME or HOME to be set
+        // we also populate the $_ENV variable, it is used by symfony/process component
         if (!getenv('COMPOSER_HOME') && !getenv('HOME')) {
             $composerHome = PIMCORE_PRIVATE_VAR . '/composer';
             if (!is_dir($composerHome)) {
                 mkdir($composerHome, 0777, true);
             }
             putenv('COMPOSER_HOME=' . $composerHome);
+            $_ENV['COMPOSER_HOME'] = $composerHome;
         }
 
         putenv('COMPOSER_DISABLE_XDEBUG_WARN=true');
+        $_ENV['COMPOSER_DISABLE_XDEBUG_WARN'] = 'true';
     }
 
     /**
