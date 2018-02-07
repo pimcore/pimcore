@@ -1,0 +1,10 @@
+{% macro label(value, classes, attributes) %}
+    <span class="_ptg-toolbar__label {{ classes is not empty ? classes|join(' ') }}" {%- for attr, val in attributes %} {{ attr }}="{{ val }}"{% endfor -%}>{{ value }}</span>
+{% endmacro %}
+
+{% macro metric(label, value) %}
+    <span class="_ptg-toolbar__metric">
+        <span class="_ptg-toolbar__metric__label">{{ label }}</span>
+        <span class="_ptg-toolbar__metric__value">{{ value }}</span>
+    </span>
+{% endmacro %}

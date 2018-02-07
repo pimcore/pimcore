@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Event\Targeting\RenderToolbarEvent;
+use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Http\Response\CodeInjector;
@@ -27,6 +29,7 @@ use Pimcore\Targeting\Debug\TargetingDataCollector;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool\Authentication;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,6 +63,11 @@ class ToolbarListener implements EventSubscriberInterface
     private $overrideHandler;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @var EngineInterface
      */
     private $templatingEngine;
@@ -74,6 +82,7 @@ class ToolbarListener implements EventSubscriberInterface
         DocumentResolver $documentResolver,
         TargetingDataCollector $targetingDataCollector,
         OverrideHandler $overrideHandler,
+        EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine,
         CodeInjector $codeInjector
     ) {
@@ -81,6 +90,7 @@ class ToolbarListener implements EventSubscriberInterface
         $this->documentResolver       = $documentResolver;
         $this->targetingDataCollector = $targetingDataCollector;
         $this->overrideHandler        = $overrideHandler;
+        $this->eventDispatcher        = $eventDispatcher;
         $this->templatingEngine       = $templatingEngine;
         $this->codeInjector           = $codeInjector;
     }
@@ -183,7 +193,14 @@ class ToolbarListener implements EventSubscriberInterface
 
     private function injectToolbar(Response $response, array $data)
     {
-        $code = $this->templatingEngine->render('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', $data);
+        $event = new RenderToolbarEvent('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', $data);
+
+        $this->eventDispatcher->dispatch(TargetingEvents::RENDER_TOOLBAR, $event);
+
+        $code = $this->templatingEngine->render(
+            $event->getTemplate(),
+            $event->getData()
+        );
 
         $this->codeInjector->inject(
             $response,
