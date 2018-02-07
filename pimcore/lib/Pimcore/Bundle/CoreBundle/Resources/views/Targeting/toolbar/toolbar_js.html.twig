@@ -87,11 +87,11 @@
         };
 
         util.addEventListener(document, 'DOMContentLoaded', function () {
-            var localStorageStateKey = 'pimcore/targeting/toolbar/displayState';
-            var collapsedClass = '_ptgtb--collapsed';
-
             // whole toolbar
             document.querySelectorAll('._ptgtb__trigger').forEach(function (trigger) {
+                var localStorageStateKey = 'pimcore/targeting/toolbar/displayState';
+                var collapsedClass = '_ptgtb--collapsed';
+
                 var toolbar = trigger.parentNode;
 
                 var showToolbar = function(show) {
@@ -102,14 +102,15 @@
                     }
 
                     if (util.featureDetect('localStorage')) {
-                        localStorage.setItem(localStorageStateKey, show ? 'block' : 'none');
+                        localStorage.setItem(localStorageStateKey, show ? 'show' : 'collapse');
                     }
                 };
 
                 if (util.featureDetect('localStorage')) {
                     var state = localStorage.getItem(localStorageStateKey);
-                    if ('block' === state) {
-                        showToolbar(true);
+
+                    if (state) {
+                        showToolbar('collapse' !== state);
                     }
                 }
 
@@ -117,11 +118,7 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    if (util.hasClass(toolbar, collapsedClass)) {
-                        showToolbar(true);
-                    } else {
-                        showToolbar(false);
-                    }
+                    showToolbar(util.hasClass(toolbar, collapsedClass));
                 });
             });
 
@@ -146,58 +143,80 @@
                 });
             });
 
-            // collapsible detail table rows
-            var detailRowCollapsedClass = '_ptgtb__table__row-details--collapsed';
-            document.querySelectorAll('._ptgtb__table__row-with-details').forEach(function (row) {
-                var index = row.getAttribute('data-index');
-                if (!index) {
+            // collapsible sections with support to store their state in local storage
+            document.querySelectorAll('[data-ptgtb-toggle="collapse"]').forEach(function (trigger) {
+                var targetSelector = trigger.getAttribute('data-ptgtb-target');
+                if (!targetSelector) {
                     return;
                 }
 
-                var trigger = row.querySelector('._ptgtb__table__row-with-details__trigger');
-                if (!trigger) {
+                var target = document.querySelector(targetSelector);
+                if (!target) {
                     return;
                 }
 
-                var detailRows = row.parentElement.querySelectorAll('._ptgtb__table__row-details[data-index="' + index + '"]');
-                if (0 === detailRows.length) {
-                    return;
+                // define a state storage key if localStorage is available and
+                // data-ptgtb-collapse-store is set
+                var stateStorageKey = null;
+                if (util.featureDetect('localStorage')) {
+                    stateStorageKey = trigger.getAttribute('data-ptgtb-collapse-store');
+                    if (stateStorageKey) {
+                        stateStorageKey = 'pimcore/targeting/toolbar/collapseState/' + stateStorageKey;
+                    }
                 }
+
+                util.addClass(trigger, '_ptgtb__collapse__trigger');
+                util.addClass(target, '_ptgtb__collapse__target');
 
                 var arrow = document.createElement('span');
-                util.addClass(arrow, '_ptgtb__table__row-with-details__trigger-arrow');
+                util.addClass(arrow, '_ptgtb__collapse__arrow');
 
-                var toggleDetails = function (show) {
-                    if (show) {
+                var targetCollapsedClass = '_ptgtb__collapse--collapsed';
+                var arrowCollapsedClass = '_ptgtb__collapse__arrow--collapsed';
+
+                var toggle = function (state, updateStore) {
+                    if (state) {
                         arrow.innerHTML = '▼';
-                        arrow.setAttribute('data-collapsed', '0');
-
-                        detailRows.forEach(function (detailRow) {
-                            util.removeClass(detailRow, detailRowCollapsedClass);
-                        });
+                        util.removeClass(arrow, arrowCollapsedClass);
+                        util.removeClass(target, targetCollapsedClass);
                     } else {
                         arrow.innerHTML = '▶';
-                        arrow.setAttribute('data-collapsed', '1');
+                        util.addClass(arrow, arrowCollapsedClass);
+                        util.addClass(target, targetCollapsedClass);
+                    }
 
-                        detailRows.forEach(function(detailRow) {
-                            util.addClass(detailRow, detailRowCollapsedClass);
-                        });
+                    if (updateStore && stateStorageKey) {
+                        localStorage.setItem(stateStorageKey, state ? 'show' : 'collapse');
                     }
                 };
 
-                toggleDetails(false);
                 trigger.appendChild(arrow);
+
+                // use stored state if defined and there is a stored state
+                var storedState = null;
+                if (stateStorageKey) {
+                    if (storedState = localStorage.getItem(stateStorageKey)) {
+                        toggle('collapse' !== storedState);
+                    }
+                }
+
+                if (!storedState) {
+                    var defaultState = trigger.getAttribute('data-ptgtb-collapse-default');
+
+                    // use default state if defined and no stored state was set
+                    if (defaultState) {
+                        toggle('collapse' !== defaultState);
+                    } else {
+                        // initialize arrow state from target state
+                        toggle(!util.hasClass(target, targetCollapsedClass));
+                    }
+                }
 
                 util.addEventListener(trigger, 'click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    var collapsed = arrow.getAttribute('data-collapsed');
-                    if ('1' === collapsed) {
-                        toggleDetails(true);
-                    } else {
-                        toggleDetails(false);
-                    }
+                    toggle(util.hasClass(target, targetCollapsedClass), true);
                 });
             });
 
