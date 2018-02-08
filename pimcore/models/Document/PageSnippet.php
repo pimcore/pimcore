@@ -81,7 +81,7 @@ abstract class PageSnippet extends Model\Document
     public $legacy = false;
 
     /**
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
      */
