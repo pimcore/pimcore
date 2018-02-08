@@ -157,6 +157,7 @@
             /* collapsible form sections - set data attributes before collapse logic is executed */
             document.querySelectorAll('._ptgtb__override-form__collapse-section').forEach(function (section) {
                 var parent = section.parentNode;
+                util.addClass(parent, '_ptgtb__override-form__collapse-section-container');
 
                 var children = Array.prototype.slice.call(parent.childNodes);
 

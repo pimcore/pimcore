@@ -127,8 +127,6 @@ services:
     Pimcore\Targeting\Document\DocumentTargetingConfigurator:
         public: true
 
-    Pimcore\Targeting\Debug\Override\DocumentTargetingOverrideHandler: ~
-    Pimcore\Targeting\Debug\Override\LocationOverrideHandler: ~
 
     #
     # TARGETING CODE
@@ -143,5 +141,15 @@ services:
     Pimcore\Targeting\Debug\TargetingDataCollector: ~
 
     Pimcore\Targeting\Debug\OverrideHandler:
+        lazy: true
         arguments:
-            $overrideHandlers: !tagged pimcore.targeting.override_handler
+            # injected by TargetingOverrideHandlersPass
+            $overrideHandlers: '?@'
+
+    Pimcore\Targeting\Debug\Override\DocumentTargetingOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 500 }
+
+    Pimcore\Targeting\Debug\Override\LocationOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 400 }

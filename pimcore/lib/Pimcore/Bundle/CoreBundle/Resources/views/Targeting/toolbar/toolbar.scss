@@ -265,10 +265,19 @@ $font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
             }
         }
 
-        ._ptgtb__collapse__trigger--block {
-            margin-top: 25px;
-            padding-bottom: 3px;
-            border-bottom: 1px dotted #686868;
+        ._ptgtb__override-form__collapse-section-container {
+            margin-top: 20px;
+            margin-bottom: 10px;
+
+            &:first-child {
+                margin-top: 10px;
+            }
+
+            > label {
+                margin-top: 0;
+                padding-bottom: 3px;
+                border-bottom: 1px dotted #686868;
+            }
         }
     }
 

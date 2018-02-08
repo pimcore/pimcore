@@ -131,10 +131,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         }
 
         $this->addContextRoutes($container, $config['context']);
-
-        $container
-            ->registerForAutoconfiguration(OverrideHandlerInterface::class)
-                ->addTag('pimcore.targeting.override_handler');
     }
 
     /**
