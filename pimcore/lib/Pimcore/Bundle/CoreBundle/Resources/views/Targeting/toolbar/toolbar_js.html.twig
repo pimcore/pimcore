@@ -275,6 +275,16 @@
                     return;
                 }
 
+                util.addEventListener(form, 'submit', function(e) {
+                    /* disable empty submits to omit them from form data */
+                    var inputs = document.querySelectorAll('._ptgtb__override-form input, ._ptgtb__override-form select, ._ptgtb__override-form textarea');
+                    inputs.forEach(function(input) {
+                        if (0 === input.value.length) {
+                            input.disabled = true;
+                        }
+                    });
+                });
+
                 /* handle reset button only in browsers supporting URLSearchParams and Array.from */
                 if (!util.featureDetect('urlsearchparams') || !util.featureDetect('arrayfrom')) {
                     return;

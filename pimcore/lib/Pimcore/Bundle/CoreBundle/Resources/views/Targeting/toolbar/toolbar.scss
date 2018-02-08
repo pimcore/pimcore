@@ -225,16 +225,23 @@ $font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
         }
 
         input,
-        select {
+        select,
+        textarea {
             color: #000;
             background: #fff;
             padding: 5px 10px;
             width: 100%;
             border: 1px solid #ccc;
             border-radius: 2px;
+
+            &:disabled {
+                cursor: not-allowed;
+                background: #d3d3d3;
+            }
         }
 
-        input {
+        input,
+        textarea {
             font: 11px $font-family-monospace;
         }
 
