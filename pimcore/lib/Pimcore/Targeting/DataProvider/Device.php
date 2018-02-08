@@ -23,11 +23,17 @@ use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\OperatingSystem;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
+use Pimcore\Event\Targeting\OverrideEvent;
+use Pimcore\Event\TargetingEvents;
+use Pimcore\Targeting\DataProvider\Traits\OverridableTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class Device implements DataProviderInterface
+class Device implements DataProviderInterface, EventSubscriberInterface
 {
+    use OverridableTrait;
+
     const PROVIDER_KEY = 'device';
 
     /**
@@ -54,6 +60,18 @@ class Device implements DataProviderInterface
         $this->logger = $logger;
     }
 
+    public static function getSubscribedEvents()
+    {
+        return [
+            TargetingEvents::overrideEventName('device') => 'onOverrideDevice'
+        ];
+    }
+
+    public function onOverrideDevice(OverrideEvent $event)
+    {
+        $this->extractOverriddenProperties($event->getData(), ['hardwarePlatform', 'operatingSystem', 'browser']);
+    }
+
     public function setCache(CoreHandlerInterface $cache)
     {
         $this->cache = $cache;
@@ -74,12 +92,44 @@ class Device implements DataProviderInterface
         }
 
         $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent');
-        $result    = $this->loadData($userAgent);
+
+        $result = $this->loadData($userAgent);
+        $result = $this->handleOverrides($result);
 
         $visitorInfo->set(
             self::PROVIDER_KEY,
             $result
         );
+    }
+
+    private function handleOverrides(array $result = null)
+    {
+        if (empty($this->overrides)) {
+            return $result;
+        }
+
+        $result = $result ?? [];
+
+        if (isset($this->overrides['hardwarePlatform'])) {
+            $result['device'] = array_merge($result['device'] ?? [], [
+                'type' => $this->overrides['hardwarePlatform']
+            ]);
+        }
+
+        if (isset($this->overrides['operatingSystem'])) {
+            $result['os'] = array_merge($result['os'] ?? [], [
+                'short_name' => $this->overrides['operatingSystem']
+            ]);
+        }
+
+        if (isset($this->overrides['browser'])) {
+            $result['client'] = array_merge($result['client'] ?? [], [
+                'type' => 'browser',
+                'name' => $this->overrides['browser']
+            ]);
+        }
+
+        return $result;
     }
 
     private function loadData(string $userAgent)

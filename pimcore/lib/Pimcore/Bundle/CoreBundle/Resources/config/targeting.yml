@@ -150,6 +150,10 @@ services:
         tags:
             - { name: pimcore.targeting.override_handler, priority: 500 }
 
+    Pimcore\Targeting\Debug\Override\DeviceOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 480 }
+
     Pimcore\Targeting\Debug\Override\LocationOverrideHandler:
         tags:
             - { name: pimcore.targeting.override_handler, priority: 400 }

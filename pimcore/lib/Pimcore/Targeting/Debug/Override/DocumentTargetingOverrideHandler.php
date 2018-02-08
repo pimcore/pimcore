@@ -42,7 +42,6 @@ class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
         $form->add('documentTargetGroup', ChoiceType::class, [
             'label'         => 'Document Target Group',
             'required'      => false,
-            'placeholder'   => '(default)',
             'choice_loader' => new CallbackChoiceLoader(function () {
                 return (new TargetGroup\Listing())->load();
             }),

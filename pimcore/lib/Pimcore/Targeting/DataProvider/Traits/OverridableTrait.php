@@ -24,11 +24,15 @@ trait OverridableTrait
      */
     private $overrides = [];
 
-    private function extractOverriddenProperties(array $overrides, array $properties)
+    private function extractOverriddenProperties(array $overrides, array $properties = [])
     {
-        foreach ($properties as $property) {
-            if (isset($overrides[$property]) && !empty($overrides[$property])) {
-                $this->overrides[$property] = $overrides[$property];
+        foreach ($overrides as $key => $value) {
+            if (!empty($properties) && !in_array($key, $properties)) {
+                continue;
+            }
+
+            if (!empty($value)) {
+                $this->overrides[$key] = $value;
             }
         }
     }

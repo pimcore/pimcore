@@ -29,7 +29,6 @@ class LocationType extends AbstractType
         $builder->add('country', CountryType::class, [
             'label'       => 'Country',
             'required'    => false,
-            'placeholder' => '(default)',
         ]);
 
         $builder->add('latitude', TextType::class, [
