@@ -21,12 +21,16 @@ use GeoIp2\Model\City;
 use GeoIp2\ProviderInterface;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Pimcore\Targeting\OverrideHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Loads geolocation from GeoIP (IP to geo database).
  */
-class GeoIp implements DataProviderInterface
+class GeoIp implements DataProviderInterface, OverrideHandlerInterface
 {
     const PROVIDER_KEY = 'geoip';
 
@@ -45,6 +49,11 @@ class GeoIp implements DataProviderInterface
      */
     private $cache;
 
+    /**
+     * @var array
+     */
+    private $overrides = [];
+
     public function __construct(
         ProviderInterface $geoIpProvider,
         LoggerInterface $logger
@@ -56,6 +65,22 @@ class GeoIp implements DataProviderInterface
     public function setCache(CoreHandlerInterface $cache)
     {
         $this->cache = $cache;
+    }
+
+    public function buildOverrideForm(FormBuilderInterface $form, Request $request)
+    {
+        $form->add('country', CountryType::class, [
+            'label'       => 'Country',
+            'required'    => false,
+            'placeholder' => '(default)',
+        ]);
+    }
+
+    public function overrideFromRequest(array $overrides, Request $request)
+    {
+        if (isset($overrides['country']) && !empty($overrides['country'])) {
+            $this->overrides['country'] = $overrides['country'];
+        }
     }
 
     /**
@@ -85,7 +110,23 @@ class GeoIp implements DataProviderInterface
             $result = $this->resolveIp($ip);
         }
 
+        $result = $this->handleOverrides($result);
+
         return $result;
+    }
+
+    private function handleOverrides(array $result = null)
+    {
+        if (empty($this->overrides)) {
+            return $result;
+        }
+
+        $overrides = [];
+        if (isset($this->overrides['country'])) {
+            $overrides['country']['iso_code'] = $this->overrides['country'];
+        }
+
+        return array_merge($result ?? [], $overrides);
     }
 
     private function isPublicIp(string $ip): bool

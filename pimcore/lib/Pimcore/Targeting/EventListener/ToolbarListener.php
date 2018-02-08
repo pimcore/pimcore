@@ -19,6 +19,7 @@ namespace Pimcore\Targeting\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Event\Targeting\RenderToolbarEvent;
+use Pimcore\Event\Targeting\TargetingEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -34,7 +35,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -98,17 +98,13 @@ class ToolbarListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST  => ['onKernelRequest', 7],
-            KernelEvents::RESPONSE => ['onKernelResponse', -127],
+            TargetingEvents::PRE_RESOLVE => ['onPreResolve', -10],
+            KernelEvents::RESPONSE       => ['onKernelResponse', -127],
         ];
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onPreResolve(TargetingEvent $event)
     {
-        if (!$event->isMasterRequest()) {
-            return;
-        }
-
         $request = $event->getRequest();
         if (!$this->requestCanDebug($request)) {
             return;
