@@ -3,7 +3,7 @@
   width: 450px;
   position: fixed;
   right: 0;
-  top: 0px;
+  top: 0;
   z-index: 10000;
   background: rgba(68, 68, 68, 0.97);
   border-bottom-left-radius: 4px;
@@ -130,13 +130,25 @@
     display: block;
     margin: 10px 0 3px 0; }
   ._ptgtb ._ptgtb__override-form input,
-  ._ptgtb ._ptgtb__override-form select {
+  ._ptgtb ._ptgtb__override-form select,
+  ._ptgtb ._ptgtb__override-form textarea {
     color: #000;
     background: #fff;
-    padding: 3px 5px; }
+    padding: 5px 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 2px; }
+    ._ptgtb ._ptgtb__override-form input:disabled,
+    ._ptgtb ._ptgtb__override-form select:disabled,
+    ._ptgtb ._ptgtb__override-form textarea:disabled {
+      cursor: not-allowed;
+      background: #d3d3d3; }
+  ._ptgtb ._ptgtb__override-form input,
+  ._ptgtb ._ptgtb__override-form textarea {
+    font: 11px Menlo, Monaco, Consolas, "Courier New", monospace; }
   ._ptgtb ._ptgtb__override-form button {
     display: inline-block;
-    margin: 0 3px 0 0;
+    margin: 0 0 0 3px;
     padding: 6px 15px;
     background: #838383;
     border-radius: 2px;
@@ -148,7 +160,20 @@
       opacity: 0.8;
       text-decoration: none; }
   ._ptgtb ._ptgtb__override-form ._ptgtb__override-form__button-row {
-    margin-top: 12px; }
+    margin-top: 12px;
+    text-align: right; }
+    ._ptgtb ._ptgtb__override-form ._ptgtb__override-form__button-row [type="submit"] {
+      background: #4f805d;
+      color: #fff; }
+  ._ptgtb ._ptgtb__override-form ._ptgtb__override-form__collapse-section-container {
+    margin-top: 20px;
+    margin-bottom: 10px; }
+    ._ptgtb ._ptgtb__override-form ._ptgtb__override-form__collapse-section-container:first-child {
+      margin-top: 10px; }
+    ._ptgtb ._ptgtb__override-form ._ptgtb__override-form__collapse-section-container > label {
+      margin-top: 0;
+      padding-bottom: 3px;
+      border-bottom: 1px dotted #686868; }
   ._ptgtb .sf-dump {
     font-size: 11px;
     background: #2f2f2f;
