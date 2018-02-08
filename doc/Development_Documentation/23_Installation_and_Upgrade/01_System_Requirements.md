@@ -40,7 +40,7 @@ Please note that the usage of **PHP 7.1 is strongly recommended** as future vers
 
 ### MySQL >= 5.6.4 / MariaDB >= 10.0.0.5
 
-MySQL 5.6 GA or compatible.
+MySQL 5.6 GA or compatible. Note that some pimcore extensions like the Customer Management Framework require MariaDB.
 
 #### Features
 - InnoDB / XtraDB storage engine
