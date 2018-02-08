@@ -91,8 +91,13 @@
         };
 
         util.addEventListener(document, 'DOMContentLoaded', function () {
-            /* whole toolbar */
-            document.querySelectorAll('._ptgtb__trigger').forEach(function (trigger) {
+            /* toolbar collapse */
+            (function() {
+                var trigger = document.querySelector('._ptgtb__trigger');
+                if (!trigger) {
+                    return;
+                }
+
                 var localStorageStateKey = 'pimcore/targeting/toolbar/displayState';
                 var collapsedClass = '_ptgtb--collapsed';
 
@@ -124,8 +129,32 @@
 
                     showToolbar(util.hasClass(toolbar, collapsedClass));
                 });
-            });
+            }());
 
+            /* close icon */
+            (function() {
+                var close = document.querySelector('._ptgtb__toolbar-icon--close');
+
+                util.addEventListener(close, 'click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var selector = this.getAttribute('data-ptgtb-target');
+                    if (!selector) {
+                        return;
+                    }
+
+                    var toolbar = document.querySelector(selector);
+                    if (toolbar) {
+                        toolbar.parentNode.removeChild(toolbar);
+                    }
+
+                    /* delete cookie to disable toolbar */
+                    document.cookie = 'pimcore_targeting_debug=; path=/'
+                });
+            }());
+
+            /* collapsible form sections - set data attributes before collapse logic is executed */
             document.querySelectorAll('._ptgtb__override-form__collapse-section').forEach(function (section) {
                 var parent = section.parentNode;
 
@@ -148,27 +177,6 @@
                 label.setAttribute('data-ptgtb-target', '#' + section.id);
                 label.setAttribute('data-ptgtb-collapse-default', 'collapse');
                 label.setAttribute('data-ptgtb-collapse-store', 'overrideForm/' + section.id);
-            });
-
-            /* close icon */
-            document.querySelectorAll('._ptgtb__toolbar-icon--close').forEach(function (close) {
-                util.addEventListener(close, 'click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    var selector = this.getAttribute('data-ptgtb-target');
-                    if (!selector) {
-                        return;
-                    }
-
-                    var toolbar = document.querySelector(selector);
-                    if (toolbar) {
-                        toolbar.parentNode.removeChild(toolbar);
-                    }
-
-                    /* delete cookie to disable toolbar */
-                    document.cookie = 'pimcore_targeting_debug=; path=/'
-                });
             });
 
             /* collapsible sections with support to store their state in local storage */
@@ -302,6 +310,5 @@
                 });
             }());
         });
-
     }(window, document));
 </script>
