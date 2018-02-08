@@ -17,16 +17,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\DataProvider;
 
+use Pimcore\Event\Targeting\OverrideEvent;
+use Pimcore\Event\TargetingEvents;
+use Pimcore\Targeting\DataProvider\Traits\OverridableTrait;
 use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Loads geolocation (only coordinates and optional altitude) from either
  * browser geolocation delivered as cookie or from geoip lookup as fallback.
  */
-class GeoLocation implements DataProviderInterface
+class GeoLocation implements DataProviderInterface, EventSubscriberInterface
 {
+    use OverridableTrait;
+
     const PROVIDER_KEY = 'geolocation';
 
     const COOKIE_NAME_GEOLOCATION = '_pc_tgl';
@@ -49,14 +55,48 @@ class GeoLocation implements DataProviderInterface
         $this->logger            = $logger;
     }
 
+    public static function getSubscribedEvents()
+    {
+        return [
+            TargetingEvents::overrideEventName('location') => 'onOverrideLocation'
+        ];
+    }
+
+    public function onOverrideLocation(OverrideEvent $event)
+    {
+        $this->extractOverriddenProperties($event->getData(), ['latitude', 'longitude', 'altitude']);
+    }
+
     public function load(VisitorInfo $visitorInfo)
     {
         $location = $this->loadLocation($visitorInfo);
+        $location = $this->handleOverrides($location);
 
         $visitorInfo->set(
             self::PROVIDER_KEY,
             $location
         );
+    }
+
+    private function handleOverrides(GeoLocationModel $location = null)
+    {
+        if (empty($this->overrides)) {
+            return $location;
+        }
+
+        $data = array_merge([
+            'latitude'  => $location ? $location->getLatitude() : null,
+            'longitude' => $location ? $location->getLongitude() : null,
+            'altitude'  => $location ? $location->getAltitude() : null,
+        ], $this->overrides);
+
+        if (null !== $data['latitude'] && null !== $data['longitude']) {
+            return GeoLocationModel::build(
+                $data['latitude'],
+                $data['longitude'],
+                $data['altitude']
+            );
+        }
     }
 
     private function loadLocation(VisitorInfo $visitorInfo)

@@ -20,18 +20,20 @@ namespace Pimcore\Targeting\DataProvider;
 use GeoIp2\Model\City;
 use GeoIp2\ProviderInterface;
 use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Event\Targeting\OverrideEvent;
+use Pimcore\Event\TargetingEvents;
+use Pimcore\Targeting\DataProvider\Traits\OverridableTrait;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Pimcore\Targeting\OverrideHandlerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Form\Extension\Core\Type\CountryType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Loads geolocation from GeoIP (IP to geo database).
  */
-class GeoIp implements DataProviderInterface, OverrideHandlerInterface
+class GeoIp implements DataProviderInterface, EventSubscriberInterface
 {
+    use OverridableTrait;
+
     const PROVIDER_KEY = 'geoip';
 
     /**
@@ -49,11 +51,6 @@ class GeoIp implements DataProviderInterface, OverrideHandlerInterface
      */
     private $cache;
 
-    /**
-     * @var array
-     */
-    private $overrides = [];
-
     public function __construct(
         ProviderInterface $geoIpProvider,
         LoggerInterface $logger
@@ -62,25 +59,21 @@ class GeoIp implements DataProviderInterface, OverrideHandlerInterface
         $this->logger        = $logger;
     }
 
+    public static function getSubscribedEvents()
+    {
+        return [
+            TargetingEvents::overrideEventName('location') => 'onOverrideLocation'
+        ];
+    }
+
+    public function onOverrideLocation(OverrideEvent $event)
+    {
+        $this->extractOverriddenProperties($event->getData(), ['country']);
+    }
+
     public function setCache(CoreHandlerInterface $cache)
     {
         $this->cache = $cache;
-    }
-
-    public function buildOverrideForm(FormBuilderInterface $form, Request $request)
-    {
-        $form->add('country', CountryType::class, [
-            'label'       => 'Country',
-            'required'    => false,
-            'placeholder' => '(default)',
-        ]);
-    }
-
-    public function overrideFromRequest(array $overrides, Request $request)
-    {
-        if (isset($overrides['country']) && !empty($overrides['country'])) {
-            $this->overrides['country'] = $overrides['country'];
-        }
     }
 
     /**

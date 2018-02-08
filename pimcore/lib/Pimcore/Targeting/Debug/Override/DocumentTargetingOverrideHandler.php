@@ -15,9 +15,10 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\Document;
+namespace Pimcore\Targeting\Debug\Override;
 
 use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Targeting\OverrideHandlerInterface;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -38,7 +39,7 @@ class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
 
     public function buildOverrideForm(FormBuilderInterface $form, Request $request)
     {
-        $form->add('targetGroup', ChoiceType::class, [
+        $form->add('documentTargetGroup', ChoiceType::class, [
             'label'         => 'Document Target Group',
             'required'      => false,
             'placeholder'   => '(default)',
@@ -56,7 +57,7 @@ class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
 
     public function overrideFromRequest(array $overrides, Request $request)
     {
-        $targetGroup = $overrides['targetGroup'] ?? null;
+        $targetGroup = $overrides['documentTargetGroup'] ?? null;
         if ($targetGroup && $targetGroup instanceof TargetGroup) {
             $this->documentTargetingConfigurator->setOverrideTargetGroup($targetGroup);
         }
