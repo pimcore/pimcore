@@ -21,6 +21,8 @@ use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Targeting\DataProvider\TargetingStorage;
+use Pimcore\Targeting\DebugInfoComponentInterface;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
@@ -59,8 +61,20 @@ class TargetingDataCollector
             'visitorId' => $visitorInfo->getVisitorId(),
             'sessionId' => $visitorInfo->getSessionId(),
             'actions'   => $visitorInfo->getActions(),
-            'data'      => $visitorInfo->getData(),
+            'data'      => $this->filterVisitorInfoData($visitorInfo->getData()),
         ];
+    }
+
+    protected function filterVisitorInfoData(array $data): array
+    {
+        if (isset($data[TargetingStorage::PROVIDER_KEY])) {
+            $data[TargetingStorage::PROVIDER_KEY] = sprintf(
+                'object(%s)',
+                (new \ReflectionObject($data[TargetingStorage::PROVIDER_KEY]))->getShortName()
+            );
+        }
+
+        return $data;
     }
 
     public function collectStorage(VisitorInfo $visitorInfo): array
