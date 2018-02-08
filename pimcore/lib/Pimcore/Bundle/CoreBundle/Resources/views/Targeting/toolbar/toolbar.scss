@@ -10,10 +10,10 @@ $color-rule: #a46a1f;
 ._ptg-toolbar {
     display: block;
     width: $width;
-    position: absolute;
+    position: fixed;
     right: 0;
     top: 0px;
-    z-index: 100;
+    z-index: 10000;
     background: rgba(68, 68, 68, 0.97); // #444
     border-bottom-left-radius: 4px;
     font: 12px Arial, 'Helvetica Neue', Helvetica, sans-serif;
