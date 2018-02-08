@@ -129,7 +129,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 batchSelectedMenu.show();
             }
 
-            if (!Ext.Array.contains(this.systemColumns,columnDataIndex) && Ext.Array.contains(this.batchAppendColumns, columnDataIndex)) {
+            if (!Ext.Array.contains(this.systemColumns,columnDataIndex) && Ext.Array.contains(this.batchAppendColumns ? this.batchAppendColumns : [], columnDataIndex)) {
                 batchAppendAllMenu.show();
                 batchAppendSelectedMenu.show();
             } else {
