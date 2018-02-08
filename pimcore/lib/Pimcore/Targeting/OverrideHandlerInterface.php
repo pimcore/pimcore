@@ -26,6 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 interface OverrideHandlerInterface
 {
+    const REQUEST_ATTRIBUTE = 'pimcore_targeting_overrides';
+
     /**
      * Add fields to the targeting toolbar override form
      *
