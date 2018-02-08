@@ -23,17 +23,13 @@ use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\OperatingSystem;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
-use Pimcore\Event\Targeting\OverrideEvent;
-use Pimcore\Event\TargetingEvents;
-use Pimcore\Targeting\DataProvider\Traits\OverridableTrait;
+use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-class Device implements DataProviderInterface, EventSubscriberInterface
+class Device implements DataProviderInterface
 {
-    use OverridableTrait;
-
     const PROVIDER_KEY = 'device';
 
     /**
@@ -60,18 +56,6 @@ class Device implements DataProviderInterface, EventSubscriberInterface
         $this->logger = $logger;
     }
 
-    public static function getSubscribedEvents()
-    {
-        return [
-            TargetingEvents::overrideEventName('device') => 'onOverrideDevice'
-        ];
-    }
-
-    public function onOverrideDevice(OverrideEvent $event)
-    {
-        $this->extractOverriddenProperties($event->getData(), ['hardwarePlatform', 'operatingSystem', 'browser']);
-    }
-
     public function setCache(CoreHandlerInterface $cache)
     {
         $this->cache = $cache;
@@ -94,7 +78,7 @@ class Device implements DataProviderInterface, EventSubscriberInterface
         $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent');
 
         $result = $this->loadData($userAgent);
-        $result = $this->handleOverrides($result);
+        $result = $this->handleOverrides($visitorInfo->getRequest(), $result);
 
         $visitorInfo->set(
             self::PROVIDER_KEY,
@@ -102,30 +86,31 @@ class Device implements DataProviderInterface, EventSubscriberInterface
         );
     }
 
-    private function handleOverrides(array $result = null)
+    private function handleOverrides(Request $request, array $result = null)
     {
-        if (empty($this->overrides)) {
+        $overrides = OverrideAttributeResolver::getOverrideValue($request, 'device');
+        if (empty($overrides)) {
             return $result;
         }
 
         $result = $result ?? [];
 
-        if (isset($this->overrides['hardwarePlatform'])) {
+        if (isset($overrides['hardwarePlatform']) && !empty($overrides['hardwarePlatform'])) {
             $result['device'] = array_merge($result['device'] ?? [], [
-                'type' => $this->overrides['hardwarePlatform']
+                'type' => $overrides['hardwarePlatform']
             ]);
         }
 
-        if (isset($this->overrides['operatingSystem'])) {
+        if (isset($overrides['operatingSystem']) && !empty($overrides['operatingSystem'])) {
             $result['os'] = array_merge($result['os'] ?? [], [
-                'short_name' => $this->overrides['operatingSystem']
+                'short_name' => $overrides['operatingSystem']
             ]);
         }
 
-        if (isset($this->overrides['browser'])) {
+        if (isset($overrides['browser']) && !empty($overrides['browser'])) {
             $result['client'] = array_merge($result['client'] ?? [], [
                 'type' => 'browser',
-                'name' => $this->overrides['browser']
+                'name' => $overrides['browser']
             ]);
         }
 

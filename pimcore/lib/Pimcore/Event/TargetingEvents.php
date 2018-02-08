@@ -106,23 +106,4 @@ final class TargetingEvents
      * @var string
      */
     const RENDER_TOOLBAR = 'pimcore.targeting.render_toolbar';
-
-    /**
-     * Prefix for override handling events which are dispatched to data providers.
-     */
-    const HANDLE_OVERRRIDE_PREFIX = 'pimcore.targeting.handle_override';
-
-    /**
-     * Builds the event name for a typed override event
-     *
-     * @Event("Pimcore\Event\Targeting\OverrideEvent")
-     *
-     * @param string $type
-     *
-     * @return string
-     */
-    public static function overrideEventName(string $type): string
-    {
-        return implode('.', [self::HANDLE_OVERRRIDE_PREFIX, $type]);
-    }
 }

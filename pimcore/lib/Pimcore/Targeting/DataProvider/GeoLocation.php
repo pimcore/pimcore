@@ -17,22 +17,18 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\DataProvider;
 
-use Pimcore\Event\Targeting\OverrideEvent;
-use Pimcore\Event\TargetingEvents;
-use Pimcore\Targeting\DataProvider\Traits\OverridableTrait;
+use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Loads geolocation (only coordinates and optional altitude) from either
  * browser geolocation delivered as cookie or from geoip lookup as fallback.
  */
-class GeoLocation implements DataProviderInterface, EventSubscriberInterface
+class GeoLocation implements DataProviderInterface
 {
-    use OverridableTrait;
-
     const PROVIDER_KEY = 'geolocation';
 
     const COOKIE_NAME_GEOLOCATION = '_pc_tgl';
@@ -50,27 +46,16 @@ class GeoLocation implements DataProviderInterface, EventSubscriberInterface
     public function __construct(
         GeoIp $geoIpProvider,
         LoggerInterface $logger
-    ) {
+    )
+    {
         $this->geoIpDataProvider = $geoIpProvider;
         $this->logger            = $logger;
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            TargetingEvents::overrideEventName('location') => 'onOverrideLocation'
-        ];
-    }
-
-    public function onOverrideLocation(OverrideEvent $event)
-    {
-        $this->extractOverriddenProperties($event->getData(), ['latitude', 'longitude', 'altitude']);
     }
 
     public function load(VisitorInfo $visitorInfo)
     {
         $location = $this->loadLocation($visitorInfo);
-        $location = $this->handleOverrides($location);
+        $location = $this->handleOverrides($visitorInfo->getRequest(), $location);
 
         $visitorInfo->set(
             self::PROVIDER_KEY,
@@ -78,17 +63,22 @@ class GeoLocation implements DataProviderInterface, EventSubscriberInterface
         );
     }
 
-    private function handleOverrides(GeoLocationModel $location = null)
+    private function handleOverrides(Request $request, GeoLocationModel $location = null)
     {
-        if (empty($this->overrides)) {
+        $overrides = OverrideAttributeResolver::getOverrideValue($request, 'location');
+        if (empty($overrides)) {
             return $location;
         }
+
+        $overrides = array_filter($overrides, function ($key) {
+            return in_array($key, ['latitude', 'longitude', 'altitude']);
+        }, ARRAY_FILTER_USE_KEY);
 
         $data = array_merge([
             'latitude'  => $location ? $location->getLatitude() : null,
             'longitude' => $location ? $location->getLongitude() : null,
             'altitude'  => $location ? $location->getAltitude() : null,
-        ], $this->overrides);
+        ], $overrides);
 
         if (null !== $data['latitude'] && null !== $data['longitude']) {
             return GeoLocationModel::build(

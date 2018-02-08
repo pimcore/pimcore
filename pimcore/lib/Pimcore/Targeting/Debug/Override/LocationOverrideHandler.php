@@ -17,26 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Debug\Override;
 
-use Pimcore\Event\Targeting\OverrideEvent;
-use Pimcore\Event\TargetingEvents;
 use Pimcore\Targeting\Debug\Form\LocationType;
+use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\OverrideHandlerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class LocationOverrideHandler implements OverrideHandlerInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
-
     public function buildOverrideForm(FormBuilderInterface $form, Request $request)
     {
         $form->add('location', LocationType::class, [
@@ -55,11 +43,6 @@ class LocationOverrideHandler implements OverrideHandlerInterface
             return;
         }
 
-        $type = 'location';
-
-        $this->eventDispatcher->dispatch(
-            TargetingEvents::overrideEventName($type),
-            new OverrideEvent($type, $location)
-        );
+        OverrideAttributeResolver::setOverrideValue($request, 'location', $location);
     }
 }

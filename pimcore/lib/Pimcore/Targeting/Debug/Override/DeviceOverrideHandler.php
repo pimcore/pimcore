@@ -17,27 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Debug\Override;
 
-use Pimcore\Event\Targeting\OverrideEvent;
-use Pimcore\Event\TargetingEvents;
 use Pimcore\Targeting\Debug\Form\DeviceType;
-use Pimcore\Targeting\Debug\Form\LocationType;
+use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\OverrideHandlerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class DeviceOverrideHandler implements OverrideHandlerInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
-
     public function buildOverrideForm(FormBuilderInterface $form, Request $request)
     {
         $form->add('device', DeviceType::class, [
@@ -56,11 +43,6 @@ class DeviceOverrideHandler implements OverrideHandlerInterface
             return;
         }
 
-        $type = 'device';
-
-        $this->eventDispatcher->dispatch(
-            TargetingEvents::overrideEventName($type),
-            new OverrideEvent($type, $device)
-        );
+        OverrideAttributeResolver::setOverrideValue($request, 'device', $device);
     }
 }

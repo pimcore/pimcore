@@ -20,20 +20,16 @@ namespace Pimcore\Targeting\DataProvider;
 use GeoIp2\Model\City;
 use GeoIp2\ProviderInterface;
 use Pimcore\Cache\Core\CoreHandlerInterface;
-use Pimcore\Event\Targeting\OverrideEvent;
-use Pimcore\Event\TargetingEvents;
-use Pimcore\Targeting\DataProvider\Traits\OverridableTrait;
+use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Loads geolocation from GeoIP (IP to geo database).
  */
-class GeoIp implements DataProviderInterface, EventSubscriberInterface
+class GeoIp implements DataProviderInterface
 {
-    use OverridableTrait;
-
     const PROVIDER_KEY = 'geoip';
 
     /**
@@ -54,21 +50,10 @@ class GeoIp implements DataProviderInterface, EventSubscriberInterface
     public function __construct(
         ProviderInterface $geoIpProvider,
         LoggerInterface $logger
-    ) {
+    )
+    {
         $this->geoIpProvider = $geoIpProvider;
         $this->logger        = $logger;
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            TargetingEvents::overrideEventName('location') => 'onOverrideLocation'
-        ];
-    }
-
-    public function onOverrideLocation(OverrideEvent $event)
-    {
-        $this->extractOverriddenProperties($event->getData(), ['country']);
     }
 
     public function setCache(CoreHandlerInterface $cache)
@@ -95,31 +80,36 @@ class GeoIp implements DataProviderInterface, EventSubscriberInterface
 
     public function loadData(VisitorInfo $visitorInfo)
     {
-        $result = null;
+        $result  = null;
+        $request = $visitorInfo->getRequest();
 
-        $ip = $visitorInfo->getRequest()->getClientIp();
+        $ip = $request->getClientIp();
 
         if ($this->isPublicIp($ip)) {
             $result = $this->resolveIp($ip);
         }
 
-        $result = $this->handleOverrides($result);
+        $result = $this->handleOverrides($request, $result);
 
         return $result;
     }
 
-    private function handleOverrides(array $result = null)
+    private function handleOverrides(Request $request, array $result = null)
     {
-        if (empty($this->overrides)) {
+        $overrides = OverrideAttributeResolver::getOverrideValue($request, 'location');
+        if (empty($overrides)) {
             return $result;
         }
 
-        $overrides = [];
-        if (isset($this->overrides['country'])) {
-            $overrides['country']['iso_code'] = $this->overrides['country'];
+        $result = $result ?? [];
+
+        if (isset($overrides['country']) && !empty($overrides['country'])) {
+            $result['country'] = array_merge($result['country'] ?? [], [
+                'iso_code' => $overrides['country']
+            ]);
         }
 
-        return array_merge($result ?? [], $overrides);
+        return $result;
     }
 
     private function isPublicIp(string $ip): bool
