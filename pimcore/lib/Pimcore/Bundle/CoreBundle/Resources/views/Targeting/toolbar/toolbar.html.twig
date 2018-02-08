@@ -260,12 +260,13 @@
                     </h2>
 
                     {% block overrideForm %}
+                        {% form_theme overrideForm 'form_div_layout.html.twig' %}
                         {{ form_start(overrideForm, { attr: { id: toolbar.identifier(token, 'overrides'), class: '_ptgtb__override-form' }}) }}
                         {{ form_widget(overrideForm) }}
 
                         <div class="_ptgtb__override-form__button-row">
-                            <button type="submit" value="">Apply</button>
                             <button type="reset" value="" class="_ptgtb--hidden">Reset</button>
+                            <button type="submit" value="">Apply</button>
                         </div>
 
                         {{ form_end(overrideForm) }}

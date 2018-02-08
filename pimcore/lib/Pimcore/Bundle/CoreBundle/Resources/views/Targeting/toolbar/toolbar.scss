@@ -6,6 +6,7 @@ $width: 450px;
 $triggerWidth: 36px;
 $color-target-group: #4f805d;
 $color-rule: #a46a1f;
+$font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
 
 ._ptgtb {
     display: block;
@@ -178,7 +179,7 @@ $color-rule: #a46a1f;
 
     ._ptgtb__label,
     ._ptgtb__metric {
-        font: 11px Menlo, Monaco, Consolas, "Courier New", monospace;
+        font: 11px $font-family-monospace;
     }
 
     ._ptgtb__label {
@@ -227,12 +228,19 @@ $color-rule: #a46a1f;
         select {
             color: #000;
             background: #fff;
-            padding: 3px 5px;
+            padding: 5px 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }
+
+        input {
+            font: 11px $font-family-monospace;
         }
 
         button {
             display: inline-block;
-            margin: 0 3px 0 0;
+            margin: 0 0 0 3px;
             padding: 6px 15px;
             background: #838383;
             border-radius: 2px;
@@ -249,6 +257,18 @@ $color-rule: #a46a1f;
 
         ._ptgtb__override-form__button-row {
             margin-top: 12px;
+            text-align: right;
+
+            [type="submit"] {
+                background: $color-target-group;
+                color: #fff;;
+            }
+        }
+
+        ._ptgtb__collapse__trigger--block {
+            margin-top: 25px;
+            padding-bottom: 3px;
+            border-bottom: 1px dotted #686868;
         }
     }
 

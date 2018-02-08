@@ -126,6 +126,30 @@
                 });
             });
 
+            document.querySelectorAll('._ptgtb__override-form__collapse-section').forEach(function (section) {
+                var parent = section.parentNode;
+
+                var children = Array.prototype.slice.call(parent.childNodes);
+
+                var label = null;
+                for (var i = 0; i < children.length; i++) {
+                    if ('label' === children[i].tagName.toLowerCase()) {
+                        label = children[i];
+                        break;
+                    }
+                }
+
+                if (!label) {
+                    return;
+                }
+
+                util.addClass(label, '_ptgtb__collapse__trigger--block');
+                label.setAttribute('data-ptgtb-toggle', 'collapse');
+                label.setAttribute('data-ptgtb-target', '#' + section.id);
+                label.setAttribute('data-ptgtb-collapse-default', 'collapse');
+                label.setAttribute('data-ptgtb-collapse-store', 'overrideForm/' + section.id);
+            });
+
             /* close icon */
             document.querySelectorAll('._ptgtb__toolbar-icon--close').forEach(function (close) {
                 util.addEventListener(close, 'click', function (e) {
