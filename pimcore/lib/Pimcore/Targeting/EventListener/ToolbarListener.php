@@ -199,8 +199,6 @@ class ToolbarListener implements EventSubscriberInterface
             $event->getData()
         );
 
-        $code = "\n" . str_replace("\n", '', $code) . "\n";
-
         $this->codeInjector->inject(
             $response,
             $code,

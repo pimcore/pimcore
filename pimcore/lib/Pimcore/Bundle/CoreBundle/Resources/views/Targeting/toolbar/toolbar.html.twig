@@ -1,6 +1,7 @@
 {% import '@PimcoreCore/Targeting/toolbar/macros.html.twig' as toolbar %}
 
 {% block toolbar %}
+    {% spaceless %}
     <div id="_ptgtb-{{ token }}" class="_ptgtb _ptgtb--collapsed">
         <div class="_ptgtb__trigger" title="{% trans from 'admin' %}targeting{% endtrans %}">
             <span class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--target">
@@ -275,12 +276,17 @@
             </div>
         </div>
     </div>
+    {% endspaceless %}
 {% endblock %}
 
 {% block css %}
+    {%- spaceless -%}
     <style type="text/css">
+        {%- pimcoreassetcompress -%}
         {{ include('@PimcoreCore/Targeting/toolbar/toolbar.css') }}
+        {%- endpimcoreassetcompress -%}
     </style>
+    {%- endspaceless -%}
 {% endblock %}
 
 {% block js %}

@@ -1,9 +1,11 @@
 {#
-    CAUTION: The debug profiler listener just blindly strips all newlines from the generated code. This means you can't
+    CAUTION: The pimcoreassetcompress tag just blindly strips all newlines from the generated code. This means you can't
     use // comments here as they would break the generated code. Use /* */ comments if needed or refactor the "minifying"
-    to use a decent JS processor (e.g. uglify, webpack).
+    to use a decent JS processor such as uglify or webpack.
 #}
+{%- spaceless -%}
 <script type="text/javascript">
+    {%- pimcoreassetcompress -%}
     (function (window, document, undefined) {
         'use strict';
 
@@ -322,4 +324,6 @@
             }());
         });
     }(window, document));
+    {%- endpimcoreassetcompress -%}
 </script>
+{%- endspaceless -%}
