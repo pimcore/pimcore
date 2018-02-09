@@ -97,4 +97,13 @@ final class TargetingEvents
      * @var string
      */
     const VISITED_PAGES_COUNT_MATCH = 'pimcore.targeting.visited_pages_count_match';
+
+    /**
+     * Fired before the targeting debug toolbar is rendered
+     *
+     * @Event("Pimcore\Event\Targeting\RenderToolbarEvent")
+     *
+     * @var string
+     */
+    const RENDER_TOOLBAR = 'pimcore.targeting.render_toolbar';
 }

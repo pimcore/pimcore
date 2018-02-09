@@ -49,6 +49,15 @@ class GeoLocation
         $this->altitude  = $altitude;
     }
 
+    public static function build($latitude, $longitude, $altitude = null): self
+    {
+        return new self(
+            (float)$latitude,
+            (float)$longitude,
+            null !== $altitude ? (float)$altitude : null
+        );
+    }
+
     /**
      * @return float
      */
