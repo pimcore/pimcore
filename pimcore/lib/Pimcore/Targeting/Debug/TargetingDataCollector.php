@@ -22,6 +22,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\DataProvider\TargetingStorage;
+use Pimcore\Targeting\DataProvider\VisitedPagesCounter;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
@@ -46,6 +47,14 @@ class TargetingDataCollector
      */
     private $stopwatch;
 
+    /**
+     * @var array
+     */
+    private $filteredVisitorInfoDataObjecKeys = [
+        TargetingStorage::PROVIDER_KEY,
+        VisitedPagesCounter::PROVIDER_KEY
+    ];
+
     public function __construct(
         TargetingStorageInterface $targetingStorage,
         DocumentTargetingConfigurator $targetingConfigurator
@@ -64,13 +73,26 @@ class TargetingDataCollector
         ];
     }
 
+    public function getFilteredVisitorInfoDataObjecKeys(): array
+    {
+        return $this->filteredVisitorInfoDataObjecKeys;
+    }
+
+    public function setFilteredVisitorInfoDataObjecKeys(array $filteredVisitorInfoDataObjecKeys)
+    {
+        $this->filteredVisitorInfoDataObjecKeys = $filteredVisitorInfoDataObjecKeys;
+    }
+
     protected function filterVisitorInfoData(array $data): array
     {
-        if (isset($data[TargetingStorage::PROVIDER_KEY])) {
-            $data[TargetingStorage::PROVIDER_KEY] = sprintf(
-                'object(%s)',
-                (new \ReflectionObject($data[TargetingStorage::PROVIDER_KEY]))->getShortName()
-            );
+        // only show a string reference naming the class instead of serializing objects in the list
+        foreach ($this->filteredVisitorInfoDataObjecKeys as $key) {
+            if (isset($data[$key]) && is_object($data[$key])) {
+                $data[$key] = sprintf(
+                    'object(%s)',
+                    (new \ReflectionObject($data[$key]))->getShortName()
+                );
+            }
         }
 
         return $data;
