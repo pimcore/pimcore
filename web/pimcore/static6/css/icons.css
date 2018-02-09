@@ -619,6 +619,18 @@
     background: url(/pimcore/static6/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_targeting_toolbar_enable {
+    background: url(/pimcore/static6/img/flat-color-icons/ok.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_targeting_toolbar_disable {
+    background: url(/pimcore/static6/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_targeting_toolbar {
+    background: url(/pimcore/static6/img/flat-color-icons/list.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_info {
     background: url(/pimcore/static6/img/flat-color-icons/info.svg) center center no-repeat !important;
 }

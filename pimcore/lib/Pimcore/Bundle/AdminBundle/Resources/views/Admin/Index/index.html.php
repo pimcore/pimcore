@@ -310,6 +310,7 @@ $scripts = array(
     "pimcore/settings/targeting/rules/item.js",
     "pimcore/settings/targeting/targetGroups/panel.js",
     "pimcore/settings/targeting/targetGroups/item.js",
+    "pimcore/settings/targeting_toolbar.js",
 
     "pimcore/settings/gdpr/gdprPanel.js",
     "pimcore/settings/gdpr/dataproviders/dataObjects.js",
