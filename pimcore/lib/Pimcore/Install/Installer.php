@@ -138,13 +138,30 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function checkPrerequisites(): array
+    /**
+     * checks and extract fatal requirement errors and collect them as formated strings depending on calling context
+     *
+     * Note:
+     *  - per default Requirements::checkFilesystem()
+     *    and Requirements::checkPhp() are used, which are extensible by adding own checks and set $merge to true
+     *  - if $merge is not set, it will exclude the default-requirements and functioned as error-extractor only
+     *
+     * @param   Check[] $checks (optional)  additonal Requeiremnt checks
+     * @param   bool    $merge  (optional)  merge with default requirements? Default is false
+     *
+     * @return  string[]         collected fatal errors as formated strings
+     */
+    public function checkPrerequisites(array $checks = [], bool $merge = false): array
     {
-        /** @var Check[] $checks */
-        $checks = array_merge(
-            Requirements::checkFilesystem(),
-            Requirements::checkPhp()
-        );
+        // improves re-usability and minimize duplicates
+        if (!$checks || $merge) {
+            /** @var Check[] $checks */
+            $checks = array_merge(
+                $checks,
+                Requirements::checkFilesystem(),
+                Requirements::checkPhp()
+            );
+        }
 
         $errors = [];
         foreach ($checks as $check) {
@@ -172,6 +189,7 @@ class Installer
     public function install(array $params): array
     {
         $dbConfig = $this->resolveDbConfig($params);
+        $errors = [];
 
         // try to establish a mysql connection
         try {
@@ -180,24 +198,8 @@ class Installer
             /** @var Connection $db */
             $db = DriverManager::getConnection($dbConfig, $config);
 
-            // check utf-8 encoding
-            $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
-            if (!in_array($result['Value'], ['utf8mb4'])) {
-                $errors[] = 'Database charset is not utf8mb4';
-            }
-
-            $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
-            if ($largePrefix && $largePrefix['Value'] != 'ON') {
-                $errors[] = 'MySQL/MariaDB system variable innodb_large_prefix must be ON';
-            }
-            $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
-            if ($fileFormat && $fileFormat['Value'] != 'Barracuda') {
-                $errors[] = 'MySQL/MariaDB system variable innodb_file_format must be Barracuda';
-            }
-            $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
-            if ($fileFilePerTable && $fileFilePerTable['Value'] != 'ON') {
-                $errors[] = 'MySQL/MariaDB system variable innodb_file_per_table must be ON';
-            }
+            // check all db-requirements before install
+            $errors = $this->checkPrerequisites(Requirements::checkMysql($db), true);
         } catch (\Exception $e) {
             $errors[] = sprintf('Couldn\'t establish connection to MySQL: %s', $e->getMessage());
         }
