@@ -392,7 +392,6 @@ class Update
 
         self::composerUpdate(['--no-scripts']);
 
-
         // remove terminate and exception event listeners for the current env as they break with a
         // cleared container - see #2434
         $eventDispatcher = \Pimcore::getEventDispatcher();

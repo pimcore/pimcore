@@ -18,7 +18,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Db;
 use Pimcore\File;
-use Pimcore\Logger;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -449,12 +448,12 @@ class MiscController extends AdminController
     }
 
     /**
- * @Route("/fileexplorer-delete")
- *
- * @param Request $request
- *
- * @return JsonResponse
- */
+     * @Route("/fileexplorer-delete")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
     public function fileexplorerDeleteAction(Request $request)
     {
         $this->checkPermission('fileexplorer');

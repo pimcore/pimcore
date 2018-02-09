@@ -19,7 +19,6 @@ namespace Pimcore\Targeting\Debug;
 
 use Pimcore\Targeting\OverrideHandlerInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,8 +42,7 @@ class OverrideHandler
     public function __construct(
         FormFactoryInterface $formFactory,
         $overrideHandlers
-    )
-    {
+    ) {
         $this->formFactory      = $formFactory;
         $this->overrideHandlers = $overrideHandlers;
     }

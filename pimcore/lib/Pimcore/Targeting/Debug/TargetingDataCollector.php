@@ -22,7 +22,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Targeting\DataProvider\TargetingStorage;
-use Pimcore\Targeting\DebugInfoComponentInterface;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;

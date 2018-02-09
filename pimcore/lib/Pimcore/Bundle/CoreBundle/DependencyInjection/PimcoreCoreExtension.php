@@ -29,7 +29,6 @@ use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
-use Pimcore\Targeting\OverrideHandlerInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
