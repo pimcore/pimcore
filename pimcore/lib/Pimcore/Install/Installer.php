@@ -138,47 +138,43 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    /**
-     * checks and extract fatal requirement errors and collect them as formated strings depending on calling context
-     *
-     * Note:
-     *  - per default Requirements::checkFilesystem()
-     *    and Requirements::checkPhp() are used, which are extensible by adding own checks and set $merge to true
-     *  - if $merge is not set, it will exclude the default-requirements and functioned as error-extractor only
-     *
-     * @param   Check[] $checks (optional)  additonal Requeiremnt checks
-     * @param   bool    $merge  (optional)  merge with default requirements? Default is false
-     *
-     * @return  string[]         collected fatal errors as formated strings
-     */
-    public function checkPrerequisites(array $checks = [], bool $merge = false): array
+    public function checkPrerequisites(Connection $db = null): array
     {
-        // improves re-usability and minimize duplicates
-        if (!$checks || $merge) {
-            /** @var Check[] $checks */
-            $checks = array_merge(
-                $checks,
-                Requirements::checkFilesystem(),
-                Requirements::checkPhp()
-            );
-        }
+        $checks = array_merge(
+            Requirements::checkFilesystem(),
+            Requirements::checkPhp(),
+            null !== $db ? Requirements::checkMysql($db) : []
+        );
 
-        $errors = [];
+        return $this->formatPrerequisiteMessages($checks, [Check::STATE_ERROR]);
+    }
+
+    /**
+     * @param Check[] $checks
+     * @param array $filterStates
+     *
+     * @return array
+     */
+    public function formatPrerequisiteMessages(array $checks, array $filterStates = [Check::STATE_ERROR])
+    {
+        $messages = [];
         foreach ($checks as $check) {
-            if ($check->getState() === Check::STATE_ERROR) {
-                if ($check->getLink()) {
-                    if ('cli' === php_sapi_name()) {
-                        $errors[] = sprintf('%s (see %s)', $check->getMessage(), $check->getLink());
-                    } else {
-                        $errors[] = sprintf('<a href="%s" target="_blank">%s</a>', $check->getLink(), $check->getMessage());
-                    }
+            if (empty($filterStates) || !in_array($check->getState(), $filterStates)) {
+                continue;
+            }
+
+            if ($check->getLink()) {
+                if ('cli' === php_sapi_name()) {
+                    $messages[] = sprintf('%s (see %s)', $check->getMessage(), $check->getLink());
                 } else {
-                    $errors[] = $check->getMessage();
+                    $messages[] = sprintf('<a href="%s" target="_blank">%s</a>', $check->getLink(), $check->getMessage());
                 }
+            } else {
+                $messages[] = $check->getMessage();
             }
         }
 
-        return $errors;
+        return $messages;
     }
 
     /**
@@ -199,7 +195,7 @@ class Installer
             $db = DriverManager::getConnection($dbConfig, $config);
 
             // check all db-requirements before install
-            $errors = $this->checkPrerequisites(Requirements::checkMysql($db), true);
+            $errors = $this->checkPrerequisites($db);
         } catch (\Exception $e) {
             $errors[] = sprintf('Couldn\'t establish connection to MySQL: %s', $e->getMessage());
         }
