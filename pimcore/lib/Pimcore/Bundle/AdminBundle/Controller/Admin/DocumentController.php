@@ -1407,7 +1407,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                             $description = html_entity_decode(trim(strip_tags($description->content)), null, 'UTF-8');
                         }
 
-                        $nodeConfig['hx'] = count($html->find('h2,h2,h4,h5'));
+                        $nodeConfig['hx'] = count($html->find('h2,h3,h4,h5'));
 
                         $images = $html->find('img');
                         if ($images) {
