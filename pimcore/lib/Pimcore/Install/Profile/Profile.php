@@ -169,19 +169,7 @@ class Profile
 
     public function getBundlesToEnable(): array
     {
-        $enable = $this->config['pimcore_bundles']['enable'] ?? [];
-
-        foreach ($this->getBundlesToInstall() as $installBundle) {
-            if (isset($enable[$installBundle])) {
-                if (!$enable[$installBundle]['enabled']) {
-                    $enable[$installBundle]['enabled'] = true;
-                }
-            } else {
-                $enable[$installBundle] = ['enabled' => true];
-            }
-        }
-
-        return $enable;
+        return $this->config['pimcore_bundles']['enable'] ?? [];
     }
 
     public function getBundlesToInstall(): array
