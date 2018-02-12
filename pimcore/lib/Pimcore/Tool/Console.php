@@ -67,6 +67,12 @@ class Console
             return self::$executableCache[$name];
         }
 
+        // allow custom setup routines for certain programs
+        $customSetupMethod = 'setup' . ucfirst($name);
+        if (method_exists(__CLASS__, $customSetupMethod)) {
+            self::$customSetupMethod();
+        }
+
         // use DI to provide the ability to customize / overwrite paths
         if (\Pimcore::hasContainer() && \Pimcore::getContainer()->hasParameter('pimcore_executable_' . $name)) {
             $value = \Pimcore::getContainer()->getParameter('pimcore_executable_' . $name);
@@ -90,12 +96,6 @@ class Console
         }
 
         array_push($paths, '');
-
-        // allow custom setup routines for certain programs
-        $customSetupMethod = 'setup' . ucfirst($name);
-        if (method_exists(__CLASS__, $customSetupMethod)) {
-            self::$customSetupMethod();
-        }
 
         // allow custom check routines for certain programs
         $customCheckMethod = 'check' . ucfirst($name);
