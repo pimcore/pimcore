@@ -366,7 +366,7 @@ class InstallCommand extends Command
             return 2;
         }
 
-        $this->io->comment(sprintf(
+        $this->io->writeln(sprintf(
             'Running installation. You can find a detailed install log in <comment>var/installer/logs/%s.log</comment>',
             $this->getApplication()->getKernel()->getEnvironment()
         ));
@@ -375,7 +375,7 @@ class InstallCommand extends Command
 
         $progressBar = new ProgressBar($output, $this->installer->getStepEventCount());
         $progressBar->setMessage('Starting the install process...');
-        $progressBar->setFormat("<info>%message%</info>\n\n %current%/%max% [%bar%] %percent:3s%%");
+        $progressBar->setFormat("<info>%message%</info>\n\n %current%/%max% [%bar%] %percent:3s%%\n");
         $progressBar->start();
 
         $this->eventDispatcher->addListener(
