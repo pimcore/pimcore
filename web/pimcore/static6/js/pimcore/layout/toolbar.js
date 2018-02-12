@@ -1002,10 +1002,10 @@ pimcore.layout.toolbar = Class.create({
             }
 
             // admin translations only for admins
-            if (user.admin) {
+            if (user.isAllowed('admin_translations')) {
                 if (perspectiveCfg.inToolbar("settings.adminTranslations")) {
                     settingsItems.push({
-                        text: t("translations_admin"),
+                        text: t("admin_translations"),
                         iconCls: "pimcore_icon_translations",
                         handler: this.editTranslationsSpecific
                     });

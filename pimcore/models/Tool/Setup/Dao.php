@@ -161,6 +161,7 @@ class Dao extends Model\Dao\AbstractDao
             ['key' => 'translations'],
             ['key' => 'users'],
             ['key' => 'website_settings'],
+            ['key' => 'admin_translations'],
             ['key' => 'web2print_settings']
         ];
 
