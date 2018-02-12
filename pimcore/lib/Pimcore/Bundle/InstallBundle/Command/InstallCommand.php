@@ -66,8 +66,7 @@ class InstallCommand extends Command
         Installer $installer,
         ProfileLocator $profileLocator,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->installer       = $installer;
         $this->profileLocator  = $profileLocator;
         $this->eventDispatcher = $eventDispatcher;

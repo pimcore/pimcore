@@ -117,8 +117,7 @@ class Installer
         ProfileLocator $profileLocator,
         FileInstaller $fileInstaller,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $this->logger          = $logger;
         $this->profileLocator  = $profileLocator;
         $this->fileInstaller   = $fileInstaller;
