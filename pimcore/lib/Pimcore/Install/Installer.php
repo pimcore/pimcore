@@ -22,6 +22,9 @@ use Doctrine\DBAL\DriverManager;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
+use Pimcore\Extension;
+use Pimcore\Extension\Bundle\Config\StateConfig;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Install\Event\InstallerStepEvent;
 use Pimcore\Install\Profile\FileInstaller;
 use Pimcore\Install\Profile\Profile;
@@ -106,9 +109,11 @@ class Installer
         'load_profile'        => 'Loading install profile...',
         'start_install'       => 'Starting installation...',
         'copy_files'          => 'Copying profile files...',
+        'create_config_files' => 'Creating config files...',
         'boot_kernel'         => 'Booting new kernel...',
         'setup_database'      => 'Running database setup...',
         'install_assets'      => 'Installing assets...',
+        'install_bundles'     => 'Installing bundles...',
         'complete'            => 'Install complete!'
     ];
 
@@ -370,6 +375,8 @@ class Installer
             }
         }
 
+        $this->dispatchStepEvent('create_config_files');
+
         $dbConfig['username'] = $dbConfig['user'];
         unset($dbConfig['user']);
         unset($dbConfig['driver']);
@@ -380,6 +387,8 @@ class Installer
                 'params' => $dbConfig
             ],
         ]);
+
+        $this->enableBundles($profile);
 
         $this->dispatchStepEvent('boot_kernel');
 
@@ -405,9 +414,10 @@ class Installer
         $this->dispatchStepEvent('install_assets');
         $this->installAssets($kernel);
 
-        $this->clearKernelCacheDir($kernel);
+        $this->dispatchStepEvent('install_bundles');
+        $errors = array_merge($this->installBundles($kernel, $profile), $errors);
 
-        $this->dispatchStepEvent('complete');
+        $this->clearKernelCacheDir($kernel);
 
         return $errors;
     }
@@ -449,6 +459,42 @@ class Installer
             $stdErr->note('Installing assets failed. Please run the following command manually:');
             $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
         }
+    }
+
+    private function enableBundles(Profile $profile)
+    {
+        $stateConfig = new StateConfig(new Extension\Config());
+
+        foreach ($profile->getBundlesToEnable() as $id => $config) {
+            $stateConfig->setState($id, $config);
+        }
+    }
+
+    private function installBundles(KernelInterface $kernel, Profile $profile): array
+    {
+        if (empty($installBundles = $profile->getBundlesToInstall())) {
+            return [];
+        }
+
+        $bundleManager = $kernel->getContainer()->get(PimcoreBundleManager::class);
+        $errors        = [];
+
+        foreach ($installBundles as $installBundle) {
+            if (null !== $this->commandLineOutput) {
+                $this->commandLineOutput->writeln(sprintf('  <comment>*</comment> Installing bundle <info>%s</info>', $installBundle));
+            }
+
+            try {
+                $bundle = $bundleManager->getActiveBundle($installBundle, false);
+                if ($bundleManager->canBeInstalled($bundle)) {
+                    $bundleManager->install($bundle);
+                }
+            } catch (\Throwable $e) {
+                $errors[] = $e->getMessage();
+            }
+        }
+
+        return $errors;
     }
 
     private function createConfigFiles(array $config)
