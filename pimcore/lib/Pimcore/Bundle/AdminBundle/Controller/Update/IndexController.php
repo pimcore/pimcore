@@ -133,12 +133,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             Update::installData($request->get('revision'), $request->get('updateScript'));
         } elseif ($request->get('type') == 'clearcache') {
             \Pimcore\Cache::clearAll();
-
-            $symfonyCacheClearer = $this->get(CacheClearer::class);
-            $symfonyCacheClearer->clear($kernel->getEnvironment(), [
-                // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
-                'no-warmup' => true
-            ]);
+            \Pimcore\Update::clearSymfonyCaches();
         } elseif ($request->get('type') == 'preupdate') {
             $status = Update::executeScript($request->get('revision'), 'preupdate');
         } elseif ($request->get('type') == 'postupdate') {
