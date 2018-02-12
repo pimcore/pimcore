@@ -113,7 +113,7 @@
     "tijsverkoyen/css-to-inline-styles": "~1.5",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.0",
-    "vrana/adminer": "~4.2",
+    "vrana/adminer": "~4.6",
     "vrana/jush": "*",
     "wikimedia/composer-merge-plugin": "^1.4",
     "zendframework/zend-code": "~3.1.0",
