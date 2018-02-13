@@ -81,28 +81,6 @@ class CodeInjectorTest extends TestCase
     }
 
     /**
-     * @dataProvider validSelectorProvider
-     */
-    public function testValidSelector(string $selector)
-    {
-        $html   = 'foo';
-        $result = $this->injector->injectIntoHtml($html, 'bar', $selector, CodeInjector::POSITION_BEGINNING);
-
-        $this->assertEquals($html, $result);
-    }
-
-    /**
-     * @dataProvider validPositionProvider
-     */
-    public function testValidPosition(string $position)
-    {
-        $html   = 'foo';
-        $result = $this->injector->injectIntoHtml($html, 'bar', CodeInjector::SELECTOR_BODY, $position);
-
-        $this->assertEquals($html, $result);
-    }
-
-    /**
      * @dataProvider invalidTypeProvider
      */
     public function testInvalidPosition(string $position)
@@ -112,21 +90,11 @@ class CodeInjectorTest extends TestCase
         $this->injector->injectIntoHtml('foo', 'bar', CodeInjector::SELECTOR_BODY, $position);
     }
 
-    /**
-     * @dataProvider invalidTypeProvider
-     */
-    public function testInvalidSelector(string $selector)
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->injector->injectIntoHtml('foo', 'bar', $selector, CodeInjector::POSITION_BEGINNING);
-    }
-
-    public function validSelectorProvider(): array
+    public function presetSelectorProvider(): array
     {
         $reflector = new \ReflectionClass(CodeInjector::class);
 
-        $property = $reflector->getProperty('validSelectors');
+        $property = $reflector->getProperty('presetSelectors');
         $property->setAccessible(true);
 
         $data = [];
@@ -206,7 +174,7 @@ EOF
 
         $data[] = [
             CodeInjector::SELECTOR_HEAD,
-            CodeInjector::POSITION_REPLACE,
+            CodeInjector::REPLACE,
             $source,
             <<<EOF
 <html>
@@ -252,7 +220,7 @@ EOF
 
         $data[] = [
             CodeInjector::SELECTOR_BODY,
-            CodeInjector::POSITION_REPLACE,
+            CodeInjector::REPLACE,
             $source,
             <<<EOF
 <html>
@@ -262,6 +230,76 @@ EOF
 <body class="foo" bar><!-- INJECTED --></body>
 </html>
 EOF
+        ];
+
+        $domSource = <<<EOF
+<html>
+<head>
+    <!-- ORIG HEAD -->
+</head>
+<body class="foo" bar>
+    <!-- ORIG BODY -->
+    <div class="bar"><!-- ORIG DIV --></div>
+</body>
+</html>
+EOF;
+
+        $data[] = [
+            'body > div.bar',
+            CodeInjector::REPLACE,
+            $domSource,
+            <<<EOF
+<html>
+<head>
+    <!-- ORIG HEAD -->
+</head>
+<body class="foo" bar>
+    <!-- ORIG BODY -->
+    <div class="bar"><!-- INJECTED --></div>
+</body>
+</html>
+EOF
+        ];
+
+        $data[] = [
+            'body > div.bar',
+            CodeInjector::POSITION_BEGINNING,
+            $domSource,
+            <<<EOF
+<html>
+<head>
+    <!-- ORIG HEAD -->
+</head>
+<body class="foo" bar>
+    <!-- ORIG BODY -->
+    <div class="bar"><!-- INJECTED --><!-- ORIG DIV --></div>
+</body>
+</html>
+EOF
+        ];
+
+        $data[] = [
+            'body > div.bar',
+            CodeInjector::POSITION_END,
+            $domSource,
+            <<<EOF
+<html>
+<head>
+    <!-- ORIG HEAD -->
+</head>
+<body class="foo" bar>
+    <!-- ORIG BODY -->
+    <div class="bar"><!-- ORIG DIV --><!-- INJECTED --></div>
+</body>
+</html>
+EOF
+        ];
+
+        $data[] = [
+            '.non-existing',
+            CodeInjector::POSITION_END,
+            $domSource,
+            $domSource
         ];
 
         return $data;

@@ -27,9 +27,14 @@ class CodeInjector
 
     const POSITION_BEGINNING = 'beginning';
     const POSITION_END = 'end';
-    const POSITION_REPLACE = 'replace';
+    const REPLACE = 'replace';
 
-    private static $validSelectors = [
+    /**
+     * @deprecated Use REPLACE instead
+     */
+    const POSITION_REPLACE = self::REPLACE;
+
+    private static $presetSelectors = [
         self::SELECTOR_HEAD,
         self::SELECTOR_BODY,
     ];
@@ -37,7 +42,7 @@ class CodeInjector
     private static $validPositions = [
         self::POSITION_BEGINNING,
         self::POSITION_END,
-        self::POSITION_REPLACE
+        self::REPLACE,
     ];
 
     /**
@@ -68,13 +73,6 @@ class CodeInjector
 
     public function injectIntoHtml(string $html, string $code, string $selector, string $position): string
     {
-        if (!in_array($selector, self::$validSelectors)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Invalid selector. Supported selectors are: %s',
-                implode(', ', self::$validSelectors)
-            ));
-        }
-
         if (!in_array($position, self::$validPositions)) {
             throw new \InvalidArgumentException(sprintf(
                 'Invalid position. Supported positions are: %s',
@@ -82,13 +80,22 @@ class CodeInjector
             ));
         }
 
+        if (in_array($selector, self::$presetSelectors, true)) {
+            return $this->injectIntoPresetSelector($html, $code, $selector, $position);
+        } else {
+            return $this->injectIntoDomSelector($html, $code, $selector, $position);
+        }
+    }
+
+    private function injectIntoPresetSelector(string $html, string $code, string $selector, string $position): string
+    {
         $startTagPattern = '<\s*?' . $selector . '\b[^>]*>';
         $endTagPattern   = '</' . $selector . '\b[^>]*>';
 
         // temporary placeholder to use in preg_replace as we can't be sure the code breaks our replacement
         $injectTpl = sprintf('----%s----', uniqid('INJECT:', true));
 
-        if (self::POSITION_REPLACE === $position) {
+        if (self::REPLACE === $position) {
             $html = preg_replace(
                 '#(' . $startTagPattern . ')(.*?)(' . $endTagPattern . ')#s',
                 '${1}' . $injectTpl . '${3}',
@@ -112,5 +119,36 @@ class CodeInjector
         $html = str_replace($injectTpl, $code, $html);
 
         return $html;
+    }
+
+    private function injectIntoDomSelector(string $html, string $code, string $selector, string $position): string
+    {
+        include_once PIMCORE_PATH . '/lib/simple_html_dom.php';
+
+        $dom = str_get_html($html);
+        if (!$dom) {
+            return $html;
+        }
+
+        $element = $dom->find($selector, 0);
+        if (!$element) {
+            return $html;
+        }
+
+        if (self::REPLACE === $position) {
+            $element->innertext = $code;
+        } elseif (self::POSITION_BEGINNING === $position) {
+            $element->innertext = $code . $element->innertext;
+        } elseif (self::POSITION_END === $position) {
+            $element->innertext = $element->innertext . $code;
+        }
+
+        $result = $dom->save();
+
+        $dom->clear();
+        $dom = null;
+        unset($dom);
+
+        return $result;
     }
 }
