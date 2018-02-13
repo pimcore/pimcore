@@ -368,13 +368,11 @@ class Update
         ];
     }
 
-    /**
-     *
-     */
-    public static function clearSymfonyCaches() {
+    public static function clearSymfonyCaches()
+    {
         // clear symfony cache
         $symfonyCacheClearer = new CacheClearer();
-        foreach(array_unique(['dev','prod',\Pimcore::getKernel()->getEnvironment()]) as $env) {
+        foreach (array_unique(['dev', 'prod', \Pimcore::getKernel()->getEnvironment()]) as $env) {
             $symfonyCacheClearer->clear($env, [
                 // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
                 'no-warmup' => true

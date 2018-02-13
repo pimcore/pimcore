@@ -141,8 +141,7 @@ class Installer extends MigrationInstaller
         BundleInterface $bundle,
         Connection $connection,
         MigrationManager $migrationManager
-    )
-    {
+    ) {
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
 
         parent::__construct($bundle, $connection, $migrationManager);
