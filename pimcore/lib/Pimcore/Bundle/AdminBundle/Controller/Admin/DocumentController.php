@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
+use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -1153,16 +1154,19 @@ class DocumentController extends ElementControllerBase implements EventedControl
     /**
      * @Route("/seopanel-tree-root")
      *
-     * @param Request $request
+     * @param DocumentRouteHandler $documentRouteHandler
      *
      * @return JsonResponse
      */
-    public function seopanelTreeRootAction(Request $request)
+    public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler)
     {
         $this->checkPermission('seo_document_editor');
 
         $root = Document::getById(1);
         if ($root->isAllowed('list')) {
+            // make sure document routes are also built for unpublished documents
+            $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
+
             $nodeConfig = $this->getSeoNodeConfig($root);
 
             return $this->adminJson($nodeConfig);
@@ -1175,10 +1179,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
      * @Route("/seopanel-tree")
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param DocumentRouteHandler $documentRouteHandler
      *
      * @return JsonResponse
      */
-    public function seopanelTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function seopanelTreeAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher,
+        DocumentRouteHandler $documentRouteHandler
+    )
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -1190,6 +1200,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         $this->checkPermission('seo_document_editor');
+
+        // make sure document routes are also built for unpublished documents
+        $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
 
         $document = Document::getById($allParams['node']);
 
@@ -1352,7 +1365,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Request $request
      * @param Document\PageSnippet|Document\Page $document
      *
      * @return array
