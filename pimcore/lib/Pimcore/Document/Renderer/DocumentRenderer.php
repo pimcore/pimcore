@@ -104,7 +104,9 @@ class DocumentRenderer implements DocumentRendererInterface
         // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)
         if (!isset($attributes['_route'])) {
             $route = $this->documentRouteHandler->buildRouteForDocument($document);
-            $attributes['_route'] = $route->getRouteKey();
+            if (null !== $route) {
+                $attributes['_route'] = $route->getRouteKey();
+            }
         }
 
         try {
