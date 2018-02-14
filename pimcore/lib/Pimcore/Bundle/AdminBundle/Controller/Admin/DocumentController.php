@@ -1163,7 +1163,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $root = Document::getById(1);
         if ($root->isAllowed('list')) {
-            $nodeConfig = $this->getSeoNodeConfig($request, $root);
+            $nodeConfig = $this->getSeoNodeConfig($root);
 
             return $this->adminJson($nodeConfig);
         }
@@ -1216,7 +1216,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $list->setCondition('path LIKE ? and type = ?', [$childDocument->getRealFullPath() . '/%', 'page']);
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
-                        $documents[] = $this->getSeoNodeConfig($request, $childDocument);
+                        $documents[] = $this->getSeoNodeConfig($childDocument);
                     }
                 }
             }
@@ -1357,13 +1357,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
      *
      * @return array
      */
-    private function getSeoNodeConfig(Request $request, $document)
+    private function getSeoNodeConfig($document)
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 
         if (method_exists($document, 'getTitle') && method_exists($document, 'getDescription')) {
-
-            // anaylze content
+            // analyze content
             $nodeConfig['prettyUrl']     = $document->getPrettyUrl();
             $nodeConfig['links']         = 0;
             $nodeConfig['externallinks'] = 0;
@@ -1377,12 +1376,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $description = null;
 
             try {
-
-                // cannot use the rendering service from Document\Service::render() because of singleton's ...
-                // $content = Document\Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
-
-                $contentUrl = $request->getScheme() . '://' . $request->getHttpHost() . $document->getFullPath();
-                $content    = Tool::getHttpData($contentUrl, ['pimcore_preview' => true, 'pimcore_admin' => true, '_dc' => time()]);
+                $content = Document\Service::render($document, [], true, [
+                    'pimcore_admin' => true,
+                    'pimcore_preview' => true
+                ]);
 
                 if ($content) {
                     include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
