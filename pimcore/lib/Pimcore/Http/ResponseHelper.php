@@ -61,7 +61,7 @@ class ResponseHelper
             return false;
         }
 
-        if (strpos($response->getContent(), '<html')) {
+        if (false !== strpos($response->getContent(), '<html')) {
             return true;
         }
 
