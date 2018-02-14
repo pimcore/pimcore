@@ -106,7 +106,7 @@ class Image extends Model\Asset
             \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . $svgPath . ' '. $pngPath);
             unlink($pngPath);
 
-            if(file_exists($svgPath)) {
+            if (file_exists($svgPath)) {
                 $svgData = file_get_contents($svgPath);
                 $svgData = str_replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"', $svgData);
                 File::put($svgPath, $svgData);
@@ -140,6 +140,7 @@ class Image extends Model\Asset
 EOT;
 
             File::put($this->getLowQualityPreviewFileSystemPath(), $svg);
+
             return $this->getLowQualityPreviewFileSystemPath();
         }
 

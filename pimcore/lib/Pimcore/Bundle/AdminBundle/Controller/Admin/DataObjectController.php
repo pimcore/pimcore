@@ -1249,7 +1249,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             if (($request->get('task') == 'publish' && $object->isAllowed('publish')) or ($request->get('task') == 'unpublish' && $object->isAllowed('unpublish'))) {
                 if ($data) {
-                   if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
+                    if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
                         return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
                     }
                 }
@@ -1341,6 +1341,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
         }
+
         return true;
     }
 
