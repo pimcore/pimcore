@@ -139,4 +139,22 @@ final class DocumentEvents
      * @Event("Pimcore\Event\Model\Document\TagNameEvent")
      */
     const TAG_NAME = 'pimcore.document.tag.name';
+
+    /**
+     * The RENDERER_PRE_RENDER event is triggered before the DocumentRenderer renders a document
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const RENDERER_PRE_RENDER = 'pimcore.document.renderer.pre_render';
+
+    /**
+     * The RENDERER_POST_RENDER event is triggered after the DocumentRenderer rendered a document
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const RENDERER_POST_RENDER = 'pimcore.document.renderer.post_render';
 }

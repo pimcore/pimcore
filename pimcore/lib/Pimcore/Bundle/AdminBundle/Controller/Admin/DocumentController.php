@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
+use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -1153,17 +1154,20 @@ class DocumentController extends ElementControllerBase implements EventedControl
     /**
      * @Route("/seopanel-tree-root")
      *
-     * @param Request $request
+     * @param DocumentRouteHandler $documentRouteHandler
      *
      * @return JsonResponse
      */
-    public function seopanelTreeRootAction(Request $request)
+    public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler)
     {
         $this->checkPermission('seo_document_editor');
 
         $root = Document::getById(1);
         if ($root->isAllowed('list')) {
-            $nodeConfig = $this->getSeoNodeConfig($request, $root);
+            // make sure document routes are also built for unpublished documents
+            $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
+
+            $nodeConfig = $this->getSeoNodeConfig($root);
 
             return $this->adminJson($nodeConfig);
         }
@@ -1175,10 +1179,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
      * @Route("/seopanel-tree")
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param DocumentRouteHandler $documentRouteHandler
      *
      * @return JsonResponse
      */
-    public function seopanelTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function seopanelTreeAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher,
+        DocumentRouteHandler $documentRouteHandler
+    )
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -1190,6 +1200,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         $this->checkPermission('seo_document_editor');
+
+        // make sure document routes are also built for unpublished documents
+        $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
 
         $document = Document::getById($allParams['node']);
 
@@ -1216,7 +1229,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $list->setCondition('path LIKE ? and type = ?', [$childDocument->getRealFullPath() . '/%', 'page']);
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
-                        $documents[] = $this->getSeoNodeConfig($request, $childDocument);
+                        $documents[] = $this->getSeoNodeConfig($childDocument);
                     }
                 }
             }
@@ -1352,18 +1365,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Request $request
      * @param Document\PageSnippet|Document\Page $document
      *
      * @return array
      */
-    private function getSeoNodeConfig(Request $request, $document)
+    private function getSeoNodeConfig($document)
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 
         if (method_exists($document, 'getTitle') && method_exists($document, 'getDescription')) {
-
-            // anaylze content
+            // analyze content
             $nodeConfig['prettyUrl']     = $document->getPrettyUrl();
             $nodeConfig['links']         = 0;
             $nodeConfig['externallinks'] = 0;
@@ -1377,12 +1388,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $description = null;
 
             try {
-
-                // cannot use the rendering service from Document\Service::render() because of singleton's ...
-                // $content = Document\Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
-
-                $contentUrl = $request->getScheme() . '://' . $request->getHttpHost() . $document->getFullPath();
-                $content    = Tool::getHttpData($contentUrl, ['pimcore_preview' => true, 'pimcore_admin' => true, '_dc' => time()]);
+                $content = Document\Service::render($document, [], true, [
+                    'pimcore_admin' => true,
+                    'pimcore_preview' => true
+                ]);
 
                 if ($content) {
                     include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
