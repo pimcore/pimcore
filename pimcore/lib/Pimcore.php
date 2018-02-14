@@ -372,6 +372,19 @@ class Pimcore
         Model\Tool\Lock::releaseAll();
     }
 
+
+    /**
+     * @static
+     *
+     */
+    public static function disableMinifyJs()
+    {
+        // magic parameter for debugging ExtJS stuff
+        if (PIMCORE_DEVMODE || (array_key_exists('disable_minify_js', $_REQUEST) && self::inDebugMode())) {
+            return true;
+        }
+    }
+
     /**
      * @static
      *

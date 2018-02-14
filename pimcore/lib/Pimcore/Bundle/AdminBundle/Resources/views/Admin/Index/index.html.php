@@ -175,11 +175,11 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
 <?php // define stylesheets ?>
 <?php
 
-$extjsDev = isset($runtimePerspective["extjsDev"]) ? $runtimePerspective["extjsDev"] : FALSE;
+$disableMinifyJs = Pimcore::disableMinifyJs();
 
 // SCRIPT LIBRARIES
 $debugSuffix = "";
-if (PIMCORE_DEVMODE || $extjsDev) {
+if ($disableMinifyJs) {
     $debugSuffix = "-debug";
 }
 
@@ -708,7 +708,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 
 
 <!-- internal scripts -->
-<?php if (PIMCORE_DEVMODE || $extjsDev) { ?>
+<?php if ($disableMinifyJs) { ?>
     <?php foreach ($scripts as $scriptUrl) { ?>
     <script type="text/javascript" src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
@@ -734,7 +734,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 // only add the timestamp if the devmode is not activated, otherwise it is very hard to develop and debug plugins,
 // because the filename changes on every reload and therefore breakpoints, ... are resetted on every reload
 $pluginDcValue = time();
-if (PIMCORE_DEVMODE || $extjsDev) {
+if ($disableMinifyJs) {
     $pluginDcValue = 1;
 }
 ?>

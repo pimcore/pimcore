@@ -99,7 +99,6 @@ class IndexController extends AdminController
         $runtimePerspective = Config::getRuntimePerspective($user);
 
         $view->runtimePerspective = $runtimePerspective;
-        $view->extjsDev           = isset($runtimePerspective['extjsDev']) ? $runtimePerspective['extjsDev'] : false;
 
         return $this;
     }
@@ -151,7 +150,8 @@ class IndexController extends AdminController
             'build'     => Version::getRevision(),
             'buildDate'     => Version::getBuildDate(),
             'debug'     => \Pimcore::inDebugMode(),
-            'devmode'   => PIMCORE_DEVMODE || $view->extjsDev,
+            'devmode'   => PIMCORE_DEVMODE,
+            'disableMinifyJs' => \Pimcore::disableMinifyJs(),
             'environment' => $kernel->getEnvironment(),
             'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
             'isLegacyModeAvailable' => \Pimcore::isLegacyModeAvailable()
