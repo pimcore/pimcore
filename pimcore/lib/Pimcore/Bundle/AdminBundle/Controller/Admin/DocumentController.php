@@ -1188,8 +1188,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         Request $request,
         EventDispatcherInterface $eventDispatcher,
         DocumentRouteHandler $documentRouteHandler
-    )
-    {
+    ) {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [

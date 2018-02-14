@@ -36,8 +36,8 @@
  */
 
 namespace Pimcore\Templating\Helper\Placeholder;
+
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\DocumentEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**

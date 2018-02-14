@@ -372,7 +372,6 @@ class Pimcore
         Model\Tool\Lock::releaseAll();
     }
 
-
     /**
      * @static
      *

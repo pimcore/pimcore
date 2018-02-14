@@ -287,7 +287,6 @@ class EditmodeListener implements EventSubscriberInterface
      */
     protected function getEditmodeLibraries()
     {
-
         $disableMinifyJs = \Pimcore::disableMinifyJs();
 
         return [
