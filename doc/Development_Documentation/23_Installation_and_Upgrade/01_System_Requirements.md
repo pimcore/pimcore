@@ -31,7 +31,7 @@ Please note that the usage of **PHP 7.1 is strongly recommended** as future vers
 - [openssl](http://php.net/openssl)
 - [opcache](http://php.net/opcache)
 - CLI SAPI (for Cron Jobs)
-- [Composer](https://getcomposer.org/) (added to `$PATH`)
+- [Composer](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
 
 #### Recommended Modules & Extensions 
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
