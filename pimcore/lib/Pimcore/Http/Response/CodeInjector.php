@@ -19,6 +19,7 @@ namespace Pimcore\Http\Response;
 
 use Pimcore\Http\ResponseHelper;
 use Symfony\Component\HttpFoundation\Response;
+use Wa72\HtmlPageDom\HtmlPageCrawler;
 
 class CodeInjector
 {
@@ -66,12 +67,12 @@ class CodeInjector
         }
 
         $content = $response->getContent();
-        $result  = $this->injectIntoHtml($content, $code, $selector, $position);
+        $result  = $this->injectIntoHtml($content, $code, $selector, $position, $response->getCharset());
 
         $response->setContent($result);
     }
 
-    public function injectIntoHtml(string $html, string $code, string $selector, string $position): string
+    public function injectIntoHtml(string $html, string $code, string $selector, string $position, string $charset = 'UTF-8'): string
     {
         if (!in_array($position, self::$validPositions)) {
             throw new \InvalidArgumentException(sprintf(
@@ -83,7 +84,7 @@ class CodeInjector
         if (in_array($selector, self::$presetSelectors, true)) {
             return $this->injectIntoPresetSelector($html, $code, $selector, $position);
         } else {
-            return $this->injectIntoDomSelector($html, $code, $selector, $position);
+            return $this->injectIntoDomSelector($html, $code, $selector, $position, $charset);
         }
     }
 
@@ -121,34 +122,66 @@ class CodeInjector
         return $html;
     }
 
-    private function injectIntoDomSelector(string $html, string $code, string $selector, string $position): string
+    private function injectIntoDomSelector(string $html, string $code, string $selector, string $position, string $charset): string
     {
-        include_once PIMCORE_PATH . '/lib/simple_html_dom.php';
-
-        $dom = str_get_html($html);
-        if (!$dom) {
+        try {
+            $dom = $this->createDomDocument($html, $charset);
+        } catch (\Throwable $e) {
             return $html;
         }
 
-        $element = $dom->find($selector, 0);
-        if (!$element) {
+        $crawler = new HtmlPageCrawler($dom);
+
+        /** @var HtmlPageCrawler $element */
+        $element = $crawler->filter($selector)->first();
+        if (0 === $element->count()) {
             return $html;
         }
 
         if (self::REPLACE === $position) {
-            $element->innertext = $code;
+            $element->setInnerHtml($code);
         } elseif (self::POSITION_BEGINNING === $position) {
-            $element->innertext = $code . $element->innertext;
+            $element->prepend($code);
         } elseif (self::POSITION_END === $position) {
-            $element->innertext = $element->innertext . $code;
+            $element->append($code);
         }
 
-        $result = $dom->save();
+        return trim($crawler->saveHTML());
+    }
 
-        $dom->clear();
-        $dom = null;
-        unset($dom);
+    /**
+     * Extracted from Symfony\Component\DomCrawler\Crawler::addContent(). This is the same logic,
+     * but it passes additional libxml options to loadHTML to avoid changing the HTML content.
+     *
+     * @param string $content
+     * @param string $charset
+     *
+     * @return \DOMDocument
+     */
+    private function createDomDocument(string $content, string $charset): \DOMDocument
+    {
+        $internalErrors  = libxml_use_internal_errors(true);
+        $disableEntities = libxml_disable_entity_loader(true);
 
-        return $result;
+        $dom = new \DOMDocument('1.0', $charset);
+        $dom->validateOnParse = true;
+
+        set_error_handler(function () {
+            throw new \Exception();
+        });
+
+        // Convert charset to HTML-entities to work around bugs in DOMDocument::loadHTML()
+        $content = mb_convert_encoding($content, 'HTML-ENTITIES', $charset);
+
+        restore_error_handler();
+
+        if ('' !== trim($content)) {
+            @$dom->loadHTML($content, LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED);
+        }
+
+        libxml_use_internal_errors($internalErrors);
+        libxml_disable_entity_loader($disableEntities);
+
+        return $dom;
     }
 }

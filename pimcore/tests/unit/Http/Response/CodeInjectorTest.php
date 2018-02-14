@@ -71,9 +71,23 @@ class CodeInjectorTest extends TestCase
     }
 
     /**
-     * @dataProvider injectProvider
+     * @dataProvider injectPresetProvider
      */
-    public function testInject(string $selector, string $position, string $source, string $expected)
+    public function testInjectPreset(string $selector, string $position, string $source, string $expected)
+    {
+        $this->testInject($selector, $position, $source, $expected);
+    }
+
+    /**
+     * @group dom
+     * @dataProvider injectDOMProvider
+     */
+    public function testInjectDOM(string $selector, string $position, string $source, string $expected)
+    {
+        $this->testInject($selector, $position, $source, $expected);
+    }
+
+    private function testInject(string $selector, string $position, string $source, string $expected)
     {
         $result = $this->injector->injectIntoHtml($source, $this->codePart, $selector, $position);
 
@@ -125,7 +139,7 @@ class CodeInjectorTest extends TestCase
         return [['foo'], ['bar']];
     }
 
-    public function injectProvider(): array
+    public function injectPresetProvider(): array
     {
         $data = [];
 
@@ -231,6 +245,13 @@ EOF
 </html>
 EOF
         ];
+
+        return $data;
+    }
+
+    public function injectDOMProvider(): array
+    {
+        $data = [];
 
         $domSource = <<<EOF
 <html>
