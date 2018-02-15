@@ -138,8 +138,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             //pagination for custom view
             $total = $cv
                 ? $childsList->count()
-                : $object->getChildAmount([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
-                    DataObject\AbstractObject::OBJECT_TYPE_VARIANT], $this->getAdminUser());
+                : $object->getChildAmount(null, $this->getAdminUser());
         }
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
