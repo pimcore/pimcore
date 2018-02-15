@@ -89,6 +89,7 @@
     "monolog/monolog": "~1",
     "mpratt/embera": "~1",
     "myclabs/deep-copy": "~1.3",
+    "myclabs/php-enum": "^1.5",
     "neitanod/forceutf8": "~2",
     "nesbot/carbon": "~1",
     "ocramius/package-versions": "^1.1",
