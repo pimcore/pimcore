@@ -53,6 +53,30 @@ Is a collection of `Advanced Images` (see below). The sort order can be changed 
 
 ![Image Gallery](../../../img/image_gallery.png) 
 
+Populate an ImageGallery
+
+```php
+<?php
+
+$galleryData = [
+	AssetImage,
+	AssetImage,
+	....
+];
+
+$items = [];
+foreach($galleryData as $img){
+
+   $advancedImage = new \Pimcore\Model\DataObject\Data\Hotspotimage();
+   $advancedImage->setImage($img);
+   $items[] = $advancedImage;
+}
+
+$news->setGallery(new \Pimcore\Model\DataObject\Data\ImageGallery($items));
+
+?>
+```
+
 ## Image Advanced (supporting Hotspots/Markers/Cropping)
 
 This data type is an advanced extension to the image data type which allows defining hotspots, markers and cropping on 
