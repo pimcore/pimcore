@@ -38,10 +38,8 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     public function checkDebugModeAction(KernelInterface $kernel)
     {
-        $debug = \Pimcore::inDebugMode() || $kernel->isDebug();
-
         return $this->adminJson([
-            'success' => (bool) $debug
+            'success' => $kernel->isDebug()
         ]);
     }
 

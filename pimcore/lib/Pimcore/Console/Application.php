@@ -55,7 +55,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $this->setDispatcher($dispatcher);
 
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
-            if ($event->getInput()->getOption('no-debug') && \Pimcore::inDebugMode()) {
+            if ($event->getInput()->getOption('no-debug')) {
                 \Pimcore::setDebugMode(false);
             }
 

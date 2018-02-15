@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Config;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -170,7 +171,7 @@ class Renderlet extends Model\Document\Tag
 
                 return $content;
             } catch (\Exception $e) {
-                if (\Pimcore::inDebugMode()) {
+                if (\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
                     return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
                 }
                 Logger::error($e);

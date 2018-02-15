@@ -387,26 +387,24 @@ class Pimcore
         Model\Tool\Lock::releaseAll();
     }
 
-    /**
-     * @static
-     *
-     */
-    public static function disableMinifyJs()
+    public static function disableMinifyJs(): bool
     {
-        // magic parameter for debugging ExtJS stuff
-        if (PIMCORE_DEVMODE || (array_key_exists('disable_minify_js', $_REQUEST) && self::inDebugMode())) {
+        if (self::inDevMode(DevMode::UNMINIFIED_JS)) {
             return true;
         }
+
+        // magic parameter for debugging ExtJS stuff
+        if (array_key_exists('disable_minify_js', $_REQUEST) && self::inDebugMode(DebugMode::MAGIC_PARAMS)) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * @static
-     *
-     */
     public static function initLogger()
     {
         // special request log -> if parameter pimcore_log is set
-        if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode()) {
+        if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode(DebugMode::MAGIC_PARAMS)) {
             if (empty($_REQUEST['pimcore_log'])) {
                 $requestLogName = date('Y-m-d_H-i-s');
             } else {
