@@ -19,6 +19,7 @@ namespace Pimcore\FeatureToggles\Initializers;
 
 use Pimcore\FeatureToggles\FeatureContextInterface;
 use Pimcore\FeatureToggles\FeatureStateInitializerInterface;
+use Pimcore\FeatureToggles\FeatureStateInterface;
 
 class ClosureInitializer implements FeatureStateInitializerInterface
 {
@@ -43,8 +44,8 @@ class ClosureInitializer implements FeatureStateInitializerInterface
         return $this->type;
     }
 
-    public function getStates(FeatureContextInterface $context): array
+    public function getState(FeatureContextInterface $context, FeatureStateInterface $previousState = null)
     {
-        return call_user_func($this->closure, $context);
+        return call_user_func($this->closure, $context, $previousState);
     }
 }

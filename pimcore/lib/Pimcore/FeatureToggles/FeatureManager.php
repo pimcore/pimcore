@@ -25,15 +25,19 @@ class FeatureManager implements FeatureManagerInterface
     private $context;
 
     /**
-     * @var array
+     * @var FeatureStateInterface[]
      */
     private $states = [];
 
     /**
-     * @var array
+     * @var FeatureStateInitializerInterface[]
      */
     private $initializers = [];
 
+    /**
+     * @param FeatureContextInterface|null $context
+     * @param FeatureStateInitializerInterface[] $initializers
+     */
     public function __construct(FeatureContextInterface $context = null, array $initializers = [])
     {
         $this->setContext($context ?? new FeatureContext());
@@ -55,73 +59,45 @@ class FeatureManager implements FeatureManagerInterface
 
     public function isEnabled(Feature $feature): bool
     {
-        $states = $this->getStates($feature::getType());
-        if (empty($states)) {
+        $state = $this->getState($feature::getType());
+        if (null === $state) {
             return false;
         }
 
-        /** @var FeatureStateInterface $state */
-        foreach ($states as $state) {
-            if ($state->isEnabled($feature, $this->context)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $state->isEnabled($feature, $this->context);
     }
 
-    public function addState(FeatureStateInterface $featureState)
+    public function setState(FeatureStateInterface $state)
     {
-        $type = $featureState->getType();
-
-        if (isset($this->states[$type])) {
-            $this->states[$type][] = $featureState;
-        } else {
-            $this->states[$type] = [$featureState];
-        }
+        $this->states[$state->getType()] = $state;
     }
 
-    /**
-     * @param FeatureStateInterface[] $states
-     */
-    public function addStates(array $states)
+    public function hasState(string $type): bool
     {
-        foreach ($states as $state) {
-            $this->addState($state);
-        }
-    }
-
-    public function setState(FeatureStateInterface $featureState)
-    {
-        $this->clear($featureState->getType());
-        $this->addState($featureState);
-    }
-
-    public function hasStates(string $type): bool
-    {
-        return count($this->getStates($type)) > 0;
+        return null !== $this->getState($type);
     }
 
     /**
      * @param string $type
      *
-     * @return FeatureStateInterface[]
+     * @return FeatureStateInterface|null
      */
-    public function getStates(string $type): array
+    public function getState(string $type)
     {
-        if (!isset($this->states[$type]) && isset($this->initializers[$type])) {
-            /** @var FeatureStateInitializerInterface $initializer */
-            foreach ($this->initializers[$type] as $initializer) {
-                $this->addStates($initializer->getStates($this->context));
-            }
+        if (isset($this->states[$type])) {
+            return $this->states[$type];
         }
 
-        return $this->states[$type] ?? [];
-    }
+        $state = null;
+        foreach ($this->getInitializers($type) as $initializer) {
+            $state = $initializer->getState($this->context, $state);
+        }
 
-    public function getRegisteredTypes(): array
-    {
-        return array_keys($this->states);
+        if (null !== $state) {
+            $this->states[$type] = $state;
+        }
+
+        return $state;
     }
 
     public function clear(string $type = null)
@@ -137,45 +113,34 @@ class FeatureManager implements FeatureManagerInterface
 
     public function addInitializer(FeatureStateInitializerInterface $initializer)
     {
-        $this->initializers[$initializer->getType()][] = $initializer;
+        $this->initializers[] = $initializer;
     }
 
     /**
-     * @param string $type
+     * @param string|null $type
      *
      * @return FeatureStateInitializerInterface[]
      */
-    public function getInitializers(string $type): array
+    public function getInitializers(string $type = null): array
     {
-        return $this->initializers[$type] ?? [];
+        if (null === $type) {
+            return $this->initializers;
+        } else {
+            return array_filter($this->initializers, function (FeatureStateInitializerInterface $initializer) use ($type) {
+                return $initializer->getType() === $type;
+            });
+        }
     }
 
     /**
-     * @param string $type
      * @param FeatureStateInitializerInterface[] $initializers
      */
-    public function setInitializers(string $type, array $initializers)
+    public function setInitializers(array $initializers)
     {
-        $this->initializers[$type] = [];
+        $this->initializers = [];
 
         foreach ($initializers as $initializer) {
             $this->addInitializer($initializer);
         }
-    }
-
-    public function clearInitializers(string $type = null)
-    {
-        if (null !== $type) {
-            if (isset($this->initializers[$type])) {
-                unset($this->initializers[$type]);
-            }
-        } else {
-            $this->initializers = [];
-        }
-    }
-
-    public function getInitializerTypes(): array
-    {
-        return array_keys($this->initializers);
     }
 }

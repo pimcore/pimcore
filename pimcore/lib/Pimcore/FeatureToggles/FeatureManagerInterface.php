@@ -23,20 +23,16 @@ interface FeatureManagerInterface
 
     public function isEnabled(Feature $feature): bool;
 
-    public function addState(FeatureStateInterface $featureState);
+    public function setState(FeatureStateInterface $state);
 
-    public function setState(FeatureStateInterface $featureState);
-
-    public function hasStates(string $type): bool;
+    public function hasState(string $type): bool;
 
     /**
      * @param string $type
      *
-     * @return FeatureStateInterface[]
+     * @return FeatureStateInterface|null
      */
-    public function getStates(string $type): array;
-
-    public function getRegisteredTypes(): array;
+    public function getState(string $type);
 
     public function clear(string $type = null);
 }

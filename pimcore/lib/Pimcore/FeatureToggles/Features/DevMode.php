@@ -21,6 +21,7 @@ use Pimcore\FeatureToggles\Feature;
 use Pimcore\FeatureToggles\FeatureContextInterface;
 use Pimcore\FeatureToggles\FeatureState;
 use Pimcore\FeatureToggles\FeatureStateInitializerInterface;
+use Pimcore\FeatureToggles\FeatureStateInterface;
 use Pimcore\FeatureToggles\Initializers\ClosureInitializer;
 
 final class DevMode extends Feature
@@ -36,15 +37,17 @@ final class DevMode extends Feature
 
     public static function getDefaultInitializer(): FeatureStateInitializerInterface
     {
-        $initializer = function (FeatureContextInterface $context): array {
+        $initializer = function (FeatureContextInterface $context, FeatureStateInterface $previousState = null) {
+            if (null !== $previousState) {
+                return $previousState;
+            }
+
             $devMode = false;
             if (defined('PIMCORE_DEVMODE') && PIMCORE_DEVMODE) {
                 $devMode = true;
             }
 
-            return [
-                FeatureState::fromFeature($devMode ? static::ALL() : static::NONE())
-            ];
+            return FeatureState::fromFeature($devMode ? static::ALL() : static::NONE());
         };
 
         return new ClosureInitializer(static::getType(), $initializer);

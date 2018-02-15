@@ -29,8 +29,9 @@ interface FeatureStateInitializerInterface
 
     /**
      * @param FeatureContextInterface $context
+     * @param FeatureStateInterface|null $previousState
      *
-     * @return FeatureStateInterface[]
+     * @return FeatureStateInterface|null
      */
-    public function getStates(FeatureContextInterface $context): array;
+    public function getState(FeatureContextInterface $context, FeatureStateInterface $previousState = null);
 }

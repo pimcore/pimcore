@@ -21,6 +21,7 @@ use Pimcore\FeatureToggles\Feature;
 use Pimcore\FeatureToggles\FeatureContextInterface;
 use Pimcore\FeatureToggles\FeatureState;
 use Pimcore\FeatureToggles\FeatureStateInitializerInterface;
+use Pimcore\FeatureToggles\FeatureStateInterface;
 use Pimcore\FeatureToggles\Initializers\ClosureInitializer;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\IpUtils;
@@ -49,7 +50,11 @@ final class DebugMode extends Feature
 
     public static function getDefaultInitializer(): FeatureStateInitializerInterface
     {
-        $initializer = function (FeatureContextInterface $context): array {
+        $initializer = function (FeatureContextInterface $context, FeatureStateInterface $previousState = null) {
+            if (null !== $previousState) {
+                return $previousState;
+            }
+
             $debug = false;
 
             if (defined('PIMCORE_DEBUG')) {
@@ -84,9 +89,7 @@ final class DebugMode extends Feature
                 }
             }
 
-            return [
-                FeatureState::fromFeature($debug ? static::ALL() : static::NONE())
-            ];
+            return FeatureState::fromFeature($debug ? static::ALL() : static::NONE());
         };
 
         return new ClosureInitializer(static::getType(), $initializer);
