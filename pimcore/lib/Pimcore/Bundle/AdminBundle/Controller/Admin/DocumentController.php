@@ -1374,130 +1374,17 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         if (method_exists($document, 'getTitle') && method_exists($document, 'getDescription')) {
             // analyze content
-            $nodeConfig['prettyUrl']     = $document->getPrettyUrl();
-            $nodeConfig['links']         = 0;
-            $nodeConfig['externallinks'] = 0;
-            $nodeConfig['h1']            = 0;
-            $nodeConfig['h1_text']       = '';
-            $nodeConfig['hx']            = 0;
-            $nodeConfig['imgwithalt']    = 0;
-            $nodeConfig['imgwithoutalt'] = 0;
+            $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
 
-            $title       = null;
-            $description = null;
-
-            try {
-                $content = Document\Service::render($document, [], true, [
-                    'pimcore_admin' => true,
-                    'pimcore_preview' => true
-                ]);
-
-                if ($content) {
-                    include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-                    $html = str_get_html($content);
-                    if ($html) {
-                        $nodeConfig['links']         = count($html->find('a'));
-                        $nodeConfig['externallinks'] = count($html->find('a[href^=http]'));
-                        $nodeConfig['h1']            = count($html->find('h1'));
-
-                        $h1 = $html->find('h1', 0);
-                        if ($h1) {
-                            $nodeConfig['h1_text'] = strip_tags($h1->innertext);
-                        }
-
-                        $title = $html->find('title', 0);
-                        if ($title) {
-                            $title = html_entity_decode(trim(strip_tags($title->innertext)), null, 'UTF-8');
-                        }
-
-                        $description = $html->find('meta[name=description]', 0);
-                        if ($description) {
-                            $description = html_entity_decode(trim(strip_tags($description->content)), null, 'UTF-8');
-                        }
-
-                        $nodeConfig['hx'] = count($html->find('h2,h3,h4,h5'));
-
-                        $images = $html->find('img');
-                        if ($images) {
-                            foreach ($images as $image) {
-                                $alt = $image->alt;
-                                if (empty($alt)) {
-                                    $nodeConfig['imgwithoutalt']++;
-                                } else {
-                                    $nodeConfig['imgwithalt']++;
-                                }
-                            }
-                        }
-
-                        $html->clear();
-                        unset($html);
-                    }
-                }
-            } catch (\Exception $e) {
-                Logger::debug($e);
-            }
-
-            if (!$title) {
-                $title = $document->getTitle();
-            }
-            if (!$description) {
-                $description = $document->getDescription();
-            }
+            $title = $document->getTitle();
+            $description = $document->getDescription();
 
             $nodeConfig['title'] = $title;
-
-            // the title as used in the edit window
-            $nodeConfig['edit_title'] = $document->getTitle();
-
-            // fall back to resolved title if no document title is set - this potentially includes
-            // pre- and suffixes but is better than and empty input when actually a title was resolved
-            // in the tree
-            if (empty($nodeConfig['edit_title']) && !empty($nodeConfig['title'])) {
-                $nodeConfig['edit_title'] = $nodeConfig['title'];
-            }
-
             $nodeConfig['description'] = $description;
 
             $nodeConfig['title_length']       = mb_strlen($title);
             $nodeConfig['description_length'] = mb_strlen($description);
 
-            $qtip = '';
-
-            $translator = \Pimcore::getContainer()->get('translator');
-
-            if (mb_strlen($title) > 80) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The title is too long, it should have 5 to 80 characters.', [], 'admin') . '<br>';
-            }
-
-            if (mb_strlen($title) < 5) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The title is too short, it should have 5 to 80 characters.', [], 'admin') . '<br>';
-            }
-
-            if (mb_strlen($description) > 180) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The description is too long, it should have 20 to 180 characters.', [], 'admin') . '<br>';
-            }
-
-            if (mb_strlen($description) < 20) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The description is too short, it should have 20 to 180 characters.', [], 'admin') . '<br>';
-            }
-
-            if ($nodeConfig['h1'] != 1) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= sprintf($translator->trans('The document should have one h1, but has %s.', [], 'admin'), $nodeConfig['h1']) . '<br>';
-            }
-
-            if ($nodeConfig['hx'] < 1) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The document should some headlines other than h1, but has none.', [], 'admin') . '<br>';
-            }
-
-            if ($qtip) {
-                $nodeConfig['qtip'] = $qtip;
-            }
         }
 
         return $nodeConfig;

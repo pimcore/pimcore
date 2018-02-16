@@ -30,7 +30,7 @@ pimcore.document.seopanel = Class.create({
             this.panel = new Ext.Panel({
                 id: "pimcore_document_seopanel",
                 title: t("seo_document_editor"),
-                iconCls: "pimcore_icon_seo",
+                iconCls: "pimcore_icon_document pimcore_icon_overlay_search",
                 border: false,
                 layout: "fit",
                 closable:true,
@@ -95,34 +95,6 @@ pimcore.document.seopanel = Class.create({
             text: t("length"),
             dataIndex: 'description_length',
             width: 50
-        },{
-            text: "H1",
-            dataIndex: 'h1',
-            width: 25
-        },{
-            text: t("h1_text"),
-            dataIndex: 'h1_text',
-            width: 300
-        },{
-            text: "H2-5",
-            dataIndex: 'hx',
-            width: 35
-        },{
-            text: t("images_with_alt"),
-            dataIndex: 'imgwithalt',
-            width: 120
-        },{
-            text: t("images_without_alt"),
-            dataIndex: 'imgwithoutalt',
-            width: 120
-        },{
-            text: t("links"),
-            dataIndex: 'links',
-            width: 50
-        },{
-            text: t("external_links"),
-            dataIndex: 'externallinks',
-            width: 90
         }];
 
         var store = Ext.create('Ext.data.TreeStore', {
@@ -199,9 +171,9 @@ pimcore.document.seopanel = Class.create({
             bodyStyle: "padding:10px;",
             items: [{
                 xtype: "textfield",
-                fieldLabel: t("title") + " (" + record.data.edit_title.length + ")",
+                fieldLabel: t("title") + " (" + record.data.title.length + ")",
                 name: "title",
-                value: record.data.edit_title,
+                value: record.data.title,
                 width: 450,
                 enableKeyEvents: true,
                 listeners: {
