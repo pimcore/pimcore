@@ -15,15 +15,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
-use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata;
-use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject\Data\ObjectMetadata;
+use Pimcore\Db;
+use Pimcore\Model\Asset;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
+use Symfony\Component\HttpFoundation\Response;
 
-class DataObjects extends Elements implements DataProviderInterface
+class Assets extends Elements implements DataProviderInterface
 {
     /**
      * @var \Pimcore\Model\Webservice\Service
@@ -40,7 +39,7 @@ class DataObjects extends Elements implements DataProviderInterface
      */
     protected $config = [];
 
-    public function __construct(\Pimcore\Model\Webservice\Service $service, array $config)
+    public function __construct(\Pimcore\Model\Webservice\Service $service, array $config = null)
     {
         $this->service = $service;
         $this->config = $config;
@@ -51,7 +50,7 @@ class DataObjects extends Elements implements DataProviderInterface
      */
     public function getName(): string
     {
-        return 'dataObjects';
+        return 'assets';
     }
 
     /**
@@ -59,64 +58,65 @@ class DataObjects extends Elements implements DataProviderInterface
      */
     public function getJsClassName(): string
     {
-        return 'pimcore.settings.gdpr.dataproviders.dataObjects';
+        return 'pimcore.settings.gdpr.dataproviders.assets';
     }
 
     /**
-     * Exports data of given object as json including all references that are configured to be included
+     * Exports data of given asset as json
      *
-     * @param AbstractObject $object
+     * @param Asset $object
      *
-     * @return array
+     * @return Response
      */
-    public function doExportData(AbstractObject $object): array
+    public function doExportData(Asset $asset)
     {
         $this->exportIds = [];
 
-        $this->fillIds($object);
+        $this->fillIds($asset);
 
         $exportResult = [];
 
-        foreach (array_keys($this->exportIds['object']) as $id) {
-            $exportResult[] = $this->service->getObjectConcreteById($id);
-        }
-        if ($this->exportIds['image']) {
-            foreach (array_keys($this->exportIds['image']) as $id) {
-                $exportResult[] = $this->service->getAssetFileById($id);
+        // Prepare File
+        $file = tempnam('/tmp', 'zip');
+        $zip = new \ZipArchive();
+        $zip->open($file, \ZipArchive::OVERWRITE);
+
+        foreach (array_keys($this->exportIds) as $id) {
+            $theAsset = Asset::getById($id);
+            /** @var $theAsset */
+            $webAsset = $this->service->getAssetFileById($id);
+
+            $resultItem = json_decode(json_encode($webAsset), true);
+            unset($resultItem['data']);
+            $resultItem = json_encode($resultItem, JSON_PRETTY_PRINT);
+
+            $zip->addFromString($asset->getFilename() . '.txt', $resultItem);
+
+            if (!$theAsset instanceof Asset\Folder) {
+                $zip->addFromString($theAsset->getFilename(), $theAsset->getData());
             }
         }
 
-        return $exportResult;
+        $zip->close();
+
+        $size = filesize($file);
+        $content = file_get_contents($file);
+        unlink($file);
+
+        $response = new Response($content);
+        $response->headers->set('Content-Type', 'application/zip');
+        $response->headers->set('Content-Length', $size);
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $asset->getFilename() . '.zip"');
+
+        return $response;
     }
 
+    /**
+     * @param ElementInterface $element
+     */
     protected function fillIds(ElementInterface $element)
     {
-        $this->exportIds[$element->getType()][$element->getId()] = true;
-
-        if ($element instanceof Concrete) {
-            $subFields = $this->config['classes'][$element->getClass()->getName()]['includedRelations'];
-            if ($subFields) {
-                foreach ($subFields as $field) {
-                    $getter = 'get' . ucfirst($field);
-
-                    $subElements = $element->$getter();
-
-                    if ($subElements) {
-                        if (!is_array($subElements)) {
-                            $subElements = [$subElements];
-                        }
-
-                        foreach ($subElements as $subElement) {
-                            if ($subElement instanceof ObjectMetadata || $subElement instanceof MultihrefMetadata) {
-                                $subElement = $subElement->getObject();
-                            }
-
-                            $this->fillIds($subElement);
-                        }
-                    }
-                }
-            }
-        }
+        $this->exportIds[$element->getId()] = true;
     }
 
     /**
@@ -159,24 +159,18 @@ class DataObjects extends Elements implements DataProviderInterface
             $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST ("' . $db->quote($queryString) . '" IN BOOLEAN MODE) )';
         }
 
-        $conditionParts[] = '( maintype = "object" AND type IN ("object", "variant") )';
+        $db = Db::get();
 
-        $classnames = [];
-        if ($this->config['classes']) {
-            foreach ($this->config['classes'] as $classname => $classConfig) {
-                if ($classConfig['include'] == true) {
-                    $classnames[] = $classname;
-                }
+        $typesPart = '';
+        if ($this->config['types']) {
+            $typesList = [];
+            foreach ($this->config['types'] as $type) {
+                $typesList[] = $db->quote($type);
             }
+            $typesPart = ' AND type IN (' . implode(',', $typesList) . ')';
         }
 
-        if (is_array($classnames) and !empty($classnames[0])) {
-            $conditionClassnameParts = [];
-            foreach ($classnames as $classname) {
-                $conditionClassnameParts[] = $db->quote($classname);
-            }
-            $conditionParts[] = '( subtype IN (' . implode(',', $conditionClassnameParts) . ') )';
-        }
+        $conditionParts[] = '( maintype = "asset" ' . $typesPart . ')';
 
         if (count($conditionParts) > 0) {
             $condition = implode(' AND ', $conditionParts);
@@ -190,7 +184,7 @@ class DataObjects extends Elements implements DataProviderInterface
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
-                'classname' => 'subtype'
+                'type' => 'subtype'
             ];
 
             $sort = $sortingSettings['orderKey'];
@@ -208,9 +202,8 @@ class DataObjects extends Elements implements DataProviderInterface
         $elements=[];
         foreach ($hits as $hit) {
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            if ($element instanceof Concrete) {
-                $data = \Pimcore\Model\DataObject\Service::gridObjectData($element);
-                $data['__gdprIsDeletable'] = $this->config['classes'][$element->getClassName()]['allowDelete'];
+            if ($element instanceof Asset) {
+                $data = \Pimcore\Model\Asset\Service::gridAssetData($element);
             }
 
             $elements[] = $data;
@@ -231,6 +224,6 @@ class DataObjects extends Elements implements DataProviderInterface
      */
     public function getSortPriority(): int
     {
-        return 10;
+        return 20;
     }
 }

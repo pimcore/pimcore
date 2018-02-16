@@ -81,6 +81,22 @@ class Configuration implements ConfigurationInterface
 
         $gdprDataExtractor->append($dataObjects);
 
+        $assets = $treeBuilder->root('assets');
+        $assets
+            ->addDefaultsIfNotSet()
+            ->info('Settings for Assets DataProvider');
+
+        $assets
+            ->children()
+                ->arrayNode('types')
+                    ->info('Configure which types should be considered')
+                    ->prototype('array')
+                    ->info('asset types')
+                ->end()->defaultValue([])
+            ->end();
+
+        $gdprDataExtractor->append($assets);
+
         return $gdprDataExtractor;
     }
 }

@@ -1806,6 +1806,7 @@
   "gdpr_data_extractor_label_lastname": "Lastname",
   "gdpr_data_extractor_label_email": "E-Mail",
   "gdpr_dataSource_dataObjects": "Data Objects",
+  "gdpr_dataSource_assets": "Assets",
   "gdpr_dataSource_export": "Export",
   "gdpr_dataSource_sentMail": "Sent Mail",
   "gdpr_dataSource_sentMail_only_email": "Search only based on E-Mail",

@@ -313,6 +313,7 @@ $scripts = array(
     "pimcore/settings/targeting_toolbar.js",
 
     "pimcore/settings/gdpr/gdprPanel.js",
+    "pimcore/settings/gdpr/dataproviders/assets.js",
     "pimcore/settings/gdpr/dataproviders/dataObjects.js",
     "pimcore/settings/gdpr/dataproviders/sentMail.js",
     "pimcore/settings/gdpr/dataproviders/pimcoreUsers.js",
