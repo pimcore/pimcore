@@ -94,7 +94,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
         $arrayFields = [
             'client_config',
             'index_settings',
-            'es_client_params',
+            'elastic_search_client_params',
             'mapping'
         ];
 
