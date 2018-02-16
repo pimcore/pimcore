@@ -473,7 +473,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 if ($hasChilds) {
                     // get amount of childs
                     $list = new Asset\Listing();
-                    $list->setCondition("path LIKE ", [$asset->getRealFullPath() . "/%"]);
+                    $list->setCondition("path LIKE ?", [$asset->getRealFullPath() . "/%"]);
                     $childs = $list->getTotalCount();
                     $totalChilds += $childs;
 
