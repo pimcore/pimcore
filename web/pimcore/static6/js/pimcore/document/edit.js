@@ -25,7 +25,7 @@ pimcore.document.edit = Class.create({
             + pimcore.settings.language+'&_dc=' + date.getTime();
 
         if (pimcore.settings.disableMinifyJs) {
-            link += "&disable_minify_js";
+            link += "&unminified_js";
         }
 
         if(this.targetGroup && this.targetGroup.getValue()) {

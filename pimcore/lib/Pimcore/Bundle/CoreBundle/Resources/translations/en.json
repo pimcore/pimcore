@@ -914,6 +914,7 @@
   "translations": "Website Translations",
   "admin_translations": "Admin Translations",
   "debug_description": "With debug-mode on errors and warnings are displayed directly in the browser, otherwise they are deactivated and the error-controller is active (Error Page). Multiple IP addresses can be specified by separating them with a comma. You can also specify IP ranges by specifying a mask, e.g. 192.168.1.0/24",
+  "debug_override_warning": "<strong>WARNING:</strong> If the debug mode is explicitely set via code, this setting will be ignored. See <a target='_blank' href='https://pimcore.com/docs/5.1.x/Development_Documentation/Development_Tools_and_Details/Feature_Flags_Debug_Mode.html'>documentation</a> for details.",
   "icon": "Icon",
   "add_document": "Add document",
   "please_enter_the_name_of_the_new_document": "Please enter the name of the new document",

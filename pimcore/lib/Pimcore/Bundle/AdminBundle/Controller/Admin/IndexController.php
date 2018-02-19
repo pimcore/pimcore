@@ -20,6 +20,7 @@ use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\Google;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Manager\Procedural;
@@ -146,14 +147,14 @@ class IndexController extends AdminController
         $config = $view->config;
 
         $settings = new ViewModel([
-            'version'   => Version::getVersion(),
-            'build'     => Version::getRevision(),
-            'buildDate'     => Version::getBuildDate(),
-            'debug'     => \Pimcore::inDebugMode(),
-            'devmode'   => PIMCORE_DEVMODE,
-            'disableMinifyJs' => \Pimcore::disableMinifyJs(),
-            'environment' => $kernel->getEnvironment(),
-            'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
+            'version'               => Version::getVersion(),
+            'build'                 => Version::getRevision(),
+            'buildDate'             => Version::getBuildDate(),
+            'debug'                 => \Pimcore::inDebugMode(),
+            'devmode'               => \Pimcore::inDevMode(DevMode::ADMIN),
+            'disableMinifyJs'       => \Pimcore::disableMinifyJs(),
+            'environment'           => $kernel->getEnvironment(),
+            'sessionId'             => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
             'isLegacyModeAvailable' => \Pimcore::isLegacyModeAvailable()
         ]);
 

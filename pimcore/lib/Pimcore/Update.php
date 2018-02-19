@@ -16,6 +16,8 @@ namespace Pimcore;
 
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Composer\Config\ConfigMerger;
+use Pimcore\FeatureToggles\Features\DebugMode;
+use Pimcore\FeatureToggles\Features\DevMode;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Process\Process;
 
@@ -73,7 +75,8 @@ class Update
         self::cleanup();
 
         $updateInfoUrl = 'https://' . self::$updateHost . '/get-update-info?revision=' . $currentRev;
-        if (PIMCORE_DEVMODE) {
+
+        if (\Pimcore::inDevMode(DevMode::UPDATES)) {
             $updateInfoUrl .= '&devmode=1';
         }
 

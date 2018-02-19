@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,7 +64,7 @@ class AdminExceptionListener implements EventSubscriberInterface
                 'message' => $message,
             ];
 
-            if (\Pimcore::inDebugMode()) {
+            if (\Pimcore::inDebugMode(DebugMode::EXCEPTION_TRACES)) {
                 $data['trace'] = $ex->getTrace();
             }
 

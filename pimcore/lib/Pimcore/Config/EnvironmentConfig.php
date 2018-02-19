@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Config;
 
+use Pimcore\FeatureToggles\Features\DebugMode;
+
 class EnvironmentConfig implements EnvironmentConfigInterface
 {
     /**
@@ -51,7 +53,7 @@ class EnvironmentConfig implements EnvironmentConfigInterface
 
     public function activatesKernelDebugMode(string $environment): bool
     {
-        if (\Pimcore::inDebugMode()) {
+        if (\Pimcore::inDebugMode(DebugMode::SYMFONY_KERNEL_DEBUG)) {
             return true;
         }
 

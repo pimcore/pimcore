@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -531,7 +532,7 @@ HTML;
         }
 
         // only display error message in debug mode
-        if (!\Pimcore::inDebugMode()) {
+        if (!\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
             $message = '';
         }
 
