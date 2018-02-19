@@ -86,7 +86,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
         // TODO validate client config and other settings/params?
         $this->clientConfig = $options['client_config'];
         $this->indexSettings = $options['index_settings'];
-        $this->elasticSearchClientParams = $options['elastic_search_client_params'];
+        $this->elasticSearchClientParams = $options['es_client_params'];
     }
 
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
@@ -94,7 +94,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
         $arrayFields = [
             'client_config',
             'index_settings',
-            'elastic_search_client_params',
+            'es_client_params',
             'mapping'
         ];
 
