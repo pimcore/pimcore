@@ -24,6 +24,11 @@ use Pimcore\FeatureToggles\FeatureStateInitializerInterface;
 use Pimcore\FeatureToggles\FeatureStateInterface;
 use Pimcore\FeatureToggles\Initializers\ClosureInitializer;
 
+/**
+ * @method static DevMode ADMIN()
+ * @method static DevMode UPDATES()
+ * @method static DevMode UNMINIFIED_JS()
+ */
 final class DevMode extends Feature
 {
     const ADMIN         = 1;

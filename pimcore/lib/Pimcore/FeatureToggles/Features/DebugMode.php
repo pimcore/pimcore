@@ -26,6 +26,22 @@ use Pimcore\FeatureToggles\Initializers\ClosureInitializer;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\IpUtils;
 
+/**
+ * @method static DebugMode SYMFONY_ENVIRONMENT()
+ * @method static DebugMode SYMFONY_KERNEL_DEBUG()
+ * @method static DebugMode MAGIC_PARAMS()
+ * @method static DebugMode EXCEPTION_TRACES()
+ * @method static DebugMode ERROR_REPORTING()
+ * @method static DebugMode NO_ERROR_PAGE()
+ * @method static DebugMode REST_ERRORS()
+ * @method static DebugMode RENDER_DOCUMENT_TAG_ERRORS()
+ * @method static DebugMode MAIL()
+ * @method static DebugMode LOG()
+ * @method static DebugMode UPDATE()
+ * @method static DebugMode DISABLE_HTTP_CACHE()
+ * @method static DebugMode DISABLE_FULL_PAGE_CACHE()
+ * @method static DebugMode TARGETING()
+ */
 final class DebugMode extends Feature
 {
     const SYMFONY_ENVIRONMENT        = 1;
