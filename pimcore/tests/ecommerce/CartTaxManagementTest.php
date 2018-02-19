@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Tests\Test\EcommerceTestCase;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class CartTaxManagementTest extends EcommerceTestCase
 {
@@ -53,7 +52,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         $environment = $this->buildEnvironment();
 
         $pricingManagers = Stub::make(PricingManagerLocator::class, [
-            'getPricingManager' => function() {
+            'getPricingManager' => function () {
                 return new PricingManager([], [], $this->buildSession());
             }
         ]);

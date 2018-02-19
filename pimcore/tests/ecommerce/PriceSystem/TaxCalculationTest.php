@@ -15,7 +15,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Tests\Test\EcommerceTestCase;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class TaxCalculationTest extends EcommerceTestCase
 {
@@ -256,7 +255,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $environment = $this->buildEnvironment();
 
         $pricingManagers = Stub::make(PricingManagerLocator::class, [
-            'getPricingManager' => function() {
+            'getPricingManager' => function () {
                 return new PricingManager([], [], $this->buildSession());
             }
         ]);
