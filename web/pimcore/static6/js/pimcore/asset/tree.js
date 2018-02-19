@@ -656,6 +656,19 @@ pimcore.asset.tree = Class.create({
                 handler: this.deleteAsset.bind(this, tree, record)
             }));
         }
+                
+        // Download button only if is not a folder
+        if(record.data.type != 'folder') {
+            if (perspectiveCfg.inTreeContextMenu("asset.downloadFile")) {
+                menu.add(new Ext.menu.Item({
+                    text: t('download'),
+                    iconCls: "pimcore_icon_folder pimcore_icon_download",
+                    handler: function () {
+                        pimcore.helpers.download("/admin/asset/download?id=" + record.id);
+                    }
+                }));
+            }
+        }
 
         // advanced menu
         var advancedMenuItems = [];
