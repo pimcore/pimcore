@@ -126,9 +126,9 @@ class FeatureManager implements FeatureManagerInterface
         if (null === $type) {
             return $this->initializers;
         } else {
-            return array_filter($this->initializers, function (FeatureStateInitializerInterface $initializer) use ($type) {
+            return array_values(array_filter($this->initializers, function (FeatureStateInitializerInterface $initializer) use ($type) {
                 return $initializer->getType() === $type;
-            });
+            }));
         }
     }
 

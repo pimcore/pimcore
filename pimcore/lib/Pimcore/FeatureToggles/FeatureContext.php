@@ -56,7 +56,9 @@ class FeatureContext implements FeatureContextInterface
 
     public function remove(string $key)
     {
-        unset($this->parameters[$key]);
+        if (isset($this->parameters[$key])) {
+            unset($this->parameters[$key]);
+        }
     }
 
     public function getIterator(): \Iterator

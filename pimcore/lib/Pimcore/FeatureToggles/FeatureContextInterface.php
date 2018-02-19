@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\FeatureToggles;
 
-interface FeatureContextInterface
+interface FeatureContextInterface extends \Countable, \IteratorAggregate
 {
     public function all(): array;
 
@@ -30,8 +30,4 @@ interface FeatureContextInterface
     public function has(string $key): bool;
 
     public function remove(string $key);
-
-    public function getIterator(): \Iterator;
-
-    public function count(): int;
 }
