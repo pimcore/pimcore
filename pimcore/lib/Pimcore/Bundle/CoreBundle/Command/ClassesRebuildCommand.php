@@ -30,7 +30,6 @@ class ClassesRebuildCommand extends AbstractCommand
     private $db;
 
     /**
-     * ClassesRebuildCommand constructor.
      * @param Db\Connection $db
      */
     public function __construct(Db\Connection $db)
