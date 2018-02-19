@@ -412,28 +412,71 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet();
 
         $pricingManager
-            ->canBeDisabled()
+            // support deprecated options at the root level of the pricing_manager
+            // values set here will OVERWRITE the value in every tenant, even if the
+            // tenant defines the value!
+            // TODO remove in Pimcore 6
+            ->validate()
+                ->always(function ($v) {
+                    $enabled = null;
+                    if (is_bool($v['enabled'])) {
+                        $enabled = $v['enabled'];
+                        unset($v['enabled']);
+                    }
+
+                    $pricingManagerId = null;
+                    if (isset($v['pricing_manager_id'])) {
+                        $pricingManagerId = $v['pricing_manager_id'];
+                        unset($v['pricing_manager_id']);
+                    }
+
+                    $pricingManagerOptions = null;
+                    if (isset($v['pricing_manager_options']) && !empty($v['pricing_manager_options'])) {
+                        $pricingManagerOptions = $v['pricing_manager_options'];
+                        unset($v['pricing_manager_options']);
+                    }
+
+                    if (null === $enabled && null === $pricingManagerId && null === $pricingManagerOptions) {
+                        return $v;
+                    }
+
+                    foreach ($v['tenants'] as $tenant => &$tenantConfig) {
+                        if (null !== $enabled) {
+                            $tenantConfig['enabled'] = $enabled;
+                        }
+
+                        if (null !== $pricingManagerId) {
+                            $tenantConfig['pricing_manager_id'] = $pricingManagerId;
+                        }
+
+                        if (null !== $pricingManagerOptions) {
+                            $tenantConfig['pricing_manager_options'] = array_merge(
+                                $tenantConfig['pricing_manager_options'],
+                                $pricingManagerOptions
+                            );
+                        }
+                    }
+
+                    return $v;
+                })
+            ->end()
             ->children()
+                ->booleanNode('enabled')
+                    ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
+                ->end()
                 ->scalarNode('pricing_manager_id')
-                    ->info('Service id of pricing manager')
-                    ->cannotBeEmpty()
-                    ->defaultValue(PricingManager::class)
+                    ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
                 ->end()
                 ->arrayNode('pricing_manager_options')
-                    ->info('Options for pricing manager')
-                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('rule_class')
-                            ->cannotBeEmpty()
-                            ->defaultValue(Rule::class)
+                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
                         ->end()
                         ->scalarNode('price_info_class')
-                            ->cannotBeEmpty()
-                            ->defaultValue(PriceInfo::class)
+                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
                         ->end()
                         ->scalarNode('environment_class')
-                            ->cannotBeEmpty()
-                            ->defaultValue(Environment::class)
+                            ->setDeprecated('The child node "%node%" at the root level path "%path%" is deprecated. Please migrate to the new tenant structure.')
                         ->end()
                     ->end()
                 ->end()
@@ -449,6 +492,53 @@ class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey('name')
                     ->prototype('scalar')
                         ->cannotBeEmpty()
+                    ->end()
+                ->end()
+                ->arrayNode('tenants')
+                    ->info('Configuration per tenant. If a _defaults key is set, it will be merged into every tenant. A tenant named "default" is mandatory.')
+                    ->useAttributeAsKey('name')
+                    ->validate()
+                        ->ifTrue(function (array $v) {
+                            return !array_key_exists('default', $v);
+                        })
+                        ->thenInvalid('Pricing manager needs at least a default tenant')
+                    ->end()
+                    ->beforeNormalization()
+                        ->always(function ($v) {
+                            if (empty($v) || !is_array($v)) {
+                                $v = [];
+                            }
+
+                            return $this->tenantProcessor->mergeTenantConfig($v);
+                        })
+                    ->end()
+                    ->prototype('array')
+                        ->canBeDisabled()
+                        ->children()
+                            ->scalarNode('pricing_manager_id')
+                                ->info('Service id of pricing manager')
+                                ->cannotBeEmpty()
+                                ->defaultValue(PricingManager::class)
+                            ->end()
+                            ->arrayNode('pricing_manager_options')
+                                ->info('Options for pricing manager')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->scalarNode('rule_class')
+                                        ->cannotBeEmpty()
+                                        ->defaultValue(Rule::class)
+                                    ->end()
+                                    ->scalarNode('price_info_class')
+                                        ->cannotBeEmpty()
+                                        ->defaultValue(PriceInfo::class)
+                                    ->end()
+                                    ->scalarNode('environment_class')
+                                        ->cannotBeEmpty()
+                                        ->defaultValue(Environment::class)
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end();

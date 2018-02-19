@@ -9,6 +9,7 @@ services:
             - '@service_container'
             - '@pimcore_ecommerce.locator.cart_manager'
             - '@pimcore_ecommerce.locator.order_manager'
+            - '@pimcore_ecommerce.locator.pricing_manager'
             - '@pimcore_ecommerce.locator.price_system'
             - '@pimcore_ecommerce.locator.availability_system'
             - '@pimcore_ecommerce.locator.checkout_manager.factory'
