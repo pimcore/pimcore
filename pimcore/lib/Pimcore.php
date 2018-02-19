@@ -394,7 +394,7 @@ class Pimcore
         }
 
         // magic parameter for debugging ExtJS stuff
-        if (array_key_exists('disable_minify_js', $_REQUEST) && self::inDebugMode(DebugMode::MAGIC_PARAMS)) {
+        if (array_key_exists('unminified_js', $_REQUEST) && self::inDebugMode(DebugMode::MAGIC_PARAMS)) {
             return true;
         }
 
