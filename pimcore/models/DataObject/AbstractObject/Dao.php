@@ -334,7 +334,7 @@ class Dao extends Model\Element\Dao
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
-            $query .= " AND (select list as locate from users_workspaces_object where userId in (" . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
+            $query .= ' AND (select list as locate from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
         }
 
         $c = $this->db->fetchOne($query, $this->model->getId());

@@ -70,6 +70,7 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     {
         $asset = \Pimcore\Model\Asset::getById($request->get('id'));
         $exportResult = $service->doExportData($asset);
+
         return $exportResult;
     }
 }

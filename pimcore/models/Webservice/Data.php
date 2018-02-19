@@ -62,7 +62,6 @@ abstract class Data
             }
         }
 
-
         if ($object instanceof Element\ElementInterface) {
             // add notes and events
             $list = new Element\Note\Listing();
@@ -73,7 +72,6 @@ abstract class Data
             $list->setCondition($condition);
 
             $list = $list->load();
-
 
             $noteList = [];
             if (is_array($list)) {

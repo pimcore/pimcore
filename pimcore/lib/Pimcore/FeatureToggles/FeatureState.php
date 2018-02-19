@@ -67,7 +67,7 @@ class FeatureState implements FeatureStateInterface
         if (0 === $value) {
             if ($this->value > 0) {
                 return false;
-            } else if (0 === $this->value) {
+            } elseif (0 === $this->value) {
                 return true;
             }
         }

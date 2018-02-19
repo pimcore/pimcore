@@ -39,8 +39,7 @@ class PimcoreDataCollector extends DataCollector
     public function __construct(
         PimcoreContextResolver $contextResolver,
         FeatureManagerInterface $featureManager
-    )
-    {
+    ) {
         $this->contextResolver = $contextResolver;
         $this->featureManager  = $featureManager;
     }

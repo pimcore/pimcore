@@ -1052,9 +1052,11 @@ class Service extends Model\AbstractModel
 
     /**
      * @param Note $note
+     *
      * @return array
      */
-    public static function getNoteData(Note $note) {
+    public static function getNoteData(Note $note)
+    {
         $cpath = '';
         if ($note->getCid() && $note->getCtype()) {
             if ($element = Service::getElementById($note->getCtype(), $note->getCid())) {
@@ -1118,6 +1120,7 @@ class Service extends Model\AbstractModel
                 $e['user'] = '';
             }
         }
+
         return $e;
     }
 }

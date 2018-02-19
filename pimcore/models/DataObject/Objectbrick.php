@@ -272,7 +272,7 @@ class Objectbrick extends Model\AbstractModel
 
         if (is_array($this->brickGetters)) {
             foreach ($this->brickGetters as $brickGetter) {
-                if (isset($this->$brickGetter)  && $this->$brickGetter instanceof  \__PHP_Incomplete_Class) {
+                if (isset($this->$brickGetter) && $this->$brickGetter instanceof  \__PHP_Incomplete_Class) {
                     $this->$brickGetter = null;
                     Logger::error('brick ' . $brickGetter . ' does not exist anymore');
                 }

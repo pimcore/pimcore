@@ -56,7 +56,7 @@ class NumberRange extends AbstractFilterType
             if (!empty($value['to'])) {
                 if ($isPrecondition) {
                     $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $productList->quote($value['to']), 'PRECONDITION_' . $this->getField($filterDefinition));
-                } elseif($value['to'] != AbstractFilterType::EMPTY_STRING) {
+                } elseif ($value['to'] != AbstractFilterType::EMPTY_STRING) {
                     $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $productList->quote($value['to']), $this->getField($filterDefinition));
                 }
             }
