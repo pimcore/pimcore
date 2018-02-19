@@ -82,7 +82,7 @@ it was before for backwards compatibility reasons. If a value is set globally it
 
 The debug mode was changed from being a boolean setting to a more granular feature flag setting. If you query the debug 
 mode in your code, you might update the call to specify which kind of debug setting you want to query. See
-[Feature Flags and Debug Mode](../../19_Development_Tools_and_Details/03_Feature_Flags_Debug_Mode.md) for details.
+[Feature Flags and Debug Mode](../../19_Development_Tools_and_Details/03_Feature_Flags_And_Debug_Mode.md) for details.
 
 ## Build 195 (2018-02-01)
 
