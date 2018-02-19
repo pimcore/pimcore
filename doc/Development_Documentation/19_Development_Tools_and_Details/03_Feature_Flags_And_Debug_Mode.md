@@ -6,10 +6,11 @@ feature flag system for its own Debug Mode and Dev Mode flags. One or more featu
 `FeatureManagerInterface` in your code in a DI context.
 
 > As soon as you set a custom state on the feature manager, the default behavior (e.g. reading debug mode setting from the
-  `debug-mode.php` config file will be omitted.
+  `debug-mode.php` config file) will be omitted.
   
 To define and query a set of features define a feature as a bit field enum extending the `Pimcore\FeatureToggles\Feature`
-class. This class can be used to set and query a feature state on the feature manager. Besides the flags you define on
+class (internally the class uses the [myclabs/php-enum library](https://github.com/myclabs/php-enum) to implement an enum-like
+type in PHP). This class can be used to set and query a feature state on the feature manager. Besides the flags you define on
 your feature class, the `Feature` base class will define a special `NONE` and an `ALL` value representing all flags turned
 off and all flags turned on. To register a state on the feature manager, set a `FeatureState` object on the manager which
 contains a `type` (e.g. `debug_mode`) and a `value` (an integer value representing one or more flags in the bit field).
