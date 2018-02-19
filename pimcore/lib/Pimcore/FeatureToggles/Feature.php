@@ -56,6 +56,7 @@ abstract class Feature extends Enum
 
         // add a magic ALL constant
         $allMask = 0;
+        $count   = 0;
         $defined = [];
 
         foreach ($constants as $name => $mask) {
@@ -96,6 +97,11 @@ abstract class Feature extends Enum
                     $name,
                     $defined[$mask]
                 ));
+            }
+
+            // limit flags to 31 as ALL would exceed PHP_INT_MAX on 32-bit systems with more flags
+            if (++$count > 31) {
+                throw new \LogicException('A feature can have a maximum of 31 flags excluding NONE and ALL.');
             }
 
             $defined[$mask] = $name;
