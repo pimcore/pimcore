@@ -373,6 +373,7 @@ CREATE TABLE `objects` (
   `o_userModification` int(11) unsigned DEFAULT NULL,
   `o_classId` int(11) unsigned DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
+  `o_childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
   PRIMARY KEY (`o_id`),
   UNIQUE KEY `fullpath` (`o_path`,`o_key`),
   KEY `key` (`o_key`),

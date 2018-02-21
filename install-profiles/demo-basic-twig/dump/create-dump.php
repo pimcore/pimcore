@@ -50,6 +50,12 @@ foreach ($tables as $name) {
         continue;
     }
 
+    $tableColumns = [];
+    $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $name);
+    foreach ($data as $dataRow) {
+        $tableColumns[] = $dataRow['Field'];
+    }
+
     $tableData = $db->fetchAll('SELECT * FROM ' . $name);
 
     foreach ($tableData as $row) {
@@ -64,8 +70,12 @@ foreach ($tables as $name) {
             $cells[] = $cell;
         }
 
-        $dumpData .= 'INSERT INTO `' . $name . '` VALUES (' . implode(',', $cells) . ');';
-        $dumpData .= "\n";
+        $dumpData .= sprintf(
+            "INSERT INTO %s (%s) VALUES (%s);\n",
+            $name,
+            implode(',', $tableColumns),
+            implode(',', $cells)
+        );
     }
 }
 
