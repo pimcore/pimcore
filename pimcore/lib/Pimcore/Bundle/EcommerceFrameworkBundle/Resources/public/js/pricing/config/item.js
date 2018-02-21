@@ -1106,10 +1106,46 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
         });
 
         return item;
+    },
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    conditionTenant: function (panel, data, getName) {
+        var niceName = t("bundle_ecommerce_pricing_config_condition_tenant");
+        if (typeof getName !== "undefined" && getName) {
+            return niceName;
+        }
+
+        // check params
+        if (typeof data === "undefined") {
+            data = {};
+        }
+
+        // create item
+        var myId = Ext.id();
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            type: 'Tenant',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionTenant"),
+            items: [{
+                xtype: "textfield",
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_tenant_tenant"),
+                name: "tenant",
+                width: 350,
+                value: data.tenant
+            }]
+        });
+
+        return item;
     }
-
 };
-
 
 
 /**

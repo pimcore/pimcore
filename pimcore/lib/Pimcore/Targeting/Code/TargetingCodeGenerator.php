@@ -20,6 +20,7 @@ namespace Pimcore\Targeting\Code;
 use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Event\Targeting\TargetingCodeEvent;
 use Pimcore\Event\TargetingEvents;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -62,7 +63,7 @@ class TargetingCodeGenerator
     public function generateCode(VisitorInfo $visitorInfo): string
     {
         $data = [
-            'inDebugMode'      => \Pimcore::inDebugMode(),
+            'inDebugMode'      => \Pimcore::inDebugMode(DebugMode::TARGETING),
             'dataProviderKeys' => $visitorInfo->getFrontendDataProviders()
         ];
 

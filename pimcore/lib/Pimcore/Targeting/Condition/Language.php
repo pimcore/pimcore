@@ -17,7 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Condition;
 
+use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\Model\VisitorInfo;
+use Symfony\Component\HttpFoundation\Request;
 
 class Language extends AbstractVariableCondition implements ConditionInterface
 {
@@ -57,7 +59,7 @@ class Language extends AbstractVariableCondition implements ConditionInterface
     {
         $request = $visitorInfo->getRequest();
 
-        $language = $request->getPreferredLanguage();
+        $language = $this->loadLanguage($request);
         if (empty($language)) {
             return false;
         }
@@ -80,5 +82,16 @@ class Language extends AbstractVariableCondition implements ConditionInterface
         }
 
         return false;
+    }
+
+    protected function loadLanguage(Request $request)
+    {
+        // handle override
+        $language = OverrideAttributeResolver::getOverrideValue($request, 'language');
+        if (!empty($language)) {
+            return $language;
+        }
+
+        return $request->getPreferredLanguage();
     }
 }

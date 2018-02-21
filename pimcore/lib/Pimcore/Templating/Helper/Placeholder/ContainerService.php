@@ -37,17 +37,77 @@
 
 namespace Pimcore\Templating\Helper\Placeholder;
 
+use Pimcore\Event\DocumentEvents;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 /**
  * Registry for placeholder containers
  */
 class ContainerService
 {
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @var int
+     */
+    private $currentIndex = 0;
+
+    /**
      * Placeholder containers
      *
      * @var array
      */
     protected $_items = [];
+
+    public function __construct()
+    {
+        $this->_items[$this->currentIndex] = [];
+    }
+
+    /**
+     * TODO Pimcore 6 set event dispatcher as constructor parameter
+     *
+     * @internal
+     * @required
+     *
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+
+        // lazily add event listeners - these listeners are only added if the container service is actually built
+        // when rendering a new document, the index is pushed to create a new, empty context
+        $eventDispatcher->addListener(DocumentEvents::RENDERER_PRE_RENDER, [$this, 'pushIndex']);
+        $eventDispatcher->addListener(DocumentEvents::RENDERER_POST_RENDER, [$this, 'popIndex']);
+    }
+
+    public function pushIndex()
+    {
+        ++$this->currentIndex;
+
+        if (isset($this->_items[$this->currentIndex])) {
+            throw new \RuntimeException(sprintf('Items at index %d already exist', $this->currentIndex));
+        }
+
+        $this->_items[$this->currentIndex] = [];
+    }
+
+    public function popIndex()
+    {
+        if (0 === $this->currentIndex) {
+            throw new \OutOfBoundsException('Current index is already at 0');
+        }
+
+        if (isset($this->_items[$this->currentIndex])) {
+            unset($this->_items[$this->currentIndex]);
+        }
+
+        --$this->currentIndex;
+    }
 
     /**
      * createContainer
@@ -61,9 +121,9 @@ class ContainerService
     {
         $key = (string) $key;
 
-        $this->_items[$key] = new Container($value);
+        $this->_items[$this->currentIndex][$key] = new Container($value);
 
-        return $this->_items[$key];
+        return $this->_items[$this->currentIndex][$key];
     }
 
     /**
@@ -76,8 +136,8 @@ class ContainerService
     public function getContainer($key)
     {
         $key = (string) $key;
-        if (isset($this->_items[$key])) {
-            return $this->_items[$key];
+        if (isset($this->_items[$this->currentIndex][$key])) {
+            return $this->_items[$this->currentIndex][$key];
         }
 
         $container = $this->createContainer($key);
@@ -95,7 +155,7 @@ class ContainerService
     public function containerExists($key)
     {
         $key = (string) $key;
-        $return =  array_key_exists($key, $this->_items);
+        $return =  array_key_exists($key, $this->_items[$this->currentIndex]);
 
         return $return;
     }
@@ -111,7 +171,7 @@ class ContainerService
     public function setContainer($key, Container $container)
     {
         $key = (string) $key;
-        $this->_items[$key] = $container;
+        $this->_items[$this->currentIndex][$key] = $container;
 
         return $this;
     }
@@ -126,8 +186,8 @@ class ContainerService
     public function deleteContainer($key)
     {
         $key = (string) $key;
-        if (isset($this->_items[$key])) {
-            unset($this->_items[$key]);
+        if (isset($this->_items[$this->currentIndex][$key])) {
+            unset($this->_items[$this->currentIndex][$key]);
 
             return true;
         }

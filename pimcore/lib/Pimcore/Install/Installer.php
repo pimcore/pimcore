@@ -22,6 +22,10 @@ use Doctrine\DBAL\DriverManager;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
+use Pimcore\Extension;
+use Pimcore\Extension\Bundle\Config\StateConfig;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Pimcore\Install\Event\InstallerStepEvent;
 use Pimcore\Install\Profile\FileInstaller;
 use Pimcore\Install\Profile\Profile;
 use Pimcore\Install\Profile\ProfileLocator;
@@ -31,12 +35,15 @@ use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class Installer
 {
+    const EVENT_NAME_STEP = 'pimcore.installer.step';
+
     /**
      * @var LoggerInterface
      */
@@ -51,6 +58,11 @@ class Installer
      * @var FileInstaller
      */
     private $fileInstaller;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * If false, profile files won't be copied/symlinked
@@ -88,14 +100,33 @@ class Installer
      */
     private $commandLineOutput;
 
+    /**
+     * @var array
+     */
+    private $stepEvents = [
+        'validate_parameters' => 'Validating input parameters...',
+        'check_prerequisites' => 'Checking prerequisites...',
+        'load_profile'        => 'Loading install profile...',
+        'start_install'       => 'Starting installation...',
+        'copy_files'          => 'Copying profile files...',
+        'create_config_files' => 'Creating config files...',
+        'boot_kernel'         => 'Booting new kernel...',
+        'setup_database'      => 'Running database setup...',
+        'install_assets'      => 'Installing assets...',
+        'install_bundles'     => 'Installing bundles...',
+        'complete'            => 'Install complete!'
+    ];
+
     public function __construct(
         LoggerInterface $logger,
         ProfileLocator $profileLocator,
-        FileInstaller $fileInstaller
+        FileInstaller $fileInstaller,
+        EventDispatcherInterface $eventDispatcher
     ) {
-        $this->logger         = $logger;
-        $this->profileLocator = $profileLocator;
-        $this->fileInstaller  = $fileInstaller;
+        $this->logger          = $logger;
+        $this->profileLocator  = $profileLocator;
+        $this->fileInstaller   = $fileInstaller;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function setInstallProfileFiles(bool $installFiles)
@@ -138,30 +169,64 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function checkPrerequisites(): array
+    public function checkPrerequisites(Connection $db = null): array
     {
-        /** @var Check[] $checks */
         $checks = array_merge(
             Requirements::checkFilesystem(),
-            Requirements::checkPhp()
+            Requirements::checkPhp(),
+            null !== $db ? Requirements::checkMysql($db) : []
         );
 
-        $errors = [];
+        return $this->formatPrerequisiteMessages($checks, [Check::STATE_ERROR]);
+    }
+
+    /**
+     * @param Check[] $checks
+     * @param array $filterStates
+     *
+     * @return array
+     */
+    public function formatPrerequisiteMessages(array $checks, array $filterStates = [Check::STATE_ERROR])
+    {
+        $messages = [];
         foreach ($checks as $check) {
-            if ($check->getState() === Check::STATE_ERROR) {
-                if ($check->getLink()) {
-                    if ('cli' === php_sapi_name()) {
-                        $errors[] = sprintf('%s (see %s)', $check->getMessage(), $check->getLink());
-                    } else {
-                        $errors[] = sprintf('<a href="%s" target="_blank">%s</a>', $check->getLink(), $check->getMessage());
-                    }
+            if (empty($filterStates) || !in_array($check->getState(), $filterStates)) {
+                continue;
+            }
+
+            if ($check->getLink()) {
+                if ('cli' === php_sapi_name()) {
+                    $messages[] = sprintf('%s (see %s)', $check->getMessage(), $check->getLink());
                 } else {
-                    $errors[] = $check->getMessage();
+                    $messages[] = sprintf('<a href="%s" target="_blank">%s</a>', $check->getLink(), $check->getMessage());
                 }
+            } else {
+                $messages[] = $check->getMessage();
             }
         }
 
-        return $errors;
+        return $messages;
+    }
+
+    public function getStepEventCount(): int
+    {
+        return count($this->stepEvents);
+    }
+
+    private function dispatchStepEvent(string $type, string $message = null)
+    {
+        if (!isset($this->stepEvents[$type])) {
+            throw new \InvalidArgumentException(sprintf('Trying to dispatch unsupported event type "%s"', $type));
+        }
+
+        $message = $message ?? $this->stepEvents[$type];
+        $step    = array_search($type, array_keys($this->stepEvents)) + 1;
+
+        $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
+
+        $this->eventDispatcher->dispatch(self::EVENT_NAME_STEP, $event);
+
+        return $event;
     }
 
     /**
@@ -171,7 +236,10 @@ class Installer
      */
     public function install(array $params): array
     {
+        $this->dispatchStepEvent('validate_parameters');
+
         $dbConfig = $this->resolveDbConfig($params);
+        $errors   = [];
 
         // try to establish a mysql connection
         try {
@@ -180,26 +248,18 @@ class Installer
             /** @var Connection $db */
             $db = DriverManager::getConnection($dbConfig, $config);
 
-            // check utf-8 encoding
-            $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
-            if (!in_array($result['Value'], ['utf8mb4'])) {
-                $errors[] = 'Database charset is not utf8mb4';
-            }
+            $this->dispatchStepEvent('check_prerequisites');
 
-            $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
-            if ($largePrefix && $largePrefix['Value'] != 'ON') {
-                $errors[] = 'MySQL/MariaDB system variable innodb_large_prefix must be ON';
-            }
-            $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
-            if ($fileFormat && $fileFormat['Value'] != 'Barracuda') {
-                $errors[] = 'MySQL/MariaDB system variable innodb_file_format must be Barracuda';
-            }
-            $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
-            if ($fileFilePerTable && $fileFilePerTable['Value'] != 'ON') {
-                $errors[] = 'MySQL/MariaDB system variable innodb_file_per_table must be ON';
+            // check all db-requirements before install
+            $errors = $this->checkPrerequisites($db);
+
+            if (count($errors) > 0) {
+                return $errors;
             }
         } catch (\Exception $e) {
             $errors[] = sprintf('Couldn\'t establish connection to MySQL: %s', $e->getMessage());
+
+            return $errors;
         }
 
         // check username & password
@@ -228,6 +288,8 @@ class Installer
 
         $profile = null;
 
+        $this->dispatchStepEvent('load_profile');
+
         try {
             $profile = $this->profileLocator->getProfile($profileId);
         } catch (\Exception $e) {
@@ -239,6 +301,8 @@ class Installer
         if (!empty($errors)) {
             return $errors;
         }
+
+        $this->dispatchStepEvent('start_install');
 
         try {
             return $this->runInstall(
@@ -301,6 +365,8 @@ class Installer
             'profile' => $profile->getName()
         ]);
 
+        $this->dispatchStepEvent('copy_files');
+
         $errors = [];
         if ($this->installProfileFiles) {
             $errors = $this->fileInstaller->installFiles($profile, $this->overwriteExistingFiles, $this->symlink);
@@ -308,6 +374,8 @@ class Installer
                 return $errors;
             }
         }
+
+        $this->dispatchStepEvent('create_config_files');
 
         $dbConfig['username'] = $dbConfig['user'];
         unset($dbConfig['user']);
@@ -320,11 +388,15 @@ class Installer
             ],
         ]);
 
+        $this->enableBundles($profile);
+
+        $this->dispatchStepEvent('boot_kernel');
+
         // resolve environment with default=dev here as we set debug mode to true and want to
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
         $environment = Config::getEnvironment(true, 'dev');
-        $kernel = new \AppKernel($environment, true);
+        $kernel      = new \AppKernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -332,12 +404,18 @@ class Installer
 
         $kernel->boot();
 
+        $this->dispatchStepEvent('setup_database');
+
         $setup = new Setup();
         $setup->database();
 
         $errors = $this->setupProfileDatabase($setup, $profile, $userCredentials, $errors);
 
+        $this->dispatchStepEvent('install_assets');
         $this->installAssets($kernel);
+
+        $this->dispatchStepEvent('install_bundles');
+        $errors = array_merge($this->installBundles($kernel, $profile), $errors);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -368,13 +446,55 @@ class Installer
                 return;
             }
 
+            $stdErr  = $io->getErrorStyle();
             $process = $e->getProcess();
 
-            $io->writeln($process->getOutput());
+            $errorOutput = trim($process->getErrorOutput());
+            if (!empty($errorOutput)) {
+                $stdErr->write($errorOutput);
+            }
 
-            $io->note('Installing assets failed. Please run the following command manually:');
-            $io->writeln('  ' . $process->getCommandLine());
+            $stdErr->write($process->getOutput());
+            $stdErr->write($process->getErrorOutput());
+            $stdErr->note('Installing assets failed. Please run the following command manually:');
+            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
         }
+    }
+
+    private function enableBundles(Profile $profile)
+    {
+        $stateConfig = new StateConfig(new Extension\Config());
+
+        foreach ($profile->getBundlesToEnable() as $id => $config) {
+            $stateConfig->setState($id, $config);
+        }
+    }
+
+    private function installBundles(KernelInterface $kernel, Profile $profile): array
+    {
+        if (empty($installBundles = $profile->getBundlesToInstall())) {
+            return [];
+        }
+
+        $bundleManager = $kernel->getContainer()->get(PimcoreBundleManager::class);
+        $errors        = [];
+
+        foreach ($installBundles as $installBundle) {
+            if (null !== $this->commandLineOutput) {
+                $this->commandLineOutput->writeln(sprintf('  <comment>*</comment> Installing bundle <info>%s</info>', $installBundle));
+            }
+
+            try {
+                $bundle = $bundleManager->getActiveBundle($installBundle, false);
+                if ($bundleManager->canBeInstalled($bundle)) {
+                    $bundleManager->install($bundle);
+                }
+            } catch (\Throwable $e) {
+                $errors[] = $e->getMessage();
+            }
+        }
+
+        return $errors;
     }
 
     private function createConfigFiles(array $config)

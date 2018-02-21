@@ -22,22 +22,20 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Model\WebsiteSetting;
 
 abstract class AbstractPriceSystem implements IPriceSystem
 {
     /**
-     * @var IPricingManager
+     * @var IPricingManagerLocator
      */
-    protected $pricingManager;
+    protected $pricingManagers;
 
-    /**
-     * @param IPricingManager $pricingManager
-     */
-    public function __construct(IPricingManager $pricingManager)
+    public function __construct(IPricingManagerLocator $pricingManagers)
     {
-        $this->pricingManager = $pricingManager;
+        $this->pricingManagers = $pricingManagers;
     }
 
     /**
@@ -71,9 +69,14 @@ abstract class AbstractPriceSystem implements IPriceSystem
         $priceInfo->setPriceSystem($this);
 
         // apply pricing rules
-        $priceInfoWithRules = $this->pricingManager->applyProductRules($priceInfo);
+        $priceInfoWithRules = $this->getPricingManager()->applyProductRules($priceInfo);
 
         return $priceInfoWithRules;
+    }
+
+    protected function getPricingManager(): IPricingManager
+    {
+        return $this->pricingManagers->getPricingManager();
     }
 
     /**

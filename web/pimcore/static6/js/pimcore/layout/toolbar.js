@@ -517,15 +517,21 @@ pimcore.layout.toolbar = Class.create({
                     menu: {
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
-                        items: [{
-                            text: t("global_targeting_rules"),
-                            iconCls: "pimcore_icon_targeting",
-                            handler: this.showTargetingRules
-                        }, {
-                            text: t('target_groups'),
-                            iconCls: "pimcore_icon_target_groups",
-                            handler: this.showTargetGroups
-                        }]
+                        items: [
+                            {
+                                text: t("global_targeting_rules"),
+                                iconCls: "pimcore_icon_targeting",
+                                handler: this.showTargetingRules
+                            }, {
+                                text: t('target_groups'),
+                                iconCls: "pimcore_icon_target_groups",
+                                handler: this.showTargetGroups
+                            }, {
+                                text: t("targeting_toolbar"),
+                                iconCls: "pimcore_icon_targeting_toolbar",
+                                handler: this.showTargetingToolbarSettings
+                            }
+                        ]
                     }
                 });
             }
@@ -996,10 +1002,10 @@ pimcore.layout.toolbar = Class.create({
             }
 
             // admin translations only for admins
-            if (user.admin) {
+            if (user.isAllowed('admin_translations')) {
                 if (perspectiveCfg.inToolbar("settings.adminTranslations")) {
                     settingsItems.push({
-                        text: t("translations_admin"),
+                        text: t("admin_translations"),
                         iconCls: "pimcore_icon_translations",
                         handler: this.editTranslationsSpecific
                     });
@@ -1403,6 +1409,10 @@ pimcore.layout.toolbar = Class.create({
 
             pimcore.layout.refresh();
         }
+    },
+
+    showTargetingToolbarSettings: function () {
+        new pimcore.settings.targetingToolbar();
     },
 
     notes: function () {

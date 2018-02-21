@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 
 class DefaultMockup implements IProduct
@@ -130,7 +131,8 @@ class DefaultMockup implements IProduct
             }
         }
         $msg = "Method $method not in Mockup implemented, delegating to object with id {$this->id}.";
-        if (PIMCORE_DEBUG) {
+
+        if (\Pimcore::inDebugMode(DebugMode::LOG)) {
             Logger::warn($msg);
         } else {
             Logger::info($msg);

@@ -63,5 +63,9 @@ services:
         arguments:
             $config: '%pimcore.gdpr-data-extrator.dataobjects%'
 
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Assets:
+        arguments:
+            $config: '%pimcore.gdpr-data-extrator.assets%'
+
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers: ~

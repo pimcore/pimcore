@@ -18,14 +18,23 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle\Command;
 
 use Pimcore\Config;
+use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
+use Pimcore\Install\Event\InstallerStepEvent;
 use Pimcore\Install\Installer;
 use Pimcore\Install\Profile\ProfileLocator;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @method Application getApplication()
+ */
 class InstallCommand extends Command
 {
     /**
@@ -39,6 +48,11 @@ class InstallCommand extends Command
     private $profileLocator;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @var PimcoreStyle
      */
     private $io;
@@ -48,14 +62,14 @@ class InstallCommand extends Command
      */
     private $options;
 
-    /**
-     * @param Installer $installer
-     * @param ProfileLocator $profileLocator
-     */
-    public function __construct(Installer $installer, ProfileLocator $profileLocator)
-    {
-        $this->installer      = $installer;
-        $this->profileLocator = $profileLocator;
+    public function __construct(
+        Installer $installer,
+        ProfileLocator $profileLocator,
+        EventDispatcherInterface $eventDispatcher
+    ) {
+        $this->installer       = $installer;
+        $this->profileLocator  = $profileLocator;
+        $this->eventDispatcher = $eventDispatcher;
 
         parent::__construct();
     }
@@ -108,7 +122,7 @@ class InstallCommand extends Command
                 'mode'         => InputOption::VALUE_REQUIRED,
                 'insecure'     => true,
                 'hidden-input' => true,
-                'group'       => 'db_credentials',
+                'group'        => 'db_credentials',
             ],
             'mysql-database'    => [
                 'description' => 'MySQL database',
@@ -201,8 +215,6 @@ class InstallCommand extends Command
         }
 
         $this->io = new PimcoreStyle($input, $output);
-
-        $this->installer->setCommandLineOutput($this->io);
 
         foreach ($this->getOptions() as $name => $config) {
             if (!$this->installerNeedsOption($config)) {
@@ -354,10 +366,44 @@ class InstallCommand extends Command
             return 2;
         }
 
-        $this->io->comment('Running installation. You\'ll see the installation log as installation proceeds.');
+        $this->io->writeln(sprintf(
+            'Running installation. You can find a detailed install log in <comment>var/installer/logs/%s.log</comment>',
+            $this->getApplication()->getKernel()->getEnvironment()
+        ));
+
+        $this->io->newLine();
+
+        $progressBar = new ProgressBar($output, $this->installer->getStepEventCount());
+        $progressBar->setMessage('Starting the install process...');
+        $progressBar->setFormat("<info>%message%</info>\n\n %current%/%max% [%bar%] %percent:3s%%\n");
+        $progressBar->start();
+
+        $this->eventDispatcher->addListener(
+            Installer::EVENT_NAME_STEP,
+            function (InstallerStepEvent $event) use ($progressBar) {
+                $progressBar->setMessage($event->getMessage());
+                $progressBar->advance();
+            }
+        );
+
+        // catch installer output in a buffered output and write results after progress bar is finished
+        $installerOutput      = new BufferedOutput($output->getVerbosity(), $output->isDecorated(), $output->getFormatter());
+        $installerErrorOutput = new BufferedOutput($output->getVerbosity(), $output->isDecorated(), $output->getFormatter());
+
+        $this->installer->setCommandLineOutput(new PimcoreStyle(
+            $input,
+            new ConsoleOutputDecorator($installerOutput, $installerErrorOutput)
+        ));
 
         $installErrors = $this->installer->install($params);
-        $this->io->newLine();
+
+        if (0 === count($installErrors)) {
+            $progressBar->finish();
+        }
+
+        $this->io->newLine(2);
+
+        $this->writeInstallerOutputResults($installerOutput, $installerErrorOutput);
 
         if (count($installErrors) > 0) {
             $this->io->error('The following errors were encountered during installation');
@@ -366,6 +412,20 @@ class InstallCommand extends Command
             return 2;
         } else {
             $this->io->success('Pimcore was successfully installed');
+        }
+    }
+
+    private function writeInstallerOutputResults(BufferedOutput $output, BufferedOutput $errorOutput)
+    {
+        $outputResults = $output->fetch();
+        if (!empty($outputResults)) {
+            $this->io->write($outputResults);
+        }
+
+        $errorResults = $errorOutput->fetch();
+        if (!empty($errorResults)) {
+            $this->io->getErrorStyle()->write($errorResults);
+            $this->io->getErrorStyle()->newLine(2);
         }
     }
 }

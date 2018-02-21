@@ -250,7 +250,7 @@ class EditmodeListener implements EventSubscriberInterface
         }
 
         // combine the pimcore scripts in non-devmode
-        if ($config->general->devmode) {
+        if (\Pimcore::disableMinifyJs()) {
             foreach ($scripts as $script) {
                 $headHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . '"></script>';
                 $headHtml .= "\n";
@@ -287,11 +287,13 @@ class EditmodeListener implements EventSubscriberInterface
      */
     protected function getEditmodeLibraries()
     {
+        $disableMinifyJs = \Pimcore::disableMinifyJs();
+
         return [
             '/pimcore/static6/js/pimcore/common.js',
             '/pimcore/static6/js/lib/prototype-light.js',
             '/pimcore/static6/js/lib/jquery-3.3.1.min.js',
-            '/pimcore/static6/js/lib/ext/ext-all' . (PIMCORE_DEVMODE ? '-debug' : '') . '.js',
+            '/pimcore/static6/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
             '/pimcore/static6/js/lib/ckeditor/ckeditor.js'
         ];
     }

@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
@@ -263,5 +264,28 @@ class Objectbrick extends Model\AbstractModel
         }
 
         $this->getDao()->delete($object);
+    }
+
+    public function __wakeup()
+    {
+        // sanity check, remove data requiring non-existing (deleted) brick definitions
+
+        if (is_array($this->brickGetters)) {
+            foreach ($this->brickGetters as $brickGetter) {
+                if (isset($this->$brickGetter) && $this->$brickGetter instanceof  \__PHP_Incomplete_Class) {
+                    $this->$brickGetter = null;
+                    Logger::error('brick ' . $brickGetter . ' does not exist anymore');
+                }
+            }
+        }
+
+        if (is_array($this->items)) {
+            foreach ($this->items as $key => $item) {
+                if ($item instanceof \__PHP_Incomplete_Class) {
+                    unset($this->items[$key]);
+                    Logger::error('brick ' . $brickGetter . ' does not exist anymore');
+                }
+            }
+        }
     }
 }

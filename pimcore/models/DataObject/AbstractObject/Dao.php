@@ -295,7 +295,7 @@ class Dao extends Model\Element\Dao
      */
     public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER])
     {
-        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
+        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1", $this->model->getId());
 
         return (bool)$c;
     }
@@ -317,21 +317,24 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly childs (not recursivly)
      *
-     * @param array $objectTypes
+     * @param array|null $objectTypes
      * @param Model\User $user
      *
      * @return int
      */
     public function getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $user = null)
     {
+        $query = 'SELECT COUNT(*) AS count FROM objects o WHERE o_parentId = ?';
+
+        if (!empty($objectTypes)) {
+            $query .= sprintf(' AND o_type IN (\'%s\')', implode("','", $objectTypes));
+        }
+
         if ($user and !$user->isAdmin()) {
             $userIds = $user->getRoles();
             $userIds[] = $user->getId();
 
-            $query = "SELECT COUNT(*) AS count FROM objects o WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')
-                              AND (select list as locate from users_workspaces_object where userId in (" . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
-        } else {
-            $query = "SELECT COUNT(*) AS count FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')";
+            $query .= ' AND (select list as locate from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o.o_path,o.o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
         }
 
         $c = $this->db->fetchOne($query, $this->model->getId());

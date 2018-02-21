@@ -1618,6 +1618,9 @@ pimcore.helpers.sendTestEmail = function () {
                         }
                     }
                 });
+            },
+            failure: function () {
+                win.close();
             }
         });
     };

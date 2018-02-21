@@ -23,7 +23,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 
-class DataObjects implements DataProviderInterface
+class DataObjects extends Elements implements DataProviderInterface
 {
     /**
      * @var \Pimcore\Model\Webservice\Service
@@ -60,14 +60,6 @@ class DataObjects implements DataProviderInterface
     public function getJsClassName(): string
     {
         return 'pimcore.settings.gdpr.dataproviders.dataObjects';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSortPriority(): int
-    {
-        return 10;
     }
 
     /**
@@ -234,16 +226,11 @@ class DataObjects implements DataProviderInterface
         return ['data' => $elements, 'success' => true, 'total' => $totalMatches];
     }
 
-    protected function prepareQueryString($query): string
+    /**
+     * @inheritdoc
+     */
+    public function getSortPriority(): int
     {
-        if ($query == '*') {
-            $query = '';
-        }
-
-        $query = str_replace('%', '*', $query);
-        $query = str_replace('@', '#', $query);
-        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
-
-        return $query;
+        return 10;
     }
 }

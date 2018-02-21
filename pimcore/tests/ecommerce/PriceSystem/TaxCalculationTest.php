@@ -11,6 +11,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Tests\Test\EcommerceTestCase;
@@ -251,9 +252,15 @@ class TaxCalculationTest extends EcommerceTestCase
 
     public function testPriceSystem()
     {
-        $pricingManager = new PricingManager([], [], $this->buildSession());
+        $environment = $this->buildEnvironment();
 
-        $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManager, $this->buildEnvironment()], [
+        $pricingManagers = Stub::make(PricingManagerLocator::class, [
+            'getPricingManager' => function () {
+                return new PricingManager([], [], $this->buildSession());
+            }
+        ]);
+
+        $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManagers, $environment], [
             'getTaxClassForProduct' => function () {
                 $taxClass = new OnlineShopTaxClass();
                 $taxClass->setTaxEntryCombinationType(TaxEntry::CALCULATION_MODE_COMBINE);

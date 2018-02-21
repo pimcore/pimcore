@@ -173,6 +173,8 @@ class PageController extends DocumentControllerBase
                                     $redirect = new Redirect();
                                 }
 
+                                $redirect->setType(Redirect::TYPE_PATH_QUERY);
+                                $redirect->setRegex(true);
                                 $redirect->setSource($settings['redirect_url_'.$i]);
                                 $redirect->setTarget($page->getId());
                                 $redirect->setStatusCode(301);

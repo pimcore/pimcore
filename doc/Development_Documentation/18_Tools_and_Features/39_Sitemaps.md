@@ -8,13 +8,13 @@ Pimcore includes the [`presta/sitemap-bundle`](https://github.com/prestaconcept/
 yet powerful API to generate XML sitemaps. Have a look at the bundle documentation on details how the bundle works and how
 you can add sitemaps to it. The bundle exposes a way to add sitemap entries by [firing an event](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/5-Usage-Event_Listener.md)
 which you can handle to add entries to an `UrlContainerInterface`. For simple scenarios, you can directly implement such
-and event handler and starting to add entries.
+an event handler and start to add entries.
 
 [TOC]
 
 ## Exposing Sitemaps
 
-Sitemaps can either be exposed by being generated on-the-fly or dumped to static files. What to use depends on the size
+Sitemaps can either be exposed by being generated on-the-fly or by being dumped to static files. What to use depends on the size
 of your site (e.g. the size of the tree which needs to be processed). In general it's recommended to create static files 
 as it reduces the overhead of creating the sitemap on every crawler request. If you want to serve the sitemap directly,
 you need to register the sitemaps routes in your routing config (see [PrestaSitemapBundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/1-Installation.md)
@@ -78,9 +78,9 @@ interface GeneratorInterface
 }
 ```
 
-When the sitemap bundles fires its `SitemapPopulateEvent::ON_SITEMAP_POPULATE` event, Pimcore will iterate through every
+When the sitemap bundle fires its `SitemapPopulateEvent::ON_SITEMAP_POPULATE` event, Pimcore will iterate through every
 registered generator and call the `populate()` method. To make a generator available to the event handler, it needs to be
-registered via config. `generator_id` in the config below references a generator service which was previously registered
+registered via config. `generator_id` in the config below references a generator which was previously registered
 as service. As you can see, generators can be enabled/disabled and ordered by priority.
 
 ```yaml

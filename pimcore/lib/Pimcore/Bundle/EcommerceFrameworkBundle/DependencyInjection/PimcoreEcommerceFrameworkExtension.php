@@ -26,6 +26,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -40,7 +42,6 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 {
     const SERVICE_ID_FACTORY = 'pimcore_ecommerce.factory';
     const SERVICE_ID_ENVIRONMENT = 'pimcore_ecommerce.environment';
-    const SERVICE_ID_PRICING_MANAGER = 'pimcore_ecommerce.pricing_manager';
     const SERVICE_ID_PAYMENT_MANAGER = 'pimcore_ecommerce.payment_manager';
     const SERVICE_ID_INDEX_SERVICE = 'pimcore_ecommerce.index_service';
     const SERVICE_ID_VOUCHER_SERVICE = 'pimcore_ecommerce.voucher_service';
@@ -211,17 +212,36 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     private function registerPricingManagerConfiguration(ContainerBuilder $container, array $config)
     {
-        $container
-            ->setAlias(
-                self::SERVICE_ID_PRICING_MANAGER,
-                $config['pricing_manager_id']
-            )
-            ->setPublic(true);
+        $mapping = [];
 
-        $container->setParameter('pimcore_ecommerce.pricing_manager.enabled', $config['enabled']);
         $container->setParameter('pimcore_ecommerce.pricing_manager.condition_mapping', $config['conditions']);
         $container->setParameter('pimcore_ecommerce.pricing_manager.action_mapping', $config['actions']);
-        $container->setParameter('pimcore_ecommerce.pricing_manager.options', $config['pricing_manager_options']);
+
+        foreach ($config['tenants'] as $tenant => $tenantConfig) {
+            $pricingManager = new ChildDefinition($tenantConfig['pricing_manager_id']);
+            $pricingManager->setAutowired(true);
+
+            if (!empty($tenantConfig['pricing_manager_options'])) {
+                $pricingManager->setArgument('$options', $tenantConfig['pricing_manager_options']);
+            }
+
+            $pricingManager->addMethodCall('setEnabled', [$tenantConfig['enabled']]);
+
+            $aliasName = sprintf('pimcore_ecommerce.pricing_manager.%s', $tenant);
+            $container->setDefinition($aliasName, $pricingManager);
+
+            $mapping[$tenant] = $aliasName;
+        }
+
+        $this->setupTenantAwareComponentLocator(
+            $container,
+            IPricingManagerLocator::class,
+            $mapping,
+            PricingManagerLocator::class,
+            [
+                'pimcore_ecommerce.locator.pricing_manager'
+            ]
+        );
     }
 
     private function registerPriceSystemsConfiguration(ContainerBuilder $container, array $config)

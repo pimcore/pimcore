@@ -35,6 +35,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
@@ -65,6 +66,13 @@ class Factory
      * @var IOrderManagerLocator
      */
     private $orderManagers;
+
+    /**
+     * Pricing managers registered by tenant
+     *
+     * @var IPricingManagerLocator
+     */
+    private $pricingManagers;
 
     /**
      * Price systems registered by name
@@ -109,6 +117,7 @@ class Factory
      * @param ContainerInterface $container
      * @param ICartManagerLocator $cartManagers
      * @param IOrderManagerLocator $orderManagers
+     * @param IPricingManagerLocator $pricingManagers
      * @param IPriceSystemLocator $priceSystems
      * @param IAvailabilitySystemLocator $availabilitySystems
      * @param ICheckoutManagerFactoryLocator $checkoutManagerFactories
@@ -119,6 +128,7 @@ class Factory
         ContainerInterface $container,
         ICartManagerLocator $cartManagers,
         IOrderManagerLocator $orderManagers,
+        IPricingManagerLocator $pricingManagers,
         IPriceSystemLocator $priceSystems,
         IAvailabilitySystemLocator $availabilitySystems,
         ICheckoutManagerFactoryLocator $checkoutManagerFactories,
@@ -128,6 +138,7 @@ class Factory
         $this->container                = $container;
         $this->cartManagers             = $cartManagers;
         $this->orderManagers            = $orderManagers;
+        $this->pricingManagers          = $pricingManagers;
         $this->priceSystems             = $priceSystems;
         $this->availabilitySystems      = $availabilitySystems;
         $this->checkoutManagerFactories = $checkoutManagerFactories;
@@ -171,9 +182,17 @@ class Factory
         return $this->orderManagers->getOrderManager($tenant);
     }
 
-    public function getPricingManager(): IPricingManager
+    /**
+     * Returns pricing manager for a specific tenant. If no tenant is passed it will fall back to the current
+     * checkout tenant or to "default" if no current checkout tenant is set.
+     *
+     * @param string|null $tenant
+     *
+     * @return IPricingManager
+     */
+    public function getPricingManager(string $tenant = null): IPricingManager
     {
-        return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PRICING_MANAGER);
+        return $this->pricingManagers->getPricingManager($tenant);
     }
 
     /**

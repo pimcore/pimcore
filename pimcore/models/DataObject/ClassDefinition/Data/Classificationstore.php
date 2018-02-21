@@ -441,11 +441,13 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
             if (is_array($items)) {
                 foreach ($items as $groupId => $groupData) {
                     $groupDef = DataObject\Classificationstore\GroupConfig::getById($groupId);
-                    $activeGroups[] = [
-                        'id' => $groupId,
-                        'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
-                        'enabled' => $groupData
-                    ];
+                    if (!is_null($groupDef)) {
+                        $activeGroups[] = [
+                            'id' => $groupId,
+                            'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
+                            'enabled' => $groupData
+                        ];
+                    }
                 }
             }
 
@@ -478,11 +480,13 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
                 if ($groupResult) {
                     $groupDef = DataObject\Classificationstore\GroupConfig::getById($groupId);
-                    $groupResult = [
-                        'id' => $groupId,
-                        'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
-                        'keys' => $groupResult
-                    ];
+                    if (!is_null($groupDef)) {
+                        $groupResult = [
+                            'id' => $groupId,
+                            'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
+                            'keys' => $groupResult
+                        ];
+                    }
                 }
 
                 $result['groups'][] = $groupResult;

@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
@@ -370,7 +371,7 @@ class DocumentController extends AbstractElementController
         $className = $this->getWebserviceInClassName($type);
         $method    = 'createDocument' . $typeUpper;
 
-        $this->checkWebserviceMethod($method);
+        $this->checkWebserviceMethod($method, $type);
 
         $wsData = $this->fillWebserviceData($className, $data);
 
@@ -409,7 +410,7 @@ class DocumentController extends AbstractElementController
         $className = $this->getWebserviceInClassName($type);
         $method    = 'updateDocument' . $typeUpper;
 
-        $this->checkWebserviceMethod($method);
+        $this->checkWebserviceMethod($method, $type);
 
         $wsData  = $this->fillWebserviceData($className, $data);
         $success = $this->service->$method($wsData);
@@ -444,13 +445,14 @@ class DocumentController extends AbstractElementController
 
     /**
      * @param string $method
+     * @param string $type
      *
      * @throws ResponseException
      */
-    protected function checkWebserviceMethod($method)
+    protected function checkWebserviceMethod($method, $type)
     {
         if (!method_exists($this->service, $method)) {
-            if (\Pimcore::inDebugMode()) {
+            if (\Pimcore::inDebugMode(DebugMode::REST_ERRORS)) {
                 throw new ResponseException(
                     $this->createErrorResponse(sprintf('Method %s does not exist', $method))
                 );

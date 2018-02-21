@@ -9,7 +9,7 @@ Please have a look at [System Requirements](../23_Installation_and_Upgrade/01_Sy
 ## 2. Install Pimcore Sources
 
 The easiest way to install Pimcore is from your terminal using our installer package.
-We additionally provide a [Composer based install guide](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/04_Composer_Install.md) and of course you can install Pimcore also without the help of the command line using your favorite tools (SFTP, ...).
+We additionally provide a [Composer based install guide](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/04_Install_via_Composer.md) and of course you can install Pimcore also without the help of the command line using your favorite tools (SFTP, ...).
 
 Change into the root folder of your project (**please remember project root != document root**):
 

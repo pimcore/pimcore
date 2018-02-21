@@ -17,6 +17,10 @@
 
 namespace Pimcore\Model\User;
 
+use Pimcore\Model\User\Workspace\Asset;
+use Pimcore\Model\User\Workspace\DataObject;
+use Pimcore\Model\User\Workspace\Document;
+
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()
  */
@@ -75,12 +79,15 @@ class UserRole extends AbstractUser
         $this->getDao()->emptyWorkspaces();
 
         foreach ($this->getWorkspacesAsset() as $workspace) {
+            $workspace->setUserId($this->getId());
             $workspace->save();
         }
         foreach ($this->getWorkspacesDocument() as $workspace) {
+            $workspace->setUserId($this->getId());
             $workspace->save();
         }
         foreach ($this->getWorkspacesObject() as $workspace) {
+            $workspace->setUserId($this->getId());
             $workspace->save();
         }
     }
@@ -182,7 +189,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return array
+     * @return Asset[]
      */
     public function getWorkspacesAsset()
     {
@@ -202,7 +209,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return array
+     * @return Document[]
      */
     public function getWorkspacesDocument()
     {
@@ -222,7 +229,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return array
+     * @return DataObject[]
      */
     public function getWorkspacesObject()
     {

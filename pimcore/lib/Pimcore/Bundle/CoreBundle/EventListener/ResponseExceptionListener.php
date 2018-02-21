@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
@@ -86,7 +87,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
     protected function handleErrorPage(GetResponseForExceptionEvent $event)
     {
-        if (\Pimcore::inDebugMode() || PIMCORE_DEVMODE) {
+        if (\Pimcore::inDebugMode(DebugMode::NO_ERROR_PAGE)) {
             return;
         }
 
@@ -97,7 +98,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
         if ($exception instanceof HttpExceptionInterface) {
             $statusCode = $exception->getStatusCode();
-            $header     = $exception->getHeaders();
+            $headers    = $exception->getHeaders();
         }
 
         $errorPath = Config::getSystemConfig()->documents->error_pages->default;

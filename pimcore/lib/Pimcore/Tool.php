@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
 use Pimcore\Cache\Symfony\CacheClearer;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -417,7 +418,7 @@ class Tool
         ]);
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && PIMCORE_DEBUG) {
+        if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode(DebugMode::MAGIC_PARAMS)) {
             return false;
         }
 

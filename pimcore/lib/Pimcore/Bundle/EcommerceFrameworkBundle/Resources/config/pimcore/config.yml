@@ -21,6 +21,9 @@ pimcore_ecommerce_framework:
             default: ~
 
     pricing_manager:
+        tenants:
+            default: ~
+
         conditions:
             Bracket: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket
             DateRange: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange
@@ -32,6 +35,7 @@ pimcore_ecommerce_framework:
             Sales: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sales
             ClientIp: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ClientIp
             VoucherToken: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\VoucherToken
+            Tenant: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Tenant
         actions:
             ProductDiscount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscount
             CartDiscount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartDiscount

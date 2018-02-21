@@ -139,3 +139,25 @@ services:
     #
 
     Pimcore\Targeting\Debug\TargetingDataCollector: ~
+
+    Pimcore\Targeting\Debug\OverrideHandler:
+        lazy: true
+        arguments:
+            # injected by TargetingOverrideHandlersPass
+            $overrideHandlers: '?@'
+
+    Pimcore\Targeting\Debug\Override\DocumentTargetingOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 500 }
+
+    Pimcore\Targeting\Debug\Override\LanguageOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 475 }
+
+    Pimcore\Targeting\Debug\Override\DeviceOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 450 }
+
+    Pimcore\Targeting\Debug\Override\LocationOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 425 }

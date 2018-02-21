@@ -61,6 +61,26 @@ abstract class Data
                 }
             }
         }
+
+        if ($object instanceof Element\ElementInterface) {
+            // add notes and events
+            $list = new Element\Note\Listing();
+
+            $cid = $object->getId();
+            $ctype = Element\Service::getElementType($object);
+            $condition = '(cid = ' . $list->quote($cid) . ' AND ctype = ' . $list->quote($ctype) . ')';
+            $list->setCondition($condition);
+
+            $list = $list->load();
+
+            $noteList = [];
+            if (is_array($list)) {
+                foreach ($list as $note) {
+                    $noteList[] = Element\Service::getNoteData($note);
+                }
+            }
+            $this->notes = $noteList;
+        }
     }
 
     /**

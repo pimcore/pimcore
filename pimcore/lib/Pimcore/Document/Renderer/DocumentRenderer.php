@@ -17,11 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Renderer;
 
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Renderer\ActionRenderer;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
@@ -52,6 +55,11 @@ class DocumentRenderer implements DocumentRendererInterface
      */
     private $targetingConfigurator;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
     public function __construct(
         RequestHelper $requestHelper,
         ActionRenderer $actionRenderer,
@@ -67,10 +75,28 @@ class DocumentRenderer implements DocumentRendererInterface
     }
 
     /**
+     * TODO Pimcore 6 set event dispatcher as constructor parameter
+     *
+     * @internal
+     * @required
+     *
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
      * @inheritdoc
      */
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
+        $this->eventDispatcher->dispatch(
+            DocumentEvents::RENDERER_PRE_RENDER,
+            new DocumentEvent($document)
+        );
+
         // apply best matching target group (if any)
         $this->targetingConfigurator->configureTargetGroup($document);
 
@@ -78,7 +104,9 @@ class DocumentRenderer implements DocumentRendererInterface
         // this is needed for logic relying on the current route (e.g. pimcoreUrl helper)
         if (!isset($attributes['_route'])) {
             $route = $this->documentRouteHandler->buildRouteForDocument($document);
-            $attributes['_route'] = $route->getRouteKey();
+            if (null !== $route) {
+                $attributes['_route'] = $route->getRouteKey();
+            }
         }
 
         try {
@@ -89,6 +117,11 @@ class DocumentRenderer implements DocumentRendererInterface
 
         $uri      = $this->actionRenderer->createDocumentReference($document, $attributes, $query);
         $response = $this->fragmentRenderer->render($uri, $request, $options);
+
+        $this->eventDispatcher->dispatch(
+            DocumentEvents::RENDERER_POST_RENDER,
+            new DocumentEvent($document)
+        );
 
         return $response->getContent();
     }

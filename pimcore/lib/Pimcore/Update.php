@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Composer\Config\ConfigMerger;
+use Pimcore\FeatureToggles\Features\DevMode;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Process\Process;
 
@@ -73,7 +74,8 @@ class Update
         self::cleanup();
 
         $updateInfoUrl = 'https://' . self::$updateHost . '/get-update-info?revision=' . $currentRev;
-        if (PIMCORE_DEVMODE) {
+
+        if (\Pimcore::inDevMode(DevMode::UPDATES)) {
             $updateInfoUrl .= '&devmode=1';
         }
 
@@ -368,6 +370,18 @@ class Update
         ];
     }
 
+    public static function clearSymfonyCaches()
+    {
+        // clear symfony cache
+        $symfonyCacheClearer = new CacheClearer();
+        foreach (array_unique(['dev', 'prod', \Pimcore::getKernel()->getEnvironment()]) as $env) {
+            $symfonyCacheClearer->clear($env, [
+                // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
+                'no-warmup' => true
+            ]);
+        }
+    }
+
     /**
      * @param $newFile
      * @param $oldFile
@@ -391,7 +405,6 @@ class Update
         }
 
         self::composerUpdate(['--no-scripts']);
-
 
         // remove terminate and exception event listeners for the current env as they break with a
         // cleared container - see #2434

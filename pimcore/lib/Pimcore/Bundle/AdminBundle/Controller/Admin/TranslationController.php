@@ -46,9 +46,10 @@ class TranslationController extends AdminController
      */
     public function importAction(Request $request)
     {
-        $this->checkPermission('translations');
-
         $admin = $request->get('admin');
+
+        $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
+
         $merge = $request->get('merge');
 
         $tmpFile = $_FILES['Filedata']['tmp_name'];
@@ -96,8 +97,8 @@ class TranslationController extends AdminController
      */
     public function exportAction(Request $request)
     {
-        $this->checkPermission('translations');
         $admin = $request->get('admin');
+        $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
         if ($admin) {
             $class = '\\Pimcore\\Model\\Translation\\Admin';
@@ -273,12 +274,12 @@ class TranslationController extends AdminController
     {
         $admin = $request->get('admin');
 
+        $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
+
         if ($admin) {
             $class = '\\Pimcore\\Model\\Translation\\Admin';
-            $this->checkPermission('translations_admin');
         } else {
             $class = '\\Pimcore\\Model\\Translation\\Website';
-            $this->checkPermission('translations');
         }
 
         $tableName = call_user_func($class . '\\Dao::getTableName');
