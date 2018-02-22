@@ -1,5 +1,14 @@
 # Testing
 
+Pimcore applications can be tested with any PHP testing solution, but this page demonstrates 2 viable approaches:
+
+1. [Symfony's default testing setup](https://symfony.com/doc/3.4/testing.html) with PHPUnit
+2. [Codeception](https://codeception.com/) (which is based on PHPUnit) for more advanced features like Selenium testing by using Codeception's module system
+
+In general it's recommended to start with the first approach as it is simpler to set up and to get started with testing. Note, however, that the PHPUnit setup does not include any out-of-the-box solution how to prepare your application for tests (e.g. how to make sure you are always testing with the same reproducible data set), so that's up to you. You could prepare test data in your bootstrap file or run some script before you start the test suite.
+
+In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/master/pimcore/tests).
+
 ## PHPUnit
 
 As Pimcore is a standard Symfony application, you can use Symfony's PHPUnit testing setup exactly as described in
@@ -11,7 +20,7 @@ to your project:
 $ composer require --dev 'symfony/phpunit-bridge:^3.4'
 ```
 
-Next, add a PHPUnit config file named `phpunit.xml.dist` in the root directory of your project. The config file above
+Next, add a PHPUnit config file named `phpunit.xml.dist` in the root directory of your project. The config file below
 expects your tests in a `tests/` directory and processes files in `src/` when calculating code coverage reports.
 
 ```xml
@@ -39,7 +48,7 @@ structure from your application code in your test directory.
 ```php
 <?php
 
-// tests/AppBundle/CalculatorTest
+// tests/AppBundle/CalculatorTest.php
 
 namespace Tests\AppBundle;
 
@@ -162,6 +171,8 @@ below assumes an installation running the `demo-basic` install profile.
 ```php
 <?php
 
+// tests/AppBundle/Controller/ContentControllerTest.php
+
 declare(strict_types=1);
 
 namespace Tests\AppBundle\Controller;
@@ -204,14 +215,14 @@ class ContentControllerTest extends WebTestCase
 }
 ```
 
-If you would run the test suite now, you would get a list of errors saying the test can't connect to the database. This 
+If you would run the test suite now, it would fail with a list of errors as the test can't connect to the database. This 
 is because the tests run in the `test` environment and that environment is set up to use a different database connection
-which is defined as `PIMCORE_TEST_DB_DSN` by default (see [config_test.yml](https://github.com/pimcore/pimcore/blob/master/app/config/config_test.yml)).
+which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config_test.yml](https://github.com/pimcore/pimcore/blob/master/app/config/config_test.yml)).
 
-You can either define the DB DSN as environment variable on your shell, hardcode it into the PHPUnit config file (not
+You can either define the database DSN as environment variable on your shell, hardcode it into the PHPUnit config file (not
 recommended) or remove/alter the customized `doctrine` section from `config_test.yml` completely to have Pimcore connect
 to the DB defined in `system.php` during tests. What to use depends highly on your environment and your tests - if you have
-tests which make changes to the database you'll probably want to run them on a different database which a predefined data
+tests which make changes to the database you'll probably want to run them on a different database with a predefined data
 set. The example below just passes the DB connection as env variable:
 
 ```
@@ -293,7 +304,7 @@ $ vendor/bin/codecept -c tests/codeception.dist.yml generate:suite unit
 $ vendor/bin/codecept -c tests/codeception.dist.yml generate:suite functional
 ```
 
-The config file above references a `_bootstrap.php` file. Create `tests/_bootstra.php` with the following contents to make
+The config file above references a `_bootstrap.php` file. Create `tests/_bootstrap.php` with the following contents to make
 sure Pimcore can be bootstrapped during tests. Adjust according to your needs.
 
 
@@ -310,7 +321,7 @@ define('PIMCORE_PROJECT_ROOT', realpath(__DIR__ . '/..'));
 // set the used pimcore/symfony environment
 putenv('PIMCORE_ENVIRONMENT=test');
 
-// add the pimcore tests path to the autoloader - this could also be done in composer.json's autoload-dev section
+// add the core pimcore test library to the autoloader - this could also be done in composer.json's autoload-dev section
 // but is done here for demonstration purpose
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/tests/_support/Util/Autoloader.php';
 
@@ -319,8 +330,8 @@ Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/pimcore/tests
 require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 ```
 
-The `tests/unit.suite.yml` should be fine for a standard unit testing setup without dependencies, but we need to alter 
-functional test suite to initialize a test database and to boot the Pimcore kernel before running tests. Configure the 
+The `tests/unit.suite.yml` should be fine for a standard unit testing setup without dependencies, but we need to alter the
+functional test suite to initialize a test database and to boot Pimcore's kernel before running tests. Configure the 
 suite to use the `\Pimcore\Tests\Helper\Pimcore` helper:
 
 ```yaml
@@ -339,10 +350,14 @@ modules:
             purge_class_directory: true
 ```
 
-This should be everything you need to run tests. Let's start to add a simple unit test:
+This will set up a functional test which sends a request directly through Symfony's kernel (similar to the PHPUnit setup above). However, Codeception makes it easy to use a full-blown browser for acceptance testing by configuring additional modules such as the [WebDriver](https://codeception.com/docs/modules/WebDriver) module for Selenium testing. 
+
+Let's start writing tests by adding a simple unit test:
 
 ```php
 <?php
+
+// tests/unit/ExampleTest.php
 
 namespace Tests\Unit\AppBundle;
 
