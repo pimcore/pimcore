@@ -69,7 +69,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
                         $context['brickField'] = $key;
                         $context['fieldname'] = $brick->getFieldname();
                         $params['context'] = $context;
-                        $value = $fd->load($brick);
+                        $value = $fd->load($brick,$params);
                         if ($value === 0 || !empty($value)) {
                             $brick->setValue($key, $value);
                         }
