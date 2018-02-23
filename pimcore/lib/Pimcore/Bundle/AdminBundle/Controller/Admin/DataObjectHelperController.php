@@ -2304,7 +2304,7 @@ class DataObjectHelperController extends AdminController
 
                 try {
                     // don't check for mandatory fields here
-                    $object->setOmitMandatoryCheck(true);
+                    $object->setOmitMandatoryCheck(!$object->isPublished());
                     $object->setUserModification($this->getAdminUser()->getId());
                     $object->save();
                     $success = true;
