@@ -400,7 +400,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $parentAsset = Asset::getById($this->getParam("id"));
 
             $list = new Asset\Listing();
-            $list->setCondition("path LIKE ", [$parentAsset->getRealFullPath() . "/%"]);
+            $list->setCondition("path LIKE ?", [$parentAsset->getRealFullPath() . "/%"]);
             $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(path)", false);
             $list->setOrder("DESC");
@@ -473,7 +473,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 if ($hasChilds) {
                     // get amount of childs
                     $list = new Asset\Listing();
-                    $list->setCondition("path LIKE ", [$asset->getRealFullPath() . "/%"]);
+                    $list->setCondition("path LIKE ?", [$asset->getRealFullPath() . "/%"]);
                     $childs = $list->getTotalCount();
                     $totalChilds += $childs;
 
@@ -1339,7 +1339,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             if ($asset->hasChilds()) {
                 // get amount of childs
                 $list = new Asset\Listing();
-                $list->setCondition("path LIKE ", [$asset->getRealFullPath() . "/%"]);
+                $list->setCondition("path LIKE ?", [$asset->getRealFullPath() . "/%"]);
                 $list->setOrderKey("LENGTH(path)", false);
                 $list->setOrder("ASC");
                 $childIds = $list->loadIdList();
