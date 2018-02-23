@@ -254,7 +254,7 @@ class Concrete extends AbstractObject
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote)
+    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote = null)
     {
         if ($setModificationDate) {
             $this->setModificationDate(time());
