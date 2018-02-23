@@ -102,7 +102,6 @@ class ClassesRebuildCommand extends AbstractCommand
             }
         }
 
-
         $list = new ClassDefinition\Listing();
         $list->load();
 
