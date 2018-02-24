@@ -88,6 +88,11 @@ class Asset extends Model\Webservice\Data
     public $metadata;
 
     /**
+     * @var Model\Element\Note[]
+     */
+    public $notes;
+
+    /**
      * @param $object
      * @param null $options
      */

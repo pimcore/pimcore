@@ -480,13 +480,13 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
                 if ($groupResult) {
                     $groupDef = DataObject\Classificationstore\GroupConfig::getById($groupId);
-                   if (!is_null($groupDef)) {
+                    if (!is_null($groupDef)) {
                         $groupResult = [
                             'id' => $groupId,
                             'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
                             'keys' => $groupResult
                         ];
-                   }
+                    }
                 }
 
                 $result['groups'][] = $groupResult;

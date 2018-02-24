@@ -377,7 +377,13 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: t("debug_description"),
+                                value: t("debug_description")
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: t("debug_override_warning"),
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {

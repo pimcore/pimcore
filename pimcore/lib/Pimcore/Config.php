@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
@@ -791,7 +792,7 @@ class Config
                 } else {
                     $environmentConfig = static::getEnvironmentConfig();
 
-                    if (\Pimcore::inDebugMode()) {
+                    if (\Pimcore::inDebugMode(DebugMode::SYMFONY_ENVIRONMENT)) {
                         $environment = $environmentConfig->getDefaultDebugModeEnvironment();
                     } else {
                         $environment = $environmentConfig->getDefaultEnvironment();

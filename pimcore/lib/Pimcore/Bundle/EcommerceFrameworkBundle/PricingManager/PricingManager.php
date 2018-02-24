@@ -195,7 +195,8 @@ class PricingManager implements IPricingManager
     public function getValidRules()
     {
         if (empty($this->rules)) {
-            $rules = new Rule\Listing();
+            /** @var Rule\Listing $rules */
+            $rules = $this->getRuleListing();
             $rules->setCondition('active = 1');
             $rules->setOrderKey('prio');
             $rules->setOrder('ASC');
@@ -224,7 +225,7 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * Factory
+     * @deprecated as it is never used. Will be removed in Pimcore 6.
      *
      * @return IRule
      */
@@ -233,6 +234,16 @@ class PricingManager implements IPricingManager
         $class = $this->options['rule_class'];
 
         return new $class();
+    }
+
+    /**
+     * @return Rule\Listing
+     */
+    public function getRuleListing()
+    {
+        $class = $this->options['rule_class'] . '\\Listing';
+
+        return new $class;
     }
 
     /**

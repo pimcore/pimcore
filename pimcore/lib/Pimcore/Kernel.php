@@ -178,7 +178,12 @@ abstract class Kernel extends SymfonyKernel
 
         // on pimcore shutdown
         register_shutdown_function(function () {
-            $this->getContainer()->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
+            // check if container still exists at this point as it could already
+            // be cleared (e.g. when running tests which boot multiple containers)
+            if (null !== $container = $this->getContainer()) {
+                $container->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
+            }
+
             \Pimcore::shutdown();
         });
     }

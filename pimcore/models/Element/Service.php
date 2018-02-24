@@ -1049,4 +1049,78 @@ class Service extends Model\AbstractModel
 
         return $theCopy;
     }
+
+    /**
+     * @param Note $note
+     *
+     * @return array
+     */
+    public static function getNoteData(Note $note)
+    {
+        $cpath = '';
+        if ($note->getCid() && $note->getCtype()) {
+            if ($element = Service::getElementById($note->getCtype(), $note->getCid())) {
+                $cpath = $element->getRealFullPath();
+            }
+        }
+
+        $e = [
+            'id' => $note->getId(),
+            'type' => $note->getType(),
+            'cid' => $note->getCid(),
+            'ctype' => $note->getCtype(),
+            'cpath' => $cpath,
+            'date' => $note->getDate(),
+            'title' => $note->getTitle(),
+            'description' => $note->getDescription()
+        ];
+
+        // prepare key-values
+        $keyValues = [];
+        if (is_array($note->getData())) {
+            foreach ($note->getData() as $name => $d) {
+                $type = $d['type'];
+                $data = $d['data'];
+
+                if ($type == 'document' || $type == 'object' || $type == 'asset') {
+                    if ($d['data'] instanceof ElementInterface) {
+                        $data = [
+                            'id' => $d['data']->getId(),
+                            'path' => $d['data']->getRealFullPath(),
+                            'type' => $d['data']->getType()
+                        ];
+                    }
+                } elseif ($type == 'date') {
+                    if (is_object($d['data'])) {
+                        $data = $d['data']->getTimestamp();
+                    }
+                }
+
+                $keyValue = [
+                    'type' => $type,
+                    'name' => $name,
+                    'data' => $data
+                ];
+
+                $keyValues[] = $keyValue;
+            }
+        }
+
+        $e['data'] = $keyValues;
+
+        // prepare user data
+        if ($note->getUser()) {
+            $user = Model\User::getById($note->getUser());
+            if ($user) {
+                $e['user'] = [
+                    'id' => $user->getId(),
+                    'name' => $user->getName()
+                ];
+            } else {
+                $e['user'] = '';
+            }
+        }
+
+        return $e;
+    }
 }

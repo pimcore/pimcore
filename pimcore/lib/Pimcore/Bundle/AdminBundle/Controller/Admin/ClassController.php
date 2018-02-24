@@ -442,7 +442,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/import-custom-layout")
+     * @Route("/import-custom-layout-definition")
      *
      * @param Request $request
      *
@@ -582,7 +582,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/export-custom-layout-definitions")
+     * @Route("/export-custom-layout-definition")
      *
      * @param Request $request
      *

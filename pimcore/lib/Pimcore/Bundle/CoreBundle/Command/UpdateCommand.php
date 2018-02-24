@@ -125,7 +125,7 @@ class UpdateCommand extends AbstractCommand
                 exit;
             }
 
-            $debug = \Pimcore::inDebugMode() || $this->getApplication()->getKernel()->isDebug();
+            $debug = $this->getApplication()->getKernel()->isDebug();
             if (!$debug) {
                 $this->writeError('Enable debug mode in system settings or set PIMCORE_ENVIRONMENT=dev');
                 exit;

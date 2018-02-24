@@ -1384,7 +1384,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $nodeConfig['title_length']       = mb_strlen($title);
             $nodeConfig['description_length'] = mb_strlen($description);
-
         }
 
         return $nodeConfig;

@@ -43,6 +43,10 @@ Each price system must be defined as service (either a service defined by core c
 ```
 # services.yml
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
     # defines a completely custom price system as service
     # arguments depend on your implementation
     App\Ecommerce\PriceSystem\CustomPriceSystem:
@@ -54,9 +58,8 @@ services:
     app.custom_attribute_price_system:
         class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
         arguments:
-            - '@pimcore_ecommerce.pricing_manager'
-            - '@pimcore_ecommerce.environment'
-            - { attribute_name: 'customPriceField' }
+            $options:
+                attribute_name: customPriceField
 ```
 
 
