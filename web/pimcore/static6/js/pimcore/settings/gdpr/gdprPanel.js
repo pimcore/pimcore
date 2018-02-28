@@ -114,7 +114,7 @@ pimcore.settings.gdpr.gdprPanel = Class.create({
                     var constructor = this.stringToFunction(definition.jsClass);
 
                     var panel = new constructor(searchParams);
-                    this.tabPanel.add(panel.getPanel())
+                    this.tabPanel.add(panel.getPanel());
                 }
 
                 this.tabPanel.setActiveTab(0);
