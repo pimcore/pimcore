@@ -2201,6 +2201,14 @@ class DataObjectHelperController extends AdminController
 
                         $getter = 'get' . ucfirst($field);
                         if (method_exists($object, $getter)) {
+
+                            /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                            $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                            $csLanguage = $requestedLanguage;
+                            if (!$csFieldDefinition->isLocalized()) {
+                                $csLanguage = 'default';
+                            }
+
                             /** @var $fd DataObject\ClassDefinition\Data\Classificationstore */
                             $fd = $class->getFieldDefinition($field);
                             $keyConfig = $fd->getKeyConfiguration($keyid);
@@ -2212,7 +2220,7 @@ class DataObjectHelperController extends AdminController
                                 $groupId,
                                 $keyid,
                                 $dataDefinition->getDataFromEditmode($value),
-                                $requestedLanguage
+                                $csLanguage
                             );
                         }
                     } else {
