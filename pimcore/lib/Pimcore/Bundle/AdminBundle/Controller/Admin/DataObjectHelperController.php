@@ -2013,6 +2013,14 @@ class DataObjectHelperController extends AdminController
                             $definition = json_decode($keyConfig->getDefinition());
                             $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
+                            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                            $csFieldDefinition = $object->getClass()->getFieldDefinition($fieldname);
+                            $csLanguage = $requestedLanguage;
+                            if (!$csFieldDefinition->isLocalized()) {
+                                $csLanguage = 'default';
+                            }
+
+
                             return $fieldDefinition->getForCsvExport(
                                 $object,
                                 ['context' => [
@@ -2020,7 +2028,7 @@ class DataObjectHelperController extends AdminController
                                     'fieldname' => $fieldname,
                                     'groupId' => $groupId,
                                     'keyId' => $keyId,
-                                    'language' => $requestedLanguage
+                                    'language' => $csLanguage
                                 ]]
                             );
                         }
