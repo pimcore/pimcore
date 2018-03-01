@@ -40,7 +40,7 @@
         "name": "vrana/jush",
         "version": "1.0.0",
         "source": {
-          "url": "https://git.code.sf.net/p/jush/git",
+          "url": "https://github.com/vrana/jush.git",
           "type": "git",
           "reference": "master"
         }
