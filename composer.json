@@ -41,7 +41,7 @@
         "version": "1.0.0",
         "source": {
           "url": "https://github.com/vrana/jush.git",
-          "type": "https",
+          "type": "git",
           "reference": "master"
         }
       }
