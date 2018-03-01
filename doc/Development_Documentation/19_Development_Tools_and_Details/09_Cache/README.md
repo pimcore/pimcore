@@ -151,7 +151,7 @@ if(!$data = \Pimcore\Cache::load($cacheKey)) {
 \Pimcore\Cache::clearAll();
  
 // disable the queue and limit and write immediately
-\Pimcore\Cache::setForceImmendiateWrite(true);
+\Pimcore\Cache::setForceImmediateWrite(true);
 ```
 
 #### Disable the Cache for a Single Request
