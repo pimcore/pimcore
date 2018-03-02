@@ -2020,7 +2020,6 @@ class DataObjectHelperController extends AdminController
                                 $csLanguage = 'default';
                             }
 
-
                             return $fieldDefinition->getForCsvExport(
                                 $object,
                                 ['context' => [

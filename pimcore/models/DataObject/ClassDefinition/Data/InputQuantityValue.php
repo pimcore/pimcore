@@ -30,7 +30,6 @@ class InputQuantityValue extends QuantityValue
 {
     public $fieldtype = 'inputQuantityValue';
 
-
     /**
      * Type for the column to query
      *
