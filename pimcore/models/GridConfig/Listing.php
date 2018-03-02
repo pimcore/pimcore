@@ -48,7 +48,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getGridConfigs()
     {
-        return $this->gridconfigs;
+        return $this->gridConfigs;
     }
 
     /**
