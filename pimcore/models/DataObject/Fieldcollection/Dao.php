@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\Fieldcollection;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Logger;
 
 /**
  * @property \Pimcore\Model\DataObject\Fieldcollection $model
@@ -151,7 +152,7 @@ class Dao extends Model\Dao\AbstractDao
                         'fieldname' => $this->model->getFieldname()
                     ]);
                 } catch (\Exception $e) {
-                    \Logger::error($e);
+                    Logger::error($e);
                 }
             }
 
