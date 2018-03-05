@@ -1481,7 +1481,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
                     $object->setValues($objectData);
 
-
+                    $object->setUserModification($this->getUser()->getId());
                     $object->save();
                     $this->_helper->json(["data" => Object\Service::gridObjectData($object, $this->getParam("fields"), $requestedLanguage), "success" => true]);
                 } catch (\Exception $e) {
