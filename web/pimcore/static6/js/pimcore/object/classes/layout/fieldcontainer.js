@@ -19,8 +19,15 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
     initialize: function (treeNode, initData) {
         this.type = "fieldcontainer";
 
+        if (!initData) {
+            initData = {
+                datatype: "layout",
+                fieldtype: this.getType(),
+                name: t("fieldcontainer")
+            };
+        }
+
         this.initData(initData);
-        this.datax.name = t("fieldcontainer");
 
         this.treeNode = treeNode;
     },
@@ -44,7 +51,7 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
             ]
         });
 
-        if(!this.datax.layout) {
+        if (!this.datax.layout) {
             this.datax.layout = "hbox";
         }
 
