@@ -540,7 +540,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                     'update_status' => $response['index']['status'],
                     'update_error' => null,
                 ];
-                if ($response['index']['error']) {
+                if (isset($response['index']['error']) && $response['index']['error']) {
                     $data['update_error'] = json_encode($response['index']['error']);
                     $data['crc_index'] = 0;
                     Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
