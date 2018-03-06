@@ -117,8 +117,14 @@ class LogController extends AdminController implements EventedControllerInterfac
             $qb->andWhere('pid LIKE ' . $qb->createNamedParameter('%' . $pid . '%'));
         }
 
+        $totalQb = clone $qb;
+        $totalQb->setMaxResults(null)
+            ->setFirstResult(0)
+            ->select('COUNT(id) as count');
+        $total = $totalQb->execute()->fetch();
+        $total = (int) $total['count'];
+
         $stmt   = $qb->execute();
-        $total  = $stmt->rowCount();
         $result = $stmt->fetchAll();
 
         $logEntries = [];
