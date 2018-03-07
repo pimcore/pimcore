@@ -987,7 +987,15 @@ class Service extends Model\Element\Service
         try {
             $object = new AbstractObject();
 
-            if (\Pimcore\Tool::isValidPath($path)) {
+            $pathElements = explode('/', $path);
+            $keyIdx = count($pathElements) - 1;
+            $key = $pathElements[$keyIdx];
+            $validKey = Element\Service::getValidKey($key, 'object');
+
+            unset($pathElements[$keyIdx]);
+            $pathOnly = implode('/', $pathElements);
+
+            if ($validKey == $key && \Pimcore\Tool::isValidPath($pathOnly)) {
                 $object->getDao()->getByPath($path);
 
                 return true;
