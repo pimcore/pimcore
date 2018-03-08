@@ -341,14 +341,11 @@ class Classificationstore extends Model\AbstractModel
 
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
                         if ($parent->getClassId() == $object->getClassId()) {
-                            $method = 'getLocalizedfields';
-                            if (method_exists($parent, $method)) {
-                                $getter = 'get' . ucfirst($this->fieldname);
-                                $classificationStore = $parent->$getter();
-                                if ($classificationStore instanceof Classificationstore) {
-                                    if ($classificationStore->object->getId() != $this->object->getId()) {
-                                        $data = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false);
-                                    }
+                            $getter = 'get' . ucfirst($this->fieldname);
+                            $classificationStore = $parent->$getter();
+                            if ($classificationStore instanceof Classificationstore) {
+                                if ($classificationStore->object->getId() != $this->object->getId()) {
+                                    $data = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false);
                                 }
                             }
                         }
