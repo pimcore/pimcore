@@ -17,9 +17,9 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Logger;
 
 /**
  * @property \Pimcore\Model\DataObject\Fieldcollection $model
