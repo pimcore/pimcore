@@ -18,6 +18,9 @@
 namespace Pimcore\Model\User\Workspace;
 
 use Pimcore\Model;
+use Pimcore\Logger;
+use Pimcore\Tool;
+use Pimcore\Cache;
 
 /**
  * @method \Pimcore\Model\User\Workspace\Dao getDao()
@@ -322,5 +325,125 @@ class AbstractWorkspace extends Model\AbstractModel
     public function getCpath()
     {
         return $this->cpath;
+    }
+
+    /**
+     * save workspace and remove cache entries
+     */
+    public function save()
+    {
+        parent::save();
+        // remove possible cache entry to have refreshed workspaces on next request
+        Cache::remove(static::getType() . '_' . $this->getCid());
+    }
+
+    /**
+     * get workspace by path
+     *
+     * @param   string  $path   workspace c-path
+     * @param   bool    $force  force refresh cached entry
+     *
+     * @return self
+     */
+    public static function getByPath($path, $force = false)
+    {
+        $path = Model\Element\Service::correctPath($path);
+
+        try {
+            $object = new static();
+
+            if (Tool::isValidPath($path)) {
+                $object->getDao()->getByPath($path);
+
+                return static::getById($object->getCid(), $force);
+            }
+        } catch (\Exception $e) {
+            Logger::warning($e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Static helper to get an workspace by the passed ID
+     *
+     * @param   int     $id     workspace id
+     * @param   bool    $force  force refresh cached entry
+     *
+     * @return  self
+     */
+    public static function getById($id, $force = false)
+    {
+        $id = intval($id);
+
+        if ($id < 1) {
+            return null;
+        }
+
+        $cacheKey = static::getType() . '_' . $id;
+
+        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            $object = \Pimcore\Cache\Runtime::get($cacheKey);
+            if ($object && static::typeMatch($object)) {
+                return $object;
+            }
+        }
+
+        try {
+            /** @var static $object */
+            if ($force || !($object = Cache::load($cacheKey))) {
+                // no model factory, because of unsupported model override
+                $object = new static();
+                // set to runtime
+                \Pimcore\Cache\Runtime::set($cacheKey, $object);
+                $object->getDao()->getById($id);
+
+                Cache::save($object, $cacheKey);
+            } else {
+                \Pimcore\Cache\Runtime::set($cacheKey, $object);
+            }
+        } catch (\Exception $e) {
+            Logger::warning($e->getMessage());
+
+            return null;
+        }
+
+        if (!$object || !static::typeMatch($object)) {
+            return null;
+        }
+
+        return $object;
+    }
+
+    /**
+     * get workspace type
+     *
+     * @return  string  workspace type
+     */
+    public static function getType()
+    {
+        foreach (['Asset', 'Document', 'DataObject'] as $specific) {
+            $class = 'Pimcore\\Model\\User\\Workspace\\' . $specific;
+            if (static::class == $class || is_subclass_of(static::class, $class)) {
+                return 'user_workspace_' . strtolower($specific);
+            }
+        }
+        return '';
+    }
+
+    /**
+     * validate generated object type
+     *
+     * @param   \Pimcore\Model\User\Workspace\AbstractWorkspace $object workspace to validate
+     *
+     * @return  bool                                                    true if valid
+     */
+    protected static function typeMatch(AbstractWorkspace $object)
+    {
+        $staticType = get_called_class();
+        if (!$object instanceof $staticType) {
+            return false;
+        }
+        return true;
     }
 }
