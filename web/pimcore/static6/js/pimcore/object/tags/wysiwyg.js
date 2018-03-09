@@ -51,7 +51,30 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
     },*/
 
-    getGridColumnFilter: function(field) {
+
+    getGridColumnConfig: function (field) {
+        var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
+
+            try {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
+            } catch (e) {
+                console.log(e);
+            }
+            return value;
+
+        }.bind(this, field.key);
+
+        return {
+            text: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            getEditor: this.getWindowCellEditor.bind(this, field)
+        };
+    },
+
+
+    getGridColumnFilter: function (field) {
         return {type: 'string', dataIndex: field.key};
     },
 
@@ -163,6 +186,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         eConfig.entities_greek = false;
         eConfig.entities_latin = false;
         eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
+        eConfig.baseFloatZIndex = 40000;   // prevent that the editor gets displayed behind the grid cell editor window
 
         if(eConfig.hasOwnProperty('removePlugins'))
             eConfig.removePlugins += ",tableresize";
@@ -220,7 +244,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         var wrappedText = node.data.text;
         var textIsSelected = false;
-        
+
         try {
             var selection = this.ckeditor.getSelection();
             var bookmarks = selection.createBookmarks();
@@ -258,7 +282,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         var id = node.data.id;
         var uri = node.data.path;
         var browserPossibleExtensions = ["jpg","jpeg","gif","png"];
-        
+
         if (node.data.elementType == "asset") {
             if (node.data.type == "image" && textIsSelected == false) {
                 // images bigger than 600px or formats which cannot be displayed by the browser directly will be
@@ -360,6 +384,17 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
 
         return false;
+    },
+
+    getWindowCellEditor: function (field, record) {
+        return new pimcore.object.helpers.gridCellEditor({
+                fieldInfo: field
+            }
+        );
+    },
+
+    getCellEditValue: function () {
+        return this.getValue();
     }
 });
 
