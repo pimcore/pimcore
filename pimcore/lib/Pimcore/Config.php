@@ -593,7 +593,7 @@ class Config
                     continue;
                 }
                 $customViewCfg = $cfConfigMapping[$customViewId];
-                if (!$customViewId) {
+                if (!$customViewCfg) {
                     Logger::error('no custom view config for id  ' . $customViewId);
                     continue;
                 }
