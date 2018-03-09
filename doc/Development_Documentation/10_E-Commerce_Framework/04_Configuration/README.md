@@ -37,17 +37,17 @@ pimcore_ecommerce_framework:
                     factory_id: CartFactoryId
                 price_calculator:
                     factory_id: PriceCalculatorFactoryId
-                    options:
+                    factory_options:
                         foo: bar
 
             default:
                 price_calculator:
-                    options:
+                    factory_options:
                         baz: 1234
 
             noShipping:
                 price_calculator:
-                    options:
+                    factory_options:
                         baz: 4321
 ```
 
@@ -60,17 +60,17 @@ pimcore_ecommerce_framework:
         tenants:
             _defaults_foo:
                 price_calculator:
-                    options: &defaults_foo_options # define an anchor
+                    factory_options: &defaults_foo_options # define an anchor
                         class: MyCommonCalculatorClass
                         
             default:
                 price_calculator:
-                    options:
+                    factory_options:
                         <<: *defaults_foo_options # import anchor
             
             anotherOne:
                 price_calculator:
-                    options:
+                    factory_options:
                         <<: *defaults_foo_options # import anchor
 ```
 

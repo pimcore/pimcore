@@ -7,7 +7,7 @@ git clone https://github.com/pimcore/pimcore-docs.git tmp-docs/pimcore-docs
 cd tmp-docs/pimcore-docs
 
 # check out latest pimcore-docs release
-LATEST_VERSION=$(git describe --abbrev=0)
+LATEST_VERSION=$(git describe --abbrev=0 --tags)
 echo "Checking out latest pimcore-docs release ${LATEST_VERSION}"
 git checkout ${LATEST_VERSION}
 

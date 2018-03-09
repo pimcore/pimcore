@@ -1595,6 +1595,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                                 $getter = 'get' . ucfirst($field);
                                 if (method_exists($object, $getter)) {
+
+                                    /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                                    $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                                    $csLanguage = $requestedLanguage;
+                                    if (!$csFieldDefinition->isLocalized()) {
+                                        $csLanguage = 'default';
+                                    }
+
                                     /** @var $classificationStoreData DataObject\Classificationstore */
                                     $classificationStoreData = $object->$getter();
 
@@ -1609,7 +1617,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                         }
                                     }
 
-                                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $requestedLanguage);
+                                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $csLanguage);
                                 }
                             }
                         } elseif (count($parts) > 1) {

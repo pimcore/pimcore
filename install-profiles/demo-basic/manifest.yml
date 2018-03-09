@@ -7,6 +7,8 @@ files:
         - var/config/*
         - web/static
         - web/var/assets
+        - tests
+        - phpunit.xml.dist
 db:
     data_files:
         - dump/data.sql

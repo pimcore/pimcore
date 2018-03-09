@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
+use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -37,7 +38,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
     /**
      * @var ActionRenderer
      */
-    protected $actionRenderer;
+    protected $documentRenderer;
 
     /**
      * @var bool
@@ -45,12 +46,12 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected $renderErrorPage = true;
 
     /**
-     * @param ActionRenderer $actionRenderer
+     * @param DocumentRenderer $documentRenderer
      * @param bool $renderErrorPage
      */
-    public function __construct(ActionRenderer $actionRenderer, $renderErrorPage = true)
+    public function __construct(DocumentRenderer $documentRenderer, $renderErrorPage = true)
     {
-        $this->actionRenderer  = $actionRenderer;
+        $this->documentRenderer  = $documentRenderer;
         $this->renderErrorPage = (bool)$renderErrorPage;
     }
 
@@ -120,7 +121,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
 
         try {
-            $response = $this->actionRenderer->render($document);
+            $response = $this->documentRenderer->render($document);
         } catch (\Exception $e) {
             // we are even not able to render the error page, so we send the client a unicorn
             $response = 'Page not found. 🦄';

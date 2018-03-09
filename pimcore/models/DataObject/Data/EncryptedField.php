@@ -63,7 +63,7 @@ class EncryptedField
     /**
      * @param Data $delegate
      */
-    public function setDelegate(Data $delegate): void
+    public function setDelegate(Data $delegate)
     {
         $this->delegate = $delegate;
     }
@@ -79,7 +79,7 @@ class EncryptedField
     /**
      * @param mixed $plain
      */
-    public function setPlain($plain): void
+    public function setPlain($plain)
     {
         $this->plain = $plain;
     }

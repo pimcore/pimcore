@@ -23,6 +23,7 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
+use Pimcore\Templating\Helper\Placeholder\ContainerService;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -85,6 +86,19 @@ class DocumentRenderer implements DocumentRendererInterface
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @required
+     *
+     * @param ContainerService $containerService
+     */
+    public function setContainerService(ContainerService $containerService)
+    {
+        // we have to ensure that the ContainerService was initialized at the time this service is created
+        // this is necessary, since the ContainerService registers a listener for DocumentEvents::RENDERER_PRE_RENDER
+        // which wouldn't be called if the ContainerService would be lazy initialized when the first
+        // placeholder service/templating helper is used during the rendering process
     }
 
     /**

@@ -691,15 +691,15 @@ class DefaultElasticSearch implements IProductList
     protected function buildQuery(array $params, array $boolFilters, array $queryFilters)
     {
         if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            $params['body']['query']['filtered']['query']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
-            $params['body']['query']['filtered']['query']['has_child']['score_mode'] = 'avg';
-            $params['body']['query']['filtered']['query']['has_child']['query']['bool']['must'] = $queryFilters;
+            $params['body']['query']['bool']['must']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
+            $params['body']['query']['bool']['must']['has_child']['score_mode'] = 'avg';
+            $params['body']['query']['bool']['must']['has_child']['query']['bool']['must'] = $queryFilters;
 
-            $params['body']['query']['filtered']['filter']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
-            $params['body']['query']['filtered']['filter']['has_child']['filter']['bool']['must'] = $boolFilters;
+            $params['body']['query']['bool']['filter']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
+            $params['body']['query']['bool']['filter']['has_child']['filter']['bool']['must'] = $boolFilters;
         } else {
-            $params['body']['query']['filtered']['query']['bool']['must'] = $queryFilters;
-            $params['body']['query']['filtered']['filter']['bool']['must'] = $boolFilters;
+            $params['body']['query']['bool']['must']['bool']['must'] = $queryFilters;
+            $params['body']['query']['bool']['filter']['bool']['must'] = $boolFilters;
         }
 
         return $params;

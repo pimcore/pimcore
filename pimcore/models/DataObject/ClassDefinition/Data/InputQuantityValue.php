@@ -31,15 +31,6 @@ class InputQuantityValue extends QuantityValue
     public $fieldtype = 'inputQuantityValue';
 
     /**
-     * This field is extended from the parent but is off
-     * (InputQuantityValue SHOULD NOT have default value)
-     * For more information please check getter and setter for this field.
-     *
-     * @var null
-     */
-    public $defaultValue = null;
-
-    /**
      * Type for the column to query
      *
      * @var array
@@ -60,22 +51,6 @@ class InputQuantityValue extends QuantityValue
     ];
 
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
-
-    /**
-     * @return void
-     */
-    public function getDefaultValue()
-    {
-        return;
-    }
-
-    /**
-     * @param int $defaultValue
-     */
-    public function setDefaultValue($defaultValue)
-    {
-        return;
-    }
 
     /**
      * @param float $data

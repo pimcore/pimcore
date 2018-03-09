@@ -746,7 +746,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             return $publishedList;
         }
 
-        return $data;
+        return is_array($data) ? $data : [];
     }
 
     /**
