@@ -483,7 +483,7 @@ class Tool
         }
 
         // get it from System settings
-        if (!$hostname) {
+        if (!$hostname || $hostname == 'localhost') {
             $systemConfig = Config::getSystemConfig()->toArray();
             $hostname = $systemConfig['general']['domain'];
 
