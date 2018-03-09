@@ -567,6 +567,14 @@ pimcore.asset.tree = Class.create({
                     }));
                 }
 
+                if (perspectiveCfg.inTreeContextMenu("asset.downloadFolder")) {
+                    menu.add(new Ext.menu.Item({
+                        text: t('download_as_zip'),
+                        iconCls: "pimcore_icon_folder pimcore_icon_zip pimcore_icon_overlay_download",
+                        handler: this.downloadFolder.bind(this, tree, record)
+                    }));
+                }
+                
                 menu.add("-");
 
             }
@@ -647,6 +655,19 @@ pimcore.asset.tree = Class.create({
                 iconCls: "pimcore_icon_delete",
                 handler: this.deleteAsset.bind(this, tree, record)
             }));
+        }
+                
+        // Download button only if is not a folder
+        if(record.data.type != 'folder') {
+            if (perspectiveCfg.inTreeContextMenu("asset.downloadFile")) {
+                menu.add(new Ext.menu.Item({
+                    text: t('download'),
+                    iconCls: "pimcore_icon_folder pimcore_icon_download",
+                    handler: function () {
+                        pimcore.helpers.download("/admin/asset/download?id=" + record.id);
+                    }
+                }));
+            }
         }
 
         // advanced menu
@@ -976,6 +997,60 @@ pimcore.asset.tree = Class.create({
         }.bind(this), function (res) {
             pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.get("id"));
         }.bind(this));
+    },
+     
+    downloadFolder: function (tree, record, response) {
+        console.log(record.id);
+        Ext.Ajax.request({
+            url: "/admin/asset/download-as-zip-jobs",
+            params: {id: record.id},
+            success: function(response) {
+                var res = Ext.decode(response.responseText);
+
+                this.downloadProgressBar = new Ext.ProgressBar({
+                    text: t('initializing')
+                });
+
+                this.downloadProgressWin = new Ext.Window({
+                    title: t("download_as_zip"),
+                    layout:'fit',
+                    width:500,
+                    bodyStyle: "padding: 10px;",
+                    closable:false,
+                    plain: true,
+                    modal: true,
+                    items: [this.downloadProgressBar]
+                });
+
+                this.downloadProgressWin.show();
+
+
+                var pj = new pimcore.tool.paralleljobs({
+                    success: function (jobId) {
+                        if(this.downloadProgressWin) {
+                            this.downloadProgressWin.close();
+                        }
+
+                        this.downloadProgressBar = null;
+                        this.downloadProgressWin = null;
+
+                        pimcore.helpers.download('/admin/asset/download-as-zip?jobId='+ jobId + "&id=" + record.id);
+                    }.bind(this, res.jobId),
+                    update: function (currentStep, steps, percent) {
+                        if(this.downloadProgressBar) {
+                            var status = currentStep / steps;
+                            this.downloadProgressBar.updateProgress(status, percent + "%");
+                        }
+                    }.bind(this),
+                    failure: function (message) {
+                        this.downloadProgressWin.close();
+                        pimcore.helpers.showNotification(t("error"), t("error"),
+                            "error", t(message));
+                    }.bind(this),
+                    jobs: res.jobs
+                });
+            }.bind(this)
+        });
     },
 
     enableHtml5Upload: function (node, rowIdx, out) {
