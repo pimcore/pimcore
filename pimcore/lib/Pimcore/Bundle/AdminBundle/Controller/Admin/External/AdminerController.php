@@ -42,8 +42,14 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                 return $this->redirect('/admin/external_adminer/adminer?username=' . $conf->username . '&db=' . $conf->dbname);
             }
 
+            // disable debug error handler while including adminer
+            $errorHandler = set_error_handler(function () {
+            });
+
             chdir($this->adminerHome . 'adminer');
             include($this->adminerHome . 'adminer/index.php');
+
+            set_error_handler($errorHandler);
 
             // empty fake response, unfortunately Adminer uses flush() very heavily so we're not able to buffer, rewrite
             // and put the into a proper response object :(

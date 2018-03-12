@@ -124,6 +124,14 @@ pimcore.settings.fileexplorer.explorer = Class.create({
             }));
         }
 
+        if (record.parentNode) {
+            menu.add(new Ext.menu.Item({
+                text: t('rename'),
+                iconCls: "pimcore_icon_key",
+                handler: this.rename.bind(this, record),
+                disabled: !record.data.writeable
+            }));
+        }
 
         menu.showAt(e.pageX, e.pageY);
     },
@@ -175,6 +183,31 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                                     }
                                 });
                             }.bind(this, node));
+    },
+
+    rename: function (node) {
+
+        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
+            function (node, button, value) {
+                Ext.Ajax.request({
+                    url: "/admin/misc/fileexplorer-rename",
+                    success: function (node, response) {
+                        if (this.openfiles[node.id]) {
+                            this.openfiles[node.id].updatePath(node.parentNode.id + value);
+                        }
+                        this.treePanel.getStore().load({
+                            node: node.parentNode,
+                            callback: function() {
+                                node.parentNode.expand();
+                            }
+                        });
+                    }.bind(this, node),
+                    params: {
+                        path: node.id,
+                        newPath: node.parentNode.id + value
+                    }
+                });
+            }.bind(this, node));
     },
 
     deleteFile: function (node) {

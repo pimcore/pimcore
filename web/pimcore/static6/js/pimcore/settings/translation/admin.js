@@ -65,7 +65,7 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
             this.panel = new Ext.Panel({
                 id: "pimcore_translations_admin",
                 iconCls: "pimcore_icon_translations",
-                title: t("translations_admin"),
+                title: t("admin_translations"),
                 border: false,
                 layout: "fit",
                 closable:true,

@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
-use Pimcore\Config;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Console;
@@ -126,7 +125,7 @@ class UpdateCommand extends AbstractCommand
                 exit;
             }
 
-            $debug = \Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
+            $debug = $this->getApplication()->getKernel()->isDebug();
             if (!$debug) {
                 $this->writeError('Enable debug mode in system settings or set PIMCORE_ENVIRONMENT=dev');
                 exit;

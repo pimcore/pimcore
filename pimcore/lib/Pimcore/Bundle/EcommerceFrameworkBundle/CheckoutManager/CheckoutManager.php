@@ -121,8 +121,8 @@ class CheckoutManager implements ICheckoutManager
      */
     protected function setCheckoutSteps(array $checkoutSteps)
     {
-        if (0 === count($checkoutSteps)) {
-            throw new \InvalidArgumentException('Checkout manager needs at least one checkout step');
+        if (empty($checkoutSteps)) {
+            return;
         }
 
         foreach ($checkoutSteps as $checkoutStep) {
@@ -241,6 +241,8 @@ class CheckoutManager implements ICheckoutManager
      */
     protected function updateEnvironmentAfterOrderCommit(AbstractOrder $order)
     {
+        $this->validateCheckoutSteps();
+
         if (empty($order->getOrderState())) {
             // if payment not successful -> set current checkout step to last step and checkout to not finished
             // last step must be committed again in order to restart payment or e.g. commit without payment?
@@ -265,6 +267,8 @@ class CheckoutManager implements ICheckoutManager
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams)
     {
+        $this->validateCheckoutSteps();
+
         $commitOrderProcessor = $this->commitOrderProcessors->getCommitOrderProcessor();
 
         // check if order is already committed and payment information with same internal payment id has same state
@@ -297,6 +301,8 @@ class CheckoutManager implements ICheckoutManager
      */
     public function commitOrderPayment(IStatus $status)
     {
+        $this->validateCheckoutSteps();
+
         if (!$this->payment) {
             throw new UnsupportedException('Payment is not activated');
         }
@@ -321,6 +327,8 @@ class CheckoutManager implements ICheckoutManager
      */
     public function commitOrder()
     {
+        $this->validateCheckoutSteps();
+
         if ($this->isCommitted()) {
             throw new UnsupportedException('Order already committed.');
         }
@@ -484,6 +492,8 @@ class CheckoutManager implements ICheckoutManager
      */
     public function commitStep(ICheckoutStep $step, $data)
     {
+        $this->validateCheckoutSteps();
+
         // get index of current step and index of step to commit
         $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
         $index = array_search($step, $this->checkoutStepOrder);
@@ -540,7 +550,7 @@ class CheckoutManager implements ICheckoutManager
      */
     public function getCheckoutStep($stepName)
     {
-        return $this->checkoutSteps[$stepName];
+        return $this->checkoutSteps[$stepName] ?? null;
     }
 
     /**
@@ -556,7 +566,16 @@ class CheckoutManager implements ICheckoutManager
      */
     public function getCurrentStep()
     {
+        $this->validateCheckoutSteps();
+
         return $this->currentStep;
+    }
+
+    protected function validateCheckoutSteps()
+    {
+        if (empty($this->checkoutSteps)) {
+            throw new \RuntimeException('Checkout manager does not define any checkout steps');
+        }
     }
 
     /**

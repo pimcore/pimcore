@@ -41,6 +41,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Templating\Helper\Placeholder\CacheBusterAware;
 use Pimcore\Templating\Helper\Placeholder\Container;
 use Pimcore\Templating\Helper\Placeholder\ContainerService;
+use Pimcore\Templating\Helper\Traits\WebLinksTrait;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -59,6 +60,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class HeadLink extends CacheBusterAware
 {
+    use WebLinksTrait;
+
     /**
      * $_validAttributes
      *
@@ -84,15 +87,27 @@ class HeadLink extends CacheBusterAware
     protected $_regKey = 'HeadLink';
 
     /**
+     * Default attributes for generated WebLinks (HTTP/2 push).
+     *
+     * @var array
+     */
+    protected $webLinkAttributes = ['as' => 'style'];
+
+    /**
      * HeadLink constructor.
      *
      * Use PHP_EOL as separator
      *
      * @param ContainerService $containerService
+     * @param WebLink $webLinkHelper
      */
-    public function __construct(ContainerService $containerService)
-    {
+    public function __construct(
+        ContainerService $containerService,
+        WebLink $webLinkHelper
+    ) {
         parent::__construct($containerService);
+
+        $this->webLinkHelper = $webLinkHelper;
         $this->setSeparator(PHP_EOL);
     }
 
@@ -364,6 +379,17 @@ class HeadLink extends CacheBusterAware
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_LINK, new GenericEvent($this, [
                 'item' => $item
             ]));
+
+            $source         = (string)($item->href ?? '');
+            $itemAttributes = isset($item->extras) ? $item->extras : [];
+
+            if (is_array($item->extras) && isset($item->extras['webLink'])) {
+                unset($item->extras['webLink']);
+            }
+
+            if (is_array($itemAttributes) && !empty($source)) {
+                $this->handleWebLink($item, $source, $itemAttributes);
+            }
         }
     }
 

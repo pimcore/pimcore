@@ -98,7 +98,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
      */
@@ -124,6 +124,8 @@ class Page extends TargetingDocument
 
             // create redirect for old path
             $redirect = new Redirect();
+            $redirect->setType(Redirect::TYPE_PATH);
+            $redirect->setRegex(true);
             $redirect->setTarget($this->getId());
             $redirect->setSource('@' . $oldPath . '/?@');
             $redirect->setStatusCode(301);

@@ -108,6 +108,24 @@ class Requirements
             'state' => ($result['Value'] == 'utf8mb4') ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
+        $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
+        $checks[] = new Check([
+            'name' => 'innodb_large_prefix = ON ',
+            'state' => ($largePrefix && $largePrefix['Value'] != 'ON') ? Check::STATE_ERROR : Check::STATE_OK
+        ]);
+
+        $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
+        $checks[] = new Check([
+            'name' => 'innodb_file_format = Barracuda',
+            'state' => ($fileFormat && $fileFormat['Value'] != 'Barracuda') ? Check::STATE_ERROR : Check::STATE_OK
+        ]);
+
+        $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
+        $checks[] = new Check([
+            'name' => 'innodb_file_per_table = ON',
+            'state' => ($fileFilePerTable && $fileFilePerTable['Value'] != 'ON') ? Check::STATE_ERROR : Check::STATE_OK
+        ]);
+
         // create table
         $queryCheck = true;
         try {
@@ -462,16 +480,20 @@ class Requirements
 
         // check for memory limit
         $memoryLimit = ini_get('memory_limit');
-        $memoryLimit = filesize2bytes($memoryLimit . 'B');
         $memoryLimitState = Check::STATE_OK;
         $memoryLimitMessage = '';
 
-        if ($memoryLimit < 67108000) {
-            $memoryLimitState = Check::STATE_ERROR;
-            $memoryLimitMessage = 'Your memory limit is by far too low. Set `memory_limit` in your php.ini at least to `150M`.';
-        } elseif ($memoryLimit < 134217000) {
-            $memoryLimitState = Check::STATE_WARNING;
-            $memoryLimitMessage = 'Your memory limit is probably too low. Set `memory_limit` in your php.ini to `150M` or higher to avoid issues.';
+        // check bytes of memory limit if it's not set to unlimited ('-1')
+        // http://php.net/manual/en/ini.core.php#ini.memory-limit
+        if ($memoryLimit !== '-1') {
+            $memoryLimit = filesize2bytes($memoryLimit . 'B');
+            if ($memoryLimit < 67108000) {
+                $memoryLimitState = Check::STATE_ERROR;
+                $memoryLimitMessage = 'Your memory limit is by far too low. Set `memory_limit` in your php.ini at least to `150M`.';
+            } elseif ($memoryLimit < 134217000) {
+                $memoryLimitState = Check::STATE_WARNING;
+                $memoryLimitMessage = 'Your memory limit is probably too low. Set `memory_limit` in your php.ini to `150M` or higher to avoid issues.';
+            }
         }
 
         $checks[] = new Check([
@@ -577,17 +599,19 @@ class Requirements
         $checks[] = new Check([
             'name' => 'Intl',
             'link' => 'http://www.php.net/intl',
-            'state' => class_exists('Locale') ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => extension_loaded('intl') ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // Locales
-        $fmt = new \IntlDateFormatter('de', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, 'Europe/Vienna', \IntlDateFormatter::GREGORIAN, 'EEEE');
-        $checks[] = new Check([
-            'name' => 'locales-all',
-            'link' => 'https://packages.debian.org/en/stable/locales-all',
-            'state' => ($fmt->format(new \DateTime('next tuesday')) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
-            'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all)."
-        ]);
+        if (extension_loaded('intl')) {
+            $fmt = new \IntlDateFormatter('de', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL, 'Europe/Vienna', \IntlDateFormatter::GREGORIAN, 'EEEE');
+            $checks[] = new Check([
+                'name' => 'locales-all',
+                'link' => 'https://packages.debian.org/en/stable/locales-all',
+                'state' => ($fmt->format(new \DateTime('next tuesday')) == 'Dienstag') ? Check::STATE_OK : Check::STATE_WARNING,
+                'message' => "It's recommended to have the GNU C Library locale data installed (eg. apt-get install locales-all)."
+            ]);
+        }
 
         // Imagick
         $checks[] = new Check([

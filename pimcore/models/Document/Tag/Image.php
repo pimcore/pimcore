@@ -172,7 +172,8 @@ class Image extends Model\Document\Tag
                 'cropTop' => $this->cropTop,
                 'cropLeft' => $this->cropLeft,
                 'hotspots' => $hotspots,
-                'marker' => $marker
+                'marker' => $marker,
+                'predefinedDataTemplates' => $this->getOptions()['predefinedDataTemplates']
             ];
         }
 

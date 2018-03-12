@@ -222,7 +222,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     forceFit: true
                 },
                 plugins: ['gridfilters'],
-                selModel: Ext.create('Ext.selection.RowModel', {}),
+                selModel: this.getGridSelModel(),
                 bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {

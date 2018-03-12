@@ -26,6 +26,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class EnableCommand extends AbstractBundleCommand
 {
+    /**
+     * @var PostStateChange
+     */
+    private $postStateChangeHelper;
+
+    public function __construct(PostStateChange $postStateChangeHelper)
+    {
+        parent::__construct();
+
+        $this->postStateChangeHelper = $postStateChangeHelper;
+    }
+
     protected function configure()
     {
         $this
@@ -79,8 +91,10 @@ class EnableCommand extends AbstractBundleCommand
             return;
         }
 
-        $postStateChange = new PostStateChange($this->getApplication());
-        $postStateChange->runPostStateChangeCommands($this->io);
+        $this->postStateChangeHelper->runPostStateChangeCommands(
+            $this->io,
+            $this->getApplication()->getKernel()->getEnvironment()
+        );
     }
 
     /**

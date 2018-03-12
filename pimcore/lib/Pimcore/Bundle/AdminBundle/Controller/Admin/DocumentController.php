@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
+use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -85,18 +86,17 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
+        $limit  = intval($allParams['limit'] ?? 100000000);
+        $offset = intval($allParams['start'] ?? 0);
+
         $document = Document::getById($allParams['node']);
+        if (!$document) {
+            throw $this->createNotFoundException('Document was not found');
+        }
 
         $documents = [];
         $cv = false;
         if ($document->hasChildren()) {
-            $limit = intval($allParams['limit']);
-            if (!$allParams['limit']) {
-                $limit = 100000000;
-            }
-
-            $offset = intval($allParams['start']);
-
             if ($allParams['view']) {
                 $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
             }
@@ -124,11 +124,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $list);
 
             $beforeListLoadEvent = new GenericEvent($this, [
-                'list' => $childsList,
+                'list' => $list,
                 'context' => $allParams
             ]);
+
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
-            $childsList = $beforeListLoadEvent->getArgument('list');
+            $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
 
@@ -1153,17 +1154,20 @@ class DocumentController extends ElementControllerBase implements EventedControl
     /**
      * @Route("/seopanel-tree-root")
      *
-     * @param Request $request
+     * @param DocumentRouteHandler $documentRouteHandler
      *
      * @return JsonResponse
      */
-    public function seopanelTreeRootAction(Request $request)
+    public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler)
     {
         $this->checkPermission('seo_document_editor');
 
         $root = Document::getById(1);
         if ($root->isAllowed('list')) {
-            $nodeConfig = $this->getSeoNodeConfig($request, $root);
+            // make sure document routes are also built for unpublished documents
+            $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
+
+            $nodeConfig = $this->getSeoNodeConfig($root);
 
             return $this->adminJson($nodeConfig);
         }
@@ -1175,11 +1179,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
      * @Route("/seopanel-tree")
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param DocumentRouteHandler $documentRouteHandler
      *
      * @return JsonResponse
      */
-    public function seopanelTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
-    {
+    public function seopanelTreeAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher,
+        DocumentRouteHandler $documentRouteHandler
+    ) {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
@@ -1190,6 +1199,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         $this->checkPermission('seo_document_editor');
+
+        // make sure document routes are also built for unpublished documents
+        $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
 
         $document = Document::getById($allParams['node']);
 
@@ -1216,7 +1228,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $list->setCondition('path LIKE ? and type = ?', [$childDocument->getRealFullPath() . '/%', 'page']);
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
-                        $documents[] = $this->getSeoNodeConfig($request, $childDocument);
+                        $documents[] = $this->getSeoNodeConfig($childDocument);
                     }
                 }
             }
@@ -1289,7 +1301,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $document = Document::getById($request->get('id'));
         if ($document) {
             $service = new Document\Service;
-            $translations = $service->getTranslations($document->getParent());
+            $translations = $service->getTranslations($document->getId() === 1 ? $document : $document->getParent());
             if (isset($translations[$request->get('language')])) {
                 $targetDocument = Document::getById($translations[$request->get('language')]);
                 $targetPath = $targetDocument->getRealFullPath();
@@ -1352,144 +1364,26 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Request $request
      * @param Document\PageSnippet|Document\Page $document
      *
      * @return array
      */
-    private function getSeoNodeConfig(Request $request, $document)
+    private function getSeoNodeConfig($document)
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 
         if (method_exists($document, 'getTitle') && method_exists($document, 'getDescription')) {
+            // analyze content
+            $nodeConfig['prettyUrl'] = $document->getPrettyUrl();
 
-            // anaylze content
-            $nodeConfig['prettyUrl']     = $document->getPrettyUrl();
-            $nodeConfig['links']         = 0;
-            $nodeConfig['externallinks'] = 0;
-            $nodeConfig['h1']            = 0;
-            $nodeConfig['h1_text']       = '';
-            $nodeConfig['hx']            = 0;
-            $nodeConfig['imgwithalt']    = 0;
-            $nodeConfig['imgwithoutalt'] = 0;
-
-            $title       = null;
-            $description = null;
-
-            try {
-
-                // cannot use the rendering service from Document\Service::render() because of singleton's ...
-                // $content = Document\Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
-
-                $contentUrl = $request->getScheme() . '://' . $request->getHttpHost() . $document->getFullPath();
-                $content    = Tool::getHttpData($contentUrl, ['pimcore_preview' => true, 'pimcore_admin' => true, '_dc' => time()]);
-
-                if ($content) {
-                    include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-                    $html = str_get_html($content);
-                    if ($html) {
-                        $nodeConfig['links']         = count($html->find('a'));
-                        $nodeConfig['externallinks'] = count($html->find('a[href^=http]'));
-                        $nodeConfig['h1']            = count($html->find('h1'));
-
-                        $h1 = $html->find('h1', 0);
-                        if ($h1) {
-                            $nodeConfig['h1_text'] = strip_tags($h1->innertext);
-                        }
-
-                        $title = $html->find('title', 0);
-                        if ($title) {
-                            $title = html_entity_decode(trim(strip_tags($title->innertext)), null, 'UTF-8');
-                        }
-
-                        $description = $html->find('meta[name=description]', 0);
-                        if ($description) {
-                            $description = html_entity_decode(trim(strip_tags($description->content)), null, 'UTF-8');
-                        }
-
-                        $nodeConfig['hx'] = count($html->find('h2,h2,h4,h5'));
-
-                        $images = $html->find('img');
-                        if ($images) {
-                            foreach ($images as $image) {
-                                $alt = $image->alt;
-                                if (empty($alt)) {
-                                    $nodeConfig['imgwithoutalt']++;
-                                } else {
-                                    $nodeConfig['imgwithalt']++;
-                                }
-                            }
-                        }
-
-                        $html->clear();
-                        unset($html);
-                    }
-                }
-            } catch (\Exception $e) {
-                Logger::debug($e);
-            }
-
-            if (!$title) {
-                $title = $document->getTitle();
-            }
-            if (!$description) {
-                $description = $document->getDescription();
-            }
+            $title = $document->getTitle();
+            $description = $document->getDescription();
 
             $nodeConfig['title'] = $title;
-
-            // the title as used in the edit window
-            $nodeConfig['edit_title'] = $document->getTitle();
-
-            // fall back to resolved title if no document title is set - this potentially includes
-            // pre- and suffixes but is better than and empty input when actually a title was resolved
-            // in the tree
-            if (empty($nodeConfig['edit_title']) && !empty($nodeConfig['title'])) {
-                $nodeConfig['edit_title'] = $nodeConfig['title'];
-            }
-
             $nodeConfig['description'] = $description;
 
             $nodeConfig['title_length']       = mb_strlen($title);
             $nodeConfig['description_length'] = mb_strlen($description);
-
-            $qtip = '';
-
-            $translator = \Pimcore::getContainer()->get('translator');
-
-            if (mb_strlen($title) > 80) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The title is too long, it should have 5 to 80 characters.', [], 'admin') . '<br>';
-            }
-
-            if (mb_strlen($title) < 5) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The title is too short, it should have 5 to 80 characters.', [], 'admin') . '<br>';
-            }
-
-            if (mb_strlen($description) > 180) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The description is too long, it should have 20 to 180 characters.', [], 'admin') . '<br>';
-            }
-
-            if (mb_strlen($description) < 20) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The description is too short, it should have 20 to 180 characters.', [], 'admin') . '<br>';
-            }
-
-            if ($nodeConfig['h1'] != 1) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= sprintf($translator->trans('The document should have one h1, but has %s.', [], 'admin'), $nodeConfig['h1']) . '<br>';
-            }
-
-            if ($nodeConfig['hx'] < 1) {
-                $nodeConfig['cls'] = 'pimcore_document_seo_warning';
-                $qtip .= $translator->trans('The document should some headlines other than h1, but has none.', [], 'admin') . '<br>';
-            }
-
-            if ($qtip) {
-                $nodeConfig['qtip'] = $qtip;
-            }
         }
 
         return $nodeConfig;

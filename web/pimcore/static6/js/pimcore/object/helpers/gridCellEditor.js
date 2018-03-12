@@ -73,6 +73,10 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
             width: 700,
             maxHeight: 600,
             autoScroll: true,
+            preventRefocus: true,      // nasty hack because this is an internal property
+                                       // for html grid cell values with hrefs this prevents that the cell
+                                       // gets refocused which would then trigger another editor window
+                                       // upon close of this instance
             listeners:{
                 close:function(){
                     this.cancelEdit(false);

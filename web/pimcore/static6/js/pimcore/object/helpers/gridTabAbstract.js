@@ -129,7 +129,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 batchSelectedMenu.show();
             }
 
-            if (!Ext.Array.contains(this.systemColumns,columnDataIndex) && Ext.Array.contains(this.batchAppendColumns, columnDataIndex)) {
+            if (!Ext.Array.contains(this.systemColumns,columnDataIndex) && Ext.Array.contains(this.batchAppendColumns ? this.batchAppendColumns : [], columnDataIndex)) {
                 batchAppendAllMenu.show();
                 batchAppendSelectedMenu.show();
             } else {
@@ -329,7 +329,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         if (append) {
             this.batchParameters.append = 1;
         }
-        
+
         Ext.Ajax.request({
             url: "/admin/object-helper/batch",
             params: this.batchParameters,
@@ -532,7 +532,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
             this.exportParameters = {
                 fileHandle: fileHandle,
-                language: this.gridLanguage
+                language: this.gridLanguage,
+                settings: settings
             };
             this.exportProgressBar = new Ext.ProgressBar({
                 text: t('Initializing'),
@@ -575,7 +576,6 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         this.exportParameters["fields[]"] = fields;
         this.exportParameters.classId = this.classId;
         this.exportParameters.initial = initial ? 1 : 0;
-        this.exportParameters['settings'] = settings;
 
         Ext.Ajax.request({
             url: "/admin/object-helper/do-export",

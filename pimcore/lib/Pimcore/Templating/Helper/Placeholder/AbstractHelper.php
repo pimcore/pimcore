@@ -59,6 +59,11 @@ use Symfony\Component\Templating\Helper\Helper;
 abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Countable, \ArrayAccess
 {
     /**
+     * @var ContainerService
+     */
+    protected $containerService;
+
+    /**
      * @var Container
      */
     protected $_container;
@@ -78,16 +83,9 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      */
     protected $_autoEscape = true;
 
-    /**
-     * AbstractHelper constructor.
-     *
-     * @param ContainerService $containerService
-     *
-     * @internal param Container $container
-     */
     public function __construct(ContainerService $containerService)
     {
-        $this->setContainer($containerService->getContainer($this->_regKey));
+        $this->containerService = $containerService;
     }
 
     /**
@@ -135,7 +133,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      */
     public function setContainer(Container $container)
     {
-        $this->_container = $container;
+        $this->containerService->setContainer($this->_regKey, $container);
 
         return $this;
     }
@@ -147,7 +145,7 @@ abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Cou
      */
     public function getContainer()
     {
-        return $this->_container;
+        return $this->containerService->getContainer($this->_regKey);
     }
 
     /**

@@ -396,7 +396,7 @@ pimcore.object.classes.klass = Class.create({
                         layoutMenu.push({
                             text: pimcore.object.classes.layout[layouts[i]].prototype.getTypeName(),
                             iconCls: pimcore.object.classes.layout[layouts[i]].prototype.getIconClass(),
-                            handler: this.addLayoutChild.bind(record, layouts[i], this.context)
+                            handler: this.addLayoutChild.bind(record, layouts[i], null, this.context)
                         });
                     }
 

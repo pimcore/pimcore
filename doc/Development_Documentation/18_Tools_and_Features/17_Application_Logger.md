@@ -112,7 +112,7 @@ monolog:
 
 Note that the channel(s) need to exist. This can either by achieved by [configuring them manually](https://symfony.com/doc/3.4/logging/channels_handlers.html#creating-your-own-channel)
 or by using [DI tags](https://symfony.com/doc/3.4/reference/dic_tags.html#dic-tags-monolog) to select the logger for
-the channel you want to log to. When using DI tags, the channel will be created implicitely by monolog.
+the channel you want to log to. When using DI tags, the channel will be created implicitly by monolog.
 
 > **IMPORTANT**: As the `ApplicationLoggerDb` handler has a dependency on the database connection it is important to exclude
   channels logging database queries (typically the `doctrine` channel) from the handler to avoid infinite loops. Either
@@ -244,7 +244,7 @@ If you click on the row you can go to the object editor by clicking on the *Rela
 
 ### Logging exceptions
 
-The application logger provides a helper method to log exceptions and implicitely create a `FileObject` from the exception
+The application logger provides a helper method to log exceptions and implicitly create a `FileObject` from the exception
 when writing the log entry. This can be done in 2 ways depending on how you use the application logger:
 
 ```php

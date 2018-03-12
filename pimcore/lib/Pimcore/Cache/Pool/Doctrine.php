@@ -251,19 +251,25 @@ SQL;
      */
     protected function removeNotMatchingTags($id, array $tags)
     {
-        $stmt = $this->db->executeQuery(
-            'DELETE FROM cache_tags WHERE id = ? AND tag NOT IN (?)',
-            [
-                $id,
-                $tags
-            ],
-            [
-                \PDO::PARAM_STR,
-                Connection::PARAM_STR_ARRAY
-            ]
-        );
+        try {
+            $this->db->executeQuery(
+                'DELETE FROM cache_tags WHERE id = ? AND tag NOT IN (?)',
+                [
+                    $id,
+                    $tags
+                ],
+                [
+                    \PDO::PARAM_STR,
+                    Connection::PARAM_STR_ARRAY
+                ]
+            );
 
-        return $stmt->execute();
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error($e);
+
+            return false;
+        }
     }
 
     /**

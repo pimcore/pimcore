@@ -95,6 +95,10 @@ services:
         tags:
             - { name: templating.helper, alias: headMeta }
 
+    Pimcore\Templating\Helper\WebLink:
+        tags:
+            - { name: templating.helper, alias: webLink }
+
     Pimcore\Templating\Helper\Device:
         tags:
             - { name: templating.helper, alias: device }

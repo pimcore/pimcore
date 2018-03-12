@@ -1,0 +1,297 @@
+{% import '@PimcoreCore/Targeting/toolbar/macros.html.twig' as toolbar %}
+
+{% block toolbar %}
+    {% spaceless %}
+    <div id="_ptgtb-{{ token }}" class="_ptgtb _ptgtb--collapsed">
+        <div class="_ptgtb__trigger" title="{% trans from 'admin' %}targeting{% endtrans %}">
+            <span class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--target">
+                {{ include('@PimcoreCore/Profiler/target.svg.twig') }}
+            </span>
+
+            <span class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--collapse">
+                {{ include('@PimcoreCore/Targeting/toolbar/icon/toolbar-collapse.svg.twig') }}
+            </span>
+        </div>
+
+        <a class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--close" data-ptgtb-target="#_ptgtb-{{ token }}" title="Close Toolbar">
+            {{ include('@PimcoreCore/Targeting/toolbar/icon/close.svg.twig') }}
+        </a>
+
+        <a
+            class="_ptgtb__toolbar-icon _ptgtb__toolbar-icon--advanced-features"
+            title="Toggle Advanced Features"
+            data-ptgtb-toggle="collapse"
+            data-ptgtb-target="._ptgtb__advanced"
+            data-ptgtb-collapse-default="collapse"
+            data-ptgtb-collapse-store="advanced"
+            data-ptgtb-arrow="false"
+            >
+            {{ include('@PimcoreCore/Targeting/toolbar/icon/advanced_features.svg.twig') }}
+        </a>
+
+        <div class="_ptgtb__content">
+            <div class="_ptgtb__content-inner">
+                <h1>
+                    Targeting
+                </h1>
+
+                {% block overview %}
+                    <table class="_ptgtb__table">
+                        {% block overviewTable %}
+                            {% if documentTargetGroup is not null %}
+                                <tr>
+                                    <th>Document Target Group</th>
+                                    <td class="_ptgtb__table__col-right">
+                                        {{ toolbar.label(documentTargetGroup.name, ['_ptgtb__label--target-group']) }}
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            <tr>
+                                <th>Visitor ID</th>
+                                <td class="_ptgtb__table__col-right">
+                                    {% if visitorInfo.visitorId is not empty %}
+                                        {{ toolbar.label(visitorInfo.visitorId) }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>Session ID</th>
+                                <td class="_ptgtb__table__col-right">
+                                    {% if visitorInfo.sessionId is not empty %}
+                                        {{ toolbar.label(visitorInfo.sessionId) }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endblock %}
+                    </table>
+                {% endblock %}
+
+                {% block rules %}
+                    {% if rules is not empty %}
+                        <h2
+                            class="_ptgtb__collapse__trigger--block"
+                            data-ptgtb-toggle="collapse"
+                            data-ptgtb-target="#{{ toolbar.identifier(token, 'rules') }}"
+                            data-ptgtb-collapse-store="rules"
+                        >
+                            Matched Rules
+                            {{ toolbar.label(rules|length) }}
+                        </h2>
+
+                        <table id="{{ toolbar.identifier(token, 'rules') }}" class="_ptgtb__table">
+                            {% block rulesTable %}
+                                {% for rule in rules %}
+                                    {% set rowIdentifier = toolbar.identifier(token, 'rules-details', loop.index) %}
+
+                                    <tr class="_ptgtb__table__row-with-details">
+                                        <td>
+                                            {{ toolbar.trigger_label(rule.name, '#' ~ rowIdentifier, ['_ptgtb__label--rule']) }}
+                                        </td>
+                                    </tr>
+                                    <tr id="{{ rowIdentifier }}" class="_ptgtb__table__row-details">
+                                        <td>
+                                            {{ toolbar.metric('Rule ID', rule.id) }}
+
+                                            {% if rule.duration is not null %}
+                                                {{ toolbar.metric('Duration', rule.duration|round(2) ~ ' ms') }}
+                                            {% endif %}
+
+                                            {{ toolbar.metric('Conditions', rule.conditions|length) }}
+                                            {{ toolbar.metric('Actions', rule.actions|length) }}
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+                            {% endblock %}
+                        </table>
+                    {% endif %}
+                {% endblock %}
+
+                {% block targetGroups %}
+                    {% if targetGroups is not empty %}
+                        <h2
+                            class="_ptgtb__collapse__trigger--block"
+                            data-ptgtb-toggle="collapse"
+                            data-ptgtb-target="#{{ toolbar.identifier(token, 'target-groups') }}"
+                            data-ptgtb-collapse-store="target-groups"
+                        >
+                            Assigned Target Groups
+                            {{ toolbar.label(targetGroups|length) }}
+                        </h2>
+
+                        <table id="{{ toolbar.identifier(token, 'target-groups') }}" class="_ptgtb__table">
+                            {% block targetGroupsTable %}
+                                {% for targetGroup in targetGroups %}
+                                    {% set rowIdentifier = toolbar.identifier(token, 'target-groups-details', loop.index) %}
+
+                                    <tr class="_ptgtb__table__row-with-details">
+                                        <td>
+                                            {{ toolbar.trigger_label(targetGroup.name, '#' ~ rowIdentifier, ['_ptgtb__label--target-group']) }}
+                                        </td>
+                                        <td class="_ptgtb__table__col-number">
+                                            {{ toolbar.label(targetGroup.count) }}
+                                        </td>
+                                    </tr>
+                                    <tr id="{{ rowIdentifier }}" class="_ptgtb__table__row-details">
+                                        <td colspan="2">
+                                            {{ toolbar.metric('Target Group ID', targetGroup.id) }}
+                                            {{ toolbar.metric('Threshold', targetGroup.threshold) }}
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+                            {% endblock %}
+                        </table>
+                    {% endif %}
+                {% endblock %}
+
+                {% block documentTargetGroups %}
+                    {% if documentTargetGroups is not empty %}
+                        <h2
+                            class="_ptgtb__collapse__trigger--block"
+                            data-ptgtb-toggle="collapse"
+                            data-ptgtb-target="#{{ toolbar.identifier(token, 'document-target-groups') }}"
+                            data-ptgtb-collapse-store="document-target-groups"
+                        >
+                            Document Target Groups
+                            {{ toolbar.label(documentTargetGroups|length) }}
+                        </h2>
+
+                        <table id="{{ toolbar.identifier(token, 'document-target-groups') }}" class="_ptgtb__table">
+                            {% block documentTargetGroupsTable %}
+                                {% for assignment in documentTargetGroups %}
+                                    {% set rowIdentifier = toolbar.identifier(token, 'document-target-groups-details', loop.index) %}
+
+                                    <tr class="_ptgtb__table__row-with-details">
+                                        <td>
+                                            {{ toolbar.trigger_label(assignment.document.path|truncate(32), '#' ~ rowIdentifier, [], { title: assignment.document.path }) }}
+                                        </td>
+                                        <td class="_ptgtb__table__col-right">
+                                            {{ toolbar.label(assignment.targetGroup.name, ['_ptgtb__label--target-group']) }}
+                                        </td>
+                                    </tr>
+                                    <tr id="{{ rowIdentifier }}" class="_ptgtb__table__row-details">
+                                        <td colspan="2">
+                                            {{ toolbar.metric('Document ID', assignment.document.id) }}
+                                            {{ toolbar.metric('Target Group ID', assignment.targetGroup.id) }}
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+                            {% endblock %}
+                        </table>
+                    {% endif %}
+                {% endblock %}
+
+                <div class="_ptgtb__advanced">
+                    {% block advanced %}
+                        {% block visitorInfo %}
+                            <h2
+                                class="_ptgtb__collapse__trigger--block"
+                                data-ptgtb-toggle="collapse"
+                                data-ptgtb-target="#{{ toolbar.identifier(token, 'visitor-info') }}"
+                                data-ptgtb-collapse-default="collapse"
+                                data-ptgtb-collapse-store="visitor-info"
+                            >
+                                Visitor Info
+                            </h2>
+                            <div id="{{ toolbar.identifier(token, 'visitor-info') }}">
+                                {{ pimcore_dump({ data: visitorInfo.data, actions: visitorInfo.actions }) }}
+                            </div>
+                        {% endblock %}
+
+                        {% block storage %}
+                            <h2
+                                class="_ptgtb__collapse__trigger--block"
+                                data-ptgtb-toggle="collapse"
+                                data-ptgtb-target="#{{ toolbar.identifier(token, 'storage') }}"
+                                data-ptgtb-collapse-default="collapse"
+                                data-ptgtb-collapse-store="storage"
+                            >
+                                Storage
+                            </h2>
+                            <div id="{{ toolbar.identifier(token, 'storage') }}" class="_ptgtb__storage">
+
+                                {% block visitorStorage %}
+                                    <h3
+                                        class="_ptgtb__collapse__trigger--block"
+                                        data-ptgtb-toggle="collapse"
+                                        data-ptgtb-target="#{{ toolbar.identifier(token, 'storage-visitor') }}"
+                                        data-ptgtb-collapse-default="collapse"
+                                        data-ptgtb-collapse-store="storage-visitor"
+                                    >
+                                        Visitor Storage
+                                    </h3>
+                                    <div id="{{ toolbar.identifier(token, 'storage-visitor') }}">
+                                        {{ pimcore_dump(storage.visitor) }}
+                                    </div>
+                                {% endblock %}
+
+                                {% block sessionStorage %}
+                                    <h3
+                                        class="_ptgtb__collapse__trigger--block"
+                                        data-ptgtb-toggle="collapse"
+                                        data-ptgtb-target="#{{ toolbar.identifier(token, 'storage-session') }}"
+                                        data-ptgtb-collapse-default="collapse"
+                                        data-ptgtb-collapse-store="storage-session"
+                                    >
+                                        Session Storage
+                                    </h3>
+                                    <div id="{{ toolbar.identifier(token, 'storage-session') }}">
+                                        {{ pimcore_dump(storage.session) }}
+                                    </div>
+                                {% endblock %}
+                            </div>
+                        {% endblock %}
+                    {% endblock %}
+                </div>
+
+                {% block overrides %}
+                    <h2
+                        class="_ptgtb__collapse__trigger--block"
+                        data-ptgtb-toggle="collapse"
+                        data-ptgtb-target="#{{ toolbar.identifier(token, 'overrides') }}"
+                        data-ptgtb-collapse-default="collapse"
+                        data-ptgtb-collapse-store="overrides"
+                    >
+                        Overrides
+                    </h2>
+
+                    {% block overrideForm %}
+                        {% form_theme overrideForm 'form_div_layout.html.twig' %}
+                        {{ form_start(overrideForm, { attr: { id: toolbar.identifier(token, 'overrides'), class: '_ptgtb__override-form' }}) }}
+                        {{ form_widget(overrideForm) }}
+
+                        <div class="_ptgtb__override-form__button-row">
+                            <button type="reset" value="" class="_ptgtb--hidden">Reset</button>
+                            <button type="submit" value="">Apply</button>
+                        </div>
+
+                        {{ form_end(overrideForm) }}
+                    {% endblock %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block css %}
+    {%- spaceless -%}
+    <style type="text/css">
+        {%- pimcoreassetcompress -%}
+        {{ include('@PimcoreCore/Targeting/toolbar/toolbar.css') }}
+        {%- endpimcoreassetcompress -%}
+    </style>
+    {%- endspaceless -%}
+{% endblock %}
+
+{% block js %}
+    {{ include('@PimcoreCore/Targeting/toolbar/toolbar_js.html.twig') }}
+{% endblock %}

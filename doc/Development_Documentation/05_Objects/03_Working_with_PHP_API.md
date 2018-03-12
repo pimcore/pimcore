@@ -18,7 +18,11 @@ $newObject->setKey(\Pimcore\File::getValidFilename('New Name'));
 $newObject->setParentId(123);
 $newObject->setName("New Name");
 $newObject->setDescription("Some Text");
-$newObject->save();
+
+// the optional parameter allows you to provide additional info
+// currently supported:
+//      * versionNote: note added to the version (see version tab)
+$newObject->save(["versionNote" => "my new version"]);
 
 
 //getting objects

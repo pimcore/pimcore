@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\HttpKernel\BundleCollection;
 
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class LazyLoadedItem extends AbstractItem
@@ -31,6 +32,11 @@ class LazyLoadedItem extends AbstractItem
      * @var BundleInterface
      */
     private $bundle;
+
+    /**
+     * @var array
+     */
+    private static $classImplementsCache = [];
 
     public function __construct(
         string $className,
@@ -70,9 +76,24 @@ class LazyLoadedItem extends AbstractItem
         }
 
         // do not initialize bundle - check class instead
-        return in_array(
-            PimcoreBundleInterface::class,
-            class_implements($this->className)
-        );
+        return static::implementsInterface($this->className, PimcoreBundleInterface::class);
+    }
+
+    public function registerDependencies(BundleCollection $collection)
+    {
+        if (static::implementsInterface($this->className, DependentBundleInterface::class)) {
+            /** @var DependentBundleInterface $className */
+            $className = $this->className;
+            $className::registerDependentBundles($collection);
+        }
+    }
+
+    private static function implementsInterface(string $className, string $interfaceName): bool
+    {
+        if (!isset(static::$classImplementsCache[$className])) {
+            static::$classImplementsCache[$className] = class_implements($className);
+        }
+
+        return in_array($interfaceName, static::$classImplementsCache[$className]);
     }
 }

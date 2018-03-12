@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Webservice\Service;
 use Psr\Log\LoggerInterface;
@@ -188,7 +189,7 @@ abstract class AbstractRestController extends AdminController
 
         if (!is_array($data)) {
             $message = 'Invalid data';
-            if (\Pimcore::inDebugMode()) {
+            if (\Pimcore::inDebugMode(DebugMode::REST_ERRORS)) {
                 $message .= ': ' . $error;
             }
 

@@ -27,6 +27,7 @@ use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Config\Config as ConfigObject;
 use Pimcore\Event\Analytics\GoogleAnalyticsEvents;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -66,6 +67,11 @@ class Tracker extends AbstractTracker
     private $defaultPath;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var array
      */
     private $blocks = [
@@ -100,6 +106,14 @@ class Tracker extends AbstractTracker
     public function setDefaultPath(string $defaultPath = null)
     {
         $this->defaultPath = $defaultPath;
+    }
+
+    /**
+     * TODO Pimcore 6 set logger as constructor dependency
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     protected function buildCodeCollector(): CodeCollector
@@ -153,9 +167,16 @@ class Tracker extends AbstractTracker
             'retargeting'            => $siteConfig->retargetingcode ?? false,
         ];
 
-        $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig';
-        if ($siteConfig->asynchronouscode || $siteConfig->retargetingcode) {
+        if ($siteConfig->gtagcode) {
+            $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/gtagTrackingCode.html.twig';
+
+            $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig->universal_configuration ?? null, [
+                'anonymize_ip' => true
+            ]);
+        } elseif ($siteConfig->asynchronouscode || $siteConfig->retargetingcode) {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/asynchronousTrackingCode.html.twig';
+        } else {
+            $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig';
         }
 
         $blocks = $this->buildCodeBlocks($siteId, $siteConfig);
@@ -164,6 +185,23 @@ class Tracker extends AbstractTracker
         $this->eventDispatcher->dispatch(GoogleAnalyticsEvents::CODE_TRACKING_DATA, $event);
 
         return $this->renderTemplate($event);
+    }
+
+    private function getTrackerConfigurationFromJson($configValue = null, array $defaultConfig = []): array
+    {
+        $config = [];
+        if (!empty($configValue)) {
+            $jsonConfig = @json_decode($configValue, true);
+            if (JSON_ERROR_NONE === json_last_error() && is_array($jsonConfig)) {
+                $config = $jsonConfig;
+            } else {
+                $this->logger->warning('Failed to parse analytics tracker custom configuration: {error}', [
+                    'error' => json_last_error_msg() ?? 'not an array'
+                ]);
+            }
+        }
+
+        return array_merge($defaultConfig, $config);
     }
 
     private function buildCodeBlocks(SiteId $siteId, ConfigObject $siteConfig): array

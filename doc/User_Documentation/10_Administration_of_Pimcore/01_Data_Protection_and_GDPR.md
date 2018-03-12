@@ -9,7 +9,7 @@ with corresponding tasks.
 
 ## Restriction of Access
 
-Restriction of data access is archived with Pimcores extensive permission system. It allows to restrict accessing, 
+Restriction of data access is achieved with Pimcores extensive permission system. It allows to restrict accessing, 
 changing and deleting information on user and role level. For details see 
 [User and Roles documentation](../../Development_Documentation/22_Administration_of_Pimcore/07_Users_and_Roles.md). 
 

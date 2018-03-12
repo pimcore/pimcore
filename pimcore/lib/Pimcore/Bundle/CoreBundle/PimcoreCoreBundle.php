@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ComposerConfigNormalizersPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineMigrationsParametersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPass;
@@ -26,6 +27,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreContextResolve
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplateVarsProviderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplatingEngineAwareHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WebDebugToolbarListenerPass;
@@ -72,9 +74,11 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new ServiceControllersPass());
         $container->addCompilerPass(new SessionConfiguratorPass());
         $container->addCompilerPass(new WebDebugToolbarListenerPass());
+        $container->addCompilerPass(new TargetingOverrideHandlersPass());
         $container->addCompilerPass(new DoctrineMigrationsParametersPass());
         $container->addCompilerPass(new MonologPublicLoggerPass());
         $container->addCompilerPass(new MonologPsrLogMessageProcessorPass());
         $container->addCompilerPass(new ComposerConfigNormalizersPass());
+        $container->addCompilerPass(new DebugStopwatchPass());
     }
 }

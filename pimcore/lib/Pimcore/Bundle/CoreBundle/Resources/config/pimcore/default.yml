@@ -16,6 +16,8 @@ framework:
     validation: { enable_annotations: true }
     templating:
         engines: ['php', 'twig']
+    web_link:
+        enabled: true
     default_locale:  "%locale%"
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
@@ -68,6 +70,11 @@ cmf_routing:
 
 # Pimcore
 pimcore:
+    web_profiler:
+        toolbar:
+            excluded_routes:
+                - {path: '^/admin/asset/image-editor'}
+
     security:
         encoder_factories:
             Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_encoder_factory
@@ -242,6 +249,13 @@ pimcore:
                 namespace: App\Migrations
                 directory: "%kernel.root_dir%/Resources/migrations"
 
+    sitemaps:
+        generators:
+            pimcore_documents:
+                enabled: true
+                priority: 100
+                generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
+
 swiftmailer:
     default_mailer: pimcore_mailer
     mailers:
@@ -263,3 +277,10 @@ swiftmailer:
             port: '%pimcore_system_config.newsletter.smtp.port%'
             encryption: '%pimcore_system_config.newsletter.smtp.ssl%'
             auth_mode: '%pimcore_system_config.newsletter.smtp.auth.method%'
+
+presta_sitemap:
+    # do not add properties by default
+    defaults:
+        lastmod: ~
+        priority: ~
+        changefreq: ~

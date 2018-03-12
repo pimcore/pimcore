@@ -27,8 +27,8 @@ CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL,
-  `filename` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
-  `path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '',
+  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `mimetype` varchar(190) DEFAULT NULL,
   `creationDate` INT(11) UNSIGNED DEFAULT NULL,
   `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE `assets` (
   KEY `filename` (`filename`),
   KEY `path` (`path`),
   KEY `modificationDate` (`modificationDate`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
@@ -114,8 +114,8 @@ CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('page','link','snippet','folder','hardlink','email','newsletter','printpage','printcontainer') DEFAULT NULL,
-  `key` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
-  `path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '',
+  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` INT(11) UNSIGNED DEFAULT NULL,
@@ -129,7 +129,7 @@ CREATE TABLE `documents` (
   KEY `path` (`path`),
   KEY `published` (`published`),
   KEY `modificationDate` (`modificationDate`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `documents_elements`;
 CREATE TABLE `documents_elements` (
@@ -363,8 +363,8 @@ CREATE TABLE `objects` (
   `o_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `o_parentId` int(11) unsigned DEFAULT NULL,
   `o_type` enum('object','folder','variant') DEFAULT NULL,
-  `o_key` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci default '',
-  `o_path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `o_key` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci default '',
+  `o_path` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `o_index` int(11) unsigned DEFAULT '0',
   `o_published` tinyint(1) unsigned DEFAULT '1',
   `o_creationDate` int(11) unsigned DEFAULT NULL,
@@ -383,13 +383,13 @@ CREATE TABLE `objects` (
   KEY `parentId` (`o_parentId`),
   KEY `type` (`o_type`),
   KEY `o_modificationDate` (`o_modificationDate`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `name` varchar(190) NOT NULL DEFAULT '',
   `type` enum('text','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
@@ -399,7 +399,7 @@ CREATE TABLE `properties` (
   KEY `inheritable` (`inheritable`),
   KEY `ctype` (`ctype`),
   KEY `cid` (`cid`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `recyclebin`;
 CREATE TABLE `recyclebin` (
@@ -460,7 +460,7 @@ CREATE TABLE `schedule_tasks` (
 DROP TABLE IF EXISTS `search_backend_data`;
 CREATE TABLE `search_backend_data` (
   `id` int(11) NOT NULL,
-  `fullpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `fullpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(190) DEFAULT NULL,
@@ -479,7 +479,7 @@ CREATE TABLE `search_backend_data` (
   KEY `subtype` (`subtype`),
   KEY `published` (`published`),
   FULLTEXT KEY `fulltext` (`data`,`properties`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
@@ -680,7 +680,7 @@ CREATE TABLE `users_permission_definitions` (
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -694,12 +694,12 @@ CREATE TABLE `users_workspaces_asset` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `cid` (`cid`),
   KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -715,12 +715,12 @@ CREATE TABLE `users_workspaces_document` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `cid` (`cid`),
   KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -739,7 +739,7 @@ CREATE TABLE `users_workspaces_object` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `cid` (`cid`),
   KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `uuids`;
 CREATE TABLE `uuids` (
@@ -766,21 +766,6 @@ CREATE TABLE `versions` (
   KEY `ctype` (`ctype`),
   KEY `date` (`date`)
 ) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `website_settings`;
-CREATE TABLE `website_settings` (
-	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(190) NOT NULL DEFAULT '',
-	`type` ENUM('text','document','asset','object','bool') DEFAULT NULL,
-	`data` TEXT,
-	`siteId` INT(11) UNSIGNED DEFAULT NULL,
-	`creationDate` INT(11) UNSIGNED DEFAULT '0',
-	`modificationDate` INT(11) UNSIGNED DEFAULT '0',
-	PRIMARY KEY (`id`),
-	INDEX `name` (`name`),
-	INDEX `siteId` (`siteId`)
-) DEFAULT CHARSET=utf8mb4;
-
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
 DROP TABLE IF EXISTS `classificationstore_collectionrelations`;

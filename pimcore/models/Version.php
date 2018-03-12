@@ -22,6 +22,7 @@ use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
@@ -187,14 +188,14 @@ class Version extends AbstractModel
             File::put($this->getFilePath(), $dataString);
 
             // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
-            if ($data instanceof Asset && $data->getType() != 'folder') {
+            if ($data instanceof Asset && $data->getType() != 'folder' && file_exists($data->getFileSystemPath())) {
                 $linked = false;
 
                 // we always try to create a hardlink onto the original file, the asset ensures that not the actual
                 // inodes get overwritten but creates new inodes if the content changes. This is done by deleting the
                 // old file first before opening a new stream -> see Asset::update()
                 if (stream_is_local($this->getBinaryFilePath()) && stream_is_local($data->getFileSystemPath())) {
-                    $linked = link($data->getFileSystemPath(), $this->getBinaryFilePath());
+                    $linked = @link($data->getFileSystemPath(), $this->getBinaryFilePath());
                 }
 
                 if (!$linked) {
@@ -282,8 +283,10 @@ class Version extends AbstractModel
             $fds = $class->getFieldDefinitions();
             foreach ($fds as $fd) {
                 if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
-                    $data->addLazyLoadedField($fd->getName());
-                    $data->addO__loadedLazyField($fd->getName());
+                    if (!$fd instanceof Nonownerobjects) {
+                        $data->addLazyLoadedField($fd->getName());
+                        $data->addO__loadedLazyField($fd->getName());
+                    }
                 }
             }
         }

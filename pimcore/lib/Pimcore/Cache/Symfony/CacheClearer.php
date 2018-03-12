@@ -17,71 +17,115 @@ declare(strict_types=1);
 
 namespace Pimcore\Cache\Symfony;
 
-use Pimcore\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Pimcore\Process\PartsBuilder;
+use Pimcore\Tool\Console;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class CacheClearer
 {
-    public function clear(KernelInterface $kernel, array $options = [])
+    /**
+     * @var int
+     */
+    private $processTimeout;
+
+    /**
+     * @var \Closure
+     */
+    private $runCallback;
+
+    public function __construct(array $options = [])
+    {
+        $this->resolveOptions($options);
+    }
+
+    private function resolveOptions(array $options = [])
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'processTimeout' => 300
+        ]);
+
+        $resolver->setAllowedTypes('processTimeout', 'int');
+        $resolver->setRequired('processTimeout');
+
+        $options = $resolver->resolve($options);
+
+        $this->processTimeout = $options['processTimeout'];
+    }
+
+    public function clear(string $environment, array $options = []): Process
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'no-warmup'           => false,
             'no-optional-warmers' => false,
-            'env'                 => $kernel->getEnvironment()
+            'env'                 => $environment,
+            'ansi'                => false,
+            'no-ansi'             => false,
         ]);
 
-        $this->runCommand($kernel, 'cache:clear', [], $resolver->resolve($options));
+        foreach (['no-warmup', 'no-optional-warmers', 'ansi', 'no-ansi'] as $option) {
+            $resolver->setAllowedTypes($option, 'bool');
+        }
+
+        return $this->runCommand('cache:clear', [], $resolver->resolve($options));
     }
 
-    public function warmup(KernelInterface $kernel, array $options = [])
+    public function warmup(string $environment, array $options = []): Process
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'no-optional-warmers' => false,
-            'env'                 => $kernel->getEnvironment()
+            'env'                 => $environment,
+            'ansi'                => false,
+            'no-ansi'             => false,
         ]);
 
-        $this->runCommand($kernel, 'cache:warmup', [], $resolver->resolve($options));
-    }
-
-    private function runCommand(KernelInterface $kernel, string $command, array $arguments = [], array $options = [])
-    {
-        $input = $this->createInput($command, $arguments, $options);
-
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
-
-        $output = new BufferedOutput();
-        $result = $application->run($input, $output);
-
-        if (0 !== $result) {
-            throw new \RuntimeException(sprintf(
-                'Command "%s" failed: %s',
-                $command,
-                $output->fetch()
-            ));
-        }
-    }
-
-    private function createInput(string $command, array $arguments = [], array $options = []): ArrayInput
-    {
-        $input = array_merge($arguments, [
-            'command' => $command
-        ]);
-
-        foreach ($options as $optionKey => $option) {
-            // do not set option if it is false
-            if (is_bool($option) && !$option) {
-                continue;
-            }
-
-            $input['--' . $optionKey] = $option;
+        foreach (['no-optional-warmers', 'ansi', 'no-ansi'] as $option) {
+            $resolver->setAllowedTypes($option, 'bool');
         }
 
-        return new ArrayInput($input);
+        return $this->runCommand('cache:warmup', [], $resolver->resolve($options));
+    }
+
+    /**
+     * @param \Closure $runCallback
+     */
+    public function setRunCallback(\Closure $runCallback = null)
+    {
+        $this->runCallback = $runCallback;
+    }
+
+    private function runCommand(string $command, array $arguments = [], array $options = [])
+    {
+        $process = $this->buildProcess($command, $arguments, $options);
+        $process->run($this->runCallback);
+
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        return $process;
+    }
+
+    private function buildProcess(string $command, array $arguments = [], array $options = []): Process
+    {
+        $arguments = array_merge([
+            Console::getPhpCli(),
+            'bin/console',
+            $command
+        ], $arguments);
+
+        $partsBuilder = new PartsBuilder($arguments, $options);
+        $parts        = $partsBuilder->getParts();
+
+        $process = new Process($parts);
+        $process
+            ->setTimeout($this->processTimeout)
+            ->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
+
+        return $process;
     }
 }

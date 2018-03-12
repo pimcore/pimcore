@@ -32,6 +32,11 @@ class WebsiteSetting extends AbstractModel
     public $name;
 
     /**
+     * @var string
+     */
+    public $language;
+
+    /**
      * @var
      */
     public $type;
@@ -57,38 +62,76 @@ class WebsiteSetting extends AbstractModel
     public $modificationDate;
 
     /**
+     * this is a small per request cache to know which website setting is which is, this info is used in self::getByName()
+     *
+     * @var array
+     */
+    protected static $nameIdMappingCache = [];
+
+    /**
      * @param int $id
      *
      * @return WebsiteSetting
      */
     public static function getById($id)
     {
-        $setting = new self();
+        $cacheKey = 'website_setting_' . $id;
 
-        $setting->setId(intval($id));
-        $setting->getDao()->getById();
+        try {
+            $setting = \Pimcore\Cache\Runtime::get($cacheKey);
+            if (!$setting) {
+                throw new \Exception('Website setting in registry is null');
+            }
+        } catch (\Exception $e) {
+            $setting = new self();
+            $setting->setId(intval($id));
+            $setting->getDao()->getById();
+            \Pimcore\Cache\Runtime::set($cacheKey, $setting);
+        }
 
         return $setting;
     }
 
     /**
-     * @param string $name
-     * @param null $siteId
+     * @param string $name name of the config
+     * @param null $siteId site ID
+     * @param null $language language, if property cannot be found the value of property without language is returned
+     * @param null $fallbackLanguage fallback language
      *
-     * @return WebsiteSetting
+     * @return null|WebsiteSetting
      */
-    public static function getByName($name, $siteId = null)
+    public static function getByName($name, $siteId = null, $language = null, $fallbackLanguage = null)
     {
+        $nameCacheKey = $name . '~~~' . $siteId . '~~~' . $language;
+
+        // check if pimcore already knows the id for this $name, if yes just return it
+        if (array_key_exists($nameCacheKey, self::$nameIdMappingCache)) {
+            return self::getById(self::$nameIdMappingCache[$nameCacheKey]);
+        }
 
         // create a tmp object to obtain the id
         $setting = new self();
 
         try {
-            $setting->getDao()->getByName($name, $siteId);
+            $setting->getDao()->getByName($name, $siteId, $language);
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::warning($e->getMessage());
+
+            if ($language != $fallbackLanguage) {
+                $result = self::getByName($name, $siteId, $fallbackLanguage, $fallbackLanguage);
+
+                return $result;
+            }
 
             return null;
+        }
+
+        // to have a singleton in a way. like all instances of Element\ElementInterface do also, like DataObject\AbstractObject
+        if ($setting->getId() > 0) {
+            // add it to the mini-per request cache
+            self::$nameIdMappingCache[$nameCacheKey] = $setting->getId();
+
+            return self::getById($setting->getId());
         }
 
         return $setting;
@@ -232,6 +275,22 @@ class WebsiteSetting extends AbstractModel
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * @param string $language
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
     }
 
     public function clearDependentCache()

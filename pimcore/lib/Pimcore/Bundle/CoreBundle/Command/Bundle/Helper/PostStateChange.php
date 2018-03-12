@@ -17,23 +17,40 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle\Helper;
 
-use Pimcore\Console\Application;
+use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Tool\AssetsInstaller;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class PostStateChange
 {
     /**
-     * @var Application
+     * @var CacheClearer
      */
-    private $application;
+    private $cacheClearer;
 
-    public function __construct(Application $application)
-    {
-        $this->application = $application;
+    /**
+     * @var AssetsInstaller
+     */
+    private $assetsInstaller;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    public function __construct(
+        CacheClearer $cacheClearer,
+        AssetsInstaller $assetsInstaller,
+        EventDispatcherInterface $eventDispatcher
+    ) {
+        $this->cacheClearer    = $cacheClearer;
+        $this->assetsInstaller = $assetsInstaller;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public static function configureStateChangeCommandOptions(Command $command)
@@ -60,7 +77,7 @@ class PostStateChange
         );
     }
 
-    public function runPostStateChangeCommands(PimcoreStyle $io)
+    public function runPostStateChangeCommands(PimcoreStyle $io, string $environment)
     {
         $input = $io->getInput();
 
@@ -71,92 +88,47 @@ class PostStateChange
         $runAssetsInstall = $input->getOption('no-assets-install') ? false : true;
         $runCacheClear    = $input->getOption('no-cache-clear') ? false : true;
 
-        $commands = [];
-
-        if ($runAssetsInstall) {
-            $commands[] = ['assets:install', $this->resolveAssetsInstallOptions()];
-        }
-
-        if ($runCacheClear) {
-            $commands[] = ['cache:clear'];
-        }
-
-        if (empty($commands)) {
+        if (!$runAssetsInstall && !$runCacheClear) {
             return;
         }
+
+        $runCallback = function ($type, $buffer) use ($io) {
+            $io->write($buffer);
+        };
 
         $io->newLine();
         $io->section('Running post state change commands');
 
-        foreach ($commands as $command) {
-            $this->runCommand($io, $command[0], $command[1] ?? []);
-        }
-    }
+        if ($runAssetsInstall) {
+            $io->comment('Running bin/console assets:install...');
 
-    private function runCommand(PimcoreStyle $io, string $command, array $arguments = [])
-    {
-        $this->writeCommandInfo($io, $command, $arguments);
-
-        $command   = $this->application->find($command);
-        $arguments = array_merge(['command' => $command], $arguments);
-
-        $code = $command->run(new ArrayInput($arguments), $io);
-        if ($code > 0) {
-            throw new \RuntimeException(sprintf('Command "%s" failed', $command));
-        }
-    }
-
-    private function resolveAssetsInstallOptions(): array
-    {
-        $assetsInstaller = $this->application->getKernel()->getContainer()->get(AssetsInstaller::class);
-
-        $assetsOptions = [];
-        foreach ($assetsInstaller->resolveOptions(['ansi' => true]) as $option => $value) {
-            // do not set ansi option again for our subcommand
-            if ('ansi' === $option) {
-                continue;
-            }
-
-            $assetsOptions['--' . $option] = $value;
-        }
-
-        return $assetsOptions;
-    }
-
-    /**
-     * Prints information about the command about to be run
-     *
-     * @param string $command
-     * @param array $arguments
-     */
-    private function writeCommandInfo(PimcoreStyle $io, string $command, array $arguments)
-    {
-        $argumentsInfo = [];
-        foreach ($arguments as $key => $value) {
-            if (0 === strpos($key, '--')) {
-                // --option
-                $option = $key;
-
-                if (is_bool($value)) {
-                    if (!$value) {
-                        $option .= '=0';
-                    }
-                } else {
-                    $option .= sprintf('="%s"', $value);
-                }
-
-                $argumentsInfo[] = $option;
-            } else {
-                // arguments just add the value
-                $argumentsInfo[] = sprintf('"%s"', $value);
+            try {
+                $this->assetsInstaller->setRunCallback($runCallback);
+                $this->assetsInstaller->install([
+                    'env'  => $environment,
+                    'ansi' => $io->isDecorated(),
+                ]);
+            } catch (ProcessFailedException $e) {
+                // noop - output should be enough
             }
         }
 
-        $commandInfo = $command;
-        if (!empty($argumentsInfo)) {
-            $commandInfo .= ' ' . implode(' ', $argumentsInfo);
-        }
+        if ($runCacheClear) {
+            // remove terminate event listeners as they break with a cleared container
+            foreach ($this->eventDispatcher->getListeners(ConsoleEvents::TERMINATE) as $listener) {
+                $this->eventDispatcher->removeListener(ConsoleEvents::TERMINATE, $listener);
+            }
 
-        $io->comment(sprintf('Running command %s', $commandInfo));
+            $io->comment('Running bin/console cache:clear...');
+
+            try {
+                $this->cacheClearer->setRunCallback($runCallback);
+                $this->cacheClearer->clear($environment, [
+                    'ansi' => $io->isDecorated()
+                ]);
+            } catch (ProcessFailedException $e) {
+                // noop - output should be enough
+            }
+        }
     }
 }

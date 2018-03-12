@@ -873,14 +873,13 @@ class Service extends Model\AbstractModel
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
         $key = $event->getArgument('key');
 
-        $key = \Pimcore\Tool\Transliteration::toASCII($key);
+        // replace all 4 byte unicode characters
+        $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
 
         if ($type == 'document') {
-            // no spaces for documents / clean URLs
+            // no spaces & utf8 for documents / clean URLs
+            $key = \Pimcore\Tool\Transliteration::toASCII($key);
             $key = preg_replace('/[^a-zA-Z0-9\-\.~_]+/', '-', $key);
-        } else {
-            // assets & objects including spaces
-            $key = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $key);
         }
 
         if ($type == 'asset') {
@@ -1049,5 +1048,79 @@ class Service extends Model\AbstractModel
         $theCopy->setParent(null);
 
         return $theCopy;
+    }
+
+    /**
+     * @param Note $note
+     *
+     * @return array
+     */
+    public static function getNoteData(Note $note)
+    {
+        $cpath = '';
+        if ($note->getCid() && $note->getCtype()) {
+            if ($element = Service::getElementById($note->getCtype(), $note->getCid())) {
+                $cpath = $element->getRealFullPath();
+            }
+        }
+
+        $e = [
+            'id' => $note->getId(),
+            'type' => $note->getType(),
+            'cid' => $note->getCid(),
+            'ctype' => $note->getCtype(),
+            'cpath' => $cpath,
+            'date' => $note->getDate(),
+            'title' => $note->getTitle(),
+            'description' => $note->getDescription()
+        ];
+
+        // prepare key-values
+        $keyValues = [];
+        if (is_array($note->getData())) {
+            foreach ($note->getData() as $name => $d) {
+                $type = $d['type'];
+                $data = $d['data'];
+
+                if ($type == 'document' || $type == 'object' || $type == 'asset') {
+                    if ($d['data'] instanceof ElementInterface) {
+                        $data = [
+                            'id' => $d['data']->getId(),
+                            'path' => $d['data']->getRealFullPath(),
+                            'type' => $d['data']->getType()
+                        ];
+                    }
+                } elseif ($type == 'date') {
+                    if (is_object($d['data'])) {
+                        $data = $d['data']->getTimestamp();
+                    }
+                }
+
+                $keyValue = [
+                    'type' => $type,
+                    'name' => $name,
+                    'data' => $data
+                ];
+
+                $keyValues[] = $keyValue;
+            }
+        }
+
+        $e['data'] = $keyValues;
+
+        // prepare user data
+        if ($note->getUser()) {
+            $user = Model\User::getById($note->getUser());
+            if ($user) {
+                $e['user'] = [
+                    'id' => $user->getId(),
+                    'name' => $user->getName()
+                ];
+            } else {
+                $e['user'] = '';
+            }
+        }
+
+        return $e;
     }
 }

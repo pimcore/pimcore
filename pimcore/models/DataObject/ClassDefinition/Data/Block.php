@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -32,6 +33,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
      * @var string
      */
     public $fieldtype = 'block';
+
+    /**
+     * @var bool
+     */
+    public $lazyLoading;
 
     /**
      * @var bool
@@ -160,6 +166,8 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
+            $count = 0;
+
             $unserializedData = unserialize($data);
             $result = [];
 
@@ -188,7 +196,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
-                            $data->setContext(['containerType' => 'block', 'containerKey' => $this->getName()]);
+                            $data->setContext(['containerType' => 'block',
+                                'fieldname' => $this->getName(),
+                                'index' => $count,
+                                'containerKey' => $this->getName(),
+                                'classId' => $object ? $object->getClassId() : null]);
                             $blockElementRaw['data'] = $data;
                         }
                     }
@@ -196,6 +208,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
                     $items[$elementName] = $blockElement;
                 }
                 $result[] = $items;
+                $count++;
             }
 
             return $result;
@@ -751,6 +764,10 @@ class Block extends Model\DataObject\ClassDefinition\Data
     {
         $tags = is_array($tags) ? $tags : [];
 
+        if ($this->getLazyLoading()) {
+            return $tags;
+        }
+
         if (!is_array($data)) {
             return $tags;
         }
@@ -822,5 +839,160 @@ class Block extends Model\DataObject\ClassDefinition\Data
         $this->styleElement = $styleElement;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getLazyLoading()
+    {
+        return $this->lazyLoading;
+    }
+
+    /**
+     * @param  $lazyLoading
+     *
+     * @return $this
+     */
+    public function setLazyLoading($lazyLoading)
+    {
+        $this->lazyLoading = $lazyLoading;
+
+        return $this;
+    }
+
+    /**
+     * @param $object
+     * @param $data
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function preSetData($object, $data, $params = [])
+    {
+        if ($object instanceof DataObject\Concrete) {
+            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+                $object->addO__loadedLazyField($this->getName());
+            }
+        }
+
+        return $data;
+    }
+
+//
+//    public function getTableName($container, $params = []) {
+//        $db = Db::get();
+//        $data = null;
+//
+//        if ($container instanceof DataObject\Concrete) {
+//            return "object_store_" . $container->getClassId();
+//        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+//
+//            //TODO
+//        } elseif ($container instanceof DataObject\Localizedfield) {
+//            //TODO
+//        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+//            //TODO
+//        }
+//
+//
+//    }
+
+    /**
+     * @param $object
+     * @param array $params
+     *
+     * @return null
+     */
+    public function load($container, $params = [])
+    {
+        $field = $this->getName();
+        $db = Db::get();
+
+        if ($container instanceof DataObject\Concrete) {
+            if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
+                $data = null;
+
+                $query = 'select ' . $field . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
+                $data = $db->fetchOne($query);
+                $data = $this->getDataFromResource($data, $container, $params);
+            } else {
+                return null;
+            }
+        } elseif ($container instanceof DataObject\Localizedfield) {
+            $context = $params['context'];
+            $object = $context['object'];
+
+            if ($context && $context['containerType'] == 'fieldcollection') {
+                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $context['containerKey'] . '_localized_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId()  . ' and fieldname = ' . $db->quote($context['fieldname']) . ' and `index` =  ' . $context['index'];
+            } else {
+                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
+            }
+            $data = $db->fetchOne($query);
+            $data = $this->getDataFromResource($data, $container, $params);
+        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            $context = $params['context'];
+
+            $object = $context['object'];
+            $brickType = $context['containerKey'];
+            $brickField = $context['brickField'];
+            $fieldname = $context['fieldname'];
+            $query = 'select ' . $db->quoteIdentifier($brickField) . ' from object_brick_store_' . $brickType . '_' . $object->getClassId()
+                . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
+            $data = $db->fetchOne($query);
+            $data = $this->getDataFromResource($data, $container, $params);
+        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            $context = $params['context'];
+            $collectionType = $context['containerKey'];
+            $object = $context['object'];
+            $fcField = $context['fieldname'];
+
+            //TODO index!!!!!!!!!!!!!!
+
+            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $collectionType . '_' . $object->getClassId()
+                . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = '. $context['index'];
+            $data = $db->fetchOne($query);
+            $data = $this->getDataFromResource($data, $container, $params);
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param $object
+     * @param array $params
+     *
+     * @return array|mixed|null
+     */
+    public function preGetData($object, $params = [])
+    {
+        $data = null;
+        if ($object instanceof DataObject\Concrete) {
+            $data = $object->{$this->getName()};
+            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+                $data = $this->load($object, ['force' => true]);
+
+                $setter = 'set' . ucfirst($this->getName());
+                if (method_exists($object, $setter)) {
+                    $object->$setter($data);
+                }
+            }
+        } elseif ($object instanceof DataObject\Localizedfield) {
+            $data = $params['data'];
+        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            $data = $object->{$this->getName()};
+        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            $data = $object->{$this->getName()};
+        }
+
+        return is_array($data) ? $data : [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRemoteOwner()
+    {
+        return false;
     }
 }

@@ -20,6 +20,7 @@ use Pimcore\Cache\FullPage\SessionStatus;
 use Pimcore\Event\Cache\FullPage\CacheResponseEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
@@ -205,8 +206,8 @@ class FullPageCacheListener
                     return $this->disable();
                 }
 
-                if (\Pimcore::inDebugMode()) {
-                    return $this->disable('in debug mode');
+                if (\Pimcore::inDebugMode(DebugMode::DISABLE_FULL_PAGE_CACHE)) {
+                    return $this->disable('Debug flag DISABLE_FULL_PAGE_CACHE is enabled');
                 }
 
                 if ($conf->lifetime) {

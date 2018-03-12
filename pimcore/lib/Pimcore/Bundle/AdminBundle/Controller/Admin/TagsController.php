@@ -243,10 +243,11 @@ class TagsController extends AdminController
      * @Route("/get-batch-assignment-jobs")
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function getBatchAssignmentJobsAction(Request $request)
+    public function getBatchAssignmentJobsAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $elementId = intval($request->get('elementId'));
         $elementType = strip_tags($request->get('elementType'));
@@ -256,19 +257,19 @@ class TagsController extends AdminController
             case 'object':
                 $object = \Pimcore\Model\DataObject\AbstractObject::getById($elementId);
                 if ($object) {
-                    $idList = $this->getSubObjectIds($object);
+                    $idList = $this->getSubObjectIds($object, $eventDispatcher);
                 }
                 break;
             case 'asset':
                 $asset = \Pimcore\Model\Asset::getById($elementId);
                 if ($asset) {
-                    $idList = $this->getSubAssetIds($asset);
+                    $idList = $this->getSubAssetIds($asset, $eventDispatcher);
                 }
                 break;
             case 'document':
                 $document = \Pimcore\Model\Document::getById($elementId);
                 if ($document) {
-                    $idList = $this->getSubDocumentIds($document);
+                    $idList = $this->getSubDocumentIds($document, $eventDispatcher);
                 }
                 break;
         }

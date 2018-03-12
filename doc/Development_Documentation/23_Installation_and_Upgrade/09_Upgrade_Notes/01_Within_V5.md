@@ -1,10 +1,113 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 206 (2018-02-19)
+
+The pricing manager in the Ecommerce Framework is now tenant aware, using the checkout tenant if set. To make this possible,
+BC breaking changes were necessary which probably affect you if you either consume the pricing manager service directly
+or define a custom price system.
+
+### `@pimcore_ecommerce.pricing_manager` service (`PimcoreEcommerceFrameworkExtension::SERVICE_ID_PRICING_MANAGER`)
+
+The `PimcoreEcommerceFrameworkExtension::SERVICE_ID_PRICING_MANAGER`constant does not exist anymore, nor the pricing
+manager service `@pimcore_ecommerce.pricing_manager` it referenced. If you need a pricing manager as dependency in one of
+your services, please inject `@pimcore_ecommerce.locator.pricing_manager` instead, which is an instance of `IPricingManagerLocator`
+and allows you to get the pricing manager for a specific or the current tenant.
+
+This affects mainly price systems, as the default price system depends on the pricing manager. Please use autowiring
+or explicitely reference the `@pimcore_ecommerce.locator.pricing_manager` service. If you implemented a custom price system
+which extends `AbstractPriceSystem` please note that the constructor signature changed. Example price system definition
+using autowiring:
+
+```yaml
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    app.default_price_system:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
+        arguments:
+            $options:
+                attribute_name: price
+                price_class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price
+
+    # if you don' use autowiring, make sure to inject the locator instead of the pricing manager service
+    app.another_price_system:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
+        autowire: false
+        arguments:
+            - '@pimcore_ecommerce.locator.pricing_manager' # <-- this argument needs to change from @pimcore_ecommerce.pricing_manager
+            - '@pimcore_ecommerce.environment'
+            - { attribute_name: price, price_class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price }
+```
+
+### Configuration tree
+
+The configuration is now tenant aware, following the same structure as other components (e.g. the order manager). Conditions
+and actions are still global, but `enabled`, `pricing_manager_id` and `pricing_manager_options` now need to be configured
+on a tenant level. New structure:
+
+```yaml
+pimcore_ecommerce_framework:
+    pricing_manager:
+        tenants:
+            # the default tenant is mandatory and will be automatically be configured - below are default values
+            default:
+                enabled: true
+                pricing_manager_id: Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager
+                pricing_manager_options:
+                    rule_class: Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule
+                    price_info_class: Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo
+                    environment_class: Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment
+
+            # define another tenant
+            otherPricingManager:
+                pricing_manager_id: AppBundle\Ecommerce\PricingManager
+                pricing_manager_options:
+                    price_info_class: AppBundle\Ecommerce\PricingManager\PriceInfo
+
+        conditions:
+            Bracket: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket
+            # ...
+        actions:
+            ProductDiscount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscount
+            # ...
+```
+
+**Note:** the configuration entries which were moved inside the tenant tree are still configurable on a global level as
+it was before for backwards compatibility reasons. If a value is set globally it will be merged into every tenant and
+**overwrite** the tenant value. This behaviour triggers a deprecation warning and will be removed with Pimcore 6.
+
+## Build 205 (2018-02-19)
+
+The debug mode was changed from being a boolean setting to a more granular feature flag setting. If you query the debug 
+mode in your code, you might update the call to specify which kind of debug setting you want to query. See
+[Feature Flags and Debug Mode](../../19_Development_Tools_and_Details/03_Feature_Flags_And_Debug_Mode.md) for details.
+
+## Build 195 (2018-02-01)
+
+New MySQL/MariaDB requirements are introduced, ensure the following system variables are set accordingly.
+```
+innodb_file_format = Barracuda
+innodb_large_prefix = 1
+```
+
+## Build 188 (2018-01-26)
+
+In a highly concurrent setup, the [**Redis Cache**](../../19_Development_Tools_and_Details/09_Cache/README.md)
+adapter can lead to inconsistencies resulting in items losing cache tags and not being cleared anymore on save. This was
+fixed in the Lua version of the cache adapter and the `use_lua` option now defaults to true. Please note that Lua scripting
+is not available in Redis versions prior to 2.6.0.
+
 ## Build 183 (2018-01-23)
 
 The `pimcore:cache:clear` command semantics for the `-o` and `-a` option changed to follow option semantics as in other
 commands. Instead of `-a=1`, `-o=1`, now just pass `-a` and `-o`. The tags option now accepts multiple options, so you can
 use `-t foo -t bar` instead of `-t foo,bar` (old syntax still works).
+
+## Build 181 (2018-01-22)
+
+The signature of `Pimcore\Model\DataObject\AbstractObject` changed. It received an `$params = []` parameter to make saving notes for supported objects easier. This may lead to problems if you extend/overwrite this function though. Note that the issue of saving notes for supported objects is solved by a different approach (using func_get_arg(0) instead of changing the signature) on build >= 185. Due to that the parameter `$params = []` is removed in build 185
 
 ## Build 173 (2018-01-09)
 

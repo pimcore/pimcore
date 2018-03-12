@@ -145,7 +145,12 @@ class Service
         // this will allow to import the brick on a different instance with identical class names but different class IDs
         if (is_array($objectBrick->classDefinitions)) {
             foreach ($objectBrick->classDefinitions as &$cd) {
-                $class = DataObject\ClassDefinition::getById($cd['classname']);
+                // for compatibility (upgraded pimcore4s that may deliver class ids in $cd['classname'] we need to
+                // get the class by id in order to be able to correctly set the classname for the generated json
+                if (!$class = DataObject\ClassDefinition::getByName($cd['classname'])) {
+                    $class = DataObject\ClassDefinition::getById($cd['classname']);
+                }
+
                 if ($class) {
                     $cd['classname'] = $class->getName();
                 }

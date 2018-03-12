@@ -23,8 +23,10 @@ use DeviceDetector\Parser\Client\Browser;
 use DeviceDetector\Parser\OperatingSystem;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
+use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class Device implements DataProviderInterface
 {
@@ -74,12 +76,45 @@ class Device implements DataProviderInterface
         }
 
         $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent');
-        $result    = $this->loadData($userAgent);
+
+        $result = $this->loadData($userAgent);
+        $result = $this->handleOverrides($visitorInfo->getRequest(), $result);
 
         $visitorInfo->set(
             self::PROVIDER_KEY,
             $result
         );
+    }
+
+    private function handleOverrides(Request $request, array $result = null)
+    {
+        $overrides = OverrideAttributeResolver::getOverrideValue($request, 'device');
+        if (empty($overrides)) {
+            return $result;
+        }
+
+        $result = $result ?? [];
+
+        if (isset($overrides['hardwarePlatform']) && !empty($overrides['hardwarePlatform'])) {
+            $result['device'] = array_merge($result['device'] ?? [], [
+                'type' => $overrides['hardwarePlatform']
+            ]);
+        }
+
+        if (isset($overrides['operatingSystem']) && !empty($overrides['operatingSystem'])) {
+            $result['os'] = array_merge($result['os'] ?? [], [
+                'short_name' => $overrides['operatingSystem']
+            ]);
+        }
+
+        if (isset($overrides['browser']) && !empty($overrides['browser'])) {
+            $result['client'] = array_merge($result['client'] ?? [], [
+                'type' => 'browser',
+                'name' => $overrides['browser']
+            ]);
+        }
+
+        return $result;
     }
 
     private function loadData(string $userAgent)

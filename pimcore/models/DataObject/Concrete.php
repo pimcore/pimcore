@@ -143,7 +143,7 @@ class Concrete extends AbstractObject
 
     /**
      * @param $isUpdate
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
      */
@@ -254,7 +254,7 @@ class Concrete extends AbstractObject
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote)
+    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote = null)
     {
         if ($setModificationDate) {
             $this->setModificationDate(time());

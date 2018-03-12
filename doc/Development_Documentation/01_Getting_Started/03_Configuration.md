@@ -99,3 +99,25 @@ control over the used paths here.
 
 In contrast to the other constants, `PIMCORE_PROJECT_ROOT` can not be set via `.env` Pimcore doesn't know where to look
 for a `.env` file at this point.
+
+
+## Adding logic to the startup process
+
+If you need to execute code to influence Pimcore's startup process, you can do so by adding a file in `/app/startup.php`
+which will be automatically included as part of the bootstrap process. Specifically, it will be loaded after all other
+bootstrapping (loading the autoloader, parsing constants, ...) is done, but **before** the kernel is loaded and booted.
+This gives you the possibility to reconfigure environment settings before they are used and to configure the system for
+your needs. Examples:
+
+* Defining the [Trusted Proxies](http://symfony.com/doc/3.4/deployment/proxies.html) configuration on the `Request` object
+* Influencing the default [environment handling](../21_Deployment/03_Multi_Environment.md)
+
+```php
+<?php
+
+// /app/startup.php
+
+use \Symfony\Component\HttpFoundation\Request;
+
+Request::setTrustedProxies(['192.0.0.1', '10.0.0.0/8']);
+```

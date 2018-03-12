@@ -1206,7 +1206,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
                 '<style type="text/css">' +
                 'body { margin:0; padding: 0; } ' +
                 '.thumbnails { width: 410px; } ' +
-                '.thumb { border: 1px solid #999; border-radius: 5px; background: url(' + uriPrefix + '/pimcore/static6/img/loading.gif) no-repeat center center; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing:border-box; } ' +
+                '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/pimcore/static6/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; } ' +
                 '.big { min-height: 300px; } ' +
                 '.complete { border:none; border-radius: 0; background:none; }' +
                 '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
@@ -1618,6 +1618,9 @@ pimcore.helpers.sendTestEmail = function () {
                         }
                     }
                 });
+            },
+            failure: function () {
+                win.close();
             }
         });
     };

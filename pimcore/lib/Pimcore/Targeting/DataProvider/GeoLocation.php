@@ -17,9 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\DataProvider;
 
+use Pimcore\Targeting\Debug\Util\OverrideAttributeResolver;
 use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Loads geolocation (only coordinates and optional altitude) from either
@@ -52,11 +54,38 @@ class GeoLocation implements DataProviderInterface
     public function load(VisitorInfo $visitorInfo)
     {
         $location = $this->loadLocation($visitorInfo);
+        $location = $this->handleOverrides($visitorInfo->getRequest(), $location);
 
         $visitorInfo->set(
             self::PROVIDER_KEY,
             $location
         );
+    }
+
+    private function handleOverrides(Request $request, GeoLocationModel $location = null)
+    {
+        $overrides = OverrideAttributeResolver::getOverrideValue($request, 'location');
+        if (empty($overrides)) {
+            return $location;
+        }
+
+        $overrides = array_filter($overrides, function ($key) {
+            return in_array($key, ['latitude', 'longitude', 'altitude']);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $data = array_merge([
+            'latitude'  => $location ? $location->getLatitude() : null,
+            'longitude' => $location ? $location->getLongitude() : null,
+            'altitude'  => $location ? $location->getAltitude() : null,
+        ], $overrides);
+
+        if (null !== $data['latitude'] && null !== $data['longitude']) {
+            return GeoLocationModel::build(
+                $data['latitude'],
+                $data['longitude'],
+                $data['altitude']
+            );
+        }
     }
 
     private function loadLocation(VisitorInfo $visitorInfo)

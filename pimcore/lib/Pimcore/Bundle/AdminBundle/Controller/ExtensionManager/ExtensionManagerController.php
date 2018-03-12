@@ -18,6 +18,7 @@ use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\LegacyBundle\Controller\Admin\ExtensionManager\LegacyExtensionManagerController;
+use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
@@ -34,6 +35,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
@@ -151,12 +153,17 @@ class ExtensionManagerController extends AdminController implements EventedContr
      * @Route("/admin/toggle-extension-state")
      *
      * @param Request $request
+     * @param KernelInterface $kernel
      * @param AssetsInstaller $assetsInstaller
      *
      * @return JsonResponse
      */
-    public function toggleExtensionStateAction(Request $request, AssetsInstaller $assetsInstaller)
-    {
+    public function toggleExtensionStateAction(
+        Request $request,
+        KernelInterface $kernel,
+        CacheClearer $cacheClearer,
+        AssetsInstaller $assetsInstaller
+    ) {
         if (null !== $response = $this->handleLegacyRequest($request, __FUNCTION__)) {
             return $response;
         }
@@ -168,22 +175,33 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $reload  = false;
         $message = null;
 
+        $data = [
+            'success' => true,
+            'errors'  => []
+        ];
+
         if ($type === 'bundle') {
             $this->bundleManager->setState($id, ['enabled' => $enable]);
             $reload = true;
 
-            if ($enable) {
-                $message = $this->installAssets($assetsInstaller);
+            $message = $this->installAssets($assetsInstaller, $enable);
+
+            // clear the cache if kernel is not in debug mode (= auto-rebuilds container)
+            if (!$kernel->isDebug()) {
+                try {
+                    $cacheClearer->clear($kernel->getEnvironment(), [
+                        'no-warmup' => true
+                    ]);
+                } catch (\Throwable $e) {
+                    $data['errors'][] = $e->getMessage();
+                }
             }
         } elseif ($type === 'areabrick') {
             $this->areabrickManager->setState($id, $enable);
             $reload = true;
         }
 
-        $data = [
-            'success' => true,
-            'reload'  => $reload,
-        ];
+        $data['reload'] = $reload;
 
         if ($message) {
             $data['message'] = $message;
@@ -196,24 +214,32 @@ class ExtensionManagerController extends AdminController implements EventedContr
      * Runs array:install command and returns its result as array (line-by-line)
      *
      * @param AssetsInstaller $assetsInstaller
+     * @param bool $enable
      *
      * @return array
      */
-    private function installAssets(AssetsInstaller $assetsInstaller): array
+    private function installAssets(AssetsInstaller $assetsInstaller, bool $enable): array
     {
+        $message = null;
+
         try {
             $installProcess = $assetsInstaller->install();
 
-            $message = str_replace("'", '', $installProcess->getCommandLine()) . PHP_EOL . $installProcess->getOutput();
+            if ($enable) {
+                $message = str_replace("'", '', $installProcess->getCommandLine()) . PHP_EOL . $installProcess->getOutput();
+            }
         } catch (ProcessFailedException $e) {
             $message = 'Failed to run assets:install command. Please run command manually.' . PHP_EOL . PHP_EOL . $e->getMessage();
         }
 
+        if (!$message) {
+            return [];
+        }
+
         $message = Encoding::fixUTF8($message);
         $message = (new AnsiToHtmlConverter())->convert($message);
-        $message = explode(PHP_EOL, $message);
 
-        return $message;
+        return explode(PHP_EOL, $message);
     }
 
     /**

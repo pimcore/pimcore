@@ -24,7 +24,7 @@ pimcore.report.piwik.settings = Class.create({
 
     getLayout: function () {
         this.panel = new Ext.FormPanel({
-            title: "Piwik",
+            title: "Matomo/Piwik",
             bodyStyle: "padding: 10px;",
             autoScroll: true,
             items: [

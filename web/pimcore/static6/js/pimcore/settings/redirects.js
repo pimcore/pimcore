@@ -86,6 +86,8 @@ pimcore.settings.redirects = Class.create({
             itemsPerPage
         );
 
+        this.store.getProxy().setBatchActions(false);
+
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         this.filterField = new Ext.form.TextField({

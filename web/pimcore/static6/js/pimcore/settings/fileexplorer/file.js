@@ -35,10 +35,11 @@ pimcore.settings.fileexplorer.file = Class.create({
         if(response.success) {
 
             var toolbarItems = ["->"];
+            this.responsePath = response.path;
             if(response.writeable) {
                 toolbarItems.push({
                     text: t("save"),
-                    handler: this.saveFile.bind(this, response.path),
+                    handler: this.saveFile.bind(this),
                     iconCls: "pimcore_icon_save"
                 });
             }
@@ -48,35 +49,44 @@ pimcore.settings.fileexplorer.file = Class.create({
                 style: "font-family:courier"
             });
 
-            this.editor = new Ext.Panel({
-                title: response.path,
-                closable: true,
-                layout: "fit",
-                bbar: Ext.create('Ext.Toolbar', {
-                    cls: 'main-toolbar',
-                    items: toolbarItems
-                }),
-                bodyStyle: "position:relative;",
-                items: [this.textarea]
-            });
+            var isNew = false;
 
-            this.editor.on("beforedestroy", function () {
-                delete this.explorer.openfiles[this.path];
-            }.bind(this));
+            if (!this.editor) {
+                isNew = true;
+                this.editor = new Ext.Panel({
+                    closable: true,
+                    layout: "fit",
+                    bbar: Ext.create('Ext.Toolbar', {
+                        cls: 'main-toolbar',
+                        items: toolbarItems
+                    }),
+                    bodyStyle: "position:relative;"
+                });
 
-            this.explorer.editorPanel.add(this.editor);
+                this.editor.on("beforedestroy", function () {
+                    delete this.explorer.openfiles[this.path];
+                }.bind(this));
+
+            }
+            this.editor.removeAll();
+            this.editor.setTitle(response.path);
+            this.editor.add(this.textarea);
+
+            if (isNew) {
+                this.explorer.editorPanel.add(this.editor);
+            }
             this.explorer.editorPanel.setActiveTab(this.editor);
             this.explorer.editorPanel.updateLayout();
         }
     },
 
-    saveFile: function (path) {
+    saveFile: function () {
         var content = this.textarea.getValue();
         Ext.Ajax.request({
             method: "post",
             url: "/admin/misc/fileexplorer-content-save",
             params: {
-                path: path,
+                path: this.responsePath,
                 content: content
             },
             success: function (response) {
@@ -98,6 +108,11 @@ pimcore.settings.fileexplorer.file = Class.create({
 
     activate: function () {
         this.explorer.editorPanel.setActiveTab(this.editor);
+    },
+
+    updatePath: function(path) {
+        this.path = path;
+        this.loadFileContents(path);
     }
 
 });

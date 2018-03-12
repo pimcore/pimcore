@@ -166,4 +166,19 @@ class Profile
 
         return $this->dbDataFiles;
     }
+
+    public function getBundlesToEnable(): array
+    {
+        return $this->config['pimcore_bundles']['enable'] ?? [];
+    }
+
+    public function getBundlesToInstall(): array
+    {
+        return array_keys(array_filter(
+            $this->config['pimcore_bundles']['install'] ?? [],
+            function (array $config) {
+                return (bool)$config['enabled'];
+            }
+        ));
+    }
 }

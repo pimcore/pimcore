@@ -369,6 +369,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'icon' => '',
    'previewUrl' => '/%title_n%o_id',
    'group' => NULL,
+   'linkGeneratorReference' => '@AppBundle\\LinkGenerator\\NewsLinkGenerator',
    'propertyVisibility' =>
   array (
     'grid' =>

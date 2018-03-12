@@ -5,9 +5,12 @@ Pimcore uses some 3rd party applications for certain functionalities, such as vi
 The installation of some of the tools is covered in this guide and should work at least on every Debian based Linux (Debian, Ubuntu, Mint, ...). 
 For other Linux distributions you might have to adopt some commands to your platform-specific environment, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
 
+> It's important that all tools (incl. `composer`) are added to the `$PATH` env. variable, so that Pimcore is able to find the executables. 
+If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/pimcore/blob/master/app/config/parameters.example.yml).
+
+
 ## Composer 
 Please visit the official install guide for Composer: [https://getcomposer.org/](https://getcomposer.org/)
-
 
 ## FFMPEG
 

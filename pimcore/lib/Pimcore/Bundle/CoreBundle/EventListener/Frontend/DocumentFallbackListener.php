@@ -23,6 +23,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * If no document was found on the active request (not set by router or by initiator of a sub-request), try to find and
@@ -55,16 +56,36 @@ class DocumentFallbackListener implements EventSubscriberInterface
      */
     protected $documentService;
 
+    /**
+     * @var array
+     */
+    protected $options;
+
     public function __construct(
         RequestStack $requestStack,
         DocumentResolver $documentResolver,
         SiteResolver $siteResolver,
-        Document\Service $documentService
+        Document\Service $documentService,
+        array $options = []
     ) {
         $this->requestStack     = $requestStack;
         $this->documentResolver = $documentResolver;
         $this->siteResolver     = $siteResolver;
         $this->documentService  = $documentService;
+
+        $optionsResolver = new OptionsResolver();
+        $this->configureOptions($optionsResolver);
+
+        $this->options = $optionsResolver->resolve($options);
+    }
+
+    protected function configureOptions(OptionsResolver $optionsResolver)
+    {
+        $optionsResolver->setDefaults([
+            'nearestDocumentTypes' => ['page', 'snippet', 'hardlink']
+        ]);
+
+        $optionsResolver->setAllowedTypes('nearestDocumentTypes', 'array');
     }
 
     /**
@@ -133,7 +154,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
                 $path = urldecode($request->getPathInfo());
             }
 
-            $document = $this->documentService->getNearestDocumentByPath($path, false, ['page', 'snippet', 'hardlink']);
+            $document = $this->documentService->getNearestDocumentByPath($path, false, $this->options['nearestDocumentTypes']);
             if ($document) {
                 $this->documentResolver->setDocument($request, $document);
             }

@@ -775,13 +775,50 @@ class SettingsController extends AdminController
         }
 
         if ($clearSymfonyCache) {
-            try {
-                $this->clearSymfonyCache($kernel, $eventDispatcher, $symfonyCacheClearer);
-            } catch (\Throwable $e) {
-                $result = [
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ];
+            // pass one or move env parameters to clear multiple envs
+            // if no env is passed it will use the current one
+            $environments = $request->get('env', $kernel->getEnvironment());
+
+            if (!is_array($environments)) {
+                $environments = trim((string)$environments);
+
+                if (empty($environments)) {
+                    $environments = [];
+                } else {
+                    $environments = [$environments];
+                }
+            }
+
+            if (empty($environments)) {
+                $environments = [$kernel->getEnvironment()];
+            }
+
+            $result['environments'] = $environments;
+
+            if (in_array($kernel->getEnvironment(), $environments)) {
+                // remove terminate and exception event listeners for the current env as they break with a
+                // cleared container - see #2434
+                foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
+                    $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);
+                }
+
+                foreach ($eventDispatcher->getListeners(KernelEvents::EXCEPTION) as $listener) {
+                    $eventDispatcher->removeListener(KernelEvents::EXCEPTION, $listener);
+                }
+            }
+
+            foreach ($environments as $environment) {
+                try {
+                    $symfonyCacheClearer->clear($environment);
+                } catch (\Throwable $e) {
+                    $errors = $result['errors'] ?? [];
+                    $errors[] = $e->getMessage();
+
+                    $result = array_merge($result, [
+                        'success' => false,
+                        'errors'  => $errors
+                    ]);
+                }
             }
         }
 
@@ -796,26 +833,6 @@ class SettingsController extends AdminController
         }
 
         return $response;
-    }
-
-    private function clearSymfonyCache(
-        KernelInterface $kernel,
-        EventDispatcherInterface $eventDispatcher,
-        CacheClearer $symfonyCacheClearer
-    ) {
-        // remove terminate and exception event listeners as they break with a cleared container - see #2434
-        foreach ($eventDispatcher->getListeners(KernelEvents::TERMINATE) as $listener) {
-            $eventDispatcher->removeListener(KernelEvents::TERMINATE, $listener);
-        }
-
-        foreach ($eventDispatcher->getListeners(KernelEvents::EXCEPTION) as $listener) {
-            $eventDispatcher->removeListener(KernelEvents::EXCEPTION, $listener);
-        }
-
-        $symfonyCacheClearer->clear($kernel, [
-            // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
-            'no-warmup' => true
-        ]);
     }
 
     /**
@@ -1833,24 +1850,45 @@ class SettingsController extends AdminController
 
                 $list = new WebsiteSetting\Listing();
 
-                $list->setLimit($request->get('limit'));
-                $list->setOffset($request->get('start'));
+                $limit = $request->get('limit');
+                $start = $request->get('start');
 
                 $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-                if ($sortingSettings['orderKey']) {
-                    $list->setOrderKey($sortingSettings['orderKey']);
-                    $list->setOrder($sortingSettings['order']);
-                } else {
-                    $list->setOrderKey('name');
-                    $list->setOrder('asc');
-                }
 
                 if ($request->get('filter')) {
-                    $list->setCondition('`name` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+                    $filter = $request->get('filter');
+                    $list->setFilter(function ($row) use ($filter) {
+                        foreach ($row as $value) {
+                            if (strpos($value, $filter) !== false) {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    });
                 }
+
+                $list->setOrder(function ($a, $b) use ($sortingSettings) {
+                    if (!$sortingSettings) {
+                        return 0;
+                    }
+                    $orderKey = $sortingSettings['orderKey'];
+                    if ($a[$orderKey] == $b[$orderKey]) {
+                        return 0;
+                    }
+
+                    $result = $a[$orderKey] < $b[$orderKey] ? -1 : 1;
+                    if ($sortingSettings['order'] == 'DESC') {
+                        $result = -1 * $result;
+                    }
+
+                    return $result;
+                });
 
                 $totalCount = $list->getTotalCount();
                 $list = $list->load();
+
+                $list = array_slice($list, $start, $limit);
 
                 $settings = [];
                 foreach ($list as $item) {
@@ -1868,7 +1906,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @param $item
+     * @param WebsiteSetting $item
      *
      * @return array
      */
@@ -1877,6 +1915,7 @@ class SettingsController extends AdminController
         $resultItem = [
             'id' => $item->getId(),
             'name' => $item->getName(),
+            'language' => $item->getLanguage(),
             'type' => $item->getType(),
             'data' => null,
             'siteId' => $item->getSiteId(),

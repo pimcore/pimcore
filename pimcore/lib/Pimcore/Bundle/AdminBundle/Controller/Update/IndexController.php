@@ -15,8 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Update;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Cache\Symfony\CacheClearer;
-use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Update;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,16 +32,14 @@ class IndexController extends AdminController implements EventedControllerInterf
     /**
      * @Route("/check-debug-mode")
      *
-     * @param Request $request
+     * @param KernelInterface $kernel
      *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
-    public function checkDebugModeAction(Request $request)
+    public function checkDebugModeAction(KernelInterface $kernel)
     {
-        $debug = \Pimcore::inDebugMode() || in_array(Config::getEnvironment(), ['dev', 'test']);
-
         return $this->adminJson([
-            'success' => (bool) $debug
+            'success' => $kernel->isDebug()
         ]);
     }
 
@@ -134,12 +130,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             Update::installData($request->get('revision'), $request->get('updateScript'));
         } elseif ($request->get('type') == 'clearcache') {
             \Pimcore\Cache::clearAll();
-
-            $symfonyCacheClearer = $this->get(CacheClearer::class);
-            $symfonyCacheClearer->clear($kernel, [
-                // warmup will break the request as it will try to re-declare the appDevDebugProjectContainerUrlMatcher class
-                'no-warmup' => true
-            ]);
+            \Pimcore\Update::clearSymfonyCaches();
         } elseif ($request->get('type') == 'preupdate') {
             $status = Update::executeScript($request->get('revision'), 'preupdate');
         } elseif ($request->get('type') == 'postupdate') {

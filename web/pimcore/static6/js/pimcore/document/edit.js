@@ -24,6 +24,10 @@ pimcore.document.edit = Class.create({
         var link =  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
             + pimcore.settings.language+'&_dc=' + date.getTime();
 
+        if (pimcore.settings.disableMinifyJs) {
+            link += "&unminified_js";
+        }
+
         if(this.targetGroup && this.targetGroup.getValue()) {
             link += "&_ptg=" + this.targetGroup.getValue();
         }

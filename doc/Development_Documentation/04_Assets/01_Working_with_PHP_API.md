@@ -10,7 +10,11 @@ $newAsset = new Pimcore\Model\Asset();
 $newAsset->setFilename("myAsset.png");
 $newAsset->setData(file_get_contents("some-file.png"));
 $newAsset->setParent(Pimcore\Model\Asset::getByPath("/"));
-$newAsset->save();
+
+// the optional parameter allows you to provide additional info
+// currently supported:
+//      * versionNote: note added to the version (see version tab)
+$newAsset->save(["versionNote" => "my new version"]);
 
 //getting assets
 $asset1 = Pimcore\Model\Asset::getById(3456);

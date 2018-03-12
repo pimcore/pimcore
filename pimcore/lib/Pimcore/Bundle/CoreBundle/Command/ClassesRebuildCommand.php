@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +24,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ClassesRebuildCommand extends AbstractCommand
 {
+    /**
+     * @var Db\Connection
+     */
+    private $db;
+
+    /**
+     * @param Db\Connection $db
+     */
+    public function __construct(Db\Connection $db)
+    {
+        parent::__construct();
+
+        $this->db = $db;
+    }
+
     protected function configure()
     {
         $this
@@ -35,7 +51,12 @@ class ClassesRebuildCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'Create missing Classes (Classes that exists in var/classes but not in the database)'
             )
-        ;
+            ->addOption(
+                'delete-classes',
+                'd',
+                InputOption::VALUE_NONE,
+                'Delete missing Classes (Classes that dont exists in var/classes anymore but in the database)'
+            );
     }
 
     /**
@@ -43,6 +64,44 @@ class ClassesRebuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($input->getOption('delete-classes')) {
+            $questionResult = true;
+
+            if ($input->isInteractive()) {
+                $questionResult = $this->io->confirm(
+                    '<error>You are going to delete classes that don\'t have class-definitions anymore. This could lead to data loss! Do you want to continue?</error>',
+                    false
+                );
+            }
+
+            if ($questionResult) {
+                if ($output->isVerbose()) {
+                    $output->writeln('---------------------');
+                    $output->writeln('Delete Classes that don\'t have class-definitions anymore.');
+                }
+
+                $classes = $this->db->fetchAll('SELECT * FROM classes');
+
+                foreach ($classes as $class) {
+                    $id = $class['id'];
+                    $name = $class['name'];
+
+                    $cls = new ClassDefinition();
+                    $cls->setId((int)$id);
+                    $definitionFile = $cls->getDefinitionFile($name);
+
+                    if (!file_exists($definitionFile)) {
+                        if ($output->isVerbose()) {
+                            $output->writeln(sprintf('%s [%s] deleted', $name, $id));
+                        }
+
+                        //ClassDefinition doesn't exist anymore, therefore we delete it
+                        $cls->delete();
+                    }
+                }
+            }
+        }
+
         $list = new ClassDefinition\Listing();
         $list->load();
 
@@ -52,7 +111,7 @@ class ClassesRebuildCommand extends AbstractCommand
         }
 
         if ($input->getOption('create-classes')) {
-            $objectClassesFolder = PIMCORE_CLASS_DIRECTORY ;
+            $objectClassesFolder = PIMCORE_CLASS_DIRECTORY;
             $files = glob($objectClassesFolder . '/*.php');
 
             foreach ($files as $file) {
@@ -63,13 +122,13 @@ class ClassesRebuildCommand extends AbstractCommand
 
                     if ($existingClass instanceof ClassDefinition) {
                         if ($output->isVerbose()) {
-                            $output->writeln($class->getName() . ' [' . $class->getId() . '] saved');
+                            $output->writeln(sprintf('%s [%s] saved', $class->getName(), $class->getId()));
                         }
 
                         $existingClass->save(false);
                     } else {
                         if ($output->isVerbose()) {
-                            $output->writeln($class->getName() . ' [' . $class->getId() . '] created');
+                            $output->writeln(sprintf('%s [%s] created', $class->getName(), $class->getId()));
                         }
 
                         $class->save(false);
@@ -78,11 +137,13 @@ class ClassesRebuildCommand extends AbstractCommand
             }
         } else {
             foreach ($list->getClasses() as $class) {
-                if ($output->isVerbose()) {
-                    $output->writeln($class->getName() . ' [' . $class->getId() . '] saved');
-                }
+                if ($class instanceof ClassDefinition) {
+                    if ($output->isVerbose()) {
+                        $output->writeln(sprintf('%s [%s] created', $class->getName(), $class->getId()));
+                    }
 
-                $class->save(false);
+                    $class->save(false);
+                }
             }
         }
 
@@ -94,7 +155,7 @@ class ClassesRebuildCommand extends AbstractCommand
         $list = $list->load();
         foreach ($list as $brickDefinition) {
             if ($output->isVerbose()) {
-                $output->writeln($brickDefinition->getKey() . ' saved');
+                $output->writeln(sprintf('%s saved', $brickDefinition->getKey()));
             }
 
             $brickDefinition->save();
@@ -108,7 +169,7 @@ class ClassesRebuildCommand extends AbstractCommand
         $list = $list->load();
         foreach ($list as $fc) {
             if ($output->isVerbose()) {
-                $output->writeln($fc->getKey() . ' saved');
+                $output->writeln(sprintf('%s saved', $fc->getKey()));
             }
 
             $fc->save();

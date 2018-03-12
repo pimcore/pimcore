@@ -129,13 +129,13 @@ class DefinitionModifier
      * callback is executed - passing the parent, its child which was found by name and the child-index it was found at
      * to edit upon.
      *
-     * @param Layout $layoutDefinition
+     * @param Layout|Data\Localizedfields $layoutDefinition
      * @param string $nameToFind
      * @param callable $callback
      *
      * @return bool
      */
-    private function findField(Layout $layoutDefinition, string $nameToFind, callable $callback): bool
+    public function findField($layoutDefinition, string $nameToFind, callable $callback): bool
     {
         $found = false;
         $index = null;
@@ -158,7 +158,7 @@ class DefinitionModifier
         } else {
             //if not found, call recursive
             foreach ($children as $index => $child) {
-                if ($child instanceof Layout) {
+                if ($child instanceof Layout || $child instanceof Data\Localizedfields) {
                     if ($this->findField($child, $nameToFind, $callback)) {
                         return true;
                     }

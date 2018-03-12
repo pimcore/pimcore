@@ -142,6 +142,7 @@ class Dao extends Model\Dao\AbstractDao
             ['key' => 'piwik_reports'],
             ['key' => 'plugins'],
             ['key' => 'predefined_properties'],
+            ['key' => 'asset_metadata'],
             ['key' => 'recyclebin'],
             ['key' => 'redirects'],
             ['key' => 'reports'],
@@ -160,6 +161,7 @@ class Dao extends Model\Dao\AbstractDao
             ['key' => 'translations'],
             ['key' => 'users'],
             ['key' => 'website_settings'],
+            ['key' => 'admin_translations'],
             ['key' => 'web2print_settings']
         ];
 

@@ -378,6 +378,11 @@ class Dao extends Model\Dao\AbstractDao
                     if (method_exists($fd, 'load')) {
                         // datafield has it's own loader
                         $params['language'] = $row['language'];
+                        $params['object'] = $object;
+                        if (!isset($params['context'])) {
+                            $params['context'] = [];
+                        }
+                        $params['context']['object'] = $object;
                         $value = $fd->load($this->model, $params);
                         if ($value === 0 || !empty($value)) {
                             $this->model->setLocalizedValue($key, $value, $row['language']);

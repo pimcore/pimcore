@@ -8,10 +8,10 @@ namespace Pimcore\Tests\Cache\Pool;
  */
 class TaggableRedisLuaTest extends TaggableRedisTest
 {
-    /**
-     * @var array
-     */
-    protected $redisOptions = [
-        'use_lua' => true
-    ];
+    protected function getRedisOptions(): array
+    {
+        return [
+            'use_lua' => true
+        ];
+    }
 }

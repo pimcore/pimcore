@@ -20,6 +20,7 @@ use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\Google;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Schedule\Manager\Procedural;
@@ -33,6 +34,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class IndexController extends AdminController
 {
@@ -55,6 +57,7 @@ class IndexController extends AdminController
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
+     * @param KernelInterface $kernel
      *
      * @return ViewModel
      *
@@ -62,7 +65,8 @@ class IndexController extends AdminController
      */
     public function indexAction(
         Request $request,
-        SiteConfigProvider $siteConfigProvider
+        SiteConfigProvider $siteConfigProvider,
+        KernelInterface $kernel
     ) {
         $user = $this->getAdminUser();
         $view = new ViewModel([
@@ -74,7 +78,7 @@ class IndexController extends AdminController
             ->addReportConfig($view)
             ->addPluginAssets($view);
 
-        $settings = $this->buildPimcoreSettings($request, $view, $user);
+        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
         // allow to alter settings via an event
@@ -96,7 +100,6 @@ class IndexController extends AdminController
         $runtimePerspective = Config::getRuntimePerspective($user);
 
         $view->runtimePerspective = $runtimePerspective;
-        $view->extjsDev           = isset($runtimePerspective['extjsDev']) ? $runtimePerspective['extjsDev'] : false;
 
         return $this;
     }
@@ -135,20 +138,23 @@ class IndexController extends AdminController
      * @param Request $request
      * @param ViewModel $view
      * @param User $user
+     * @param KernelInterface $kernel
      *
      * @return ViewModel
      */
-    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user)
+    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel)
     {
         $config = $view->config;
 
         $settings = new ViewModel([
-            'version'   => Version::getVersion(),
-            'build'     => Version::getRevision(),
-            'buildDate'     => Version::getBuildDate(),
-            'debug'     => \Pimcore::inDebugMode(),
-            'devmode'   => PIMCORE_DEVMODE || $view->extjsDev,
-            'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
+            'version'               => Version::getVersion(),
+            'build'                 => Version::getRevision(),
+            'buildDate'             => Version::getBuildDate(),
+            'debug'                 => \Pimcore::inDebugMode(),
+            'devmode'               => \Pimcore::inDevMode(DevMode::ADMIN),
+            'disableMinifyJs'       => \Pimcore::disableMinifyJs(),
+            'environment'           => $kernel->getEnvironment(),
+            'sessionId'             => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
             'isLegacyModeAvailable' => \Pimcore::isLegacyModeAvailable()
         ]);
 

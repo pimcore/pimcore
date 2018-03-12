@@ -26,7 +26,7 @@ class FallbackBuilder extends AbstractClassNameLoader
      */
     public function supports(string $name): bool
     {
-        return true;
+        return class_exists($name);
     }
 
     /**

@@ -86,7 +86,11 @@ class PimcoreUrl extends Helper
             $name = $this->getCurrentRoute();
         }
 
-        return $this->generator->generate($name, $parameters, $referenceType);
+        if ($name !== null) {
+            return $this->generator->generate($name, $parameters, $referenceType);
+        }
+
+        return '';
     }
 
     /**

@@ -25,7 +25,7 @@ class Logger
      */
     public static function log($message, $level = 'info', $context = [])
     {
-        if (\Pimcore::hasContainer()) {
+        if (\Pimcore::hasContainer() && \Pimcore::getContainer()->has('monolog.logger.pimcore')) {
             $logger = \Pimcore::getContainer()->get('monolog.logger.pimcore');
             $logger->$level($message, $context);
         }

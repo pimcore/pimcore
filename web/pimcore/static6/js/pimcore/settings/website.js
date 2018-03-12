@@ -101,6 +101,24 @@ pimcore.settings.website = Class.create({
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
+        var languagestore = [["",t("none")]];
+        var websiteLanguages = pimcore.settings.websiteLanguages;
+        var selectContent = "";
+        for (var i=0; i<websiteLanguages.length; i++) {
+            selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
+            languagestore.push([websiteLanguages[i], selectContent]);
+        }
+
+        var customLanguage = new Ext.form.ComboBox({
+            name: "language",
+            store: languagestore,
+            editable: false,
+            triggerAction: 'all',
+            mode: "local",
+            width: 150,
+            emptyText: t('language')
+        });
+
         var typesColumns = [
             {
                 text: t("type"),
@@ -117,6 +135,22 @@ pimcore.settings.website = Class.create({
                 editable: true,
                 getEditor: this.getCellEditor.bind(this),
                 sortable: true
+            },
+            {
+                text: t('language'),
+                sortable: true,
+                dataIndex: "language",
+                getEditor: function() {
+                    return new Ext.form.ComboBox({
+                        name: "language",
+                        store: languagestore,
+                        editable: false,
+                        listConfig: {minWidth: 200},
+                        triggerAction: 'all',
+                        mode: "local"
+                    });
+                },
+                width: 80
             },
             {
                 text: t("value"),

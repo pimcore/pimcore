@@ -74,6 +74,33 @@ services:
 
 
     #
+    # SITEMAPS
+    #
+
+    # Link generator for the News class. This generator is configured on the News class definition. See
+    # https://pimcore.com/docs/5.1.x/Development_Documentation/Objects/Object_Classes/Class_Settings/Link_Generator.html
+    # for details
+    AppBundle\LinkGenerator\NewsLinkGenerator:
+        public: true
+
+    # Processor adds Google Image tags to news entries
+    AppBundle\Sitemaps\Processor\NewsImageProcessor: ~
+
+    # The actual news sitemaps generator. This generator is registered in pimcore/config.yml. Filters exclude certain
+    # entries from being published (e.g. the PublishedFilter excludes unpublished elements) and processors enrich
+    # generated entries (e.g. the ModificationDateProcessor adds the modification date property).
+    AppBundle\Sitemaps\NewsGenerator:
+        arguments:
+            $filters:
+                - '@Pimcore\Sitemap\Element\Filter\PublishedFilter'
+                - '@Pimcore\Sitemap\Element\Filter\PropertiesFilter'
+            $processors:
+                - '@Pimcore\Sitemap\Element\Processor\ModificationDateProcessor'
+                - '@Pimcore\Sitemap\Element\Processor\PropertiesProcessor'
+                - '@AppBundle\Sitemaps\Processor\NewsImageProcessor'
+
+
+    #
     # EXAMPLES
     #
 

@@ -52,6 +52,11 @@ class DocumentTargetingConfigurator
      */
     private $targetGroupMapping = [];
 
+    /**
+     * @var TargetGroup|null
+     */
+    private $overrideTargetGroup;
+
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
         RequestHelper $requestHelper,
@@ -82,6 +87,10 @@ class DocumentTargetingConfigurator
         }
 
         if ($this->isConfiguredByAdminParam($document)) {
+            return;
+        }
+
+        if ($this->isConfiguredByOverride($document)) {
             return;
         }
 
@@ -130,6 +139,18 @@ class DocumentTargetingConfigurator
 
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    private function isConfiguredByOverride(TargetingDocumentInterface $document): bool
+    {
+        if (null !== $this->overrideTargetGroup) {
+            $this->targetGroupMapping[$document->getId()] = $this->overrideTargetGroup;
+            $document->setUseTargetGroup($this->overrideTargetGroup->getId());
+
+            return true;
         }
 
         return false;
@@ -219,5 +240,18 @@ class DocumentTargetingConfigurator
         $this->cache->save($cacheKey, $targetGroups, [sprintf('document_%d', $document->getId()), 'target_groups']);
 
         return $targetGroups;
+    }
+
+    public function setOverrideTargetGroup(TargetGroup $overrideTargetGroup = null)
+    {
+        $this->overrideTargetGroup = $overrideTargetGroup;
+    }
+
+    /**
+     * @return null|TargetGroup
+     */
+    public function getOverrideTargetGroup()
+    {
+        return $this->overrideTargetGroup;
     }
 }

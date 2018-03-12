@@ -472,6 +472,29 @@ class MiscController extends AdminController
     }
 
     /**
+     * @Route("/fileexplorer-rename")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function fileexplorerRenameAction(Request $request)
+    {
+        $this->checkPermission('fileexplorer');
+
+        if ($request->get('path') && $request->get('newPath')) {
+            $file = $this->getFileexplorerPath($request, 'path');
+            $newFile = $this->getFileexplorerPath($request, 'newPath');
+
+            $success = rename($file, $newFile);
+        }
+
+        return $this->adminJson([
+            'success' => $success
+        ]);
+    }
+
+    /**
      * @param Request $request
      * @param string $paramName
      *

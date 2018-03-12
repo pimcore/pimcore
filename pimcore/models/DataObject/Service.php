@@ -299,7 +299,15 @@ class Service extends Model\Element\Service
                         if (method_exists($object, $getter)) {
                             /** @var $classificationStoreData Classificationstore */
                             $classificationStoreData = $object->$getter();
-                            $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $requestedLanguage, true, true);
+
+                            /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                            $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                            $csLanguage = $requestedLanguage;
+                            if (!$csFieldDefinition->isLocalized()) {
+                                $csLanguage = 'default';
+                            }
+
+                            $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $csLanguage, true, true);
 
                             $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
                             $type = $keyConfig->getType();
@@ -979,7 +987,15 @@ class Service extends Model\Element\Service
         try {
             $object = new AbstractObject();
 
-            if (\Pimcore\Tool::isValidPath($path)) {
+            $pathElements = explode('/', $path);
+            $keyIdx = count($pathElements) - 1;
+            $key = $pathElements[$keyIdx];
+            $validKey = Element\Service::getValidKey($key, 'object');
+
+            unset($pathElements[$keyIdx]);
+            $pathOnly = implode('/', $pathElements);
+
+            if ($validKey == $key && \Pimcore\Tool::isValidPath($pathOnly)) {
                 $object->getDao()->getByPath($path);
 
                 return true;

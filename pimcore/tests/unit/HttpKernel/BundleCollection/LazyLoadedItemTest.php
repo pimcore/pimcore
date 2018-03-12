@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\HttpKernel\BundleCollection;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -98,6 +100,35 @@ class LazyLoadedItemTest extends TestCase
         $this->assertFalse($itemA->isPimcoreBundle());
         $this->assertTrue($itemB->isPimcoreBundle());
     }
+
+    public function testRegistersDependencies()
+    {
+        $collection = new BundleCollection();
+
+        $item = new LazyLoadedItem(LazyLoadedItemTestBundleC::class);
+
+        $collection->add($item);
+
+        $this->assertEquals([
+            LazyLoadedItemTestBundleC::class,
+            LazyLoadedItemTestBundleA::class,
+        ], $collection->getIdentifiers());
+    }
+
+    public function testRegistersDependenciesWithBundleInstance()
+    {
+        $collection = new BundleCollection();
+
+        $item = new LazyLoadedItem(LazyLoadedItemTestBundleC::class);
+        $item->getBundle();
+
+        $collection->add($item);
+
+        $this->assertEquals([
+            LazyLoadedItemTestBundleC::class,
+            LazyLoadedItemTestBundleA::class,
+        ], $collection->getIdentifiers());
+    }
 }
 
 class LazyLoadedItemTestBundleA extends Bundle
@@ -143,5 +174,13 @@ class LazyLoadedItemTestBundleB extends AbstractPimcoreBundle
     public static function getCounter(): int
     {
         return static::$counter;
+    }
+}
+
+class LazyLoadedItemTestBundleC extends Bundle implements DependentBundleInterface
+{
+    public static function registerDependentBundles(BundleCollection $collection)
+    {
+        $collection->add(new LazyLoadedItem(LazyLoadedItemTestBundleA::class));
     }
 }

@@ -254,7 +254,9 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        //TODO
+        $data = $this->getDataFromObjectParam($object, $params);
+
+        return $data;
     }
 
     /**

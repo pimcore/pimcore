@@ -157,6 +157,8 @@ class Classificationstore extends Model\AbstractModel
      * @param null $language
      *
      * @return $this
+     *
+     * @throws \Exception
      */
     public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null)
     {
@@ -172,6 +174,15 @@ class Classificationstore extends Model\AbstractModel
 
         // treat value "0" nonempty
         $nonEmpty = (is_string($value) || is_numeric($value)) && strlen($value) > 0;
+
+        // Workaround for booleanSelect
+        // @TODO Find a better solution for using isEmpty() in all ClassDefintion DataTypes
+
+        $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
+        $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+        if ($dataDefinition instanceof Model\DataObject\ClassDefinition\Data\BooleanSelect) {
+            $nonEmpty = true;
+        }
 
         if ($nonEmpty || $value) {
             $this->items[$groupId][$keyId][$language] = $value;
@@ -330,14 +341,11 @@ class Classificationstore extends Model\AbstractModel
 
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
                         if ($parent->getClassId() == $object->getClassId()) {
-                            $method = 'getLocalizedfields';
-                            if (method_exists($parent, $method)) {
-                                $getter = 'get' . ucfirst($this->fieldname);
-                                $classificationStore = $parent->$getter();
-                                if ($classificationStore instanceof Classificationstore) {
-                                    if ($classificationStore->object->getId() != $this->object->getId()) {
-                                        $data = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false);
-                                    }
+                            $getter = 'get' . ucfirst($this->fieldname);
+                            $classificationStore = $parent->$getter();
+                            if ($classificationStore instanceof Classificationstore) {
+                                if ($classificationStore->object->getId() != $this->object->getId()) {
+                                    $data = $classificationStore->getLocalizedKeyValue($groupId, $keyId, $language, false);
                                 }
                             }
                         }

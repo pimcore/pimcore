@@ -141,8 +141,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             //pagination for custom view
             $total = $cv
                 ? $childsList->count()
-                : $object->getChildAmount([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
-                    DataObject\AbstractObject::OBJECT_TYPE_VARIANT], $this->getAdminUser());
+                : $object->getChildAmount(null, $this->getAdminUser());
         }
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
@@ -1310,7 +1309,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             if (($request->get('task') == 'publish' && $object->isAllowed('publish')) or ($request->get('task') == 'unpublish' && $object->isAllowed('unpublish'))) {
                 if ($data) {
-                    $this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data);
+                    if (!$this->performFieldcollectionModificationCheck($request, $object, $originalModificationDate, $data)) {
+                        return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
+                    }
                 }
 
                 $object->save();
@@ -1392,7 +1393,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             $childDefinitions = $fdDef->getFieldDefinitions();
                             foreach ($childDefinitions as $childDef) {
                                 if ($childDef instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                                    return $this->adminJson(['success' => false, 'message' => 'Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again']);
+                                    return false;
                                 }
                             }
                         }
@@ -1400,6 +1401,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
         }
+
+        return true;
     }
 
     /**
@@ -1653,6 +1656,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                                 $getter = 'get' . ucfirst($field);
                                 if (method_exists($object, $getter)) {
+
+                                    /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                                    $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                                    $csLanguage = $requestedLanguage;
+                                    if (!$csFieldDefinition->isLocalized()) {
+                                        $csLanguage = 'default';
+                                    }
+
                                     /** @var $classificationStoreData DataObject\Classificationstore */
                                     $classificationStoreData = $object->$getter();
 
@@ -1667,7 +1678,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                         }
                                     }
 
-                                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $requestedLanguage);
+                                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $csLanguage);
                                 }
                             }
                         } elseif (count($parts) > 1) {

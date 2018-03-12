@@ -294,6 +294,9 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
             for (i = 0; i < subTypes.length; i++) {
                 if (subTypes[i] == data.data.type) {
                     found = true;
+                    if (data.data.type == "folder" && checkClass) {
+                        checkClass = false;
+                    }
                     break;
                 }
 

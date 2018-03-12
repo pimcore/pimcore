@@ -34,7 +34,7 @@ class Image extends Model\Asset
     public $type = 'image';
 
     /**
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
      */
@@ -96,15 +96,7 @@ class Image extends Model\Asset
     public function generateLowQualityPreview($generator = null)
     {
         $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
-        if (!$generator) {
-            if ($sqipBin) {
-                $generator = 'sqip';
-            } elseif (class_exists('Imagick')) {
-                $generator = 'imagick';
-            }
-        }
-
-        if ($generator == 'sqip') {
+        if ($sqipBin) {
             // SQIP is preferred, produced smaller files & mostly better quality
             // primitive isn't able to process PJPEG so we have to generate a PNG
             $sqipConfig = Image\Thumbnail\Config::getPreviewConfig();
@@ -114,12 +106,16 @@ class Image extends Model\Asset
             \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . $svgPath . ' '. $pngPath);
             unlink($pngPath);
 
-            $svgData = file_get_contents($svgPath);
-            $svgData = str_replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"', $svgData);
-            File::put($svgPath, $svgData);
+            if (file_exists($svgPath)) {
+                $svgData = file_get_contents($svgPath);
+                $svgData = str_replace('<svg', '<svg preserveAspectRatio="xMidYMid slice"', $svgData);
+                File::put($svgPath, $svgData);
 
-            return $svgPath;
-        } elseif ($generator == 'imagick') {
+                return $svgPath;
+            }
+        }
+
+        if (class_exists('Imagick')) {
             // Imagick fallback
             $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
             $imagick = new \Imagick($path);
@@ -144,6 +140,8 @@ class Image extends Model\Asset
 EOT;
 
             File::put($this->getLowQualityPreviewFileSystemPath(), $svg);
+
+            return $this->getLowQualityPreviewFileSystemPath();
         }
 
         return false;

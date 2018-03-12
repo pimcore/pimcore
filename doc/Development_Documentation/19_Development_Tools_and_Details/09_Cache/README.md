@@ -85,6 +85,11 @@ maxmemory-policy volatile-lru
 save ""
 ```
 
+> With the default settings, the minimum supported Redis version is 2.6.0 as it uses Redis' Lua scripting feature.
+
+> Please note that the Redis adapter currently doesn't properly support Redis Cluster setups.
+
+
 ## Element Cache Workflow (Asset, Document, Object)
 
 ![Element Cache Workflow](../../img/pimcore-cache.png)
@@ -146,7 +151,7 @@ if(!$data = \Pimcore\Cache::load($cacheKey)) {
 \Pimcore\Cache::clearAll();
  
 // disable the queue and limit and write immediately
-\Pimcore\Cache::setForceImmendiateWrite(true);
+\Pimcore\Cache::setForceImmediateWrite(true);
 ```
 
 #### Disable the Cache for a Single Request

@@ -457,24 +457,16 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
-     *
      * @return $this
      *
      * @throws \Exception
      */
-    public function save($params = [])
+    public function save()
     {
-        try {
-            // not only check if the type is set but also if the implementation can be found
-            $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
-            $dummyAsset = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
-        } catch (\Throwable $e) {
-            Logger::error($e);
-        }
-
-        if (!$dummyAsset) {
-            throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = [];
+        if (func_num_args() && is_array(func_get_arg(0))) {
+            $params =  func_get_arg(0);
         }
 
         $isUpdate = false;
@@ -630,13 +622,11 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        if (strlen($this->getRealFullPath()) > 765) {
-            throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
-        }
+        $this->validatePathLength();
     }
 
     /**
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
+     * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
      */
@@ -714,6 +704,12 @@ class Asset extends Element\AbstractElement
                 if ($type != $this->getType()) {
                     $this->setType($type);
                     $typeChanged = true;
+                }
+
+                // not only check if the type is set but also if the implementation can be found
+                $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
+                if (!\Pimcore::getContainer()->get('pimcore.model.factory')->supports($className)) {
+                    throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
 

@@ -40,6 +40,12 @@ require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/bootstrap.php';
 $workingDirectory = getcwd();
 chdir(__DIR__);
 
+// init shell verbosity as 0 - this would normally be handled by the console application,
+// but as we boot the kernel early the kernel initializes this to 3 (verbose) by default
+putenv('SHELL_VERBOSITY=0');
+$_ENV['SHELL_VERBOSITY'] = 0;
+$_SERVER['SHELL_VERBOSITY'] = 0;
+
 if ($pimcoreConsole) {
     $input = new ArgvInput();
     $env   = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
@@ -53,7 +59,6 @@ if ($pimcoreConsole) {
 
 /** @var \Pimcore\Kernel $kernel */
 $kernel = include_once __DIR__ . '/../config/kernel.php';
-$kernel->boot();
 
 chdir($workingDirectory);
 

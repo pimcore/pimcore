@@ -26,6 +26,7 @@ use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
+use Presta\SitemapBundle\PrestaSitemapBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -38,7 +39,9 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 
@@ -91,6 +94,15 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        $loader->load(function (ContainerBuilder $container) use ($loader) {
+            // add system.php as container resource and extract config values into params
+            $resource = new SystemConfigParamResource($container);
+            $resource->register();
+            $resource->setParameters();
+
+            $this->registerExtensionConfigFileResources($container);
+        });
+
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
             $loader->load($bundleConfig);
@@ -99,12 +111,40 @@ abstract class Kernel extends SymfonyKernel
         $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
     }
 
+    private function registerExtensionConfigFileResources(ContainerBuilder $container)
+    {
+        $filenames = [
+            'extensions.php',
+            sprintf('extensions_%s.php', $this->getEnvironment())
+        ];
+
+        $directories = [
+            PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
+            PIMCORE_CONFIGURATION_DIRECTORY,
+        ];
+
+        // add possible extensions.php files as file existence resources (only for the current env)
+        foreach ($directories as $directory) {
+            foreach ($filenames as $filename) {
+                $container->addResource(new FileExistenceResource($directory . '/' . $filename));
+            }
+        }
+
+        // add extensions.php as container resource
+        if ($this->extensionConfig->configFileExists()) {
+            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
+        }
+    }
+
     /**
      * Boots the current kernel.
      */
     public function boot()
     {
         if (true === $this->booted) {
+            // make sure container reset is handled properly
+            parent::boot();
+
             return;
         }
 
@@ -117,11 +157,15 @@ abstract class Kernel extends SymfonyKernel
         // initialize extension manager config
         $this->extensionConfig = new Extension\Config();
 
-        // init bundles
-        $this->initializeBundles();
+        parent::boot();
+    }
 
-        // init container
-        $this->initializeContainer();
+    /**
+     * @inheritDoc
+     */
+    protected function initializeContainer()
+    {
+        parent::initializeContainer();
 
         // initialize runtime cache (defined as synthetic service)
         Runtime::getInstance();
@@ -134,16 +178,14 @@ abstract class Kernel extends SymfonyKernel
 
         // on pimcore shutdown
         register_shutdown_function(function () {
-            $this->getContainer()->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
+            // check if container still exists at this point as it could already
+            // be cleared (e.g. when running tests which boot multiple containers)
+            if (null !== $container = $this->getContainer()) {
+                $container->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
+            }
+
             \Pimcore::shutdown();
         });
-
-        foreach ($this->getBundles() as $bundle) {
-            $bundle->setContainer($this->container);
-            $bundle->boot();
-        }
-
-        $this->booted = true;
     }
 
     /**
@@ -153,7 +195,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerBundles(): array
     {
-        $collection = new BundleCollection();
+        $collection = $this->createBundleCollection();
 
         // core bundles (Symfony, Pimcore)
         $this->registerCoreBundlesToCollection($collection);
@@ -169,6 +211,17 @@ abstract class Kernel extends SymfonyKernel
         $this->bundleCollection = $collection;
 
         return $bundles;
+    }
+
+    /**
+     * Creates bundle collection. Use this method to set bundles on the collection
+     * early.
+     *
+     * @return BundleCollection
+     */
+    protected function createBundleCollection(): BundleCollection
+    {
+        return new BundleCollection();
     }
 
     /**
@@ -200,6 +253,9 @@ abstract class Kernel extends SymfonyKernel
 
             // CMF bundles
             new CmfRoutingBundle(),
+
+            // Sitemaps
+            new PrestaSitemapBundle()
         ], 100);
 
         // pimcore bundles
@@ -208,8 +264,8 @@ abstract class Kernel extends SymfonyKernel
             new PimcoreAdminBundle()
         ], 60);
 
-        // environment specific dev + test bundles
-        if (in_array($this->getEnvironment(), ['dev', 'test'])) {
+        // load development bundles only in matching environments
+        if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
                 new WebProfilerBundle(),
@@ -218,20 +274,32 @@ abstract class Kernel extends SymfonyKernel
 
             // add generator bundle only if installed
             if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
+                $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
+
                 $collection->addBundle(
                     new SensioGeneratorBundle(),
                     80,
-                    ['dev']
+                    $generatorEnvironments
                 );
 
                 // PimcoreGeneratorBundle depends on SensioGeneratorBundle
                 $collection->addBundle(
                     new PimcoreGeneratorBundle(),
                     60,
-                    ['dev']
+                    $generatorEnvironments
                 );
             }
         }
+    }
+
+    protected function getEnvironmentsForDevBundles(): array
+    {
+        return ['dev', 'test'];
+    }
+
+    protected function getEnvironmentsForDevGeneratorBundles(): array
+    {
+        return ['dev'];
     }
 
     /**
@@ -273,26 +341,6 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerBundlesToCollection(BundleCollection $collection)
     {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function buildContainer()
-    {
-        $container = parent::buildContainer();
-
-        // add system.php as container resource and extract config values into params
-        $resource = new SystemConfigParamResource($container);
-        $resource->register();
-        $resource->setParameters();
-
-        // add extensions.php as container resource
-        if ($this->extensionConfig->configFileExists()) {
-            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
-        }
-
-        return $container;
     }
 
     /**

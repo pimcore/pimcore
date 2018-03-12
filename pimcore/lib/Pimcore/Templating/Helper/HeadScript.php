@@ -41,6 +41,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Templating\Helper\Placeholder\CacheBusterAware;
 use Pimcore\Templating\Helper\Placeholder\Container;
 use Pimcore\Templating\Helper\Placeholder\ContainerService;
+use Pimcore\Templating\Helper\Traits\WebLinksTrait;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -55,6 +56,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class HeadScript extends CacheBusterAware
 {
+    use WebLinksTrait;
+
     /**#@+
      * Script type contants
      * @const string
@@ -112,15 +115,27 @@ class HeadScript extends CacheBusterAware
     public $useCdata = false;
 
     /**
+     * Default attributes for generated WebLinks (HTTP/2 push).
+     *
+     * @var array
+     */
+    protected $webLinkAttributes = ['as' => 'script'];
+
+    /**
      * HeadScript constructor.
      *
      * Set separator to PHP_EOL.
      *
      * @param ContainerService $containerService
+     * @param WebLink $webLinkHelper
      */
-    public function __construct(ContainerService $containerService)
-    {
+    public function __construct(
+        ContainerService $containerService,
+        WebLink $webLinkHelper
+    ) {
         parent::__construct($containerService);
+
+        $this->webLinkHelper = $webLinkHelper;
         $this->setSeparator(PHP_EOL);
     }
 
@@ -542,6 +557,19 @@ class HeadScript extends CacheBusterAware
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_SCRIPT, new GenericEvent($this, [
                 'item' => $item
             ]));
+
+            if (isset($item->attributes) && is_array($item->attributes)) {
+                $source         = (string)($item->attributes['src'] ?? '');
+                $itemAttributes = $item->attributes;
+
+                if (isset($item->attributes['webLink'])) {
+                    unset($item->attributes['webLink']);
+                }
+
+                if (!empty($source)) {
+                    $this->handleWebLink($item, $source, $itemAttributes);
+                }
+            }
         }
     }
 

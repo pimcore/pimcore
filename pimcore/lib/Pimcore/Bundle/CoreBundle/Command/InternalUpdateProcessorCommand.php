@@ -57,6 +57,7 @@ class InternalUpdateProcessorCommand extends AbstractCommand
                     Update::installData($job['revision'], $job['updateScript']);
                 } elseif ($job['type'] == 'clearcache') {
                     \Pimcore\Cache::clearAll();
+                    \Pimcore\Update::clearSymfonyCaches();
                 } elseif ($job['type'] == 'preupdate') {
                     $status = Update::executeScript($job['revision'], 'preupdate');
                 } elseif ($job['type'] == 'postupdate') {

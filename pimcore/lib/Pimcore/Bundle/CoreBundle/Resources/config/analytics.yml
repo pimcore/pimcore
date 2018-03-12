@@ -17,7 +17,9 @@ services:
 
     Pimcore\Analytics\Google\Config\SiteConfigProvider: ~
 
-    Pimcore\Analytics\Google\Tracker: ~
+    Pimcore\Analytics\Google\Tracker:
+        calls:
+            - [setLogger, ['@logger']]
 
     # fallback locator which is used from the deprecated Pimcore\Google\Analytics class
     pimcore.analytics.google.fallback_service_locator:

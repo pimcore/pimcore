@@ -19,8 +19,14 @@ use Pimcore\Model;
 /**
  * @property \Pimcore\Model\WebsiteSetting $model
  */
-class Dao extends Model\Dao\AbstractDao
+class Dao extends Model\Dao\PhpArrayTable
 {
+    public function configure()
+    {
+        parent::configure();
+        $this->setFile('website-settings');
+    }
+
     /**
      * @param null $id
      *
@@ -32,8 +38,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM website_settings WHERE id = ?', $this->model->getId());
-        $this->assignVariablesToModel($data);
+        $data = $this->db->getById($this->model->getId());
 
         if ($data['id']) {
             $this->assignVariablesToModel($data);
@@ -45,20 +50,43 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param null $name
      * @param null $siteId
+     * @param null $language
      *
      * @throws \Exception
      */
-    public function getByName($name = null, $siteId = null)
+    public function getByName($name = null, $siteId = null, $language = null)
     {
-        if ($name != null) {
-            $this->model->setName($name);
-        }
-        $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", [$this->model->getName(), $siteId]);
+        $data = $this->db->fetchAll(function ($row) use ($name, $siteId, $language) {
+            $return = true;
+            if ($name && $row['name'] != $name) {
+                $return = false;
+            }
+            if ($row['siteId'] && $siteId && $row['siteId'] != $siteId) {
+                $return = false;
+            }
 
-        if (!empty($data['id'])) {
-            $this->assignVariablesToModel($data);
+            if ($row['language'] != $language) {
+                $return = false;
+            }
+
+            return $return;
+        });
+
+        if (count($data) > 0) {
+            usort($data, function ($a, $b) {
+                $result = $a['siteId'] < $b['siteId'] ? 1 : -1;
+
+                return $result;
+            });
+        }
+
+        if (count($data) && $data[0]['id']) {
+            $this->assignVariablesToModel($data[0]);
         } else {
-            throw new \Exception('Website Setting with name: ' . $this->model->getName() . ' does not exist');
+            throw new \Exception(sprintf(
+                'Website Setting "%s" does not exist.',
+                $this->model->getName() ?? $name
+            ));
         }
     }
 
@@ -66,16 +94,31 @@ class Dao extends Model\Dao\AbstractDao
      * Save object to database
      *
      * @return bool
-     *
-     * @todo: create and update don't return anything
+
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            return $this->model->update();
+        try {
+            $ts = time();
+            $this->model->setModificationDate($ts);
+
+            $dataRaw = get_object_vars($this->model);
+            $data = [];
+
+            foreach ($dataRaw as $key => $value) {
+                $data[$key] = $value;
+            }
+
+            $this->db->insertOrUpdate($data, $this->model->getId());
+        } catch (\Exception $e) {
+            throw $e;
         }
 
-        return $this->create();
+        if (!$this->model->getId()) {
+            $this->model->setId($this->db->getLastInsertId());
+        }
+
+        $this->model->clearDependentCache();
     }
 
     /**
@@ -83,52 +126,8 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->delete('website_settings', ['id' => $this->model->getId()]);
+        $this->db->delete($this->model->getId());
 
         $this->model->clearDependentCache();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function update()
-    {
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
-
-            $type = get_object_vars($this->model);
-            $data = [];
-
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('website_settings'))) {
-                    $data[$key] = $value;
-                }
-            }
-
-            $this->db->update('website_settings', $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
-
-        $this->model->clearDependentCache();
-    }
-
-    /**
-     * Create a new record for the object in database
-     *
-     * @return bool
-     */
-    public function create()
-    {
-        $ts = time();
-        $this->model->setModificationDate($ts);
-        $this->model->setCreationDate($ts);
-
-        $this->db->insert('website_settings', ['name' => $this->model->getName(), 'siteId' => $this->model->getSiteId()]);
-
-        $this->model->setId($this->db->lastInsertId());
-
-        return $this->save();
     }
 }

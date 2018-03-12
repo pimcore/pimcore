@@ -14,6 +14,7 @@
 
 namespace Pimcore\Mail\Plugins;
 
+use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Mail;
 
@@ -56,13 +57,13 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
             }
         } else {
             // default symfony behavior - only redirect when recipients are set and pimcore debug mode is active
-            if (\Pimcore::inDebugMode() && $this->getRecipient()) {
+            if (\Pimcore::inDebugMode(DebugMode::MAIL) && $this->getRecipient()) {
                 parent::beforeSendPerformed($evt);
             }
         }
 
         $headers = $message->getHeaders();
-        if (\Pimcore::inDebugMode()) {
+        if (\Pimcore::inDebugMode(DebugMode::MAIL)) {
             $headers->addMailboxHeader('X-Pimcore-Debug-To', $message->getTo());
             $headers->addMailboxHeader('X-Pimcore-Debug-Cc', $message->getCc());
             $headers->addMailboxHeader('X-Pimcore-Debug-Bcc', $message->getBcc());

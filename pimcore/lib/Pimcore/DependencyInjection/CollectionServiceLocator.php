@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 /**
  * Service locator exposing all of its services as collection
  */
-class CollectionServiceLocator extends ServiceLocator
+class CollectionServiceLocator extends ServiceLocator implements \IteratorAggregate
 {
     /**
      * @var array
@@ -41,5 +41,12 @@ class CollectionServiceLocator extends ServiceLocator
         return array_map(function ($id) {
             return $this->get($id);
         }, $this->ids);
+    }
+
+    public function getIterator()
+    {
+        foreach ($this->ids as $id) {
+            yield $this->get($id);
+        }
     }
 }

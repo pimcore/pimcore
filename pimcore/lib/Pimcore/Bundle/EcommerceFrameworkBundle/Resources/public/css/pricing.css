@@ -92,6 +92,9 @@
 .bundle_ecommerce_pricing_icon_conditionVoucherToken {
     background: url("/pimcore/static6/img/flat-color-icons/diamond.svg") no-repeat center center !important;
 }
+.bundle_ecommerce_pricing_icon_conditionTenant {
+    background: url("/pimcore/static6/img/flat-color-icons/manager.svg") no-repeat center center !important;
+}
 
 
 /** Actions **/

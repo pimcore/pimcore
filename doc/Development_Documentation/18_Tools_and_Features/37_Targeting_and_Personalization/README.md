@@ -89,7 +89,7 @@ group on a document, but have content for different target groups in snippets or
 You can see which target groups were applied to which document in the profiler. As you can see in the screenshot below,
 the main document used the target group `basketball` while the footer snippet was rendered with the target group `female`.
 
-![Targetging Profiler Target Groups](../../img/targeting_profiler_target_groups.png) 
+![Targeting Profiler Target Groups](../../img/targeting_profiler_target_groups.png) 
 
 
 ### Manually applying Content Targeting
@@ -137,3 +137,17 @@ See the following resources for further details:
 * [Action Handlers](./07_Action_Handlers.md)
 * [Targeting Storage](./09_Targeting_Storage.md)
 * [Frontend Javascript](./11_Frontend_Javascript.md)
+
+
+## Debugging Targeting Data
+
+As shown above, targeting date is added to the Symfony profiler. In addition you can enable a dedicated targeting toolbar
+which also works outside the `dev` environment when you are logged into the admin interface.
+
+<p><img class="img-narrow" src="../../img/targeting_toolbar.png" alt="Targeting Debug Toolbar" /></p>
+
+The toolbar is only shown if a `pimcore_targeting_debug` cookie exists and is set and its value evaluates to true. You can
+set the cookie with the following [bookmarklet](https://en.wikipedia.org/wiki/Bookmarklet) (just drag the link to your bookmarks
+bar):
+
+* <a href="javascript:(function()%7Bdocument.cookie %3D 'pimcore_targeting_debug%3D1%3B path%3D%2F'%7D)()">Enable Pimcore Targeting Toolbar</a> 

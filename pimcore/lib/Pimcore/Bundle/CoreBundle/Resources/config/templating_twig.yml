@@ -17,7 +17,8 @@ services:
 
     Pimcore\Twig\Extension\DocumentTagExtension: ~
 
-    Pimcore\Twig\Extension\SubrequestExtension: ~
+    Pimcore\Twig\Extension\SubrequestExtension:
+        lazy: true
 
     Pimcore\Twig\Extension\PimcoreObjectExtension: ~
 
@@ -29,9 +30,17 @@ services:
 
     Pimcore\Twig\Extension\GlossaryExtension: ~
 
+    Pimcore\Twig\Extension\AssetCompressExtension: ~
+
     Pimcore\Twig\Extension\WebsiteConfigExtension: ~
+
+    Pimcore\Twig\Extension\DumpExtension: ~
 
     # the deferred extension is needed for placeholder helpers to work
     # as otherwise the placeholder block would be rendered before any
     # content was added (e.g. headTitle)
     Phive\Twig\Extensions\Deferred\DeferredExtension: ~
+
+    # provides truncate and wordwrap filters
+    Twig_Extensions_Extension_Text:
+        class: Twig_Extensions_Extension_Text

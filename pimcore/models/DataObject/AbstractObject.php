@@ -568,14 +568,18 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @params array $params additional parameters (e.g. "versionNote" for the version note)
-     *
      * @return $this
      *
      * @throws \Exception
      */
-    public function save($params = [])
+    public function save()
     {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = [];
+        if (func_num_args() && is_array(func_get_arg(0))) {
+            $params =  func_get_arg(0);
+        }
+
         $isUpdate = false;
 
         $preEvent = new DataObjectEvent($this, $params);
@@ -731,25 +735,18 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        if (strlen($this->getRealFullPath()) > 765) {
-            throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
-        }
+        $this->validatePathLength();
     }
 
     /**
      * @param $isUpdate
+     * @param $params
      *
      * @throws \Exception
      */
     protected function update($isUpdate = null, $params = [])
     {
-
-        // set mod date
-        $this->setModificationDate(time());
-
-        if (!$this->getCreationDate()) {
-            $this->setCreationDate(time());
-        }
+        $this->updateModificationInfos();
 
         // save properties
         $this->getProperties();

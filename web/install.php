@@ -14,6 +14,7 @@
 
 use Pimcore\Config;
 use Pimcore\Install\InstallerKernel;
+use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,6 +42,8 @@ Pimcore::setAutoloader($loader);
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/constants.php';
 require_once PIMCORE_PROJECT_ROOT . '/pimcore/lib/helper-functions.php';
 
+Debug::enable();
+
 // no installer if Pimcore is already installed
 if (is_file(Config::locateConfigFile('system.php'))) {
     $response = new RedirectResponse('/admin?_dc=' . microtime(true), Response::HTTP_FOUND);
@@ -64,8 +67,8 @@ if (!class_exists('Zend_Date')) {
 }
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
+Pimcore::setKernel($kernel);
 
-$request  = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
 

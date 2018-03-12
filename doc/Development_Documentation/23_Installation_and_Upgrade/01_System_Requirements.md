@@ -31,7 +31,7 @@ Please note that the usage of **PHP 7.1 is strongly recommended** as future vers
 - [openssl](http://php.net/openssl)
 - [opcache](http://php.net/opcache)
 - CLI SAPI (for Cron Jobs)
-- [Composer](https://getcomposer.org/) (added to `$PATH`)
+- [Composer](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
 
 #### Recommended Modules & Extensions 
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
@@ -60,6 +60,13 @@ All permissions on database level, specifically:
 - Create view
 - Show view
 
+#### System Variables
+```
+innodb_file_format = Barracuda
+innodb_large_prefix = 1
+innodb_file_per_table = 1
+```
+
 ### Operating System
 Please ensure you have installed all required packages to ensure proper locale support by PHP.
 On Debian based systems, you can use the following command to install all required packages: 
@@ -83,6 +90,7 @@ On Debian based systems, you can use the following command to install all requir
 - advpng
 - cjpeg ([MozJPEG](https://github.com/mozilla/mozjpeg))
 - exiftool
+- SQIP - SVG Placeholder
 
 Please visit [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md) for additional information. 
 

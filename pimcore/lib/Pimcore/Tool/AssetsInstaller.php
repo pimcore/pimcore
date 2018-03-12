@@ -17,12 +17,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Tool;
 
-use Symfony\Component\HttpKernel\KernelInterface;
+use Pimcore\Process\PartsBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Runs the assets:install command with the settings configured in composer.json
@@ -32,29 +30,14 @@ use Symfony\Component\Serializer\Serializer;
 class AssetsInstaller
 {
     /**
-     * @var KernelInterface
+     * @var \Closure
      */
-    private $kernel;
-
-    /**
-     * @var Serializer
-     */
-    private $serializer;
+    private $runCallback;
 
     /**
      * @var string
      */
     private $composerJsonSetting;
-
-    /**
-     * @param KernelInterface $kernel
-     * @param Serializer $serializer
-     */
-    public function __construct(KernelInterface $kernel, Serializer $serializer)
-    {
-        $this->kernel     = $kernel;
-        $this->serializer = $serializer;
-    }
 
     /**
      * Runs this assets:install command
@@ -66,7 +49,7 @@ class AssetsInstaller
     public function install(array $options = []): Process
     {
         $process = $this->buildProcess($options);
-        $process->run();
+        $process->run($this->runCallback);
 
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
@@ -84,34 +67,22 @@ class AssetsInstaller
      */
     public function buildProcess(array $options = []): Process
     {
-        $options = $this->resolveOptions($options);
-
-        $builder = new ProcessBuilder([
+        $arguments = [
+            Console::getPhpCli(),
             'bin/console',
             'assets:install',
-            'web',
-            '--env=' . $this->kernel->getEnvironment()
-        ]);
+            'web'
+        ];
 
-        $builder
-            ->setWorkingDirectory(PIMCORE_PROJECT_ROOT)
-            ->setPrefix(Console::getPhpCli());
+        $options = $this->resolveOptions($options);
 
-        if (!$options['ansi']) {
-            $builder->add('--no-ansi');
-        } else {
-            $builder->add('--ansi');
-        }
+        $partsBuilder = new PartsBuilder($arguments, $options);
+        $parts        = $partsBuilder->getParts();
 
-        if ($options['symlink']) {
-            $builder->add('--symlink');
-        }
+        $process = new Process($parts);
+        $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
 
-        if ($options['relative']) {
-            $builder->add('--relative');
-        }
-
-        return $builder->getProcess();
+        return $process;
     }
 
     /**
@@ -130,12 +101,22 @@ class AssetsInstaller
         return $resolver->resolve($options);
     }
 
+    /**
+     * @param \Closure $runCallback
+     */
+    public function setRunCallback(\Closure $runCallback = null)
+    {
+        $this->runCallback = $runCallback;
+    }
+
     private function configureOptions(OptionsResolver $resolver)
     {
         $defaults = [
-            'ansi'     => false,
             'symlink'  => true,
-            'relative' => true
+            'relative' => true,
+            'env'      => false,
+            'ansi'     => false,
+            'no-ansi'  => false,
         ];
 
         $composerJsonSetting = $this->readComposerJsonSetting();
@@ -154,6 +135,10 @@ class AssetsInstaller
         }
 
         $resolver->setDefaults($defaults);
+
+        foreach (['symlink', 'relative', 'ansi', 'no-ansi'] as $option) {
+            $resolver->setAllowedTypes($option, 'bool');
+        }
     }
 
     /**
@@ -172,9 +157,9 @@ class AssetsInstaller
 
             if (!empty($contents)) {
                 try {
-                    $json = $this->serializer->decode($json, 'json', ['json_decode_associative' => true]);
+                    $json = json_decode($contents, true);
 
-                    if ($json && isset($json['extra']) && isset($json['extra']['symfony-assets-install'])) {
+                    if (JSON_ERROR_NONE === json_last_error() && $json && isset($json['extra']) && isset($json['extra']['symfony-assets-install'])) {
                         $this->composerJsonSetting = $json['extra']['symfony-assets-install'];
                     }
                 } catch (\Exception $e) {

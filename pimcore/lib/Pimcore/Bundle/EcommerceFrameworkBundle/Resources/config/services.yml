@@ -19,8 +19,8 @@ services:
 
     pimcore.ecommerceframework.installer: '@Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer'
     Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer:
-        tags:
-            - { name: monolog.logger, channel: pimcore_ecommerce.installer }
+        arguments:
+            $bundle: "@=service('kernel').getBundle('PimcoreEcommerceFrameworkBundle')"
 
     #
     # CONTROLLERS

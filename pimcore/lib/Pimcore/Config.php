@@ -14,10 +14,17 @@
 
 namespace Pimcore;
 
+use Pimcore\Config\EnvironmentConfig;
+use Pimcore\Config\EnvironmentConfigInterface;
+use Pimcore\FeatureToggles\Features\DebugMode;
+use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class Config
 {
+    /**
+     * @deprecated Default environment is now determined by EnvironmentConfig
+     */
     const DEFAULT_ENVIRONMENT = 'prod';
 
     /**
@@ -29,6 +36,11 @@ class Config
      * @var string
      */
     protected static $environment = null;
+
+    /**
+     * @var EnvironmentConfigInterface
+     */
+    private static $environmentConfig;
 
     /**
      * @param $name - name of configuration file. slash is allowed for subdirectories.
@@ -133,16 +145,34 @@ class Config
     }
 
     /**
+     * @param null $languange
+     *
+     * @return string
+     */
+    public static function getWebsiteConfigRuntimeCacheKey($languange = null)
+    {
+        $cacheKey = 'pimcore_config_website';
+        if ($languange) {
+            $cacheKey .= '_' . $languange;
+        }
+
+        return $cacheKey;
+    }
+
+    /**
      * @static
      *
      * @return mixed|\Pimcore\Config\Config
      */
-    public static function getWebsiteConfig()
+    public static function getWebsiteConfig($language = null)
     {
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_website')) {
-            $config = \Pimcore\Cache\Runtime::get('pimcore_config_website');
+        if (\Pimcore\Cache\Runtime::isRegistered(self::getWebsiteConfigRuntimeCacheKey($language))) {
+            $config = \Pimcore\Cache\Runtime::get(self::getWebsiteConfigRuntimeCacheKey($language));
         } else {
             $cacheKey = 'website_config';
+            if ($language) {
+                $cacheKey .= '_' . $language;
+            }
 
             $siteId = null;
             if (Model\Site::isSiteRequest()) {
@@ -170,11 +200,28 @@ class Config
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
+                /** @var $item WebsiteSetting */
                 foreach ($list as $item) {
                     $key = $item->getName();
                     $itemSiteId = $item->getSiteId();
 
                     if ($itemSiteId != 0 && $itemSiteId != $siteId) {
+                        continue;
+                    }
+
+                    $itemLanguage =  $item->getLanguage();
+
+                    if ($itemLanguage && $language != $itemLanguage) {
+                        continue;
+                    }
+
+                    if (isset($settingsArray[$key])) {
+                        if (!$itemLanguage) {
+                            continue;
+                        }
+                    }
+
+                    if ($settingsArray[$key] && !$itemLanguage) {
                         continue;
                     }
 
@@ -204,25 +251,25 @@ class Config
                     }
                 }
 
+                //TODO resolve for all langs, current lang first, then no lang
                 $config = new \Pimcore\Config\Config($settingsArray, true);
 
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
             }
 
-            self::setWebsiteConfig($config);
+            self::setWebsiteConfig($config, $language);
         }
 
         return $config;
     }
 
     /**
-     * @static
-     *
-     * @param \Pimcore\Config\Config $config
+     * @param Config\Config $config
+     * @param null $language
      */
-    public static function setWebsiteConfig(\Pimcore\Config\Config $config)
+    public static function setWebsiteConfig(\Pimcore\Config\Config $config, $language = null)
     {
-        \Pimcore\Cache\Runtime::set('pimcore_config_website', $config);
+        \Pimcore\Cache\Runtime::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
 
     /**
@@ -230,12 +277,13 @@ class Config
      *
      * @param null|mixed $key       Config key to directly load. If null, the whole config will be returned
      * @param null|mixed $default   Default value to use if the key is not set
+     * @param null|string $language   Language
      *
      * @return Config\Config|mixed
      */
-    public static function getWebsiteConfigValue($key = null, $default = null)
+    public static function getWebsiteConfigValue($key = null, $default = null, $language = null)
     {
-        $config = self::getWebsiteConfig();
+        $config = self::getWebsiteConfig($language);
         if (null !== $key) {
             return $config->get($key, $default);
         }
@@ -545,7 +593,7 @@ class Config
                     continue;
                 }
                 $customViewCfg = $cfConfigMapping[$customViewId];
-                if (!$customViewId) {
+                if (!$customViewCfg) {
                     Logger::error('no custom view config for id  ' . $customViewId);
                     continue;
                 }
@@ -742,10 +790,12 @@ class Config
                 if (null !== $default) {
                     $environment = $default;
                 } else {
-                    if (\Pimcore::inDebugMode()) {
-                        $environment = 'dev';
+                    $environmentConfig = static::getEnvironmentConfig();
+
+                    if (\Pimcore::inDebugMode(DebugMode::SYMFONY_ENVIRONMENT)) {
+                        $environment = $environmentConfig->getDefaultDebugModeEnvironment();
                     } else {
-                        $environment = static::DEFAULT_ENVIRONMENT;
+                        $environment = $environmentConfig->getDefaultEnvironment();
                     }
                 }
             }
@@ -762,6 +812,20 @@ class Config
     public static function setEnvironment($environment)
     {
         static::$environment = $environment;
+    }
+
+    public static function getEnvironmentConfig(): EnvironmentConfigInterface
+    {
+        if (null === static::$environmentConfig) {
+            static::$environmentConfig = new EnvironmentConfig();
+        }
+
+        return static::$environmentConfig;
+    }
+
+    public static function setEnvironmentConfig(EnvironmentConfigInterface $environmentConfig)
+    {
+        self::$environmentConfig = $environmentConfig;
     }
 
     /**
