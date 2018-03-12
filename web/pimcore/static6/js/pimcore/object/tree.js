@@ -274,6 +274,11 @@ pimcore.object.tree = Class.create({
     onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
         var tree = node.getOwnerTree();
 
+        if(newParent.data.id == oldParent.data.id && oldParent.data.sortBy != 'index') {
+            pimcore.helpers.showNotification(t("error"), t("element_cannot_be_moved"), "error");
+            return false;
+        }
+
         if (oldParent.getOwnerTree().getId() != newParent.getOwnerTree().getId()) {
             Ext.MessageBox.alert(t('error'), t('cross_tree_moves_not_supported'));
             return false;
