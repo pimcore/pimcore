@@ -8,7 +8,15 @@ preg_match_all('/CREATE TABLE `(.*)`/', $installSql, $matches);
 $existingTables = $matches[1];
 
 $db = \Pimcore\Db::get();
-$databaseName = $db->getDatabase();
+
+if(isset($_SERVER['argv'][1])) {
+    $config = new \Doctrine\DBAL\Configuration();
+    $connectionParams = array(
+        'url' => $_SERVER['argv'][1],
+        'wrapperClass' => '\Pimcore\Db\Connection'
+    );
+    $db = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+}
 
 $tablesRaw = $db->fetchAll('SHOW FULL TABLES');
 
@@ -51,9 +59,9 @@ foreach ($tables as $name) {
     }
 
     $tableColumns = [];
-    $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $name);
+    $data = $db->fetchAll('SHOW COLUMNS FROM ' . $name);
     foreach ($data as $dataRow) {
-        $tableColumns[] = $dataRow['Field'];
+        $tableColumns[] = $db->quoteIdentifier($dataRow['Field']);
     }
 
     $tableData = $db->fetchAll('SELECT * FROM ' . $name);
