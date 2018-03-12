@@ -114,7 +114,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(objects.o_type, 'folder') DESC, objects.o_key ASC", false);
+            $childsList->setOrderKey(
+                sprintf("objects.o_%s ASC", $object->getChildrenSortBy()),
+                false
+            );
             $childsList->setObjectTypes($objectTypes);
 
             Element\Service::addTreeFilterJoins($cv, $childsList);
@@ -173,6 +176,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $tmpObject = [
             'id' => $child->getId(),
+            'idx' => intval($child->getIndex()),
+            'sortBy' => $child->getChildrenSortBy(),
             'text' => $child->getKey(),
             'type' => $child->getType(),
             'path' => $child->getRealFullPath(),
@@ -950,6 +955,26 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
+     * @Route("/change-children-sort-by")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function changeChildrenSortByAction(Request $request)
+    {
+        /** @var Model\Object $object */
+        $object = DataObject::getById($request->get('id'));
+        if ($object) {
+            $object->setChildrenSortBy($request->get('sortBy'));
+            $object->save();
+            return $this->json(['success' => true]);
+        }
+
+        return $this->json(['success' => false, 'message' => 'Unable to change a sorting way of children items.']);
+    }
+
+    /**
      * @Route("/delete-info")
      *
      * @param Request $request
@@ -1112,6 +1137,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($allowUpdate) {
+                $newIndex = $values['index'] ?? null;
+                if (is_int($newIndex)) {
+                    $object->setIndex($newIndex);
+                    $this->updateIndexesOfObjectSiblings($object);
+                }
+
                 $object->setModificationDate(time());
                 $object->setUserModification($this->getAdminUser()->getId());
 
@@ -1142,6 +1173,36 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         return $this->adminJson(['success' => $success]);
+    }
+
+    /**
+     * @param DataObject\AbstractObject $updatedObject
+     */
+    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject)
+    {
+        $list = new DataObject\Listing();
+        $list->setCondition(
+            'o_parentId = ? AND o_id != ?',
+            [$updatedObject->getParentId(), $updatedObject->getId()]
+        );
+        $list->setOrderKey('o_index');
+        $list->setOrder('asc');
+        $siblings = $list->load();
+
+        $index = 0;
+        /** @var DataObject\AbstractObject $child */
+        foreach ($siblings as $sibling) {
+            if ($index == intval($updatedObject->getIndex())) {
+                $index++;
+            }
+            if (method_exists($sibling, 'setOmitMandatoryCheck')) {
+                $sibling->setOmitMandatoryCheck(true);
+            }
+            $sibling
+                ->setIndex($index)
+                ->save();
+            $index++;
+        }
     }
 
     /**

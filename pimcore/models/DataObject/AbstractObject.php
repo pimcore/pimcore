@@ -38,6 +38,9 @@ class AbstractObject extends Model\Element\AbstractElement
     const OBJECT_TYPE_OBJECT = 'object';
     const OBJECT_TYPE_VARIANT = 'variant';
 
+    const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
+    const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
+
     /**
      * @var bool
      */
@@ -226,6 +229,11 @@ class AbstractObject extends Model\Element\AbstractElement
      * @var Model\Element\AdminStyle
      */
     public $o_elementAdminStyle;
+
+    /**
+     * @var string
+     */
+    public $o_childrenSortBy;
 
     /**
      * @var array
@@ -987,6 +995,14 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @param string|null $childrenSortBy
+     */
+    public function setChildrenSortBy($childrenSortBy)
+    {
+        $this->o_childrenSortBy = $childrenSortBy;
+    }
+
+    /**
      * @param int $o_creationDate
      *
      * @return $this
@@ -1149,6 +1165,14 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         return $this->o_elementAdminStyle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChildrenSortBy()
+    {
+        return $this->o_childrenSortBy ?? self::OBJECT_CHILDREN_SORT_BY_DEFAULT;
     }
 
     public function __sleep()

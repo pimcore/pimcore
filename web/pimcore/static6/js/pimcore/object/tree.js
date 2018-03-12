@@ -239,7 +239,8 @@ pimcore.object.tree = Class.create({
         var tree = oldParent.getOwnerTree();
 
         pimcore.elementservice.updateObject(node.data.id, {
-            parentId: newParent.data.id
+            parentId: newParent.data.id,
+            index: index
         }, function (newParent, oldParent, tree, response) {
             try{
                 var rdata = Ext.decode(response.responseText);
@@ -636,6 +637,32 @@ pimcore.object.tree = Class.create({
             });
         }
 
+        // Sort Children By
+        var sortByItems = [];
+
+        if (record.data.permissions.settings && perspectiveCfg.inTreeContextMenu("object.changeChildrenSortBy")) {
+            sortByItems.push({
+                text: t('by_key'),
+                iconCls: "pimcore_icon_alphabetical_sorting_az",
+                handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key')
+            });
+            sortByItems.push({
+                text: t('by_index'),
+                iconCls: "pimcore_icon_show_in_tree",
+                handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index')
+            });
+        }
+
+        if (sortByItems.length) {
+            menu.add("-");
+            menu.add({
+                text: t('sort_children_by'),
+                iconCls: "pimcore_icon_folder",
+                hideOnClick: false,
+                menu: sortByItems
+            });
+        }
+
         if (perspectiveCfg.inTreeContextMenu("object.reload")) {
             menu.add({
                 text: t('refresh'),
@@ -956,6 +983,50 @@ pimcore.object.tree = Class.create({
                 //todo if open reload
 
             }.bind(this, tree, record, task)
+        });
+
+    },
+
+    changeObjectChildrenSortBy: function (tree, record, sortBy) {
+
+        var parameters = {
+            id: record.data.id,
+            sortBy: sortBy
+        };
+
+        Ext.Ajax.request({
+            url: '/admin/object/change-children-sort-by',
+            method: "post",
+            params: parameters,
+            success: function (tree, record, sortBy, response) {
+                try {
+                    var rdata = Ext.decode(response.responseText);
+
+                    if (rdata && rdata.success) {
+                        pimcore.helpers.showNotification(
+                            t("success"),
+                            t("successful_object_change_children_sort_to_" + sortBy),
+                            "success"
+                        );
+                        record.data.sortBy = sortBy;
+                        this.reloadNode(tree, record);
+                    } else {
+                        pimcore.helpers.showNotification(
+                            t("error"),
+                            t("error_object_change_children_sort_to_" + sortBy),
+                            "error",
+                            t(rdata.message)
+                        );
+                    }
+                } catch (e) {
+                    pimcore.helpers.showNotification(
+                        t("error"),
+                        t("error_object_change_children_sort_to_" + sortBy),
+                        "error"
+                    );
+                }
+
+            }.bind(this, tree, record, sortBy)
         });
 
     },
