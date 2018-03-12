@@ -9,12 +9,12 @@ $existingTables = $matches[1];
 
 $db = \Pimcore\Db::get();
 
-if(isset($_SERVER['argv'][1])) {
+if (isset($_SERVER['argv'][1])) {
     $config = new \Doctrine\DBAL\Configuration();
-    $connectionParams = array(
+    $connectionParams = [
         'url' => $_SERVER['argv'][1],
         'wrapperClass' => '\Pimcore\Db\Connection'
-    );
+    ];
     $db = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 }
 

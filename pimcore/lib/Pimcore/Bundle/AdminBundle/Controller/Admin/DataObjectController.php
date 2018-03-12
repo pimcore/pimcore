@@ -115,7 +115,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
             $childsList->setOrderKey(
-                sprintf("objects.o_%s ASC", $object->getChildrenSortBy()),
+                sprintf('objects.o_%s ASC', $object->getChildrenSortBy()),
                 false
             );
             $childsList->setObjectTypes($objectTypes);
@@ -968,6 +968,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($object) {
             $object->setChildrenSortBy($request->get('sortBy'));
             $object->save();
+
             return $this->json(['success' => true]);
         }
 
