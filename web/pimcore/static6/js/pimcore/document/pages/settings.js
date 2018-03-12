@@ -207,7 +207,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             var serpAbsoluteUrl = window.location.protocol + '//' + window.location.hostname + urlPath;
 
             var subSites = pimcore.globalmanager.get('sites').data.items;
-            if (typeof subSites === 'array' && subSites.length) {
+            if (typeof subSites === 'object' && subSites.length) {
                 var idPath = this.document.data.idPath.replace(/^\/+/g, '');
                 var splitPath = idPath.split('/');
 
