@@ -378,6 +378,7 @@ CREATE TABLE `objects` (
   UNIQUE KEY `fullpath` (`o_path`,`o_key`),
   KEY `key` (`o_key`),
   KEY `path` (`o_path`),
+  KEY `index` (`o_index`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
   KEY `type` (`o_type`),
