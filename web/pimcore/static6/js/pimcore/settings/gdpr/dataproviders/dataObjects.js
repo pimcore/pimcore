@@ -124,7 +124,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                                     this.store.reload();
                                     var tree = pimcore.globalmanager.get("layout_object_tree");
                                     var treePanel = tree.tree;
-                                    tree.refresh(treePanel.getRootNode());
+                                    pimcore.elementservice.refreshRootNodeAllTrees("object");
                                 }.bind(this)
                             };
                             pimcore.elementservice.deleteElement(options);
