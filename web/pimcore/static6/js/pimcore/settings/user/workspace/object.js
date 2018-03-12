@@ -28,7 +28,7 @@ pimcore.settings.user.workspace.object = Class.create({
     getPanel: function () {
 
         var availableRights = ["list","view","save","publish","unpublish","delete","rename","create","settings",
-                                                                "versions","properties", "sortBy"];
+                                                                "versions","properties"];
 
         var gridPlugins = [];
         var storeFields = ["path"];

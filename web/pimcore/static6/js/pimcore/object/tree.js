@@ -640,7 +640,7 @@ pimcore.object.tree = Class.create({
         // Sort Children By
         var sortByItems = [];
 
-        if (record.data.permissions.sortBy && perspectiveCfg.inTreeContextMenu("object.changeChildrenSortBy")) {
+        if (record.data.permissions.settings && perspectiveCfg.inTreeContextMenu("object.changeChildrenSortBy")) {
             sortByItems.push({
                 text: t('by_key'),
                 iconCls: "pimcore_icon_alphabetical_sorting_az",
