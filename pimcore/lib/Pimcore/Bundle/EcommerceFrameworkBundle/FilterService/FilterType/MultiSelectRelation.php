@@ -74,7 +74,7 @@ class MultiSelectRelation extends AbstractFilterType
         $value = $params[$field];
 
         if (empty($value) && !$params['is_reload']) {
-            $objects = $preSelect;
+            $objects = $preSelect ?: [];
             $value = [];
 
             if (!is_array($objects)) {
