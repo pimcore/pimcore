@@ -1040,9 +1040,8 @@ class DefaultElasticSearch implements IProductList
             $params = [];
             $params['index'] = $this->getIndexName();
             $params['type'] = $this->getQueryType();
-            $params['search_type'] = 'count';
             $params['body']['_source'] = false;
-            $params['body']['size'] = $this->getLimit();
+            $params['body']['size'] = 0;    // equals former "search_type=count"
             $params['body']['from'] = $this->getOffset();
             $params['body']['aggs'] = $aggregations;
 
@@ -1103,7 +1102,7 @@ class DefaultElasticSearch implements IProductList
             if ($this->doScrollRequest) {
                 $params = array_merge(['scroll' => $this->scrollRequestKeepAlive], $params);
                 //kind of dirty hack :/
-                unset($params['search_type']);
+                $params['body']['size'] = $this->getLimit();
             }
 
             $result = $esClient->search($params);
