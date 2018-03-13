@@ -25,6 +25,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 class DefaultElasticSearch implements IProductList
 {
     const LIMIT_UNLIMITED = 'unlimited';
+    const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
+
     /**
      * @var null|IIndexable[]
      */
@@ -1023,13 +1025,13 @@ class DefaultElasticSearch implements IProductList
                     ],
                     'aggs' => [
                         $fieldname => [
-                            'terms' => ['field' => $fieldname, 'size' => 0, 'order' => ['_term' => 'asc' ]]
+                            'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_term' => 'asc' ]]
                         ]
                     ]
                 ];
             } else {
                 $aggregations[$fieldname] = [
-                    'terms' => ['field' => $fieldname, 'size' => 0, 'order' => ['_term' => 'asc' ]]
+                    'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_term' => 'asc' ]]
                 ];
             }
         }
