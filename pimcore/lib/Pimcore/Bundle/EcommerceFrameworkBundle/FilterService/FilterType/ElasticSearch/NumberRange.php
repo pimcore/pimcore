@@ -42,7 +42,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                 $range['gte'] = $value['from'];
             }
             if (strlen($value['to']) > 0) {
-                $range['lte'] = $value['from'];
+                $range['lte'] = $value['to'];
             }
             $productList->addCondition(['range' => ['attributes.' . $field => $range]], $field);
         }
