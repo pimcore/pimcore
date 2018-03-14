@@ -15,6 +15,7 @@
 namespace Pimcore\Log;
 
 use Pimcore\Config;
+use Pimcore\Model\Tool\TmpStore;
 
 class Maintenance
 {
@@ -48,10 +49,20 @@ class Maintenance
         $logFiles = glob(PIMCORE_LOG_DIRECTORY . '/*.log');
 
         foreach ($logFiles as $log) {
-            if (file_exists($log) && date('Y-m-d', filectime($log)) != date('Y-m-d')) {
+            $tmpStoreTimeId = 'log-' . basename($log);
+            $lastTimeItem = TmpStore::get($tmpStoreTimeId);
+            if($lastTimeItem) {
+                $lastTime = $lastTimeItem->getData();
+            } else {
+                $lastTime = time()-86400;
+            }
+
+            if (file_exists($log) && date('Y-m-d', $lastTime) != date('Y-m-d')) {
                 // archive log (will be cleaned up by maintenance)
-                $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', filectime($log)) . '.log';
+                $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', $lastTime) . '.log';
                 rename($log, $archiveFilename);
+
+                TmpStore::add($tmpStoreTimeId, time(), null, 86400*7);
             }
         }
 
