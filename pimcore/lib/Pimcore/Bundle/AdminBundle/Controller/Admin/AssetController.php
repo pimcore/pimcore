@@ -325,7 +325,9 @@ class AssetController extends ElementControllerBase implements EventedController
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
 
         if ($parentAsset->isAllowed('create')) {
-            if (!is_file($sourcePath) || filesize($sourcePath) < 1) {
+            if(is_file($sourcePath) && filesize($sourcePath) < 1) {
+                throw new \Exception("File is empty!");
+            } else if (!is_file($sourcePath)) {
                 throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of ' . PIMCORE_PUBLIC_VAR);
             }
 
