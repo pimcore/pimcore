@@ -138,4 +138,18 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->delete('users', ['id' => $userId]);
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function setLastLogin()
+    {
+        try {
+            $data['lastLogin'] = (new \Datetime())->getTimestamp();
+            $this->db->update('users', $data, ['id' => $this->model->getId()]);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+        
+    }    
 }
