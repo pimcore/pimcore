@@ -122,6 +122,11 @@ class User extends User\UserRole
     protected $mergedWebsiteTranslationLanguagesView = null;
 
     /**
+     * @var int
+     */
+    public $lastLogin;
+
+    /**
      * @return string
      */
     public function getPassword()
@@ -727,5 +732,25 @@ class User extends User\UserRole
         } else {
             return $mergedWebsiteTranslationLanguagesView;
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getLastLogin()
+    {
+        return (int) $this->lastLogin;
+    }
+
+    /**
+     * @param bool $active
+     *
+     * @return $this
+     */
+    public function setLastLogin($lastLogin)
+    {
+        $this->lastLogin = (int) $lastLogin;
+
+        return $this;
     }
 }
