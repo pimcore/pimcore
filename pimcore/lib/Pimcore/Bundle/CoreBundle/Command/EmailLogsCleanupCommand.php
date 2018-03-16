@@ -43,7 +43,9 @@ class EmailLogsCleanupCommand extends AbstractCommand
     {
         $daysAgo = $input->getOption('older-than-days');
 
-        if (!is_numeric($daysAgo)) {
+        if(!isset($daysAgo)) {
+            throw new \Exception('Missing option "--older-than-days"');
+        } elseif (!is_numeric($daysAgo)) {
             throw new \Exception('The "--older-than-days" option value should be numeric');
         }
 
