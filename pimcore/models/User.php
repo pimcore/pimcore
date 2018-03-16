@@ -741,4 +741,16 @@ class User extends User\UserRole
     {
         return (int) $this->lastLogin;
     }
+
+    /**
+     * @param bool $active
+     *
+     * @return $this
+     */
+    public function setLastLogin($lastLogin)
+    {
+        $this->lastLogin = (int) $lastLogin;
+
+        return $this;
+    }
 }
