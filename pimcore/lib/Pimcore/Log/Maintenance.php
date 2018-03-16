@@ -51,10 +51,10 @@ class Maintenance
         foreach ($logFiles as $log) {
             $tmpStoreTimeId = 'log-' . basename($log);
             $lastTimeItem = TmpStore::get($tmpStoreTimeId);
-            if($lastTimeItem) {
+            if ($lastTimeItem) {
                 $lastTime = $lastTimeItem->getData();
             } else {
-                $lastTime = time()-86400;
+                $lastTime = time() - 86400;
             }
 
             if (file_exists($log) && date('Y-m-d', $lastTime) != date('Y-m-d')) {
@@ -62,7 +62,7 @@ class Maintenance
                 $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', $lastTime) . '.log';
                 rename($log, $archiveFilename);
 
-                TmpStore::add($tmpStoreTimeId, time(), null, 86400*7);
+                TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
             }
         }
 

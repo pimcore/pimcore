@@ -46,7 +46,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = "_force_allow_processing_unpublished_elements";
+    const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';
 
     /**
      * @var DocumentResolver

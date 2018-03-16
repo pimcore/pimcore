@@ -150,6 +150,5 @@ class Dao extends Model\Dao\AbstractDao
         } catch (\Exception $e) {
             throw $e;
         }
-        
-    }    
+    }
 }

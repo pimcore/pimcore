@@ -69,6 +69,7 @@ class GetBy extends AbstractResolver
             }
 
             $this->setObjectType($config, $object, $rowData);
+
             return $object;
         }
 
