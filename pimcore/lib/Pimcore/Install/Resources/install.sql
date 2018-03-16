@@ -203,7 +203,7 @@ CREATE TABLE `documents_page` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
+  `description` varchar(383) DEFAULT NULL,
   `metaData` text,
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
