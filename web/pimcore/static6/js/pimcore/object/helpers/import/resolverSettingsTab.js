@@ -31,7 +31,8 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
         var data = this.config;
         var sourceFields = [];
-        for (i = 0; i < data.cols - 1; i++) {
+        var i;
+        for (i = 0; i < data.cols; i++) {
             var text = t("field") + " " + i;
             if (dataPreview && dataPreview["field_" + i]) {
                 text = text  + " - " + dataPreview["field_" + i];
@@ -130,6 +131,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
             }
         );
 
+
         this.skipHeaderRow = new Ext.form.field.Checkbox(
             {
                 fieldLabel: t("skipheadrow"),
@@ -197,7 +199,64 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         this.skipHeaderRow.setValue(value);
     },
 
+    addObjectTypeOptions: function() {
+        var typesData = [];
+
+        typesData.push(["keep", t('keep')]);
+        typesData.push(["object", t('object')]);
+        typesData.push(["variant", t('variant')]);
+        typesData.push(["dynamic", t('dynamic')]);
+
+        var typesStore = new Ext.data.ArrayStore({
+            data: typesData,
+            fields: ['type', 'name']
+        });
+
+        this.objectTypeOptions = new Ext.form.field.ComboBox(
+            {
+                name: "objectType",
+                store: typesStore,
+                mode: "local",
+                triggerAction: "all",
+                fieldLabel: t("type"),
+                value: this.config.resolverSettings.objectType ? this.config.resolverSettings.objectType : 'keep',
+                valueField: 'type',
+                displayField: 'name',
+                listeners: {
+                    change: function(field, newValue, oldValue) {
+                        if (newValue == "dynamic") {
+                            this.objectTypeColumn.enable();
+                        } else {
+                            this.objectTypeColumn.disable();
+                        }
+                    }.bind(this)
+                }
+            }
+        );
+
+        var mappingStore = this.getMappingStore();
+
+        this.objectTypeColumn = new Ext.form.field.ComboBox(
+            {
+                xtype: "combo",
+                name: "columnObjectType",
+                store: mappingStore,
+                mode: "local",
+                triggerAction: "all",
+                fieldLabel: t("type_column"),
+                width: 600,
+                disabled: this.objectTypeOptions.getValue() != "dynamic",
+                value: this.config.resolverSettings.columnObjectType ? this.config.resolverSettings.columnObjectType : 0
+            })
+
+        this.detailedSettingsPanel.add(this.objectTypeOptions);
+        this.detailedSettingsPanel.add(this.objectTypeColumn);
+
+
+    },
+
     addIdOptions: function () {
+        this.addObjectTypeOptions();
 
     },
 
@@ -222,6 +281,8 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
     },
 
     addFilenameOptions: function () {
+
+        this.addObjectTypeOptions();
 
         this.detailedSettingsPanel.add([
                 {
@@ -255,6 +316,9 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
     addFullpathOptions: function () {
 
+
+        this.addObjectTypeOptions();
+
         this.detailedSettingsPanel.add([
                 {
                     xtype: "checkbox",
@@ -279,6 +343,9 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
     },
 
     addGetByOptions: function () {
+
+        this.addObjectTypeOptions();
+
         this.detailedSettingsPanel.add([
                 {
                     xtype: "textfield",

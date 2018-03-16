@@ -259,7 +259,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                             },
                             {
                                 fieldLabel: t('description') + " (" + this.document.data.description.length + ")",
-                                maxLength: 255,
+                                maxLength: 350,
                                 height: 51,
                                 width: 700,
                                 name: 'description',

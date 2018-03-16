@@ -1843,8 +1843,10 @@
   "successful_object_change_children_sort_to_key": "Changed object children sorting to Key",
   "error_object_change_children_sort_to_index": "Unable to change object children sorting to Index",
   "error_object_change_children_sort_to_key": "Unable to change object children sorting to Key",
-  "last_login": "Last Login"
-  "error_empty_file_upload": "File is empty!"
+  "last_login": "Last Login",
+  "error_empty_file_upload": "File is empty!",
   "edit_as_html": "Edit as HTML",
-  "edit_as_plain_text": "Edit as plain text"
+  "edit_as_plain_text": "Edit as plain text",
+  "type_column": "Type column",
+  "keep": "keep"
 }

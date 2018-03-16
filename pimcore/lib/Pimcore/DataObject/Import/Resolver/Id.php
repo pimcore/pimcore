@@ -24,6 +24,7 @@ class Id extends AbstractResolver
 {
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
+
         $idColumn = $this->getIdColumn($config);
         if (null === $idColumn) {
             throw new \InvalidArgumentException('ID column is not set');
@@ -48,6 +49,8 @@ class Id extends AbstractResolver
             throw new \Exception('no permission to overwrite object with id ' . $id);
         }
 
+
+        $this->setObjectType($config, $object, $rowData);
         return $object;
     }
 }
