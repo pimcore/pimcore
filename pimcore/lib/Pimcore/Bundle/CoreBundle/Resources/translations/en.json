@@ -1842,5 +1842,6 @@
   "successful_object_change_children_sort_to_index": "Changed object children sorting to Index",
   "successful_object_change_children_sort_to_key": "Changed object children sorting to Key",
   "error_object_change_children_sort_to_index": "Unable to change object children sorting to Index",
-  "error_object_change_children_sort_to_key": "Unable to change object children sorting to Key"
+  "error_object_change_children_sort_to_key": "Unable to change object children sorting to Key",
+  "last_login": "Last Login"
 }
