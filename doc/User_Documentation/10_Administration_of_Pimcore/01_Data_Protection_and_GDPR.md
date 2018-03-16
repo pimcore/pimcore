@@ -55,6 +55,11 @@ Also in terms of erasure of information, Pimcores single source publishing comes
 object) is deleted, Pimcore automatically cleans up all related data (e.g. versions, etc.) and updates the places where  
 it used. 
 
+For email logs cleanup use Pimcore Console command `pimcore:email:cleanup` with required option `older-than-days` to delete the logs older than x days
+```bash
+./bin/console pimcore:email:cleanup --older-than-days=12
+```
+
 > Of course Pimcore cannot cleanup external data copies or backups. This has to be taken care of by the owner of the actual solution. 
 
 
