@@ -664,6 +664,7 @@ CREATE TABLE `users` (
 	`perspectives` LONGTEXT NULL DEFAULT NULL,
 	`websiteTranslationLanguagesEdit` LONGTEXT NULL DEFAULT NULL,
   `websiteTranslationLanguagesView` LONGTEXT NULL DEFAULT NULL,
+  `lastLogin` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
