@@ -19,6 +19,8 @@ Have a look at, few cases below:
 
 Following example shows how you can get property value from the template:
 
+<div class="code-section">
+
 ```php
 //retrieve the value of a property named "hideNavigation"
 $hideNavigation = $this->document->getProperty('hideNavigation');
@@ -26,6 +28,15 @@ $hideNavigation = $this->document->getProperty('hideNavigation');
 //retrieve an array with all properties for this document
 $propertiesList = $this->document->getProperties();
 ```
+
+```twig
+{# retrieve the value of a property named "hideNavigation" #}
+{% set hideNavigation = document.getProperty('hideNavigation') %}
+```
+
+</div>
+
+
 
 ## Predefined properties
 With predefined properties you can help/show the editors working within your Pimcore installation which properties are available for their use.
