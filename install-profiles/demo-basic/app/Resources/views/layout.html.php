@@ -8,9 +8,7 @@
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="<?= $this->getLocale() ?>">
 <head>
     <meta charset="utf-8">

@@ -310,6 +310,9 @@ pimcore.asset.tree = Class.create({
 
                 if (window.FileList && file.name && file.size) { // check for size (folder has size=0)
                     doFileUpload(file);
+                } else if (!empty(file.type) && file.size < 1) { //throw error for 0 byte file
+                    Ext.MessageBox.alert(t('error'), t('error_empty_file_upload'));
+                    win.close();
                 }
             }
 

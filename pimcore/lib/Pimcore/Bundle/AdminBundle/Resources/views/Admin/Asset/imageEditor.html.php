@@ -74,7 +74,7 @@
 
 <img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail?id=<?= $this->asset->getId() ?>&width=1000&height=1000&contain=true'/>
 <script>
-    window.setTimeout(function () {
+    window.addEventListener('load', function (e) {
         var image = document.getElementById('image');
         window.Layers.insert({
             name: "<?= $this->asset->getFilename() ?>",
@@ -105,9 +105,7 @@
 
             return false;
         });
-    }, 2000);
-
-
+    }, false);
 </script>
 
 </body>
