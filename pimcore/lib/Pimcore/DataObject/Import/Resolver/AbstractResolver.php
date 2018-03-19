@@ -23,4 +23,19 @@ abstract class AbstractResolver implements ResolverInterface
     {
         return $config->resolverSettings->column;
     }
+
+    protected function setObjectType($config, $object, $rowData)
+    {
+        $objectType = $config->resolverSettings->objectType;
+
+        if ($objectType == 'dynamic') {
+            $typeColumn = $config->resolverSettings->columnObjectType;
+            $objectType = $rowData[$typeColumn];
+            $object->setType($objectType);
+        } elseif ($objectType != 'keep') {
+            $object->setType($objectType);
+        }
+
+        return $object;
+    }
 }

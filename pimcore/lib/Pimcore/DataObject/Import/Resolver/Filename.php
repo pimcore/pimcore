@@ -94,6 +94,8 @@ class Filename extends AbstractResolver
             throw new \Exception('failed to resolve object key ' . $objectKey);
         }
 
+        $this->setObjectType($config, $object, $rowData);
+
         return $object;
     }
 
