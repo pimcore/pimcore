@@ -123,8 +123,14 @@ class Image extends Model\Asset
             $imagick->setOption('jpeg:extent', '1kb');
             $width = $imagick->getImageWidth();
             $height = $imagick->getImageHeight();
-            $imageBase64 = base64_encode($imagick->getImageBlob());
+
+            // we can't use getImageBlob() here, because of a bug in combination with jpeg:extent
+            // http://www.imagemagick.org/discourse-server/viewtopic.php?f=3&t=24366
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-optimize-' . uniqid() . ".jpg";
+            $imagick->writeImage($tmpFile);
+            $imageBase64 = base64_encode(file_get_contents($tmpFile));
             $imagick->destroy();
+            unlink($tmpFile);
 
             $svg = <<<EOT
 <?xml version="1.0" encoding="utf-8"?>
