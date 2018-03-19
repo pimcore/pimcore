@@ -573,8 +573,11 @@ class ElementController extends AdminController
     public function deleteAllVersionAction(Request $request)
     {
         $elementId = $request->get('id');
+        $elementModificationdate = $request->get('date');
+
         $versions = new Model\Version\Listing();
-        $versions->setCondition("cid = " . $versions->quote($elementId));
+        $versions->setCondition("cid = " . $versions->quote($elementId) . " AND date <> " . $versions->quote($elementModificationdate));
+
         foreach($versions->load() as $vkey => $version) {
             $version->delete();
         }

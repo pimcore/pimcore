@@ -248,12 +248,19 @@ pimcore.document.versions = Class.create({
         if (elememntId > 0) {
             Ext.Msg.confirm(t('clear_all'), t('clear_version_message'), function(btn){
                 if (btn == 'yes'){
+                    var modificationDate = this.document.data.modificationDate;
+                    
                     Ext.Ajax.request({
                         url: "/admin/element/delete-all-version",
-                        params: {id: elememntId}
+                        params: {id: elememntId, date: modificationDate}
+                    });
+                    
+                    //get sub collection of versions for removel. Keep current version
+                    var removeCollection = grid.getStore().getData().createFiltered(function(item){
+                        return item.get('date') != modificationDate;
                     });
 
-                    grid.getStore().removeAll();
+                    grid.getStore().remove(removeCollection.getRange());
                 }
             }.bind(this));
         }
