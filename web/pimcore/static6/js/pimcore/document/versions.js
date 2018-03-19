@@ -218,6 +218,12 @@ pimcore.document.versions = Class.create({
             handler: this.removeVersion.bind(this, rowIndex, grid)
         }));
 
+        menu.add(new Ext.menu.Item({
+            text: t('clear_all'),
+            iconCls: "pimcore_icon_delete",
+            handler: this.removeAllVersion.bind(this, rowIndex, grid)
+        }));
+
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     },
@@ -233,6 +239,24 @@ pimcore.document.versions = Class.create({
         });
 
         grid.getStore().removeAt(index);
+    },
+
+    removeAllVersion: function (index, grid) {
+        var data = grid.getStore().getAt(index).data;
+        var elememntId = data.cid;
+
+        if (elememntId > 0) {
+            Ext.Msg.confirm(t('clear_all'), t('clear_version_message'), function(btn){
+                if (btn == 'yes'){
+                    Ext.Ajax.request({
+                        url: "/admin/element/delete-all-version",
+                        params: {id: elememntId}
+                    });
+
+                    grid.getStore().removeAll();
+                }
+            }.bind(this));
+        }
     },
 
     openVersion: function (index, grid) {
