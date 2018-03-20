@@ -603,13 +603,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     private function isInheritableField(DataObject\ClassDefinition\Data $fielddefinition)
     {
-        if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Fieldcollections
-            //            || $fielddefinition instanceof DataObject\ClassDefinition\Data\Localizedfields
-        ) {
-            return false;
-        }
-
-        return true;
+        return $fielddefinition->supportsInheritance();
     }
 
     /**

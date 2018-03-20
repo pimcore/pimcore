@@ -744,7 +744,7 @@ abstract class Data
         }
 
         // insert this line if inheritance from parent objects is allowed
-        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t" . '}' . "\n";
@@ -827,9 +827,11 @@ abstract class Data
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
 
-        $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
-        $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
-        $code .= "\t" . '}' . "\n";
+        if($this->supportsInheritance()) {
+            $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" .'    return $data->getPlain();' . "\n";
@@ -1355,5 +1357,14 @@ abstract class Data
     public function appendData($existingData, $additionalData)
     {
         return $existingData;
+    }
+
+    /**
+     * Returns if datatype supports data inheritance
+     *
+     * @return bool
+     */
+    public function supportsInheritance() {
+        return true;
     }
 }

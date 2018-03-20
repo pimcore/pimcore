@@ -537,4 +537,9 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     {
         return $data;
     }
+
+    public function supportsInheritance()
+    {
+        return false;
+    }
 }
