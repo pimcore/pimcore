@@ -251,7 +251,7 @@ pimcore.document.versions = Class.create({
                     var modificationDate = this.document.data.modificationDate;
                     
                     Ext.Ajax.request({
-                        url: "/admin/element/delete-all-version",
+                        url: "/admin/element/delete-all-versions",
                         params: {id: elememntId, date: modificationDate}
                     });
                     

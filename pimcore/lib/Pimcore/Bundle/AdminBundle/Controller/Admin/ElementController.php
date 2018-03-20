@@ -564,7 +564,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/delete-all-version")
+     * @Route("/element/delete-all-versions")
      *
      * @param Request $request
      *
