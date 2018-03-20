@@ -564,6 +564,28 @@ class ElementController extends AdminController
     }
 
     /**
+     * @Route("/element/delete-all-versions")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteAllVersionAction(Request $request)
+    {
+        $elementId = $request->get('id');
+        $elementModificationdate = $request->get('date');
+
+        $versions = new Model\Version\Listing();
+        $versions->setCondition("cid = " . $versions->quote($elementId) . " AND date <> " . $versions->quote($elementModificationdate));
+
+        foreach($versions->load() as $vkey => $version) {
+            $version->delete();
+        }
+
+        return $this->adminJson(['success' => true]);
+    }
+
+    /**
      * @Route("/element/get-requires-dependencies")
      *
      * @param Request $request
