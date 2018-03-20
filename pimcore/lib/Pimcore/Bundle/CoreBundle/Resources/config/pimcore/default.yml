@@ -95,6 +95,7 @@ pimcore:
                     calculatedValue: \Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue
                     checkbox: \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox
                     classificationstore: \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore
+                    consent: \Pimcore\Model\DataObject\ClassDefinition\Data\Consent
                     country: \Pimcore\Model\DataObject\ClassDefinition\Data\Country
                     countrymultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect
                     date: \Pimcore\Model\DataObject\ClassDefinition\Data\Date
