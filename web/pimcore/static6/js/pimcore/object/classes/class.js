@@ -939,7 +939,7 @@ pimcore.object.classes.klass = Class.create({
             iconCls: "pimcore_icon_" + type
         };
 
-        if (type == "localizedfields") {
+        if (type == "localizedfields" || type == "block") {
             newNode.leaf = false;
             newNode.expanded = true;
             newNode.expandable = false;
