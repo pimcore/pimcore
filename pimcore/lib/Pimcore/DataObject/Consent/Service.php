@@ -30,10 +30,10 @@ class Service
     /**
      * Inserts note for consent based to give object.
      *
-     * @param AbstractObject $object
-     * @param string $fieldname
-     * @param string $consentContent
-     * @param array $metaData
+     * @param AbstractObject $object - object to attach the note to
+     * @param string $fieldname - fieldname of consent field
+     * @param string $consentContent - message that should be stored into the notes description
+     * @param array $metaData - array of key/values that should be attached as details to the note
      * @return Note
      */
     public function insertConsentNote(AbstractObject $object, string $fieldname, string $consentContent, array $metaData = []) : Note {
@@ -43,8 +43,8 @@ class Service
         $note->setType("consent-given");
         $note->setTitle("Consent given for field " . $fieldname);
         $note->setDate(time());
+        $note->setDescription($consentContent);
 
-        $note->addData('consent-content', 'text', $consentContent);
         foreach($metaData as $key => $data) {
             $note->addData($key, 'text', $data);
         }
@@ -56,8 +56,8 @@ class Service
     /**
      * Inserts note for revoke based to give object.
      *
-     * @param AbstractObject $object
-     * @param string $fieldname
+     * @param AbstractObject $object - object to attach the note to
+     * @param string $fieldname - fieldname of consent field
      * @return Note
      */
     public function insertRevokeNote(AbstractObject $object, string $fieldname) : Note {
@@ -75,10 +75,10 @@ class Service
     /**
      * Give consent to given fieldname - sets field value and adds note
      *
-     * @param AbstractObject $object
-     * @param string $fieldname
-     * @param string $consentContent
-     * @param array $metaData
+     * @param AbstractObject $object - object to set the consent to
+     * @param string $fieldname - fieldname of consent field
+     * @param string $consentContent - message that should be stored into the notes description
+     * @param array $metaData - array of key/values that should be attached as details to the note
      * @return Note
      * @throws \Exception
      */
@@ -100,8 +100,8 @@ class Service
     /**
      * Revoke consent to given fieldname - sets field value and adds note
      *
-     * @param AbstractObject $object
-     * @param string $fieldname
+     * @param AbstractObject $object - object to revoke the consent from
+     * @param string $fieldname - fieldname of consent field
      * @return Note
      * @throws \Exception
      */
