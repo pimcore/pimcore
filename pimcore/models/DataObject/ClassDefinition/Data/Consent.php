@@ -390,7 +390,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     /**
      * @param int $width
      */
-    public function setWidth(int $width)
+    public function setWidth($width)
     {
         $this->width = $width;
     }
