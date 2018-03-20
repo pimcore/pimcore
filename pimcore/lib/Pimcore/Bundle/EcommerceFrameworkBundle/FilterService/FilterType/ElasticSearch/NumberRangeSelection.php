@@ -45,11 +45,11 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
 
         if (!empty($value)) {
             $range = [];
-            if (!empty($value['from'])) {
+            if (strlen($value['from']) > 0) {
                 $range['gte'] = $value['from'];
             }
-            if (!empty($value['to'])) {
-                $range['lte'] = $value['from'];
+            if (strlen($value['to']) > 0) {
+                $range['lte'] = $value['to'];
             }
             $productList->addCondition(['range' => ['attributes.' . $field => $range]], $field);
         }

@@ -24,18 +24,31 @@ pimcore.settings.user.user.settings = Class.create({
     },
 
     getPanel: function () {
-
         var user = pimcore.globalmanager.get("user");
         this.forceReloadOnSave = false;
 
         var generalItems = [];
 
-        generalItems.push({
-            xtype: "displayfield",
-            fieldLabel: t("id"),
-            value: this.currentUser.id
-        });
 
+        generalItems.push({
+            xtype: 'panel',
+            border: false,
+            layout: 'hbox',
+            items: [
+                {
+                    xtype: "displayfield",
+                    fieldLabel: t("id"),
+                    value: this.currentUser.id,
+                    flex: 0.3
+                },
+                {
+                    xtype: "displayfield",
+                    fieldLabel: t("last_login"),
+                    value: (this.currentUser.lastLogin ? new Date(this.currentUser.lastLogin * 1000) : ''),
+                    flex: 0.7
+                }
+            ]
+        });
 
         generalItems.push({
             xtype: "checkbox",

@@ -279,6 +279,7 @@ $scripts = array(
     "pimcore/settings/videothumbnail/item.js",
     "pimcore/settings/videothumbnail/panel.js",
     "pimcore/settings/translations.js",
+    "pimcore/settings/translationEditor.js",
     "pimcore/settings/translation/website.js",
     "pimcore/settings/translation/admin.js",
     "pimcore/settings/translation/translationmerger.js",

@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\FeatureToggles\Features\DebugMode;
@@ -727,6 +728,7 @@ class Mail extends \Swift_Message
             // render document
             if ($this->getDocument() instanceof Model\Document) {
                 $attributes = $this->getParams();
+                $attributes[ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS] = true;
 
                 $html = Model\Document\Service::render($this->getDocument(), $attributes, $this->getEnableLayoutOnPlaceholderRendering());
             }

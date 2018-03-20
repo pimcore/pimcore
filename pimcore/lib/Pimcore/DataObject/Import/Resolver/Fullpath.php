@@ -62,7 +62,11 @@ class Fullpath extends AbstractResolver
             $object->setParent($parent);
             $object->setPublished(1);
         } else {
-            $parent = $object->getParent();
+            if ($object) {
+                $parent = $object->getParent();
+            } else {
+                throw new \Exception('failed to resolve object ' . $fullpath);
+            }
         }
 
         if (!$parent->isAllowed('create')) {
@@ -72,6 +76,8 @@ class Fullpath extends AbstractResolver
         if (!$object) {
             throw new \Exception('failed to resolve object ' . $fullpath);
         }
+
+        $this->setObjectType($config, $object, $rowData);
 
         return $object;
     }
