@@ -23,7 +23,7 @@ pimcore.object.classes.data.consent = Class.create(pimcore.object.classes.data.d
         object: true,
         objectbrick: false,
         fieldcollection: false,
-        localizedfield: true,
+        localizedfield: false,
         classificationstore : false,
         block: false,
         encryptedField: false
