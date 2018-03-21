@@ -330,11 +330,9 @@ class AbstractObject extends Model\Element\AbstractElement
         try {
             $object = new self();
 
-            if (Tool::isValidPath($path)) {
-                $object->getDao()->getByPath($path);
+            $object->getDao()->getByPath($path);
 
-                return self::getById($object->getId(), $force);
-            }
+            return self::getById($object->getId(), $force);
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
         }
