@@ -191,14 +191,16 @@ class EmailController extends DocumentControllerBase
 
         if ($request->get('filter')) {
             if ($request->get('filter')) {
-                $filterTerm = $list->quote('%'.mb_strtolower($request->get('filter')).'%');
+                $filterTerm = $request->get('filter');
+                if ($filterTerm == '*') {
+                    $filterTerm = '';
+                }
 
-                $condition = '(`from` LIKE ' . $filterTerm . ' OR
-                                        `to` LIKE ' . $filterTerm . ' OR
-                                        `cc` LIKE ' . $filterTerm . ' OR
-                                        `bcc` LIKE ' . $filterTerm . ' OR
-                                        `subject` LIKE ' . $filterTerm . ' OR
-                                        `params` LIKE ' . $filterTerm . ')';
+                $filterTerm = str_replace('%', '*', $filterTerm);
+                $filterTerm = str_replace('@', '#', $filterTerm);
+                $filterTerm = htmlspecialchars($filterTerm, ENT_QUOTES);
+
+                $condition = '( MATCH (`from`,`to`,`cc`,`bcc`,`subject`,`params`) AGAINST (' . $list->quote($filterTerm) . ' IN BOOLEAN MODE) )';
 
                 if ($request->get('documentId')) {
                     $condition .= 'AND documentId = ' . (int)$request->get('documentId');

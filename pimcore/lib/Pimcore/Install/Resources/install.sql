@@ -289,7 +289,8 @@ CREATE TABLE `email_log` (
   `sentDate` int(11) UNSIGNED DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `sentDate` (`sentDate`, `id`)
+  KEY `sentDate` (`sentDate`, `id`),
+  FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `glossary`;
