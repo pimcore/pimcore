@@ -24,7 +24,6 @@ use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
-use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\AbstractObject\Dao getDao()
