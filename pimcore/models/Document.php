@@ -256,7 +256,7 @@ class Document extends Element\AbstractElement
         try {
             $helperDoc = new Document();
             // validate path
-            if (Tool::isValidPath($path)) {
+            if (Element\Service::isValidPath($path, 'document')) {
                 $helperDoc->getDao()->getByPath($path);
             }
 

@@ -995,7 +995,7 @@ class Service extends Model\Element\Service
             unset($pathElements[$keyIdx]);
             $pathOnly = implode('/', $pathElements);
 
-            if ($validKey == $key && \Pimcore\Tool::isValidPath($pathOnly)) {
+            if ($validKey == $key && self::isValidPath($pathOnly, 'object')) {
                 $object->getDao()->getByPath($path);
 
                 return true;

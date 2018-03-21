@@ -234,7 +234,7 @@ class Asset extends Element\AbstractElement
         try {
             $asset = new Asset();
 
-            if (Tool::isValidPath($path)) {
+            if (Element\Service::isValidPath($path, 'asset')) {
                 $asset->getDao()->getByPath($path);
 
                 return self::getById($asset->getId(), $force);

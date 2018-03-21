@@ -859,7 +859,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param null $type
      *
      * @return mixed|string
@@ -895,14 +895,30 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $key
-     * @param $type
+     * @param string $key
+     * @param string $type
      *
      * @return bool
      */
     public static function isValidKey($key, $type)
     {
         return self::getValidKey($key, $type) == $key;
+    }
+
+    /**
+     * @param string $path
+     * @param string $type
+     * @return bool
+     */
+    public static function isValidPath($path, $type) {
+        $parts = explode("/", $path);
+        foreach($parts as $part) {
+            if(!self::isValidKey($part, $type)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

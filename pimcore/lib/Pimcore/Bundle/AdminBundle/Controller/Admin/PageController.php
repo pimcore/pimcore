@@ -364,7 +364,7 @@ class PageController extends DocumentControllerBase
             $success = false;
         }
 
-        if (!Tool::isValidPath($path)) {
+        if (!Element\Service::isValidKey($path, 'document')) {
             $success = false;
         }
 

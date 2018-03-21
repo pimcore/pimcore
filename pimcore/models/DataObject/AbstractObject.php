@@ -330,7 +330,7 @@ class AbstractObject extends Model\Element\AbstractElement
         try {
             $object = new self();
 
-            if (Tool::isValidPath($path)) {
+            if (Element\Service::isValidPath($path, 'object')) {
                 $object->getDao()->getByPath($path);
 
                 return self::getById($object->getId(), $force);

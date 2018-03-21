@@ -351,7 +351,7 @@ class Service extends Model\Element\Service
         try {
             $document = new Document();
             // validate path
-            if (\Pimcore\Tool::isValidPath($path)) {
+            if (self::isValidPath($path, 'document')) {
                 $document->getDao()->getByPath($path);
 
                 return true;
