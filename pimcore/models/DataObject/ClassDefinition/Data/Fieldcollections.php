@@ -939,4 +939,12 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
             }
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function supportsInheritance()
+    {
+        return false;
+    }
 }

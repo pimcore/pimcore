@@ -102,6 +102,7 @@ The entire list of data types is indicated below:
 | newsletterconfirmed      | typed checkbox if newsletter is confirmed |
 | persona                  | typed selectbox for personas defined within Pimcore |
 | personas                 | typed selectbox with multiselect for personas defined within Pimcore |
+| [consent](./39_Consent.md)| store consent of user for something, e.g. consent for direct marketing mailing |
 
 
 

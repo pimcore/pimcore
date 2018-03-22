@@ -153,3 +153,8 @@ services:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         public: true
         tags: ['container.service_locator']
+
+
+    # DataObject Consent Service
+    Pimcore\DataObject\Consent\Service:
+        public: true
