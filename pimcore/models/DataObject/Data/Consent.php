@@ -21,7 +21,6 @@ use Pimcore\Model\Element\Note;
 
 class Consent
 {
-
     /**
      * @var bool
      */
@@ -39,6 +38,7 @@ class Consent
 
     /**
      * Consent constructor.
+     *
      * @param bool $consent
      * @param int $noteId
      */
@@ -85,7 +85,7 @@ class Consent
      */
     public function getNote()
     {
-        if(empty($this->note) && !empty($this->noteId)) {
+        if (empty($this->note) && !empty($this->noteId)) {
             $this->note = Note::getById($this->noteId);
         }
 
@@ -103,13 +103,13 @@ class Consent
     /**
      * @return string
      */
-    public function getSummaryString() {
+    public function getSummaryString()
+    {
         $note = $this->getNote();
-        if($note) {
-            return $note->getTitle() . ": " . date('r', $note->getDate());
+        if ($note) {
+            return $note->getTitle() . ': ' . date('r', $note->getDate());
         } else {
-            return "";
+            return '';
         }
     }
-
 }

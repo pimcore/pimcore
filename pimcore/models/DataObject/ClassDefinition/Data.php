@@ -827,7 +827,7 @@ abstract class Data
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
 
-        if($this->supportsInheritance()) {
+        if ($this->supportsInheritance()) {
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t" . '}' . "\n";
@@ -1364,7 +1364,8 @@ abstract class Data
      *
      * @return bool
      */
-    public function supportsInheritance() {
+    public function supportsInheritance()
+    {
         return true;
     }
 }

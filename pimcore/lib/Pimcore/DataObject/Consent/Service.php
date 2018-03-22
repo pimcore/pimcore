@@ -26,7 +26,6 @@ use Pimcore\Model\Element\Note;
 
 class Service
 {
-
     /**
      * Inserts note for consent based to give object.
      *
@@ -34,18 +33,20 @@ class Service
      * @param string $fieldname - fieldname of consent field
      * @param string $consentContent - message that should be stored into the notes description
      * @param array $metaData - array of key/values that should be attached as details to the note
+     *
      * @return Note
      */
-    public function insertConsentNote(AbstractObject $object, string $fieldname, string $consentContent, array $metaData = []) : Note {
+    public function insertConsentNote(AbstractObject $object, string $fieldname, string $consentContent, array $metaData = []): Note
+    {
         $note = new Note();
         $note->setCid($object->getId());
         $note->setCtype('object');
-        $note->setType("consent-given");
-        $note->setTitle("Consent given for field " . $fieldname);
+        $note->setType('consent-given');
+        $note->setTitle('Consent given for field ' . $fieldname);
         $note->setDate(time());
         $note->setDescription($consentContent);
 
-        foreach($metaData as $key => $data) {
+        foreach ($metaData as $key => $data) {
             $note->addData($key, 'text', $data);
         }
         $note->save();
@@ -58,14 +59,16 @@ class Service
      *
      * @param AbstractObject $object - object to attach the note to
      * @param string $fieldname - fieldname of consent field
+     *
      * @return Note
      */
-    public function insertRevokeNote(AbstractObject $object, string $fieldname) : Note {
+    public function insertRevokeNote(AbstractObject $object, string $fieldname): Note
+    {
         $note = new Note();
         $note->setCid($object->getId());
         $note->setCtype('object');
-        $note->setType("consent-revoked");
-        $note->setTitle("Consent revoked for field " . $fieldname);
+        $note->setType('consent-revoked');
+        $note->setTitle('Consent revoked for field ' . $fieldname);
         $note->setDate(time());
         $note->save();
 
@@ -79,12 +82,15 @@ class Service
      * @param string $fieldname - fieldname of consent field
      * @param string $consentContent - message that should be stored into the notes description
      * @param array $metaData - array of key/values that should be attached as details to the note
+     *
      * @return Note
+     *
      * @throws \Exception
      */
-    public function giveConsent(AbstractObject $object, string $fieldname, string $consentContent, array $metaData = []): Note {
-        $setter = "set" . ucfirst($fieldname);
-        if(!method_exists($object, $setter)) {
+    public function giveConsent(AbstractObject $object, string $fieldname, string $consentContent, array $metaData = []): Note
+    {
+        $setter = 'set' . ucfirst($fieldname);
+        if (!method_exists($object, $setter)) {
             throw new \Exception("Method $setter does not exist in given object.");
         }
 
@@ -96,18 +102,20 @@ class Service
         return $note;
     }
 
-
     /**
      * Revoke consent to given fieldname - sets field value and adds note
      *
      * @param AbstractObject $object - object to revoke the consent from
      * @param string $fieldname - fieldname of consent field
+     *
      * @return Note
+     *
      * @throws \Exception
      */
-    public function revokeConsent(AbstractObject $object, string $fieldname): Note {
-        $setter = "set" . ucfirst($fieldname);
-        if(!method_exists($object, $setter)) {
+    public function revokeConsent(AbstractObject $object, string $fieldname): Note
+    {
+        $setter = 'set' . ucfirst($fieldname);
+        if (!method_exists($object, $setter)) {
             throw new \Exception("Method $setter does not exist in given object.");
         }
 
@@ -118,5 +126,4 @@ class Service
 
         return $note;
     }
-
 }

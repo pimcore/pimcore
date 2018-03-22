@@ -77,12 +77,10 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\Consent) {
-
             return [
                 $this->getName() . '__consent' => $data->getConsent(),
                 $this->getName() . '__note' => $data->getNoteId()
             ];
-
         }
 
         return [
@@ -107,6 +105,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
         } else {
             $data = new DataObject\Data\Consent();
         }
+
         return $data;
     }
 
@@ -140,13 +139,11 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         // get data & info from note
-        if($data instanceof DataObject\Data\Consent) {
-
+        if ($data instanceof DataObject\Data\Consent) {
             return [
                 'consent' => $data->getConsent(),
                 'noteContent' => $data->getSummaryString()
             ];
-
         } else {
             return null;
         }
@@ -173,15 +170,15 @@ class Consent extends Model\DataObject\ClassDefinition\Data
         $oldData = null;
         $noteId = null;
 
-        $getter = "get" . ucfirst($this->getName());
-        if(method_exists($object, $getter)) {
+        $getter = 'get' . ucfirst($this->getName());
+        if (method_exists($object, $getter)) {
             $oldData = $object->$getter();
         }
 
-        if(!$oldData || $oldData->getConsent() != $data) {
+        if (!$oldData || $oldData->getConsent() != $data) {
             $service = \Pimcore::getContainer()->get(Service::class);
 
-            if($data == true) {
+            if ($data == true) {
                 $note = $service->insertConsentNote($object, $this->getName(), 'Manually by User via Pimcore Backend.');
             } else {
                 $note = $service->insertRevokeNote($object, $this->getName());
@@ -196,9 +193,11 @@ class Consent extends Model\DataObject\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param array $params
+     *
      * @return bool
      */
-    public function getDataForGrid($data, $object = null, $params = []) {
+    public function getDataForGrid($data, $object = null, $params = [])
+    {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
@@ -206,9 +205,11 @@ class Consent extends Model\DataObject\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param array $params
+     *
      * @return DataObject\Data\Consent
      */
-    public function getDataFromGridEditor($data, $object = null, $params = []) {
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
@@ -260,7 +261,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return $data ? strval($data->getConsent()) : "";
+        return $data ? strval($data->getConsent()) : '';
     }
 
     /**
@@ -276,7 +277,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return new DataObject\Data\Consent( (bool)$importValue);
+        return new DataObject\Data\Consent((bool)$importValue);
     }
 
     /**
@@ -304,7 +305,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
-        return new DataObject\Data\Consent( (bool)$value);
+        return new DataObject\Data\Consent((bool)$value);
     }
 
     /** True if change is allowed in edit mode.
@@ -402,5 +403,4 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     {
         return false;
     }
-
 }

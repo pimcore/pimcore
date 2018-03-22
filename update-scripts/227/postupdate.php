@@ -11,4 +11,3 @@ $brickList = $brickList->load();
 foreach ($brickList as $brickDef) {
     $brickDef->save();
 }
-

@@ -95,7 +95,7 @@ abstract class AbstractData extends Model\AbstractModel
     {
         $this->flushContainer();
         $this->doDelete = $doDelete;
-       
+
         return $this;
     }
 
@@ -132,7 +132,7 @@ abstract class AbstractData extends Model\AbstractModel
     {
         $object = $this->getObject();
         if ($object) {
-            $containerGetter = "get" . ucfirst($this->fieldname);
+            $containerGetter = 'get' . ucfirst($this->fieldname);
 
             $container = $object->$containerGetter();
             if ($container instanceof Object\Objectbrick) {
@@ -140,7 +140,7 @@ abstract class AbstractData extends Model\AbstractModel
             }
         }
     }
-    
+
     /**
      * @param $key
      *
