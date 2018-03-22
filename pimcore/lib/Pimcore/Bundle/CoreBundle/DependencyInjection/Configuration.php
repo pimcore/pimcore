@@ -85,6 +85,7 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         $this->addObjectsNode($rootNode);
+        $this->addAssetNode($rootNode);
         $this->addDocumentsNode($rootNode);
         $this->addEncryptionNode($rootNode);
         $this->addModelsNode($rootNode);
@@ -116,6 +117,30 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('class_overrides')
                             ->useAttributeAsKey('name')
                             ->prototype('scalar');
+    }
+
+    /**
+     * Add asset specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addAssetNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('assets')
+            ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('image')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('low_quality_image_preview')
+                        ->addDefaultsIfNotSet()
+                        ->canBeDisabled()
+                        ->children()
+                            ->scalarNode('generator')
+                            ->defaultNull()
+                            ->end();
     }
 
     /**
