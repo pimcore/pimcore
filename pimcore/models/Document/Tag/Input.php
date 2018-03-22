@@ -61,7 +61,7 @@ class Input extends Model\Document\Tag
         $options = $this->getOptions();
 
         $text = $this->text;
-        if (isset($options['htmlspecialchars']) and $options['htmlspecialchars'] !== false) {
+        if (!isset($options['htmlspecialchars']) || $options['htmlspecialchars'] !== false) {
             $text = htmlspecialchars($this->text);
         }
 
