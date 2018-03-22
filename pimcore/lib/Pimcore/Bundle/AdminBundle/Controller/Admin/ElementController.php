@@ -576,9 +576,9 @@ class ElementController extends AdminController
         $elementModificationdate = $request->get('date');
 
         $versions = new Model\Version\Listing();
-        $versions->setCondition("cid = " . $versions->quote($elementId) . " AND date <> " . $versions->quote($elementModificationdate));
+        $versions->setCondition('cid = ' . $versions->quote($elementId) . ' AND date <> ' . $versions->quote($elementModificationdate));
 
-        foreach($versions->load() as $vkey => $version) {
+        foreach ($versions->load() as $vkey => $version) {
             $version->delete();
         }
 

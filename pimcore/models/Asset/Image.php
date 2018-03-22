@@ -126,7 +126,7 @@ class Image extends Model\Asset
 
             // we can't use getImageBlob() here, because of a bug in combination with jpeg:extent
             // http://www.imagemagick.org/discourse-server/viewtopic.php?f=3&t=24366
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-optimize-' . uniqid() . ".jpg";
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-optimize-' . uniqid() . '.jpg';
             $imagick->writeImage($tmpFile);
             $imageBase64 = base64_encode(file_get_contents($tmpFile));
             $imagick->destroy();

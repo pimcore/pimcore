@@ -908,12 +908,14 @@ class Service extends Model\AbstractModel
     /**
      * @param string $path
      * @param string $type
+     *
      * @return bool
      */
-    public static function isValidPath($path, $type) {
-        $parts = explode("/", $path);
-        foreach($parts as $part) {
-            if(!self::isValidKey($part, $type)) {
+    public static function isValidPath($path, $type)
+    {
+        $parts = explode('/', $path);
+        foreach ($parts as $part) {
+            if (!self::isValidKey($part, $type)) {
                 return false;
             }
         }

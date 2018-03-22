@@ -23,7 +23,6 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
-use Pimcore\Tool;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
