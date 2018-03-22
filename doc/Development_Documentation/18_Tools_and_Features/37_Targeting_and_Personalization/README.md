@@ -151,3 +151,7 @@ set the cookie with the following [bookmarklet](https://en.wikipedia.org/wiki/Bo
 bar):
 
 * <a href="javascript:(function()%7Bdocument.cookie %3D 'pimcore_targeting_debug%3D1%3B path%3D%2F'%7D)()">Enable Pimcore Targeting Toolbar</a> 
+
+## Opt-out from targeting
+You can give the user the possibility to opt-out from targeting at any time, by setting the following cookie: `pimcore_targeting_disabled=1`. 
+
