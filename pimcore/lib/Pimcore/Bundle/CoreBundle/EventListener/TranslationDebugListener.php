@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Pimcore\Tool\Authentication;
 use Pimcore\Translation\Translator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -63,7 +64,9 @@ class TranslationDebugListener implements EventSubscriberInterface
         }
 
         if ((bool)$event->getRequest()->query->get($this->parameterName, false)) {
-            $this->translator->setDisableTranslations(true);
+            if(\Pimcore::inDebugMode() || Authentication::authenticateSession($event->getRequest())) {
+                $this->translator->setDisableTranslations(true);
+            }
         }
     }
 }

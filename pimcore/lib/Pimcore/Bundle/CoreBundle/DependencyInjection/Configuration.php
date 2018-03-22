@@ -73,7 +73,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('debugging')
                             ->info('If debugging is enabled, the translator will return the plain translation key instead of the translated message.')
                             ->addDefaultsIfNotSet()
-                            ->canBeEnabled()
+                            ->canBeDisabled()
                             ->children()
                                 ->scalarNode('parameter')
                                     ->defaultValue('pimcore_debug_translations')
