@@ -135,7 +135,7 @@ abstract class AbstractData extends Model\AbstractModel
             $containerGetter = 'get' . ucfirst($this->fieldname);
 
             $container = $object->$containerGetter();
-            if ($container instanceof Object\Objectbrick) {
+            if ($container instanceof DataObject\Objectbrick) {
                 $container->setItems([]);
             }
         }
