@@ -28,7 +28,7 @@ class MaintenanceCommand extends AbstractCommand
 {
     protected $systemTasks = [
         'scheduledtasks', 'cleanupcache', 'logmaintenance', 'sanitycheck', 'cleanuplogfiles', 'versioncleanup',
-        'versioncompress', 'redirectcleanup', 'cleanupbrokenviews','downloadmaxminddb',
+        'versioncompress', 'redirectcleanup', 'cleanupbrokenviews', 'downloadmaxminddb',
         'tmpstorecleanup', 'imageoptimize'
     ];
 

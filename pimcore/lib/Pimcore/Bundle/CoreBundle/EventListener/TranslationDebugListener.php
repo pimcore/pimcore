@@ -64,7 +64,7 @@ class TranslationDebugListener implements EventSubscriberInterface
         }
 
         if ((bool)$event->getRequest()->query->get($this->parameterName, false)) {
-            if(\Pimcore::inDebugMode() || Authentication::authenticateSession($event->getRequest())) {
+            if (\Pimcore::inDebugMode() || Authentication::authenticateSession($event->getRequest())) {
                 $this->translator->setDisableTranslations(true);
             }
         }
