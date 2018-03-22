@@ -30,19 +30,6 @@ class Maintenance
         $db->deleteWhere('http_error_log', 'date < ' . $limit);
     }
 
-    public function usageStatistics()
-    {
-        if (Config::getSystemConfig()->general->disableusagestatistics) {
-            return;
-        }
-
-        $logFile = PIMCORE_LOG_DIRECTORY . '/usagelog.log';
-        if (is_file($logFile) && filesize($logFile) > 200000) {
-            gzencode(file_get_contents($logFile));
-            rename($logFile, $logFile . '-archive-' . date('m-d-Y-H-i'));
-        }
-    }
-
     public function cleanupLogFiles()
     {
         // we don't use the RotatingFileHandler of Monolog, since rotating asynchronously is recommended + compression
@@ -70,7 +57,7 @@ class Maintenance
         $files = glob(PIMCORE_LOG_DIRECTORY . '/*-archive-*.log');
         if (is_array($files)) {
             foreach ($files as $file) {
-                if (filemtime($file) < (time() - (86400 * 30))) { // we keep the logs for 30 days
+                if (filemtime($file) < (time() - (86400 * 7))) { // we keep the logs for 7 days
                     unlink($file);
                 } elseif (!preg_match("/\.gz$/", $file)) {
                     gzcompressfile($file);
