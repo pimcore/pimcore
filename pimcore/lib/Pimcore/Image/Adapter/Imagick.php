@@ -103,7 +103,7 @@ class Imagick extends Adapter
             }
 
             $imagePathLoad = $imagePath;
-            if (!defined('HHVM_VERSION')) {
+            if (!defined('HHVM_VERSION') && !defined('STREAMS_API')) {
                 $imagePathLoad .= '[0]'; // not supported by HHVM implementation - selects the first layer/page in layered/pages file formats
             }
 
@@ -235,8 +235,8 @@ class Imagick extends Adapter
             $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
         }
 
-        if (defined('HHVM_VERSION')) {
-            $success = $i->writeImage($path);
+        if (defined('HHVM_VERSION') || defined('STREAMS_API')) {
+            $success = file_put_contents($path, $i->getImageblob());
         } else {
             $success = $i->writeImage($format . ':' . $path);
         }
