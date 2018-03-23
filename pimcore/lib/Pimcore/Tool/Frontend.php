@@ -69,7 +69,7 @@ class Frontend
         $inSite = true;
 
         if ($site && $site->getRootDocument() instanceof Document\Page) {
-            if (!strpos($document->getRealFullPath(), $site->getRootDocument()->getRealFullPath() . '/') === 0) {
+            if (strpos($document->getRealFullPath(), $site->getRootDocument()->getRealFullPath() . '/') !== 0) {
                 $inSite = false;
             }
         }
@@ -111,7 +111,7 @@ class Frontend
         }
 
         foreach ($sites as $site) {
-            if (preg_match('@^' . $site->getRootPath() . '/@', $document->getRealFullPath()) || $site->getRootDocument()->getId() == $document->getId()) {
+            if (strpos($document->getRealFullPath(), $site->getRootPath() . '/') === 0 || $site->getRootDocument()->getId() == $document->getId()) {
                 return $site;
             }
         }
