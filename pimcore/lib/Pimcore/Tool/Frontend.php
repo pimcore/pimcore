@@ -69,7 +69,7 @@ class Frontend
         $inSite = true;
 
         if ($site && $site->getRootDocument() instanceof Document\Page) {
-            if (!preg_match('@^' . $site->getRootDocument()->getRealFullPath() . '/@', $document->getRealFullPath())) {
+            if (!strpos($document->getRealFullPath(), $site->getRootDocument()->getRealFullPath() . '/') === 0) {
                 $inSite = false;
             }
         }
