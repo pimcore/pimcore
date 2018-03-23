@@ -30,6 +30,6 @@ and its methods `giveConsent` and `revokeConsent`.
     /**
     *  @var Pimcore\DataObject\Consent\Service $consentService
     **/
-    $consentService->giveConsent($x, "directMailing", $consentMessage, $metaInfo);
+    $consentService->giveConsent($customer, "directMailing", $consentMessage, $metaInfo);
 ``` 
 
