@@ -53,7 +53,9 @@ class PublicServicesController extends FrameworkController
 
                 if (!$thumbnailConfig) {
                     // check if there's an item in the TmpStore
-                    $deferredConfigId = 'thumb_' . $assetId . '__' . md5(urldecode($request->getPathInfo()));
+                    // remove an eventually existing cache-buster prefix first (eg. when using with a CDN)
+                    $pathInfo = preg_replace('@^/cache-buster\-[\d]+@', '', $request->getPathInfo());
+                    $deferredConfigId = 'thumb_' . $assetId . '__' . md5(urldecode($pathInfo));
                     if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                         $thumbnailConfig = $thumbnailConfigItem->getData();
                         TmpStore::delete($deferredConfigId);
