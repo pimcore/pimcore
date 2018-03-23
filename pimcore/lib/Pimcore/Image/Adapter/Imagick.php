@@ -235,8 +235,8 @@ class Imagick extends Adapter
             $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
         }
 
-        if (defined('HHVM_VERSION')) {
-            $success = $i->writeImage($path);
+        if (defined('HHVM_VERSION') || !stream_is_local($path)) {
+            $success = File::put($path, $i->getImageBlob());
         } else {
             $success = $i->writeImage($format . ':' . $path);
         }
