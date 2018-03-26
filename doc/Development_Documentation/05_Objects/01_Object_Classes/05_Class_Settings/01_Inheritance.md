@@ -1,7 +1,7 @@
 # Data Inheritance and Parent Class
   
 Pimcore provides two sorts of inheritance. While data inheritance allows the inheritance of object data along the tree
- hierarchy of objects, can the developer modify the PHP class hierarchy with the parent class setting of object classes. 
+ hierarchy of objects, the developer can modify the PHP class hierarchy with the parent class setting of object classes. 
    
 ## Data Inheritance
 A very important feature in connection with PIM is data inheritance. Data inheritance means, that objects of the same 
