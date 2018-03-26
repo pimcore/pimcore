@@ -95,8 +95,8 @@ Brick-specific configurations are passed using the params configuration (see abo
     "params" => [
         "my_brick" => [
             "forceEditInView" => true,
-            "editWidth" => "800",
-            "editHeight" => "500"
+            "editWidth" => "800px",
+            "editHeight" => "500px"
         ]
     ]
 ]); ?>
