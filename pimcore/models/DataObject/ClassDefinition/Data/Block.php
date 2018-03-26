@@ -60,6 +60,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public $collapsed;
 
     /**
+     * @var int
+     */
+    public $maxItems;
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -995,4 +1000,22 @@ class Block extends Model\DataObject\ClassDefinition\Data
     {
         return false;
     }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems(): int
+    {
+        return $this->maxItems;
+    }
+
+    /**
+     * @param int $maxItems
+     */
+    public function setMaxItems(int $maxItems): void
+    {
+        $this->maxItems = $maxItems;
+    }
+
+
 }
