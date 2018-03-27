@@ -83,7 +83,7 @@ The listener above sets a custom template which can either extend the core one o
 {% endblock %}
 ```
 
-As this makes use of the same extension/code block system as the [Piwik Tracking Integration](../28_Marketing_Settings/07_Piwik.md)
+As this makes use of the same extension/code block system as the [Matomo Tracking Integration](../28_Marketing_Settings/07_Piwik.md)
 see its documentation page for further details.
 
 
