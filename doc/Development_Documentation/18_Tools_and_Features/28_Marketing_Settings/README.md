@@ -5,7 +5,7 @@ The `Marketing Settings` give you the possibility to configure marketing-specifi
 - [Google Analytics](./05_Analytics.md)
 - Google Search Console
 - Google Tag Manager
-- [Piwik](./07_Piwik.md)
+- [Matomo](./07_Piwik.md)
 
 
 ## Google Analytics
@@ -24,7 +24,7 @@ possibilities through:
 * a dedicated template for both events which can be customized from an event listener
 
 
-## Piwik
+## Matomo
 
-Similar to Google Analytics, a Piwik tracking code can be automatically injected into each response. See [Piwik](./07_Piwik.md)
+Similar to Google Analytics, a Matomo tracking code can be automatically injected into each response. See [Matomo](./07_Piwik.md)
 for details.
