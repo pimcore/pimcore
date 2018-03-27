@@ -15,12 +15,14 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Document\Newsletter\SendingParamContainer;
+use Pimcore\Event\DocumentEvents;
 use Pimcore\Logger;
 use Pimcore\Mail;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Newsletter
 {
@@ -121,7 +123,16 @@ class Newsletter
                 $mailer = \Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
             }
 
+            $event = new GenericEvent($mail, [
+                'mail' => $mail,
+                'document' => $mail->getDocument(),
+                'sendingContainer' => $sendingContainer,
+                'mailer' => $mailer
+            ]);
+
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_PRE_SEND, $event);
             $mail->sendWithoutRendering($mailer);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_POST_SEND, $event);
 
             Logger::info('Sent newsletter to: ' . self::obfuscateEmail($mailAddress) . ' [' . $mail->getDocument()->getId() . ']');
         } else {
