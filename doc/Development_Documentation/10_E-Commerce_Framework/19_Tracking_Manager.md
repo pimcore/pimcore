@@ -8,7 +8,7 @@ Current implementations of trackers are
 * **Google Analytics Classic**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce`
 * **Google Analytics Universal**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce`
 * **Google Analytics Enhanced E-Commerce**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce`
-* **Piwik**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik`
+* **Matomo**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik`
 
 ## Supported Tracking Actions
 

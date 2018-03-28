@@ -112,7 +112,7 @@ The signature of `Pimcore\Model\DataObject\AbstractObject` changed. It received 
 ## Build 173 (2018-01-09)
 
 The Google Analytics and Google Tag Manager code generation was refactored to use the same extendable block logic as the 
-Piwik integration. If you have any custom code logic involving the `Pimcore\Google\Analytics` class or use a custom tracker
+Matomo integration. If you have any custom code logic involving the `Pimcore\Google\Analytics` class or use a custom tracker
 with the Ecommerce Framework tracking implementation, please note the following:
 
 * The static calls to `Pimcore\Google\Analytics` still work, but are discouraged. Please use `Pimcore\Analytics\Google\Tracker`
@@ -216,19 +216,19 @@ please make sure you update them to the new structure.
 
 ## Build 149 (2017-11-14)
 
-The Piwik integration which was recently added was refactored to always use a full URI including the protocol for the Piwik
-URL configuration setting. Please update your settings to include the protocol as otherwise the Piwik tracking will be 
+The Matomo integration which was recently added was refactored to always use a full URI including the protocol for the Matomo
+URL configuration setting. Please update your settings to include the protocol as otherwise the Matomo tracking will be 
 disabled.
 
 Before:
 
-* `piwik.example.com`
-* `analytics.example.com/piwik`
+* `matomo.example.com`
+* `analytics.example.com/matomo`
 
 Now:
 
-* `https://piwik.example.com`
-* `https://analytics.example.com/piwik`
+* `https://matomo.example.com`
+* `https://analytics.example.com/matomo`
 
 ## Build 148 (2017-11-13)
 
