@@ -1041,18 +1041,18 @@ class ClassificationstoreController extends AdminController
         $object = DataObject\AbstractObject::getById($oid);
         $fieldname = $request->get('fieldname');
 
-        $keyCondition = 'groupId in (' . implode(',', $ids) . ')';
+        $keyCondition = 'groupId in (' . implode(',', array_fill(0, count($ids), '?')) . ')';
 
         $keyList = new Classificationstore\KeyGroupRelation\Listing();
-        $keyList->setCondition($keyCondition);
+        $keyList->setCondition($keyCondition, $ids);
         $keyList->setOrderKey(['sorter', 'id']);
         $keyList->setOrder(['ASC', 'ASC']);
         $keyList = $keyList->load();
 
-        $groupCondition = 'id in (' . implode(',', $ids) . ')';
+        $groupCondition = 'id in (' . implode(',', array_fill(0, count($ids), '?')) . ')';
 
         $groupList = new Classificationstore\GroupConfig\Listing();
-        $groupList->setCondition($groupCondition);
+        $groupList->setCondition($groupCondition, $ids);
         $groupList->setOrder('ASC');
         $groupList->setOrderKey('id');
         $groupList = $groupList->load();
