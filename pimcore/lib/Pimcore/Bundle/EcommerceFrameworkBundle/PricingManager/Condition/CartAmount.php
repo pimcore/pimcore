@@ -20,10 +20,18 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class CartAmount implements ICartAmount
 {
+    CONST CALCULATION_MODE_ONLY_CART = "only_cart";
+    CONST CALCULATION_MODE_PRODUCT_AND_CART = "product_and_cart";
+
     /**
      * @var float
      */
     protected $limit;
+
+    /**
+     * @var string
+     */
+    protected $mode = self::CALCULATION_MODE_ONLY_CART;
 
     /**
      * @param IEnvironment $environment
@@ -32,14 +40,39 @@ class CartAmount implements ICartAmount
      */
     public function check(IEnvironment $environment)
     {
+        if($this->mode == self::CALCULATION_MODE_PRODUCT_AND_CART) {
+            return $this->checkProductAndCart($environment);
+        } else {
+            return $this->checkOnlyCart($environment);
+        }
+    }
+
+    /**
+     * @param IEnvironment $environment
+     * @return bool
+     * @throws \TypeError
+     */
+    protected function checkOnlyCart(IEnvironment $environment) {
         if (!$environment->getCart() || $environment->getProduct() !== null) {
             return false;
         }
-
         $calculator = $environment->getCart()->getPriceCalculator();
-
-        // TODO store limit as Decimal?
         return $calculator->getSubTotal()->getAmount()->greaterThanOrEqual(Decimal::create($this->getLimit()));
+    }
+
+    /**
+     * @param IEnvironment $environment
+     * @return bool
+     * @throws \TypeError
+     */
+    protected function checkProductAndCart(IEnvironment $environment) {
+        if ($environment->getCart() && $environment->getProduct() !== null) {
+            $calculator = $environment->getCart()->getPriceCalculator();
+
+            return $calculator->getSubTotal()->getAmount()->greaterThanOrEqual(Decimal::create($this->getLimit()));
+        }
+
+        return false;
     }
 
     /**
@@ -65,11 +98,29 @@ class CartAmount implements ICartAmount
     /**
      * @return string
      */
+    public function getMode(): string
+    {
+        return $this->mode;
+    }
+
+    /**
+     * @param string $mode
+     */
+    public function setMode(string $mode)
+    {
+        $this->mode = $mode;
+    }
+
+
+    /**
+     * @return string
+     */
     public function toJSON()
     {
         return json_encode([
             'type' => 'CartAmount',
-            'limit' => $this->getLimit()
+            'limit' => $this->getLimit(),
+            'mode' => $this->getMode()
         ]);
     }
 
@@ -82,6 +133,7 @@ class CartAmount implements ICartAmount
     {
         $json = json_decode($string);
         $this->setLimit($json->limit);
+        $this->setMode($json->mode);
 
         return $this;
     }

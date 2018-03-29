@@ -860,6 +860,19 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
                 name: "limit",
                 width: 300,
                 value: data.limit
+            },{
+                xtype: "combo",
+                store: [
+                    ["only_cart", t("bundle_ecommerce_pricing_config_condition_cart_amount_mode_only_cart")],
+                    ["product_and_cart", t("bundle_ecommerce_pricing_config_condition_cart_amount_mode_product_and_cart")]
+                ],
+                mode: "local",
+                width: 500,
+                editable: false,
+                triggerAction: "all",
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_cart_amount_mode"),
+                name: "mode",
+                value: data.mode
             }]
         });
 
