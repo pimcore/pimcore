@@ -23,6 +23,9 @@ class Published extends AbstractOperator
     {
         if (method_exists($target, 'setPublished')) {
             $published = $rowData[$colIndex] ? true : false;
+            if (!$published && method_exists($target, 'setOmitMandatoryCheck')) {
+                $target->setOmitMandatoryCheck(true);
+            }
             $target->setPublished($published);
         }
     }
