@@ -180,6 +180,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
             ->setTransactionId($order->getOrdernumber())
             ->setName($this->normalizeName($orderItem->getProductName()))
             ->setCategories($this->getProductCategories($product))
+            ->setBrand($this->getProductBrand($product))
             ->setPrice(Decimal::create($orderItem->getTotalPrice())->div($orderItem->getAmount())->asNumeric())
             ->setQuantity($orderItem->getAmount());
 
@@ -203,6 +204,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
             ->setId($product->getId())
             ->setName($this->normalizeName($product->getOSName()))
             ->setCategories($this->getProductCategories($product))
+            ->setBrand($this->getProductBrand($product))
             ->setPrice($cartItem->getTotalPrice()->getAmount()->div($cartItem->getCount())->asNumeric())
             ->setQuantity($cartItem->getCount());
 
@@ -235,6 +237,27 @@ class TrackingItemBuilder implements ITrackingItemBuilder
         }
 
         return $categories;
+    }
+    
+    /**
+     * Get a product's brand
+     *
+     * @param IProduct $product
+     *
+     * @return null|string
+     */
+    protected function getProductBrand(IProduct $product)
+    {
+        $brandName = null;
+        if ($product && method_exists($product, 'getBrand')) {
+            if ($brand = $product->getBrand()) {
+                if ($brand && method_exists($brand, 'getName')) {
+                    $brandName = $brand->getName();
+                }
+            }
+        }
+
+        return $brandName;
     }
 
     /**
