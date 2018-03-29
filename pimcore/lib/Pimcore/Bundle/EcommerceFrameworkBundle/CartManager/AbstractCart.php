@@ -81,7 +81,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * @var ICartPriceCalculator
      */
-    protected $priceCalcuator;
+    protected $priceCalculator;
 
     /**
      * @var int
@@ -734,11 +734,11 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getPriceCalculator()
     {
-        if (empty($this->priceCalcuator)) {
-            $this->priceCalcuator = Factory::getInstance()->getCartManager()->getCartPriceCalculator($this);
+        if (empty($this->priceCalculator)) {
+            $this->priceCalculator = Factory::getInstance()->getCartManager()->getCartPriceCalculator($this);
         }
 
-        return $this->priceCalcuator;
+        return $this->priceCalculator;
     }
 
     /**
@@ -749,8 +749,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
         $this->setModificationDateTimestamp(time());
 
         //don't use getter here because reset is only necessary if price calculator is already there
-        if ($this->priceCalcuator) {
-            $this->priceCalcuator->reset();
+        if ($this->priceCalculator) {
+            $this->priceCalculator->reset();
         }
 
         $this->validateVoucherTokenReservations();
