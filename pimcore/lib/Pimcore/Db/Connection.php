@@ -14,13 +14,6 @@
 
 namespace Pimcore\Db;
 
-use Doctrine\DBAL\Cache\QueryCacheProfile;
-use Pimcore\Db;
-use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
-use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
-use Pimcore\Model\Element\ValidationException;
-
 class Connection extends \Doctrine\DBAL\Connection
 {
     use PimcoreExtensionsTrait;
