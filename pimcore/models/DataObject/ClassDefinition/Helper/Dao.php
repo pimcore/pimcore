@@ -56,7 +56,6 @@ trait Dao
                         }
                         $this->db->queryIgnoreError(
                             'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
-                            [],
                             [UniqueConstraintViolationException::class]
                         );
                     }
@@ -73,7 +72,6 @@ trait Dao
                     }
                     $this->db->queryIgnoreError(
                         'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
-                        [],
                         [UniqueConstraintViolationException::class]
                     );
                 }
