@@ -143,7 +143,7 @@ class SessionCart extends AbstractCart implements ICart
     {
         $vars = parent::__sleep();
 
-        $blockedVars = ['creationDate', 'modificationDate', 'priceCalculator'];
+        $blockedVars = ['creationDate', 'modificationDate', 'priceCalculator', 'pricingManager'];
 
         $finalVars = [];
         foreach ($vars as $key) {
