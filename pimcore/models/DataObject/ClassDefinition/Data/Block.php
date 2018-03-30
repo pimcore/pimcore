@@ -1004,7 +1004,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @return int
      */
-    public function getMaxItems(): int
+    public function getMaxItems()
     {
         return $this->maxItems;
     }
@@ -1012,7 +1012,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @param int $maxItems
      */
-    public function setMaxItems(int $maxItems): void
+    public function setMaxItems($maxItems)
     {
         $this->maxItems = $maxItems;
     }
