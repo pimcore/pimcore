@@ -28,7 +28,10 @@
     "docs": "https://www.pimcore.org/wiki/"
   },
   "config": {
-    "optimize-autoloader": true
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "5.6"
+    }
   },
   "require": {
     "php": ">=5.6.0",
