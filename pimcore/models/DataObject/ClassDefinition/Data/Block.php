@@ -1020,7 +1020,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @return bool
      */
-    public function isDisallowAddRemove(): bool
+    public function isDisallowAddRemove()
     {
         return $this->disallowAddRemove;
     }
@@ -1028,7 +1028,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @param bool $disallowAddRemove
      */
-    public function setDisallowAddRemove(bool $disallowAddRemove): void
+    public function setDisallowAddRemove($disallowAddRemove)
     {
         $this->disallowAddRemove = $disallowAddRemove;
     }
@@ -1036,7 +1036,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @return bool
      */
-    public function isDisallowReorder(): bool
+    public function isDisallowReorder()
     {
         return $this->disallowReorder;
     }
@@ -1044,7 +1044,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @param bool $disallowReorder
      */
-    public function setDisallowReorder(bool $disallowReorder): void
+    public function setDisallowReorder($disallowReorder)
     {
         $this->disallowReorder = $disallowReorder;
     }
