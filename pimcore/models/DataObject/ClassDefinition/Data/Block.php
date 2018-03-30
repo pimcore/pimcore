@@ -1016,4 +1016,39 @@ class Block extends Model\DataObject\ClassDefinition\Data
     {
         $this->maxItems = $maxItems;
     }
+
+    /**
+     * @return bool
+     */
+    public function isDisallowAddRemove(): bool
+    {
+        return $this->disallowAddRemove;
+    }
+
+    /**
+     * @param bool $disallowAddRemove
+     */
+    public function setDisallowAddRemove(bool $disallowAddRemove): void
+    {
+        $this->disallowAddRemove = $disallowAddRemove;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisallowReorder(): bool
+    {
+        return $this->disallowReorder;
+    }
+
+    /**
+     * @param bool $disallowReorder
+     */
+    public function setDisallowReorder(bool $disallowReorder): void
+    {
+        $this->disallowReorder = $disallowReorder;
+    }
+
+
+
 }
