@@ -485,6 +485,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getGiftItems()
     {
+        //make sure that cart is calculated
+        $this->getPriceCalculator()->calculate();
         return $this->giftItems;
     }
 
@@ -495,6 +497,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getGiftItem($itemKey)
     {
+        //make sure that cart is calculated
+        $this->getPriceCalculator()->calculate();
         return array_key_exists($itemKey, $this->giftItems) ? $this->giftItems[$itemKey] : null;
     }
 
@@ -749,17 +753,6 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
         $this->priceCalculator = $priceCalculator;
     }
 
-    public function setPricingManager(IPricingManager $pricingManager) {
-        $this->pricingManager = $pricingManager;
-    }
-
-    public function getPricingManager() {
-        if(empty($this->pricingManager)) {
-            $this->pricingManager = Factory::getInstance()->getPricingManager();
-        }
-        return $this->pricingManager;
-    }
-
     /**
      * cart has been changed
      */
@@ -776,8 +769,6 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
         $this->giftItems = [];
 
-        // apply pricing rules
-        $this->getPricingManager()->applyCartRules($this);
     }
 
     /**

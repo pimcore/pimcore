@@ -104,6 +104,7 @@ class PriceInfo implements IPriceInfo
         $hash = $this->getEnvironment() ? $this->getEnvironment()->getHash() : '';
         if ($this->priceEnvironmentHash != $hash) {
             $this->validRules = null;
+            $this->rulesApplied = false;
             $this->priceEnvironmentHash = $hash;
 
             return true;

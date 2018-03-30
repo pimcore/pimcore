@@ -61,13 +61,13 @@ class AbstractRuleTest extends EcommerceTestCase
         ];
 
 
-        $priceCalculator = Stub::construct(PricingManager::class, [$conditionMapping, $actionMapping, $session, $options], [
+        $pricingManager = Stub::construct(PricingManager::class, [$conditionMapping, $actionMapping, $session, $options], [
             'getValidRules' => function() use ($rules) {
                 return $rules;
             }
         ]);
 
-        return $priceCalculator;
+        return $pricingManager;
 
     }
 
@@ -86,7 +86,7 @@ class AbstractRuleTest extends EcommerceTestCase
      *
      * @return CartPriceCalculator
      */
-    protected function buildCartCalculator(ICart $cart, $withModificators = false)
+    protected function buildCartCalculator(ICart $cart, IPricingManager $pricingManager, $withModificators = false)
     {
         $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 
@@ -94,6 +94,8 @@ class AbstractRuleTest extends EcommerceTestCase
             $shipping = new Shipping(['charge' => 10]);
             $calculator->addModificator($shipping);
         }
+
+        $calculator->setPricingManager($pricingManager);
 
         return $calculator;
     }
@@ -117,8 +119,7 @@ class AbstractRuleTest extends EcommerceTestCase
             }
         ]);
 
-        $cart->setPriceCalculator($this->buildCartCalculator($cart, $withModificators));
-        $cart->setPricingManager($pricingManager);
+        $cart->setPriceCalculator($this->buildCartCalculator($cart, $pricingManager, $withModificators));
 
         return $cart;
     }
@@ -199,8 +200,8 @@ class AbstractRuleTest extends EcommerceTestCase
 
         $priceInfo = $pricingManager->applyProductRules($priceInfo);
 
-        $this->assertTrue($priceInfo->getPrice()->getAmount()->equals(Decimal::create($tests['productPriceSingle'])), "check single product price");
-        $this->assertTrue($priceInfo->getTotalPrice()->getAmount()->equals(Decimal::create($tests['productPriceTotal'])), "check total product price");
+        $this->assertTrue($priceInfo->getPrice()->getAmount()->equals(Decimal::create($tests['productPriceSingle'])), "check single product price: " . $priceInfo->getPrice()->getAmount() . " vs. " . $tests['productPriceSingle']);
+        $this->assertTrue($priceInfo->getTotalPrice()->getAmount()->equals(Decimal::create($tests['productPriceTotal'])), "check total product price: " . $priceInfo->getTotalPrice()->getAmount() . " vs. " . $tests['productPriceTotal']);
 
 
         $product = $this->setUpProduct($productDefinitions['singleProduct']['id'], $productDefinitions['singleProduct']['price'], $pricingManager);
