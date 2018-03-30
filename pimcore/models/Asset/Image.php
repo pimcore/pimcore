@@ -97,7 +97,7 @@ class Image extends Model\Asset
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
 
-        if(!$config['enabled']) {
+        if (!$config['enabled']) {
             return false;
         }
 

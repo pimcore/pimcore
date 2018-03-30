@@ -100,7 +100,7 @@ trait PimcoreExtensionsTrait
      * @param array  $params The query parameters.
      * @param array  $types  The parameter types.
      *
-     * @return integer The number of affected rows.
+     * @return int The number of affected rows.
      *
      * @throws \Doctrine\DBAL\DBALException
      */
@@ -110,7 +110,6 @@ trait PimcoreExtensionsTrait
 
         return parent::executeUpdate($query, $params, $types);
     }
-
 
     /**
      * @see \Doctrine\DBAL\Connection::executeCacheQuery
@@ -167,7 +166,7 @@ trait PimcoreExtensionsTrait
      * @param array  $identifier The update criteria. An associative array containing column-value pairs.
      * @param array  $types      Types of the merged $data and $identifier arrays in that order.
      *
-     * @return integer The number of affected rows.
+     * @return int The number of affected rows.
      */
     public function update($tableExpression, array $data, array $identifier, array $types = [])
     {
@@ -184,7 +183,7 @@ trait PimcoreExtensionsTrait
      * @param array  $data      An associative array containing column-value pairs.
      * @param array  $types     Types of the inserted data.
      *
-     * @return integer The number of affected rows.
+     * @return int The number of affected rows.
      */
     public function insert($tableExpression, array $data, array $types = [])
     {
@@ -200,6 +199,7 @@ trait PimcoreExtensionsTrait
      * @param  mixed        $where DELETE WHERE clause(s).
      *
      * @return int          The number of affected rows.
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     public function deleteWhere($table, $where = '')
@@ -220,6 +220,7 @@ trait PimcoreExtensionsTrait
      * @param  mixed        $where UPDATE WHERE clause(s).
      *
      * @return int          The number of affected rows.
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     public function updateWhere($table, array $data, $where = '')
@@ -249,6 +250,7 @@ trait PimcoreExtensionsTrait
      * @param array $types
      *
      * @return mixed
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     public function fetchRow($sql, $params = [], $types = [])
@@ -266,6 +268,7 @@ trait PimcoreExtensionsTrait
      * @param array $types
      *
      * @return mixed
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     public function fetchCol($sql, $params = [], $types = [])
@@ -311,6 +314,7 @@ trait PimcoreExtensionsTrait
      * @param array $types
      *
      * @return array
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     public function fetchPairs($sql, array $params = [], $types = [])
@@ -557,13 +561,16 @@ trait PimcoreExtensionsTrait
     /**
      * @param $sql
      * @param array $exclusions
+     *
      * @return \Doctrine\DBAL\Driver\Statement|int|null
+     *
      * @throws ValidationException
      */
     public function queryIgnoreError($sql, $exclusions = [])
     {
         try {
             $return = $this->query($sql);
+
             return $return;
         } catch (\Exception $e) {
             foreach ($exclusions as $exclusion) {
