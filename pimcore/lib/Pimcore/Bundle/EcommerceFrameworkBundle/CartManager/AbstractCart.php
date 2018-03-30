@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
 
@@ -742,6 +743,24 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     }
 
     /**
+     * @param ICartPriceCalculator $priceCalculator
+     */
+    public function setPriceCalculator(ICartPriceCalculator $priceCalculator) {
+        $this->priceCalculator = $priceCalculator;
+    }
+
+    public function setPricingManager(IPricingManager $pricingManager) {
+        $this->pricingManager = $pricingManager;
+    }
+
+    public function getPricingManager() {
+        if(empty($this->pricingManager)) {
+            $this->pricingManager = Factory::getInstance()->getPricingManager();
+        }
+        return $this->pricingManager;
+    }
+
+    /**
      * cart has been changed
      */
     protected function modified()
@@ -756,8 +775,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
         $this->validateVoucherTokenReservations();
 
         $this->giftItems = [];
+
         // apply pricing rules
-        Factory::getInstance()->getPricingManager()->applyCartRules($this);
+        $this->getPricingManager()->applyCartRules($this);
     }
 
     /**
