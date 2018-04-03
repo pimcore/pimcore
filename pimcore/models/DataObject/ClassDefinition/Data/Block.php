@@ -1048,7 +1048,4 @@ class Block extends Model\DataObject\ClassDefinition\Data
     {
         $this->disallowReorder = $disallowReorder;
     }
-
-
-
 }
