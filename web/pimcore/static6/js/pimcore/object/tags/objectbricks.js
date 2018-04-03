@@ -267,7 +267,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             listeners: {
                 afterrender: function (childConfig, dataProvider, panel) {
                     if (!panel.__tabpanel_initialized) {
-                        var children = this.getRecursiveLayout(childConfig, null,             {
+                        var copy = Ext.decode(Ext.encode(childConfig));
+                        var children = this.getRecursiveLayout(copy, null,             {
                             containerType: "objectbrick",
                             containerKey: type,
                             ownerName: this.fieldConfig.name
