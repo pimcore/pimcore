@@ -637,5 +637,5 @@ function to_php_data_file_format($contents)
  */
 function generateRandomSymfonySecret()
 {
-    return bin2hex(random_bytes(20));
+    return base64_encode(random_bytes(24));
 }
