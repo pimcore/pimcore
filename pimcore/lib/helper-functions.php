@@ -637,9 +637,5 @@ function to_php_data_file_format($contents)
  */
 function generateRandomSymfonySecret()
 {
-    if (function_exists('openssl_random_pseudo_bytes')) {
-        return hash('sha1', openssl_random_pseudo_bytes(23));
-    }
-
-    return hash('sha1', uniqid(mt_rand(), true));
+    return base64_encode(random_bytes(24));
 }
