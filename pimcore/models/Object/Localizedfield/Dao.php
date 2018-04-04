@@ -492,7 +492,7 @@ QUERY;
                 // join fallback languages
                 foreach ($fallbackLanguages as $lang) {
                     $viewQuery .= <<<QUERY
-LEFT JOIN {$this->getQueryTableName()}_{$lang} as {$lang}
+LEFT JOIN {$this->getQueryTableName()}_{$lang} as `{$lang}`
     ON( 1
         AND {$defaultTable}.oo_id = {$lang}.ooo_id
     )
