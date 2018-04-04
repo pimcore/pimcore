@@ -238,7 +238,7 @@ class TrackingItemBuilder implements ITrackingItemBuilder
 
         return $categories;
     }
-    
+
     /**
      * Get a product's brand
      *
