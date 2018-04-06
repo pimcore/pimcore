@@ -129,6 +129,7 @@ pimcore.object.helpers.grid = Class.create({
                 update  : this.url + glue  + "xaction=update",
                 destroy : this.url + glue  + "xaction=destroy"
             },
+            batchActions: false,
             actionMethods: {
                 create : 'POST',
                 read   : 'POST',
