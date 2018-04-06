@@ -146,3 +146,44 @@ server {
     }
 }
 ```
+
+### Thumbnail generation overload protection
+
+In case your Web-Application has a page with loads of images that are processed by a image pipeline, there's a chance this can overload your server due to too many PHP processes running in parallel that try to generate thumbnails - especially if your Users upload quite large images (e.g. 16:9 format, 5000+ pixels wide).
+
+In that case you may extend the nginx configuration above to utilize [nginx rate-limiting](https://www.nginx.com/blog/rate-limiting-nginx/). You should get familiar with rate limiting anyway to protect your Site from Denial-of-Service attacks.
+
+__Step 1: Create a Zone__
+
+Somewhere in the _http_ Section of your nginx config add this:
+
+```nginx
+# Zone to Limit Pimcore On-demand Image generation
+limit_req_zone $server_name zone=imggen:1M rate=5r/s;
+```
+
+This defines a new zone called _imggen_ which uses the [$server_name](http://nginx.org/en/docs/http/ngx_http_core_module.html#var_server_name) as key and allows 5 Requests per Second. You should adjust that number to match your servers capability.
+
+__Step 2: Replace the location that handles on-demand thumbnail generation__
+
+```nginx
+    # Pimcore On-Demand Thumbnail generation
+    # with Rate-Limit.
+    location ~* .*/(image|video)-thumb__\d+__.* {
+        try_files /var/tmp/$1-thumbnails$request_uri @imggen;
+        expires 2w;
+        access_log off;
+        add_header Cache-Control "public";
+    }
+    location @imggen {
+        limit_req zone=imggen burst=15;
+        try_files /var/tmp/$1-thumbnails$request_uri /app.php;
+        expires 2w;
+        access_log off;
+        add_header Cache-Control "public";
+    }
+```
+
+It comes with the expense of a additional stat call - which should be cached anyways, therefore the overhead should be negligible.
+
+This config allows to queue 15 requests in a bucket before rejecting additional ones with a [HTTP 429 Error](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429). Such a bucket is maintained per virtual host and drained using 5 requests per second (as defined in Step 1).
