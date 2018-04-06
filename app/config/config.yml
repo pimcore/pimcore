@@ -53,6 +53,8 @@ pimcore:
 
 #### ASSET CUSTOM SETTINGS
 #    assets:
+#        versions:
+#            use_hardlinks: false
 #        image:
 #            low_quality_image_preview:
 #                enabled: false
