@@ -16,9 +16,9 @@ Apart from that, there are also attributes that are different for each category 
 Generally speaking, both data types make the rigid object class definition extensible at the object level. Of course, this is not just limited to product data, but can also be practical for other data. Attributes for both data types can be displayed, filtered and edited in the object grid view.
 
 ## Technical implementation differences
-| Path   |  Object Bricks |  Classification Store
+| |  Object Bricks |  Classification Store
 |--------|--------------|---------------------
-| Design options in the object editor | All layout options provided by ExtJS and Pimcore (Panels, Tabs, Regions, Fieldsets, Text Descriptions, ...) ![Object Bricks](img/ObjectsBricks_object_example.png)| All attributes are arranged among themselves in regions, little influence possibilities. ![Classification Store](img/Objects_ClassificationStore_edit_object.png)
+| Design options in the object editor | All layout options provided by ExtJS and Pimcore (Panels, Tabs, Regions, Fieldsets, Text Descriptions, ...) ![Object Bricks](../img/ObjectsBricks_object_example.png)| All attributes are arranged among themselves in regions, little influence possibilities. ![Classification Store](../img/Objects_ClassificationStore_edit_object.png)
 | Available data types | Almost all Pimcore data types, apart from structured data types such as Localized Fields, Field Collections, Classification Store, Object Bricks | Only very limited simple data types such as text fields, numbers, dates, selects and multiselects (eg also no relations).
 | Storage of the data | Pimcore standard schema in own database tables with one column per attribute.	| 	Entity Attribute Value (EAV) schema, ie in a very long database table with one line per attribute (has the same effect on loading and filtering).
 | Access to the data via API | Quite simply via getter and setter as known from Pimcore objects - see [here](../05_Objects/Object_Classes/Data_Types/Object_Bricks.html#page_Working-with-PHP-API) | Slightly harder on generic getter / setter calls - see [here](../05_Objects/Object_Classes/Data_Types/Classification_Store.html#page_Using-Classification-Store-via-PHP-API)
