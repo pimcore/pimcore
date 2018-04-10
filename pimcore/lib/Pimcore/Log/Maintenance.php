@@ -55,19 +55,17 @@ class Maintenance
                 } else {
                     TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
                 }
-
-
             }
         }
 
         // archive and cleanup logs
         $files = [];
         $logFiles = glob(PIMCORE_LOG_DIRECTORY . '/*-archive-*.log');
-        if(is_array($logFiles)) {
+        if (is_array($logFiles)) {
             $files = array_merge($files, $logFiles);
         }
         $archivedLogFiles = glob(PIMCORE_LOG_DIRECTORY . '/*-archive-*.log.gz');
-        if(is_array($archivedLogFiles)) {
+        if (is_array($archivedLogFiles)) {
             $files = array_merge($files, $archivedLogFiles);
         }
 
