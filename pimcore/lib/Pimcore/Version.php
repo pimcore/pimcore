@@ -19,7 +19,7 @@ class Version
     /**
      * @var string
      */
-    public static $version = 'dev-master';
+    public static $version = '5.2.2';
 
     /**
      * @var int
