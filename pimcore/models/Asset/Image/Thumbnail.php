@@ -137,7 +137,7 @@ class Thumbnail
         } elseif (!$this->filesystemPath) {
             // if no correct thumbnail config is given use the original image as thumbnail
             if (!$this->config) {
-                $this->filesystemPath = $this->asset->getRealFullPath();
+                $this->filesystemPath = $this->asset->getFileSystemPath();
             } else {
                 try {
                     $deferred = ($deferredAllowed && $this->deferred) ? true : false;
