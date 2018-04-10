@@ -87,3 +87,14 @@ if($this->editmode):
     
 endif;
 ```
+
+```twig
+{% if editmode %}
+    {% if pimcore_select("valid_for").isEmpty() %}
+        {% do pimcore_select("valid_for").setDataFromResource("unlimited") %}
+    {% endif %}
+    
+    ...
+    
+{% endif %}
+```
