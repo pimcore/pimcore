@@ -77,6 +77,8 @@ Frontend:
 
 You can ***preselect*** an option in your select editable by using `setDataFromResource()`.
 
+<div class="code-section">
+    
 ```php
 if($this->editmode):
     if($this->select("valid_for")->isEmpty()):
@@ -98,3 +100,4 @@ endif;
     
 {% endif %}
 ```
+</div>
