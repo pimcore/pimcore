@@ -62,7 +62,17 @@ pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
                         id: "pimcore_newsletter_send_report_" + this.document.id,
                         width: 600,
                         displayField: 'text',
-                        valueField: 'id'
+                        valueField: 'id',
+                        listeners: {
+                            "change": function (el) {
+                                Ext.getCmp("email_field_name_" + this.document.id).clearValue();
+                                Ext.getCmp("email_field_name_" + this.document.id).getStore().reload({
+                                    params: {
+                                        reportId: el.getValue()
+                                    }
+                                });
+                            }.bind(this)
+                        }
                     },{
                         xtype:'combo',
                         name: "emailFieldName",
@@ -79,21 +89,20 @@ pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
                                     rootProperty: 'data'
                                 }
                             },
+                            listeners: {
+                                beforeload : function(store, options) {
+                                    store.getProxy().extraParams = {
+                                        reportId: Ext.getCmp("pimcore_newsletter_send_report_"
+                                            + this.document.id).getValue()
+                                    };
+                                }.bind(this)
+                            },
                             fields: ["name"]
                         }),
                         width: 600,
                         displayField: 'name',
                         valueField: 'name',
-                        listeners: {
-                            "focus": function (el) {
-                                el.getStore().reload({
-                                    params: {
-                                        reportId: Ext.getCmp("pimcore_newsletter_send_report_"
-                                            + this.document.id).getValue()
-                                    }
-                                });
-                            }.bind(this)
-                        }
+                        id: "email_field_name_" + this.document.id,
                     }
                 ]
             });

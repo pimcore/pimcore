@@ -338,6 +338,11 @@ class NewsletterController extends DocumentControllerBase
         $document = Document\Newsletter::getById($request->get('id'));
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
+        $testMailAddress = $request->get('testMailAddress');
+
+        if(empty($testMailAddress)) {
+            return $this->adminJson(['success' => false, 'message' =>  'Please provide a valid email address to send test newsletter']);
+        }
 
         $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');
 
@@ -351,7 +356,7 @@ class NewsletterController extends DocumentControllerBase
         $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
-        $sendingContainer = $addressAdapter->getParamsForTestSending($request->get('testMailAddress'));
+        $sendingContainer = $addressAdapter->getParamsForTestSending($testMailAddress);
 
         $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
         \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingContainer);
