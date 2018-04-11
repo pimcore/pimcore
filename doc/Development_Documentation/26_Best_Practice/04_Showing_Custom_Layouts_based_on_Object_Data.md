@@ -17,13 +17,13 @@ hierarchy level.
 
 **Solution**
 
-1) Create a [Custom Layout](../05_Objects/Object_Classes/Class_Settings/Custom_Layouts.html) 
+1) Create a [Custom Layout](../05_Objects/01_Object_Classes/05_Class_Settings/09_Custom_Layouts.md) 
 for every hierarchy level. 
 ![Custom Layout Definitions](img/custom-layout-definition.jpg)
 
  
 2) Use the `OBJECT_GET_PRE_SEND_DATA` event to decide which custom layouts should be shown to the user based the hierarchy level. 
-To do so create a [Event Listener](../20_Extending_Pimcore/Event_API_and_Event_Manager.html) 
+To do so create a [Event Listener](../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md) 
 with following content: 
 
 
