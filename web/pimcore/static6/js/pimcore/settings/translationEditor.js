@@ -101,7 +101,7 @@ Ext.define('pimcore.settings.translationEditor', {
         var formPanel = Ext.create('Ext.form.Panel', fConfig);
 
         this.editWin = new Ext.Window({
-            modal: true,
+            modal: false,
             title: outerTitle,
             items: [formPanel],
             bodyStyle: "background: #fff;",
@@ -198,6 +198,30 @@ Ext.define('pimcore.settings.translationEditor', {
             return;
         }
 
+        // add drop zone, use the parent panel here (container), otherwise this can cause problems when specifying a fixed height on the wysiwyg
+        var dd = new Ext.dd.DropZone(Ext.get(this.editableDivId).parent(), {
+            ddGroup: "element",
+
+            getTargetFromEvent: function(e) {
+                return this.getEl();
+            },
+
+            onNodeOver : function(target, dd, e, data) {
+                var record = data.records[0];
+                data = record.data;
+                if (this.dndAllowed(data)) {
+                    return Ext.dd.DropZone.prototype.dropAllowed;
+                }
+                else {
+                    return Ext.dd.DropZone.prototype.dropNotAllowed;
+                }
+
+            }.bind(this),
+
+            onNodeDrop : this.onNodeDrop.bind(this)
+        });
+
+
         var eConfig = {};
 
         eConfig.toolbarGroups = [
@@ -247,5 +271,122 @@ Ext.define('pimcore.settings.translationEditor', {
             console.log(e);
         }
     },
+
+    onNodeDrop: function (target, dd, e, data) {
+
+        if (!this.ckeditor) {
+            return;
+        }
+
+        this.ckeditor.focus();
+
+        var node = data.records[0];
+
+        if (!this.ckeditor ||!this.dndAllowed(node.data)) {
+            return;
+        }
+
+        var wrappedText = node.data.text;
+        var textIsSelected = false;
+
+        try {
+            var selection = this.ckeditor.getSelection();
+            var bookmarks = selection.createBookmarks();
+            var range = selection.getRanges()[ 0 ];
+            var fragment = range.clone().cloneContents();
+
+            selection.selectBookmarks(bookmarks);
+            var retval = "";
+            var childList = fragment.getChildren();
+            var childCount = childList.count();
+
+            for (var i = 0; i < childCount; i++) {
+                var child = childList.getItem(i);
+                retval += ( child.getOuterHtml ?
+                    child.getOuterHtml() : child.getText() );
+            }
+
+            if (retval.length > 0) {
+                wrappedText = retval;
+                textIsSelected = true;
+            }
+        }
+        catch (e2) {
+        }
+
+
+        // remove existing links out of the wrapped text
+        wrappedText = wrappedText.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, function ($0, $1) {
+            if($1.toLowerCase() == "a") {
+                return "";
+            }
+            return $0;
+        });
+
+        var id = node.data.id;
+        var uri = node.data.path;
+        var browserPossibleExtensions = ["jpg","jpeg","gif","png"];
+
+        if (node.data.elementType == "asset") {
+            if (node.data.type == "image" && textIsSelected == false) {
+                // images bigger than 600px or formats which cannot be displayed by the browser directly will be
+                // converted by the pimcore thumbnailing service so that they can be displayed in the editor
+                var defaultWidth = 600;
+                var additionalAttributes = "";
+                uri = "/admin/asset/get-image-thumbnail?id=" + id + "&width=" + defaultWidth + "&aspectratio=true";
+
+                if(typeof node.data.imageWidth != "undefined") {
+                    if(node.data.imageWidth < defaultWidth
+                        && in_arrayi(pimcore.helpers.getFileExtension(node.data.text),
+                            browserPossibleExtensions)) {
+                        uri = node.data.path;
+                        additionalAttributes += ' pimcore_disable_thumbnail="true"';
+                    }
+
+                    if(node.data.imageWidth < defaultWidth) {
+                        defaultWidth = node.data.imageWidth;
+                    }
+                }
+
+                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id
+                    + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
+                return true;
+            }
+            else {
+                this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="'
+                    + id + '">' + wrappedText + '</a>');
+                return true;
+            }
+        }
+
+        if (node.data.elementType == "document" && (node.data.type=="page"
+                || node.data.type=="hardlink" || node.data.type=="link")){
+            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
+                + id + '">' + wrappedText + '</a>');
+            return true;
+        }
+
+        if (node.data.elementType == "object"){
+            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="object" pimcore_id="'
+                + id + '">' + wrappedText + '</a>');
+            return true;
+        }
+
+    },
+
+    dndAllowed: function(data) {
+
+        if (data.elementType == "document" && (data.type=="page"
+                || data.type=="hardlink" || data.type=="link")){
+            return true;
+        } else if (data.elementType=="asset" && data.type != "folder"){
+            return true;
+        } else if (data.elementType=="object" && data.type != "folder"){
+            return true;
+        }
+
+        return false;
+    }
+
 
 });
