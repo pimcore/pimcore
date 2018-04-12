@@ -533,35 +533,39 @@ class AbstractObject extends Model\Element\AbstractElement
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
-
-        // delete childs
-        if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
-            // delete also unpublished children
-            $unpublishedStatus = self::doHideUnpublished();
-            self::setHideUnpublished(false);
-            foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $value) {
-                $value->delete();
+        try {
+            // delete childs
+            if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
+                // delete also unpublished children
+                $unpublishedStatus = self::doHideUnpublished();
+                self::setHideUnpublished(false);
+                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $value) {
+                    $value->delete();
+                }
+                self::setHideUnpublished($unpublishedStatus);
             }
-            self::setHideUnpublished($unpublishedStatus);
+
+            // remove dependencies
+            $d = $this->getDependencies();
+            $d->cleanAllForElement($this);
+
+            // remove all properties
+            $this->getDao()->deleteAllProperties();
+
+            // remove all permissions
+            $this->getDao()->deleteAllPermissions();
+
+            $this->getDao()->delete();
+
+            // empty object cache
+            $this->clearDependentCache();
+
+            //set object to registry
+            \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
+            Logger::crit($e);
         }
-
-        // remove dependencies
-        $d = $this->getDependencies();
-        $d->cleanAllForElement($this);
-
-        // remove all properties
-        $this->getDao()->deleteAllProperties();
-
-        // remove all permissions
-        $this->getDao()->deleteAllPermissions();
-
-        $this->getDao()->delete();
-
-        // empty object cache
-        $this->clearDependentCache();
-
-        //set object to registry
-        \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
     }
@@ -668,7 +672,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     } else {
                         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD_FAILURE, new DataObjectEvent($this));
                     }
-                    
+
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
                     Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
                     throw $e;
