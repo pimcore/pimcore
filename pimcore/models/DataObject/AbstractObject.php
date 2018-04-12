@@ -663,6 +663,12 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
+                    if ($isUpdate) {
+                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this));
+                    } else {
+                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD_FAILURE, new DataObjectEvent($this));
+                    }
+                    
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
                     Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
                     throw $e;
