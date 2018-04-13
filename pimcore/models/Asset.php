@@ -543,6 +543,11 @@ class Asset extends Element\AbstractElement
 
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
+                    if ($isUpdate) {
+                        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this));
+                    } else {
+                        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD_FAILURE, new AssetEvent($this));
+                    }
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
                     throw $e;
                 }
@@ -987,50 +992,55 @@ class Asset extends Element\AbstractElement
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
 
-        $this->closeStream();
+        try {
+            $this->closeStream();
 
-        // remove childs
-        if ($this->hasChildren()) {
-            foreach ($this->getChildren() as $child) {
-                $child->delete();
+            // remove childs
+            if ($this->hasChildren()) {
+                foreach ($this->getChildren() as $child) {
+                    $child->delete();
+                }
             }
+
+            // remove file on filesystem
+            $fullPath = $this->getRealFullPath();
+            if ($fullPath != '/..' && !strpos($fullPath, '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
+                $this->deletePhysicalFile();
+            }
+
+            $versions = $this->getVersions();
+            foreach ($versions as $version) {
+                $version->delete();
+            }
+
+            // remove permissions
+            $this->getDao()->deleteAllPermissions();
+
+            // remove all properties
+            $this->getDao()->deleteAllProperties();
+
+            // remove all metadata
+            $this->getDao()->deleteAllMetadata();
+
+            // remove all tasks
+            $this->getDao()->deleteAllTasks();
+
+            // remove dependencies
+            $d = $this->getDependencies();
+            $d->cleanAllForElement($this);
+
+            // remove from resource
+            $this->getDao()->delete();
+
+            // empty object cache
+            $this->clearDependentCache();
+
+            //set object to registry
+            \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, new AssetEvent($this));
+            Logger::crit($e);
         }
-
-        // remove file on filesystem
-        $fullPath = $this->getRealFullPath();
-        if ($fullPath != '/..' && !strpos($fullPath, '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
-            $this->deletePhysicalFile();
-        }
-
-        $versions = $this->getVersions();
-        foreach ($versions as $version) {
-            $version->delete();
-        }
-
-        // remove permissions
-        $this->getDao()->deleteAllPermissions();
-
-        // remove all properties
-        $this->getDao()->deleteAllProperties();
-
-        // remove all metadata
-        $this->getDao()->deleteAllMetadata();
-
-        // remove all tasks
-        $this->getDao()->deleteAllTasks();
-
-        // remove dependencies
-        $d = $this->getDependencies();
-        $d->cleanAllForElement($this);
-
-        // remove from resource
-        $this->getDao()->delete();
-
-        // empty object cache
-        $this->clearDependentCache();
-
-        //set object to registry
-        \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
     }
