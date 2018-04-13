@@ -560,7 +560,7 @@ class AbstractObject extends Model\Element\AbstractElement
             // empty object cache
             $this->clearDependentCache();
 
-            //set object to registry
+            //clear object from registry
             \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));

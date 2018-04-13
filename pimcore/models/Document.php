@@ -605,7 +605,7 @@ class Document extends Element\AbstractElement
 
         $this->getDao()->update();
 
-        //set object to registry
+        //set document to registry
         \Pimcore\Cache\Runtime::set('document_' . $this->getId(), $this);
     }
 
@@ -819,7 +819,7 @@ class Document extends Element\AbstractElement
             // clear cache
             $this->clearDependentCache();
 
-            //set object to registry
+            //clear document from registry
             \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
