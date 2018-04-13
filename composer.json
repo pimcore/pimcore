@@ -173,6 +173,9 @@
       "merge-extra": false,
       "merge-extra-deep": false,
       "merge-scripts": false
+    },
+    "branch-alias": {
+      "dev-master": "5.2.x-dev"
     }
   }
 }
