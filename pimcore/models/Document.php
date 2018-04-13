@@ -474,6 +474,11 @@ class Document extends Element\AbstractElement
 
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
+                    if ($isUpdate) {
+                        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, new DocumentEvent($this));
+                    } else {
+                        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD_FAILURE, new DocumentEvent($this));
+                    }
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
                     throw $e;
                 }
@@ -783,39 +788,42 @@ class Document extends Element\AbstractElement
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
-
-        // remove childs
-        if ($this->hasChildren()) {
-            // delete also unpublished children
-            $unpublishedStatus = self::doHideUnpublished();
-            self::setHideUnpublished(false);
-            foreach ($this->getChildren(true) as $child) {
-                $child->delete();
+        try {
+            // remove childs
+            if ($this->hasChildren()) {
+                // delete also unpublished children
+                $unpublishedStatus = self::doHideUnpublished();
+                self::setHideUnpublished(false);
+                foreach ($this->getChildren(true) as $child) {
+                    $child->delete();
+                }
+                self::setHideUnpublished($unpublishedStatus);
             }
-            self::setHideUnpublished($unpublishedStatus);
+
+            // remove all properties
+            $this->getDao()->deleteAllProperties();
+
+            // remove permissions
+            $this->getDao()->deleteAllPermissions();
+
+            // remove dependencies
+            $d = $this->getDependencies();
+            $d->cleanAllForElement($this);
+
+            // remove translations
+            $service = new Document\Service;
+            $service->removeTranslation($this);
+
+            $this->getDao()->delete();
+
+            // clear cache
+            $this->clearDependentCache();
+
+            //set object to registry
+            \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
         }
-
-        // remove all properties
-        $this->getDao()->deleteAllProperties();
-
-        // remove permissions
-        $this->getDao()->deleteAllPermissions();
-
-        // remove dependencies
-        $d = $this->getDependencies();
-        $d->cleanAllForElement($this);
-
-        // remove translations
-        $service = new Document\Service;
-        $service->removeTranslation($this);
-
-        $this->getDao()->delete();
-
-        // clear cache
-        $this->clearDependentCache();
-
-        //set object to registry
-        \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
     }

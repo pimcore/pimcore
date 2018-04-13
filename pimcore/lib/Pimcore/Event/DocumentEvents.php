@@ -31,6 +31,13 @@ final class DocumentEvents
     const POST_ADD = 'pimcore.document.postAdd';
 
     /**
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const POST_ADD_FAILURE = 'pimcore.document.postAddFailure';
+
+    /**
      * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
      *
@@ -51,6 +58,16 @@ final class DocumentEvents
     const POST_UPDATE = 'pimcore.document.postUpdate';
 
     /**
+     * Arguments:
+     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const POST_UPDATE_FAILURE = 'pimcore.document.postUpdateFailure';
+
+    /**
      * @Event("Pimcore\Event\Model\DocumentEvent")
      *
      * @var string
@@ -63,6 +80,13 @@ final class DocumentEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.document.postDelete';
+
+    /**
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const POST_DELETE_FAILURE = 'pimcore.document.postDeleteFailure';
 
     /**
      * Processor contains the processor object used to generate the PDF
