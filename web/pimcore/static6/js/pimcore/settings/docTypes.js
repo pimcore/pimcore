@@ -115,6 +115,10 @@ pimcore.settings.document.doctypes = Class.create({
                     triggerAction: "all",
                     displayField: 'name',
                     valueField: 'name',
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 400
+                    },
                     listeners: {
                         "focus": function (el) {
                             var currentRecord = this.grid.getSelection();
@@ -152,6 +156,10 @@ pimcore.settings.document.doctypes = Class.create({
                     triggerAction: "all",
                     displayField: 'name',
                     valueField: 'name',
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 400
+                    },
                     listeners: {
                         "focus": function (el) {
                             var currentRecord = this.grid.getSelection();
@@ -163,7 +171,7 @@ pimcore.settings.document.doctypes = Class.create({
                                     el.expand();
                                 }
                             });
-                        }.bind(this),
+                        }.bind(this)
                     }
                 })
             },
@@ -189,6 +197,10 @@ pimcore.settings.document.doctypes = Class.create({
                     triggerAction: "all",
                     displayField: 'path',
                     valueField: 'path',
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 400
+                    },
                     listeners: {
                         "focus": function (el) {
                             el.getStore().reload({
@@ -196,7 +208,7 @@ pimcore.settings.document.doctypes = Class.create({
                                     el.expand();
                                 }
                             });
-                        }.bind(this),
+                        }.bind(this)
                     }
                 })
             },
