@@ -340,7 +340,7 @@ class NewsletterController extends DocumentControllerBase
         $adapterParams = json_decode($request->get('adapterParams'), true);
         $testMailAddress = $request->get('testMailAddress');
 
-        if(empty($testMailAddress)) {
+        if (empty($testMailAddress)) {
             return $this->adminJson(['success' => false, 'message' =>  'Please provide a valid email address to send test newsletter']);
         }
 

@@ -351,7 +351,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
                     $cd .= '/**' . "\n";
                     $cd .= '* @param \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . $brickKey . ' $' . $brickKey . "\n";
-                    $cd .= "* @return \\".$namespace."\\".$className."\n";
+                    $cd .= '* @return \\'.$namespace.'\\'.$className."\n";
                     $cd .= '*/' . "\n";
                     $cd .= 'public function set' . ucfirst($brickKey) . ' (' . '$' . $brickKey . ") {\n";
                     $cd .= "\t" . '$this->' . $brickKey . ' = ' . '$' . $brickKey . ";\n";
