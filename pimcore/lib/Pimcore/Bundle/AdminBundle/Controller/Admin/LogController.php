@@ -253,6 +253,9 @@ class LogController extends AdminController implements EventedControllerInterfac
 
         if (file_exists($filePath)) {
             $response->setContent(file_get_contents($filePath));
+            if (strpos($response->getContent(), '</html>') > 0) {
+                $response->headers->set('Content-Type', 'text/html');
+            }
         } else {
             $response->setContent('Path `' . $filePath . '` not found.');
             $response->setStatusCode(404);

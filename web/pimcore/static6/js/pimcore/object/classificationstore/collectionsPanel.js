@@ -55,6 +55,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
         var url = "/admin/classificationstore/collection-relations?";
         var proxy = {
+            batchActions: false,
             type: 'ajax',
             reader: {
                 type: 'json',
@@ -221,6 +222,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
         var url = "/admin/classificationstore/collections?";
         var proxy = {
+            batchActions: false,
             type: 'ajax',
             reader: {
                 type: 'json',

@@ -658,7 +658,7 @@ class Config
                     } else {
                         $userOrRoleToCheck = Model\User::getById($userId);
                     }
-                    $perspectives = $userOrRoleToCheck->getPerspectives();
+                    $perspectives = $userOrRoleToCheck ? $userOrRoleToCheck->getPerspectives() : null;
                     if ($perspectives) {
                         foreach ($perspectives as $perspectiveName) {
                             $masterDef = $masterConfig[$perspectiveName];
