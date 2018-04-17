@@ -99,7 +99,7 @@
     "twig/extensions": "^1.5",
     "twig/twig": "^2.0",
     "vrana/adminer": "~4.6",
-    "vrana/jush": "dev-master",
+    "vrana/jush": "~2.0.2",
     "wa72/htmlpagedom": "^1.3",
     "wikimedia/composer-merge-plugin": "^1.4",
     "zendframework/zend-code": "~3.1.0",
