@@ -844,7 +844,7 @@ class SettingsController extends AdminController
      */
     public function clearOutputCacheAction(EventDispatcherInterface $eventDispatcher)
     {
-        $this->checkPermission('clear_cache');
+        $this->checkPermission('clear_fullpage_cache');
 
         // remove "output" out of the ignored tags, if a cache lifetime is specified
         Cache::removeIgnoredTagOnClear('output');
