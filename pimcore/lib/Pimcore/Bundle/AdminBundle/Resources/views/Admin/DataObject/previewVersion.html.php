@@ -162,7 +162,7 @@
                        $value = $fieldItem->{"get" . ucfirst($fieldKey->name)}();
                        // if ($fieldValue) { ?>
                              <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                                <td><?= ucfirst($definition->title) . " - " . $fieldKey->title ?> (<?= $language; ?>)</td>
+                                <td><?= ucfirst($fieldItem->type) . " - " . $fieldKey->title ?> (<?= $language; ?>)</td>
                                 <td><?= $fieldKey->name ?></td>
                                 <td><?= $fieldKey->getVersionPreview($value) ?></td>
                             </tr>
@@ -171,12 +171,7 @@
                       //  }
                     }
                 }
-            } else { ?>
-                <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                <td><?= ucfirst($definition->title) . $fieldKey->title ?> (<?= $language; ?>)</td>
-                <td><?= $fieldKey->name ?></td>
-                <td><?= $fieldValue ?></td>
-            <?php }
+            }
     ?>
     <?php } else { ?>
         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
