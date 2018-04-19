@@ -88,7 +88,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Block';
+    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';
 
     /**
      * @var array
