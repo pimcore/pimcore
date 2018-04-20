@@ -1040,6 +1040,7 @@ class Asset extends Element\AbstractElement
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, new AssetEvent($this));
             Logger::crit($e);
+            throw $e;
         }
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
