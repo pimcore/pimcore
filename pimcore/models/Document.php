@@ -823,6 +823,8 @@ class Document extends Element\AbstractElement
             \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
+            Logger::error($e);
+            throw $e;
         }
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
