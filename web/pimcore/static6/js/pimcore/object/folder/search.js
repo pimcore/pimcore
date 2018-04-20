@@ -309,6 +309,15 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 forceFit: false,
                 xtype: 'patchedgridview'
             },
+            listeners: {
+                celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+                    var columnName = grid.ownerGrid.getColumns();
+                    if(columnName[cellIndex].text == 'ID' || columnName[cellIndex].text == 'Path') {
+                        var data = this.store.getAt(rowIndex);
+                        pimcore.helpers.openObject(data.get("id"), data.get("type"));
+                    }
+                }
+            },
             cls: 'pimcore_object_grid_panel',
             tbar: [this.languageInfo, "-", this.toolbarFilterInfo, this.clearFilterButton, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
                 text: t("search_and_move"),
