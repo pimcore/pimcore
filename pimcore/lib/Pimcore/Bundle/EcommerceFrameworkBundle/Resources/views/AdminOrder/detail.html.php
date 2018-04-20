@@ -244,6 +244,7 @@ $regionArray = $locale->getDisplayRegions();
                                     $provider[] = 'datatrans';
                                     $provider[] = 'paypal';
                                     $provider[] = 'ogone';
+                                    $provider[] = 'mpay24';
 
                                     $amount = null;
                                     foreach($provider as $p)
