@@ -85,7 +85,7 @@ server {
     # Installer
     # Remove this if you don't need the web installer (anymore)
     if (-f $document_root/install.php) {
-        rewrite ^/install(/?.*) /install.php$1 last;
+        rewrite ^/install(/?.*) /install.php last;
     }
 
     location / {
