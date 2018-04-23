@@ -565,6 +565,7 @@ class AbstractObject extends Model\Element\AbstractElement
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
             Logger::crit($e);
+            throw $e;
         }
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
