@@ -346,9 +346,182 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     }
                 }
             };
+        } else {
+            this.panel = new Ext.Panel({
+                layout: "fit",
+                border: false,
+                items: []
+            });
+
+
+            Ext.Ajax.request({
+                url: "/admin/reports/custom-report/get",
+                params: {
+                    name: this.config
+                },
+                success: function (response) {
+                    var data = Ext.decode(response.responseText);
+                    var grid = this.initGrid(data);
+
+                    var items = [grid];
+
+                    var subPanel = new Ext.Panel({
+                        layout: "border",
+                        border: false,
+                        items: items
+                    });
+
+                    this.panel.add(subPanel);
+                    this.panel.updateLayout();
+                }.bind(this)
+            });
+            chart = this.panel;
         }
 
         return chart;
+    },
+
+    prepareGridConfig: function(data) {
+        this.drillDownFilters = {};
+        this.drillDownStores = [];
+
+        this.storeFields = [];
+        this.gridColumns = [];
+
+        this.drillDownFilterDefinitions = [];
+        this.columnLabels = {};
+        this.gridfilters = {};
+
+        var gridColConfig = {};
+
+        for(var f=0; f<data.columnConfiguration.length; f++) {
+
+            var colConfig = data.columnConfiguration[f];
+            this.storeFields.push(colConfig["name"]);
+
+            if (colConfig["displayType"] == "hide") {
+                continue;
+            }
+
+            this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
+
+            gridColConfig = {
+                header: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
+                hidden: !colConfig["display"],
+                sortable: colConfig["order"],
+                dataIndex: colConfig["name"]
+            };
+
+            if(colConfig["width"]) {
+                gridColConfig["width"] = intval(colConfig["width"]);
+            }
+
+            if(colConfig["filter"]) {
+                gridColConfig["filter"] = colConfig["filter"];
+                this.gridfilters[colConfig["name"]] = colConfig["filter"];
+            }
+
+            if (colConfig["displayType"] == "date") {
+                gridColConfig["renderer"] = function (key, value, metaData, record) {
+                    if (value) {
+                        var timestamp = intval(value) * 1000;
+                        var date = new Date(timestamp);
+
+                        return Ext.Date.format(date, "Y-m-d H:i");
+                    }
+                    return "";
+                }.bind(this, colConfig["name"]);
+            };
+
+
+            if(colConfig["filter_drilldown"] == 'only_filter' || colConfig["filter_drilldown"] == 'filter_and_show') {
+                this.drillDownFilterDefinitions.push(colConfig);
+            }
+
+            if(colConfig["filter_drilldown"] != 'only_filter') {
+                this.gridColumns.push(gridColConfig);
+            }
+
+            if (colConfig["columnAction"]) {
+                this.gridColumns.push({
+                    header: t("open"),
+                    xtype: 'actioncolumn',
+                    width: 40,
+                    items: [
+                        {
+                            tooltip: t("open") + " " + (colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"])),
+                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            handler: function (colConfig, grid, rowIndex) {
+                                var data = grid.getStore().getAt(rowIndex).getData();
+                                var columnName = colConfig["name"];
+                                var id = data[columnName];
+                                var action = colConfig["columnAction"]
+                                if (action == "openDocument") {
+                                    pimcore.helpers.openElement(id, "document");
+                                } else if (action == "openAsset") {
+                                    pimcore.helpers.openElement(id, "asset");
+                                } else if (action == "openObject") {
+                                    pimcore.helpers.openElement(id, "object");
+                                }
+                            }.bind(this, colConfig)
+                        }
+                    ]
+                });
+            }
+        }
+
+    },
+
+    initGrid: function (data) {
+        this.prepareGridConfig(data);
+        return this.createGrid();
+    },
+
+    createGrid: function() {
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
+        var url = '/admin/reports/custom-report/data?';
+
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            url, this.storeFields, itemsPerPage
+        );
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
+
+        var proxy = this.store.getProxy();
+        proxy.extraParams.name = this.config;
+
+        this.store.addListener('load', function() {
+            var filterData = this.store.getFilters().items;
+
+            for(var j = 0; j < this.drillDownStores.length; j++) {
+                if(this.drillDownStores[j].notReload) {
+                    //to prevent reopening of combo box
+                    this.drillDownStores[j].notReload = false;
+                } else {
+                    this.drillDownStores[j].load({
+                        params: {
+                            filter: proxy.encodeFilters(filterData)
+                        }
+                    });
+                }
+            }
+
+        }.bind(this));
+
+        this.grid = new Ext.grid.GridPanel({
+            region: "center",
+            store: this.store,
+            bbar: this.pagingtoolbar,
+            columns: this.gridColumns,
+            columnLines: true,
+            plugins: ['pimcore.gridfilters'],
+            stripeRows: true,
+            trackMouseOver: true,
+            viewConfig: {
+                forceFit: false
+            }
+        });
+
+        return this.grid;
     },
 
     openReport: function() {
