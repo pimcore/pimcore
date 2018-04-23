@@ -222,6 +222,7 @@ class Mpay24Seamless implements IPayment
             ];
 
             //add information on item level
+            //@todo switch to Mpay24SDK library, see https://github.com/mpay24/mpay24-php/pull/79#issuecomment-383528608
             $additional = $this->addOrderItemPositions($order, $paymentType, $additional);
 
             $result = $mpay24->payment($paymentType, $paymentInfo->getInternalPaymentId(),
