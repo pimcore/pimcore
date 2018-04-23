@@ -301,6 +301,7 @@ class Configuration implements ConfigurationInterface
                                     ->append($this->buildOptionsNode('factory_options'))
                                     ->arrayNode('modificators')
                                         ->info('List price modificators for cart, e.g. for shipping-cost, special discounts, etc. Key is name of modificator.')
+                                        ->useAttributeAsKey('name')
                                         ->prototype('array')
                                             ->children()
                                                 ->scalarNode('class')->isRequired()->end()
