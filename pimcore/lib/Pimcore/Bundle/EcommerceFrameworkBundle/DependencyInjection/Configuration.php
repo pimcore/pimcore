@@ -658,6 +658,7 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('steps')
                                 ->info('Define different checkout steps which need to be committed before commit of order is possible')
                                 ->requiresAtLeastOneElement()
+                                ->useAttributeAsKey('name')
                                 ->prototype('array')
                                     ->children()
                                         ->scalarNode('class')
