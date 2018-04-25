@@ -505,7 +505,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     getTranslationButtons: function () {
 
         var translationsMenu = [];
+        var unlinkTranslationsMenu = [];
         if(this.data["translations"]) {
+            var me = this;
             Ext.iterate(this.data["translations"], function (language, documentId, myself) {
                 translationsMenu.push({
                     text: pimcore.available_languages[language] + " [" + language + "]",
@@ -513,6 +515,24 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     handler: function () {
                         pimcore.helpers.openElement(documentId, "document");
                     }
+                });
+
+                unlinkTranslationsMenu.push({
+                    text: pimcore.available_languages[language] + " [" + language + "]",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/document/translation-remove",
+                            params: {
+                                sourceId: me.id,
+                                targetId: documentId
+                            },
+                            success: function (response) {
+                                me.reload();
+                            }.bind(this)
+                        });
+                    }.bind(this),
+                    iconCls: "pimcore_icon_language_" + language
+                   
                 });
             });
         }
@@ -544,6 +564,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 menu: translationsMenu,
                 hidden: !translationsMenu.length,
                 iconCls: "pimcore_icon_open"
+            }, {
+                text: t("unlink_existing_document"),
+                menu: unlinkTranslationsMenu,
+                hidden: !unlinkTranslationsMenu.length,
+                iconCls: "pimcore_icon_delete"
             }]
         };
     }

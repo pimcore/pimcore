@@ -1338,6 +1338,27 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
+     * @Route("/translation-remove")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function translationRemoveAction(Request $request)
+    {
+        $sourceDocument = Document::getById($request->get("sourceId"));
+        $targetDocument = Document::getById($request->get('targetId'));
+        if ($sourceDocument && $targetDocument) {
+            $service = new Document\Service;
+            $service->removeTranslationLink($sourceDocument, $targetDocument);
+        }
+        
+        return $this->adminJson([
+            'success' => true
+        ]);
+    }
+
+    /**
      * @Route("/translation-check-language")
      *
      * @param Request $request
