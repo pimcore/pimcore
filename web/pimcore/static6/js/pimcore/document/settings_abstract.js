@@ -265,6 +265,10 @@ pimcore.document.settings_abstract = Class.create({
                     mode: "local",
                     id: "pimcore_document_settings_controller_" + this.document.id,
                     value: this.document.data.controller,
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 600
+                    },
                     listeners: {
                         "focus": function (el) {
                             el.getStore().reload({
@@ -276,7 +280,7 @@ pimcore.document.settings_abstract = Class.create({
                                     el.expand();
                                 }
                             });
-                        }.bind(this),
+                        }.bind(this)
                     }
                 },
                 {
@@ -301,6 +305,10 @@ pimcore.document.settings_abstract = Class.create({
                     triggerAction: "all",
                     queryMode: "local",
                     value: this.document.data.action,
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 600
+                    },
                     listeners: {
                         "focus": function (el) {
                             el.getStore().reload({
@@ -314,7 +322,7 @@ pimcore.document.settings_abstract = Class.create({
                                     el.expand();
                                 }
                             });
-                        }.bind(this),
+                        }.bind(this)
                     }
                 },
                 {
@@ -340,6 +348,10 @@ pimcore.document.settings_abstract = Class.create({
                     triggerAction: "all",
                     mode: "local",
                     value: this.document.data.template,
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 600
+                    },
                     listeners: {
                         afterrender: function (el) {
                             el.getStore().load();

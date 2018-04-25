@@ -79,6 +79,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
         var url = "/admin/classificationstore/properties?";
         var proxy = {
+            batchActions: false,
             type: 'ajax',
             reader: {
                 type: 'json',

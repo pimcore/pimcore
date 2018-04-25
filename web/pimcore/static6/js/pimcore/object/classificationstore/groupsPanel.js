@@ -234,6 +234,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         var url = "/admin/classificationstore/groups?";
         var proxy = {
             type: 'ajax',
+            batchActions: false,
             reader: {
                 type: 'json',
                 rootProperty: 'data'

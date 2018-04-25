@@ -101,7 +101,7 @@ pimcore.plugin.MyTestBundle = Class.create(pimcore.plugin.admin, {
     },
 
     preSaveObject: function (object, type) {
-        var userAnswer = confirm("Are you sure you want to change the Product Number?");
+        var userAnswer = confirm("Are you sure you want to save " + object.data.general.o_className + "?");
         if (!userAnswer) {
             throw new pimcore.error.ActionCancelledException('Cancelled by user');
         }

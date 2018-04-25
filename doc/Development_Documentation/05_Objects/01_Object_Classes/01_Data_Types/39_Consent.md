@@ -15,7 +15,8 @@ is added automatically.
 
 ### Usage in PHP API
 When setting consent in custom controllers or in other places, use the service `Pimcore\DataObject\Consent\Service` 
-and its methods `giveConsent` and `revokeConsent`. 
+and its methods `giveConsent` and `revokeConsent`. Please make sure that your DataObject was saved before using the Consent Service. If your DataObject doesent have an Id the note cannot be saved!
+
 
 ```php 
 <?php 

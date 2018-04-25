@@ -22,6 +22,7 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, cus
     }
 
     var proxy = new Ext.data.proxy.Ajax({
+        batchActions: false, 
         type: 'ajax',
         reader: {
             type: 'json',

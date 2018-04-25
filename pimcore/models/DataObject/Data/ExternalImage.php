@@ -53,6 +53,6 @@ class ExternalImage
      */
     public function __toString()
     {
-        return $this->url;
+        return (is_null($this->url)) ? '' : $this->url;
     }
 }

@@ -128,6 +128,7 @@ class Dao extends Model\Dao\AbstractDao
             ['key' => 'assets'],
             ['key' => 'classes'],
             ['key' => 'clear_cache'],
+            ['key' => 'clear_fullpage_cache'],
             ['key' => 'clear_temp_files'],
             ['key' => 'dashboards'],
             ['key' => 'document_types'],
