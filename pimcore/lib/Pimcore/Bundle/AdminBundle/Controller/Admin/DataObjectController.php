@@ -358,7 +358,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['metaData'] = $this->metaData;
 
             $objectData['layout'] = $object->getClass()->getLayoutDefinitions();
-
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData['userPermissions'] = $object->getUserPermissions();
             $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
@@ -386,9 +385,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
             $currentLayoutId = $request->get('layoutId', null);
-
             $validLayouts = DataObject\Service::getValidLayouts($object);
-
             //master layout has id 0 so we check for is_null()
             if (is_null($currentLayoutId) && !empty($validLayouts)) {
                 foreach ($validLayouts as $checkDefaultLayout) {
@@ -397,7 +394,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
                 }
             }
+
             if (!empty($validLayouts)) {
+
                 $objectData['validLayouts'] = [ ];
 
                 foreach ($validLayouts as $validLayout) {
@@ -405,17 +404,20 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
 
                 $user = Tool\Admin::getCurrentUser();
-                if ($currentLayoutId == 0 && !$user->isAdmin()) {
-                    $first = reset($validLayouts);
-                    $currentLayoutId = $first->getId();
-                }
 
+                if(!is_null($currentLayoutId)) {
+                    if ($currentLayoutId == 0 && !$user->isAdmin()) {
+                        $first = reset($validLayouts);
+                        $currentLayoutId = $first->getId();
+                    }
+                }
                 if ($currentLayoutId > 0) {
                     // check if user has sufficient rights
                     if ($validLayouts && $validLayouts[$currentLayoutId]) {
                         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId);
                         $customLayoutDefinition = $customLayout->getLayoutDefinitions();
                         $objectData['layout'] = $customLayoutDefinition;
+
                     } else {
                         $currentLayoutId = 0;
                     }
@@ -423,13 +425,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $layout = DataObject\Service::getSuperLayoutDefinition($object);
                     $objectData['layout'] = $layout;
                 }
-
+               
                 $objectData['currentLayoutId'] = $currentLayoutId;
+
             }
 
             $objectData = $this->filterLocalizedFields($object, $objectData);
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
-
             //Hook for modifying return value - e.g. for changing permissions based on object data
             //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
             $event = new GenericEvent($this, [
@@ -438,7 +440,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
-
             return $this->adminJson($data);
         } else {
             Logger::debug('prevented getting object id [ ' . $object->getId() . ' ] because of missing permissions');

@@ -132,9 +132,8 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
             if ($element instanceof ConcreteObject) {
                 $workflowLayoutId = $manager->getObjectLayout();
-
                 //check for !is_null here as we might want to specify 0 in the workflow config
-                if (!is_null($workflowLayoutId)) {
+                if (!is_null($workflowLayoutId) && is_null($data['currentLayoutId'])) {
                     //load the new layout into the object container
 
                     $validLayouts = DataObject\Service::getValidLayouts($element);
@@ -148,6 +147,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
                             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
                             DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getArgument('object'));
                             $data['layout'] = $customLayoutDefinition;
+                            $data['currentLayoutId'] = $workflowLayoutId;
                         }
                     }
                 }
