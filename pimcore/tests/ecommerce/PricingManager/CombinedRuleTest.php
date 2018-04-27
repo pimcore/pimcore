@@ -165,4 +165,207 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
+
+    public function testSimpleProductAndCartDiscountWithConditionFreeShippingFirst() {
+
+        $ruleDefinitions = [
+            'testrule' => [
+                'actions' => [
+                    [
+                        'class' => ProductDiscount::class,
+                        'amount' => 10
+                    ]
+                ],
+                'condition' => ''
+            ],
+            'testrule3' => [
+                'actions' => [
+                    [
+                        'class' => FreeShipping::class
+                    ],
+                ],
+                'condition' => [
+                    'class' => CartAmount::class,
+                    'limit' => 200
+                ]
+            ],
+            'testrule4' => [
+                'actions' => [
+                    [
+                        'class' => ProductDiscount::class,
+                        'amount' => 10
+                    ]
+                ],
+                'condition' => [
+                    'class' => CartAmount::class,
+                    'limit' => 10
+                ]
+            ],
+        ];
+
+        $productDefinitions = [
+            'singleProduct' => [
+                'id' => 4,
+                'price' => 100
+            ],
+            'cart' => [
+                [
+                    'id' => 4,
+                    'price' => 100
+                ],
+                [
+                    'id' => 5,
+                    'price' => 50
+                ]
+            ]
+
+        ];
+
+        $tests = [
+            'productPriceSingle' => 90,
+            'productPriceTotal' => 180,
+            'cartSubTotal' => 130,
+            'cartGrandTotal' => 130,
+            'cartSubTotalModificators' => 130,
+            'cartGrandTotalModificators' => 140,
+        ];
+
+        $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
+
+
+        $productDefinitions = [
+            'singleProduct' => [
+                'id' => 4,
+                'price' => 100
+            ],
+            'cart' => [
+                [
+                    'id' => 4,
+                    'price' => 100
+                ],
+                [
+                    'id' => 5,
+                    'price' => 50
+                ],
+                [
+                    'id' => 6,
+                    'price' => 80
+                ]
+            ]
+
+        ];
+
+        $tests = [
+            'productPriceSingle' => 90,
+            'productPriceTotal' => 180,
+            'cartSubTotal' => 200,
+            'cartGrandTotal' => 200,
+            'cartSubTotalModificators' => 200,
+            'cartGrandTotalModificators' => 200,
+        ];
+
+        $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
+    }
+
+    public function testSimpleProductAndCartDiscountWithConditionFreeShippingLast() {
+
+        $ruleDefinitions = [
+            'testrule' => [
+                'actions' => [
+                    [
+                        'class' => ProductDiscount::class,
+                        'amount' => 10
+                    ]
+                ],
+                'condition' => ''
+            ],
+            'testrule4' => [
+                'actions' => [
+                    [
+                        'class' => ProductDiscount::class,
+                        'amount' => 10
+                    ]
+                ],
+                'condition' => [
+                    'class' => CartAmount::class,
+                    'limit' => 10
+                ]
+            ],
+            'testrule3' => [
+                'actions' => [
+                    [
+                        'class' => FreeShipping::class
+                    ],
+                ],
+                'condition' => [
+                    'class' => CartAmount::class,
+                    'limit' => 200
+                ]
+            ],
+        ];
+
+        $productDefinitions = [
+            'singleProduct' => [
+                'id' => 4,
+                'price' => 100
+            ],
+            'cart' => [
+                [
+                    'id' => 4,
+                    'price' => 100
+                ],
+                [
+                    'id' => 5,
+                    'price' => 50
+                ]
+            ]
+
+        ];
+
+        $tests = [
+            'productPriceSingle' => 90,
+            'productPriceTotal' => 180,
+            'cartSubTotal' => 130,
+            'cartGrandTotal' => 130,
+            'cartSubTotalModificators' => 130,
+            'cartGrandTotalModificators' => 140,
+        ];
+
+        $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
+
+
+        $productDefinitions = [
+            'singleProduct' => [
+                'id' => 4,
+                'price' => 100
+            ],
+            'cart' => [
+                [
+                    'id' => 4,
+                    'price' => 100
+                ],
+                [
+                    'id' => 5,
+                    'price' => 50
+                ],
+                [
+                    'id' => 6,
+                    'price' => 80
+                ]
+            ]
+
+        ];
+
+        $tests = [
+            'productPriceSingle' => 90,
+            'productPriceTotal' => 180,
+            'cartSubTotal' => 200,
+            'cartGrandTotal' => 200,
+            'cartSubTotalModificators' => 200,
+            'cartGrandTotalModificators' => 200,
+        ];
+
+        $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
+    }
+
 }
