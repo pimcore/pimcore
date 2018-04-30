@@ -212,7 +212,9 @@ class Link extends Model\Document\Tag
         }
 
         if (strlen($this->data['anchor'] ?? '') > 0) {
-            $url .= '#'.str_replace('#', '', $this->getAnchor());
+            $anchor = $this->getAnchor();
+            $anchor = str_replace('"', urlencode('"'), $anchor);
+            $url .= "#" . str_replace("#", "", $anchor);
         }
 
         return $url;
