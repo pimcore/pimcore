@@ -102,6 +102,12 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         return items;
     },
 
+    getLayoutShow: function() {
+        var layout = this.getLayoutEdit();
+        layout.disable();
+        return layout;
+    },
+
     getLayoutEdit: function () {
 
         var items = [];
