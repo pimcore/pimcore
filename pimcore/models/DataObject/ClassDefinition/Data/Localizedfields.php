@@ -200,7 +200,18 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
 
                 if ($foundEmptyValue) {
                     // still some values are passing, ask the parent
-                    $parentData = $parent->getLocalizedFields();
+                    if ($params["context"] && $params["context"]["containerType"] == "objectbrick") {
+                        $brickContainerGetter = "get" . ucfirst($params["fieldname"]);
+                        $brickContainer = $parent->$brickContainerGetter();
+                        $brickGetter = "get" . ucfirst($params["context"]["containerKey"]);
+                        $brickData = $brickContainer->$brickGetter();
+                        $parentData = $brickData->getLocalizedFields();
+
+                    } else {
+                        if (method_exists($parent ,"getLocalizedFields")) {
+                            $parentData = $parent->getLocalizedFields();
+                        }
+                    }
                     $parentResult = $this->doGetDataForEditMode(
                         $parentData,
                         $parent,
@@ -270,7 +281,12 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         $result = new \stdClass();
         foreach ($this->getFieldDefinitions() as $fd) {
             $key = $fd->getName();
-            $result->$key = $object->{'get'.ucfirst($fd->getName())}();
+            $context = $params["context"];
+            if ($context && $context["containerType"] = "objectbrick") {
+                $result->$key = 'NOT SUPPORTED';
+            } else {
+                $result->$key = $object->{'get' . ucfirst($fd->getName())}();
+            }
             if (method_exists($fd, 'getDataForGrid')) {
                 $result->$key = $fd->getDataForGrid($result->$key, $object, $params);
             }
@@ -605,9 +621,10 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
         if ($localizedFields instanceof DataObject\Localizedfield) {
-            if ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $object instanceof DataObject\Objectbrick\Data\AbstractData) {
                 $object = $object->getObject();
             }
+
             $localizedFields->setObject($object);
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
@@ -623,7 +640,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      */
     public function load($object, $params = [])
     {
-        if ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+        if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $object instanceof DataObject\Objectbrick\Data\AbstractData) {
             $object = $object->getObject();
         }
 
@@ -664,7 +681,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         $localizedFields->setClass($class);
         $context = isset($params['context']) ? $params['context'] : null;
         $localizedFields->setContext($context);
-        $localizedFields->createUpdateTable();
+        $localizedFields->createUpdateTable($params);
 
         foreach ($this->getFieldDefinitions() as $fd) {
             if (method_exists($fd, 'classSaved')) {
@@ -683,15 +700,24 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      */
     public function preGetData($container, $params = [])
     {
-        if (!$container instanceof DataObject\Concrete && !$container instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            throw new \Exception('Localized Fields are only valid in Objects and Fieldcollections');
+        if (!$container instanceof DataObject\Concrete && !$container instanceof DataObject\Fieldcollection\Data\AbstractData
+                    && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            throw new \Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
         }
 
         if (!$container->localizedfields instanceof DataObject\Localizedfield) {
             $lf = new DataObject\Localizedfield();
 
             $object = $container;
-            if ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            if ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+                $object = $container->getObject();
+
+                $context = [
+                    'containerType' => 'objectbrick',
+                    'containerKey' => $container->getType(),
+                ];
+                $lf->setContext($context);
+            } else if ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
                 $object = $container->getObject();
 
                 $context = [

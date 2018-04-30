@@ -323,20 +323,31 @@ class Service extends Model\Element\Service
                 } elseif (count($keyParts) > 1) {
                     // brick
                     $brickType = $keyParts[0];
+                    if (strpos($brickType, "?") !== false) {
+                        $brickDescriptor = substr($brickType, 1);
+                        $brickDescriptor = json_decode($brickDescriptor, true);
+                        $brickType = $brickDescriptor["containerKey"];
+                    }
+
                     $brickKey = $keyParts[1];
+
                     $key = self::getFieldForBrickType($object->getclass(), $brickType);
 
                     $brickClass = Objectbrick\Definition::getByKey($brickType);
                     $context['outerFieldname'] = $key;
-                    $def = $brickClass->getFieldDefinition($brickKey, $context);
+
+                    if ($brickDescriptor) {
+                        $innerContainer = $brickDescriptor["innerContainer"] ? $brickDescriptor["innerContainer"] : "localizedfields";
+                        $localizedFields = $brickClass->getFieldDefinition($innerContainer);
+                        $def = $localizedFields->getFieldDefinition($brickDescriptor["brickfield"]);
+                    } else {
+                        $def = $brickClass->getFieldDefinition($brickKey, $context);
+                    }
                 }
 
                 if (!empty($key)) {
-
                     // some of the not editable field require a special response
-
-                    $getter = 'get'.ucfirst($key);
-
+                    $getter = 'get' . ucfirst($key);
                     $needLocalizedPermissions = false;
 
                     // if the definition is not set try to get the definition from localized fields
@@ -356,7 +367,7 @@ class Service extends Model\Element\Service
                         if (in_array($key, Concrete::$systemColumnNames)) {
                             $data[$dataKey] = $object->$getter();
                         } else {
-                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context);
+                            $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context, $brickDescriptor);
                             $data['inheritedFields'][$dataKey] = ['inherited' => $valueObject->objectid != $object->getId(), 'objectid' => $valueObject->objectid];
 
                             if (method_exists($def, 'getDataForGrid')) {
@@ -607,16 +618,25 @@ class Service extends Model\Element\Service
      *
      * @return \stdclass, value and objectid where the value comes from
      */
-    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null, $context = [])
+    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null, $context = [], $brickDescriptor = null)
     {
-        $getter = 'get'.ucfirst($key);
+        $getter = 'get' . ucfirst($key);
         $value = $object->$getter();
         if (!empty($value) && !empty($brickType)) {
             $getBrickType = 'get' . ucfirst($brickType);
             $value = $value->$getBrickType();
             if (!empty($value) && !empty($brickKey)) {
-                $brickGetter = 'get'.ucfirst($brickKey);
-                $value = $value->$brickGetter();
+                if ($brickDescriptor) {
+                    $innerContainer = $brickDescriptor["innerContainer"] ? $brickDescriptor["innerContainer"] : "localizedfields";
+                    $localizedFields = $value->{'get' . ucfirst($innerContainer)}();
+                    $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
+                    $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition("localizedfields");
+                    $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
+                    $value = $localizedFields->getLocalizedValue($brickDescriptor["brickfield"]);
+                } else {
+                    $brickFieldGetter = 'get' . ucfirst($brickKey);
+                    $value = $value->$brickFieldGetter();
+                }
             }
         }
 
@@ -624,7 +644,7 @@ class Service extends Model\Element\Service
             $fieldDefinition = $object->getClass()->getFieldDefinition($key, $context);
         }
 
-        if (!empty($brickType) && !empty($brickKey)) {
+        if (!empty($brickType) && !empty($brickKey) && !$brickDescriptor) {
             $brickClass = Objectbrick\Definition::getByKey($brickType);
             $context = ['object' => $object, 'outerFieldname' => $key];
             $fieldDefinition = $brickClass->getFieldDefinition($brickKey, $context);
@@ -633,7 +653,7 @@ class Service extends Model\Element\Service
         if ($fieldDefinition->isEmpty($value)) {
             $parent = self::hasInheritableParentObject($object);
             if (!empty($parent)) {
-                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context);
+                return self::getValueForObject($parent, $key, $brickType, $brickKey, $fieldDefinition, $context, $brickDescriptor);
             }
         }
 
@@ -724,7 +744,7 @@ class Service extends Model\Element\Service
                     $operator = '=';
                 } elseif ($filter['type'] == 'boolean') {
                     $operator = '=';
-                    $filter['value'] = (int) $filter['value'];
+                    $filter['value'] = (int)$filter['value'];
                 }
 
                 $keyParts = explode('~', $filterField);
@@ -751,7 +771,7 @@ class Service extends Model\Element\Service
 
                 if ($field instanceof ClassDefinition\Data) {
                     $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
-                    $joins[] =  ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId'=> $keyid];
+                    $joins[] = ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId' => $keyid];
                     $condition = $field->getFilterConditionExt(
                         $filter['value'],
                         $operator,
@@ -818,7 +838,7 @@ class Service extends Model\Element\Service
                     $operator = '=';
                 } elseif ($filter['type'] == 'boolean') {
                     $operator = '=';
-                    $filter['value'] = (int) $filter['value'];
+                    $filter['value'] = (int)$filter['value'];
                 }
 
                 $field = $class->getFieldDefinition($filterField);
@@ -847,30 +867,47 @@ class Service extends Model\Element\Service
                         $key = self::getFieldForBrickType($class, $brickType);
                         $field = $class->getFieldDefinition($key);
 
+                        if (strpos($brickType, "?") !== false) {
+                            $brickDescriptor = substr($brickType, 1);
+                            $brickDescriptor = json_decode($brickDescriptor, true);
+                            $brickType = $brickDescriptor["containerKey"];
+                        }
+
                         $brickClass = Objectbrick\Definition::getByKey($brickType);
-                        $brickField = $brickClass->getFieldDefinition($brickKey);
+
+                        if ($brickDescriptor) {
+                            $brickField = $brickClass->getFieldDefinition('localizedfields')->getFieldDefinition($brickDescriptor['brickfield']);
+
+                        } else {
+                            $brickField = $brickClass->getFieldDefinition($brickKey);
+                        }
                     }
                 }
-                if ($field instanceof ClassDefinition\Data\Objectbricks) {
+                if ($field instanceof ClassDefinition\Data\Objectbricks || $brickDescriptor) {
                     // custom field
                     $db = \Pimcore\Db::get();
                     $brickPrefix = '';
 
                     $ommitPrefix = false;
 
-                    if ($brickField instanceof  Model\DataObject\ClassDefinition\Data\Checkbox
-                            || (($brickField instanceof Model\DataObject\ClassDefinition\Data\Date || $brickField instanceof  Model\DataObject\ClassDefinition\Data\Datetime) && $brickField->getColumnType() == 'datetime')
+                    if ($brickField instanceof Model\DataObject\ClassDefinition\Data\Checkbox
+                        || (($brickField instanceof Model\DataObject\ClassDefinition\Data\Date || $brickField instanceof Model\DataObject\ClassDefinition\Data\Datetime) && $brickField->getColumnType() == 'datetime')
                     ) {
                         $ommitPrefix = true;
                     }
 
                     if (!$ommitPrefix) {
-                        $brickPrefix =  $db->quoteIdentifier($brickType) . '.';
+                        if ($brickDescriptor) {
+                            $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
+
+                        } else {
+                            $brickPrefix = $db->quoteIdentifier($brickType) . '.';
+                        }
                     }
                     if (is_array($filter['value'])) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] =  $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
+                            $fieldConditions[] = $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
                                     ['brickType' => $brickType]
                                 );
                         }
@@ -890,7 +927,7 @@ class Service extends Model\Element\Service
                     } else {
                         $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator);
                     }
-                } elseif (in_array('o_'.$filterField, $systemFields)) {
+                } elseif (in_array('o_' . $filterField, $systemFields)) {
                     // system field
                     if ($filterField == 'fullpath') {
                         $conditionPartsFilters[] = 'concat(o_path, o_key) ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
@@ -1138,7 +1175,7 @@ class Service extends Model\Element\Service
      */
     public static function getSuperLayoutDefinition(Concrete $object)
     {
-        $masterLayout = $object->getClass()->getLayoutDefinitions() ;
+        $masterLayout = $object->getClass()->getLayoutDefinitions();
         $superLayout = unserialize(serialize($masterLayout));
 
         self::createSuperLayout($superLayout);
@@ -1504,13 +1541,15 @@ class Service extends Model\Element\Service
             $layout->enrichLayoutDefinition($object, $context);
         }
 
-        if ($layout instanceof  Model\DataObject\ClassDefinition\Data\Localizedfields) {
+        if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             if ($context['containerType'] == 'fieldcollection') {
+                $context['subContainerType'] = 'localizedfield';
+            } else if ($context['containerType'] == 'objectbrick') {
                 $context['subContainerType'] = 'localizedfield';
             } else {
                 $context['ownerType'] = 'localizedfield';
             }
-            $context['ownerName']= 'localizedfields';
+            $context['ownerName'] = 'localizedfields';
         }
 
         if (method_exists($layout, 'getChilds')) {

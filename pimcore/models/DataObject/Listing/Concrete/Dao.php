@@ -64,7 +64,7 @@ class Dao extends Model\DataObject\Listing\Dao
         // create base
         $field = $this->getTableName() . '.o_id';
         $select->from(
-            [ $this->getTableName() ],
+            [$this->getTableName()],
             [
                 new Expression(sprintf('%s as o_id', $this->getSelectPart($field, $field))), 'o_type'
             ]
@@ -135,6 +135,41 @@ class Dao extends Model\DataObject\Listing\Dao
         throw $e;
     }
 
+
+    /**
+     * @return string
+     *
+     * @throws \Exception
+     * @throws \Exception
+     */
+    public function getLocalizedBrickLanguage()
+    {
+
+        $language = null;
+
+        // check for a localized field and if they should be used for this list
+
+        if ($this->model->getLocale()) {
+            if (Tool::isValidLanguage((string)$this->model->getLocale())) {
+                $language = (string)$this->model->getLocale();
+            }
+        }
+
+        if (!$language) {
+            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            if (Tool::isValidLanguage((string)$locale)) {
+                $language = (string)$locale;
+            }
+        }
+
+        if (!$language) {
+            $language = Tool::getDefaultLanguage();
+        }
+
+
+        return $language;
+    }
+
     /**
      * @return string
      *
@@ -153,15 +188,15 @@ class Dao extends Model\DataObject\Listing\Dao
                 // check for a localized field and if they should be used for this list
                 if (property_exists('\\Pimcore\\Model\\DataObject\\' . ucfirst($this->model->getClassName()), 'localizedfields')) {
                     if ($this->model->getLocale()) {
-                        if (Tool::isValidLanguage((string) $this->model->getLocale())) {
-                            $language = (string) $this->model->getLocale();
+                        if (Tool::isValidLanguage((string)$this->model->getLocale())) {
+                            $language = (string)$this->model->getLocale();
                         }
                     }
 
                     if (!$language) {
                         $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
-                        if (Tool::isValidLanguage((string) $locale)) {
-                            $language = (string) $locale;
+                        if (Tool::isValidLanguage((string)$locale)) {
+                            $language = (string)$locale;
                         }
                     }
 
@@ -226,7 +261,7 @@ CONDITION;
 
                 // add join
                 $select->joinLeft(
-                    [ $name => $table ],
+                    [$name => $table],
                     $condition,
                     ''
                 );
@@ -244,7 +279,7 @@ CONDITION;
 
                 // add join
                 $select->joinLeft(
-                    [ $name => $table ],
+                    [$name => $table],
                     <<<CONDITION
 1
 AND {$this->db->quoteIdentifier($name)}.o_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
@@ -252,6 +287,25 @@ CONDITION
                     ,
                     ''
                 );
+
+                $brickDefinition = DataObject\Objectbrick\Definition::getByKey($ob);
+                if ($brickDefinition->getFieldDefinition("localizedfields")) {
+                    $langugage = $this->getLocalizedBrickLanguage();
+                    //TODO wrong pattern
+                    $localizedTable = 'object_brick_localized_query_' . $ob . '_' . $this->model->getClassId() . "_" . $langugage;
+                    $name = $ob . "_localized";
+
+                    // add join
+                    $select->joinLeft(
+                        [$name => $localizedTable],
+                        <<<CONDITION
+1
+AND {$this->db->quoteIdentifier($name)}.ooo_id = {$this->db->quoteIdentifier($this->getTableName())}.o_id
+CONDITION
+                        ,
+                        ''
+                    );
+                }
             }
         }
 

@@ -67,7 +67,14 @@ class Dao extends Model\Dao\AbstractDao
 
             if (method_exists($fd, 'save')) {
                 // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
-                $fd->save($this->model);
+                $fd->save($this->model,
+                    [
+                        'context' => [
+                            'containerType' => 'objectbrick',
+                            'containerKey' => $this->model->getType(),
+                            'fieldname' =>  $this->model->getFieldname()
+                        ]
+                    ]);
             } elseif ($fd->getColumnType()) {
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
@@ -233,6 +240,22 @@ class Dao extends Model\Dao\AbstractDao
             $fd = $this->model->getDefinition()->getFieldDefinition($key);
 
             if ($fd) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $localizedFieldDao = new DataObject\Localizedfield\Dao();
+                    $localizedFieldDao->configure();
+
+                    $fakeModel = new DataObject\Localizedfield();
+                    $fakeModel->setObject($object);
+                    $fakeModel->setContext([
+                        'containerType' => 'objectbrick',
+                        'containerKey' => $this->model->getType(),
+                        'fieldname' =>  $this->model->getFieldname()
+                    ]);
+                    $localizedFieldDao->setModel($fakeModel);
+                    $localizedFieldDao->delete();
+                    continue;
+                }
+
                 if ($fd->getQueryColumnType()) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
