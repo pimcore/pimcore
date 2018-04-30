@@ -571,5 +571,17 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 iconCls: "pimcore_icon_delete"
             }]
         };
+    },
+
+    resetPath: function () {
+        Ext.Ajax.request({
+            url: "/admin/document/get-data-by-id",
+            params: {id: this.id},
+            success: function (response) {
+                var rdata = Ext.decode(response.responseText);
+                this.data.path = rdata.path;
+                this.data.key = rdata.key;
+            }.bind(this)
+        });
     }
 });
