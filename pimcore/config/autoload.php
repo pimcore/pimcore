@@ -20,11 +20,9 @@ $loader = Pimcore::getAutoloader();
 // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
 $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
 
-if (version_compare(PHP_VERSION, '7.2.0', '<')) {
-    // for PHP versions < 7.2 we can use the compatibility autoloader for the \Pimcore\Model\Object\* namespace
-    $dataObjectCompatibilityLoader = new \Pimcore\Loader\Autoloader\DataObjectCompatibility($loader);
-    $dataObjectCompatibilityLoader->register(true);
-}
+// compatibility autoloader for the \Pimcore\Model\Object\* namespace (seems to work with PHP 7.2 as well, tested with 7.2.3)
+$dataObjectCompatibilityLoader = new \Pimcore\Loader\Autoloader\DataObjectCompatibility($loader);
+$dataObjectCompatibilityLoader->register(true);
 
 // legacy mapping loader creates aliases for renamed classes
 $legacyMappingLoader = new \Pimcore\Loader\Autoloader\AliasMapper($loader);
