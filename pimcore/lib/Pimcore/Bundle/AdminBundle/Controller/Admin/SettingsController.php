@@ -1811,6 +1811,7 @@ class SettingsController extends AdminController
                     $setting->delete();
 
                     return $this->adminJson(['success' => true, 'data' => []]);
+
                 } elseif ($request->get('xaction') == 'update') {
                     // save routes
                     $setting = WebsiteSetting::getById($data['id']);
@@ -1821,11 +1822,14 @@ class SettingsController extends AdminController
                         case 'object':
                             if (isset($data['data'])) {
                                 $path = $data['data'];
-                                $element = Element\Service::getElementByPath($setting->getType(), $path);
-                                $data['data'] = $element ? $element->getId() : null;
+                                if ($path != null) {
+                                    $element = Element\Service::getElementByPath($setting->getType(), $path);
+                                }
+                                    $data['data'] = $element ? $element->getId() : null;
                             }
                             break;
                     }
+
 
                     $setting->setValues($data);
 
