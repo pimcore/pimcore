@@ -1821,14 +1821,15 @@ class SettingsController extends AdminController
                         case 'object':
                             if (isset($data['data'])) {
                                 $path = $data['data'];
-                                $element = Element\Service::getElementByPath($setting->getType(), $path);
+                                if ($path != null) {
+                                    $element = Element\Service::getElementByPath($setting->getType(), $path);
+                                }
                                 $data['data'] = $element ? $element->getId() : null;
                             }
                             break;
                     }
 
                     $setting->setValues($data);
-
                     $setting->save();
 
                     $data = $this->getWebsiteSettingForEditMode($setting);
