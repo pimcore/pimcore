@@ -1300,24 +1300,25 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-    * @param string $fieldName
-    * @param null $language
-    * @return mixed
-    */
+     * @param string $fieldName
+     * @param null $language
+     *
+     * @return mixed
+     */
     public function get($fieldName, $language = null)
     {
-        return $this->{"get".ucfirst($fieldName)}($language);
+        return $this->{'get'.ucfirst($fieldName)}($language);
     }
 
     /**
-    * @param string $fieldName
-    * @param $value
-    * @param null $language
-    * @return mixed
-    */
+     * @param string $fieldName
+     * @param $value
+     * @param null $language
+     *
+     * @return mixed
+     */
     public function set($fieldName, $value, $language = null)
     {
-        return $this->{"set".ucfirst($fieldName)}($value, $language);
-
+        return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
 }

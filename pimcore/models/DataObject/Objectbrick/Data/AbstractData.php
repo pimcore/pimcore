@@ -198,22 +198,23 @@ abstract class AbstractData extends Model\AbstractModel
     }
 
     /**
-    * @param string $fieldName
-    * @return mixed
-    */
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
     public function get($fieldName)
     {
-        return $this->{"get".ucfirst($fieldName)}();
+        return $this->{'get'.ucfirst($fieldName)}();
     }
 
     /**
-    * @param string $fieldName
-    * @param $value
-    * @return mixed
-    */
+     * @param string $fieldName
+     * @param $value
+     *
+     * @return mixed
+     */
     public function set($fieldName, $value)
     {
-        return $this->{"set".ucfirst($fieldName)}($value);
-
+        return $this->{'set'.ucfirst($fieldName)}($value);
     }
 }

@@ -137,12 +137,12 @@ class Dao extends Model\Dao\AbstractDao
     public function removeTranslationLink(Document $document, Document $targetDocument)
     {
         $sourceId = $this->getTranslationSourceId($document);
-        if($targetDocument->getId() == $sourceId) {
+        if ($targetDocument->getId() == $sourceId) {
             $sourceId = $document->getId();
         }
-        
+
         // Remove in both way
-        $this->db->delete("documents_translations", ['id' => $targetDocument->getId(), 'sourceId' => $sourceId]);
-        $this->db->delete("documents_translations", ['id' => $sourceId, 'sourceId' => $targetDocument->getId()]);
+        $this->db->delete('documents_translations', ['id' => $targetDocument->getId(), 'sourceId' => $sourceId]);
+        $this->db->delete('documents_translations', ['id' => $sourceId, 'sourceId' => $targetDocument->getId()]);
     }
 }

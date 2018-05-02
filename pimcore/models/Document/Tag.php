@@ -265,11 +265,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected function outputEditmodeOptions(array $options, $return = false)
     {
         // clean up invalid brick editmode options
-        if(array_key_exists('options', $options) && array_key_exists('params', $options['options'])) {
+        if (array_key_exists('options', $options) && array_key_exists('params', $options['options'])) {
             $validOptions = ['forceEditInView', 'editWidth', 'editHeight'];
-            foreach($options['options']['params'] as $brickName => $params) {
-                foreach($params as $key => $val) {
-                    if(!in_array($key, $validOptions)) {
+            foreach ($options['options']['params'] as $brickName => $params) {
+                foreach ($params as $key => $val) {
+                    if (!in_array($key, $validOptions)) {
                         unset($options['options']['params'][$brickName][$key]);
                     }
                 }
@@ -282,8 +282,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             </script>
         ';
 
-
-        if(json_last_error()) {
+        if (json_last_error()) {
             throw new \Exception('json encode failed: ' . json_last_error_msg());
         }
 
