@@ -66,7 +66,7 @@ server {
     
     # Thumbnails
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$request_uri /app.php;
+        try_files /var/tmp/$1-thumbnails$uri /app.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
@@ -170,14 +170,14 @@ __Step 2: Replace the location that handles on-demand thumbnail generation__
     # Pimcore On-Demand Thumbnail generation
     # with Rate-Limit.
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$request_uri @imggen;
+        try_files /var/tmp/$1-thumbnails$uri @imggen;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
     }
     location @imggen {
         limit_req zone=imggen burst=15;
-        try_files /var/tmp/$1-thumbnails$request_uri /app.php;
+        try_files /var/tmp/$1-thumbnails$uri /app.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
