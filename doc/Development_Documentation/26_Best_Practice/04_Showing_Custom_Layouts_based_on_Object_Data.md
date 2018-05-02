@@ -33,7 +33,7 @@ services:
     app.event_listener.my_event_listner:
         class: AppBundle\EventListener\MyEventListener
         tags:
-            - { name: kernel.event_listener, event: pimcore.admin.object.get.preSendData, method: selectCustomLayout }
+            - { name: kernel.event_listener, event: pimcore.admin.dataobject.get.preSendData, method: selectCustomLayout }
 ```
 
 `src/AppBundle/EventListener/MyEventListener`
