@@ -338,6 +338,20 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @return mixed
+     */
+    public function getClass() {
+        return $this->data['class'];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAttributes() {
+        return $this->data['attributes'];
+    }
+
+    /**
      * @see Document\Tag\TagInterface::setDataFromResource
      *
      * @param mixed $data
