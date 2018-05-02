@@ -1825,7 +1825,7 @@ class SettingsController extends AdminController
                                 if ($path != null) {
                                     $element = Element\Service::getElementByPath($setting->getType(), $path);
                                 }
-                                    $data['data'] = $element ? $element->getId() : null;
+                                $data['data'] = $element ? $element->getId() : null;
                             }
                             break;
                     }
