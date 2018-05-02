@@ -1811,7 +1811,6 @@ class SettingsController extends AdminController
                     $setting->delete();
 
                     return $this->adminJson(['success' => true, 'data' => []]);
-
                 } elseif ($request->get('xaction') == 'update') {
                     // save routes
                     $setting = WebsiteSetting::getById($data['id']);
@@ -1830,9 +1829,7 @@ class SettingsController extends AdminController
                             break;
                     }
 
-
                     $setting->setValues($data);
-
                     $setting->save();
 
                     $data = $this->getWebsiteSettingForEditMode($setting);
