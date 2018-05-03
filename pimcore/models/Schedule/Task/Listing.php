@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Schedule\Task\Listing\Dao getDao()
+ * @method Model\Schedule\Task[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

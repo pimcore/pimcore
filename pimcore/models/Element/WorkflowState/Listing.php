@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\WorkflowState\Listing\Dao getDao()
+ * @method Model\Element\WorkflowState[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\DataObject\Listing\Concrete\Dao getDao()
+ * @method Model\Webservice\Data\DataObject\Concrete[] load()
  */
 abstract class Concrete extends Model\DataObject\Listing
 {

@@ -440,6 +440,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "/**\n";
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())." current()\n";
+        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] load()\n";
         $cd .= ' */';
         $cd .= "\n\n";
         $cd .= 'class Listing extends DataObject\\Listing\\Concrete {';

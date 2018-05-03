@@ -23,7 +23,7 @@ use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
 
 /**
- * @method int load()
+ * @method Document[] load()
  * @method int getTotalCount()
  * @method int getCount()
  * @method int loadIdList()

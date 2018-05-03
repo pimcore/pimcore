@@ -16,6 +16,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 
+/**
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart[] load()
+ * @method int getTotalCount()
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing\Dao getDao()
+ */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
