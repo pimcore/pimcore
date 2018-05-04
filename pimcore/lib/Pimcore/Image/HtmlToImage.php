@@ -62,8 +62,16 @@ class HtmlToImage
 
         // add parameter pimcore_preview to prevent inclusion of google analytics code, cache, etc.
         $url .= (strpos($url, '?') ? '&' : '?') . 'pimcore_preview=true';
-
-        $arguments = ' --width ' . $screenWidth . ' --format ' . $format . ' "' . $url . '" ' . $outputFile;
+		//we need to set php session cookie
+	    $parts = parse_url($url);
+	    parse_str($parts['query'], $query);
+	    if(isset($query['PHPSESSID'])){
+	        $sess_cookie = ' --cookie PHPSESSID '.$query['PHPSESSID'];
+	    }
+	    else{
+		    $sess_cookie = '';
+	    }
+        $arguments = ' --width ' . $screenWidth . $sess_cookie.' --format ' . $format . ' "' . $url . '" ' . $outputFile;
 
         // use xvfb if possible
         if ($xvfb = self::getXvfbBinary()) {
