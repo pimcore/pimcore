@@ -253,9 +253,9 @@ pimcore.treenodelocator.getDirectionForElementsSortedByKey = function (elementKe
     var direction = 0;
 
     if (eType == "folder") {
-        if (firstFolderChild && elementKey.toLowerCase() < firstFolderChild.data.text.toLowerCase()) {
+        if (firstFolderChild && elementKey.toUpperCase() < firstFolderChild.data.text.toUpperCase()) {
             direction = -1;
-        } else if (lastFolderChild && elementKey.toLowerCase() > lastFolderChild.data.text.toLowerCase()) {
+        } else if (lastFolderChild && elementKey.toUpperCase() > lastFolderChild.data.text.toUpperCase()) {
             direction = 1;
         } else if (firstElementChild) {
             direction = -1;
@@ -263,9 +263,9 @@ pimcore.treenodelocator.getDirectionForElementsSortedByKey = function (elementKe
     } else {
         if (lastFolderChild) {
             direction = 1;
-        } else if (firstElementChild && elementKey.toLowerCase() < firstElementChild.data.text.toLowerCase()) {
+        } else if (firstElementChild && elementKey.toUpperCase() < firstElementChild.data.text.toUpperCase()) {
             direction = -1;
-        } else if (lastElementChild && elementKey.toLowerCase() > lastElementChild.data.text.toLowerCase()) {
+        } else if (lastElementChild && elementKey.toUpperCase() > lastElementChild.data.text.toUpperCase()) {
             direction = 1;
         }
     }
