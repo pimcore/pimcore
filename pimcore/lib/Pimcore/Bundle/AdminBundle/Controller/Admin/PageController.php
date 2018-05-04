@@ -24,6 +24,7 @@ use Pimcore\Model\Redirect;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -266,31 +267,6 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/upload-screenshot")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function uploadScreenshotAction(Request $request)
-    {
-        if ($request->get('data') && $request->get('id')) {
-            $data = substr($request->get('data'), strpos($request->get('data'), ',') + 1);
-            $data = base64_decode($data);
-
-            $file = PIMCORE_TEMPORARY_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $request->get('id') . '.jpg';
-            $dir = dirname($file);
-            if (!is_dir($dir)) {
-                File::mkdir($dir);
-            }
-
-            File::put($file, $data);
-        }
-
-        return $this->adminJson(['success' => true]);
-    }
-
-    /**
      * @Route("/generate-screenshot")
      *
      * @param Request $request
@@ -314,7 +290,7 @@ class PageController extends DocumentControllerBase
             }
 
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
-            $file = PIMCORE_TEMPORARY_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $doc->getId() . '.jpg';
+            $file = $doc->getPreviewImageFilesystemPath();
 
             $dir = dirname($file);
             if (!is_dir($dir)) {
@@ -338,6 +314,20 @@ class PageController extends DocumentControllerBase
         }
 
         return $this->adminJson(['success' => $success]);
+    }
+
+    /**
+     * @Route("/display-preview-image", name="pimcore_admin_page_display_preview_image")
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function displayPreviewImageAction(Request $request) {
+        $document = Document::getById($request->get('id'));
+        if($document instanceof Document\Page) {
+            return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, ['Content-Type' => 'image/jpg']);
+        }
     }
 
     /**

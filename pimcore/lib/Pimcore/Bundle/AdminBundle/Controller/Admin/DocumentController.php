@@ -954,14 +954,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $versionFrom = Version::getById($from);
         $docFrom = $versionFrom->loadData();
-
-        $sessionName = Tool\Session::getSessionName();
-        $sessionId = Tool\Session::getSessionId();
-
         $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . '?pimcore_version=';
 
-        $fromUrl = $prefix . $from . '&' . $sessionName . '=' . $sessionId;
-        $toUrl   = $prefix . $to . '&' . $sessionName . '=' . $sessionId;
+        $fromUrl = $prefix . $from;
+        $toUrl   = $prefix . $to;
 
         $toFileId = uniqid();
         $fromFileId = uniqid();
@@ -1095,12 +1091,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         // PREVIEWS temporary disabled, need's to be optimized some time
         if ($childDocument instanceof Document\Page && Config::getSystemConfig()->documents->generatepreview) {
-            $thumbnailFile = PIMCORE_TEMPORARY_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $childDocument->getId() . '.jpg';
-
+            $thumbnailFile = $childDocument->getPreviewImageFilesystemPath();
             // only if the thumbnail exists and isn't out of time
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
-                $thumbnailPath = str_replace(PIMCORE_WEB_ROOT, '', $thumbnailFile);
-                $tmpDocument['thumbnail'] = $thumbnailPath;
+                $tmpDocument['thumbnail'] = $this->generateUrl('pimcore_admin_page_display_preview_image', ['id' => $childDocument->getId()]);
             }
         }
 
