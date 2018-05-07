@@ -530,12 +530,31 @@ class DataObjectHelperController extends AdminController
                             }
                         } elseif (count($keyParts) > 1) {
                             $brick = $keyParts[0];
-                            $key = $keyParts[1];
+                            $brickDescriptor = null;
+
+                            if (strpos($brick, "?") !== false) {
+                                $brickDescriptor = substr($brick, 1);
+                                $brickDescriptor = json_decode($brickDescriptor, true);
+                                $keyPrefix = $brick . '~';
+                                $brick = $brickDescriptor["containerKey"];
+                            } else {
+                                $keyPrefix = $brick . '~';
+                            }
+
+                            $fieldname = $keyParts[1];
 
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
-                            $fd = $brickClass->getFieldDefinition($key);
+
+                            if ($brickDescriptor) {
+                                $innerContainer = $brickDescriptor["innerContainer"] ? $brickDescriptor["innerContainer"] : "localizedfields";
+                                $localizedFields = $brickClass->getFieldDefinition($innerContainer);
+                                $fd = $localizedFields->getFieldDefinition($brickDescriptor["brickfield"]);
+                            } else {
+                                $fd = $brickClass->getFieldDefinition($fieldname);
+                            }
+
                             if (!empty($fd)) {
-                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $brick . '~', $class, $objectId);
+                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $keyPrefix, $class, $objectId);
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
                                         $fieldConfig['width'] = $sc['width'];
@@ -543,6 +562,7 @@ class DataObjectHelperController extends AdminController
                                     $availableFields[] = $fieldConfig;
                                 }
                             }
+
                         } else {
                             if (DataObject\Service::isHelperGridColumnConfig($key)) {
                                 $calculatedColumnConfig = $this->getCalculatedColumnConfig($savedColumns[$key]);
@@ -2305,7 +2325,7 @@ class DataObjectHelperController extends AdminController
                         $getter = 'get' . ucfirst($field);
                         if (method_exists($object, $getter)) {
 
-                            /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                            /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
                             $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                             $csLanguage = $requestedLanguage;
                             if (!$csFieldDefinition->isLocalized()) {
