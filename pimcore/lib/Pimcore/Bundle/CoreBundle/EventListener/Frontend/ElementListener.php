@@ -118,7 +118,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             $user = $this->userLoader->getUser();
         }
 
-        if (!$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS)) {
+        if (!$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS) && empty($request->attributes->get('assetId'))) {
             $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
                 $document->getFullPath()
             ]);
