@@ -35,7 +35,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <td>o_modificationDate</td>
         <?php if (!$this->isImportPreview || !$this->isNew) { ?>
             <td><?= date('Y-m-d H:i:s', $this->object1->getModificationDate()); ?></td>
-        <?php }?>
+        <?php } ?>
         <td><?= date('Y-m-d H:i:s', $this->object2->getModificationDate()); ?></td>
     </tr>
     <tr class="system">
@@ -68,52 +68,51 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <td colspan="3">&nbsp;</td>
     </tr>
 
-<?php $c = 0; ?>
-<?php
-    foreach ($fields as $fieldName => $definition) { ?>
+    <?php $c = 0; ?>
     <?php
-        if($definition instanceof DataObject\ClassDefinition\Data\Localizedfields) { ?>
-        <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
-            <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
-                <?php
+    foreach ($fields as $fieldName => $definition) { ?>
+        <?php
+        if ($definition instanceof DataObject\ClassDefinition\Data\Localizedfields) { ?>
+            <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
+                <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
+                    <?php
                     $v1Container = $this->object1->getValueForFieldName($fieldName);
                     $v1 = $v1Container ? $lfd->getVersionPreview($v1Container->getLocalizedValue($lfd->getName(), $language)) : "";
                     $v2Container = $this->object2->getValueForFieldName($fieldName);
                     $v2 = $v2Container ? $lfd->getVersionPreview($v2Container->getLocalizedValue($lfd->getName(), $language)) : "";
-                ?>
-                <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                    <td><?= $lfd->getTitle() ?> (<?= $language; ?>)</td>
-                    <td><?= $lfd->getName() ?></td>
-                    <?php if (!$this->isImportPreview || !$this->isNew) { ?>
-                        <td><?= $v1 ?></td>
+                    ?>
+                    <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                        <td><?= $lfd->getTitle() ?> (<?= $language; ?>)</td>
+                        <td><?= $lfd->getName() ?></td>
+                        <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                            <td><?= $v1 ?></td>
                         <?php } ?>
-                    <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
-                </tr>
-                <?php
-                $c++;
-            } ?>
-        <?php } ?>
-        <?php } else if($definition instanceof DataObject\ClassDefinition\Data\Classificationstore){
-
+                        <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+                    </tr>
+                    <?php
+                    $c++;
+                } ?>
+            <?php } ?>
+        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Classificationstore) {
 
 
             /** @var $storedata DataObject\Classificationstore */
             $storedata1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
             $storedata2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
 
-            $existingGroups = array();
+            $existingGroups = [];
 
 
             if ($storedata1) {
                 $activeGroups1 = $storedata1->getActiveGroups();
             } else {
-                $activeGroups1 = array();
+                $activeGroups1 = [];
             }
 
             if ($storedata2) {
                 $activeGroups2 = $storedata2->getActiveGroups();
             } else {
-                $activeGroups2 = array();
+                $activeGroups2 = [];
             }
 
             foreach ($activeGroups1 as $activeGroupId => $enabled) {
@@ -128,14 +127,14 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 continue;
             }
 
-            $languages = array("default");
+            $languages = ["default"];
 
             if ($definition->isLocalized()) {
                 $languages = array_merge($languages, \Pimcore\Tool::getValidLanguages());
             }
 
             foreach ($existingGroups as $activeGroupId => $enabled) {
-                if  (!$activeGroups1[$activeGroupId] && !$activeGroups2[$activeGroupId]) {
+                if (!$activeGroups1[$activeGroupId] && !$activeGroups2[$activeGroupId]) {
                     continue;
                 }
                 /** @var $groupDefinition DataObject\Classificationstore\GroupConfig */
@@ -162,9 +161,10 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         $preview2 = $keyDef->getVersionPreview($keyData2);
                         ?>
 
-                        <tr class = "<?php if ($c % 2) { ?> odd<?php  } ?>">
+                        <tr class="<?php if ($c % 2) { ?> odd<?php } ?>">
                             <td><?= $definition->getTitle() ?></td>
-                            <td><?= $groupDefinition->getName() ?> - <?= $keyGroupRelation->getName()?> <?= $definition->isLocalized() ? "/ " . $language : "" ?></td>
+                            <td><?= $groupDefinition->getName() ?>
+                                - <?= $keyGroupRelation->getName() ?> <?= $definition->isLocalized() ? "/ " . $language : "" ?></td>
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $preview1 ?></td>
                             <?php } ?>
@@ -176,15 +176,66 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 }
             }
             ?>
-    <?php } else if($definition instanceof DataObject\ClassDefinition\Data\ObjectBricks) {
-                ?>
-                <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
+        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\ObjectBricks) {
+            ?>
+            <?php foreach ($definition->getAllowedTypes() as $asAllowedType) { ?>
+                <?php
+                $collectionDef = DataObject\Objectbrick\Definition::getByKey($asAllowedType);
+
+                foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
                     <?php
-                    $collectionDef = DataObject\Objectbrick\Definition::getByKey($asAllowedType);
 
-                    foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
-                        <?php
 
+                    $bricks1 = $this->object1->{"get" . ucfirst($fieldName)}();
+                    $bricks2 = $this->object2->{"get" . ucfirst($fieldName)}();
+
+                    if (!$bricks1 && !$bricks2) {
+                        continue;
+                    }
+
+
+                    if ($lfd instanceof DataObject\ClassDefinition\Data\Localizedfields) { ?>
+                        <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
+                            <?php foreach ($lfd->getFieldDefinitions() as $localizedFieldDefinition) { ?>
+                                <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                                    <td><?= $localizedFieldDefinition->getTitle() ?> (<?= $language; ?>)</td>
+                                    <td><?= $localizedFieldDefinition->getName() ?></td>
+
+                                    <?php
+                                    $v1 = null;
+                                    $v2 = null;
+                                    if ($bricks1) {
+                                        $brick1Value = $bricks1->{"get" . $asAllowedType}();
+                                        if ($brick1Value) {
+                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            $localizedBrickValues = $brick1Value->getLocalizedFields();
+                                            $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
+                                            $v1 = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
+                                        }
+                                    }
+
+                                    if ($bricks2) {
+                                        $brick2Value = $bricks2->{"get" . $asAllowedType}();
+                                        if ($brick2Value) {
+                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            $localizedBrickValues = $brick2Value->getLocalizedFields();
+                                            $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
+                                            $v2 = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
+                                        }
+                                    }
+
+                                    ?>
+                                    <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                                        <td><?= $v1 ?></td>
+                                    <?php } ?>
+                                    <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+
+                                </tr>
+                                <?php
+                                $c++;
+                            } ?>
+                        <?php }
+                    } else {
                         $v1 = null;
                         $bricks1 = $this->object1->{"get" . ucfirst($fieldName)}();
                         if ($bricks1) {
@@ -247,9 +298,9 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         if($fieldItem1 instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\NumFields) {
                             $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
                         }
-                        
+
                         $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
-                        
+
                         if(!empty($ffkey2) && isset($fieldKeys2[$fkey])) {
                             $v2 = $fieldKey1->getVersionPreview($ffkey2->{"get" . ucfirst($fieldKeys2[$fkey]->name)}());
                         }
@@ -293,6 +344,12 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
             }
         } else { ?>
         <?php
+                    }
+
+                } ?>
+            <?php } ?>
+        <?php } else { ?>
+            <?php
             $v1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
             $v2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
         ?>
