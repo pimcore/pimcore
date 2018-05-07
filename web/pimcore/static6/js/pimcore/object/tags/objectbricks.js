@@ -358,14 +358,15 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 } else {
                     for (var u=0; u<element.fields.length; u++) {
 
+                        var field = element.fields[u];
                         try {
-                            if(element.fields[u].isDirty()) {
-                                element.fields[u].unmarkInherited();
-                                elementData[element.fields[u].getName()] = element.fields[u].getValue();
+                            if(field.isDirty()) {
+                                field.unmarkInherited();
+                                elementData[field.getName()] = field.getValue();
                             }
                         } catch (e) {
                             console.log(e);
-                            elementData[element.fields[u].getName()] = "";
+                            elementData[field.getName()] = "";
                         }
 
                     }
@@ -396,10 +397,20 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 var element = this.currentElements[types[t]];
                 if(element.action != "deleted") {
                     for (var u=0; u<element.fields.length; u++) {
-                        if(element.fields[u].isDirty()) {
-                            element.fields[u].unmarkInherited();
+                        var field = element.fields[u];
+                        if(field.isDirty()) {
+
                             this.dirty = true;
+
+                            if (field.fieldConfig.fieldtype == "localizedfields") {
+                                field.dataIsNotInherited(true);
+                            } else {
+                                field.unmarkInherited();
+                            }
+
+
                             return this.dirty;
+
                         }
                     }
                 }
@@ -420,8 +431,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 var element = this.currentElements[types[t]];
                 if(element.action != "deleted") {
                     for (var u=0; u<element.fields.length; u++) {
-                        if(element.fields[u].isDirty()) {
-                            element.fields[u].unmarkInherited();
+                        var field = element.fields[u];
+                        if(field.isDirty()) {
+                            if (field.fieldConfig.fieldtype == "localizedfields") {
+                                field.dataIsNotInherited(true);
+                            } else {
+                                field.unmarkInherited();
+                            }
                         }
                     }
                 }
