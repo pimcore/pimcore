@@ -148,7 +148,13 @@ pimcore.asset.listfolder = Class.create({
             tbar: [
                 "->"
                 ,this.checkboxOnlyDirectChildren
-                ]
+                , "-"
+                ,{
+                    text: t("download_as_zip"),
+                    iconCls: "pimcore_icon_export",
+                    handler: this.downloadSelectedZip.bind(this)
+                }
+            ]
         });
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
@@ -250,7 +256,71 @@ pimcore.asset.listfolder = Class.create({
 
         e.stopEvent();
         menu.showAt(e.getXY());
-    }
+    },
+
+    downloadSelectedZip: function () {
+
+        //create the ids array which contains chosen rows to export
+        ids = [];
+        var selectedRows = this.grid.getSelectionModel().getSelection();
+        for (var i = 0; i < selectedRows.length; i++) {
+            ids.push(selectedRows[i].data.id);
+        }
+        console.log(ids);
+        Ext.Ajax.request({
+            url: "/admin/asset/download-as-zip-jobs",
+            params: {
+                id: this.element.id,
+                "selectedIds[]": ids
+            },
+            success: function(response) {
+                var res = Ext.decode(response.responseText);
+
+                this.downloadProgressBar = new Ext.ProgressBar({
+                    text: t('initializing')
+                });
+
+                this.downloadProgressWin = new Ext.Window({
+                    title: t("download_as_zip"),
+                    layout:'fit',
+                    width:500,
+                    bodyStyle: "padding: 10px;",
+                    closable:false,
+                    plain: true,
+                    modal: true,
+                    items: [this.downloadProgressBar]
+                });
+
+                this.downloadProgressWin.show();
+
+
+                var pj = new pimcore.tool.paralleljobs({
+                    success: function (jobId) {
+                        if(this.downloadProgressWin) {
+                            this.downloadProgressWin.close();
+                        }
+
+                        this.downloadProgressBar = null;
+                        this.downloadProgressWin = null;
+
+                        pimcore.helpers.download('/admin/asset/download-as-zip?jobId='+ jobId + "&id=" + this.element.id);
+                    }.bind(this, res.jobId),
+                    update: function (currentStep, steps, percent) {
+                        if(this.downloadProgressBar) {
+                            var status = currentStep / steps;
+                            this.downloadProgressBar.updateProgress(status, percent + "%");
+                        }
+                    }.bind(this),
+                    failure: function (message) {
+                        this.downloadProgressWin.close();
+                        pimcore.helpers.showNotification(t("error"), t("error"),
+                            "error", t(message));
+                    }.bind(this),
+                    jobs: res.jobs
+                });
+            }.bind(this)
+        });
+    },
 
 });
 
