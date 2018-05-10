@@ -15,12 +15,12 @@ pimcore.registerNS("pimcore.object.object");
 pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     initialize: function (id, options) {
+        this.id = intval(id);
+        this.options = options;
+        
         pimcore.plugin.broker.fireEvent("preOpenObject", this, "object");
 
-        this.id = intval(id);
         this.addLoadingPanel();
-
-        this.options = options;
 
         var user = pimcore.globalmanager.get("user");
 
