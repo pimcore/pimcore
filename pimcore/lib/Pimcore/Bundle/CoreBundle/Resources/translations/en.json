@@ -1852,5 +1852,6 @@
   "type_column": "Type column",
   "keep": "keep",
   "unlink_existing_document": "Unlink existing Document",
-  "clear_fullpage_cache": "Clear Full Page Cache"
+  "clear_fullpage_cache": "Clear Full Page Cache",
+  "multiselect_render_type": "Render Type"
 }

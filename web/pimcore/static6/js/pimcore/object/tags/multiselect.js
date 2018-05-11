@@ -96,7 +96,6 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             store: store,
             componentCls: "object_field",
-            height: 100,
             valueField: 'id',
             labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100,
             listeners: {
@@ -125,13 +124,19 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
         if (this.fieldConfig.height) {
             options.height = this.fieldConfig.height;
+        } else if (this.fieldConfig.renderType != "tags") {
+            options.height = 100;
         }
 
         if (typeof this.data == "string" || typeof this.data == "number") {
             options.value = this.data;
         }
 
-        this.component = Ext.create('Ext.ux.form.MultiSelect', options);
+        if (this.fieldConfig.renderType == "tags") {
+            this.component = Ext.create('Ext.form.field.Tag', options);
+        } else {
+            this.component = Ext.create('Ext.ux.form.MultiSelect', options);
+        }
 
         return this.component;
     },

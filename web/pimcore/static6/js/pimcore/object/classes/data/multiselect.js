@@ -225,7 +225,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             });
         }.bind(this));
 
-
         var specificItems = [
             {
                 xtype: "numberfield",
@@ -245,6 +244,27 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 name: "maxItems",
                 value: datax.maxItems,
                 minValue: 0
+            },
+            {
+                xtype: "combo",
+                fieldLabel: t("multiselect_render_type"),
+                name: "renderType",
+                itemId: "renderType",
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: [
+                        'value',
+                        'key'
+                    ],
+                    data: [
+                        ['list', 'List'],
+                        ['tags', 'Tags']
+                    ]
+                }),
+                value: datax.renderType,
+                valueField: 'value',
+                displayField: 'key',
             },
             {
                 xtype: "textfield",
@@ -297,7 +317,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     options: source.datax.options,
                     width: source.datax.width,
                     height: source.datax.height,
-                    maxItems: source.datax.maxItems
+                    maxItems: source.datax.maxItems,
+                    renderType: source.datax.renderType
                 });
         }
     },
