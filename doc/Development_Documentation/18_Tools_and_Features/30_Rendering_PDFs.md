@@ -1,14 +1,14 @@
 # Rendering PDFs
 
-Instead of directly returning the HTML code of your website you could also return a PDF version. 
+Instead of directly returning the HTML code of your website you could also return a PDF version.
 You can use the built in Web2Print functionality to accomplish this.
 
 Please make sure that you have set up the web2print functionality correctly ("Settings" -> "Web2Print Settings").
 
-You don't need to enable the Web2Print Documents in Pimcore, you 
-just have to provide the correct settings (Tool -> WkHtmlToPdf / PDFreactor) and the corresponding settings.
+You don't need to enable the Web2Print Documents in Pimcore, you
+just have to provide the correct settings (Tool -> WkHtmlToPdf / PDFreactor / LibreOffice) and the corresponding settings.
 
-In your controller you just have to return the PDF instead of the HTML. 
+In your controller you just have to return the PDF instead of the HTML.
 
 ## Simple example
 ```php
