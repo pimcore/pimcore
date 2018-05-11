@@ -366,7 +366,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 });
 
                 var columnConfig = new Ext.menu.Item({
-                    text: t("grid_column_config"),
+                    text: t("grid_options"),
                     iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
                     handler: this.openColumnConfig.bind(this, selectedClass, classId)
                 });

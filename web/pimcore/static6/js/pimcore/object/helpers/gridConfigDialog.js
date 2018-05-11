@@ -105,9 +105,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         this.window = new Ext.Window({
             width: 950,
-            height: 700,
+            height: '95%',
             modal: true,
-            title: t('grid_column_config'),
+            title: t('grid_options'),
             layout: "fit",
             items: [this.tabPanel],
             buttons: buttons
