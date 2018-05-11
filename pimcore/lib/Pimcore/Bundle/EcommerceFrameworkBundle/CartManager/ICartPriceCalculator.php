@@ -42,7 +42,7 @@ interface ICartPriceCalculator
      *
      * @return void
      */
-    public function calculate();
+    public function calculate($ignorePricingRules = false);
 
     /**
      * Reset calculations

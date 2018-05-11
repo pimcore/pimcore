@@ -240,7 +240,7 @@ class Pimcore extends Module\Symfony
         }
 
         $this->debug(sprintf('[DB] Creating DB %s', $dbName));
-        $schemaManager->createDatabase($connection->quoteIdentifier($dbName));
+        $schemaManager->createDatabase($connection->quoteIdentifier($dbName) . ' charset=utf8mb4');
     }
 
     /**

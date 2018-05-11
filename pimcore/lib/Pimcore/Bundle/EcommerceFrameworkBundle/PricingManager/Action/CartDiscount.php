@@ -63,7 +63,7 @@ class CartDiscount implements IDiscount
         foreach ($priceCalculator->getModificators() as &$modificator) {
             if ($modificator instanceof Discount && $modificator->getRuleId() == $environment->getRule()->getId()) {
                 $modificator->setAmount($amount);
-                $priceCalculator->reset();
+                $priceCalculator->calculate(true);
 
                 return $this;
             }
@@ -73,6 +73,7 @@ class CartDiscount implements IDiscount
         $modDiscount->setAmount($amount);
 
         $priceCalculator->addModificator($modDiscount);
+        $priceCalculator->calculate(true);
 
         return $this;
     }
