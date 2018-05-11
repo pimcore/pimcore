@@ -191,6 +191,44 @@ pimcore.settings.web2print = Class.create({
                 ]
             });
 
+            this.libreofficeSettings = Ext.create("Ext.form.FieldSet", {
+                title: t('web2print_libreoffice_settings'),
+                collapsible: true,
+                collapsed: false,
+                autoHeight: true,
+                hidden: this.getValue("generalTool") != 'libreoffice',
+                defaultType: 'textfield',
+                defaults: {width: 450},
+                items: [
+                    {
+                        xtype: 'textfield',
+                        width: 650,
+                        fieldLabel: t("web2print_libreoffice_binary"),
+                        name: 'libreofficeBin',
+                        value: this.getValue("libreofficeBin")
+                    }, {
+                        xtype: 'textarea',
+                        width: 650,
+                        height: 200,
+                        fieldLabel: t("web2print_libreoffice_options"),
+                        name: 'libreofficeOptions',
+                        value: this.getValue("libreofficeOptions")
+                    },{
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        width: 600,
+                        value: t('web2print_libreoffice_options_txt'),
+                        cls: "pimcore_extra_label_bottom"
+                    },{
+                        xtype: 'textfield',
+                        width: 650,
+                        fieldLabel: t("web2print_hostname"),
+                        name: 'libreofficeHostname',
+                        value: this.getValue("libreofficeHostname")
+                    }
+                ]
+            });
+
             this.layout = Ext.create('Ext.form.Panel', {
                 bodyStyle: 'padding:20px 5px 20px 5px;',
                 border: false,
@@ -244,7 +282,8 @@ pimcore.settings.web2print = Class.create({
                                 value: this.getValue("generalTool"),
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
-                                    ["wkhtmltopdf", "WkHtmlToPdf"]
+                                    ["wkhtmltopdf", "WkHtmlToPdf"],
+                                    ["libreoffice", "LibreOffice"]
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
@@ -254,9 +293,15 @@ pimcore.settings.web2print = Class.create({
                                         if(combo.getValue() == "pdfreactor") {
                                             this.pdfReactorSettings.show();
                                             this.wkhtmlToPdfSettings.hide();
-                                        } else {
+                                            this.libreofficeSettings.hide();
+                                        } else if(combo.getValue() == "wkhtmltopdf") {
                                             this.pdfReactorSettings.hide();
                                             this.wkhtmlToPdfSettings.show();
+                                            this.libreofficeSettings.hide();
+                                        } else {
+                                            this.pdfReactorSettings.hide();
+                                            this.wkhtmlToPdfSettings.hide();
+                                            this.libreofficeSettings.show();
                                         }
 
                                     }.bind(this)
@@ -283,7 +328,7 @@ pimcore.settings.web2print = Class.create({
                             }
                         ]
                     }
-                    , this.pdfReactorSettings, this.wkhtmlToPdfSettings
+                    , this.pdfReactorSettings, this.wkhtmlToPdfSettings, this.libreofficeSettings
                 ]
             });
 

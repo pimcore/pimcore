@@ -686,6 +686,18 @@ class SettingsController extends AdminController
         }
         $valueArray['wkhtml2pdfOptions'] = implode("\n", $optionsString);
 
+        $optionsString = [];
+        if ($valueArray['libreofficeOptions']) {
+            foreach ($valueArray['libreofficeOptions'] as $key => $value) {
+                $tmpStr = '--'.$key;
+                if ($value !== null && $value !== '') {
+                    $tmpStr .= ' '.$value;
+                }
+                $optionsString[] = $tmpStr;
+            }
+        }
+        $valueArray['libreofficeOptions'] = implode("\n", $optionsString);
+
         $response = [
             'values' => $valueArray
         ];
@@ -718,6 +730,20 @@ class SettingsController extends AdminController
                 }
             }
             $values['wkhtml2pdfOptions'] = $optionArray;
+        }
+
+        if ($values['libreofficeOptions']) {
+            $optionArray = [];
+            $lines = explode("\n", $values['libreofficeOptions']);
+            foreach ($lines as $line) {
+                $parts = explode(' ', substr($line, 2));
+                $key = trim($parts[0]);
+                if ($key) {
+                    $value = trim($parts[1]);
+                    $optionArray[$key] = $value;
+                }
+            }
+            $values['libreofficeOptions'] = $optionArray;
         }
 
         $configFile = \Pimcore\Config::locateConfigFile('web2print.php');

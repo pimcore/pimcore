@@ -23,11 +23,12 @@ use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Pimcore\Web2Print\Processor\PdfReactor8;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
+use Pimcore\Web2Print\Processor\LibreOffice;
 
 abstract class Processor
 {
     /**
-     * @return PdfReactor8|WkHtmlToPdf
+     * @return PdfReactor8|WkHtmlToPdf|LibreOffice
      *
      * @throws \Exception
      */
@@ -39,6 +40,8 @@ abstract class Processor
             return new PdfReactor8();
         } elseif ($config->generalTool == 'wkhtmltopdf') {
             return new WkHtmlToPdf();
+        } elseif ($config->generalTool == 'libreoffice') {
+            return new LibreOffice();
         } else {
             throw new \Exception('Invalid Configuation - ' . $config->generalTool);
         }
