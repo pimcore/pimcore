@@ -754,9 +754,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     }
 
     /**
-     * cart has been changed
+     * @return $this
      */
-    protected function modified()
+    public function modified()
     {
         $this->setModificationDateTimestamp(time());
 
@@ -769,6 +769,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
         $this->giftItems = [];
 
+        return $this;
     }
 
     /**
