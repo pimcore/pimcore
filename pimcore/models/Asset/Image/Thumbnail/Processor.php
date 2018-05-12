@@ -127,7 +127,7 @@ class Processor
                     }
                 }
             } elseif ($format == 'svg') {
-                return str_replace(PIMCORE_WEB_ROOT, '', $fileSystemPath);
+                return $asset->getFullPath();
             }
         } elseif ($format == 'tiff') {
             if (\Pimcore\Tool::isFrontentRequestByAdmin()) {
