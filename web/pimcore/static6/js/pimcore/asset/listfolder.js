@@ -266,7 +266,7 @@ pimcore.asset.listfolder = Class.create({
         for (var i = 0; i < selectedRows.length; i++) {
             ids.push(selectedRows[i].data.id);
         }
-        console.log(ids);
+        
         Ext.Ajax.request({
             url: "/admin/asset/download-as-zip-jobs",
             params: {
