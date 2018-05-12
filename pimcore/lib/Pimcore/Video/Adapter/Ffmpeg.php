@@ -117,7 +117,7 @@ class Ffmpeg extends Adapter
             // add some global arguments
             $arguments = '-threads 0 ' . $arguments;
 
-            $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file)) . ' ' . $arguments . ' ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile()));
+            $cmd = self::getFfmpegCli() . ' -i ' . realpath($this->file) . ' ' . $arguments . ' ' . str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
 
             Logger::debug('Executing FFMPEG Command: ' . $cmd);
 
@@ -163,7 +163,7 @@ class Ffmpeg extends Adapter
             $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ffmpeg-tmp-' . uniqid() . '.' . File::getFileExtension($file);
         }
 
-        $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file)) . ' -vcodec png -vframes 1 -vf scale=iw*sar:ih -ss ' . $timeOffset . ' ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $file));
+        $cmd = self::getFfmpegCli() . ' -i ' . realpath($this->file) . ' -vcodec png -vframes 1 -vf scale=iw*sar:ih -ss ' . $timeOffset . ' ' . escapeshellarg(str_replace('/', DIRECTORY_SEPARATOR, $file));
         Console::exec($cmd, null, 60);
 
         if ($realTargetPath) {
