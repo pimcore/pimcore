@@ -310,12 +310,26 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         return this.toolbar;
     },
 
-    downloadZip: function () {
+    downloadZip: function (el, e, selection) {
         //pimcore.helpers.download('/admin/asset/download-as-zip?id='+ this.id);
+        var ids = [];
+
+        if (typeof selection != "undefined") {
+            //create the ids array which contains chosen rows to export
+            ids = [];
+            var selectedRows = el.grid.getSelectionModel().getSelection();
+            for (var i = 0; i < selectedRows.length; i++) {
+                ids.push(selectedRows[i].data.id);
+            }
+        }
+
 
         Ext.Ajax.request({
             url: "/admin/asset/download-as-zip-jobs",
-            params: {id: this.id},
+            params: {
+                id: this.id,
+                "selectedIds[]": ids
+            },
             success: function(response) {
                 var res = Ext.decode(response.responseText);
 
