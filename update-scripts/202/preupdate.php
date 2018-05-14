@@ -8,7 +8,7 @@ if (PimcoreEcommerceFrameworkBundle::isInstalled()) {
     $db = \Pimcore\Db::get();
 
     // create migration table if not exists
-    $factory = $this->get('Pimcore\Migrations\Configuration\ConfigurationFactory');
+    $factory = \Pimcore::getContainer()->get('Pimcore\Migrations\Configuration\ConfigurationFactory');
     $bundle = \Pimcore::getKernel()->getBundle('PimcoreEcommerceFrameworkBundle');
     $config = $factory->getForBundle($bundle, $db);
     $config->createMigrationTable();
