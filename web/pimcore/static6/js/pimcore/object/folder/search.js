@@ -140,6 +140,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         var fields = [];
+
         if (response.responseText) {
             response = Ext.decode(response.responseText);
 
@@ -149,6 +150,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
             fields = response.availableFields;
             this.gridLanguage = response.language;
+            this.gridPageSize = response.pageSize;
             this.sortinfo = response.sortinfo;
 
             this.settings = response.settings || {};
@@ -159,6 +161,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 this.onlyDirectChildren = response.onlyDirectChildren;
             }
         } else {
+            itemsPerPage = this.gridPageSize;
             fields = response;
             this.settings = settings;
             this.buildColumnConfigMenu();
