@@ -47,3 +47,36 @@ And this is how the entry looks like:
 You could also add the note directly in the edit view of objects, documents and assets.
 
 ![Notes & events - add a note manually](../img/notesandevents_add_note.png)
+
+
+#### Specify Custom Types for Notes and Events
+
+Via Pimcore configuration, the selectable types for notes and events can be specified per content type (asset, document, 
+data object), see sample config below:
+
+```yml
+# app/config/config.yml or any other Symfony config file
+
+pimcore_admin:
+    documents:
+        notes_events:
+            types:
+                - ""
+                - "content"
+                - "seo"
+                - "some other type"
+    assets:
+        notes_events:
+            types:
+                - ""
+                - "content"
+                - "licese renewal"
+                - "some other type"                
+    dataObjects:
+        notes_events:
+            types:
+                - ""
+                - "manual data change"
+                - "some other type"
+
+```
