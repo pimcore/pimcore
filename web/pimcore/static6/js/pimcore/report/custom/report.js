@@ -73,6 +73,16 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 this.gridfilters[colConfig["name"]] = colConfig["filter"];
             }
 
+            if (colConfig["displayType"] == "text") {
+                gridColConfig["renderer"] = function (key, value, metaData, record) {
+                    if (value && Ext.String.hasHtmlCharacters(value)) {
+                        return Ext.util.Format.htmlEncode(value);
+                    } else {
+                        return value;
+                    }
+                }.bind(this, colConfig["name"]);
+            }
+
             if (colConfig["displayType"] == "date") {
                 gridColConfig["renderer"] = function (key, value, metaData, record) {
                     if (value) {

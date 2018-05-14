@@ -314,14 +314,38 @@ pimcore.element.notes = Class.create({
 
     onAdd: function () {
 
+        var noteTypesStore = new Ext.data.Store({
+            fields: [
+                "name"
+                //,
+                // {
+                //     name:"translatedName",
+                //     convert: function(v, rec){
+                //         return ts(rec.data.name);
+                //     }
+                // }
+            ],
+
+            proxy: {
+                type: 'ajax',
+                url: '/admin/element/note-types?ctype=' + this.type,
+                reader: {
+                    type: 'json',
+                    rootProperty: "noteTypes"
+                }
+            }
+        });
+
         var formPanel = new Ext.form.FormPanel({
             bodyStyle: "padding:10px;",
             items: [{
                 xtype: "combo",
                 fieldLabel: t('type'),
                 name: "type",
-                store: ["","content","seo","warning","notice"],
                 editable: true,
+                displayField: 'name',
+                valueField: 'name',
+                store: noteTypesStore,
                 mode: "local",
                 triggerAction: "all",
                 width: 250

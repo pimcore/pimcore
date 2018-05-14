@@ -63,12 +63,13 @@ class OptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
+     * Returns the value which is defined in the 'Default value' field  
      * @param $context array
      * @param $fieldDefinition Data
      * @return mixed
      */
     public function getDefaultValue($context, $fieldDefinition) {
-        return 4;
+        return $fieldDefinition->getDefaultValue();
     }
 
     /**

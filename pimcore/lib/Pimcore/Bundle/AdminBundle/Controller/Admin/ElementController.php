@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\DependencyInjection\PimcoreAdminExtension;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -24,6 +25,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
+use Symfony\Component\DependencyInjection\Tests\Extension\ExtensionTest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -124,6 +126,47 @@ class ElementController extends AdminController
             ]);
         }
     }
+
+    /**
+     * @param string $parameterName
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     */
+    protected function processNoteTypesFromParameters(string $parameterName) {
+
+        $config = $this->container->getParameter($parameterName);
+        $result = [];
+        foreach($config as $configEntry) {
+            $result[] = [
+                'name' => $configEntry
+            ];
+        }
+
+        return $this->adminJson(['noteTypes' => $result]);
+    }
+
+    /**
+     * @Route("/element/note-types")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function noteTypes(Request $request) {
+
+        switch ($request->get("ctype")) {
+            case "document":
+                return $this->processNoteTypesFromParameters(PimcoreAdminExtension::PARAM_DOCUMENTS_NOTES_EVENTS_TYPES);
+            case "asset":
+                return $this->processNoteTypesFromParameters(PimcoreAdminExtension::PARAM_ASSETS_NOTES_EVENTS_TYPES);
+            case "object":
+                return $this->processNoteTypesFromParameters(PimcoreAdminExtension::PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES);
+            default:
+                return $this->adminJson(['noteTypes' => []]);
+
+        }
+
+    }
+
 
     /**
      * @Route("/element/note-list")

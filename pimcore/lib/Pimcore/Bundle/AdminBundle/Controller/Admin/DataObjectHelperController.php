@@ -602,6 +602,10 @@ class DataObjectHelperController extends AdminController
             $language = $gridConfig['language'];
         }
 
+        if (!empty($gridConfig) && !empty($gridConfig['pageSize'])) {
+            $pageSize = $gridConfig['pageSize'];
+        }
+
         $availableConfigs = $class ? $this->getMyOwnGridColumnConfigs($userId, $class->getId(), $searchType) : [];
         $sharedConfigs = $class ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $class->getId(), $searchType) : [];
         $settings = $this->getShareSettings((int) $gridConfigId);
@@ -614,6 +618,7 @@ class DataObjectHelperController extends AdminController
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             'language' => $language,
+            'pageSize' => $pageSize,
             'availableFields' => $availableFields,
             'settings' => $settings,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,

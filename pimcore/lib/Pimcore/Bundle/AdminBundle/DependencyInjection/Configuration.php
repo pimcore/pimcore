@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -30,12 +31,18 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('pimcore_admin');
 
-        $rootNode->append($this->buildDataObjectsNode());
+        $rootNode->append($this->buildGdprDataExtractorNode());
+        $rootNode->append($this->buildObjectsNode());
+        $rootNode->append($this->buildAsstsNode());
+        $rootNode->append($this->buildDocumentsNode());
 
         return $treeBuilder;
     }
 
-    protected function buildDataObjectsNode()
+    /**
+     * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    protected function buildGdprDataExtractorNode()
     {
         $treeBuilder = new TreeBuilder();
 
@@ -98,5 +105,71 @@ class Configuration implements ConfigurationInterface
         $gdprDataExtractor->append($assets);
 
         return $gdprDataExtractor;
+    }
+
+    /**
+     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    protected function buildEventsNode() {
+        $treeBuilder = new TreeBuilder();
+        $notesEvents = $treeBuilder->root('notes_events');
+
+        $notesEvents
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('types')
+                    ->info('List all notes/event types.')
+                    ->prototype('scalar')->end()
+                    ->defaultValue(['', 'content', 'seo', 'warning', 'notice'])
+                ->end()
+            ->end()
+        ;
+
+        return $notesEvents;
+    }
+
+    /**
+     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    protected function buildObjectsNode()
+    {
+        $treeBuilder = new TreeBuilder();
+        $objectsNode = $treeBuilder->root('dataObjects');
+
+        $objectsNode
+            ->addDefaultsIfNotSet()
+            ->append($this->buildEventsNode());
+
+        return $objectsNode;
+    }
+
+    /**
+     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    protected function buildAsstsNode()
+    {
+        $treeBuilder = new TreeBuilder();
+        $assetsNode = $treeBuilder->root('assets');
+
+        $assetsNode
+            ->addDefaultsIfNotSet()
+            ->append($this->buildEventsNode());
+
+        return $assetsNode;
+    }
+
+    /**
+     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    protected function buildDocumentsNode()
+    {
+        $treeBuilder = new TreeBuilder();
+        $documentsNode = $treeBuilder->root('documents');
+
+        $documentsNode
+            ->addDefaultsIfNotSet()
+            ->append($this->buildEventsNode());
+
+        return $documentsNode;
     }
 }

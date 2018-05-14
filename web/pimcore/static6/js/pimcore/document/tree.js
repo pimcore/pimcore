@@ -280,6 +280,8 @@ pimcore.document.tree = Class.create({
                         delete node.data.cls;
                     }
                     pimcore.elementservice.nodeMoved("document", oldParent, newParent);
+                    this.updateOpenDocumentPaths(node);
+                    
                 }
                 else {
                     tree.loadMask.hide();
@@ -881,6 +883,7 @@ pimcore.document.tree = Class.create({
             pimcore.elementservice.refreshNodeAllTrees("document", newParent.id);
             newParent.expand();
             this.tree.loadMask.hide();
+            this.updateOpenDocumentPaths(document);
 
         }.bind(this, document, newParent, oldParent, tree));
 
@@ -1346,6 +1349,22 @@ pimcore.document.tree = Class.create({
         // key must be at least one character, an maximum 30 characters
         if (key.length < 1 && key.length > 30) {
             return false;
+        }
+    },
+
+    updateOpenDocumentPaths: function(node) {
+        try {
+            var openTabs = pimcore.helpers.getOpenTab();
+            for (var i = 0; i < openTabs.length; i++) {
+                if(openTabs[i].indexOf("document_") == 0 && (openTabs[i].indexOf("_page") || openTabs[i].indexOf("_snippet") || openTabs[i].indexOf("_email") || openTabs[i].indexOf("_newsletter"))) {
+                    var documentElement = pimcore.globalmanager.get(openTabs[i].replace(/_page|_snippet|_email|_newsletter/gi,''));
+                    if(typeof documentElement.data != 'undefined' && documentElement.data.idPath.indexOf("/" + node.data.id) > 0) {
+                        documentElement.resetPath();
+                    }
+                }
+            }    
+        } catch (e) {
+            console.log(e);
         }
     }
 });

@@ -2560,6 +2560,7 @@ INSERT INTO users_permission_definitions (`key`) VALUES ('application_logging');
 INSERT INTO users_permission_definitions (`key`) VALUES ('assets');
 INSERT INTO users_permission_definitions (`key`) VALUES ('classes');
 INSERT INTO users_permission_definitions (`key`) VALUES ('clear_cache');
+INSERT INTO users_permission_definitions (`key`) VALUES ('clear_fullpage_cache');
 INSERT INTO users_permission_definitions (`key`) VALUES ('clear_temp_files');
 INSERT INTO users_permission_definitions (`key`) VALUES ('dashboards');
 INSERT INTO users_permission_definitions (`key`) VALUES ('documents');

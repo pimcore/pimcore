@@ -14,9 +14,15 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
 
+/**
+ * @method Token[] load()
+ * @method int getTotalCount()
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
+ */
 class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     public $tokens;

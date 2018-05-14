@@ -49,7 +49,7 @@ class FreeShipping implements IAction
             // remove shipping charge
             if ($modificator instanceof IShipping) {
                 $modificator->setCharge(Decimal::zero());
-                $priceCalculator->reset();
+                $priceCalculator->calculate(true);
             }
         }
 

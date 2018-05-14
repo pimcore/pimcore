@@ -1,4 +1,5 @@
 {
+  "grid_options": "Grid Options",
   "admin_interface": "Admin Interface",
   "login_screen": "Login Screen",
   "color_description": "Use the HTML hex format, eg. #ffffff",
@@ -1129,7 +1130,6 @@
   "structuredtable_type_bool": "Checkbox",
   "structuredtable_invalid_key": "Invalid Key",
   "grid_current_language": "Current language",
-  "grid_column_config": "Column configuration",
   "selected_grid_columns": "Selected grid columns",
   "object_columns": "Object columns",
   "system_columns": "System columns",
@@ -1377,7 +1377,7 @@
   "perspectives": "Perspectives",
   "search_for_key": "Search Key",
   "filter_active": "Filter active!",
-  "save_column_configuration": "Save column configuration",
+  "save_grid_options": "Save Grid Options",
   "error_saving_configuration": "Error saving configuration",
   "your_configuration_has_been_saved": "Your configuration has been saved",
   "reset_config": "Reset changes",
@@ -1517,7 +1517,7 @@
   "web_format": "Web Format",
   "print_format": "Print Format",
   "office_format": "Office Format",
-  "full_page_cache": "Full Page Cache",
+  "full_page_cache": "Clear Full Page Cache",
   "all_caches": "All Caches",
   "data_cache": "Data Cache",
   "change_password": "Change Password",
@@ -1851,5 +1851,7 @@
   "edit_as_plain_text": "Edit as plain text",
   "type_column": "Type column",
   "keep": "keep",
-  "download_selected_as_zip": "Download selected items as ZIP"
+  "download_selected_as_zip": "Download selected items as ZIP",
+  "unlink_existing_document": "Unlink existing Document",
+  "clear_fullpage_cache": "Clear Full Page Cache"
 }

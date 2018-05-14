@@ -31,6 +31,13 @@ final class DataObjectEvents
     const POST_ADD = 'pimcore.dataobject.postAdd';
 
     /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_ADD_FAILURE = 'pimcore.dataobject.postAddFailure';
+
+    /**
      * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
      *
@@ -51,6 +58,16 @@ final class DataObjectEvents
     const POST_UPDATE = 'pimcore.dataobject.postUpdate';
 
     /**
+     * Arguments:
+     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_UPDATE_FAILURE = 'pimcore.dataobject.postUpdateFailure';
+
+    /**
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string
@@ -63,6 +80,13 @@ final class DataObjectEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.dataobject.postDelete';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_DELETE_FAILURE = 'pimcore.dataobject.postDeleteFailure';
 
     /**
      * Arguments:

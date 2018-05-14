@@ -204,6 +204,11 @@ pimcore.settings.web2print = Class.create({
                 },
                 buttons: [
                     {
+                        text: t("test"),
+                        handler: this.test.bind(this),
+                        icon: "/pimcore/static6/img/flat-color-icons/approval.svg"
+                    },
+                    {
                         text: t("save"),
                         handler: this.save.bind(this),
                         iconCls: "pimcore_icon_apply"
@@ -328,6 +333,10 @@ pimcore.settings.web2print = Class.create({
                 }
             }
         });
+    },
+
+    test: function () {
+        window.open("/admin/settings/test-web2print", "_blank");
     }
 
 

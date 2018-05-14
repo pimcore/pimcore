@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Listing\Dao getDao()
+ * @method Model\Element\Tag[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

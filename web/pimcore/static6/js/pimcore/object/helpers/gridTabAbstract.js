@@ -64,7 +64,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     updateGridHeaderContextMenu: function(grid) {
 
         var columnConfig = new Ext.menu.Item({
-            text: t("grid_column_config"),
+            text: t("grid_options"),
             iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: this.openColumnConfig.bind(this)
         });
@@ -394,12 +394,14 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var columnConfig = {
             language: this.gridLanguage,
+            pageSize: this.gridPageSize,
             classid: this.classId,
             objectId: objectId,
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data, settings, save) {
                 this.gridLanguage = data.language;
+                this.gridPageSize = data.pageSize;
                 this.createGrid(true, data.columns, settings, save);
             }.bind(this),
             function() {
@@ -442,6 +444,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     getGridConfig : function () {
         var config = {
             language: this.gridLanguage,
+            pageSize: this.gridPageSize,
             sortinfo: this.sortinfo,
             classId: this.classId,
             columns: {}

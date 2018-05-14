@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Translation\AbstractTranslation\Listing\Dao getDao()
+ * @method Model\Translation\AbstractTranslation[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

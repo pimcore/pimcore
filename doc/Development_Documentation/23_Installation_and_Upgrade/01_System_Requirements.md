@@ -38,9 +38,11 @@ Please note that the usage of **PHP 7.1 is strongly recommended** as future vers
 - [curl](http://php.net/curl) (required if Google APIs are used)
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
 
-### MySQL >= 5.6.4 / MariaDB >= 10.0.0.5
-
-MySQL 5.6 GA or compatible.
+### Database Server
+- MariaDB >= 10.0.0.5
+- MySQL >= 5.6.4 
+- AWS Aurora (MySQL)
+- Percona Server
 
 #### Features
 - InnoDB / XtraDB storage engine

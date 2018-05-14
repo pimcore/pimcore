@@ -901,7 +901,7 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
-            if (perspectiveCfg.inToolbar("settings.cache") && (user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files"))) {
+            if (perspectiveCfg.inToolbar("settings.cache") && (user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files") || user.isAllowed("clear_fullpage_cache"))) {
 
                 var cacheItems = [];
                 var cacheSubItems = [];
@@ -921,14 +921,6 @@ pimcore.layout.toolbar = Class.create({
                             text: t("data_cache"),
                             iconCls: "pimcore_icon_clear_cache",
                             handler: this.clearCache.bind(this, {'only_pimcore_cache': true})
-                        });
-                    }
-
-                    if (perspectiveCfg.inToolbar("settings.cache.clearOutput")) {
-                        cacheSubItems.push({
-                            text: t("full_page_cache"),
-                            iconCls: "pimcore_icon_clear_cache",
-                            handler: this.clearOutputCache
                         });
                     }
 
@@ -962,6 +954,16 @@ pimcore.layout.toolbar = Class.create({
                             items: cacheSubItems
                         }
                     });
+                }
+
+                if (perspectiveCfg.inToolbar("settings.cache.clearOutput")) {
+                    if (user.isAllowed("clear_fullpage_cache")) {
+                        cacheItems.push({
+                            text: t("full_page_cache"),
+                            iconCls: "pimcore_icon_clear_cache",
+                            handler: this.clearOutputCache
+                        });
+                    }
                 }
 
                 if (perspectiveCfg.inToolbar("settings.cache.clearTemp")) {

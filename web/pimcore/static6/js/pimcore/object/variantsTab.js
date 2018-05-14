@@ -185,7 +185,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         var hideSaveColumnConfig = !fromConfig;
 
         this.saveColumnConfigButton = new Ext.Button({
-            tooltip: t('save_column_configuration'),
+            tooltip: t('save_grid_options'),
             iconCls: "pimcore_icon_publish",
             hidden: hideSaveColumnConfig,
             handler: function () {
@@ -194,7 +194,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         });
 
         this.columnConfigButton = new Ext.SplitButton({
-            text: t('grid_column_config'),
+            text: t('grid_options'),
             iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: function () {
                 this.openColumnConfig();

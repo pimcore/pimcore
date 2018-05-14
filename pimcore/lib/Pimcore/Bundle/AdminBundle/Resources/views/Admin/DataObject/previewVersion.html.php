@@ -145,6 +145,34 @@
             }
         }
         ?>
+    <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+            $fields = $this->object->{"get" . ucfirst($fieldName)}();
+            if($fields) {
+                $fieldDefinitions = $fields->getItemDefinitions();
+                $fieldItems = $fields->getItems();
+            }
+
+            if (count($fieldItems)) {
+                
+                foreach ($fieldItems as $fkey => $fieldItem) {
+                    $fieldKeys = $fieldDefinitions[$fieldItem->type]->getFieldDefinitions();
+                    foreach ($fieldKeys as $fieldKey) {
+
+                    
+                       $value = $fieldItem->{"get" . ucfirst($fieldKey->name)}();
+                       // if ($fieldValue) { ?>
+                             <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                                <td><?= ucfirst($fieldItem->type) . " - " . $fieldKey->title ?> (<?= $language; ?>)</td>
+                                <td><?= $fieldKey->name ?></td>
+                                <td><?= $fieldKey->getVersionPreview($value) ?></td>
+                            </tr>
+                        <?php
+                        $c++;
+                      //  }
+                    }
+                }
+            }
+    ?>
     <?php } else { ?>
         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
             <td><?= $definition->getTitle() ?></td>

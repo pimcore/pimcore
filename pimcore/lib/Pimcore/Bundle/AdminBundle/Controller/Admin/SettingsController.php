@@ -844,7 +844,7 @@ class SettingsController extends AdminController
      */
     public function clearOutputCacheAction(EventDispatcherInterface $eventDispatcher)
     {
-        $this->checkPermission('clear_cache');
+        $this->checkPermission('clear_fullpage_cache');
 
         // remove "output" out of the ignored tags, if a cache lifetime is specified
         Cache::removeIgnoredTagOnClear('output');
@@ -1821,14 +1821,15 @@ class SettingsController extends AdminController
                         case 'object':
                             if (isset($data['data'])) {
                                 $path = $data['data'];
-                                $element = Element\Service::getElementByPath($setting->getType(), $path);
+                                if ($path != null) {
+                                    $element = Element\Service::getElementByPath($setting->getType(), $path);
+                                }
                                 $data['data'] = $element ? $element->getId() : null;
                             }
                             break;
                     }
 
                     $setting->setValues($data);
-
                     $setting->save();
 
                     $data = $this->getWebsiteSettingForEditMode($setting);
@@ -1988,5 +1989,49 @@ class SettingsController extends AdminController
                 $db->query($sql);
             }
         }
+    }
+
+    /**
+     * @Route("/test-web2print")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function testWeb2printAction(Request $request)
+    {
+        $this->checkPermission('web2print_settings');
+
+        $response = $this->render("PimcoreAdminBundle:Admin/Settings:testWeb2print.html.php");
+        $html = $response->getContent();
+
+        $adapter = \Pimcore\Web2Print\Processor::getInstance();
+
+        if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
+            $params['adapterConfig'] = '-O landscape';
+
+        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
+            $params['adapterConfig'] = [
+                'javaScriptMode'  => 0,
+                'addLinks'        => true,
+                'appendLog'       => true,
+                'enableDebugMode' => true,
+            ];
+        }
+
+        $responseOptions = [
+            'Content-Type' => 'application/pdf',
+        ];
+
+        $pdfData = $adapter->getPdfFromString($html, $params);
+
+        return new \Symfony\Component\HttpFoundation\Response(
+            $pdfData,
+            200,
+            $responseOptions
+
+        );
+
+
     }
 }

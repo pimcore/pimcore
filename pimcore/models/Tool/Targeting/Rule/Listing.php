@@ -22,6 +22,7 @@ use Pimcore\Model\Tool\Targeting\Rule;
 
 /**
  * @method Listing\Dao getDao()
+ * @method Rule[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

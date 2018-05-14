@@ -18,7 +18,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     brickKeys: [],
 
     initialize: function (columnConfig, callback, resetCallback, showSaveAndShareTab, settings) {
-
         this.config = columnConfig;
         this.callback = callback;
         this.resetCallback = resetCallback;
@@ -105,9 +104,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         this.window = new Ext.Window({
             width: 950,
-            height: 700,
+            height: '95%',
             modal: true,
-            title: t('grid_column_config'),
+            title: t('grid_options'),
             layout: "fit",
             items: [this.tabPanel],
             buttons: buttons
@@ -311,6 +310,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             this.data.language = this.languageField.getValue();
         }
 
+        if(this.itemsPerPage) {
+            this.data.pageSize = this.itemsPerPage.getValue();
+        }
+
         var operatorFound = false;
 
         if (this.selectionPanel) {
@@ -389,12 +392,19 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     },
 
     getLanguageSelection: function () {
-
         var storedata = [["default", t("default")]];
         for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
             storedata.push([pimcore.settings.websiteLanguages[i],
                 pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
         }
+
+       var itemsPerPageStore = [
+            [25, "25"],
+            [50, "50"],
+            [100, "100"],
+            [200, "200"],
+            [999999, t("all")]
+        ];
 
         this.languageField = new Ext.form.ComboBox({
             name: "language",
@@ -416,6 +426,27 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             displayField: 'label'
         });
 
+        this.itemsPerPage = new Ext.form.ComboBox({
+            name: "itemsperpage",
+            fieldLabel: t("items_per_page"),
+            width: 200,
+            mode: 'local',
+            autoSelect: true,
+            editable: true,
+            value: (this.config.pageSize?this.config.pageSize:pimcore.helpers.grid.getDefaultPageSize(-1)),
+            store: new Ext.data.ArrayStore({
+                id: 0,
+                fields: [
+                    'id',
+                    'label'
+                ],
+                data: itemsPerPageStore
+            }),
+            triggerAction: 'all',
+            valueField: 'id',
+            displayField: 'label'
+        });
+
         var compositeConfig = {
             xtype: "fieldset",
             layout: 'hbox',
@@ -423,7 +454,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             style: "border-top: none !important;",
             hideLabel: false,
             fieldLabel: t("language"),
-            items: [this.languageField]
+            items: [this.languageField,{
+                    xtype: 'tbfill'
+                    }, this.itemsPerPage]
         };
 
         if (!this.languagePanel) {

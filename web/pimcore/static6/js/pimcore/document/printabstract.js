@@ -18,12 +18,12 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
     type: "printabstract",
 
     initialize: function(id, options) {
-
+        this.id = intval(id);
         this.options = options;
+        
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, this.getType());
 
         this.addLoadingPanel();
-        this.id = intval(id);
         this.getData();
     },
 
