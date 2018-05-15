@@ -153,7 +153,21 @@ pimcore.asset.listfolder = Class.create({
                     text: t("download_selected_as_zip"),
                     iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
                     handler: function () {
-                        this.element.downloadZip(this, null, 'selection');
+                        var ids = [];
+
+                        var selectedRows = this.grid.getSelectionModel().getSelection();
+                        for (var i = 0; i < selectedRows.length; i++) {
+                            ids.push(selectedRows[i].data.id);
+                        }
+
+                        if(ids.length) {
+                            this.element.downloadZip({
+                                id: this.element.id,
+                                "selectedIds[]": ids
+                            });
+                        } else {
+                            Ext.Msg.alert(t('error'), t('please_select_items_to_download'));
+                        }
                     }.bind(this)
                 }
             ]

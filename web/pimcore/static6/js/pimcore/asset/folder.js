@@ -261,7 +261,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 tooltip: t("download_as_zip"),
                 iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
                 scale: "medium",
-                handler: this.downloadZip.bind(this)
+                handler: this.downloadZip.bind(this, {id: this.id})
             });
 
             buttons.push({
@@ -310,26 +310,11 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         return this.toolbar;
     },
 
-    downloadZip: function (el, e, selection) {
-        //pimcore.helpers.download('/admin/asset/download-as-zip?id='+ this.id);
-        var ids = [];
-
-        if (typeof selection != "undefined") {
-            //create the ids array which contains chosen rows to export
-            ids = [];
-            var selectedRows = el.grid.getSelectionModel().getSelection();
-            for (var i = 0; i < selectedRows.length; i++) {
-                ids.push(selectedRows[i].data.id);
-            }
-        }
-
+    downloadZip: function (params) {
 
         Ext.Ajax.request({
             url: "/admin/asset/download-as-zip-jobs",
-            params: {
-                id: this.id,
-                "selectedIds[]": ids
-            },
+            params: params,
             success: function(response) {
                 var res = Ext.decode(response.responseText);
 

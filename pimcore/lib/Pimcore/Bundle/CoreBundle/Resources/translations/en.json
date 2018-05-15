@@ -1852,6 +1852,7 @@
   "type_column": "Type column",
   "keep": "keep",
   "download_selected_as_zip": "Download selected items as ZIP",
+  "please_select_items_to_download": "Please select items to download in the list",
   "unlink_existing_document": "Unlink existing Document",
   "clear_fullpage_cache": "Clear Full Page Cache"
 }
