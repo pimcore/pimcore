@@ -1500,7 +1500,7 @@
   "newsletter_csvList": "CSV List",
   "newsletter_testsend": "Newsletter Test Sending",
   "newsletter_test_sent_message": "Test Newsletter sent successfully",
-  "add_object_mbx_title": "Add object of type ",
+  "add_object_mbx_title": "Add new Object of type %s",
   "translation_merger_website": "Merge website translations",
   "high_resolution_info_text": "eg. for Web-to-Print or everywhere where srcset is not possible/sufficient, not necessary for normal web-thumbnails, they automatically get a srcset attribute with 1x and 2x",
   "advanced_settings": "Advanced settings",
