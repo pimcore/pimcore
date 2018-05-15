@@ -875,6 +875,8 @@ class Service extends Model\AbstractModel
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
+        // replace slashes with a hyphen 
+        $key = str_replace('/', '-', $key);
 
         if ($type == 'document') {
             // no spaces & utf8 for documents / clean URLs
