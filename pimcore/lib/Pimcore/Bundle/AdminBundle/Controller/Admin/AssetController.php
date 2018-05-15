@@ -1701,6 +1701,12 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $db = \Pimcore\Db::get();
             $conditionFilters = [];
+            $selectedIds = $request->get('selectedIds', []);
+
+            if (!empty($selectedIds)) {
+                //add a condition if id numbers are specified
+                $conditionFilters[] = "id IN (" . implode(',', $selectedIds) . ')';
+            }
             $conditionFilters[] .= 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
@@ -1724,6 +1730,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     'url' => '/admin/asset/download-as-zip-add-files',
                     'params' => [
                         'id' => $asset->getId(),
+                        'selectedIds' => implode(',', $selectedIds),
                         'offset' => $i * $filesPerJob,
                         'limit' => $filesPerJob,
                         'jobId' => $jobId
@@ -1768,6 +1775,14 @@ class AssetController extends ElementControllerBase implements EventedController
 
                 $db = \Pimcore\Db::get();
                 $conditionFilters = [];
+
+                $selectedIds = $request->get('selectedIds', []);
+                
+                if (!empty($selectedIds)) {
+                    $selectedIds = explode(',', $selectedIds);
+                    //add a condition if id numbers are specified
+                    $conditionFilters[] = "id IN (" . implode(',', $selectedIds) . ')';
+                }
                 $conditionFilters[] .= "type != 'folder' AND path LIKE " . $db->quote($parentPath . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();

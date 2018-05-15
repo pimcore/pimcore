@@ -261,7 +261,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 tooltip: t("download_as_zip"),
                 iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
                 scale: "medium",
-                handler: this.downloadZip.bind(this)
+                handler: this.downloadZip.bind(this, {id: this.id})
             });
 
             buttons.push({
@@ -310,12 +310,11 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         return this.toolbar;
     },
 
-    downloadZip: function () {
-        //pimcore.helpers.download('/admin/asset/download-as-zip?id='+ this.id);
+    downloadZip: function (params) {
 
         Ext.Ajax.request({
             url: "/admin/asset/download-as-zip-jobs",
-            params: {id: this.id},
+            params: params,
             success: function(response) {
                 var res = Ext.decode(response.responseText);
 
