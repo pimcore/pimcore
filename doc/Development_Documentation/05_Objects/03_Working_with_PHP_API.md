@@ -325,7 +325,7 @@ The object listing of this example only delivers objects of the type Collectiont
 
 <a name="zendPaginatorListing">&nbsp;</a>
 
-### Working with Zend_Paginator
+### Working with Zend\Paginator
 
 ##### Action 
 ```php
@@ -335,7 +335,7 @@ public function testAction( Request $request )
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
-    $paginator = \Zend_Paginator::factory($list);
+    $paginator = new \Zend\Paginator\Paginator($list);
     $paginator->setCurrentPageNumber( $request->get('page') );
     $paginator->setItemCountPerPage(10);
     $this->view->paginator  = $paginator;
