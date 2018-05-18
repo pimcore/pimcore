@@ -125,7 +125,7 @@ First, click right on *Home* in the *Documents* panel.
 ![Create page](../img/Pimcore_Elements_check_homepage.png)
 
 Now select the tab *Settings* in the newly opened tab.
-Select the name of the controller and the name of the action in the accordingly fields.
+Select the name of the controller and the name of the action in the according fields.
 
 ![Page settings](../img/Pimcore_Elements_homepage_settings.png)
 
