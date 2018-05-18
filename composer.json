@@ -98,6 +98,7 @@
     "tijsverkoyen/css-to-inline-styles": "~1.5",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.0",
+    "umpirsky/country-list": "2.0.4",
     "vrana/adminer": "~4.6",
     "vrana/jush": "dev-master",
     "wa72/htmlpagedom": "^1.3",
