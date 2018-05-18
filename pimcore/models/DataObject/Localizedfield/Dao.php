@@ -433,11 +433,13 @@ class Dao extends Model\Dao\AbstractDao
 
             // create query
             $sql = sprintf(
-                'ifnull(`%s`.`%s`, %s)',
-                $lang,
-                $field,
-                $fallback
+                'IF(`%s`.`%s` IS NULL OR `%s`.`%s` = "", %s, `%s`.`%s`)',
+                $lang, $field,
+                $lang, $field,
+                $fallback,
+                $lang, $field
             );
+
 
             return $fallback !== 'null'
                 ? $sql
@@ -467,7 +469,11 @@ class Dao extends Model\Dao\AbstractDao
                 $fallbackLanguages = array_unique(Tool::getFallbackLanguagesFor($language));
                 array_unshift($fallbackLanguages, $language);
                 foreach ($localizedColumns as $row) {
-                    $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages) . sprintf(' as "%s"', $row['Field']);
+                    if($row['Field'] == 'language' || $row['Field'] == 'ooo_id') {
+                        $localizedFields[] = $db->quoteIdentifier($language) . '.' . $db->quoteIdentifier($row['Field']);
+                    } else {
+                        $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages) . sprintf(' as "%s"', $row['Field']);
+                    }
                 }
 
                 // create view select fields
