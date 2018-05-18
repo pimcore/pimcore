@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 interface IEnvironment
@@ -60,6 +61,18 @@ interface IEnvironment
      * @return ICheckoutable
      */
     public function getProduct();
+
+    /**
+     * @param VisitorInfo $visitorInfo
+     * @return IEnvironment
+     */
+    public function setVisitorInfo(VisitorInfo $visitorInfo);
+
+    /**
+     * @return VisitorInfo
+     */
+    public function getVisitorInfo();
+
 
     /**
      * @param IRule $rule
