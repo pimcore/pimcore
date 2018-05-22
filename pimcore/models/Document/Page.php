@@ -427,7 +427,8 @@ class Page extends TargetingDocument
     /**
      * @return string
      */
-    public function getPreviewImageFilesystemPath() {
+    public function getPreviewImageFilesystemPath()
+    {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . '.jpg';
     }
 }

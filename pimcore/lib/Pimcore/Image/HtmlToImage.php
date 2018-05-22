@@ -44,7 +44,9 @@ class HtmlToImage
 
     /**
      * @deprecated
+     *
      * @return bool|mixed|string
+     *
      * @throws \Exception
      */
     public static function getXvfbBinary()

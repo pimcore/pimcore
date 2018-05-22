@@ -454,9 +454,10 @@ class Video extends Model\Document\Tag
     /**
      * @return mixed|string
      */
-    private function parseYoutubeId() {
+    private function parseYoutubeId()
+    {
         $youtubeId = '';
-        if($this->type == 'youtube') {
+        if ($this->type == 'youtube') {
             if ($youtubeId = $this->id) {
                 if (strpos($youtubeId, '//') !== false) {
                     $parts = parse_url($this->id);
@@ -478,21 +479,23 @@ class Video extends Model\Document\Tag
                 }
             }
         }
+
         return $youtubeId;
     }
 
     /**
      * @return string
      */
-    public function getYoutubeUrlEmbedded() {
-        if($this->type == 'youtube') {
+    public function getYoutubeUrlEmbedded()
+    {
+        if ($this->type == 'youtube') {
             if ($youtubeId = $this->parseYoutubeId()) {
                 return 'https://www.youtube-nocookie.com/embed/'.$youtubeId;
             }
         }
+
         return '';
     }
-
 
     /**
      * @return string
@@ -505,7 +508,6 @@ class Video extends Model\Document\Tag
 
         $options = $this->getOptions();
         $code = '';
-
 
         $youtubeId = $this->parseYoutubeId();
         if (!$youtubeId) {

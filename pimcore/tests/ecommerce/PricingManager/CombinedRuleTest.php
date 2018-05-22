@@ -8,21 +8,16 @@
 
 namespace Pimcore\Tests\Ecommerce\PricingManager;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartDiscount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\FreeShipping;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\Gift;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CartAmount;
 use Pimcore\Tests\Ecommerce\PricingManager\Rule\AbstractRuleTest;
 
-
 class CombinedRuleTest extends AbstractRuleTest
 {
-
-
-    public function testSimpleProductAndCartDiscount() {
-
+    public function testSimpleProductAndCartDiscount()
+    {
         $ruleDefinitions = [
             'testrule' => [
                 'actions' => [
@@ -74,9 +69,8 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-
-    public function testSimpleProductAndCartDiscountWithCondition1() {
-
+    public function testSimpleProductAndCartDiscountWithCondition1()
+    {
         $ruleDefinitions = [
             'testrule' => [
                 'actions' => [
@@ -130,7 +124,6 @@ class CombinedRuleTest extends AbstractRuleTest
 
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 
-
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
@@ -165,9 +158,8 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-
-    public function testSimpleProductAndCartDiscountWithConditionFreeShippingFirst() {
-
+    public function testSimpleProductAndCartDiscountWithConditionFreeShippingFirst()
+    {
         $ruleDefinitions = [
             'testrule' => [
                 'actions' => [
@@ -232,7 +224,6 @@ class CombinedRuleTest extends AbstractRuleTest
 
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 
-
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
@@ -267,8 +258,8 @@ class CombinedRuleTest extends AbstractRuleTest
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
 
-    public function testSimpleProductAndCartDiscountWithConditionFreeShippingLast() {
-
+    public function testSimpleProductAndCartDiscountWithConditionFreeShippingLast()
+    {
         $ruleDefinitions = [
             'testrule' => [
                 'actions' => [
@@ -333,7 +324,6 @@ class CombinedRuleTest extends AbstractRuleTest
 
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 
-
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
@@ -367,5 +357,4 @@ class CombinedRuleTest extends AbstractRuleTest
 
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
     }
-
 }

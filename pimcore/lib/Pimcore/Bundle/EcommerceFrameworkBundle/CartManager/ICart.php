@@ -180,7 +180,6 @@ interface ICart
      */
     public function getPriceCalculator();
 
-
     /**
      * executes necessary steps when cart is modified - e.g. updating modification timestamp, resetting cart price calculator etc.
      *

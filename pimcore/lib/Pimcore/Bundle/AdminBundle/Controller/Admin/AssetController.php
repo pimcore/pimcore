@@ -1705,7 +1705,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             if (!empty($selectedIds)) {
                 //add a condition if id numbers are specified
-                $conditionFilters[] = "id IN (" . implode(',', $selectedIds) . ')';
+                $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
             }
             $conditionFilters[] .= 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
@@ -1777,11 +1777,11 @@ class AssetController extends ElementControllerBase implements EventedController
                 $conditionFilters = [];
 
                 $selectedIds = $request->get('selectedIds', []);
-                
+
                 if (!empty($selectedIds)) {
                     $selectedIds = explode(',', $selectedIds);
                     //add a condition if id numbers are specified
-                    $conditionFilters[] = "id IN (" . implode(',', $selectedIds) . ')';
+                    $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
                 }
                 $conditionFilters[] .= "type != 'folder' AND path LIKE " . $db->quote($parentPath . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {

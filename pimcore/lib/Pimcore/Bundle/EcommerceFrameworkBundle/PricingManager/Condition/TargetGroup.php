@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 
@@ -42,19 +41,16 @@ class TargetGroup implements ICondition
      */
     public function check(IEnvironment $environment)
     {
-
         $visitorInfo = $environment->getVisitorInfo();
 
-        if($this->getTargetGroup()) {
-
-            if($visitorInfo->hasTargetGroupAssignment($this->getTargetGroup())) {
-                if($visitorInfo->getTargetGroupAssignment($this->getTargetGroup())->getCount() > $this->getThreshold()) {
+        if ($this->getTargetGroup()) {
+            if ($visitorInfo->hasTargetGroupAssignment($this->getTargetGroup())) {
+                if ($visitorInfo->getTargetGroupAssignment($this->getTargetGroup())->getCount() > $this->getThreshold()) {
                     return true;
                 }
-
             }
-
         }
+
         return false;
     }
 
@@ -66,17 +62,12 @@ class TargetGroup implements ICondition
         return ['targetGroupId', 'threshold'];
     }
 
-    /**
-     *
-     */
     public function __wakeup()
     {
-        if($this->targetGroupId) {
+        if ($this->targetGroupId) {
             $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
         }
-
     }
-
 
     /**
      * @return string
@@ -100,10 +91,10 @@ class TargetGroup implements ICondition
     {
         $json = json_decode($string);
 
-        if($json->targetGroupId) {
+        if ($json->targetGroupId) {
             $this->setTargetGroupId($json->targetGroupId);
         }
-        if($json->threshold) {
+        if ($json->threshold) {
             $this->setThreshold($json->threshold);
         }
 
@@ -124,7 +115,7 @@ class TargetGroup implements ICondition
     public function setTargetGroupId(int $targetGroupId)
     {
         $this->targetGroupId = $targetGroupId;
-        if($this->targetGroupId) {
+        if ($this->targetGroupId) {
             $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
         } else {
             $this->targetGroup = null;
@@ -145,7 +136,7 @@ class TargetGroup implements ICondition
     public function setTargetGroup(\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup)
     {
         $this->targetGroup = $targetGroup;
-        if($this->targetGroup) {
+        if ($this->targetGroup) {
             $this->targetGroupId = $targetGroup->getId();
         } else {
             $this->targetGroupId = null;
@@ -167,5 +158,4 @@ class TargetGroup implements ICondition
     {
         $this->threshold = $threshold;
     }
-
 }

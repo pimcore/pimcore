@@ -18,7 +18,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
 
@@ -487,6 +486,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     {
         //make sure that cart is calculated
         $this->getPriceCalculator()->calculate();
+
         return $this->giftItems;
     }
 
@@ -499,6 +499,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     {
         //make sure that cart is calculated
         $this->getPriceCalculator()->calculate();
+
         return array_key_exists($itemKey, $this->giftItems) ? $this->giftItems[$itemKey] : null;
     }
 
@@ -749,7 +750,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * @param ICartPriceCalculator $priceCalculator
      */
-    public function setPriceCalculator(ICartPriceCalculator $priceCalculator) {
+    public function setPriceCalculator(ICartPriceCalculator $priceCalculator)
+    {
         $this->priceCalculator = $priceCalculator;
     }
 

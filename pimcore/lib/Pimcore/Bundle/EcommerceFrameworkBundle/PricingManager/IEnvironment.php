@@ -64,6 +64,7 @@ interface IEnvironment
 
     /**
      * @param VisitorInfo $visitorInfo
+     *
      * @return IEnvironment
      */
     public function setVisitorInfo(VisitorInfo $visitorInfo);
@@ -72,7 +73,6 @@ interface IEnvironment
      * @return VisitorInfo
      */
     public function getVisitorInfo();
-
 
     /**
      * @param IRule $rule

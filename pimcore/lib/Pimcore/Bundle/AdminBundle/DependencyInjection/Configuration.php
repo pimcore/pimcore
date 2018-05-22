@@ -110,7 +110,8 @@ class Configuration implements ConfigurationInterface
     /**
      * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */
-    protected function buildEventsNode() {
+    protected function buildEventsNode()
+    {
         $treeBuilder = new TreeBuilder();
         $notesEvents = $treeBuilder->root('notes_events');
 

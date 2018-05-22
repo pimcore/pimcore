@@ -869,7 +869,7 @@ class ClassDefinition extends Model\AbstractModel
         if ($def instanceof DataObject\ClassDefinition\Data) {
             $existing = $this->getFieldDefinition($def->getName());
 
-            if(!$existing && method_exists($def, 'addReferencedField') && method_exists($def, 'setReferencedFields')) {
+            if (!$existing && method_exists($def, 'addReferencedField') && method_exists($def, 'setReferencedFields')) {
                 $def->setReferencedFields([]);
             }
 
@@ -881,8 +881,6 @@ class ClassDefinition extends Model\AbstractModel
             } else {
                 $this->addFieldDefinition($def->getName(), $def);
             }
-
-
         }
     }
 

@@ -323,9 +323,10 @@ class PageController extends DocumentControllerBase
      *
      * @return BinaryFileResponse
      */
-    public function displayPreviewImageAction(Request $request) {
+    public function displayPreviewImageAction(Request $request)
+    {
         $document = Document::getById($request->get('id'));
-        if($document instanceof Document\Page) {
+        if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, ['Content-Type' => 'image/jpg']);
         }
     }

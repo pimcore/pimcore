@@ -149,7 +149,7 @@ class PricingManager implements IPricingManager
         $env->setCart($cart);
         $env->setExecutionMode(IEnvironment::EXECUTION_MODE_CART);
         $env->setProduct(null);
-        if($this->visitorInfoStorage && $this->visitorInfoStorage->hasVisitorInfo()) {
+        if ($this->visitorInfoStorage && $this->visitorInfoStorage->hasVisitorInfo()) {
             $env->setVisitorInfo($this->visitorInfoStorage->getVisitorInfo());
         }
 
@@ -337,7 +337,7 @@ class PricingManager implements IPricingManager
             $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
         }
 
-        if($this->visitorInfoStorage && $this->visitorInfoStorage->hasVisitorInfo()) {
+        if ($this->visitorInfoStorage && $this->visitorInfoStorage->hasVisitorInfo()) {
             $environment->setVisitorInfo($this->visitorInfoStorage->getVisitorInfo());
         }
 

@@ -440,7 +440,6 @@ class Dao extends Model\Dao\AbstractDao
                 $lang, $field
             );
 
-
             return $fallback !== 'null'
                 ? $sql
                 : $db->quoteIdentifier($lang) . '.' . $db->quoteIdentifier($field)
@@ -469,7 +468,7 @@ class Dao extends Model\Dao\AbstractDao
                 $fallbackLanguages = array_unique(Tool::getFallbackLanguagesFor($language));
                 array_unshift($fallbackLanguages, $language);
                 foreach ($localizedColumns as $row) {
-                    if($row['Field'] == 'language' || $row['Field'] == 'ooo_id') {
+                    if ($row['Field'] == 'language' || $row['Field'] == 'ooo_id') {
                         $localizedFields[] = $db->quoteIdentifier($language) . '.' . $db->quoteIdentifier($row['Field']);
                     } else {
                         $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages) . sprintf(' as "%s"', $row['Field']);

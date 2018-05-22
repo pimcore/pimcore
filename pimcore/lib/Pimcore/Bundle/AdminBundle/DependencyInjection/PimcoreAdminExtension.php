@@ -21,10 +21,9 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class PimcoreAdminExtension extends Extension
 {
-
-    CONST PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES = 'pimcore_admin.dataObjects.notes_events.types';
-    CONST PARAM_ASSETS_NOTES_EVENTS_TYPES = 'pimcore_admin.assets.notes_events.types';
-    CONST PARAM_DOCUMENTS_NOTES_EVENTS_TYPES = 'pimcore_admin.documents.notes_events.types';
+    const PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES = 'pimcore_admin.dataObjects.notes_events.types';
+    const PARAM_ASSETS_NOTES_EVENTS_TYPES = 'pimcore_admin.assets.notes_events.types';
+    const PARAM_DOCUMENTS_NOTES_EVENTS_TYPES = 'pimcore_admin.documents.notes_events.types';
 
     /**
      * {@inheritdoc}
@@ -56,6 +55,5 @@ class PimcoreAdminExtension extends Extension
         $container->setParameter(self::PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES, $config['dataObjects']['notes_events']['types']);
         $container->setParameter(self::PARAM_ASSETS_NOTES_EVENTS_TYPES, $config['assets']['notes_events']['types']);
         $container->setParameter(self::PARAM_DOCUMENTS_NOTES_EVENTS_TYPES, $config['documents']['notes_events']['types']);
-
     }
 }

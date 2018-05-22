@@ -42,7 +42,6 @@ class Ecommerce extends Module
             $installer = $pimcoreModule->getContainer()->get(Installer::class);
             $installer->install();
 
-
             //explicitly load installed classes so that the new ones are used during tests
             Autoloader::load(OnlineShopTaxClass::class);
             Autoloader::load(FilterDefinition::class);

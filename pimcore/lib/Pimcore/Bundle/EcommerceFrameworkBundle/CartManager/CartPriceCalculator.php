@@ -246,27 +246,28 @@ class CartPriceCalculator implements ICartPriceCalculator
         $this->grandTotal   = $currentSubTotal;
         $this->isCalculated = true;
 
-        if(!$ignorePricingRules) {
+        if (!$ignorePricingRules) {
             // apply pricing rules
             $this->getPricingManager()->applyCartRules($this->cart);
 
             //check if some pricing rule needs recalculation of sums
-            if(!$this->isCalculated) {
+            if (!$this->isCalculated) {
                 $this->calculate(true);
             }
-
         }
-
     }
 
-    public function setPricingManager(IPricingManager $pricingManager) {
+    public function setPricingManager(IPricingManager $pricingManager)
+    {
         $this->pricingManager = $pricingManager;
     }
 
-    public function getPricingManager() {
-        if(empty($this->pricingManager)) {
+    public function getPricingManager()
+    {
+        if (empty($this->pricingManager)) {
             $this->pricingManager = Factory::getInstance()->getPricingManager();
         }
+
         return $this->pricingManager;
     }
 

@@ -132,11 +132,13 @@ class Environment implements IEnvironment
 
     /**
      * @param VisitorInfo $visitorInfo
+     *
      * @return IEnvironment
      */
     public function setVisitorInfo(VisitorInfo $visitorInfo)
     {
         $this->visitorInfo = $visitorInfo;
+
         return $this;
     }
 

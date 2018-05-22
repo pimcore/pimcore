@@ -2002,14 +2002,13 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('web2print_settings');
 
-        $response = $this->render("PimcoreAdminBundle:Admin/Settings:testWeb2print.html.php");
+        $response = $this->render('PimcoreAdminBundle:Admin/Settings:testWeb2print.html.php');
         $html = $response->getContent();
 
         $adapter = \Pimcore\Web2Print\Processor::getInstance();
 
         if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
             $params['adapterConfig'] = '-O landscape';
-
         } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
             $params['adapterConfig'] = [
                 'javaScriptMode'  => 0,
@@ -2031,7 +2030,5 @@ class SettingsController extends AdminController
             $responseOptions
 
         );
-
-
     }
 }
