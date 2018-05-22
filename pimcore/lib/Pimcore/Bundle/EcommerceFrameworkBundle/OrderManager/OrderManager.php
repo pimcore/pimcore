@@ -218,6 +218,9 @@ class OrderManager implements IOrderManager
         ));
     }
 
+    /**
+     * @return Folder
+     */
     protected function getOrderParentFolder()
     {
         if (empty($this->orderParentFolder)) {
