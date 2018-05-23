@@ -394,7 +394,7 @@ pimcore.asset.metadata = Class.create({
         // check for duplicate name
         var dublicateIndex = store.findBy(function (record, id) {
             if (record.data.name.toLowerCase() == key.toLowerCase()) {
-                if(record.data.language.toLowerCase() == language.toLowerCase()) {
+                if(String(record.data.language).toLowerCase() == language.toLowerCase()) {
                     return true;
                 }
             }
@@ -532,7 +532,7 @@ pimcore.asset.metadata = Class.create({
 
             var dublicateIndex = store.findBy(function (record, id) {
                 if (record.data.name.toLowerCase() == key.toLowerCase()) {
-                    if(record.data.language.toLowerCase() == language.toLowerCase()) {
+                    if(String(record.data.language).toLowerCase() == language.toLowerCase()) {
                         return true;
                     }
                 }
