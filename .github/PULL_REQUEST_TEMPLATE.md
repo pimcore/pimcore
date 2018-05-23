@@ -9,9 +9,9 @@
 **Don't submit a PR if it doesn't comply, it'll be closed without a comment!**
   
   
-## Fixes Issue #
 
 ## Changes in this pull request  
+Resolves #
 
 ## Additional info  
 
