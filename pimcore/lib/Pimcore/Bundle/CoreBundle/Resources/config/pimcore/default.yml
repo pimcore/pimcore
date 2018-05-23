@@ -54,6 +54,7 @@ doctrine:
                     collate: utf8mb4_unicode_ci
                 mapping_types:
                     enum: string
+                    bit: boolean
 
 # Monolog Configuration
 monolog:
