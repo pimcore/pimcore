@@ -1,5 +1,11 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Build 236 (2018-05-22)
+
+Method signature of [ICart](https://github.com/pimcore/pimcore/commit/d84d3cf94223a8cf55861a0d68956df126e1b6c5#diff-3ef1dc16016857cdc833662102181630) changed: 
+Added `modified()` as a public method. If you have implemented your own cart and not extended `AbstractCart` or have
+overwritten the `modified()` method, please check your implementation. 
+
 ## Build 206 (2018-02-19)
 
 The pricing manager in the Ecommerce Framework is now tenant aware, using the checkout tenant if set. To make this possible,
