@@ -111,11 +111,11 @@ class Locale
             $locale = $this->findLocale();
         }
 
-        if (file_exists(PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/' . $locale . '/country.php')) {
-            $regions = include(PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/' . $locale . '/country.php');
-
+        $dataPath = PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/';
+        if (file_exists($dataPath . $locale . '/country.php')) {
+            $regions = include($dataPath . $locale . '/country.php');
         } else {
-            $regions = include(PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/en/country.php');
+            $regions = include($dataPath . 'en/country.php');
         }
         return $regions;
     }
