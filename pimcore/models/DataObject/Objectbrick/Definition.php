@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick;
 
+use Pimcore\Cache\Runtime;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -182,7 +183,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= "}\n";
         $cd .= "\n";
 
-        File::put($this->getPhpClassFile(), $cd);
+        File::putPhpFile($this->getPhpClassFile(), $cd);
+        $cacheKey = "objectbrick_" . $this->getKey();
+        // for localized fields getting a fresh copy
+        Runtime::set($cacheKey, $this);
 
         $this->createContainerClasses();
         $this->updateDatabase();

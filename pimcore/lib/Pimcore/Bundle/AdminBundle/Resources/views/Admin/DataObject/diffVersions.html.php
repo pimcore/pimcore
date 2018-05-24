@@ -68,34 +68,32 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
         <td colspan="3">&nbsp;</td>
     </tr>
 
-<?php $c = 0; ?>
-<?php
-    foreach ($fields as $fieldName => $definition) { ?>
+    <?php $c = 0; ?>
     <?php
+    foreach ($fields as $fieldName => $definition) { ?>
+        <?php
         if($definition instanceof DataObject\ClassDefinition\Data\Localizedfields) { ?>
-        <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
-            <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
-                <?php
+            <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
+                <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
+                    <?php
                     $v1Container = $this->object1->getValueForFieldName($fieldName);
                     $v1 = $v1Container ? $lfd->getVersionPreview($v1Container->getLocalizedValue($lfd->getName(), $language)) : "";
                     $v2Container = $this->object2->getValueForFieldName($fieldName);
                     $v2 = $v2Container ? $lfd->getVersionPreview($v2Container->getLocalizedValue($lfd->getName(), $language)) : "";
-                ?>
-                <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                    <td><?= $lfd->getTitle() ?> (<?= $language; ?>)</td>
-                    <td><?= $lfd->getName() ?></td>
-                    <?php if (!$this->isImportPreview || !$this->isNew) { ?>
-                        <td><?= $v1 ?></td>
+                    ?>
+                    <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                        <td><?= $lfd->getTitle() ?> (<?= $language; ?>)</td>
+                        <td><?= $lfd->getName() ?></td>
+                        <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                            <td><?= $v1 ?></td>
                         <?php } ?>
-                    <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
-                </tr>
-                <?php
-                $c++;
-            } ?>
-        <?php } ?>
+                        <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+                    </tr>
+                    <?php
+                    $c++;
+                } ?>
+            <?php } ?>
         <?php } else if($definition instanceof DataObject\ClassDefinition\Data\Classificationstore){
-
-
 
             /** @var $storedata DataObject\Classificationstore */
             $storedata1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
@@ -176,17 +174,67 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 }
             }
             ?>
-    <?php } else if($definition instanceof DataObject\ClassDefinition\Data\ObjectBricks) {
-                ?>
-                <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
+        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\ObjectBricks) {
+            ?>
+            <?php foreach ($definition->getAllowedTypes() as $asAllowedType) { ?>
+                <?php
+                $collectionDef = DataObject\Objectbrick\Definition::getByKey($asAllowedType);
+
+                foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
                     <?php
-                    $collectionDef = DataObject\Objectbrick\Definition::getByKey($asAllowedType);
 
-                    foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
-                        <?php
 
+                    $bricks1 = $this->object1->{"get" . ucfirst($fieldName)}();
+                    $bricks2 = $this->object2->{"get" . ucfirst($fieldName)}();
+
+                    if (!$bricks1 && !$bricks2) {
+                        continue;
+                    }
+
+
+                    if ($lfd instanceof DataObject\ClassDefinition\Data\Localizedfields) { ?>
+                        <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
+                            <?php foreach ($lfd->getFieldDefinitions() as $localizedFieldDefinition) { ?>
+                                <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                                    <td><?= $localizedFieldDefinition->getTitle() ?> (<?= $language; ?>)</td>
+                                    <td><?= $localizedFieldDefinition->getName() ?></td>
+
+                                    <?php
+                                    $v1 = null;
+                                    $v2 = null;
+                                    if ($bricks1) {
+                                        $brick1Value = $bricks1->{"get" . $asAllowedType}();
+                                        if ($brick1Value) {
+                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            $localizedBrickValues = $brick1Value->getLocalizedFields();
+                                            $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
+                                            $v1 = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
+                                        }
+                                    }
+
+                                    if ($bricks2) {
+                                        $brick2Value = $bricks2->{"get" . $asAllowedType}();
+                                        if ($brick2Value) {
+                                            /** @var  $localizedBrickValues DataObject\Localizedfield */
+                                            $localizedBrickValues = $brick2Value->getLocalizedFields();
+                                            $localizedBrickValue = $localizedBrickValues->getLocalizedValue($localizedFieldDefinition->getName(), $language);
+                                            $v2 = $localizedFieldDefinition->getVersionPreview($localizedBrickValue);
+                                        }
+                                    }
+
+                                    ?>
+                                    <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                                        <td><?= $v1 ?></td>
+                                    <?php } ?>
+                                    <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+
+                                </tr>
+                                <?php
+                                $c++;
+                            } ?>
+                        <?php }
+                    } else {
                         $v1 = null;
-                        $bricks1 = $this->object1->{"get" . ucfirst($fieldName)}();
                         if ($bricks1) {
                             $brick1Value = $bricks1->{"get" . $asAllowedType}();
                             if ($brick1Value) {
@@ -194,16 +242,14 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                             }
                         }
                         $v2 = null;
-                        $bricks2 = $this->object2->{"get" . ucfirst($fieldName)}();
+
                         if ($bricks2) {
                             $brick2Value = $bricks2->{"get" . $asAllowedType}();
                             if ($brick2Value) {
                                 $v2 = $lfd->getVersionPreview($brick2Value->getValueForFieldName($lfd->getName()));
                             }
                         }
-                        if (!$bricks1 && !$bricks2) {
-                            continue;
-                        }
+
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
@@ -214,11 +260,14 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                             <?php } ?>
                             <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
                         </tr>
+
                         <?php
                         $c++;
-                    } ?>
-                <?php } ?>
-    <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+                    }
+
+                } ?>
+            <?php } ?>
+        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
             $fields1 = $this->object1->{"get" . ucfirst($fieldName)}();
             $fields2 = $this->object2->{"get" . ucfirst($fieldName)}();
 
@@ -232,7 +281,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 $fieldItems2 = $fields2->getItems();
             }
 
-            if (count($fieldItems1)) {
+            if (!is_null($fieldItems1) && count($fieldItems1)) {
                 foreach ($fieldItems1 as $fkey1 => $fieldItem1) {
                     $fieldKeys1 = $fieldDefinitions1[$fieldItem1->type]->getFieldDefinitions();
 
@@ -247,9 +296,9 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         if($fieldItem1 instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\NumFields) {
                             $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
                         }
-                        
+
                         $v1 = $fieldKey1->getVersionPreview($fieldItem1->{"get" . ucfirst($fieldKey1->name)}());
-                        
+
                         if(!empty($ffkey2) && isset($fieldKeys2[$fkey])) {
                             $v2 = $fieldKey1->getVersionPreview($ffkey2->{"get" . ucfirst($fieldKeys2[$fkey]->name)}());
                         }
@@ -269,7 +318,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 }
             }
 
-            if (count($fieldItems2)) {
+            if (!is_null($fieldItems2) && count($fieldItems2)) {
                 foreach ($fieldItems2 as $fkey2 => $fieldItem2) {
                     $fieldKeys2 = $fieldDefinitions2[$fieldItem2->type]->getFieldDefinitions();
                     foreach ($fieldKeys2 as $fkey => $fieldKey2) {
@@ -292,22 +341,22 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 }
             }
         } else { ?>
-        <?php
+            <?php
             $v1 = $definition->getVersionPreview($this->object1->getValueForFieldName($fieldName));
             $v2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
-        ?>
-        <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-            <td><?= $definition->getTitle() ?></td>
-            <td><?= $definition->getName() ?></td>
-            <?php if (!$this->isImportPreview || !$this->isNew) { ?>
-            <td><?= $v1 ?></td>
-            <?php } ?>
-            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
-        </tr>
+            ?>
+            <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                <td><?= $definition->getTitle() ?></td>
+                <td><?= $definition->getName() ?></td>
+                <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                    <td><?= $v1 ?></td>
+                <?php } ?>
+                <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+            </tr>
 
-    <?php } ?>
-    <?php $c++;
-} ?>
+        <?php } ?>
+        <?php $c++;
+    } ?>
 </table>
 
 

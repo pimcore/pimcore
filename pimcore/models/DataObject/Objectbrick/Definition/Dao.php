@@ -120,6 +120,19 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
             // add indices
             $this->addIndexToField($value, $tableStore, 'getColumnType', true);
             $this->addIndexToField($value, $tableQuery);
+
+            if ($value instanceof  DataObject\ClassDefinition\Data\Localizedfields) {
+                $value->classSaved(
+                    $class,
+                    [
+                        'context' => [
+                            'containerType' => 'objectbrick',
+                            'containerKey' => $this->model->getKey()
+                        ]
+                    ]
+                );
+            }
+
         }
 
         $this->removeUnusedColumns($tableStore, $columnsToRemoveStore, $protectedColumnsStore);

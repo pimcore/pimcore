@@ -87,6 +87,14 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
 
             foreach ($allowedBrickTypes as $allowedBrickType) {
                 $getter = 'get' . ucfirst($allowedBrickType);
+                $params =         [
+                    'context' => [
+                        'containerType' => 'objectbrick',
+                        'containerKey' => $allowedBrickType],
+                        'fieldname' => $this->getName()
+
+                ];
+
                 $editmodeData[] = $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $objectFromVersion);
             }
         }
@@ -130,7 +138,7 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
         $inherited = false;
         foreach ($collectionDef->getFieldDefinitions() as $fd) {
             if (!$fd instanceof CalculatedValue) {
-                $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $objectFromVersion); //$fd->getDataForEditmode($item->{$fd->getName()});
+                $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $objectFromVersion, $params); //$fd->getDataForEditmode($item->{$fd->getName()});
                 $brickData[$fd->getName()] = $fieldData->objectData;
             }
 
@@ -172,10 +180,11 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
      * @param $baseObject
      * @param $getter
      * @param $objectFromVersion
+     * @param $params
      *
      * @return mixed
      */
-    private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion)
+    private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion, $params)
     {
         $result = new \stdClass();
         $parent = DataObject\Service::hasInheritableParentObject($baseObject);
@@ -202,7 +211,7 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
                 if (!empty($parentItem)) {
                     $parentItem = $parentItem->$getter();
                     if ($parentItem) {
-                        return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
+                        return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion, $params);
                     }
                 }
             }
@@ -226,7 +235,8 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
             $editmodeValue = null;
             if (!empty($item)) {
                 $fieldValue = $item->$valueGetter();
-                $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject);
+
+                $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject, $params);
             }
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
                 $backup = DataObject\AbstractObject::getGetInheritedValues();
@@ -234,7 +244,7 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
                 $parentItem = $parent->{'get' . ucfirst($this->getName())}()->$getter();
                 DataObject\AbstractObject::setGetInheritedValues($backup);
                 if (!empty($parentItem)) {
-                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
+                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion, $params);
                 }
             }
             $result->objectData = $editmodeValue;
@@ -282,7 +292,15 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
                 } else {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         if (array_key_exists($fd->getName(), $collectionRaw['data'])) {
-                            $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw['data'][$fd->getName()], $object);
+                            $collectionData[$fd->getName()] =
+                                $fd->getDataFromEditmode($collectionRaw['data'][$fd->getName()], $object,
+                                    [
+                                        'context' => [
+                                            'containerType' => 'objectbrick',
+                                            'containerKey' => $collectionRaw['type'],
+                                            'fieldname' => $this->getName()
+                                        ]
+                                    ]);
                         }
                     }
                     $brick->setValues($collectionData);
@@ -1002,7 +1020,10 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
 
                     foreach ($fieldDefinition as $fd) {
                         if (method_exists($fd, 'classSaved')) {
-                            $fd->classSaved($class);
+                            if (!$fd instanceof Localizedfields) {
+                                // defer creation
+                                $fd->classSaved($class);
+                            }
                         }
                     }
                 }

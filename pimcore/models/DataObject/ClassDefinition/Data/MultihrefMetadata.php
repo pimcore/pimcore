@@ -667,13 +667,19 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
 
-        if ($params && $params['context'] && $params['context']['containerType'] == 'fieldcollection' && $params['context']['subContainerType'] == 'localizedfield') {
+        if ($params && $params['context'] && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') && $params['context']['subContainerType'] == 'localizedfield') {
             $context = $params['context'];
             $index = $context['index'];
             $containerName = $context['fieldname'];
 
+            if ($params['context']['containerType'] == 'fieldcollection') {
+                $ownerName = '/' . $params['context']['containerType'] . '~' . $containerName . '/' . $index . '/%';
+            } else {
+                $ownerName = '/' . $params['context']['containerType'] . '~' . $containerName . '/%';
+            }
+
             $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . $index . '/%')
+                . $db->quoteInto('ownername LIKE ?', $ownerName)
                 . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 . ' AND ' . $db->quoteInto('position = ?', $position);
         } else {
@@ -757,17 +763,28 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
     {
         $db = Db::get();
 
-        if ($params && $params['context'] && $params['context']['containerType'] == 'fieldcollection' && $params['context']['subContainerType'] == 'localizedfield') {
+        if ($params && $params['context'] && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') && $params['context']['subContainerType'] == 'localizedfield') {
             $context = $params['context'];
-            $index = $context['index'];
             $containerName = $context['fieldname'];
 
-            $db->deleteWhere(
-                'object_metadata_' . $object->getClassId(),
-                $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . $index . '/%')
-                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-            );
+            if ($params['context']['containerType'] == 'objectbrick') {
+                $db->deleteWhere(
+                    'object_metadata_' . $object->getClassId(),
+                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/%')
+                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                );
+            } else {
+                $index = $context['index'];
+
+                $db->deleteWhere(
+                    'object_metadata_' . $object->getClassId(),
+                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] .'~' . $containerName . '/' . $index . '/%')
+                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                );
+
+            }
         } else {
             $deleteCondition = [
                 'o_id' => $object->getId(),
