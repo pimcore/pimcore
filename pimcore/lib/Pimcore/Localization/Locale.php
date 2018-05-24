@@ -111,16 +111,12 @@ class Locale
             $locale = $this->findLocale();
         }
 
-        $regions = [];
-        $locales = $this->getLocaleList();
-        foreach ($locales as $code) {
-            $regionCode = \Locale::getRegion($code);
-            if ($regionCode) {
-                $regionTranslation = \Locale::getDisplayRegion($code, $locale);
-                $regions[$regionCode] = $regionTranslation;
-            }
+        $dataPath = PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/';
+        if (file_exists($dataPath . $locale . '/country.php')) {
+            $regions = include($dataPath . $locale . '/country.php');
+        } else {
+            $regions = include($dataPath . 'en/country.php');
         }
-
         return $regions;
     }
 
