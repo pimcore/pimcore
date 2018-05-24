@@ -6,6 +6,9 @@ Method signature of [ICart](https://github.com/pimcore/pimcore/commit/d84d3cf942
 Added `modified()` as a public method. If you have implemented your own cart and not extended `AbstractCart` or have
 overwritten the `modified()` method, please check your implementation. 
 
+In Cart Items the method `setCount()` now also fires the `modified()` method of the cart. If you have custom implementations
+please check if this has any effect on them. 
+
 ## Build 206 (2018-02-19)
 
 The pricing manager in the Ecommerce Framework is now tenant aware, using the checkout tenant if set. To make this possible,
