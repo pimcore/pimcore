@@ -10,9 +10,9 @@
 
 <?php
 
-    use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject;
 
-    $fields = $this->object->getClass()->getFieldDefinitions();
+$fields = $this->object->getClass()->getFieldDefinitions();
 
 ?>
 
@@ -73,7 +73,7 @@
                     $bricks = $this->object->{"get" . ucfirst($fieldName)}();
 
                     if (!$bricks) {
-                    continue;
+                        continue;
                     }
 
                     $brickValue = $bricks->{"get" . $asAllowedType}();
@@ -162,54 +162,53 @@
                         $preview = $keyDef->getVersionPreview($keyData);
                         ?>
 
-                    <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                        <td><?= $definition->getTitle() ?></td>
-                        <td><?= $groupDefinition->getName() ?> - <?= $keyGroupRelation->getName()?> / <?= $definition->isLocalized() ? $language : "" ?></td>
-                        <td><?= $preview ?></td>
-                    </tr>
-                    <?php
-                    $c++;
+                        <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                            <td><?= $definition->getTitle() ?></td>
+                            <td><?= $groupDefinition->getName() ?> - <?= $keyGroupRelation->getName() ?>
+                                / <?= $definition->isLocalized() ? $language : "" ?></td>
+                            <td><?= $preview ?></td>
+                        </tr>
+                        <?php
+                        $c++;
+                    }
                 }
             }
-        }
-        ?>
-    <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
+            ?>
+        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Fieldcollections) {
             $fields = $this->object->{"get" . ucfirst($fieldName)}();
-            if($fields) {
+            if ($fields) {
                 $fieldDefinitions = $fields->getItemDefinitions();
                 $fieldItems = $fields->getItems();
             }
 
-            if (count($fieldItems)) {
+            if (!is_null($fieldItems) && count($fieldItems)) {
 
                 foreach ($fieldItems as $fkey => $fieldItem) {
                     $fieldKeys = $fieldDefinitions[$fieldItem->type]->getFieldDefinitions();
                     foreach ($fieldKeys as $fieldKey) {
 
 
-                       $value = $fieldItem->{"get" . ucfirst($fieldKey->name)}();
-                       // if ($fieldValue) { ?>
-                             <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                                <td><?= ucfirst($fieldItem->type) . " - " . $fieldKey->title ?> (<?= $language; ?>)</td>
-                                <td><?= $fieldKey->name ?></td>
-                                <td><?= $fieldKey->getVersionPreview($value) ?></td>
-                            </tr>
+                        $value = $fieldItem->{"get" . ucfirst($fieldKey->name)}();  ?>
+                        <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                            <td><?= ucfirst($fieldItem->type) . " - " . $fieldKey->title ?> (<?= $language; ?>)</td>
+                            <td><?= $fieldKey->name ?></td>
+                            <td><?= $fieldKey->getVersionPreview($value) ?></td>
+                        </tr>
                         <?php
                         $c++;
-                      //  }
                     }
                 }
             }
-    ?>
-    <?php } else { ?>
-        <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-            <td><?= $definition->getTitle() ?></td>
-            <td><?= $definition->getName() ?></td>
-            <td><?= $definition->getVersionPreview($this->object->getValueForFieldName($fieldName)) ?></td>
-        </tr>
-    <?php } ?>
-<?php $c++;
-} ?>
+            ?>
+        <?php } else { ?>
+            <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
+                <td><?= $definition->getTitle() ?></td>
+                <td><?= $definition->getName() ?></td>
+                <td><?= $definition->getVersionPreview($this->object->getValueForFieldName($fieldName)) ?></td>
+            </tr>
+        <?php } ?>
+        <?php $c++;
+    } ?>
 </table>
 
 
