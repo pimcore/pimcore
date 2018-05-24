@@ -111,7 +111,12 @@ class Locale
             $locale = $this->findLocale();
         }
 
-        $regions = include(PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/' . $locale . '/country.php');
+        if (file_exists(PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/' . $locale . '/country.php')) {
+            $regions = include(PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/' . $locale . '/country.php');
+
+        } else {
+            $regions = include(PIMCORE_COMPOSER_PATH . '/umpirsky/country-list/data/en/country.php');
+        }
         return $regions;
     }
 
