@@ -532,11 +532,11 @@ class DataObjectHelperController extends AdminController
                             $brick = $keyParts[0];
                             $brickDescriptor = null;
 
-                            if (strpos($brick, "?") !== false) {
+                            if (strpos($brick, '?') !== false) {
                                 $brickDescriptor = substr($brick, 1);
                                 $brickDescriptor = json_decode($brickDescriptor, true);
                                 $keyPrefix = $brick . '~';
-                                $brick = $brickDescriptor["containerKey"];
+                                $brick = $brickDescriptor['containerKey'];
                             } else {
                                 $keyPrefix = $brick . '~';
                             }
@@ -546,9 +546,9 @@ class DataObjectHelperController extends AdminController
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
                             if ($brickDescriptor) {
-                                $innerContainer = $brickDescriptor["innerContainer"] ? $brickDescriptor["innerContainer"] : "localizedfields";
+                                $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
                                 $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                                $fd = $localizedFields->getFieldDefinition($brickDescriptor["brickfield"]);
+                                $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
                             } else {
                                 $fd = $brickClass->getFieldDefinition($fieldname);
                             }
@@ -562,7 +562,6 @@ class DataObjectHelperController extends AdminController
                                     $availableFields[] = $fieldConfig;
                                 }
                             }
-
                         } else {
                             if (DataObject\Service::isHelperGridColumnConfig($key)) {
                                 $calculatedColumnConfig = $this->getCalculatedColumnConfig($savedColumns[$key]);
@@ -750,15 +749,15 @@ class DataObjectHelperController extends AdminController
                     $localizedFieldDefinitions = $bf->getFieldDefinitions();
 
                     $context = [
-                        "containerKey" => $brickType,
-                        "fieldname" => $field->getName()
+                        'containerKey' => $brickType,
+                        'fieldname' => $field->getName()
                     ];
 
                     $this->appendBrickFields($bf, $localizedFieldDefinitions, $availableFields, $gridType, $count, $brickType, $class, $objectId, $context);
                 } else {
                     if ($context) {
-                        $context["brickfield"] = $bf->getName();
-                        $keyPrefix = "?" . json_encode($context) . "~";
+                        $context['brickfield'] = $bf->getName();
+                        $keyPrefix = '?' . json_encode($context) . '~';
                     } else {
                         $keyPrefix = $brickType . '~';
                     }
@@ -1315,8 +1314,7 @@ class DataObjectHelperController extends AdminController
         Locale $localeService,
         FactoryInterface $modelFactory,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         try {
             $importId = $request->get('importId');
 
@@ -1406,8 +1404,7 @@ class DataObjectHelperController extends AdminController
         $configData,
         $rowData,
         $context
-    )
-    {
+    ) {
         $selectedGridColumns = $configData->selectedGridColumns;
 
         $colIndex = -1;
@@ -1609,8 +1606,7 @@ class DataObjectHelperController extends AdminController
         ImportService $importService,
         Locale $localeService,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $parentId = $request->get('parentId');
         $additionalData = json_decode($request->get('additionalData'), true);
         $job = $request->get('job');
@@ -1737,16 +1733,14 @@ class DataObjectHelperController extends AdminController
                 if (substr($f, 0, 1) == '~') {
                     // key value, ignore for now
                 } elseif (count($parts) > 1) {
-
                     $brickType = $parts[0];
 
-                    if (strpos($brickType, "?") !== false) {
+                    if (strpos($brickType, '?') !== false) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
-                        $brickType = $brickDescriptor["containerKey"];
+                        $brickType = $brickDescriptor['containerKey'];
 //                        $fieldName =  $brickDescriptor["brickfield"];
                     }
-
 
                     $bricks[$brickType] = $brickType;
                 }
@@ -2121,11 +2115,11 @@ class DataObjectHelperController extends AdminController
                     // brick
                     $brickType = $fieldParts[0];
 
-                    if (strpos($brickType, "?") !== false) {
+                    if (strpos($brickType, '?') !== false) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
-                        $innerContainer = $brickDescriptor["innerContainer"] ? $brickDescriptor["innerContainer"] : "localizedfields";
-                        $brickType = $brickDescriptor["containerKey"];
+                        $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
+                        $brickType = $brickDescriptor['containerKey'];
                     }
                     $brickKey = $fieldParts[1];
 
@@ -2135,7 +2129,7 @@ class DataObjectHelperController extends AdminController
 
                     if ($brickDescriptor) {
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                        $fieldDefinition = $localizedFields->getFieldDefinition($brickDescriptor["brickfield"]);
+                        $fieldDefinition = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
                     } else {
                         $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
                     }
@@ -2145,7 +2139,6 @@ class DataObjectHelperController extends AdminController
                         if ($brickContainer && !empty($brickKey)) {
                             $brick = $brickContainer->{'get' . ucfirst($brickType)}();
                             if ($brick) {
-
                                 $params = [
                                     'context' => [
                                         'containerType' => 'objectbrick',
@@ -2158,9 +2151,8 @@ class DataObjectHelperController extends AdminController
                                 $value = $brick;
 
                                 if ($brickDescriptor) {
-                                    $innerContainer = $brickDescriptor["innerContainer"] ? $brickDescriptor["innerContainer"] : "localizedfields";
+                                    $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
                                     $value = $brick->{'get' . ucfirst($innerContainer)}();
-
                                 }
 
                                 return $fieldDefinition->getForCsvExport($value, $params);

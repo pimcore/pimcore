@@ -117,6 +117,7 @@ class Locale
         } else {
             $regions = include($dataPath . 'en/country.php');
         }
+
         return $regions;
     }
 

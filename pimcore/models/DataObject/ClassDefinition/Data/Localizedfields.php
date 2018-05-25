@@ -200,15 +200,14 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
 
                 if ($foundEmptyValue) {
                     // still some values are passing, ask the parent
-                    if ($params["context"] && $params["context"]["containerType"] == "objectbrick") {
-                        $brickContainerGetter = "get" . ucfirst($params["fieldname"]);
+                    if ($params['context'] && $params['context']['containerType'] == 'objectbrick') {
+                        $brickContainerGetter = 'get' . ucfirst($params['fieldname']);
                         $brickContainer = $parent->$brickContainerGetter();
-                        $brickGetter = "get" . ucfirst($params["context"]["containerKey"]);
+                        $brickGetter = 'get' . ucfirst($params['context']['containerKey']);
                         $brickData = $brickContainer->$brickGetter();
                         $parentData = $brickData->getLocalizedFields();
-
                     } else {
-                        if (method_exists($parent ,"getLocalizedFields")) {
+                        if (method_exists($parent, 'getLocalizedFields')) {
                             $parentData = $parent->getLocalizedFields();
                         }
                     }
@@ -281,8 +280,8 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         $result = new \stdClass();
         foreach ($this->getFieldDefinitions() as $fd) {
             $key = $fd->getName();
-            $context = $params["context"];
-            if ($context && $context["containerType"] = "objectbrick") {
+            $context = $params['context'];
+            if ($context && $context['containerType'] = 'objectbrick') {
                 $result->$key = 'NOT SUPPORTED';
             } else {
                 $result->$key = $object->{'get' . ucfirst($fd->getName())}();
@@ -717,7 +716,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                     'containerKey' => $container->getType(),
                 ];
                 $lf->setContext($context);
-            } else if ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
                 $object = $container->getObject();
 
                 $context = [

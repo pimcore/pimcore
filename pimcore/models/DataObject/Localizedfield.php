@@ -244,7 +244,7 @@ class Localizedfield extends Model\AbstractModel
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $container = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
-        } else if ($context && $context['containerType'] == 'objectbrick') {
+        } elseif ($context && $context['containerType'] == 'objectbrick') {
             $containerKey = $context['containerKey'];
             $container = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
         } elseif ($context && $context['containerType'] == 'block') {
@@ -298,10 +298,10 @@ class Localizedfield extends Model\AbstractModel
 
                             $parentContainer = $parent;
 
-                            if ($context && $context["containerType"] == "objectbrick") {
-                                $brickContainerGetter = "get" . ucfirst($context["fieldname"]);
+                            if ($context && $context['containerType'] == 'objectbrick') {
+                                $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
                                 $brickContainer = $parent->$brickContainerGetter();
-                                $brickGetter = "get" . $context["containerKey"];
+                                $brickGetter = 'get' . $context['containerKey'];
                                 $brickData = $brickContainer->$brickGetter();
                                 $parentContainer = $brickData;
                             }
@@ -380,7 +380,7 @@ class Localizedfield extends Model\AbstractModel
             if ($contextInfo && $contextInfo['containerType'] == 'fieldcollection') {
                 $containerKey = $contextInfo['containerKey'];
                 $containerDefinition = Fieldcollection\Definition::getByKey($containerKey);
-            } else if ($contextInfo && $contextInfo['containerType'] == 'objectbrick') {
+            } elseif ($contextInfo && $contextInfo['containerType'] == 'objectbrick') {
                 $containerKey = $contextInfo['containerKey'];
                 $containerDefinition = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
             } else {

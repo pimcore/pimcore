@@ -119,22 +119,21 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
         // HTTP Error Log
         $uri = $event->getRequest()->getUri();
-        $exists = $this->db->fetchOne("SELECT date FROM http_error_log WHERE uri = ?", $uri);
+        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', $uri);
         if ($exists) {
-            $this->db->query("UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?", [time(), $uri]);
+            $this->db->query('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
         } else {
-            $this->db->insert("http_error_log", [
-                "uri" => $uri,
-                "code" => (int) $statusCode,
-                "parametersGet" => serialize($_GET),
-                "parametersPost" => serialize($_POST),
-                "cookies" => serialize($_COOKIE),
-                "serverVars" => serialize($_SERVER),
-                "date" => time(),
-                "count" => 1
+            $this->db->insert('http_error_log', [
+                'uri' => $uri,
+                'code' => (int) $statusCode,
+                'parametersGet' => serialize($_GET),
+                'parametersPost' => serialize($_POST),
+                'cookies' => serialize($_COOKIE),
+                'serverVars' => serialize($_SERVER),
+                'date' => time(),
+                'count' => 1
             ]);
         }
-
 
         // Error page rendering
         if (empty($errorPath)) {

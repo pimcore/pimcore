@@ -151,12 +151,8 @@ class Dao extends Model\Dao\AbstractDao
                     $this->createUpdateTable();
                     throw new \Exception('missing table created, start next run ... ;-)');
                 }
-                throw new \Exception("passing it on ...");
+                throw new \Exception('passing it on ...');
             }
-
-
-
-
 
             if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
                 // query table
@@ -248,8 +244,8 @@ class Dao extends Model\Dao\AbstractDao
                                         $doInsert = false;
                                         foreach ($insertData as $insertDataKey => $insertDataValue) {
                                             if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
-                                                Logger::debug("do nothing");
-                                               // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                                Logger::debug('do nothing');
+                                                // do nothing, ... value is still empty and parent data is equal to current data in query table
                                             } elseif ($oldData[$insertDataKey] != $insertDataValue) {
                                                 $doInsert = true;
                                                 break;

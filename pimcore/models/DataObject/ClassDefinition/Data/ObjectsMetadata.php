@@ -668,15 +668,14 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                     . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/' . "$index . /%")
                     . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
-            } else if ($params['context']['containerType'] == 'objectbrick') {
+            } elseif ($params['context']['containerType'] == 'objectbrick') {
                 $index = $context['index'];
                 $db->deleteWhere(
                     'object_metadata_' . $object->getClassId(),
                     $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . "/%")
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/%')
                     . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
-
             } else {
                 $db->deleteWhere(
                     'object_metadata_' . $object->getClassId(),

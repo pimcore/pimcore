@@ -783,7 +783,6 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] .'~' . $containerName . '/' . $index . '/%')
                     . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
-
             }
         } else {
             $deleteCondition = [

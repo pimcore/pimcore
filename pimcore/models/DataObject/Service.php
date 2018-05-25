@@ -323,10 +323,10 @@ class Service extends Model\Element\Service
                 } elseif (count($keyParts) > 1) {
                     // brick
                     $brickType = $keyParts[0];
-                    if (strpos($brickType, "?") !== false) {
+                    if (strpos($brickType, '?') !== false) {
                         $brickDescriptor = substr($brickType, 1);
                         $brickDescriptor = json_decode($brickDescriptor, true);
-                        $brickType = $brickDescriptor["containerKey"];
+                        $brickType = $brickDescriptor['containerKey'];
                     }
 
                     $brickKey = $keyParts[1];
@@ -337,9 +337,9 @@ class Service extends Model\Element\Service
                     $context['outerFieldname'] = $key;
 
                     if ($brickDescriptor) {
-                        $innerContainer = $brickDescriptor["innerContainer"] ? $brickDescriptor["innerContainer"] : "localizedfields";
+                        $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                        $def = $localizedFields->getFieldDefinition($brickDescriptor["brickfield"]);
+                        $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
                     } else {
                         $def = $brickClass->getFieldDefinition($brickKey, $context);
                     }
@@ -627,12 +627,12 @@ class Service extends Model\Element\Service
             $value = $value->$getBrickType();
             if (!empty($value) && !empty($brickKey)) {
                 if ($brickDescriptor) {
-                    $innerContainer = $brickDescriptor["innerContainer"] ? $brickDescriptor["innerContainer"] : "localizedfields";
+                    $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
                     $localizedFields = $value->{'get' . ucfirst($innerContainer)}();
                     $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
-                    $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition("localizedfields");
+                    $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
                     $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
-                    $value = $localizedFields->getLocalizedValue($brickDescriptor["brickfield"]);
+                    $value = $localizedFields->getLocalizedValue($brickDescriptor['brickfield']);
                 } else {
                     $brickFieldGetter = 'get' . ucfirst($brickKey);
                     $value = $value->$brickFieldGetter();
@@ -867,17 +867,16 @@ class Service extends Model\Element\Service
                         $key = self::getFieldForBrickType($class, $brickType);
                         $field = $class->getFieldDefinition($key);
 
-                        if (strpos($brickType, "?") !== false) {
+                        if (strpos($brickType, '?') !== false) {
                             $brickDescriptor = substr($brickType, 1);
                             $brickDescriptor = json_decode($brickDescriptor, true);
-                            $brickType = $brickDescriptor["containerKey"];
+                            $brickType = $brickDescriptor['containerKey'];
                         }
 
                         $brickClass = Objectbrick\Definition::getByKey($brickType);
 
                         if ($brickDescriptor) {
                             $brickField = $brickClass->getFieldDefinition('localizedfields')->getFieldDefinition($brickDescriptor['brickfield']);
-
                         } else {
                             $brickField = $brickClass->getFieldDefinition($brickKey);
                         }
@@ -899,7 +898,6 @@ class Service extends Model\Element\Service
                     if (!$ommitPrefix) {
                         if ($brickDescriptor) {
                             $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
-
                         } else {
                             $brickPrefix = $db->quoteIdentifier($brickType) . '.';
                         }
@@ -1544,7 +1542,7 @@ class Service extends Model\Element\Service
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             if ($context['containerType'] == 'fieldcollection') {
                 $context['subContainerType'] = 'localizedfield';
-            } else if ($context['containerType'] == 'objectbrick') {
+            } elseif ($context['containerType'] == 'objectbrick') {
                 $context['subContainerType'] = 'localizedfield';
             } else {
                 $context['ownerType'] = 'localizedfield';

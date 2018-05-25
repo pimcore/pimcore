@@ -1673,10 +1673,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         } elseif (count($parts) > 1) {
                             $brickType = $parts[0];
 
-                            if (strpos($brickType, "?") !== false) {
+                            if (strpos($brickType, '?') !== false) {
                                 $brickDescriptor = substr($brickType, 1);
                                 $brickDescriptor = json_decode($brickDescriptor, true);
-                                $brickType = $brickDescriptor["containerKey"];
+                                $brickType = $brickDescriptor['containerKey'];
                             }
                             $brickKey = $parts[1];
                             $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
@@ -1695,9 +1695,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                             if ($brickDescriptor) {
                                 $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
-                                $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition("localizedfields");
+                                $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
                                 $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
-
                             } else {
                                 $fieldDefinition = $this->getFieldDefinitionFromBrick($brickType, $brickKey);
                             }
@@ -1707,7 +1706,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             }
 
                             if ($brickDescriptor) {
-                                /** @var  $localizedFields DataObject\Localizedfield */
+                                /** @var $localizedFields DataObject\Localizedfield */
                                 $localizedFields = $brick->getLocalizedfields();
                                 $localizedFields->setLocalizedValue($brickKey, $value);
                             } else {
@@ -1782,10 +1781,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     } elseif (count($parts) > 1) {
                         $brickType = $parts[0];
 
-                        if (strpos($brickType, "?") !== false) {
+                        if (strpos($brickType, '?') !== false) {
                             $brickDescriptor = substr($brickType, 1);
                             $brickDescriptor = json_decode($brickDescriptor, true);
-                            $brickType = $brickDescriptor["containerKey"];
+                            $brickType = $brickDescriptor['containerKey'];
                             $bricks[$brickType] = $brickDescriptor;
                         } else {
                             $bricks[$parts[0]] = $brickType;
@@ -1820,17 +1819,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         $orderKey = 'concat(' . $orderKey . '__rgb, ' . $orderKey . '__a)';
                         $doNotQuote = true;
                     } elseif (strpos($orderKey, '~') !== false) {
-
                         $orderKeyParts = explode('~', $orderKey);
 
-                        if (strpos($orderKey, "?") !== false) {
+                        if (strpos($orderKey, '?') !== false) {
                             $brickDescriptor = substr($orderKeyParts[0], 1);
                             $brickDescriptor = json_decode($brickDescriptor, true);
                             $db = Db::get();
-                            $orderKey = $db->quoteIdentifier($brickDescriptor["containerKey"] . "_localized") . "." . $db->quoteIdentifier($brickDescriptor["brickfield"]);
+                            $orderKey = $db->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') . '.' . $db->quoteIdentifier($brickDescriptor['brickfield']);
                             $doNotQuote = true;
                         } else {
-
                             if (count($orderKeyParts) == 2) {
                                 $orderKey = $orderKeyParts[1];
                             }
@@ -1884,7 +1881,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 foreach ($bricks as $b) {
                     $brickType = $b;
                     if (is_array($brickType)) {
-                        $brickType = $brickType["containerKey"];
+                        $brickType = $brickType['containerKey'];
                     }
                     $list->addObjectbrick($brickType);
                 }

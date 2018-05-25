@@ -135,7 +135,6 @@ class Dao extends Model\DataObject\Listing\Dao
         throw $e;
     }
 
-
     /**
      * @return string
      *
@@ -144,7 +143,6 @@ class Dao extends Model\DataObject\Listing\Dao
      */
     public function getLocalizedBrickLanguage()
     {
-
         $language = null;
 
         // check for a localized field and if they should be used for this list
@@ -165,7 +163,6 @@ class Dao extends Model\DataObject\Listing\Dao
         if (!$language) {
             $language = Tool::getDefaultLanguage();
         }
-
 
         return $language;
     }
@@ -289,11 +286,11 @@ CONDITION
                 );
 
                 $brickDefinition = DataObject\Objectbrick\Definition::getByKey($ob);
-                if ($brickDefinition->getFieldDefinition("localizedfields")) {
+                if ($brickDefinition->getFieldDefinition('localizedfields')) {
                     $langugage = $this->getLocalizedBrickLanguage();
                     //TODO wrong pattern
-                    $localizedTable = 'object_brick_localized_query_' . $ob . '_' . $this->model->getClassId() . "_" . $langugage;
-                    $name = $ob . "_localized";
+                    $localizedTable = 'object_brick_localized_query_' . $ob . '_' . $this->model->getClassId() . '_' . $langugage;
+                    $name = $ob . '_localized';
 
                     // add join
                     $select->joinLeft(

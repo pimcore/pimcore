@@ -49,7 +49,6 @@ class Mpay24Seamless implements IPayment
         $this->errorURL = '';
     }
 
-
     /**
      * Check options that have been passed by the main configuration
      *
@@ -81,7 +80,7 @@ class Mpay24Seamless implements IPayment
 
         //$resolver->setAllowedValues('testSystem', ['SHA1', 'SHA256', 'SHA512']);
         $notEmptyValidator = function ($value) {
-           return !empty($value);
+            return !empty($value);
         };
         foreach ($resolver->getRequiredOptions() as $requiredProperty) {
             $resolver->setAllowedValues($requiredProperty, $notEmptyValidator);
@@ -90,7 +89,8 @@ class Mpay24Seamless implements IPayment
         return $resolver;
     }
 
-    private function getMpay24Config() : Mpay24Config {
+    private function getMpay24Config(): Mpay24Config
+    {
         $mpayConfig = new Mpay24Config();
         $mpayConfig->setMerchantID($this->ecommerceConfig['merchant_id']);
         $mpayConfig->setSoapPassword($this->ecommerceConfig['password']);
@@ -100,13 +100,15 @@ class Mpay24Seamless implements IPayment
         $mpayConfig->setLogPath(PIMCORE_LOG_DIRECTORY);
         $mpayConfig->setEnableCurlLog(true);
         $mpayConfig->setCurlLogFile('mpay24-curl.log');
+
         return $mpayConfig;
     }
 
-    private function getProviderCompatibleLocale(Request $request) : string {
+    private function getProviderCompatibleLocale(Request $request): string
+    {
         $locale = $request->getLocale();
-        if (strpos($locale, "_") > 0) {
-            return explode_and_trim("_", $locale)[0];
+        if (strpos($locale, '_') > 0) {
+            return explode_and_trim('_', $locale)[0];
         } else {
             return $locale;
         }
@@ -114,6 +116,7 @@ class Mpay24Seamless implements IPayment
 
     /**
      * Start payment and build form, including token.
+     *
      * @param IPrice $price
      * @param array $config
      *
@@ -135,29 +138,34 @@ class Mpay24Seamless implements IPayment
 
         // Each line is optional so only add the lines that you need
         $tokenizerConfig = [
-            "language"              => $this->getProviderCompatibleLocale($request),
-            "internalPaymentId"     => $paymentInfo->getInternalPaymentId(),
+            'language'              => $this->getProviderCompatibleLocale($request),
+            'internalPaymentId'     => $paymentInfo->getInternalPaymentId(),
 
         ];
-        $tokenizer = $mpay24->token("CC", $tokenizerConfig); //always CC as cc is with iframe?
+        $tokenizer = $mpay24->token('CC', $tokenizerConfig); //always CC as cc is with iframe?
         if ($tokenizer->getStatus() == 'ERROR') {
             throw new \Exception($tokenizer->getReturnCode());
         }
         $params = [];
         $params['tokenizer'] = $tokenizer;
         $params['paymentMethods'] = $this->ecommerceConfig['payment_methods'];
+
         return $this->templatingEngine->render($this->ecommerceConfig['partial'], $params);
     }
 
     /**
      * Get payment redirect URL after payment form has been submitted with a post.
+     *
      * @param $config
+     *
      * @return string[] first parameter contains redirect URL, second parameter contains error message if there is any.
      * if there is an error message is it up to you to redirect to the suggested URL, which might not
      * be optimal, or to redirect back to the checkout and output the error somewhere else.
+     *
      * @throws \Exception
      */
-    public function getInitPaymentRedirectUrl($config) : array {
+    public function getInitPaymentRedirectUrl($config): array
+    {
         $request = $config['request'];
         $paymentInfo = $config['paymentInfo'];
 
@@ -165,13 +173,13 @@ class Mpay24Seamless implements IPayment
         $this->errorURL = $config['errorURL'];
         $this->confirmationURL = $config['confirmationURL'];
 
-        if(empty($this->successURL)) {
+        if (empty($this->successURL)) {
             throw new \Exception('Success URL in Mpay24Seamless provider must not be empty.');
         }
-        if(empty($this->errorURL)) {
+        if (empty($this->errorURL)) {
             throw new \Exception('Error URL in Mpay24Seamless provider must not be empty.');
         }
-        if(empty($this->confirmationURL)) {
+        if (empty($this->confirmationURL)) {
             throw new \Exception('Confirmation URL in Mpay24Seamless provider must not be empty.');
         }
 
@@ -183,26 +191,25 @@ class Mpay24Seamless implements IPayment
         $paymentType = $request->get('type');
 
         if ($request->isMethod('post') && isset($paymentType)) {
-
             $order = $config['order'];
             if (!$order instanceof AbstractOrder) {
                 throw new \Exception('Order must be passed to payment provider Mpay24Seamless!');
             }
 
             $payment = [
-                "amount" => round($order->getTotalPrice(),2)*100, //value in cent
-                "currency" => $order->getCurrency(),
-                "manualClearing" => "false",       // Optional: set to true if you want to do a manual clearing
-                "useProfile" => "false",       // Optional: set if you want to create a profile
+                'amount' => round($order->getTotalPrice(), 2) * 100, //value in cent
+                'currency' => $order->getCurrency(),
+                'manualClearing' => 'false',       // Optional: set to true if you want to do a manual clearing
+                'useProfile' => 'false',       // Optional: set if you want to create a profile
             ];
 
             $payment['token'] = $request->get('token');
             switch ($paymentType) {
-                case "CC":
+                case 'CC':
                     $paymentType = 'TOKEN';
                     break;
-                case "TOKEN":
-                    $payment["token"] = $request->get('token');
+                case 'TOKEN':
+                    $payment['token'] = $request->get('token');
                     break;
             }
 
@@ -211,14 +218,14 @@ class Mpay24Seamless implements IPayment
             $additional = [
                 // "customerID" => "customer123", // not set due to GDPR; required if useProfile is true
                 //"customerName" => "Jon Doe", // not set due to GDPR;
-                "order" =>
+                'order' =>
                     [
-                        "description" => \Pimcore::getContainer()->get('translator')->trans('mpay24.general.orderDescription')
+                        'description' => \Pimcore::getContainer()->get('translator')->trans('mpay24.general.orderDescription')
                     ],
-                "successURL" => $this->successURL,
-                "errorURL" => $this->errorURL,
-                "confirmationURL" => $this->confirmationURL,
-                "language" => $this->getProviderCompatibleLocale($request)
+                'successURL' => $this->successURL,
+                'errorURL' => $this->errorURL,
+                'confirmationURL' => $this->confirmationURL,
+                'language' => $this->getProviderCompatibleLocale($request)
             ];
 
             //add information on item level
@@ -227,8 +234,8 @@ class Mpay24Seamless implements IPayment
 
             $result = $mpay24->payment($paymentType, $paymentInfo->getInternalPaymentId(),
                 $payment, $additional);
-            if ($result->getReturnCode() == "REDIRECT") {
-                return [$result->getLocation(), ""];
+            if ($result->getReturnCode() == 'REDIRECT') {
+                return [$result->getLocation(), ''];
             } elseif ($result->hasStatusOk()) {
                 if (strpos($this->successURL, '?') > 0) {
                     $forwardUrl = $this->successURL.'&TID='.$paymentInfo->getInternalPaymentId();
@@ -236,7 +243,7 @@ class Mpay24Seamless implements IPayment
                     $forwardUrl = $this->successURL.'?TID='.$paymentInfo->getInternalPaymentId();
                 }
 
-                return [$forwardUrl, ""];
+                return [$forwardUrl, ''];
             } else {
                 //the standard error page works perfectly fine with the handleResponse method.
                 //however, the payment action will be logged as "cancelled" and not as a user error,
@@ -250,12 +257,14 @@ class Mpay24Seamless implements IPayment
                 if (empty($errorText)) {
                     $errorText = \Pimcore::getContainer()->get('translator')->trans('mpay24.general.payment-failed');
                 }
+
                 return [$forwardUrl, $errorText];
             }
         }
     }
 
-    private function addOrderItemPositions(OnlineShopOrder $order, string $paymentType, array $additional) : array {
+    private function addOrderItemPositions(OnlineShopOrder $order, string $paymentType, array $additional): array
+    {
         $checkSum = 0.0;
         $checkSumVat= 0.0;
 
@@ -263,25 +272,23 @@ class Mpay24Seamless implements IPayment
         $additional['order']['shoppingCart'] = [];
         foreach ($order->getItems() as $orderItem) {
             $totalPrice = round($orderItem->getTotalPrice(), 2);
-            $vat = round($totalPrice-$orderItem->getTotalNetPrice(), 2);
+            $vat = round($totalPrice - $orderItem->getTotalNetPrice(), 2);
             $checkSum += $totalPrice;
             $checkSumVat += $vat;
             $additional['order']['shoppingCart']['item-'.$pos] = [
                 'productNr' => $orderItem->getProduct()->getOSProductNumber(),
                 'description' => $orderItem->getProduct()->getOSName(),
                 'quantity' => $orderItem->getAmount(),
-                'tax' => $vat*100,
-                'amount' => $totalPrice*100,
+                'tax' => $vat * 100,
+                'amount' => $totalPrice * 100,
             ];
             $pos++;
         }
 
         /** @var OrderPriceModifications $modification */
-
-
         foreach ($order->getPriceModifications() as $modification) {
             $totalPrice = round($modification->getAmount(), 2);
-            $vat = round($totalPrice-$modification->getNetAmount(), 2);
+            $vat = round($totalPrice - $modification->getNetAmount(), 2);
             $checkSum += $totalPrice;
             $checkSumVat += $vat;
             //@see: pull-request made to allow formatting of order item positions: https://github.com/mpay24/mpay24-php/pull/79/commits
@@ -289,8 +296,8 @@ class Mpay24Seamless implements IPayment
                 'productNr' => $modification->getName(),
                 'descrption' => $modification->getName(),
                 'quantity' => 1,
-                'tax' => $vat*100,
-                'amount' => $totalPrice*100,
+                'tax' => $vat * 100,
+                'amount' => $totalPrice * 100,
             ];
             $pos++;
         }
@@ -302,16 +309,19 @@ class Mpay24Seamless implements IPayment
                 'productNr' => 'Balance',
                 'descrption' => 'Balance',
                 'quantity' => 1,
-                'tax' => $differenceVat*100,
-                'amount' => $difference*100,
+                'tax' => $differenceVat * 100,
+                'amount' => $difference * 100,
             ];
         }
+
         return $additional;
     }
 
     /**
      * Handles response of payment provider and creates payment status object.
+     *
      * @param array $response
+     *
      * @return IStatus
      *
      * @throws \Exception
@@ -321,12 +331,12 @@ class Mpay24Seamless implements IPayment
         $mpay24 = new Mpay24($this->getMpay24Config());
         $params = $mpay24->paymentStatusByTID($response['TID']); //example with merchant TransaktionID
 
-       // p_r($params);exit;
+        // p_r($params);exit;
         $internalPaymentId = $response['TID'];
 
         $transactionParams = $params->getParams();
         $responseStatus = IStatus::STATUS_PENDING;
-        if ($params->hasStatusOk() && $transactionParams['STATUS']!= 'ERROR') {
+        if ($params->hasStatusOk() && $transactionParams['STATUS'] != 'ERROR') {
             $responseStatus = IStatus::STATUS_AUTHORIZED;
         } else {
             $responseStatus = IStatus::STATUS_CANCELLED;
@@ -345,9 +355,9 @@ class Mpay24Seamless implements IPayment
             $mpayLogData
         );
         $this->setAuthorizedData($params->getParams());
+
         return $responseStatus;
     }
-
 
     /**
      * @inheritdoc

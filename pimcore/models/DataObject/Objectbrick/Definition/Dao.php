@@ -132,7 +132,6 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
                     ]
                 );
             }
-
         }
 
         $this->removeUnusedColumns($tableStore, $columnsToRemoveStore, $protectedColumnsStore);
