@@ -250,7 +250,8 @@ class EmailController extends DocumentControllerBase
         $emailLog = Tool\Email\Log::getById($request->get('id'));
 
         if ($request->get('type') == 'text') {
-            return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $emailLog->getTextLog() . '</pre></body></html>');
+            $templatingEnginePhp = $this->get("pimcore.templating.engine.php");
+            return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $templatingEnginePhp->escape($emailLog->getTextLog()) . '</pre></body></html>');
         } elseif ($request->get('type') == 'html') {
             return new Response($emailLog->getHtmlLog());
         } elseif ($request->get('type') == 'params') {

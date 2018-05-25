@@ -147,7 +147,10 @@ pimcore.settings.email.log = Class.create({
                 text: t('email_log_subject'),
                 sortable: false,
                 dataIndex: 'subject',
-                flex: 220
+                flex: 220,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 xtype: 'actioncolumn',
