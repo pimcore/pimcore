@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
+use Pimcore\Db\Connection;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
@@ -46,13 +47,20 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected $renderErrorPage = true;
 
     /**
+     * @var Connection
+     */
+    protected $db;
+
+    /**
      * @param DocumentRenderer $documentRenderer
+     * @param Connection $db
      * @param bool $renderErrorPage
      */
-    public function __construct(DocumentRenderer $documentRenderer, $renderErrorPage = true)
+    public function __construct(DocumentRenderer $documentRenderer, Connection $db, $renderErrorPage = true)
     {
         $this->documentRenderer  = $documentRenderer;
         $this->renderErrorPage = (bool)$renderErrorPage;
+        $this->db = $db;
     }
 
     /**
@@ -109,6 +117,26 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $errorPath = $site->getErrorDocument();
         }
 
+        // HTTP Error Log
+        $uri = $event->getRequest()->getUri();
+        $exists = $this->db->fetchOne("SELECT date FROM http_error_log WHERE uri = ?", $uri);
+        if ($exists) {
+            $this->db->query("UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?", [time(), $uri]);
+        } else {
+            $this->db->insert("http_error_log", [
+                "uri" => $uri,
+                "code" => (int) $statusCode,
+                "parametersGet" => serialize($_GET),
+                "parametersPost" => serialize($_POST),
+                "cookies" => serialize($_COOKIE),
+                "serverVars" => serialize($_SERVER),
+                "date" => time(),
+                "count" => 1
+            ]);
+        }
+
+
+        // Error page rendering
         if (empty($errorPath)) {
             $errorPath = '/';
         }
