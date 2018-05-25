@@ -131,6 +131,7 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
 
     commitData: function() {
         this.node.set('isOperator', true);
+        this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.yesValue = this.yesValueField.getValue();
         this.node.data.configAttributes.noValue = this.noValueField.getValue();
         this.node.set('text', this.textField.getValue());
