@@ -104,7 +104,7 @@ class Service extends Model\Element\Service
         $localeService = $container->get('pimcore.locale');
         $documentLocale = $document->getProperty('language');
         $tempLocale = $localeService->getLocale();
-        if($documentLocale) {
+        if ($documentLocale) {
             $localeService->setLocale($documentLocale);
         }
 

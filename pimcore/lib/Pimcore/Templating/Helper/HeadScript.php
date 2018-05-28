@@ -450,7 +450,7 @@ class HeadScript extends CacheBusterAware
         $attrString = '';
 
         $type = ($this->_autoEscape) ? $this->_escape($item->type) : $item->type;
-        if($type != 'text/javascript') {
+        if ($type != 'text/javascript') {
             $item->attributes['type'] = $type;
         }
 
