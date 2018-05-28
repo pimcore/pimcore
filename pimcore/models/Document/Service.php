@@ -100,7 +100,20 @@ class Service extends Model\Element\Service
         // keep useLayout compatibility
         $attributes['_useLayout'] = $useLayout;
 
-        return $renderer->render($document, $attributes, $query, $options);
+        // set locale based on document
+        $localeService = $container->get('pimcore.locale');
+        $documentLocale = $document->getProperty('language');
+        $tempLocale = $localeService->getLocale();
+        if($documentLocale) {
+            $localeService->setLocale($documentLocale);
+        }
+
+        $content = $renderer->render($document, $attributes, $query, $options);
+
+        // restore original locale
+        $localeService->setLocale($tempLocale);
+
+        return $content;
     }
 
     /**
