@@ -8,10 +8,10 @@
     ]);
     ?>
 
-    <script type="text/javascript" src="/pimcore/static6/js/pimcore/common.js"></script>
-    <script type="text/javascript" src="/pimcore/static6/js/pimcore/functions.js"></script>
-    <script type="text/javascript" src="/pimcore/static6/js/pimcore/helpers.js"></script>
-    <script type="text/javascript">
+    <script src="/pimcore/static6/js/pimcore/common.js"></script>
+    <script src="/pimcore/static6/js/pimcore/functions.js"></script>
+    <script src="/pimcore/static6/js/pimcore/helpers.js"></script>
+    <script>
         <?php if ($tab) { ?>
             pimcore.helpers.clearOpenTab();
             pimcore.helpers.rememberOpenTab("<?= $tab ?>", true);

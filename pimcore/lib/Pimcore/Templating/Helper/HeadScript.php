@@ -96,7 +96,7 @@ class HeadScript extends CacheBusterAware
      * @var array
      */
     protected $_optionalAttributes = [
-        'charset', 'defer', 'language', 'src'
+        'charset', 'defer', 'language', 'src', 'type'
     ];
 
     /**
@@ -448,6 +448,12 @@ class HeadScript extends CacheBusterAware
     public function itemToString($item, $indent, $escapeStart, $escapeEnd)
     {
         $attrString = '';
+
+        $type = ($this->_autoEscape) ? $this->_escape($item->type) : $item->type;
+        if($type != 'text/javascript') {
+            $item->attributes['type'] = $type;
+        }
+
         if (!empty($item->attributes)) {
             foreach ($item->attributes as $key => $value) {
                 if ((!$this->arbitraryAttributesAllowed() && !in_array($key, $this->_optionalAttributes))
@@ -463,8 +469,7 @@ class HeadScript extends CacheBusterAware
 
         $addScriptEscape = !(isset($item->attributes['noescape']) && filter_var($item->attributes['noescape'], FILTER_VALIDATE_BOOLEAN));
 
-        $type = ($this->_autoEscape) ? $this->_escape($item->type) : $item->type;
-        $html  = '<script type="' . $type . '"' . $attrString . '>';
+        $html  = '<script' . $attrString . '>';
         if (!empty($item->source)) {
             $html .= PHP_EOL ;
 

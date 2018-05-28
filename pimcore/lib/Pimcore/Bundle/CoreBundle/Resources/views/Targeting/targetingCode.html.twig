@@ -1,6 +1,6 @@
 {% block beforeScriptTag %}{{ blocks.beforeScriptTag|raw }}{% endblock %}
 
-<script type="text/javascript">
+<script>
     {% block beforeScript %}{{ blocks.beforeScript|raw }}{% endblock %}
 
     {% block script %}
@@ -24,5 +24,5 @@
 {% block afterScriptTag %}{{ blocks.afterScriptTag|raw }}{% endblock %}
 
 {% block targetingScript %}
-    <script type="text/javascript" src="{{ asset('pimcore/static6/js/frontend/targeting.js') }}"></script>
+    <script src="{{ asset('pimcore/static6/js/frontend/targeting.js') }}"></script>
 {% endblock %}

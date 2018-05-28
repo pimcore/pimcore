@@ -277,7 +277,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         $code = '
-            <script type="text/javascript">
+            <script>
                 editableConfigurations.push(' . json_encode($options) . ');
             </script>
         ';

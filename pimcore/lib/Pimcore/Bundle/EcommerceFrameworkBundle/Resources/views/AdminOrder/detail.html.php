@@ -481,7 +481,7 @@ $regionArray = $locale->getDisplayRegions();
     </div>
 </div>
 
-<script type="text/javascript">
+<script>
     <?php $this->headScript()->captureStart(); ?>
     $(function () {
 

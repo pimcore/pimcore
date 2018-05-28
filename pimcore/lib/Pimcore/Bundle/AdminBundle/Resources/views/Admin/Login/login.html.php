@@ -114,7 +114,7 @@ $config = $this->config;
                         <a href="#" onclick="showLogin();"><?= $this->translate("Click here to proceed"); ?></a>
                     </div>
 
-                    <script type="text/javascript">
+                    <script>
                         function showLogin() {
                             $("#loginform").show();
                             $("#browserinfo").hide();
@@ -139,7 +139,7 @@ $config = $this->config;
         <div id="backgroundImageInfo"></div>
     <?php } ?>
 
-    <script type="text/javascript">
+    <script>
         <?php if(!$view->getParam("deeplink")) { ?>
         // clear opened tabs store
         localStorage.removeItem("pimcore_opentabs");
@@ -147,6 +147,6 @@ $config = $this->config;
         $("#username").select();
     </script>
 
-    <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
+    <script src="https://liveupdate.pimcore.org/imageservice"></script>
 
 <?php $view->slots()->stop() ?>

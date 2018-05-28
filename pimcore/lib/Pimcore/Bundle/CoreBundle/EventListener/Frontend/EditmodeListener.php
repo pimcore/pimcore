@@ -204,7 +204,7 @@ class EditmodeListener implements EventSubscriberInterface
                 $startupJavascript = '/pimcore/static6/js/pimcore/document/edit/startup.js';
 
                 $headHtml = $this->buildHeadHtml($document, $user->getLanguage());
-                $bodyHtml = "\n\n" . '<script type="text/javascript" src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
+                $bodyHtml = "\n\n" . '<script src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
 
                 $html = preg_replace('@</head>@i', $headHtml . "\n\n</head>", $html, 1);
                 $html = preg_replace('@</body>@i', $bodyHtml . "\n\n</body>", $html, 1);
@@ -241,18 +241,18 @@ class EditmodeListener implements EventSubscriberInterface
         }
 
         $headHtml .= "\n\n";
-        $headHtml .= '<script type="text/javascript">var jQueryPreviouslyLoaded = (typeof jQuery == "undefined") ? false : true;</script>' . "\n";
+        $headHtml .= '<script>var jQueryPreviouslyLoaded = (typeof jQuery == "undefined") ? false : true;</script>' . "\n";
 
         // include script libraries
         foreach ($libraries as $script) {
-            $headHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . '"></script>';
+            $headHtml .= '<script src="' . $script . '?_dc=' . Version::$revision . '"></script>';
             $headHtml .= "\n";
         }
 
         // combine the pimcore scripts in non-devmode
         if (\Pimcore::disableMinifyJs()) {
             foreach ($scripts as $script) {
-                $headHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Version::$revision . '"></script>';
+                $headHtml .= '<script src="' . $script . '?_dc=' . Version::$revision . '"></script>';
                 $headHtml .= "\n";
             }
         } else {
@@ -261,14 +261,14 @@ class EditmodeListener implements EventSubscriberInterface
                 $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
             }
 
-            $headHtml .= '<script type="text/javascript" src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
+            $headHtml .= '<script src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
         }
 
-        $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system?language=' . $language . '&_dc=' . Version::$revision . '"></script>' . "\n";
+        $headHtml .= '<script src="/admin/misc/json-translations-system?language=' . $language . '&_dc=' . Version::$revision . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()
-        $headHtml .= '<script type="text/javascript">
+        $headHtml .= '<script>
             var editableConfigurations = new Array();
             var pimcore_document_id = ' . $document->getId() . ';
 

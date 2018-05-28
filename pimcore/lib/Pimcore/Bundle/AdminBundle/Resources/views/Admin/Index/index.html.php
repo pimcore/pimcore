@@ -88,7 +88,7 @@ $user      = $userProxy->getUser();
 
     <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
 
-    <script type="text/javascript">
+    <script>
         var pimcore = {}; // namespace
 
         // hide symfony toolbar by default
@@ -682,12 +682,12 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 
 <!-- some javascript -->
 <?php // pimcore constants ?>
-<script type="text/javascript">
+<script>
     pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
 </script>
 
 <?php // 3rd party libraries ?>
-<script type="text/javascript">
+<script>
     <?php if(isset($googleMapsApiKey) && strlen($googleMapsApiKey) > 0){ ?>
     var gmapInitialize = function () {
     }; // dummy callback
@@ -700,21 +700,21 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     <?php } ?>
 </script>
 
-<script type="text/javascript" src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::$revision ?>"></script>
-<script type="text/javascript" src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
-<script type="text/javascript" src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 
 
 <!-- library scripts -->
 <?php foreach ($scriptLibs as $scriptUrl) { ?>
-    <script type="text/javascript" src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 
 
 <!-- internal scripts -->
 <?php if ($disableMinifyJs) { ?>
     <?php foreach ($scripts as $scriptUrl) { ?>
-    <script type="text/javascript" src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 <?php } else { ?>
 <?php
@@ -728,7 +728,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     $minimizedScriptPath = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents);
 
 ?>
-    <script type="text/javascript" src="<?= $minimizedScriptPath ?>"></script>
+    <script src="<?= $minimizedScriptPath ?>"></script>
 <?php } ?>
 
 
@@ -744,7 +744,7 @@ if ($disableMinifyJs) {
 ?>
 
 <?php foreach ($this->pluginJsPaths as $pluginJsPath): ?>
-    <script type="text/javascript" src="<?= $pluginJsPath ?>?_dc=<?= $pluginDcValue; ?>"></script>
+    <script src="<?= $pluginJsPath ?>?_dc=<?= $pluginDcValue; ?>"></script>
 <?php endforeach; ?>
 
 <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
@@ -752,6 +752,6 @@ if ($disableMinifyJs) {
 <?php endforeach; ?>
 
 <?php // MUST BE THE LAST LINE ?>
-<script type="text/javascript" src="/pimcore/static6/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script src="/pimcore/static6/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 </body>
 </html>
