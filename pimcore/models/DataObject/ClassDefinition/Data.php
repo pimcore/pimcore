@@ -1289,7 +1289,7 @@ abstract class Data
                 if (method_exists($object, $getter)) {
                     $groupId = $context['groupId'];
                     $keyId = $context['keyId'];
-                    $language = $context['language'];
+                    $language = $params['language'];
 
                     /** @var $classificationStoreData DataObject\Classificationstore */
                     $classificationStoreData = $object->$getter();
