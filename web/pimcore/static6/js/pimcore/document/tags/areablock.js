@@ -209,8 +209,19 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
                         el.hide();
                     });
-                    Ext.get(event.target).selectNode('.pimcore_area_buttons', false).show();
-                });
+
+                    var buttonContainer = Ext.get(event.target).selectNode('.pimcore_area_buttons', false);
+                    buttonContainer.show();
+
+                    if(this.options['controlsAlign']) {
+                        buttonContainer.addCls(this.options['controlsAlign']);
+                    } else {
+                        var offsets = Ext.get(event.target).getOffsetsTo(Ext.getBody());
+                        if(offsets[0] < 40) {
+                            buttonContainer.addCls('top');
+                        }
+                    }
+                }.bind(this));
 
                 Ext.get(this.elements[i]).on('mouseleave', function (event) {
                     hideTimeout = window.setTimeout(function () {

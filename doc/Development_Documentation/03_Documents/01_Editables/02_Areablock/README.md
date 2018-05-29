@@ -66,6 +66,7 @@ And you can see the effect, below:
 | `reload`            | bool   | Set to `true`, to force a reload in editmode after reordering items (default: `false`)                                                                                                       |
 | `dontCheckEnabled`  | bool   | Set to `true` to display all installed area bricks, regardless if they are enabled in the extension manager                                                                                  |
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
+| `controlsAlign`     | string | The position of the control button bar. Options are: `top`, `right` and `left`.                                                                                                              |
 | `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                           |
 
 ## Brick-specific Configuration
