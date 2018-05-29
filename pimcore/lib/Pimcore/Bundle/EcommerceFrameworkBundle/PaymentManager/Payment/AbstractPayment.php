@@ -8,6 +8,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Model\DataObject\Listing\Concrete;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 
 abstract class AbstractPayment implements IPayment
@@ -18,7 +20,12 @@ abstract class AbstractPayment implements IPayment
         return false;
     }
 
-    public function getRecurringPaymentDataProperties()
+    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
+    {
+        throw new NotImplementedException("getRecurringPaymentDataProperties not implemented for " . get_class($this));
+    }
+
+    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = [])
     {
         throw new NotImplementedException("getRecurringPaymentDataProperties not implemented for " . get_class($this));
     }

@@ -85,20 +85,21 @@ The following code will briefly show how to execute a recurPayment operation for
 <form action="/route/to/pay-action" method="post">
 
     <?php
-    foreach ($this->paymentMethods as $paymentMethod) {
-        $sourceOrder = $this->sourceOrders[$paymentMethod];
-        $sourceOrderId =  $sourceOrder ? $sourceOrder->getId() : ""
-        ?>
-        
-        <input hidden
-            name="source-order-<?= $paymentMethod ?>" 
-            value="<?= $sourceOrderId ?>">
-            
-        <input name="payment-method" value="<?= $paymentMethod ?>" type="radio">
+    if ($this->security()->isGranted("IS_AUTHENTICATED_FULLY")) {
 
-        <?php
-        if ($this->security()->isGranted("IS_AUTHENTICATED_FULLY")) {
-            if ($sourcePaymentProvider = $this->sourceOrder->getPaymentProvider()->getPaymentProviderQpay()) {
+        foreach ($this->paymentMethods as $paymentMethod) {
+            $sourceOrder = $this->sourceOrders[$paymentMethod];
+            $sourceOrderId =  $sourceOrder ? $sourceOrder->getId() : ""
+            ?>
+            
+            <input hidden
+                name="source-order-<?= $paymentMethod ?>" 
+                value="<?= $sourceOrderId ?>">
+                
+            <input name="payment-method" value="<?= $paymentMethod ?>" type="radio">
+    
+            <?php
+            if ($paymentProvider = $sourceOrder->getPaymentProvider()->getPaymentProviderQpay()) {
 
                 switch ($paymentProvider->getAuth_paymentType()) {
                     case "SEPA-DD": ?>
@@ -121,11 +122,13 @@ The following code will briefly show how to execute a recurPayment operation for
                 }
             }
         }
+    }
+        ?>
 
         <button type="submit">Pay now</button>
     
     </form>
-}
+
 
 ```
 

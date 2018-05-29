@@ -260,7 +260,7 @@ class Agent implements IOrderAgent
                     /* @var \Pimcore\Model\DataObject\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
 
                     // get provider data
-                    $name = strtolower(str_replace(AbstractOrder::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
+                    $name = strtolower(str_replace(Agent::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
                     $authorizedData = [];
                     foreach ($providerData->getObjectVars() as $field => $value) {
                         if (preg_match('#^auth_(?<name>\w+)$#i', $field, $match)) {
@@ -325,26 +325,8 @@ class Agent implements IOrderAgent
         }
 
         /* recurring payment data */
-        if ($sourceOrder && method_exists($providerData, "setSourceOrder")) {
-            $providerData->setSourceOrder($sourceOrder);
-
-            $recurringPaymentProperties = $paymentProvider->getRecurringPaymentDataProperties();
-
-            $sourceOrderProviderData = $sourceOrder->getPaymentProvider()->{$providerDataGetter}();
-
-            // update authorizedData from source order
-            foreach ($recurringPaymentProperties as $field) {
-                $setter = 'setAuth_' . $field;
-                $getter = 'getAuth_' . $field;
-
-                if (method_exists($sourceOrderProviderData, $getter)
-                    && method_exists($providerData, $setter)
-                    && method_exists($providerData, $getter)
-                    && empty($providerData->$getter())
-                ) {
-                    $providerData->{$setter}($sourceOrderProviderData->{$getter});
-                }
-            }
+        if ($sourceOrder) {
+            $paymentProvider->setRecurringPaymentSourceOrderData($sourceOrder, $providerData);
         }
 
         $order->save();
