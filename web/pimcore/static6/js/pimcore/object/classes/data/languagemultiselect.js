@@ -68,7 +68,29 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
                 fieldLabel: t("height"),
                 name: "height",
                 value: datax.height
-            },{
+            },
+            {
+                xtype: "combo",
+                fieldLabel: t("multiselect_render_type"),
+                name: "renderType",
+                itemId: "renderType",
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: [
+                        'value',
+                        'key'
+                    ],
+                    data: [
+                        ['list', 'List'],
+                        ['tags', 'Tags']
+                    ]
+                }),
+                value: datax.renderType,
+                valueField: 'value',
+                displayField: 'key',
+            },
+            {
                 xtype: "checkbox",
                 fieldLabel: t("only_configured_languages"),
                 name: "onlySystemLanguages",
