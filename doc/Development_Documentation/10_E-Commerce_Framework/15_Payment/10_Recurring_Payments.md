@@ -127,9 +127,6 @@ public function paymentAction(Request $request)
 payment_manager:
     providers:
       qpay:
-       
-       # ...
-
         profiles:
           sandbox:
             secret: 'CHCSH7UGHVVX2P7EHDHSY4T2S4CGYK4QBE4M5YUUG2ND5BEZWNRZW5EJYVJQ'
