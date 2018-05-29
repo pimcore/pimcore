@@ -1,16 +1,20 @@
 # Recurring Payment
   
-Recurring Payment is performed via a [transaction-based operation](https://guides.wirecard.at/back-end_operations:transaction-based:start) offered by [Wirecard Checkout Page](https://guides.wirecard.at/wcp:start) and [Wirecard Checkout Seamless](https://guides.wirecard.at/wcs:start). The *recurPayment* operation is used to create a new order and a new payment attempt by reusing the payment information available in a previous order, the so-called source order.
+Pimcore currently supports recurring payment for Wirecard Checkout Page (_recurPayment_) and Datatrans (_Alias_).
+It is performed via backend operations (server-to-server) which are used to create a new order and a new payment attempt by reusing the payment information available in a previous order, the so-called source order.
 
-It can for example be used to implement sequential payments like hiring or leasing agreements, or also to perform a one time payment for an authorized user which already committed at least one previous order which was committed using a [valid payment method](https://guides.wirecard.at/back-end_operations:transaction-based:table). 
+Recurring payment can for example be used to implement sequential payments like hiring or leasing agreements, or also to perform a one time payment for an authorized user which already committed at least one previous order successfully. 
 
-For more details concerning the recurPayment operation also have a look at the official [Wirecard Documentation](https://guides.wirecard.at/back-end_operations:transaction-based:recurpayment).
+### Additional Information
+- [Wirecard Documentation](https://guides.wirecard.at/back-end_operations:transaction-based:recurpayment)
+- [Datatrans Documentation](https://www.datatrans.ch/alias-tokenization/using-the-alias)
 
-### Requirements, Common Pitfalls & Additional Information
+
+### Wirecard: Requirements, Common Pitfalls & Additional Information
 - For backend operations like *recurPayment* a toolkit-password is required on top of the standard Wirecard credentials. 
 - Source orders are valid for 400 days.
 - There are payment method specific specifications, like for example passing a parameter `transactionIdentifier` with the value `INITIAL` for source orders performed via *SEPA Direct Debit*.
-- Every credit card based order payment response contains a parameter `anonymousPan`, which consists of the last 4 digits of the credit card numbe. This is useful, if you you want to let the user choose which card he wants to use for the recurring payment. For some credit cards also `maskedPan` and  `expiry` are available. The `maskedPan` includes a masked string of the whole creditcard-number. The expiry is useful to validate if the source order can still be used for a recurPayment operation.
+- Every credit card based order payment response contains a parameter `anonymousPan`, which consists of the last 4 digits of the credit card numbe. This is useful, if you you want to let the user choose which card he wants to use for the recurring payment. For some credit cards also `maskedPan` and  `expiry` are available. The `maskedPan` includes a masked string of the whole creditcard-number. The expiry is useful to validate if the source order can still be used for a _recurPayment_ operation.
 
 ## Best Practice
 ### Bad Way
@@ -19,8 +23,7 @@ For more details concerning the recurPayment operation also have a look at the o
 ![Recurring Payment Good](../../img/recurring-payment-good.png) 
 
 ## Implementation
-
-The following code will briefly show how to execute a recurPayment operation for a one time payment in the checkout process.
+The following code will briefly show how to perform a one time payment in the checkout process for _Wirecard Checkout Page_ (former known as Qpay).
 
 #### CheckoutController.php
 
@@ -32,40 +35,36 @@ The following code will briefly show how to execute a recurPayment operation for
         $checkoutManager = $factory->getCheckoutManager($this->cart);
         $user = $this->getUser();
 
-        if ($request->getMethod() == "POST") {
+        // open payment or submit recurring payment
+        if ($request->getMethod() == 'POST') {
 
-            $paymentMethod = $request->get("payment-method");
-            $paymentMethodRecurring = $request->get("payment-recurring");
+            if($sourceOrderId = $request->get("recurring-payment")){
 
-            $sourceOrderId = $request->get("source-order-{$paymentMethod}");
+                /* Recurring Payment */
+                if ($user && $sourceOrderId) {
+                    $sourceOrder = \Pimcore\Model\DataObject\OnlineShopOrder::getById($sourceOrderId);
 
-            /* Recurring Payment */
-            if ($user && $sourceOrderId && $paymentMethod && ($paymentMethodRecurring == $paymentMethod)) {
-                $sourceOrder = \Pimcore\Model\DataObject\OnlineShopOrder::getById($sourceOrderId);
+                    try {
+                        $targetOrder = $checkoutManager->startAndCommitRecurringOrderPayment($sourceOrder, $user->getId());
+                        return $this->redirect($this->generateUrl('checkout', ['action' => 'completed', 'language' => $language]));
+                    } catch (\Exception $exception) {
+                        // show warning
+                    }
 
-                try {
-                    $targetOrder = $checkoutManager->startAndCommitRecurringOrderPayment($sourceOrder);
-                    return $this->redirect("/my/payment/success/url");
-                } catch (\Exception $exception) {
-                    // TODO: show warning
                 }
-
             }
 
-            // Render default payment frame
-            return $this->render("/my/payment/frame/view");
-
+            // no recurring payment or error --> redirect to payment
         }
 
-        $paymentMethods = ["SEPA-DD", "CCARD"];
+        $paymentMethods = ["SEPA-DD", "CCARD"]; // supported payment methods
 
         if ($user) {
             $sourceOrders = [];
 
             foreach ($paymentMethods as $paymentMethod) {
                 $orderManager = $factory->getOrderManager();
-                $sourceOrder = $orderManager->getRecurringPaymentSourceOrder(
-                    $user->getId(), $checkoutManager->getPayment(), $paymentMethod);
+                $sourceOrder = $orderManager->getRecurringPaymentSourceOrder($user->getId(), $checkoutManager->getPayment(), $paymentMethod);
 
                 $sourceOrders[$paymentMethod] = $sourceOrder;
             }
@@ -81,55 +80,54 @@ The following code will briefly show how to execute a recurPayment operation for
 
 #### payment.html.php
 
-```php
-<form action="/route/to/pay-action" method="post">
+```php 
 
-    <?php
-    if ($this->security()->isGranted("IS_AUTHENTICATED_FULLY")) {
+        <form method="post" action="<?= $this->pimcoreUrl(array('action' => 'confirm'), 'checkout', true) ?>">
 
-        foreach ($this->paymentMethods as $paymentMethod) {
-            $sourceOrder = $this->sourceOrders[$paymentMethod];
-            $sourceOrderId =  $sourceOrder ? $sourceOrder->getId() : ""
-            ?>
+            ... 
             
-            <input hidden
-                name="source-order-<?= $paymentMethod ?>" 
-                value="<?= $sourceOrderId ?>">
-                
-            <input name="payment-method" value="<?= $paymentMethod ?>" type="radio">
-    
-            <?php
-            if ($paymentProvider = $sourceOrder->getPaymentProvider()->getPaymentProviderQpay()) {
+            <?php if (!empty($this->sourceOrders)): ?>
 
-                switch ($paymentProvider->getAuth_paymentType()) {
-                    case "SEPA-DD": ?>
+                <h4><?= $this->t("checkout.use-recurring-payment"); ?></h4>
+
+                <?php
+                foreach ($this->paymentMethods as $paymentMethod) :
+                    /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $sourceOrder */
+                    $sourceOrder = $this->sourceOrders[$paymentMethod];
+                    $sourceOrderId = $sourceOrder ? $sourceOrder->getId() : "";
+
+                    if (!$sourceOrder) {
+                        continue;
+                    }
+
+                    if ($paymentProvider = $paymentProviderBrick->getPaymentProviderQpay()) :
+                        $currentPaymentMethod = $paymentProvider->getAuth_paymentType();
+                        ?>
                         <p>
-                            <?= $paymentProvider->getAuth_bankAccountOwner() ?><br>
-                            <?= $paymentProvider->getAuth_bankAccountIBAN() ?>
-                            <input name="payment-recurring" value="<?= $paymentMethod ?>" type="checkbox">
+                            <input name="recurring-payment" value="<?= $sourceOrderId ?>" type="radio">
+                            <strong><?= $currentPaymentMethod ?></strong>
+
+                            <?php
+                            switch ($currentPaymentMethod) {
+                                case "SEPA-DD":
+                                    echo $paymentProvider->getAuth_bankAccountOwner() . " " . $paymentProvider->getAuth_bankAccountIBAN();
+                                    break;
+                                case "CCARD":
+                                    echo $paymentProvider->getAuth_maskedPan() . " " . $paymentProvider->getAuth_expiry();
+                                    break;
+                            }
+                            ?>
                         </p>
-                        <?php
-                        break;
-                    case "CCARD": ?>
-                        <p>
-                            <?= $paymentProvider->getAuth_maskedPan() ?><br>
-                            <?= $paymentProvider->getAuth_expiry() ?>
-                            <input name="payment-recurring" value="<?= $paymentMethod ?>" type="checkbox">
-                        </p>
-                        <?php
-                        break;
-                        // ...
-                }
-            }
-        }
-    }
-        ?>
+                        <?
+                    endif;
+                endforeach;
+                ?>
+                <hr>
+            <?php endif; ?>
 
-        <button type="submit">Pay now</button>
-    
-    </form>
-
-
+            ...
+           
+        </form>
 ```
 
 #### ecommerce.yml
@@ -145,10 +143,9 @@ payment_manager:
           sandbox:
             secret: 'CHCSH7UGHVVX2P7EHDHSY4T2S4CGYK4QBE4M5YUUG2ND5BEZWNRZW5EJYVJQ'
             customer: 'D200411'
-            toolkit_password: '2g4f9q2m' # neccesary for recurPayment operation
+            toolkit_password: '2g4f9q2m' # necessary for recurPayment operation
             optional_payment_properties:
               - paymentType
-              - financialInstitution # restrict for Visa, Mastercard etc.
-              - transactionIdentifier # neccesary for recurPayment based on SEPA DIRECT DEBIT
-            recurring_payment_enabled: true
+              - transactionIdentifier # necessary for recurPayment based on SEPA DIRECT DEBIT
+            recurring_payment_enabled: true # enable recurring payment
 ```

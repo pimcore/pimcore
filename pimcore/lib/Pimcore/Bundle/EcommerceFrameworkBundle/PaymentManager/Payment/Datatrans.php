@@ -809,6 +809,8 @@ XML;
         $orderListing->addConditionParam("{$providerBrickName}.auth_aliasCC IS NOT NULL");
         $orderListing->addConditionParam("LAST_DAY(STR_TO_DATE(CONCAT({$providerBrickName}.auth_expm,'/',{$providerBrickName}.auth_expy), '%m/%Y')) >= CURDATE()");
 
+        $orderListing->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
+        $orderListing->setOrder("DESC");
     }
 
 
