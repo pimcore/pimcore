@@ -311,7 +311,7 @@ class CheckoutManager implements ICheckoutManager
      *
      * @throws \Exception
      */
-    protected function verifyRecurringPayment(IPayment $provider, AbstractOrder $sourceOrder)
+    protected function verifyRecurringPayment(IPayment $provider, AbstractOrder $sourceOrder, string $customerId)
     {
 
         /* @var OrderManager $orderManager */
@@ -321,17 +321,17 @@ class CheckoutManager implements ICheckoutManager
             throw new \Exception("Recurring Payment is not enabled or is not supported by payment provider [{$provider->getName()}].");
         }
 
-        if(!$orderManager->isValidOrderForRecurringPayment($sourceOrder, $this->getPayment())){
+        if(!$orderManager->isValidOrderForRecurringPayment($sourceOrder, $this->getPayment(), $customerId)){
             throw new \Exception("The given source order is not valid for recurring payment.");
         }
     }
 
     /**
      * @param AbstractOrder $sourceOrder
-     * @return AbstractOrder
-     * @throws \Exception
+     * @param string $customerId
+     * @return null|AbstractOrder
      */
-    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder)
+    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId)
     {
         /* @var PaymentInfo $targetPaymentInfo */
         $targetPaymentInfo = $this->startOrderPayment();
@@ -344,7 +344,7 @@ class CheckoutManager implements ICheckoutManager
 
         /* @var $paymentProvider QPay */
         $paymentProvider = $sourceOrderAgent->getPaymentProvider();
-        $this->verifyRecurringPayment($paymentProvider, $sourceOrder);
+        $this->verifyRecurringPayment($paymentProvider, $sourceOrder, $customerId);
 
         $targetOrder = $orderManager->getOrderFromCart($this->getCart());
 

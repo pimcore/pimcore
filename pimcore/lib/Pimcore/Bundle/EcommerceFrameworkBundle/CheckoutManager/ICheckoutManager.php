@@ -131,9 +131,10 @@ interface ICheckoutManager
      * provided via the source order.
      *
      * @param AbstractOrder $sourceOrder
+     * @param string $customerId             Only allow recurring payment to be performed on source-orders of the same user
      * @return AbstractOrder
      */
-    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder);
+    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId);
 
     /**
      * Commits order payment

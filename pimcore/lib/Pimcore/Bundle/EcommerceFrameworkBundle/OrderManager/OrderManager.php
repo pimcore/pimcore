@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
@@ -31,6 +32,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\File;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Service;
+use Pimcore\Model\FactoryInterface;
 use Pimcore\Tool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -481,44 +483,36 @@ class OrderManager implements IOrderManager
      * @param string $customerId
      * @param IPayment $paymentProvider
      * @param null $paymentMethod
+     * @param null|int $limit
      * @param string $orderId
-     * @return \Pimcore\Model\DataObject\Listing\Concrete
+     *
+     * @throws ProviderNotFoundException
+     * @throws \Exception
+     *
+     * @return false|\Pimcore\Model\DataObject\Listing\Concrete
      */
-    protected function getRecurringPaymentSourceOrderList(string $customerId, IPayment $paymentProvider, $paymentMethod = null, $orderId = "")
+    public function getRecurringPaymentSourceOrderList(string $customerId, IPayment $paymentProvider, $paymentMethod = null, $orderId = "")
     {
         $orders = $this->buildOrderList();
         $orders->addConditionParam("customer__id = ?", $customerId);
         $orders->addConditionParam("(orderState = '" . AbstractOrder::ORDER_STATE_COMMITTED . "' OR orderState = '" . AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED . "')");
 
-        $paymentProviderName = $paymentProvider->getName();
-
         /* Check if provider is registered */
+        $paymentProviderName = $paymentProvider->getName();
         Factory::getInstance()->getPaymentManager()->getProvider(strtolower($paymentProviderName));
-
-        $providerBrickName = "PaymentProvider{$paymentProviderName}";
-
-        $orders->addObjectbrick($providerBrickName);
-        $orders->addConditionParam("{$providerBrickName}.auth_orderNumber IS NOT NULL");
 
         if ($orderId) {
             $orders->setCondition("oo_id = '{$orderId}'");
         }
 
-        if ($paymentMethod) {
-            $orders->addConditionParam("{$providerBrickName}.auth_paymentType = ?", $paymentMethod);
+        /* Apply provider specific condition */
+        $paymentProvider->applyRecurringPaymentCondition($orders, ["paymentMethod" => $paymentMethod]);
+
+        if (empty($orders->getOrderKey())) {
+            $orders->setOrderKey("o_creationDate");
+            $orders->setOrder("DESC");
         }
 
-        /* recurring payment possible for 400 days */
-        $orders->addConditionParam("FROM_UNIXTIME({$providerBrickName}.paymentFinished) > (NOW() - INTERVAL 400 DAY)");
-
-        /* consider credit card expiry if available */
-        $orders->addConditionParam("({$providerBrickName}.auth_expiry IS NULL OR LAST_DAY(STR_TO_DATE({$providerBrickName}.auth_expiry, '%m/%Y')) >= CURDATE())");
-
-        // TODO: why is this not working? unknown column exception
-        $orders->setOrderKey("{$providerBrickName}.paymentFinished");
-
-        $orders->setOrderKey("o_creationDate");
-        $orders->setOrder("DESC");
 
         return $orders;
     }
@@ -536,26 +530,19 @@ class OrderManager implements IOrderManager
         $orders = $this->getRecurringPaymentSourceOrderList($customerId, $paymentProvider, $paymentMethod);
         $orders->setLimit(1);
 
-        return current($orders->load());
+        return $orders->current();
     }
 
     /**
+     * @param AbstractOrder $order
+     * @param IPayment $payment
+     * @param string $customerId
      * @return bool
      */
-    public function isValidOrderForRecurringPayment(AbstractOrder $order, IPayment $payment)
+    public function isValidOrderForRecurringPayment(AbstractOrder $order, IPayment $payment, $customerId = "")
     {
-        $paymentProviderBrick = $order->getPaymentProvider();
-        $paymentProviderGetter = "getPaymentProvider" . $payment->getName();
-        $paymentMethod = $paymentProviderBrick->$paymentProviderGetter();
-
-        $orders = $this->getRecurringPaymentSourceOrderList(
-            $order->getCustomer()->getId(),
-            $payment,
-            $paymentMethod->getAuth_paymentType(),
-            $order->getId()
-        );
-
-        return !empty($orders->load());
+        $orders = $this->getRecurringPaymentSourceOrderList($customerId, $payment, null, $order->getId());
+        return !empty($orders->current());
     }
 
     /**
