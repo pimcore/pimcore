@@ -37,7 +37,6 @@ public function paymentAction(Request $request)
 
     // open payment or submit recurring payment
     if ($request->getMethod() == 'POST') {
-
         if($sourceOrderId = $request->get("recurring-payment")){
 
             /* Recurring Payment */
@@ -50,12 +49,8 @@ public function paymentAction(Request $request)
                 } catch (\Exception $exception) {
                     // show warning
                 }
-
             }
         }
-
-        // no recurring payment or error --> redirect to payment page
-        return $this->redirect($this->generateUrl('payment', ['action' => 'payment']));
     }
 
     $paymentMethods = ["SEPA-DD", "CCARD"]; // supported payment methods
@@ -75,18 +70,15 @@ public function paymentAction(Request $request)
     $this->view->paymentMethods = $paymentMethods;
 
     // payment.html.php rendered
-
 }
 ```
 
 #### payment.html.php
 
 ```php 
-
+?>
 <form method="post" action="<?= $this->pimcoreUrl(array('action' => 'confirm'), 'checkout', true) ?>">
 
-    ... 
-    
     <?php if (!empty($this->sourceOrders)): ?>
 
         <h4><?= $this->t("checkout.use-recurring-payment"); ?></h4>
@@ -126,8 +118,6 @@ public function paymentAction(Request $request)
         <hr>
     <?php endif; ?>
 
-    ...
-   
 </form>
 ```
 
