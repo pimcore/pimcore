@@ -51,6 +51,8 @@ class Klarna extends AbstractPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         $this->eid             = $options['eid'];
         $this->sharedSecretKey = $options['shared_secret_key'];
 
@@ -64,6 +66,8 @@ class Klarna extends AbstractPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'mode',
             'eid',

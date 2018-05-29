@@ -59,6 +59,8 @@ class Mpay24Seamless extends AbstractPayment
      */
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'merchant_id',
             'password',

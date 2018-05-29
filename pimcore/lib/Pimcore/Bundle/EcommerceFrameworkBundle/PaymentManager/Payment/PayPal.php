@@ -59,6 +59,8 @@ class PayPal extends AbstractPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         // set endpoint depending on mode
         if ('live' === $options['mode']) {
             $this->endpointUrlPart = 'paypal';
@@ -100,6 +102,8 @@ class PayPal extends AbstractPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'mode',
             'api_username',

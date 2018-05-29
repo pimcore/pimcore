@@ -285,6 +285,8 @@ class OGone extends AbstractPayment
      */
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'pspid',
             'secret',
