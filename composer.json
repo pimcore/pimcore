@@ -76,7 +76,7 @@
     "myclabs/php-enum": "^1.5",
     "neitanod/forceutf8": "~2",
     "nesbot/carbon": "~1",
-    "ocramius/package-versions": "^1.1",
+    "ocramius/package-versions": "1.2.0",
     "ocramius/proxy-manager": "2.0.*",
     "oyejorge/less.php": "~1.7",
     "pear/net_url2": "~2.2",
@@ -89,7 +89,7 @@
     "sensio/distribution-bundle": "^5.0.19",
     "sensio/framework-extra-bundle": "^3.0.2",
     "sensio/generator-bundle": "^3.0",
-    "sensiolabs/ansi-to-html": "^1.1",
+    "sensiolabs/ansi-to-html": "^1.1",k
     "symfony-cmf/routing-bundle": "^2.0",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/polyfill-apcu": "^1.0",
