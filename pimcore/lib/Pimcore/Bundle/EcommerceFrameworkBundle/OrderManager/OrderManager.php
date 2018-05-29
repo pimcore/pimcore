@@ -495,7 +495,7 @@ class OrderManager implements IOrderManager
     {
         $orders = $this->buildOrderList();
         $orders->addConditionParam("customer__id = ?", $customerId);
-        $orders->addConditionParam("(orderState = '" . AbstractOrder::ORDER_STATE_COMMITTED . "' OR orderState = '" . AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED . "')");
+        $orders->addConditionParam("orderState IS NOT NULL");
 
         /* Check if provider is registered */
         $paymentProviderName = $paymentProvider->getName();
@@ -527,6 +527,10 @@ class OrderManager implements IOrderManager
      */
     public function getRecurringPaymentSourceOrder(string $customerId, IPayment $paymentProvider, $paymentMethod = null)
     {
+        if (!$paymentProvider->isRecurringPaymentEnabled()) {
+            return null;
+        }
+
         $orders = $this->getRecurringPaymentSourceOrderList($customerId, $paymentProvider, $paymentMethod);
         $orders->setLimit(1);
 

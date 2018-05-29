@@ -148,6 +148,8 @@ class WirecardSeamless extends AbstractPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         $this->customerId = $options['customer_id'];
         $this->shopId     = $options['shop_id'];
         $this->password   = $options['password'];
@@ -187,6 +189,8 @@ class WirecardSeamless extends AbstractPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'customer_id',
             'shop_id',

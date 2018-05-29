@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Log\Simple;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\Listing\Concrete;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -60,11 +61,6 @@ class QPay extends AbstractPayment
      * @var string
      */
     protected $paymenttype = 'SELECT';
-
-    /**
-     * @var bool
-     */
-    protected $recurringPaymentEnabled;
 
     /**
      * Keep old implementation for backwards compatibility
@@ -120,6 +116,8 @@ class QPay extends AbstractPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         $this->customer = $options['customer'];
         $this->secret = $options['secret'];
 
@@ -129,10 +127,6 @@ class QPay extends AbstractPayment
 
         if (isset($options['payment_type'])) {
             $this->paymenttype = $options['payment_type'];
-        }
-
-        if (isset($options['recurring_payment_enabled'])) {
-            $this->recurringPaymentEnabled = $options['recurring_payment_enabled'];
         }
 
         if (isset($options['hash_algorithm'])) {
@@ -149,6 +143,8 @@ class QPay extends AbstractPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'customer',
             'secret'
@@ -161,10 +157,6 @@ class QPay extends AbstractPayment
         $resolver
             ->setDefined('payment_type')
             ->setAllowedTypes('payment_type', ['string']);
-
-        $resolver
-            ->setDefined('recurring_payment_enabled')
-            ->setAllowedTypes('recurring_payment_enabled', ['bool']);
 
         $resolver
             ->setDefined('hash_algorithm')
@@ -702,11 +694,6 @@ class QPay extends AbstractPayment
         return $this->paymenttype;
     }
 
-    public function isRecurringPaymentEnabled()
-    {
-        return $this->recurringPaymentEnabled;
-    }
-
     public function applyRecurringPaymentCondition(Concrete $orders, $additionalParameters = [])
     {
         $providerBrickName = "PaymentProvider{$this->getName()}";
@@ -742,6 +729,8 @@ class QPay extends AbstractPayment
 
         if (method_exists($paymentBrick, "setSourceOrder")) {
             $paymentBrick->setSourceOrder($sourceOrder);
+        } else {
+            Logger::err("Could not set source order for performed recurring payment.");
         }
 
         $providerDataGetter = 'getPaymentProvider' . $this->getName();
