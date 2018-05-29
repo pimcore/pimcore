@@ -27,13 +27,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.initNamingStrategies();
         var namingStrategy = this.getNamingStrategy();
 
-        this.toolbarGlobalVar = this.getType() + "toolbar";
-
         this.applyFallbackIcons();
-
-        if(typeof this.options["toolbar"] == "undefined" || this.options["toolbar"] != false) {
-            this.createToolBar();
-        }
 
         this.visibilityButtons = {};
 
@@ -49,17 +43,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         // type mapping
         var typeNameMappings = {};
-        this.allowedTypes = []; // this is for the toolbar to check if an brick can be dropped to this areablock
-        for (var i=0; i<this.options.types.length; i++) {
-            typeNameMappings[this.options.types[i].type] = {
-                name: this.options.types[i].name,
-                description: this.options.types[i].description,
-                icon: this.options.types[i].icon
-            };
-
-            this.allowedTypes.push(this.options.types[i].type);
-        }
-
         var limitReached = false;
         if(typeof options["limit"] != "undefined" && this.elements.length >= options.limit) {
             limitReached = true;
@@ -70,6 +53,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.createInitalControls();
         }
         else {
+            var hideTimeout;
+
             for (var i = 0; i < this.elements.length; i++) {
                 this.elements[i].key = this.elements[i].getAttribute("key");
                 this.elements[i].type = this.elements[i].getAttribute("type");
@@ -95,6 +80,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     plusButton = new Ext.Button({
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus",
+                        arrowVisible: false,
+                        menuAlign: "tr",
                         menu: this.getTypeMenu(this, this.elements[i])
                     });
                     plusButton.render(plusDiv);
@@ -144,7 +131,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 typeDiv = Ext.get(this.elements[i]).query('.pimcore_block_type[data-name="' + this.name + '"]')[0];
                 typeButton = new Ext.Button({
                     cls: "pimcore_block_button_type",
-                    text: typebuttontext,
                     handleMouseEvents: false,
                     tooltip: t("drag_me"),
                     iconCls: "pimcore_icon_move",
@@ -213,8 +199,36 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 if(this.elements[i].dataset.hidden == "true") {
                     Ext.get(this.elements[i]).addCls('pimcore_area_hidden');
                 }
+
+                // on hover show buttons
+                Ext.get(this.elements[i]).on('mouseenter', function (event) {
+                    if(hideTimeout) {
+                        window.clearTimeout(hideTimeout);
+                    }
+
+                    Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
+                        el.hide();
+                    });
+                    Ext.get(event.target).selectNode('.pimcore_area_buttons', false).show();
+                });
+
+                Ext.get(this.elements[i]).on('mouseleave', function (event) {
+                    hideTimeout = window.setTimeout(function () {
+                        Ext.get(event.target).selectNode('.pimcore_area_buttons', false).hide();
+                        hideTimeout = null;
+                    }, 10000);
+                });
             }
         }
+
+        // click outside, hide all block buttons
+        Ext.getBody().on('click', function (event) {
+            if(!Ext.get(id).isAncestor(event.target)) {
+                Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
+                    el.hide();
+                });
+            }
+        })
     },
 
     initNamingStrategies: function() {
@@ -502,7 +516,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     setInherited: function ($super, inherited) {
-        var elements = Ext.get(this.id).query('.pimcore_block_buttons[data-name="' + this.name + '"]');
+        var elements = Ext.get(this.id).query('.pimcore_area_buttons[data-name="' + this.name + '"]');
         if(elements.length > 0) {
             for(var i=0; i<elements.length; i++) {
                 $super(inherited, Ext.get(elements[i]));
@@ -570,13 +584,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             },
 
             onNodeDrop : function(target, dd, e, data){
-                if(data.fromToolbar) {
-                    this.addBlockAt(data.brick.type, target.getAttribute("index"));
-                    return true;
-                } else {
-                    this.moveBlockTo(data.sourceEl, target.getAttribute("index"));
-                    return true;
-                }
+                this.moveBlockTo(data.sourceEl, target.getAttribute("index"));
+                return true;
             }.bind(this)
         });
     },
@@ -754,8 +763,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     moveBlockTo: function (block, toIndex) {
 
-        //Ext.get(Ext.get(block).query(".pimcore_block_buttons")[0]).hide();
-
         toIndex = intval(toIndex);
 
         var currentIndex = this.getElementIndex(block);
@@ -903,250 +910,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.reloadDocument();
     },
 
-    createToolBar: function () {
-        var buttons = [];
-        var button;
-        var bricksInThisArea = [];
-        var groupsInThisArea = {};
-        var areaBlockToolbarSettings = this.options["areablock_toolbar"];
-        var itemCount = 0;
-
-        if(pimcore.document.tags[this.toolbarGlobalVar] != false
-                                                && pimcore.document.tags[this.toolbarGlobalVar].itemCount) {
-            itemCount = pimcore.document.tags[this.toolbarGlobalVar].itemCount;
-        }
-
-        if(typeof this.options.group != "undefined") {
-            var groupMenu;
-            var groupItemCount = 0;
-            var isExistingGroup;
-            var brickKey;
-            var groups = Object.keys(this.options.group);
-
-            for (var g=0; g<groups.length; g++) {
-                groupMenu = null;
-                isExistingGroup = false;
-                if(groups[g].length > 0) {
-
-                    if(pimcore.document.tags[this.toolbarGlobalVar] != false) {
-                        if(pimcore.document.tags[this.toolbarGlobalVar]["groups"][groups[g]]) {
-                            groupMenu = pimcore.document.tags[this.toolbarGlobalVar]["groups"][groups[g]];
-                            isExistingGroup = true;
-                        }
-                    }
-
-                    if(!groupMenu) {
-                        groupMenu = new Ext.Button({
-                            xtype: "button",
-                            text: groups[g],
-                            textAlign: "left",
-                            iconCls: "pimcore_icon_area",
-                            hideOnClick: false,
-                            width: areaBlockToolbarSettings.buttonWidth,
-                            menu: []
-                        });
-                    }
-
-                    groupsInThisArea[groups[g]] = groupMenu;
-
-                    for (var i=0; i<this.options.types.length; i++) {
-                        if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
-                            itemCount++;
-                            brickKey = groups[g] + " - " + this.options.types[i].type;
-                            button = this.getToolBarButton(this.options.types[i], brickKey, itemCount, "menu");
-                            if(button) {
-                                bricksInThisArea.push(brickKey);
-                                groupMenu.menu.add(button);
-                                groupItemCount++;
-                            }
-                        }
-                    }
-
-                    if(!isExistingGroup && groupItemCount > 0) {
-                        buttons.push(groupMenu);
-                    }
-                }
-            }
-        } else {
-            for (var i=0; i<this.options.types.length; i++) {
-                var brick = this.options.types[i];
-                itemCount++;
-
-                brickKey = brick.type;
-                button = this.getToolBarButton(brick, brickKey, itemCount);
-                if(button) {
-                    bricksInThisArea.push(brickKey);
-                    buttons.push(button);
-                }
-            }
-        }
-
-        // only initialize the toolbar once, even when there are more than one area on the page
-        if(pimcore.document.tags[this.toolbarGlobalVar] == false) {
-
-            var x = areaBlockToolbarSettings["x"];
-            if(areaBlockToolbarSettings["xAlign"] == "right") {
-                x = Ext.getBody().getWidth()-areaBlockToolbarSettings["x"]-areaBlockToolbarSettings["width"];
-            }
-
-            var tbId = this.toolbarGlobalVar,
-                toolbarPosition = localStorage.getItem("pimcore_toolbar_position");
-
-            if(!toolbarPosition) {
-                toolbarPosition = {};
-            } else {
-                toolbarPosition = JSON.parse(toolbarPosition);
-            }
-
-            if( !toolbarPosition[tbId] ) {
-                toolbarPosition[tbId] = { x : x, y : areaBlockToolbarSettings["y"], closed : false }
-            }
-
-            //now check if xPos is not out of view.
-            if( toolbarPosition[tbId].x > Ext.getBody().getWidth() ) {
-                toolbarPosition[tbId].x =  Ext.getBody().getWidth()-areaBlockToolbarSettings["width"] - 20
-            }
-
-            var storeToolbarState = function() {
-                localStorage.setItem("pimcore_toolbar_position", JSON.stringify(toolbarPosition));
-            };
-
-            var toolbar = new Ext.Window({
-                title: areaBlockToolbarSettings.title,
-                width: areaBlockToolbarSettings.width,
-                border:false,
-                shadow: false,
-                resizable: false,
-                autoHeight: true,
-                style: "position:fixed;",
-                collapsible: true,
-                expandOnShow : !toolbarPosition[tbId].closed,
-                collapsed: toolbarPosition[tbId].closed,
-                cls: "pimcore_areablock_toolbar",
-                closable: false,
-                x: toolbarPosition[tbId].x,
-                y: toolbarPosition[tbId].y,
-                items: buttons,
-                listeners: {
-                    collapse: function(p, eOpts) {
-                        toolbarPosition[tbId].closed = true;
-                        storeToolbarState();
-                    },
-                    expand: function(p, eOpts) {
-                        toolbarPosition[tbId].closed = false;
-                        storeToolbarState();
-                    },
-                    move: function (win, x, y) {
-                        toolbarPosition[tbId].x = Math.max( 20, x );
-                        toolbarPosition[tbId].y = Math.max( 20, y );
-                        storeToolbarState();
-                    }
-                }
-            });
-
-            storeToolbarState();
-
-            toolbar.show();
-
-            pimcore.document.tags[this.toolbarGlobalVar] = {
-                toolbar: toolbar,
-                groups: groupsInThisArea,
-                bricks: bricksInThisArea,
-                areablocks: [this],
-                itemCount: buttons.length
-            };
-        } else {
-            pimcore.document.tags[this.toolbarGlobalVar].toolbar.add(buttons);
-            pimcore.document.tags[this.toolbarGlobalVar].bricks =
-                                    array_merge(pimcore.document.tags[this.toolbarGlobalVar].bricks, bricksInThisArea);
-            pimcore.document.tags[this.toolbarGlobalVar].groups =
-                                    array_merge(pimcore.document.tags[this.toolbarGlobalVar].groups, groupsInThisArea);
-            pimcore.document.tags[this.toolbarGlobalVar].itemCount += buttons.length;
-            pimcore.document.tags[this.toolbarGlobalVar].areablocks.push(this);
-            pimcore.document.tags[this.toolbarGlobalVar].toolbar.updateLayout();
-        }
-
-    },
-
-    getToolBarButton: function (brick, key, itemCount, type) {
-
-        if(pimcore.document.tags[this.toolbarGlobalVar] != false) {
-            if(in_array(key, pimcore.document.tags[this.toolbarGlobalVar].bricks)) {
-                return;
-            }
-        }
-
-        var areaBlockToolbarSettings = this.options["areablock_toolbar"];
-        var maxButtonCharacters = areaBlockToolbarSettings.buttonMaxCharacters;
-
-        var button = {
-            xtype: "button",
-            textAlign: "left",
-            icon: brick.icon,
-            text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
-                : brick.name,
-            width: areaBlockToolbarSettings.buttonWidth,
-            listeners: {
-                "afterrender": function (brick, v) {
-
-                    v.dragZone = new Ext.dd.DragZone(v.getEl(), {
-                        getDragData: function(e) {
-                            var sourceEl = v.getEl().dom;
-                            if (sourceEl) {
-                                var d = sourceEl.cloneNode(true);
-                                d.id = Ext.id();
-                                return v.dragData = {
-                                    sourceEl: sourceEl,
-                                    repairXY: Ext.fly(sourceEl).getXY(),
-                                    ddel: d,
-                                    fromToolbar: true,
-                                    brick: brick
-                                }
-                            }
-                        },
-
-                        onStartDrag: function () {
-                            var areablocks = pimcore.document.tags[this.toolbarGlobalVar].areablocks;
-                            for(var i=0; i<areablocks.length; i++) {
-                                if(in_array(brick.type, areablocks[i].allowedTypes)) {
-                                    areablocks[i].createDropZones();
-                                }
-                            }
-                        }.bind(this),
-                        afterDragDrop: function () {
-                            var areablocks = pimcore.document.tags[this.toolbarGlobalVar].areablocks;
-                            for(var i=0; i<areablocks.length; i++) {
-                                areablocks[i].removeDropZones();
-                            }
-                        }.bind(this),
-                        afterInvalidDrop: function () {
-                            var areablocks = pimcore.document.tags[this.toolbarGlobalVar].areablocks;
-                            for(var i=0; i<areablocks.length; i++) {
-                                areablocks[i].removeDropZones();
-                            }
-                        }.bind(this),
-
-                        getRepairXY: function() {
-                            return this.dragData.repairXY;
-                        }
-                    });
-                }.bind(this, brick)
-            }
-        };
-
-        if(brick.description) {
-            button["tooltip"] = brick.description;
-        }
-
-        if(type == "menu") {
-            delete button["width"];
-            delete button["xtype"];
-            button["text"] = brick.name;// not shortened
-        }
-
-        return button;
-    },
-
     getValue: function () {
         var data = [];
         var hidden = false;
@@ -1174,5 +937,3 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         return "areablock";
     }
 });
-
-pimcore.document.tags.areablocktoolbar = false;

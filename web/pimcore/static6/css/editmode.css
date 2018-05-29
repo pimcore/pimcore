@@ -48,17 +48,46 @@
 	padding: 10px 0 5px 0;
 }
 
-.pimcore_block_buttons .x-form-trigger-default {
+.pimcore_area_buttons {
+    position: absolute;
+    left: -40px;
+    top:-8px;
+    width: 25px;
+    z-index: 10;
+    display: none;
+}
+
+.pimcore_area_buttons:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 100%;
+    width: 0;
+    height: 0;
+    border-right: 8px solid #000000;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+
+    left: 100%;
+    border-left: 8px solid #000000;
+    border-right: 0px solid #000000;
+}
+
+
+.pimcore_block_buttons .x-form-trigger-default,
+.pimcore_area_buttons .x-form-trigger-default{
     line-height: 24px;
     width:22px;
 }
 
-.pimcore_block_buttons .x-form-field {
+.pimcore_block_buttons .x-form-field,
+.pimcore_area_buttons .x-form-field {
     padding: 1px 4px;
     min-height: 24px;
 }
 
-.pimcore_block_buttons .x-btn {
+.pimcore_block_buttons .x-btn,
+.pimcore_area_buttons .x-btn {
     padding: 4px;
 }
 
@@ -70,7 +99,16 @@
 .pimcore_block_type,
 .pimcore_block_options {
     float: left;
-    padding: 0 2px 0 0;
+}
+
+.pimcore_area_buttons .pimcore_block_plus,
+.pimcore_area_buttons .pimcore_block_minus,
+.pimcore_area_buttons .pimcore_block_up,
+.pimcore_area_buttons .pimcore_block_down,
+.pimcore_area_buttons .pimcore_block_amount,
+.pimcore_area_buttons .pimcore_block_type,
+.pimcore_area_buttons .pimcore_block_options {
+    float: none;
 }
 
 .pimcore_block_clear {
@@ -83,7 +121,6 @@
 .pimcore_block_button_down,
 .pimcore_block_button_type {
 	display: inline-block !important;
-	margin: 0 3px 0 0;
 }
 
 .pimcore_block_button_plus button,
@@ -95,6 +132,10 @@
 
 .pimcore_block_entry {
 	clear:both;
+}
+
+.pimcore_area_entry {
+    position: relative;
 }
 
 .pimcore_block_amount {

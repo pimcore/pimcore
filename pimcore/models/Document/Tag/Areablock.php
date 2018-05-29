@@ -366,7 +366,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         // outer element
         $this->outputEditmode('<div class="pimcore_area_entry pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
 
-        $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
+        $this->outputEditmode('<div class="pimcore_area_buttons" ' . $attr . '>');
 
         $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
@@ -378,7 +378,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $this->outputEditmode('<div class="pimcore_block_visibility" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
 
-        $this->outputEditmode('</div>'); // .pimcore_block_buttons
+        $this->outputEditmode('</div>'); // .pimcore_area_buttons
     }
 
     /**
