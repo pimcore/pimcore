@@ -305,6 +305,7 @@ class Datatrans extends AbstractPayment
         $authorizedData = [
             'aliasCC'          => null,
             'maskedCC'         => null,
+            'pmethod'         => null,
             'expm'             => null,
             'expy'             => null,
             'reqtype'          => null,
