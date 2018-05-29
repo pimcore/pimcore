@@ -25,7 +25,6 @@ use Symfony\Component\Templating\EngineInterface;
  *
  * @package Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment
  */
-
 class Mpay24Seamless extends AbstractPayment
 {
     /**
