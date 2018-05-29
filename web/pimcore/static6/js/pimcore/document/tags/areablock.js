@@ -552,15 +552,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     this.addDropZoneToElement(a);
                 }
             }
-        } else {
-            // this is only for inserting when no element is in the areablock
-            var c = Ext.DomHelper.append(Ext.get(this.id), {
-                tag: "div",
-                index: i+1,
-                "class": "pimcore_area_dropzone"
-            });
-
-            this.addDropZoneToElement(c);
         }
     },
 
