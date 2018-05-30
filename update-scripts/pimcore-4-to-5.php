@@ -2,7 +2,7 @@
 
 namespace localMigration;
 
-include(__DIR__ . "/../pimcore/config/startup_cli.php");
+include(__DIR__ . '/../pimcore/config/startup_cli.php');
 
 use Pimcore\Db;
 use Symfony\Component\Filesystem\Filesystem;
