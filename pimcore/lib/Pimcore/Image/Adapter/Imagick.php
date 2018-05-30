@@ -102,7 +102,12 @@ class Imagick extends Adapter
                 $i->setResolution($options['resolution']['x'], $options['resolution']['y']);
             }
 
-            $imagePathLoad = ':' . $imagePath;
+            $imagePathLoad = $imagePath;
+
+            if (strpos($imagePathLoad, ':') !== false) {
+                $imagePathLoad = ':' . $imagePathLoad;
+            }
+
             if (!defined('HHVM_VERSION')) {
                 $imagePathLoad .= '[0]'; // not supported by HHVM implementation - selects the first layer/page in layered/pages file formats
             }
