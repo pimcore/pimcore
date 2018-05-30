@@ -94,18 +94,17 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                     }
                 });
                 downButton.render(downDiv);
-
-                /*if(options["autoHideButtons"] !== false) {
-                    Ext.get(this.elements[i]).on("mouseenter", function () {
-                        Ext.get(this.query(".pimcore_block_buttons")[0]).show();
-                    });
-                    Ext.get(this.elements[i]).on("mouseleave", function () {
-                        Ext.get(this.query(".pimcore_block_buttons")[0]).hide();
-                    });
-                }
-                */
             }
         }
+
+
+        Ext.get(id).on('mouseenter', function (event) {
+            Ext.get(id).addCls('pimcore_block_entry_over');
+        });
+
+        Ext.get(id).on('mouseleave', function (event) {
+            Ext.get(id).removeCls('pimcore_block_entry_over');
+        });
     },
 
     setInherited: function ($super, inherited) {

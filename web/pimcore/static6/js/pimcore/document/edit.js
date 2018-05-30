@@ -58,11 +58,30 @@ pimcore.document.edit = Class.create({
                 });
             };
 
-            var lbar = [{
+            this.areaToolbarTrigger = new Ext.button.Button({
+                iconCls: "pimcore_icon_plus",
+                tooltip: t("add_area_block"),
+                tooltipType: 'title',
+                cls: "pimcore_button_black",
+                enableToggle: true,
+                hidden: true,
+                toggleHandler: function () {
+                    var el = this.areaToolbarTrigger.areaToolbarElement;
+                    if(el.getLocalX() < 0) {
+                        el.setLocalX(0);
+                        this.layout.addCls('pimcore_document_edit_panel_areatoolbar_button_pressed');
+                    } else {
+                        el.setLocalX(-1000);
+                        this.layout.removeCls('pimcore_document_edit_panel_areatoolbar_button_pressed');
+                    }
+                }.bind(this)
+            });
+
+            var lbar = [this.areaToolbarTrigger, {
                 iconCls: "pimcore_icon_reload",
                 tooltip: t("refresh"),
                 handler: this.reload.bind(this)
-            },"-",{
+            },{
                 tooltip: t("highlight_editable_elements"),
                 iconCls: "pimcore_icon_highlight",
                 enableToggle: true,
@@ -85,7 +104,7 @@ pimcore.document.edit = Class.create({
                         }
                     }
                 }.bind(this)
-            }, "-", {
+            },{
                 tooltip: t("clear_content_of_current_view"),
                 iconCls: "pimcore_icon_cleanup",
                 handler: cleanupFunction.bind(this)
@@ -253,6 +272,8 @@ pimcore.document.edit = Class.create({
     },
 
     reload: function (disableSaveToSession) {
+
+        this.areaToolbarTrigger.toggle(false);
 
         if (this.reloadInProgress) {
             disableSaveToSession = true;

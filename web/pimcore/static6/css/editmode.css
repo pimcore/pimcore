@@ -46,6 +46,11 @@
 
 .pimcore_block_buttons {
 	padding: 10px 0 5px 0;
+    opacity: .3;
+}
+
+.pimcore_block_entry_over .pimcore_block_buttons, .pimcore_block_entry_over {
+    opacity: 1;
 }
 
 .pimcore_area_buttons {
@@ -63,9 +68,17 @@
 }
 
 .pimcore_area_buttons.top {
-    width: 200px;
+    width: 100%;
     left: 0;
-    top: -25px;
+    top: -40px;
+    padding-bottom: 15px;
+}
+
+.pimcore_area_buttons_inner{
+    background: #3c3f41;
+    border-left: 1px solid #000;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .pimcore_area_buttons:after {
@@ -112,9 +125,20 @@
     min-height: 24px;
 }
 
-.pimcore_block_buttons .x-btn,
+.pimcore_block_buttons .x-btn {
+    padding: 4px;
+    background: #f6f6f6;
+    border-color: #e4e4e4;
+    border-left: 0;
+}
+
+.pimcore_block_buttons .x-btn-over {
+    background-color: #ececec;
+}
+
 .pimcore_area_buttons .x-btn {
     padding: 4px;
+    border-left: 0;
 }
 
 .pimcore_block_plus,
@@ -341,29 +365,23 @@
 }
 
 .pimcore_areablock_toolbar {
-    opacity: .3;
+    opacity: .9;
+    border-color: #000;
 }
 
 .pimcore_areablock_toolbar.x-layer {
     position: fixed !important;
 }
 
-.pimcore_areablock_toolbar:hover {
-    opacity: .9;
-    transition: all .2s ease-in 0; /* explorer 10 */
-    -webkit-transition: all .2s ease-in 0; /* chrome & safari */
-    -moz-transition: all .2s ease-in 0; /* firefox */
-    -o-transition: all .2s ease-in 0; /* opera */
-}
-
-.pimcore_areablock_toolbar .x-window-header-default-top {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
 .pimcore_areablock_toolbar .x-btn-default-small {
     padding-top: 3px;
     padding-bottom: 3px;
+    background: #000;
+    border-bottom: 1px solid #ccc;
+}
+
+.pimcore_areablock_toolbar .x-btn-default-small:last-child {
+    border:0;
 }
 
 .pimcore_areablock_toolbar .x-btn-button-center {

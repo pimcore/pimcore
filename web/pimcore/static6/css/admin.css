@@ -1558,3 +1558,23 @@ span.warning {
     width: fit-content;
 }
 
+.pimcore_button_black {
+    background-color: #3c3f41;
+    border-color:#000;
+}
+
+.pimcore_button_black.x-btn-over, .pimcore_button_black.x-btn.x-btn-pressed {
+    background-color: #000;
+    border-color:#000;
+}
+
+.pimcore_document_edit_panel_areatoolbar_button_pressed:after {
+    position: absolute;
+    width: 10px;
+    height: 32px;
+    content: "";
+    background-color: #000;
+    top: 6px;
+    left: 39px;
+    z-index: 1000;
+}
