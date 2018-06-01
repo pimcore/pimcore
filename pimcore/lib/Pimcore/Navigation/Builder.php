@@ -258,6 +258,9 @@ class Builder
 
             if ($child instanceof Document\Hardlink) {
                 $child = Document\Hardlink\Service::wrap($child);
+                if(!$child) {
+                    continue;
+                }
             }
 
             // infinite loop detection, we use array keys here, because key lookups are much faster
