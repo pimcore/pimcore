@@ -200,7 +200,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
      * @param null $object
      * @param mixed $params
      *
-     * @return DataObject\Data\Consent
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -211,22 +211,31 @@ class Consent extends Model\DataObject\ClassDefinition\Data
             $consent = $data['consent'];
         }
 
-
         $service = \Pimcore::getContainer()->get(Service::class);
 
-
-        if ($consent == true) {
-            $note = $service->insertConsentNote($object, $this->getName(), $data['noteContent']);
-        } else {
-            $note = $service->insertRevokeNote($object, $this->getName());
+        $originalNote = null;
+        if(!empty($data['noteId'])) {
+            $originalNote = Model\Element\Note::getById($data['noteId']);
         }
 
-        if(!empty($data['noteId']) && $originalNote = Model\Element\Note::getById($data['noteId'])) {
-            $note->setTitle($note->getTitle() . ' (objects merged - original consent date: ' . date('Y-m-d H:i:s', $originalNote->getDate()) .')');
-            $note->save();
-        }
+        $noteId = null;
+        if(!$originalNote || ($originalNote->getCtype() == 'object' && $originalNote->getCid() != $object->getId())) {
 
-        $noteId = $note->getId();
+            if ($consent == true) {
+                $note = $service->insertConsentNote($object, $this->getName(), $data['noteContent']);
+            } else {
+                $note = $service->insertRevokeNote($object, $this->getName());
+            }
+
+            if(!empty($originalNote)) {
+                $note->setTitle($note->getTitle() . ' (objects merged - original consent date: ' . date('Y-m-d H:i:s', $originalNote->getDate()) .')');
+                $note->save();
+
+                $noteId = $note->getId();
+            }
+        } elseif($originalNote) {
+            $noteId = $originalNote->getId();
+        }
 
 
         return new DataObject\Data\Consent($consent, $noteId);
