@@ -38,7 +38,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.visibilityButtons = {};
 
         var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
-            typeDiv, typeButton, typebuttontext, editDiv, editButton, visibilityDiv;
+            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv;
 
         this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 
@@ -137,14 +137,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 });
                 downButton.render(downDiv);
 
-                // type button
-                typebuttontext = "<b>"  + this.elements[i].type + "</b>";
-                if(typeNameMappings[this.elements[i].type]
-                                        && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
-                    typebuttontext = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> "
-                                                + typeNameMappings[this.elements[i].type].description;
-                }
-
                 typeDiv = Ext.get(this.elements[i]).query('.pimcore_block_type[data-name="' + this.name + '"]')[0];
                 typeButton = new Ext.Button({
                     cls: "pimcore_block_button_type",
@@ -216,6 +208,16 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 if(this.elements[i].dataset.hidden == "true") {
                     Ext.get(this.elements[i]).addCls('pimcore_area_hidden');
                 }
+
+                labelDiv = Ext.get(Ext.get(this.elements[i]).query('.pimcore_block_label[data-name="' + this.name + '"]')[0]);
+                labelText = "<b>"  + this.elements[i].type + "</b>";
+                if(typeNameMappings[this.elements[i].type]
+                    && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
+                    labelText = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> "
+                        + typeNameMappings[this.elements[i].type].description;
+                }
+                labelDiv.setHtml(labelText);
+
 
                 // on hover show buttons
                 Ext.get(this.elements[i]).on('mouseenter', function (event) {

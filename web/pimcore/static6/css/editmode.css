@@ -157,7 +157,8 @@
 .pimcore_area_buttons .pimcore_block_down,
 .pimcore_area_buttons .pimcore_block_amount,
 .pimcore_area_buttons .pimcore_block_type,
-.pimcore_area_buttons .pimcore_block_options {
+.pimcore_area_buttons .pimcore_block_options,
+.pimcore_area_buttons .pimcore_block_visibility {
     float: none;
 }
 
@@ -167,12 +168,26 @@
 .pimcore_area_buttons.top .pimcore_block_down,
 .pimcore_area_buttons.top .pimcore_block_amount,
 .pimcore_area_buttons.top .pimcore_block_type,
-.pimcore_area_buttons.top .pimcore_block_options {
+.pimcore_area_buttons.top .pimcore_block_options,
+.pimcore_area_buttons.top .pimcore_block_visibility {
     float: left;
 }
 
 .pimcore_block_clear {
 	clear: both;
+}
+
+.pimcore_block_label {
+    display: none;
+}
+
+.pimcore_area_buttons.top .pimcore_block_label {
+    display: inline-block;
+    float: left;
+    color: #ccc;
+    line-height: 25px;
+    font-size: 10px;
+    padding-left: 10px;
 }
 
 .pimcore_block_button_plus,
