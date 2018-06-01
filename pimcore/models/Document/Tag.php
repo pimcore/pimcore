@@ -655,11 +655,17 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
-        if ($document && $document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
-            $name = $document->getTargetGroupElementName($name);
+        $targetGroupElementName = null;
+        if ($document && $document instanceof TargetingDocumentInterface) {
+
+            $targetGroupElementName = $document->getTargetGroupElementName($name);
+
+            if(!$blockState->hasBlocks()) {
+                $name = $targetGroupElementName;
+            }
         }
 
-        $tagName = $namingStrategy->buildTagName($name, $type, $blockState);
+        $tagName = $namingStrategy->buildTagName($name, $type, $blockState, $targetGroupElementName);
 
         $event = new TagNameEvent($type, $name, $blockState, $tagName, $document);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::TAG_NAME, $event);
