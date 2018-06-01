@@ -1501,6 +1501,7 @@ class Service extends Model\Element\Service
     {
         $list = new Listing();
         $list->setUnpublished(true);
+        $list->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT]);
         $key = Element\Service::getValidKey($item->getKey(), 'object');
         if (!$key) {
             throw new \Exception('No item key set.');
