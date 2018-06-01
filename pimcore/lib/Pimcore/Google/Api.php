@@ -114,6 +114,10 @@ class Api
         }
 
         $client = new \Google_Client();
+
+        $cache = \Pimcore::getContainer()->get('pimcore.cache.core.pool');
+        $client->setCache($cache);
+
         $client->setApplicationName('pimcore CMF');
         $json = self::getPrivateKeyPath();
         $client->setAuthConfig($json);
@@ -155,6 +159,10 @@ class Api
         }
 
         $client = new \Google_Client();
+
+        $cache = \Pimcore::getContainer()->get('pimcore.cache.core.pool');
+        $client->setCache($cache);
+
         $client->setApplicationName('pimcore CMF');
         $client->setDeveloperKey(Config::getSystemConfig()->services->google->simpleapikey);
 
