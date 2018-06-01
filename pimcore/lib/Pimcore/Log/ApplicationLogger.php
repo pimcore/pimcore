@@ -177,10 +177,16 @@ class ApplicationLogger implements LoggerInterface
         }
 
         if ($relatedObject) {
-            if ($relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject or $relatedObject instanceof \Pimcore\Model\Document or $relatedObject instanceof \Pimcore\Model\Asset) {
-                $relatedObject = $relatedObject->getId();
-            }
-            if (is_numeric($relatedObject)) {
+            if ($relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject) {
+                $context['relatedObject'] = $relatedObject->getId();
+                $context['relatedObjectType'] = 'object';
+            } elseif ($relatedObject instanceof \Pimcore\Model\Document) {
+                $context['relatedObject'] = $relatedObject->getId();
+                $context['relatedObjectType'] = 'document';
+            } elseif ($relatedObject instanceof \Pimcore\Model\Asset) {
+                $context['relatedObject'] = $relatedObject->getId();
+                $context['relatedObjectType'] = 'asset';
+            } elseif (is_numeric($relatedObject)) {
                 $context['relatedObject'] = $relatedObject;
                 $context['relatedObjectType'] = $this->relatedObjectType;
             }
