@@ -142,7 +142,8 @@ class Consent extends Model\DataObject\ClassDefinition\Data
         if ($data instanceof DataObject\Data\Consent) {
             return [
                 'consent' => $data->getConsent(),
-                'noteContent' => $data->getSummaryString()
+                'noteContent' => $data->getSummaryString(),
+                'noteId' => $data->getNoteId()
             ];
         } else {
             return null;
@@ -187,6 +188,48 @@ class Consent extends Model\DataObject\ClassDefinition\Data
         }
 
         return new DataObject\Data\Consent($data, $noteId);
+    }
+
+    /** Converts the data sent from the object merger plugin back to the internal object. Similar to
+     * getDiffDataForEditMode() an array of data elements is passed in containing the following attributes:
+     *  - "field" => the name of (this) field
+     *  - "key" => the key of the data element
+     *  - "data" => the data
+     *
+     * @param $data
+     * @param null $object
+     * @param mixed $params
+     *
+     * @return DataObject\Data\Consent
+     */
+    public function getDiffDataFromEditmode($data, $object = null, $params = [])
+    {
+        $data = $data[0]['data'];
+
+        $consent = false;
+        if(isset($data['consent'])) {
+            $consent = $data['consent'];
+        }
+
+
+        $service = \Pimcore::getContainer()->get(Service::class);
+
+
+        if ($consent == true) {
+            $note = $service->insertConsentNote($object, $this->getName(), $data['noteContent']);
+        } else {
+            $note = $service->insertRevokeNote($object, $this->getName());
+        }
+
+        if(!empty($data['noteId']) && $originalNote = Model\Element\Note::getById($data['noteId'])) {
+            $note->setTitle($note->getTitle() . ' (objects merged - original consent date: ' . date('Y-m-d H:i:s', $originalNote->getDate()) .')');
+            $note->save();
+        }
+
+        $noteId = $note->getId();
+
+
+        return new DataObject\Data\Consent($consent, $noteId);
     }
 
     /**
