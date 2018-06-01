@@ -169,7 +169,7 @@ pimcore.settings.httpErrorLog = Class.create({
                 }.bind(this),
                 iconCls: "pimcore_icon_flush_recyclebin"
             }, "-", {
-                text: t("errors_from_the_last_14_days"),
+                text: t("errors_from_the_last_7_days"),
                 xtype: "tbtext"
             }, '-',"->",{
               text: t("filter") + "/" + t("search"),
