@@ -16,6 +16,8 @@ namespace Pimcore\Log;
 
 use Monolog\Logger;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -176,14 +178,9 @@ class ApplicationLogger implements LoggerInterface
             $relatedObject = $this->relatedObject;
         }
 
-        if ($relatedObject) {
-            if ($relatedObject instanceof \Pimcore\Model\DataObject\AbstractObject or $relatedObject instanceof \Pimcore\Model\Document or $relatedObject instanceof \Pimcore\Model\Asset) {
-                $relatedObject = $relatedObject->getId();
-            }
-            if (is_numeric($relatedObject)) {
-                $context['relatedObject'] = $relatedObject;
-                $context['relatedObjectType'] = $this->relatedObjectType;
-            }
+        if ($relatedObject instanceof ElementInterface) {
+            $context['relatedObject'] = $relatedObject->getId();
+            $context['relatedObjectType'] = Service::getElementType($relatedObject);
         }
 
         $context['source'] = $this->resolveLoggingSource();
