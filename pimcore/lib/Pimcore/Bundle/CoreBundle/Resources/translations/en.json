@@ -335,7 +335,7 @@
   "fields": "Fields",
   "events": "Events",
   "analytics_settings_description": "To use the complete Google Analytics integration, please configure the Google API Service Account in System Settings",
-  "google_api_key_missing": "Google API private key is missing (p12 file from API Console), please put it into the following location:",
+  "google_api_key_missing": "Google API private key is missing (JSON file from API Console), please put it into the following location:",
   "google_api_private_key_installed": "Your Google API private key is installed correctly",
   "google_api_access_description": "This is required for the Google API integrations. Only use a `Service Account´ from the Google API Console.",
   "not_possible_with_paging": "Sorry, this is not possible in elements which are paged, try to restructure your data to avoid pages in the tree",
