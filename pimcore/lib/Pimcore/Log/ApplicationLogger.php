@@ -178,7 +178,10 @@ class ApplicationLogger implements LoggerInterface
             $relatedObject = $this->relatedObject;
         }
 
-        if ($relatedObject instanceof ElementInterface) {
+        if (is_numeric($relatedObject)) {
+            $context['relatedObject'] = $relatedObject;
+            $context['relatedObjectType'] = $this->relatedObjectType;
+        } elseif ($relatedObject instanceof ElementInterface) {
             $context['relatedObject'] = $relatedObject->getId();
             $context['relatedObjectType'] = Service::getElementType($relatedObject);
         }
