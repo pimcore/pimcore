@@ -63,7 +63,7 @@
     "egulias/email-validator": "*",
     "endroid/qr-code": "~2.2",
     "geoip2/geoip2": "~2",
-    "google/apiclient": "~1",
+    "google/apiclient": "^2.0",
     "guzzlehttp/guzzle": "~6.0",
     "hybridauth/hybridauth": "~2",
     "lcobucci/jwt": "^3.2",
