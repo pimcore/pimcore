@@ -2,7 +2,7 @@ name: CMS Demo (Twig)
 files:
     add:
         - app/Resources/views
-        - app/config
+        - app/config/google-api-private-key.json
         - src/AppBundle
         - var/classes
         - var/config/*
