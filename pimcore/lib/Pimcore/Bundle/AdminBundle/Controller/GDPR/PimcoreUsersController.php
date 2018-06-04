@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -74,8 +75,10 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     {
         $userData = $pimcoreUsers->getExportData(intval($request->get('id')));
 
-        $jsonResponse = $this->adminJson($userData);
-        $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-userdata-' . $userData['id'] . '.json"');
+        $json = $this->encodeJson($userData, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
+        $jsonResponse = new JsonResponse($json, 200, [
+            'Content-Disposition' => 'attachment; filename="export-userdata-' . $userData['id'] . '.json"'
+        ], true);
 
         return $jsonResponse;
     }
