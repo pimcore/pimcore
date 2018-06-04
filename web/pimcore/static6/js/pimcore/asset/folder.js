@@ -293,7 +293,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.id,
+                text: t("id") + " " + this.data.id,
                 scale: "medium"
             });
 
