@@ -119,7 +119,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 {
                     xtype: "button",
                     iconCls: "pimcore_icon_edit",
-                    handler: this.showoptioneditor.bind(this)
+                    handler: this.showoptioneditor.bind(this, valueStore)
 
                 }
             ],
