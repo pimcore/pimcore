@@ -2,6 +2,7 @@ name: CMS Demo
 files:
     add:
         - app/Resources/views
+        - app/config
         - src/AppBundle
         - var/classes
         - var/config/*
