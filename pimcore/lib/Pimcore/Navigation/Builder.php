@@ -258,7 +258,7 @@ class Builder
 
             if ($child instanceof Document\Hardlink) {
                 $child = Document\Hardlink\Service::wrap($child);
-                if(!$child) {
+                if (!$child) {
                     continue;
                 }
             }

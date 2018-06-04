@@ -207,36 +207,34 @@ class Consent extends Model\DataObject\ClassDefinition\Data
         $data = $data[0]['data'];
 
         $consent = false;
-        if(isset($data['consent'])) {
+        if (isset($data['consent'])) {
             $consent = $data['consent'];
         }
 
         $service = \Pimcore::getContainer()->get(Service::class);
 
         $originalNote = null;
-        if(!empty($data['noteId'])) {
+        if (!empty($data['noteId'])) {
             $originalNote = Model\Element\Note::getById($data['noteId']);
         }
 
         $noteId = null;
-        if(!$originalNote || ($originalNote->getCtype() == 'object' && $originalNote->getCid() != $object->getId())) {
-
+        if (!$originalNote || ($originalNote->getCtype() == 'object' && $originalNote->getCid() != $object->getId())) {
             if ($consent == true) {
                 $note = $service->insertConsentNote($object, $this->getName(), $data['noteContent']);
             } else {
                 $note = $service->insertRevokeNote($object, $this->getName());
             }
 
-            if(!empty($originalNote)) {
+            if (!empty($originalNote)) {
                 $note->setTitle($note->getTitle() . ' (objects merged - original consent date: ' . date('Y-m-d H:i:s', $originalNote->getDate()) .')');
                 $note->save();
 
                 $noteId = $note->getId();
             }
-        } elseif($originalNote) {
+        } elseif ($originalNote) {
             $noteId = $originalNote->getId();
         }
-
 
         return new DataObject\Data\Consent($consent, $noteId);
     }

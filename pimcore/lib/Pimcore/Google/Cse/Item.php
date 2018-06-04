@@ -87,6 +87,7 @@ class Item
 
     /**
      * @param \Google_Service_Customsearch_Result $data
+     *
      * @return $this
      */
     public function setValues(\Google_Service_Customsearch_Result $data)

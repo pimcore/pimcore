@@ -139,7 +139,7 @@ class Api
         if (!$token) {
             $client->refreshTokenWithAssertion();
             $token = json_encode($client->getAccessToken());
-            
+
             // 1 hour (3600s) is the default expiry time
             TmpStore::add($tokenId, $token, null, 3600);
         }

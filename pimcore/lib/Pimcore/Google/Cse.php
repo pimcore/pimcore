@@ -169,7 +169,6 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         $results = $googleResponse->getItems();
         if (is_array($results)) {
             foreach ($results as $item) {
-
                 $pimcoreResultItem = new Item($item);
 
                 // check for relation to document or asset
