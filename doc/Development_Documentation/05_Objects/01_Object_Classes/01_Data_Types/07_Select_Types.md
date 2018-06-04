@@ -17,12 +17,15 @@ The user field has fixed values as well. It allows to select a user from all ava
 Thereby a system user can be associated an object. 
 
 For multiselect types there is extra configuration to set render type (list or tags)
+
 ![Select Field](../../../img/multiselect_rendertype.png)
 
 Object Editor view for List Render Type:
+
 ![Select Field](../../../img/multiselect_view_list.png)
 
 Object Editor view for Tags Render Type:
+
 ![Select Field](../../../img/multiselect_view_tags.png)
 ### Working with select data types via API
 
