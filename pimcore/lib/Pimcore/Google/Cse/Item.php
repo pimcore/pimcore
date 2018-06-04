@@ -17,7 +17,7 @@ namespace Pimcore\Google\Cse;
 class Item
 {
     /**
-     * @var array
+     * @var \Google_Service_Customsearch_Result
      */
     public $raw;
 
@@ -77,25 +77,23 @@ class Item
     public $type;
 
     /**
-     * @param array $data
+     * @param \Google_Service_Customsearch_Result $data
      */
-    public function __construct($data)
+    public function __construct(\Google_Service_Customsearch_Result $data)
     {
         $this->setRaw($data);
         $this->setValues($data);
     }
 
     /**
-     * @param array $data
-     *
+     * @param \Google_Service_Customsearch_Result $data
      * @return $this
      */
-    public function setValues($data = [])
+    public function setValues(\Google_Service_Customsearch_Result $data)
     {
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $key => $value) {
-                $this->setValue($key, $value);
-            }
+        $properties = get_object_vars($data);
+        foreach ($properties as $key => $value) {
+            $this->setValue($key, $value);
         }
 
         return $this;
@@ -277,12 +275,11 @@ class Item
         return $this->link;
     }
 
-    /**
-     * @param $raw
-     *
+    /**+
+     * @param \Google_Service_Customsearch_Result $raw
      * @return $this
      */
-    public function setRaw($raw)
+    public function setRaw(\Google_Service_Customsearch_Result $raw)
     {
         $this->raw = $raw;
 
@@ -290,7 +287,7 @@ class Item
     }
 
     /**
-     * @return array
+     * @return \Google_Service_Customsearch_Result
      */
     public function getRaw()
     {

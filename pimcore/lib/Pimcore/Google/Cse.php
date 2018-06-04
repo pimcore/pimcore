@@ -153,51 +153,29 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     }
 
     /**
-     * @param $googleResponse
+     * @param \Google_Service_Customsearch_Search $googleResponse
      */
-    public function readGoogleResponse($googleResponse)
+    public function readGoogleResponse(\Google_Service_Customsearch_Search $googleResponse)
     {
-        $googleResponse = $googleResponse['modelData'];
         $this->setRaw($googleResponse);
 
-        // available factes
-        if (array_key_exists('context', $googleResponse) && is_array($googleResponse['context'])) {
-            if (array_key_exists('facets', $googleResponse['context']) && is_array($googleResponse['context']['facets'])) {
-                $facets = [];
-                foreach ($googleResponse['context']['facets'] as $facet) {
-                    $facets[$facet[0]['label']] = $facet[0]['anchor'];
-                }
-                $this->setFacets($facets);
-            }
-        }
-
-        // results incl. promotions, search results, ...
-        $items = [];
-
-        // set promotions
-        if (array_key_exists('promotions', $googleResponse) && is_array($googleResponse['promotions'])) {
-            foreach ($googleResponse['promotions'] as $promo) {
-                $promo['type'] = 'promotion';
-                $promo['formattedUrl'] = preg_replace('@^https?://@', '', $promo['link']);
-                $promo['htmlFormattedUrl'] = $promo['formattedUrl'];
-
-                $items[] = new Item($promo);
-            }
-        }
-
         // set search results
-        $total = intval($googleResponse['searchInformation']['totalResults']);
+        $total = intval($googleResponse->getSearchInformation()->getTotalResults());
         if ($total > 100) {
             $total = 100;
         }
         $this->setTotal($total);
 
-        if (array_key_exists('items', $googleResponse) && is_array($googleResponse['items'])) {
-            foreach ($googleResponse['items'] as $item) {
+        $results = $googleResponse->getItems();
+        if (is_array($results)) {
+            foreach ($results as $item) {
+
+                $pimcoreResultItem = new Item($item);
 
                 // check for relation to document or asset
                 // first check for an image
-                if (array_key_exists('pagemap', $item) && is_array($item['pagemap'])) {
+                $pagemap = $item->getPagemap();
+                if (is_array($pagemap)) {
                     if (array_key_exists('cse_image', $item['pagemap']) && is_array($item['pagemap']['cse_image'])) {
                         if ($item['pagemap']['cse_image'][0]) {
                             // try to get the asset id
@@ -219,27 +197,26 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
                             if ($id) {
                                 if ($image = Model\Asset::getById($id)) {
                                     if ($image instanceof Model\Asset\Image) {
-                                        $item['image'] = $image;
+                                        $pimcoreResultItem->setImage($image);
                                     }
                                 }
                             }
 
                             if (!array_key_exists('image', $item)) {
-                                $item['image'] = $item['pagemap']['cse_image'][0]['src'];
+                                $pimcoreResultItem->setImage($item['pagemap']['cse_image'][0]['src']);
                             }
                         }
                     }
                 }
 
                 // now a document
-                $urlParts = parse_url($item['link']);
+                $urlParts = parse_url($item->getLink());
                 if ($document = Model\Document::getByPath($urlParts['path'])) {
-                    $item['document'] = $document;
+                    $pimcoreResultItem->setDocument($document);
                 }
 
-                $item['type'] = 'searchresult';
-
-                $items[] = new Item($item);
+                $pimcoreResultItem->setType('searchresult');
+                $items[] = $pimcoreResultItem;
             }
         }
 
