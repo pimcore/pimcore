@@ -92,28 +92,7 @@ pimcore.object.klass = Class.create({
                             handler: this.addClass.bind(this)
                         }
                     ]
-                },
-                bbar: [
-                    {
-                        text: t("bulk_export"),
-                        iconCls: "pimcore_icon_export",
-                        handler: function () {
-                            var exporter = new pimcore.object.bulkexport();
-                            exporter.export();
-                        }
-                    }, {
-                        text: t("bulk_import"),
-                        iconCls: "pimcore_icon_import",
-                        handler: function () {
-                            Ext.Msg.confirm(t('warning'), t('warning_bulk_import'), function(btn){
-                                if (btn == 'yes'){
-                                    var importer = new pimcore.object.bulkimport;
-                                    importer.upload();
-                                }
-                            }.bind(this));
-                        }
-                    }
-                ]
+                }
             });
 
             this.tree.on("render", function () {

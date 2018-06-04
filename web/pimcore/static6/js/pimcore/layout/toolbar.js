@@ -870,6 +870,23 @@ pimcore.layout.toolbar = Class.create({
                         });
                     }
 
+                    if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
+                        objectMenu.menu.items.push({
+                            text: t("bulk_export"),
+                            iconCls: "pimcore_icon_export",
+                            handler: this.bulkExport
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.objects.bulkImport")) {
+                        objectMenu.menu.items.push({
+                            text: t("bulk_import"),
+                            iconCls: "pimcore_icon_import",
+                            handler: this.bulkImport.bind(this)
+                        });
+                    }
+
+
                     if (objectMenu.menu.items.length > 0) {
                         settingsItems.push(objectMenu);
                     }
@@ -1653,5 +1670,26 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("element_tag_configuration", new pimcore.element.tag.configuration());
         }
+    },
+
+
+    bulkImport: function() {
+
+        Ext.Msg.confirm(t('warning'), t('warning_bulk_import'), function(btn){
+            if (btn == 'yes'){
+                this.doBulkImport();
+            }
+        }.bind(this));
+    },
+
+
+    doBulkImport: function() {
+        var importer = new pimcore.object.bulkimport;
+        importer.upload();
+    },
+
+    bulkExport: function() {
+        var exporter = new pimcore.object.bulkexport();
+        exporter.export();
     }
 });
