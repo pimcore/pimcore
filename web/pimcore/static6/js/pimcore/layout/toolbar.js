@@ -297,8 +297,8 @@ pimcore.layout.toolbar = Class.create({
                             iconCls: "pimcore_icon_translations",
                             handler: this.xliffImportExport
                         }, {
-                            text: "MS Word " + t("export"),
-                            iconCls: "pimcore_icon_translations",
+                            text: "Microsoft® Word " + t("export"),
+                            iconCls: "pimcore_icon_docx",
                             handler: this.wordExport
                         }]
                     }
@@ -715,7 +715,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("website_settings") && perspectiveCfg.inToolbar("settings.website")) {
                 settingsItems.push({
-                    text: t("website"),
+                    text: t("website_settings"),
                     iconCls: "pimcore_icon_website",
                     handler: this.websiteSettings
                 });
@@ -723,7 +723,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
                 settingsItems.push({
-                    text: t("web2print"),
+                    text: t("web2print_settings"),
                     iconCls: "pimcore_icon_printpage pimcore_icon_overlay_setting",
                     handler: this.web2printSettings
                 });
@@ -869,23 +869,6 @@ pimcore.layout.toolbar = Class.create({
                             handler: this.editClassificationStoreConfig
                         });
                     }
-
-                    if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
-                        objectMenu.menu.items.push({
-                            text: t("bulk_export"),
-                            iconCls: "pimcore_icon_export",
-                            handler: this.bulkExport
-                        });
-                    }
-
-                    if (perspectiveCfg.inToolbar("settings.objects.bulkImport")) {
-                        objectMenu.menu.items.push({
-                            text: t("bulk_import"),
-                            iconCls: "pimcore_icon_import",
-                            handler: this.bulkImport.bind(this)
-                        });
-                    }
-
 
                     if (objectMenu.menu.items.length > 0) {
                         settingsItems.push(objectMenu);
@@ -1670,26 +1653,5 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("element_tag_configuration", new pimcore.element.tag.configuration());
         }
-    },
-
-
-    bulkImport: function() {
-
-        Ext.Msg.confirm(t('warning'), t('warning_bulk_import'), function(btn){
-            if (btn == 'yes'){
-                this.doBulkImport();
-            }
-        }.bind(this));
-    },
-
-
-    doBulkImport: function() {
-        var importer = new pimcore.object.bulkimport;
-        importer.upload();
-    },
-
-    bulkExport: function() {
-        var exporter = new pimcore.object.bulkexport();
-        exporter.export();
     }
 });

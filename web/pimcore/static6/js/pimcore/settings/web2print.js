@@ -218,8 +218,7 @@ pimcore.settings.web2print = Class.create({
                     {
                         xtype: 'fieldset',
                         title: t('general'),
-                        collapsible: true,
-                        collapsed: false,
+                        collapsible: false,
                         autoHeight: true,
                         defaultType: 'textfield',
                         defaults: {width: 450},

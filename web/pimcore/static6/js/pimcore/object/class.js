@@ -33,6 +33,34 @@ pimcore.object.klass = Class.create({
                 border: false,
                 layout: "border",
                 closable:true,
+                tbar: {
+                    items: [
+                        {
+                            text: t("add"),
+                            iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
+                            handler: this.addClass.bind(this)
+                        }, "->",
+                        {
+                            text: t("bulk_export"),
+                            iconCls: "pimcore_icon_export",
+                            handler: function () {
+                                var exporter = new pimcore.object.bulkexport();
+                                exporter.export();
+                            }
+                        }, {
+                            text: t("bulk_import"),
+                            iconCls: "pimcore_icon_import",
+                            handler: function () {
+                                Ext.Msg.confirm(t('warning'), t('warning_bulk_import'), function(btn){
+                                    if (btn == 'yes'){
+                                        var importer = new pimcore.object.bulkimport;
+                                        importer.upload();
+                                    }
+                                }.bind(this));
+                            }
+                        }
+                    ]
+                },
                 items: [this.getClassTree(), this.getEditPanel()]
             });
 
@@ -83,16 +111,7 @@ pimcore.object.klass = Class.create({
                     id: '0'
                 },
                 listeners: this.getTreeNodeListeners(),
-                rootVisible: false,
-                tbar: {
-                    items: [
-                        {
-                            text: t("add_class"),
-                            iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
-                            handler: this.addClass.bind(this)
-                        }
-                    ]
-                }
+                rootVisible: false
             });
 
             this.tree.on("render", function () {

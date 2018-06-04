@@ -79,7 +79,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                 tbar: {
                     items: [
                         {
-                            text: t("add_objectbrick"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_objectbricks pimcore_icon_overlay_add",
                             handler: this.addField.bind(this)
                         }

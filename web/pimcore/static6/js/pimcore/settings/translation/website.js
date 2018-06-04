@@ -64,7 +64,7 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
             this.panel = new Ext.Panel({
                 id: "pimcore_translations_website",
                 iconCls: "pimcore_icon_translations",
-                title: t("translations"),
+                title: t("shared_translations"),
                 border: false,
                 layout: "fit",
                 closable:true,
