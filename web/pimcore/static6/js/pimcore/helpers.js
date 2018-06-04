@@ -14,58 +14,35 @@
 /*global localStorage */
 pimcore.registerNS("pimcore.helpers.x");
 
-
 pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
 
     if (!ExtJS) {
         ExtJS = Ext;
     }
 
-    var map = new ExtJS.util.KeyMap({
+    var user = pimcore.globalmanager.get("user");
+    var bindings = [];
+
+    var decodedKeyBindings = Ext.decode(user.keyBindings);
+    if (decodedKeyBindings) {
+        for (var i = 0; i < decodedKeyBindings.length; i++) {
+            var item = decodedKeyBindings[i];
+            if (!item.key) {
+                continue;
+            }
+            var action = item.action;
+            var handler = pimcore.helpers.keyBindingMapping[action];
+            if (handler) {
+                var binding = item;
+                item["fn"] = handler;
+                bindings.push(binding);
+            }
+        }
+    }
+
+    pimcore.keymap = new ExtJS.util.KeyMap({
         target: bindEl,
-        binding: [{
-            key: "s",
-            ctrl: true,
-            shift: false,
-            alt: false,
-            fn: top.pimcore.helpers.handleCtrlS
-        }, {
-            key: 116,
-            fn: top.pimcore.helpers.handleF5
-        }, {
-            key: "sa",
-            fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
-            ctrl: true,
-            shift: true,
-            alt: false
-        }, {
-            key: "of",
-            fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "object"),
-            ctrl: true,
-            shift: true,
-            alt: false
-        }, {
-            key: "c",
-            fn: top.pimcore.helpers.openClassEditor,
-            ctrl: true,
-            shift: true
-        }, {
-            key: "l",
-            fn: top.pimcore.helpers.openInTree,
-            ctrl: true,
-            shift: true
-        }, {
-            key: "i",
-            fn: top.pimcore.helpers.showMetaInfo,
-            ctrl: false,
-            shift: false,
-            alt: true
-        }, {
-            key: "d",
-            fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
-            ctrl: true,
-            shift: true
-        }]
+        binding: bindings
     });
 };
 
@@ -3179,4 +3156,17 @@ pimcore.helpers.getDeeplink = function(type, id, subtype) {
         + (window.location.port && window.location.port !== "80" && window.location.port !== "443" ? ":" + window.location.port : "")
         + "/admin/login/deeplink?" + type + "_" + id + "_" + subtype;
 };
+
+pimcore.helpers.keyBindingMapping = {
+
+    "save" : pimcore.helpers.handleCtrlS,
+    "refresh"   : pimcore.helpers.handleF5,
+    "openAsset": pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
+    "openObject": pimcore.helpers.openElementByIdDialog.bind(this, "object"),
+    "openClassEditor": pimcore.helpers.openClassEditor,
+    "openInTree" : pimcore.helpers.openInTree,
+    "showMetaInfo" : pimcore.helpers.showMetaInfo,
+    "openDocument" : pimcore.helpers.openElementByIdDialog.bind(this, "document")
+};
+
 

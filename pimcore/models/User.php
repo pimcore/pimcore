@@ -127,6 +127,11 @@ class User extends User\UserRole
     public $lastLogin;
 
     /**
+     * @var string
+     */
+    public $keyBindings;
+
+    /**
      * @return string
      */
     public function getPassword()
@@ -282,7 +287,7 @@ class User extends User\UserRole
      */
     public function setAdmin($admin)
     {
-        $this->admin = (bool) $admin;
+        $this->admin = (bool)$admin;
 
         return $this;
     }
@@ -302,7 +307,7 @@ class User extends User\UserRole
      */
     public function setActive($active)
     {
-        $this->active = (bool) $active;
+        $this->active = (bool)$active;
 
         return $this;
     }
@@ -423,7 +428,7 @@ class User extends User\UserRole
      */
     public function setWelcomescreen($welcomescreen)
     {
-        $this->welcomescreen = (bool) $welcomescreen;
+        $this->welcomescreen = (bool)$welcomescreen;
 
         return $this;
     }
@@ -443,7 +448,7 @@ class User extends User\UserRole
      */
     public function setCloseWarning($closeWarning)
     {
-        $this->closeWarning = (bool) $closeWarning;
+        $this->closeWarning = (bool)$closeWarning;
 
         return $this;
     }
@@ -463,7 +468,7 @@ class User extends User\UserRole
      */
     public function setMemorizeTabs($memorizeTabs)
     {
-        $this->memorizeTabs = (bool) $memorizeTabs;
+        $this->memorizeTabs = (bool)$memorizeTabs;
 
         return $this;
     }
@@ -739,7 +744,7 @@ class User extends User\UserRole
      */
     public function getLastLogin()
     {
-        return (int) $this->lastLogin;
+        return (int)$this->lastLogin;
     }
 
     /**
@@ -749,8 +754,77 @@ class User extends User\UserRole
      */
     public function setLastLogin($lastLogin)
     {
-        $this->lastLogin = (int) $lastLogin;
+        $this->lastLogin = (int)$lastLogin;
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getKeyBindings()
+    {
+        return $this->keyBindings ? $this->keyBindings :
+
+            json_encode(
+                [
+                [
+                    "action" => "save",
+                    "key" => ord("S"),
+                    "ctrl" => true
+                ],
+                [
+                    "action" => "refresh",
+                    "key" => 116
+                ],
+                [
+                    "action" => "openAsset",
+                    "key" => ord("A"),
+                    "ctrl" => true,
+                    "shift" => true
+                ],
+                [
+                    "action" => "openObject",
+                    "key" => ord("O"),
+                    "ctrl" => true,
+                    "shift" => true
+                ],
+                [
+                    "action" => "openDocument",
+                    "key" => ord("D"),
+                    "ctrl" => true,
+                    "shift" => true
+                ],
+                [
+                    "action" => "openClassEditor",
+                    "key" => ord("C"),
+                    "ctrl" => true,
+                    "shift" => true
+
+                ],
+                [
+                    "action" => "openInTree",
+                    "key" => ord("L"),
+                    "ctrl" => true,
+                    "shift" => true
+
+                ],
+                [
+                    "action" => "showMetaInfo",
+                    "key" => ord("I"),
+                    "alt" => true
+                ]
+
+            ]);
+    }
+
+    /**
+     * @param string $keyBindings
+     */
+    public function setKeyBindings($keyBindings)
+    {
+        $this->keyBindings = $keyBindings;
+    }
+
+
 }

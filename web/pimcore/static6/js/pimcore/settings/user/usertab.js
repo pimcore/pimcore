@@ -56,11 +56,13 @@ pimcore.settings.user.usertab = Class.create({
         this.settings = new pimcore.settings.user.user.settings(this);
         this.workspaces = new pimcore.settings.user.workspaces(this);
         this.objectrelations = new pimcore.settings.user.user.objectrelations(this);
+        this.keyBindings = new pimcore.settings.user.user.keyBindings(this);
 
 
         this.panel.add(this.settings.getPanel());
         this.panel.add(this.workspaces.getPanel());
         this.panel.add(this.objectrelations.getPanel());
+        this.panel.add(this.keyBindings.getPanel());
 
         if(this.data.user.admin) {
             this.workspaces.disable();
@@ -101,6 +103,13 @@ pimcore.settings.user.usertab = Class.create({
         } catch (e2) {
             console.log(e2);
         }
+
+        try {
+            data.keyBindings = Ext.encode(this.keyBindings.getValues());
+        } catch (e3) {
+            console.log(e3);
+        }
+
 
         Ext.Ajax.request({
             url: "/admin/user/update",

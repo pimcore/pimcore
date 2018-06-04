@@ -265,6 +265,7 @@ $scripts = array(
     "pimcore/settings/user/role/tab.js",
     "pimcore/settings/user/user/objectrelations.js",
     "pimcore/settings/user/user/settings.js",
+    "pimcore/settings/user/user/keyBindings.js",
     "pimcore/settings/user/workspaces.js",
     "pimcore/settings/user/workspace/asset.js",
     "pimcore/settings/user/workspace/document.js",

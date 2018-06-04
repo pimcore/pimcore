@@ -225,25 +225,39 @@ pimcore.settings.profile.panel = Class.create({
 
         this.editorSettings = new pimcore.settings.user.editorSettings(this, this.currentUser.contentLanguages);
 
-        this.userPanel = new Ext.form.FormPanel({
+        this.keyBindings = new pimcore.settings.user.user.keyBindings(this);
+
+        this.basicPanel = new Ext.form.FormPanel({
             border: false,
             items: [{items: generalItems}, this.editorSettings.getPanel()],
-            labelWidth: 130,
+            labelWidth: 130
+        });
+
+
+        this.keyBindings = new pimcore.settings.user.user.keyBindings(this, true);
+
+        this.userPanel = new Ext.Panel({
+            autoScroll: true,
+            items: [this.basicPanel, {
+                xtype: "fieldset",
+                title: t("key_bindings"),
+                items: [this.keyBindings.getPanel()]
+            }],
             buttons: [
                 {
                     text: t("save"),
                     iconCls: "pimcore_icon_apply",
                     handler: this.saveCurrentUser.bind(this)
                 }
-            ],
-            autoScroll: true
+            ]
         });
+
 
         return this.userPanel;
     },
 
     saveCurrentUser: function () {
-        var values = this.userPanel.getForm().getFieldValues();
+        var values = this.basicPanel.getForm().getFieldValues();
         var contentLanguages = this.editorSettings.getContentLanguages();
         values.contentLanguages = contentLanguages;
 
@@ -255,12 +269,21 @@ pimcore.settings.profile.panel = Class.create({
             }
         }
 
+        try {
+            var keyBindings = Ext.encode(this.keyBindings.getValues());
+        } catch (e3) {
+            console.log(e3);
+        }
+
+
+
         Ext.Ajax.request({
             url: "/admin/user/update-current-user",
             method: "post",
             params: {
                 id: this.currentUser.id,
-                data: Ext.encode(values)
+                data: Ext.encode(values),
+                keyBindings: keyBindings
             },
             success: function (response) {
                 try {

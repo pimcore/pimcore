@@ -363,6 +363,17 @@ class UserController extends AdminController implements EventedControllerInterfa
             }
         }
 
+        if ($request->get('keyBindings')) {
+            $keyBindings = json_decode($request->get('keyBindings'), true);
+            $tmpArray = [];
+            foreach ($keyBindings as $action => $item) {
+                $tmpArray[] = json_decode($item, true);
+            }
+            $tmpArray = json_encode($tmpArray);
+
+            $user->setKeyBindings($tmpArray);
+        }
+
         $user->save();
 
         return $this->adminJson(['success' => true]);
@@ -437,6 +448,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         // unset confidential informations
         $userData = object2array($user);
+
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
         unset($userData['password']);
@@ -557,6 +569,18 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
 
                 $user->setValues($values);
+
+                if ($request->get('keyBindings')) {
+                    $keyBindings = json_decode($request->get('keyBindings'), true);
+                    $tmpArray = [];
+                    foreach ($keyBindings as $action => $item) {
+                        $tmpArray[] = json_decode($item, true);
+                    }
+                    $tmpArray = json_encode($tmpArray);
+
+                    $user->setKeyBindings($tmpArray);
+                }
+
                 $user->save();
 
                 return $this->adminJson(['success' => true]);
@@ -592,6 +616,8 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData = object2array($user);
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
+        $userData['keyBindings'] = $user->getKeyBindings();
+
         unset($userData['password']);
 
         $response = new Response('pimcore.currentuser = ' . $this->encodeJson($userData));

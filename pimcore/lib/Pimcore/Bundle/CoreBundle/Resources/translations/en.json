@@ -1854,5 +1854,15 @@
   "download_selected_as_zip": "Download selected items as ZIP",
   "please_select_items_to_download": "Please select items to download in the list",
   "unlink_existing_document": "Unlink existing Document",
-  "clear_fullpage_cache": "Clear Full Page Cache"
+  "clear_fullpage_cache": "Clear Full Page Cache",
+  "key_bindings": "Key Bindings",
+  "keybinding_save" : "Save",
+  "keybinding_refresh"   : "Reload",
+  "keybinding_openAsset": "Open Asset",
+  "keybinding_openObject": "Open Object",
+  "keybinding_openClassEditor": "Open Class Editor",
+  "keybinding_openInTree" : "Show in Tree",
+  "keybinding_showMetaInfo" : "Show Meta Info",
+  "keybinding_openDocument" : "Open Document",
+  "please_dont_forget_to_reload_pimcore": "<b>Plesae don't forget to reload pimcore after your modification!</b>"
 }
