@@ -133,6 +133,8 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         }
 
         if (this.fieldConfig.renderType == "tags") {
+            options.queryMode = 'local';
+            options.editable = true;
             this.component = Ext.create('Ext.form.field.Tag', options);
         } else {
             this.component = Ext.create('Ext.ux.form.MultiSelect', options);
