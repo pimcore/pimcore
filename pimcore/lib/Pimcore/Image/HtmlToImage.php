@@ -73,7 +73,7 @@ class HtmlToImage
             '--format ' . $format
         ];
 
-        if(php_sapi_name() != 'cli') {
+        if (php_sapi_name() != 'cli') {
             $options[] = '--cookie ' .  Session::getSessionName() . ' ' . Session::getSessionId();
         }
 
