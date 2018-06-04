@@ -54,7 +54,7 @@ class FileInstaller
             $target = PIMCORE_PROJECT_ROOT . '/' . $target;
 
             try {
-                if ($fs->exists($target) && !is_dir($target)) {
+                if ($fs->exists($target)) {
                     if ($overwriteExisting) {
                         $this->logger->warning('Removing existing file {file}', [
                             'file' => $target
