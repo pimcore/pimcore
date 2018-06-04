@@ -657,10 +657,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // there are any parent blocks for the current element
         $targetGroupElementName = null;
         if ($document && $document instanceof TargetingDocumentInterface) {
-
             $targetGroupElementName = $document->getTargetGroupElementName($name);
 
-            if(!$blockState->hasBlocks()) {
+            if (!$blockState->hasBlocks()) {
                 $name = $targetGroupElementName;
             }
         }
