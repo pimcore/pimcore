@@ -251,20 +251,14 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 name: "renderType",
                 itemId: "renderType",
                 mode: 'local',
-                store: new Ext.data.ArrayStore({
-                    id: 0,
-                    fields: [
-                        'value',
-                        'key'
-                    ],
-                    data: [
-                        ['list', 'List'],
-                        ['tags', 'Tags']
-                    ]
-                }),
-                value: datax.renderType,
-                valueField: 'value',
-                displayField: 'key',
+                store: [
+                    ['list', 'List'],
+                    ['tags', 'Tags']
+                ],
+                value: datax["renderType"] ? datax["renderType"] : 'list',
+                triggerAction: "all",
+                editable: false,
+                forceSelection: true
             },
             {
                 xtype: "textfield",
