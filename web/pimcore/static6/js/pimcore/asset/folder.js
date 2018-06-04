@@ -94,8 +94,8 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         this.dataview = new Ext.Panel({
             layout:'fit',
             bodyCls: "asset_folder_preview",
-            title: t("content"),
-            iconCls: "pimcore_icon_asset",
+            title: t("preview"),
+            iconCls: "pimcore_icon_preview",
             items: new Ext.DataView({
                 store: this.store,
                 autoScroll: true,
