@@ -225,8 +225,6 @@ pimcore.settings.profile.panel = Class.create({
 
         this.editorSettings = new pimcore.settings.user.editorSettings(this, this.currentUser.contentLanguages);
 
-        this.keyBindings = new pimcore.settings.user.user.keyBindings(this);
-
         this.basicPanel = new Ext.form.FormPanel({
             border: false,
             items: [{items: generalItems}, this.editorSettings.getPanel()],
@@ -240,6 +238,7 @@ pimcore.settings.profile.panel = Class.create({
             autoScroll: true,
             items: [this.basicPanel, {
                 xtype: "fieldset",
+                collapsible: true,
                 title: t("key_bindings"),
                 items: [this.keyBindings.getPanel()]
             }],

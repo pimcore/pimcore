@@ -768,54 +768,72 @@ class User extends User\UserRole
 
             json_encode(
                 [
-                [
-                    "action" => "save",
-                    "key" => ord("S"),
-                    "ctrl" => true
-                ],
-                [
-                    "action" => "refresh",
-                    "key" => 116
-                ],
-                [
-                    "action" => "openAsset",
-                    "key" => ord("A"),
-                    "ctrl" => true,
-                    "shift" => true
-                ],
-                [
-                    "action" => "openObject",
-                    "key" => ord("O"),
-                    "ctrl" => true,
-                    "shift" => true
-                ],
-                [
-                    "action" => "openDocument",
-                    "key" => ord("D"),
-                    "ctrl" => true,
-                    "shift" => true
-                ],
-                [
-                    "action" => "openClassEditor",
-                    "key" => ord("C"),
-                    "ctrl" => true,
-                    "shift" => true
+                    [
+                        "action" => "save",
+                        "key" => ord("S"),
+                        "ctrl" => true
+                    ],
+                    [
+                        "action" => "publish",
+                        "key" => ord("P"),
+                        "ctrl" => true,
+                        "shift" => true
+                    ],
+                    [
+                        "action" => "unpublish",
+                        "key" => ord("U"),
+                        "ctrl" => true,
+                        "shift" => true
+                    ],
+                    [
+                        "action" => "rename",
+                        "key" => ord("R"),
+                        "alt" => true,
+                        "shift" => true
+                    ],
+                    [
+                        "action" => "refresh",
+                        "key" => 116
+                    ],
+                    [
+                        "action" => "openAsset",
+                        "key" => ord("A"),
+                        "ctrl" => true,
+                        "shift" => true
+                    ],
+                    [
+                        "action" => "openObject",
+                        "key" => ord("O"),
+                        "ctrl" => true,
+                        "shift" => true
+                    ],
+                    [
+                        "action" => "openDocument",
+                        "key" => ord("D"),
+                        "ctrl" => true,
+                        "shift" => true
+                    ],
+                    [
+                        "action" => "openClassEditor",
+                        "key" => ord("C"),
+                        "ctrl" => true,
+                        "shift" => true
 
-                ],
-                [
-                    "action" => "openInTree",
-                    "key" => ord("L"),
-                    "ctrl" => true,
-                    "shift" => true
+                    ],
+                    [
+                        "action" => "openInTree",
+                        "key" => ord("L"),
+                        "ctrl" => true,
+                        "shift" => true
 
-                ],
-                [
-                    "action" => "showMetaInfo",
-                    "key" => ord("I"),
-                    "alt" => true
-                ]
+                    ],
+                    [
+                        "action" => "showMetaInfo",
+                        "key" => ord("I"),
+                        "alt" => true
+                    ]
 
-            ]);
+                ]);
     }
 
     /**

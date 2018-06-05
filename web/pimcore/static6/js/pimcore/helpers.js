@@ -27,6 +27,10 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
     if (decodedKeyBindings) {
         for (var i = 0; i < decodedKeyBindings.length; i++) {
             var item = decodedKeyBindings[i];
+            if (item == null) {
+                continue;
+            }
+
             if (!item.key) {
                 continue;
             }
@@ -598,6 +602,61 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
 };
 
 
+pimcore.helpers.rename = function (keyCode, e) {
+
+    e.stopEvent();
+
+    var tabpanel = Ext.getCmp("pimcore_panel_tabs");
+    var activeTab = tabpanel.getActiveTab();
+
+    if (activeTab) {
+        // for document
+        var el = activeTab.initialConfig;
+        if (el.document && el.document.rename) {
+            el.document.rename();
+
+        }
+        else if (el.object && el.object.rename) {
+            el.object.rename();
+
+        }
+        else if (el.asset && el.asset.rename) {
+            el.asset.rename();
+        }
+    }
+};
+
+pimcore.helpers.togglePublish = function (publish, keyCode, e) {
+
+    e.stopEvent();
+
+    var tabpanel = Ext.getCmp("pimcore_panel_tabs");
+    var activeTab = tabpanel.getActiveTab();
+
+    if (activeTab) {
+        // for document
+        var el = activeTab.initialConfig;
+        if (el.document) {
+            if (publish) {
+                el.document.publish();
+            } else {
+                el.document.unpublish();
+            }
+        }
+        else if (el.object) {
+            if (publish) {
+                el.object.publish();
+            } else {
+                el.object.unpublish();
+            }
+        }
+        else if (el.asset) {
+            el.asset.save();
+        }
+    }
+};
+
+
 pimcore.helpers.handleCtrlS = function (keyCode, e) {
 
     e.stopEvent();
@@ -1055,6 +1114,17 @@ pimcore.helpers.getClassForIcon = function (icon) {
     styleContainer.dom.innerHTML = content;
 
     return classname;
+};
+
+pimcore.helpers.searchAction = function (type) {
+    pimcore.helpers.itemselector(false, function (selection) {
+            pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
+        }, {type: [type]},
+        {moveToTab: true,
+            context: {
+                scope: "globalSearch"
+            }
+        });
 };
 
 
@@ -3033,7 +3103,7 @@ pimcore.helpers.csvExportWarning = function (callback) {
         cls: "x-message-box-warning x-dlg-icon"
     });
 
-    var textContainer =  Ext.Component({
+    var textContainer = Ext.Component({
         html: t('csv_object_export_warning')
     });
 
@@ -3109,7 +3179,7 @@ pimcore.helpers.csvExportWarning = function (callback) {
                 callback(formPanel.getValues());
                 window.close();
             }.bind(this)
-            },
+        },
             {
                 text: t("cancel"),
                 handler: function () {
@@ -3150,23 +3220,191 @@ pimcore.helpers.isValidPassword = function (pass) {
     return true;
 };
 
-pimcore.helpers.getDeeplink = function(type, id, subtype) {
+pimcore.helpers.getDeeplink = function (type, id, subtype) {
     return window.location.protocol + "//"
         + window.location.hostname
         + (window.location.port && window.location.port !== "80" && window.location.port !== "443" ? ":" + window.location.port : "")
         + "/admin/login/deeplink?" + type + "_" + id + "_" + subtype;
 };
 
+pimcore.helpers.showElementHistory = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets")) {
+        pimcore.layout.toolbar.prototype.showElementHistory();
+    }
+};
+
+pimcore.helpers.closeAllTabs = function() {
+    pimcore.helpers.closeAllElements();
+    // clear the opentab store, so that also non existing elements are flushed
+    pimcore.helpers.clearOpenTab();
+
+};
+
+pimcore.helpers.searchAndReplaceAssignments = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets")) {
+        new pimcore.element.replace_assignments();
+    }
+};
+
+pimcore.helpers.glossary = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("glossary")) {
+        pimcore.layout.toolbar.prototype.editGlossary();
+    }
+};
+
+pimcore.helpers.redirects = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("redirects")) {
+        pimcore.layout.toolbar.prototype.editRedirects();
+    }
+};
+
+pimcore.helpers.sharedTranslations = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("translations")) {
+        pimcore.layout.toolbar.prototype.editTranslations();
+    }
+};
+
+pimcore.helpers.recycleBin = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("recyclebin")) {
+        pimcore.layout.toolbar.prototype.recyclebin();
+    }
+};
+
+pimcore.helpers.notesEvents = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("notes_events")) {
+        pimcore.layout.toolbar.prototype.notes();
+    }
+};
+
+pimcore.helpers.applicationLogger = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("application_logging")) {
+        pimcore.layout.toolbar.prototype.logAdmin();
+    }
+};
+
+pimcore.helpers.reports = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("reports")) {
+        pimcore.layout.toolbar.prototype.showReports(null);
+    }
+};
+
+pimcore.helpers.tagManager = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("tag_snippet_management")) {
+        pimcore.layout.toolbar.prototype.showTagManagement();
+    }
+};
+
+pimcore.helpers.seoDocumentEditor = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
+        pimcore.layout.toolbar.prototype.showDocumentSeo();
+    }
+};
+
+pimcore.helpers.robots = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("robots.txt")) {
+        pimcore.layout.toolbar.prototype.showRobotsTxt();
+    }
+};
+
+pimcore.helpers.httpErrorLog = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("http_errors")) {
+        pimcore.layout.toolbar.prototype.showHttpErrorLog();
+    }
+};
+
+pimcore.helpers.customReports = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("reports")) {
+        pimcore.layout.toolbar.prototype.showCustomReports();
+    }
+};
+
+pimcore.helpers.tagConfiguration = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("tags_configuration")) {
+        pimcore.layout.toolbar.prototype.showTagConfiguration();
+    }
+};
+
+pimcore.helpers.users = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("users")) {
+        pimcore.layout.toolbar.prototype.editUsers();
+    }
+};
+
+pimcore.helpers.roles = function() {
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("users")) {
+        pimcore.layout.toolbar.prototype.editRoles();
+    }
+};
+
+pimcore.helpers.clearAllCaches = function() {
+    var user = pimcore.globalmanager.get("user");
+    if ((user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files") || user.isAllowed("clear_fullpage_cache"))) {
+        pimcore.layout.toolbar.prototype.clearCache({'env[]': ['dev','prod']})();
+    }
+};
+
+pimcore.helpers.clearDataCache = function() {
+    var user = pimcore.globalmanager.get("user");
+    if ((user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files") || user.isAllowed("clear_fullpage_cache"))) {
+        pimcore.layout.toolbar.prototype.clearCache({'only_pimcore_cache': true})
+    }
+};
+
 pimcore.helpers.keyBindingMapping = {
 
-    "save" : pimcore.helpers.handleCtrlS,
-    "refresh"   : pimcore.helpers.handleF5,
+    "save": pimcore.helpers.handleCtrlS,
+    "publish": pimcore.helpers.togglePublish.bind(this, true),
+    "unpublish": pimcore.helpers.togglePublish.bind(this, false),
+    "rename": pimcore.helpers.rename.bind(this),
+    "refresh": pimcore.helpers.handleF5,
+    "openDocument": pimcore.helpers.openElementByIdDialog.bind(this, "document"),
     "openAsset": pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
     "openObject": pimcore.helpers.openElementByIdDialog.bind(this, "object"),
     "openClassEditor": pimcore.helpers.openClassEditor,
-    "openInTree" : pimcore.helpers.openInTree,
-    "showMetaInfo" : pimcore.helpers.showMetaInfo,
-    "openDocument" : pimcore.helpers.openElementByIdDialog.bind(this, "document")
+    "openInTree": pimcore.helpers.openInTree,
+    "showMetaInfo": pimcore.helpers.showMetaInfo,
+    "searchDocument": pimcore.helpers.searchAction.bind(this, "document"),
+    "searchAsset": pimcore.helpers.searchAction.bind(this, "asset"),
+    "searchObject": pimcore.helpers.searchAction.bind(this, "object"),
+    "showElementHistory": pimcore.helpers.showElementHistory,
+    "closeAllTabs": pimcore.helpers.closeAllTabs,
+    "searchAndReplaceAssignments": pimcore.helpers.searchAndReplaceAssignments,
+    "glossary": pimcore.helpers.glossary,
+    "redirects": pimcore.helpers.redirects,
+    "sharedTranslations": pimcore.helpers.sharedTranslations,
+    "recycleBin": pimcore.helpers.recycleBin,
+    "notesEvents": pimcore.helpers.notesEvents,
+    "applicationLogger": pimcore.helpers.applicationLogger,
+    "reports": pimcore.helpers.reports,
+    "tagManager": pimcore.helpers.tagManager,
+    "seoDocumentEditor": pimcore.helpers.seoDocumentEditor,
+    "robots": pimcore.helpers.robots,
+    "httpErrorLog": pimcore.helpers.httpErrorLog,
+    "customReports": pimcore.helpers.customReports,
+    "tagConfiguration": pimcore.helpers.tagConfiguration,
+    "users": pimcore.helpers.users,
+    "roles": pimcore.helpers.roles,
+    "clearAllCaches": pimcore.helpers.clearAllCaches,
+    "clearDataCache": pimcore.helpers.clearDataCache
+
 };
+
 
 

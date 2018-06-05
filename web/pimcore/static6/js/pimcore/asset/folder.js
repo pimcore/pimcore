@@ -237,15 +237,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 tooltip: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 scale: "medium",
-                handler: function () {
-                    var options = {
-                        elementType: "asset",
-                        elementSubType: this.getType(),
-                        id: this.id,
-                        default: this.data.filename
-                    }
-                    pimcore.elementservice.editElementKey(options);
-                }.bind(this)
+                handler: this.rename.bind(this)
             });
 
             buttons.push("-");
@@ -399,6 +391,18 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 value: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
             }
         ], "folder");
+    },
+
+    rename: function () {
+        if (this.isAllowed("rename") && !this.data.locked && this.data.id != 1) {
+            var options = {
+                elementType: "asset",
+                elementSubType: this.getType(),
+                id: this.id,
+                default: this.data.filename
+            }
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 });
 

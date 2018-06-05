@@ -21,6 +21,9 @@ pimcore.settings.user.user.keyBindings = Class.create({
     },
 
     renderCode: function (code) {
+        if (!code) {
+            return;
+        }
         var parts = [];
         if (code.ctrl) {
             parts.push(t("Ctrl"));
@@ -56,12 +59,21 @@ pimcore.settings.user.user.keyBindings = Class.create({
         for (var key in keyBindings) {
             if (keyBindings.hasOwnProperty(key)) {
                 var item = keyBindings[key];
+                if (item == null) {
+                    continue;
+                }
                 keyBindingsAssoc[item.action] = keyBindings[key];
             }
         }
 
 
         var generalItems = [];
+
+        generalItems.push({
+            xtype: 'panel',
+            html: t('please_dont_forget_to_reload_pimcore'),
+            minHeight:50
+        });
 
         for (var action in mapping) {
             if (mapping.hasOwnProperty(action)) {
@@ -124,10 +136,6 @@ pimcore.settings.user.user.keyBindings = Class.create({
             }
         }
 
-        generalItems.push({
-            xtype: 'label',
-            html: t('please_dont_forget_to_reload_pimcore')
-        });
 
 
         this.panel = new Ext.form.FormPanel({
