@@ -3,7 +3,8 @@
 
 ## Version 5.3.0
 #### Build 251 (2018-06-05)
-CKEditor update from 4.6.2 to 4.9.2, for details see: https://ckeditor.com/cke4/release-notes 
+- **PHP 7.1 is required** 
+- CKEditor update from 4.6.2 to 4.9.2, for details see: https://ckeditor.com/cke4/release-notes 
 
 #### Build 247 (2018-06-04) 
 The dependency `google/apiclient` was updated from `~1` to `^2.0`. The format of the private key file has changed from P12 format to JSON.
