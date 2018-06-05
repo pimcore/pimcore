@@ -350,10 +350,10 @@ public function testAction( Request $request )
 <br />
  
 <!-- pagination start -->
-<?= $this->paginationControl($this->paginator, 'Sliding', 'includes/paging.php', [
-   'urlprefix' => $this->document->getFullPath() . '?page=', // just example (this parameter could be used in paging.php to construct the URL)
-   'appendQueryString' => true // just example (this parameter could be used in paging.php to construct the URL)
-]); ?>
+<?=     $this->render("Backend/Includes/paging.html.php", get_object_vars($this->paginator->getPages("Sliding")), [
+       'urlprefix' => $this->document->getFullPath() . '?page=', // just example (this parameter could be used in paging.php to construct the URL)
+       'appendQueryString' => true // just example (this parameter could be used in paging.php to construct the URL)
+    ]); ?>
 <!-- pagination end -->
 ```
 
