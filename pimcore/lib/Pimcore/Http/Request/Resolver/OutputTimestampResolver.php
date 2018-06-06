@@ -26,6 +26,11 @@ class OutputTimestampResolver extends AbstractRequestResolver
     const ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP = '_pimcore_output_timestamp';
 
     /**
+     * @var bool
+     */
+    protected $timestampWasQueried = false;
+
+    /**
      * @inheritDoc
      */
     public function __construct(RequestStack $requestStack)
@@ -48,6 +53,9 @@ class OutputTimestampResolver extends AbstractRequestResolver
             $this->setOutputTimestamp($timestamp);
         }
 
+        //flag to store if timestamp was queried during request
+        $this->timestampWasQueried = true;
+
         return $timestamp;
     }
 
@@ -60,6 +68,16 @@ class OutputTimestampResolver extends AbstractRequestResolver
     public function setOutputTimestamp(int $timestamp)
     {
         $this->getMasterRequest()->attributes->set(self::ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP, $timestamp);
+    }
+
+
+    /**
+     * Returns if timestamp was queried during request at least once
+     *
+     * @return bool
+     */
+    public function timestampWasQueried() {
+        return $this->timestampWasQueried;
     }
 
 }
