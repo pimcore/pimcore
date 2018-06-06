@@ -3356,7 +3356,7 @@ pimcore.helpers.roles = function() {
 pimcore.helpers.clearAllCaches = function() {
     var user = pimcore.globalmanager.get("user");
     if ((user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files") || user.isAllowed("clear_fullpage_cache"))) {
-        pimcore.layout.toolbar.prototype.clearCache({'env[]': ['dev','prod']})();
+        pimcore.layout.toolbar.prototype.clearCache({'env[]': ['dev','prod']});
     }
 };
 
@@ -3403,7 +3403,6 @@ pimcore.helpers.keyBindingMapping = {
     "roles": pimcore.helpers.roles,
     "clearAllCaches": pimcore.helpers.clearAllCaches,
     "clearDataCache": pimcore.helpers.clearDataCache
-
 };
 
 

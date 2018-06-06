@@ -108,7 +108,11 @@ pimcore.settings.user.user.keyBindings = Class.create({
                         },
                         "keydown": function (hiddenField, action, field, key) {
                             key.event.preventDefault();
-                            if (key.keyCode == 46) {
+                            if (key.keyCode == 9) {
+                                return false;
+                            }
+
+                            if (key.keyCode == 46 || key.keyCode == 27) {
                                 var code = {
                                     action: action
                                 };
