@@ -1855,5 +1855,9 @@
   "please_select_items_to_download": "Please select items to download in the list",
   "unlink_existing_document": "Unlink existing Document",
   "clear_fullpage_cache": "Clear Full Page Cache",
-  "multiselect_render_type": "Render Type"
+  "multiselect_render_type": "Render Type",
+  "scheduled_block_delete_all_in_past": "Delete all past entries",
+  "scheduled_block_really_delete_past": "Really delete all entries scheduled in the past?",
+  "scheduled_block_delete_all": "Delete all entries",
+  "scheduled_block_really_delete_all": "Really delete all scheduled entries, including future entries?"
 }
