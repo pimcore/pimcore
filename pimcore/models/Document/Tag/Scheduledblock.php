@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
@@ -26,6 +27,11 @@ use Pimcore\Tool\HtmlUtils;
  */
 class Scheduledblock extends Block implements BlockInterface
 {
+    /**
+     * @var array
+     */
+    protected $cachedCurrentElement = null;
+
     /**
      * @see TagInterface::getType
      *
@@ -79,23 +85,60 @@ class Scheduledblock extends Block implements BlockInterface
             return $this->indices;
         } else {
 
+            if($this->cachedCurrentElement) {
+                return [$this->cachedCurrentElement];
+            }
+
             $outputTimestampResolver = \Pimcore::getContainer()->get('Pimcore\Http\Request\Resolver\OutputTimestampResolver');
+            $outputTimestamp = $outputTimestampResolver->getOutputTimestamp();
+
 
             $currentElement = null;
+            $nextElement = null; //needed for calculating cache lifetime
             foreach($this->indices as $element) {
-                if($element['date'] <= $outputTimestampResolver->getOutputTimestamp()) {
+                if($element['date'] <= $outputTimestamp) {
                     $currentElement = $element;
+                } else if(empty($nextElement)) {
+                    //set first element after output timestamp as next element
+                    $nextElement = $element;
+                } else {
+                    break;
                 }
             }
 
+            $this->updateOutputCacheLifetime($outputTimestamp, $nextElement);
 
             if($currentElement) {
+                $this->cachedCurrentElement = $currentElement;
+
                 return [$currentElement];
             } else {
                 return null;
             }
 
         }
+
+    }
+
+    /**
+     * Set cache lifetime to timestamp of next element
+     *
+     * @param $outputTimestamp
+     * @param $nextElement
+     */
+    protected function updateOutputCacheLifetime($outputTimestamp, $nextElement) {
+
+        $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
+
+        if($cacheService->isEnabled()) {
+            $calculatedLifetime = $nextElement['date'] - $outputTimestamp;
+            $currentLifetime = $cacheService->getLifetime();
+
+            if(empty($currentLifetime) || $currentLifetime > $calculatedLifetime) {
+                $cacheService->setLifetime($calculatedLifetime);
+            }
+        }
+
 
     }
 
@@ -215,5 +258,14 @@ class Scheduledblock extends Block implements BlockInterface
         }
 
         return $list;
+    }
+
+    /**
+     * If object was serialized, set cached elements to null
+     */
+    public function __wakeup()
+    {
+        parent::__wakeup();
+        $this->cachedCurrentElement = null;
     }
 }
