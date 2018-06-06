@@ -3,11 +3,50 @@
 $view->extend('PimcoreAdminBundle:Admin/Login:layout.html.php');
 
 $this->get("translate")->setDomain("admin");
-
+$config = $view->config;
 ?>
+<?php if ($config->general->loginscreencustomimage) { ?>
+    <style type="text/css">
+        body {
+            background: url(<?= $config->general->loginscreencustomimage; ?>) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        #header {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        #content {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
+<?php } ?>
+<?php if($config->branding) { ?>
+    <?php if($config->branding->color_login_screen) {
+        $customColor = $config->branding->color_login_screen;
+        ?>
+        <style type="text/css">
+            #loginform button {
+                background: <?= $customColor ?>;
+            }
+
+            a, a:hover, a:visited, a:active {
+                color: <?= $customColor ?>;
+            }
+        </style>
+    <?php } ?>
+<?php } ?>
 
 <div id="vcenter">
     <div id="hcenter">
+        <div id="header">
+            <img src="/admin/settings/display-custom-logo">
+        </div>
         <div id="content">
 
             <?php if ($this->success) { ?>
