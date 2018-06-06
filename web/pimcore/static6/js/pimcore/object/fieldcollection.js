@@ -84,7 +84,7 @@ pimcore.object.fieldcollection = Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_fieldcollection"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_fieldcollection pimcore_icon_overlay_add",
                             handler: this.addField.bind(this)
                         }

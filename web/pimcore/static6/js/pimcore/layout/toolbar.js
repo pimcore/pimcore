@@ -297,8 +297,8 @@ pimcore.layout.toolbar = Class.create({
                             iconCls: "pimcore_icon_translations",
                             handler: this.xliffImportExport
                         }, {
-                            text: "MS Word " + t("export"),
-                            iconCls: "pimcore_icon_translations",
+                            text: "Microsoft® Word " + t("export"),
+                            iconCls: "pimcore_icon_docx",
                             handler: this.wordExport
                         }]
                     }
@@ -715,7 +715,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("website_settings") && perspectiveCfg.inToolbar("settings.website")) {
                 settingsItems.push({
-                    text: t("website"),
+                    text: t("website_settings"),
                     iconCls: "pimcore_icon_website",
                     handler: this.websiteSettings
                 });
@@ -723,7 +723,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
                 settingsItems.push({
-                    text: t("web2print"),
+                    text: t("web2print_settings"),
                     iconCls: "pimcore_icon_printpage pimcore_icon_overlay_setting",
                     handler: this.web2printSettings
                 });

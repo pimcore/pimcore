@@ -227,7 +227,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.id,
+                text: t("id") + " " + this.data.id,
                 scale: "medium"
             });
 

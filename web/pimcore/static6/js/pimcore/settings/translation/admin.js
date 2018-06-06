@@ -23,7 +23,7 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
 
     activate: function (filter) {
         if(filter){
-            this.store.getProxy().setExtraParam("filter", filter);
+            this.store.getProxy().setExtraParam("searchString", filter);
             this.store.load();
             this.filterField.setValue(filter);
         }

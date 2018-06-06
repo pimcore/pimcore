@@ -226,7 +226,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.general.o_id,
+                text: t("id") + " " + this.data.general.o_id,
                 scale: "medium"
             });
 

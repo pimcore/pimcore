@@ -380,7 +380,7 @@ abstract class Kernel extends SymfonyKernel
         }
 
         // check some system variables
-        $requiredVersion = '7.0';
+        $requiredVersion = '7.1';
         if (version_compare(PHP_VERSION, $requiredVersion, '<')) {
             $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);

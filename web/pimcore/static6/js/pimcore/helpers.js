@@ -1602,6 +1602,7 @@ pimcore.helpers.sendTestEmail = function () {
         height: 600,
         modal: true,
         title: t("send_test_email"),
+        iconCls: "pimcore_icon_email",
         layout: "fit",
         closeAction: "close",
         items: [{
