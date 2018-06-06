@@ -127,7 +127,7 @@ pimcore.document.pages.preview = Class.create({
                 hidden: true,
                 scrollable: false,
                 collapsible: false,
-                height: 35,
+                height: 33,
                 items: [
                     Ext.create('Ext.form.DateField', {
                         region: 'west',
@@ -143,7 +143,6 @@ pimcore.document.pages.preview = Class.create({
                 ]
             });
             this.updateTimeSlider(this.previewTime);
-            this.timeSelectPanel.show();
 
             this.layout = new Ext.Panel({
                 title: t("preview"),
