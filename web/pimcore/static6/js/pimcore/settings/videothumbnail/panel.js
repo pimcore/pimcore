@@ -87,7 +87,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_thumbnail"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addField.bind(this)
                         }

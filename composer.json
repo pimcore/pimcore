@@ -32,7 +32,7 @@
     "sort-packages": true
   },
   "require": {
-    "php": ">=7.0",
+    "php": ">=7.1",
     "ext-SimpleXML": "*",
     "ext-bz2": "*",
     "ext-dom": "*",

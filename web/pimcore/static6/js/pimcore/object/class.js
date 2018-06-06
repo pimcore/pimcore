@@ -77,7 +77,7 @@ pimcore.object.klass = Class.create({
                 autoScroll:true,
                 animate:false,
                 containerScroll: true,
-                width: 200,
+                width: 250,
                 split: true,
                 root: {
                     id: '0'
@@ -87,7 +87,7 @@ pimcore.object.klass = Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_class"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
                             handler: this.addClass.bind(this)
                         }

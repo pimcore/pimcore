@@ -1345,7 +1345,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             $result['customlayout'][] = $customLayout;
         }
 
-        $result = json_encode($result);
+        $result = json_encode($result, JSON_PRETTY_PRINT);
         $response = new Response($result);
         $response->headers->set('Content-type', 'application/json');
         $response->headers->set('Content-Disposition', 'attachment; filename="bulk_export.json"');

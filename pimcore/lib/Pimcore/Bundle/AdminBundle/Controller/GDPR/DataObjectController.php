@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\DataObject\AbstractObject;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,8 +72,11 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     {
         $object = AbstractObject::getById($request->get('id'));
         $exportResult = $service->doExportData($object);
-        $jsonResponse = $this->adminJson($exportResult);
-        $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-data-object-' . $object->getId() . '.json"');
+
+        $json = $this->encodeJson($exportResult, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
+        $jsonResponse = new JsonResponse($json, 200, [
+            'Content-Disposition' => 'attachment; filename="export-data-object-' . $object->getId() . '.json"'
+        ], true);
 
         return $jsonResponse;
     }

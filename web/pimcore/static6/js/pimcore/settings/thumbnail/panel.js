@@ -29,7 +29,7 @@ pimcore.settings.thumbnail.panel = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_thumbnails",
-                title: t("thumbnails"),
+                title: t("image_thumbnails"),
                 iconCls: "pimcore_icon_thumbnails",
                 border: false,
                 layout: "border",
@@ -90,7 +90,7 @@ pimcore.settings.thumbnail.panel = Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_thumbnail"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addField.bind(this)
                         }
