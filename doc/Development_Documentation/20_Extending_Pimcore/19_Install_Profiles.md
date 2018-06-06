@@ -66,5 +66,5 @@ To make an install profile available as composer package, use the type `pimcore-
 
 ## Examples
 
-* [https://github.com/pimcore/pimcore/tree/master/install-profiles](Install profiles shipped with Pimcore's default distribution)
+* [Install profiles shipped with Pimcore's default distribution](https://github.com/pimcore/pimcore/tree/master/install-profiles)
 * [pimcore/demo-advanced install profile](https://github.com/pimcore/demo-ecommerce) 
