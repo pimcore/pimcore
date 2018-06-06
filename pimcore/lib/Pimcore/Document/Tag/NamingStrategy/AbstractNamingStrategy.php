@@ -36,7 +36,7 @@ abstract class AbstractNamingStrategy implements NamingStrategyInterface
 
         // check if the previous block is the name we're about to build
         // TODO: can this be avoided at the block level?
-        if ($type === 'block') {
+        if ($type === 'block' || $type == 'scheduledblock') {
             $tmpBlocks  = $blocks;
             $tmpIndexes = $indexes;
 
