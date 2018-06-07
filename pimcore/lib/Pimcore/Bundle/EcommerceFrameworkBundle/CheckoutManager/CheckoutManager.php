@@ -365,8 +365,9 @@ class CheckoutManager implements ICheckoutManager
 
         $targetOrderAgent->updatePayment($paymentStatus);
 
-        // Commit order
-        $this->commitOrderPayment($paymentStatus, $sourceOrder);
+        // delegate commit order to commit order processor
+        $targetOrder = $this->commitOrderProcessors->getCommitOrderProcessor()->commitOrderPayment($paymentStatus, $this->getPayment());
+        $this->updateEnvironmentAfterOrderCommit($order);
 
         return $targetOrder;
     }
