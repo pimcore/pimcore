@@ -120,7 +120,17 @@ pimcore.asset.metadata = Class.create({
                     beforeedit: function(editor, context, eOpts) {
                         //need to clear cached editors of cell-editing editor in order to
                         //enable different editors per row
-                        editor.editors.each(Ext.destroy, Ext);
+                        editor.editors.each(function (e) {
+                            try {
+                                // complete edit, so the value is stored when hopping around with TAB
+                                e.completeEdit();
+                                Ext.destroy(e);
+                            } catch (exception) {
+                                // garbage collector was faster
+                                // already destroyed
+                            }
+                        });
+
                         editor.editors.clear();
                     }
                 }
