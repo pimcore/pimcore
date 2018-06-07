@@ -49,9 +49,7 @@ pimcore.document.tags.scheduledblock = Class.create(pimcore.document.tags.block,
      * @returns {string}
      */
     getTmpStoreId: function() {
-        var windowName = window.name;
-        var documentId = windowName.replace('document_iframe_', '');
-
+        var documentId = window.editWindow.document.id;
         return "pimcore_scheduled_block_tmp_date_" + documentId + "_" + this.name;
     },
 

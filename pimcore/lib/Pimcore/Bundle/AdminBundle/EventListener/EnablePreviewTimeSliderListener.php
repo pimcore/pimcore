@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Http\Request\Resolver\DocumentResolver;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\OutputTimestampResolver;
 use Pimcore\Http\RequestHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -38,9 +40,22 @@ class EnablePreviewTimeSliderListener implements EventSubscriberInterface
      */
     protected $requestHelper;
 
-    public function __construct(OutputTimestampResolver $outputTimestampResolver, RequestHelper $requestHelper) {
+    /**
+     * @var EditmodeResolver
+     */
+    protected $editmodeResolver;
+
+    /**
+     * @var DocumentResolver
+     */
+    protected $documentResolver;
+
+
+    public function __construct(OutputTimestampResolver $outputTimestampResolver, RequestHelper $requestHelper, EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver) {
         $this->outputTimestampResolver = $outputTimestampResolver;
         $this->requestHelper = $requestHelper;
+        $this->editmodeResolver = $editmodeResolver;
+        $this->documentResolver = $documentResolver;
     }
 
     /**
@@ -59,7 +74,15 @@ class EnablePreviewTimeSliderListener implements EventSubscriberInterface
             return;
         }
 
+        if(!$this->outputTimestampResolver->timestampWasQueried()) {
+            return;
+        }
+
         $request = $event->getRequest();
+
+        if($this->editmodeResolver->isEditmode($request)) {
+            return;
+        }
 
         // only inject analytics code on non-admin requests
         if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -71,10 +94,15 @@ class EnablePreviewTimeSliderListener implements EventSubscriberInterface
             return;
         }
 
+        $documentId = 0;
+        $document = $this->documentResolver->getDocument($request);
+        if($document) {
+            $documentId = $document->getId();
+        }
+
         $code = "
             <script>
-                var windowName = window.name;
-                var documentId = windowName.replace('document_preview_iframe_', '');
+                var documentId = " . $documentId . ";
                 var documentTab = top.pimcore.globalmanager.get('document_' + documentId);
                 if(documentTab && documentTab.preview) {
                     documentTab.preview.showTimeSlider();
