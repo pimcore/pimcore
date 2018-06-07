@@ -362,25 +362,25 @@ public function testAction( Request $request )
 <div>
     <ul class="pagination">
         <!-- First page link -->
-        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->url(['page' => $this->first]); ?>">Start</a></li>
+        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->first]); ?>">Start</a></li>
   
         <!-- Previous page link -->
-        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->url(['page' => $this->previous]); ?>">&lt; Previous</a></li>
+        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->previous]); ?>">&lt; Previous</a></li>
  
         <!-- Numbered page links -->
         <?php foreach ($this->pagesInRange as $page): ?>
             <?php if ($page != $this->current): ?>
-                <li><a href="<?= $this->url(['page' => $page]); ?>"><?= $page; ?></a></li>
+                <li><a href="<?= $this->pimcoreUrl(['page' => $page]); ?>"><?= $page; ?></a></li>
             <?php else: ?>
                 <li class="disabled"><a href="#"><?= $page; ?></a></li>
             <?php endif; ?>
         <?php endforeach; ?>
          
         <!-- Next page link -->
-        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->url(['page' => $this->next]); ?>">Next &gt;</a></li>
+        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->next]); ?>">Next &gt;</a></li>
          
         <!-- Last page link -->
-        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->url(['page' => $this->last]); ?>">End</a></li>
+        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->last]); ?>">End</a></li>
          
     </ul>
  </div>
@@ -399,14 +399,15 @@ on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(function (Zend_Db_Select $query) use ($list) {
-    // join another table
-    $query->join(
+$list->onCreateQuery(
+    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) {
+        $select->join(
         ['rating' => 'plugin_rating_ratings'],
         'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',
         ''
     );
-});
+    }
+);
 ```
 
 ### Debugging the Object List Query
@@ -421,7 +422,7 @@ You can access and print the internal query which is based on [Zend_Db_Select](h
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(function (Zend_Db_Select $query) use ($list) {
+$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder query) {
     // echo query
     echo $query;
 });
