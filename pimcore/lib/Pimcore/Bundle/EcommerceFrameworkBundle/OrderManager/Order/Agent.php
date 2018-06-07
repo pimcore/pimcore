@@ -31,11 +31,15 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 use Pimcore\Model\DataObject\Objectbrick\Data as ObjectbrickData;
+use Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
 
 class Agent implements IOrderAgent
 {
+
+    const PAYMENT_PROVIDER_BRICK_PREFIX = "PaymentProvider";
+
     /**
      * @var Order
      */
@@ -256,7 +260,7 @@ class Agent implements IOrderAgent
                     /* @var \Pimcore\Model\DataObject\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
 
                     // get provider data
-                    $name = strtolower(str_replace('PaymentProvider', '', $providerData->getType()));
+                    $name = strtolower(str_replace(Agent::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
                     $authorizedData = [];
                     foreach ($providerData->getObjectVars() as $field => $value) {
                         if (preg_match('#^auth_(?<name>\w+)$#i', $field, $match)) {
@@ -281,10 +285,11 @@ class Agent implements IOrderAgent
 
     /**
      * @param IPayment $paymentProvider
+     * @param Order $sourceOrder
      *
      * @return $this
      */
-    public function setPaymentProvider(IPayment $paymentProvider)
+    public function setPaymentProvider(IPayment $paymentProvider, Order $sourceOrder = null)
     {
         $this->paymentProvider = $paymentProvider;
 
@@ -295,8 +300,8 @@ class Agent implements IOrderAgent
         /* @var \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider $provider */
 
         // load existing
-        $getter = 'getPaymentProvider' . $paymentProvider->getName();
-        $providerData = $provider->{$getter}();
+        $providerDataGetter = 'getPaymentProvider' . $paymentProvider->getName();
+        $providerData = $provider->{$providerDataGetter}();
         /* @var ObjectbrickData\PaymentProvider* $providerData */
 
         if (!$providerData) {
@@ -313,6 +318,15 @@ class Agent implements IOrderAgent
             if (method_exists($providerData, $setter)) {
                 $providerData->{$setter}($value);
             }
+        }
+
+        if (method_exists($providerData, "setPaymentFinished")) {
+            $providerData->setPaymentFinished(new \DateTime());
+        }
+
+        /* recurring payment data */
+        if ($sourceOrder) {
+            $paymentProvider->setRecurringPaymentSourceOrderData($sourceOrder, $providerData);
         }
 
         $order->save();
@@ -563,4 +577,5 @@ class Agent implements IOrderAgent
 
         return $this->fullChangeLog;
     }
+
 }

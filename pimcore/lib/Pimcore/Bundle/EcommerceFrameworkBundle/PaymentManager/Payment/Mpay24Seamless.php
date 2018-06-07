@@ -25,7 +25,7 @@ use Symfony\Component\Templating\EngineInterface;
  *
  * @package Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment
  */
-class Mpay24Seamless implements IPayment
+class Mpay24Seamless extends AbstractPayment
 {
     /**
      * @var string[]
@@ -58,6 +58,8 @@ class Mpay24Seamless implements IPayment
      */
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'merchant_id',
             'password',

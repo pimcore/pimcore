@@ -14,8 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Model\DataObject\Listing\Concrete;
 
 /**
  * Interface for checkout payment provider
@@ -81,4 +83,24 @@ interface IPayment
      * @return IStatus
      */
     public function executeCredit(IPrice $price, $reference, $transactionId);
+
+    /**
+     * Payment supports recurring payment
+     *
+     * @return bool
+     */
+    public function isRecurringPaymentEnabled();
+
+    /**
+     * @param AbstractOrder $sourceOrder
+     * @param $paymentBrick
+     * @return mixed
+     */
+    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick);
+
+    /**
+     * @param Concrete $orderListing
+     * @return Concrete
+     */
+    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []);
 }

@@ -35,7 +35,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @package Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment
  */
-class OGone implements IPayment
+class OGone extends AbstractPayment
 {
     private static $OGONE_SERVER_URL_TEST = 'https://secure.ogone.com/ncol/test/orderstandard_utf8.asp';
     private static $OGONE_SERVER_URL_LIVE = 'https://secure.ogone.com/ncol/prod/orderstandard_utf8.asp';
@@ -285,6 +285,8 @@ class OGone implements IPayment
      */
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'pspid',
             'secret',
