@@ -252,11 +252,12 @@ pimcore.settings.translations = Class.create({
                     var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
                     if (htmlRegex.test(data)) {
                         record.set("editor", "html");
-                    } else if (data.match(/\n/gm))  {
+                    } else if (data && data.match(/\n/gm))  {
                         record.set("editor", "plain");
                     } else {
                         record.set("editor", null);
                     }
+                    return true;
 
                 }.bind(this)
             }
