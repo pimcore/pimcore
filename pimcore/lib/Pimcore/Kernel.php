@@ -78,7 +78,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getCacheDir()
     {
-        return PIMCORE_PRIVATE_VAR . '/cache/' . $this->getEnvironment();
+        return PIMCORE_SYMFONY_CACHE_DIRECTORY . '/' . $this->getEnvironment();
     }
 
     /**
