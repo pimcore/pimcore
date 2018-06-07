@@ -1890,6 +1890,6 @@
   "keybinding_roles" : "Roles",
   "keybinding_clearAllCaches" : "Clear all Caches",
   "keybinding_clearDataCache" : "Clear Data Cache",
-  "please_dont_forget_to_reload_pimcore": "<b>Plesae don't forget to reload pimcore after your modification!</b>"
+  "please_dont_forget_to_reload_pimcore": "<b>Plesae don't forget to reload pimcore after your modification!</b>",
   "multiselect_render_type": "Render Type"
 }
