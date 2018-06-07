@@ -21,7 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Log\Simple;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Listing\Concrete;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -271,8 +270,8 @@ class Datatrans extends AbstractPayment
         if ($config['useAlias']) {
             $form->add('useAlias', HiddenType::class);
             $formData['useAlias'] = 'yes';
-            $form->add("uppRememberMe", HiddenType::class);
-            $formData['uppRememberMe'] = "checked";
+            $form->add('uppRememberMe', HiddenType::class);
+            $formData['uppRememberMe'] = 'checked';
         }
 
         // add submit button
@@ -790,10 +789,10 @@ XML;
 
     public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
     {
-        if (method_exists($paymentBrick, "setSourceOrder")) {
+        if (method_exists($paymentBrick, 'setSourceOrder')) {
             $paymentBrick->setSourceOrder($sourceOrder);
         } else {
-            Logger::err("Could not set source order for performed alias payment.");
+            Logger::err('Could not set source order for performed alias payment.');
         }
     }
 
@@ -802,7 +801,7 @@ XML;
         $providerBrickName = "PaymentProvider{$this->getName()}";
         $orderListing->addObjectbrick($providerBrickName);
 
-        if ($paymentMethod = $additionalParameters["paymentMethod"]) {
+        if ($paymentMethod = $additionalParameters['paymentMethod']) {
             $orderListing->addConditionParam("{$providerBrickName}.auth_pmethod = '{$paymentMethod}'");
         }
 
@@ -810,8 +809,6 @@ XML;
         $orderListing->addConditionParam("LAST_DAY(STR_TO_DATE(CONCAT({$providerBrickName}.auth_expm,'/',{$providerBrickName}.auth_expy), '%m/%Y')) >= CURDATE()");
 
         $orderListing->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
-        $orderListing->setOrder("DESC");
+        $orderListing->setOrder('DESC');
     }
-
-
 }

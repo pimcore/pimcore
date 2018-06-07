@@ -491,11 +491,11 @@ class OrderManager implements IOrderManager
      *
      * @return false|\Pimcore\Model\DataObject\Listing\Concrete
      */
-    public function getRecurringPaymentSourceOrderList(string $customerId, IPayment $paymentProvider, $paymentMethod = null, $orderId = "")
+    public function getRecurringPaymentSourceOrderList(string $customerId, IPayment $paymentProvider, $paymentMethod = null, $orderId = '')
     {
         $orders = $this->buildOrderList();
-        $orders->addConditionParam("customer__id = ?", $customerId);
-        $orders->addConditionParam("orderState IS NOT NULL");
+        $orders->addConditionParam('customer__id = ?', $customerId);
+        $orders->addConditionParam('orderState IS NOT NULL');
 
         /* Check if provider is registered */
         $paymentProviderName = $paymentProvider->getName();
@@ -506,13 +506,12 @@ class OrderManager implements IOrderManager
         }
 
         /* Apply provider specific condition */
-        $paymentProvider->applyRecurringPaymentCondition($orders, ["paymentMethod" => $paymentMethod]);
+        $paymentProvider->applyRecurringPaymentCondition($orders, ['paymentMethod' => $paymentMethod]);
 
         if (empty($orders->getOrderKey())) {
-            $orders->setOrderKey("o_creationDate");
-            $orders->setOrder("DESC");
+            $orders->setOrderKey('o_creationDate');
+            $orders->setOrder('DESC');
         }
-
 
         return $orders;
     }
@@ -523,6 +522,7 @@ class OrderManager implements IOrderManager
      * @param string $customerId
      * @param IPayment $paymentProvider
      * @param null $paymentMethod
+     *
      * @return mixed
      */
     public function getRecurringPaymentSourceOrder(string $customerId, IPayment $paymentProvider, $paymentMethod = null)
@@ -541,11 +541,13 @@ class OrderManager implements IOrderManager
      * @param AbstractOrder $order
      * @param IPayment $payment
      * @param string $customerId
+     *
      * @return bool
      */
-    public function isValidOrderForRecurringPayment(AbstractOrder $order, IPayment $payment, $customerId = "")
+    public function isValidOrderForRecurringPayment(AbstractOrder $order, IPayment $payment, $customerId = '')
     {
         $orders = $this->getRecurringPaymentSourceOrderList($customerId, $payment, null, $order->getId());
+
         return !empty($orders->current());
     }
 

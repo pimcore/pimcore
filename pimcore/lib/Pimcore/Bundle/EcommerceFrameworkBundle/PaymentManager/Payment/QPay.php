@@ -21,7 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Log\Simple;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Listing\Concrete;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -424,7 +423,6 @@ class QPay extends AbstractPayment
      */
     public function executeDebit(IPrice $price = null, $reference = null)
     {
-
         if ($price) {
             // recurPayment
 
@@ -705,12 +703,12 @@ class QPay extends AbstractPayment
         /* consider credit card expiry if available */
         $orders->addConditionParam("({$providerBrickName}.auth_expiry IS NULL OR LAST_DAY(STR_TO_DATE({$providerBrickName}.auth_expiry, '%m/%Y')) >= CURDATE())");
 
-        if ($paymentMethod = $additionalParameters["paymentMethod"]) {
+        if ($paymentMethod = $additionalParameters['paymentMethod']) {
             $orders->addConditionParam("{$providerBrickName}.auth_paymentType = ?", $paymentMethod);
         }
 
         $orders->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
-        $orders->setOrder("DESC");
+        $orders->setOrder('DESC');
 
         return $orders;
     }
@@ -726,11 +724,10 @@ class QPay extends AbstractPayment
      */
     public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
     {
-
-        if (method_exists($paymentBrick, "setSourceOrder")) {
+        if (method_exists($paymentBrick, 'setSourceOrder')) {
             $paymentBrick->setSourceOrder($sourceOrder);
         } else {
-            Logger::err("Could not set source order for performed recurring payment.");
+            Logger::err('Could not set source order for performed recurring payment.');
         }
 
         $providerDataGetter = 'getPaymentProvider' . $this->getName();
@@ -754,6 +751,4 @@ class QPay extends AbstractPayment
 
         return $paymentBrick;
     }
-
-
 }

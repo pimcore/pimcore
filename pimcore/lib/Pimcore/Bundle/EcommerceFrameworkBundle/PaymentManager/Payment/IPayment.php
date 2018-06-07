@@ -94,12 +94,14 @@ interface IPayment
     /**
      * @param AbstractOrder $sourceOrder
      * @param $paymentBrick
+     *
      * @return mixed
      */
     public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick);
 
     /**
      * @param Concrete $orderListing
+     *
      * @return Concrete
      */
     public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []);

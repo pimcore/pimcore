@@ -37,8 +37,7 @@ use Pimcore\Model\Element\Note\Listing as NoteListing;
 
 class Agent implements IOrderAgent
 {
-
-    const PAYMENT_PROVIDER_BRICK_PREFIX = "PaymentProvider";
+    const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 
     /**
      * @var Order
@@ -320,7 +319,7 @@ class Agent implements IOrderAgent
             }
         }
 
-        if (method_exists($providerData, "setPaymentFinished")) {
+        if (method_exists($providerData, 'setPaymentFinished')) {
             $providerData->setPaymentFinished(new \DateTime());
         }
 
@@ -577,5 +576,4 @@ class Agent implements IOrderAgent
 
         return $this->fullChangeLog;
     }
-
 }

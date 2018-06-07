@@ -60,6 +60,7 @@ interface ICommitOrderProcessor
      * @param IStatus $paymentStatus
      * @param IPayment $paymentProvider
      * @param AbstractOrder $sourceOrder Source order for recurring payment
+     *
      * @return AbstractOrder
      */
     public function commitOrderPayment(IStatus $paymentStatus, IPayment $paymentProvider, AbstractOrder $sourceOrder = null);

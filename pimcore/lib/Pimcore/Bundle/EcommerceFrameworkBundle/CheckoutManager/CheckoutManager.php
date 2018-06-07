@@ -302,7 +302,6 @@ class CheckoutManager implements ICheckoutManager
         return $order;
     }
 
-
     /**
      * Verifies if the payment provider is supported for recurring payment
      *
@@ -321,14 +320,15 @@ class CheckoutManager implements ICheckoutManager
             throw new \Exception("Recurring Payment is not enabled or is not supported by payment provider [{$provider->getName()}].");
         }
 
-        if(!$orderManager->isValidOrderForRecurringPayment($sourceOrder, $this->getPayment(), $customerId)){
-            throw new \Exception("The given source order is not valid for recurring payment.");
+        if (!$orderManager->isValidOrderForRecurringPayment($sourceOrder, $this->getPayment(), $customerId)) {
+            throw new \Exception('The given source order is not valid for recurring payment.');
         }
     }
 
     /**
      * @param AbstractOrder $sourceOrder
      * @param string $customerId
+     *
      * @return null|AbstractOrder
      */
     public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId)

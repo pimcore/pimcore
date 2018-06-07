@@ -21,7 +21,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractPayment implements IPayment
 {
-
     /**
      * @var bool
      */
@@ -39,9 +38,11 @@ abstract class AbstractPayment implements IPayment
 
     /**
      * @param OptionsResolver $resolver
+     *
      * @return OptionsResolver
      */
-    protected function configureOptions(OptionsResolver $resolver): OptionsResolver{
+    protected function configureOptions(OptionsResolver $resolver): OptionsResolver
+    {
         $resolver
             ->setDefined('recurring_payment_enabled')
             ->setAllowedTypes('recurring_payment_enabled', ['bool']);
@@ -59,12 +60,11 @@ abstract class AbstractPayment implements IPayment
 
     public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
     {
-        throw new NotImplementedException("getRecurringPaymentDataProperties not implemented for " . get_class($this));
+        throw new NotImplementedException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
     }
 
     public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = [])
     {
-        throw new NotImplementedException("getRecurringPaymentDataProperties not implemented for " . get_class($this));
+        throw new NotImplementedException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
     }
-
 }
