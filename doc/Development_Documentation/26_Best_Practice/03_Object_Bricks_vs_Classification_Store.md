@@ -39,7 +39,6 @@ be displayed, filtered and edited in the object grid view.
 - Once there will be a lot of categories (more than 30) with a lot of attributes, then rather use Classification Store.
 
 ### In addition, there are a few more questions which can help you make a decision
-- Do the values themselves have to be translatable - ie are there text input fields that must be translated? → works only with **Classification Store**
 - Are there relations in the attributes? → currently only works with **Object Bricks**
 - Do the attributes have to be created automatically (eg via interface)? → easier with **Classification Store**
 
