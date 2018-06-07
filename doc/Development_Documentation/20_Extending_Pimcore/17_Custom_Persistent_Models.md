@@ -172,8 +172,6 @@ class Dao extends AbstractDao {
  
     /**
      * save vote
-     *
-     * @throws \Zend_Db_Adapter_Exception
      */
     public function save() {
         $vars = get_object_vars($this->model);
@@ -468,9 +466,6 @@ class Dao extends Listing\Dao\AbstractDao
  
     /**
      * get select query.
-     *
-     * @return \Zend_Db_Select
-     *
      * @throws \Exception
      */
     public function getQuery()
@@ -483,7 +478,7 @@ class Dao extends Listing\Dao\AbstractDao
         $field = $this->getTableName().'.id';
         $select->from(
             [$this->getTableName()], [
-                new \Zend_Db_Expr(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field, 'o_type')),
+                new \Pimcore\Db\ZendCompatibility\Expression(sprintf('SQL_CALC_FOUND_ROWS %s as id', $field, 'o_type')),
             ]
         );
  

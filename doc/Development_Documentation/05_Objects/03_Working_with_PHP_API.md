@@ -389,7 +389,7 @@ public function testAction( Request $request )
 ### Access and modify internal object list query
 
 It is possible to access and modify the internal query from every object listing. The internal query is based 
-on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html).
+on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
 ```php
 
 <?php
@@ -412,7 +412,7 @@ $list->onCreateQuery(
 
 ### Debugging the Object List Query
 
-You can access and print the internal query which is based on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html) to debug your conditions like this:
+You can access and print the internal query which is based on `\Pimcore\Db\ZendCompatibility\QueryBuilder` to debug your conditions like this:
 
 ```php
 <?php
