@@ -182,15 +182,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 tooltip: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 scale: "medium",
-                handler: function () {
-                    var options = {
-                        elementType: "object",
-                        elementSubType: this.data.general.o_type,
-                        id: this.id,
-                        default: this.data.general.o_key
-                    }
-                    pimcore.elementservice.editElementKey(options);
-                }.bind(this)
+                handler: this.rename.bind(this)
             });
 
             var buttons = [];
@@ -405,6 +397,18 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             value: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "folder")
         }
         ], "folder");
+    },
+
+    rename: function () {
+        if(this.isAllowed("rename") && !this.data.general.o_locked && this.data.general.o_id != 1) {
+            var options = {
+                elementType: "object",
+                elementSubType: this.data.general.o_type,
+                id: this.id,
+                default: this.data.general.o_key
+            }
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 
 });

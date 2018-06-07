@@ -163,15 +163,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 tooltip: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 scale: "medium",
-                handler: function () {
-                    var options = {
-                        elementType: "document",
-                        elementSubType: this.getType(),
-                        id: this.id,
-                        default: this.data.key
-                    };
-                    pimcore.elementservice.editElementKey(options);
-                }.bind(this)
+                handler: this.rename.bind(this)
             });
 
 
@@ -378,5 +370,17 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 value: pimcore.helpers.getDeeplink("document", this.data.id, this.data.type)
             }
         ], "document");
+    },
+
+    rename: function () {
+        if(this.isAllowed("rename") && !this.data.locked && this.data.id != 1) {
+            var options = {
+                elementType: "document",
+                elementSubType: this.getType(),
+                id: this.id,
+                default: this.data.key
+            };
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 });
