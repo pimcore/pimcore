@@ -164,7 +164,6 @@ pimcore.settings.translations = Class.create({
                 beforeedit: function(editor, context, eOpts) {
                     //need to clear cached editors of cell-editing editor in order to
                     //enable different editors per row
-                    editor.editors.each(", Ext);
                     editor.editors.each(Ext.destroy, Ext);
                     editor.editors.clear();
                 }
