@@ -144,6 +144,7 @@ interface ICheckoutManager
      *
      * Delegates to commit order processor
      *
+     * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
      *
      * @param AbstractOrder $sourceOrder
      * @param IStatus $status
