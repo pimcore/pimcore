@@ -495,7 +495,6 @@
     width: 100%;
 }
 
-
 .pimcore_tag_date input {
     min-width: 80px;
     line-height: 24px;
@@ -506,10 +505,16 @@
     opacity: 0.5;
 }
 
+.pimcore_tag_scheduledblock .x-slider-thumb.selected {
+    background-color: #ffefbb;
+}
+
+.pimcore_tag_scheduledblock .x-slider-thumb.selected:before {
+    color: #e9d097;
+}
+
 /* ExtJS specific overrides */
 
 .x-btn {
     text-decoration: none !important;
 }
-
-
