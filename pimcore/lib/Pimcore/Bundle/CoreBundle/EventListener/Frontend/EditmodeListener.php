@@ -307,6 +307,7 @@ class EditmodeListener implements EventSubscriberInterface
             [
                 '/pimcore/static6/js/pimcore/functions.js',
                 '/pimcore/static6/js/pimcore/overrides.js',
+                '/pimcore/static6/js/pimcore/tool/milestoneslider.js',
                 '/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js',
                 '/pimcore/static6/js/pimcore/element/tag/imagecropper.js',
                 '/pimcore/static6/js/pimcore/document/edit/helper.js',
@@ -314,6 +315,7 @@ class EditmodeListener implements EventSubscriberInterface
                 '/pimcore/static6/js/pimcore/document/edit/dnd.js',
                 '/pimcore/static6/js/pimcore/document/tag.js',
                 '/pimcore/static6/js/pimcore/document/tags/block.js',
+                '/pimcore/static6/js/pimcore/document/tags/scheduledblock.js',
                 '/pimcore/static6/js/pimcore/document/tags/date.js',
                 '/pimcore/static6/js/pimcore/document/tags/href.js',
                 '/pimcore/static6/js/pimcore/document/tags/multihref.js',
