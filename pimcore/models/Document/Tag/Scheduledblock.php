@@ -53,10 +53,11 @@ class Scheduledblock extends Block implements BlockInterface
     {
         $this->indices = $data;
 
-        usort($this->indices, function($left, $right) {
+        usort($this->indices, function ($left, $right) {
             if ($left['date'] == $right['date']) {
                 return 0;
             }
+
             return ($left['date'] < $right['date']) ? -1 : 1;
         });
 
@@ -78,27 +79,24 @@ class Scheduledblock extends Block implements BlockInterface
         return $this;
     }
 
-
-    protected function filterElements() {
-
-        if($this->getEditmode()) {
+    protected function filterElements()
+    {
+        if ($this->getEditmode()) {
             return $this->indices;
         } else {
-
-            if($this->cachedCurrentElement) {
+            if ($this->cachedCurrentElement) {
                 return [$this->cachedCurrentElement];
             }
 
             $outputTimestampResolver = \Pimcore::getContainer()->get('Pimcore\Http\Request\Resolver\OutputTimestampResolver');
             $outputTimestamp = $outputTimestampResolver->getOutputTimestamp();
 
-
             $currentElement = null;
             $nextElement = null; //needed for calculating cache lifetime
-            foreach($this->indices as $element) {
-                if($element['date'] <= $outputTimestamp) {
+            foreach ($this->indices as $element) {
+                if ($element['date'] <= $outputTimestamp) {
                     $currentElement = $element;
-                } else if(empty($nextElement)) {
+                } elseif (empty($nextElement)) {
                     //set first element after output timestamp as next element
                     $nextElement = $element;
                 } else {
@@ -108,16 +106,14 @@ class Scheduledblock extends Block implements BlockInterface
 
             $this->updateOutputCacheLifetime($outputTimestamp, $nextElement);
 
-            if($currentElement) {
+            if ($currentElement) {
                 $this->cachedCurrentElement = $currentElement;
 
                 return [$currentElement];
             } else {
                 return null;
             }
-
         }
-
     }
 
     /**
@@ -126,20 +122,18 @@ class Scheduledblock extends Block implements BlockInterface
      * @param $outputTimestamp
      * @param $nextElement
      */
-    protected function updateOutputCacheLifetime($outputTimestamp, $nextElement) {
-
+    protected function updateOutputCacheLifetime($outputTimestamp, $nextElement)
+    {
         $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
 
-        if($cacheService->isEnabled()) {
+        if ($cacheService->isEnabled()) {
             $calculatedLifetime = $nextElement['date'] - $outputTimestamp;
             $currentLifetime = $cacheService->getLifetime();
 
-            if(empty($currentLifetime) || $currentLifetime > $calculatedLifetime) {
+            if (empty($currentLifetime) || $currentLifetime > $calculatedLifetime) {
                 $cacheService->setLifetime($calculatedLifetime);
             }
         }
-
-
     }
 
     /**
@@ -152,7 +146,7 @@ class Scheduledblock extends Block implements BlockInterface
         $this->setDefault();
         $elements = $this->filterElements();
 
-        if(empty($elements)) {
+        if (empty($elements)) {
             return false;
         }
 
@@ -166,9 +160,11 @@ class Scheduledblock extends Block implements BlockInterface
         if ($this->current < count($elements) && $this->current < $this->options['limit']) {
             $this->blockConstruct();
             $this->blockStart();
+
             return true;
         } else {
             $this->end();
+
             return false;
         }
     }

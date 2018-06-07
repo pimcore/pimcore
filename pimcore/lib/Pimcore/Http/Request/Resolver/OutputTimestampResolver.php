@@ -70,14 +70,13 @@ class OutputTimestampResolver extends AbstractRequestResolver
         $this->getMasterRequest()->attributes->set(self::ATTRIBUTE_PIMCORE_OUTPUT_TIMESTAMP, $timestamp);
     }
 
-
     /**
      * Returns if timestamp was queried during request at least once
      *
      * @return bool
      */
-    public function timestampWasQueried() {
+    public function timestampWasQueried()
+    {
         return $this->timestampWasQueried;
     }
-
 }

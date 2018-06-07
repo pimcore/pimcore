@@ -50,8 +50,8 @@ class EnablePreviewTimeSliderListener implements EventSubscriberInterface
      */
     protected $documentResolver;
 
-
-    public function __construct(OutputTimestampResolver $outputTimestampResolver, RequestHelper $requestHelper, EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver) {
+    public function __construct(OutputTimestampResolver $outputTimestampResolver, RequestHelper $requestHelper, EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
+    {
         $this->outputTimestampResolver = $outputTimestampResolver;
         $this->requestHelper = $requestHelper;
         $this->editmodeResolver = $editmodeResolver;
@@ -74,13 +74,13 @@ class EnablePreviewTimeSliderListener implements EventSubscriberInterface
             return;
         }
 
-        if(!$this->outputTimestampResolver->timestampWasQueried()) {
+        if (!$this->outputTimestampResolver->timestampWasQueried()) {
             return;
         }
 
         $request = $event->getRequest();
 
-        if($this->editmodeResolver->isEditmode($request)) {
+        if ($this->editmodeResolver->isEditmode($request)) {
             return;
         }
 
@@ -96,13 +96,13 @@ class EnablePreviewTimeSliderListener implements EventSubscriberInterface
 
         $documentId = 0;
         $document = $this->documentResolver->getDocument($request);
-        if($document) {
+        if ($document) {
             $documentId = $document->getId();
         }
 
-        $code = "
+        $code = '
             <script>
-                var documentId = " . $documentId . ";
+                var documentId = ' . $documentId . ";
                 var documentTab = top.pimcore.globalmanager.get('document_' + documentId);
                 if(documentTab && documentTab.preview) {
                     documentTab.preview.showTimeSlider();
