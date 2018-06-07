@@ -14,7 +14,7 @@ Recurring payment can for example be used to implement sequential payments like 
 - For backend operations like *recurPayment* a toolkit-password is required on top of the standard Wirecard credentials. 
 - Source orders are valid for 400 days.
 - There are payment method specific specifications, like for example passing a parameter `transactionIdentifier` with the value `INITIAL` for source orders performed via *SEPA Direct Debit*.
-- Every credit card based order payment response contains a parameter `anonymousPan`, which consists of the last 4 digits of the credit card numbe. This is useful, if you you want to let the user choose which card he wants to use for the recurring payment. For some credit cards also `maskedPan` and  `expiry` are available. The `maskedPan` includes a masked string of the whole creditcard-number. The expiry is useful to validate if the source order can still be used for a _recurPayment_ operation.
+- Every credit card based order payment response contains a parameter `anonymousPan`, which consists of the last 4 digits of the credit card number. This is useful, if you you want to let the user choose which card he wants to use for the recurring payment. For some credit cards also `maskedPan` and  `expiry` are available. The `maskedPan` includes a masked string of the whole creditcard-number. The expiry is useful to validate if the source order can still be used for a _recurPayment_ operation.
 
 ## Best Practice
 ### Bad Way
@@ -131,7 +131,7 @@ payment_manager:
           sandbox:
             secret: 'CHCSH7UGHVVX2P7EHDHSY4T2S4CGYK4QBE4M5YUUG2ND5BEZWNRZW5EJYVJQ'
             customer: 'D200411'
-            toolkit_password: '2g4f9q2m' # necessary for recurPayment operation
+            toolkit_password: 'XXXXXXX' # necessary for recurPayment operation
             optional_payment_properties:
               - paymentType
               - transactionIdentifier # necessary for recurPayment based on SEPA DIRECT DEBIT
