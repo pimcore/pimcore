@@ -116,25 +116,19 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
                     value: datax.height
                 },
                 {
-                xtype: "combo",
+                    xtype: "combo",
                     fieldLabel: t("multiselect_render_type"),
                     name: "renderType",
                     itemId: "renderType",
                     mode: 'local',
-                    store: new Ext.data.ArrayStore({
-                        id: 0,
-                        fields: [
-                            'value',
-                            'key'
-                        ],
-                        data: [
-                            ['list', 'List'],
-                            ['tags', 'Tags']
-                        ]
-                    }),
-                    value: datax.renderType,
-                    valueField: 'value',
-                    displayField: 'key',
+                    store: [
+                        ['list', 'List'],
+                        ['tags', 'Tags']
+                    ],
+                    value: datax["renderType"] ? datax["renderType"] : 'list',
+                    triggerAction: "all",
+                    editable: false,
+                    forceSelection: true
                 },
                 possibleOptions
             ]
