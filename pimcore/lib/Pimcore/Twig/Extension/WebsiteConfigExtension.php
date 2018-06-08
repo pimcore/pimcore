@@ -36,8 +36,8 @@ class WebsiteConfigExtension extends \Twig_Extension
      *
      * @return Config\Config|mixed
      */
-    public function getWebsiteConfig($key = null, $default = null)
+    public function getWebsiteConfig($key = null, $default = null, $language = null)
     {
-        return Config::getWebsiteConfigValue($key, $default);
+        return Config::getWebsiteConfigValue($key, $default, $language);
     }
 }
