@@ -25,6 +25,7 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and addi
 | `getTitle()`      | string      | Get the title of the link            |
 | `getRel()`        | string      | Get the rel text of the link         |
 | `getTabindex()`   | string      | Get the tabindex of the link         |
+| `getClass()`      | string      | Get the class of the link            |
 | `getAccessKey()`  | string      | Get the access key of the link       |
 | `isEmpty()`       | string      | Whether the editable is empty or not |
 
