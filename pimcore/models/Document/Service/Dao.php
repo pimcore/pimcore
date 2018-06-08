@@ -79,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $sourceId = $this->getTranslationSourceId($document);
 
-        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId = ?', [$sourceId]);
+        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?)', [$sourceId, $document->getId()]);
 
         $translations = [];
         foreach ($data as $translation) {
