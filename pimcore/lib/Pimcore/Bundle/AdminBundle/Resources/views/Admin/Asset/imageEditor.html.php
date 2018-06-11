@@ -12,7 +12,6 @@
 <div class="wrapper">
 
     <div class="submenu">
-        <a class="logo" href="">miniPaint</a>
         <div class="block attributes" id="action_attributes"></div>
         <div class="clear"></div>
     </div>
