@@ -926,3 +926,21 @@ Ext.define('pimcore.Ext.form.field.Date', {
         this.picker.setValue(Ext.isDate(value) ? value : null);
     }
 });
+
+//Fix - Date picker does not align to component in scrollable container and breaks view layout randomly.
+Ext.override(Ext.picker.Date, {
+        afterComponentLayout: function (width, height, oldWidth, oldHeight) {
+        var field = this.pickerField;
+        this.callParent([
+            width,
+            height,
+            oldWidth,
+            oldHeight
+        ]);
+        // Bound list may change size, so realign on layout
+        // **if the field is an Ext.form.field.Picker which has alignPicker!**
+        if (field && field.alignPicker) {
+            field.alignPicker();
+        }
+    }
+});
