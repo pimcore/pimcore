@@ -777,14 +777,13 @@ pimcore.layout.toolbar = Class.create({
                         }
                     });
                 }
-            } else {
-                if (perspectiveCfg.inToolbar("settings.users.myprofile")) {
-                    settingsItems.push({
-                        text: t("my_profile"),
-                        iconCls: "pimcore_icon_user",
-                        handler: this.editProfile
-                    });
-                }
+            }
+            if (perspectiveCfg.inToolbar("settings.users.myprofile")) {
+                settingsItems.push({
+                    text: t("my_profile"),
+                    iconCls: "pimcore_icon_user",
+                    handler: this.editProfile
+                });
             }
 
             if (user.isAllowed("thumbnails") && perspectiveCfg.inToolbar("settings.thumbnails")) {
@@ -1040,13 +1039,13 @@ pimcore.layout.toolbar = Class.create({
             var searchItems = [];
             var searchAction = function (type) {
                 pimcore.helpers.itemselector(false, function (selection) {
-                    pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
-                }, {type: [type]},
+                        pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
+                    }, {type: [type]},
                     {moveToTab: true,
                         context: {
                             scope: "globalSearch"
                         }
-                });
+                    });
             };
 
             if (user.isAllowed("documents") && perspectiveCfg.inToolbar("search.documents")) {

@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AdminController implements EventedControllerInterface
@@ -317,6 +318,16 @@ class UserController extends AdminController implements EventedControllerInterfa
                     }
                     break;
                 }
+            }
+
+            if(isset($values['2fa_enabled'])) {
+                $twoFactorEnabled = $values['2fa_enabled'];
+                if($twoFactorEnabled == true) {
+                    $user->setTwoFactorAuthentication(['enabled' => true]);
+                } else {
+                    $user->setTwoFactorAuthentication(['enabled' => false]);
+                }
+                unset($values['2fa_enabled']);
             }
 
             $user->setValues($values);
@@ -622,6 +633,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         unset($userData['password']);
 
+        $userData['twoFactorAuthentication'] = $user->getTwoFactorAuthentication();
         $response = new Response('pimcore.currentuser = ' . $this->encodeJson($userData));
         $response->headers->set('Content-Type', 'text/javascript');
 
@@ -769,6 +781,76 @@ class UserController extends AdminController implements EventedControllerInterfa
         return $response;
     }
 
+
+    /**
+     * @Route("/user/get-2fa-qr-code")
+     *
+     * @param Request $request
+     *
+     * @return
+     */
+    public function get2FaQrCodeAction(Request $request) {
+
+        $secret = $request->get('secret');
+        if($this->getUser()->getGoogleAuthenticatorSecret() == $secret) {
+            $qrCodeFile = $this->createQrCodeImage();
+            $response = new BinaryFileResponse($qrCodeFile);
+            return $response;
+        }
+
+        throw new AccessDeniedHttpException();
+    }
+
+    /**
+     * @Route("/user/renew-2fa-qr-secret")
+     *
+     * @param Request $request
+     */
+    public function renew2FaSecretAction(Request $request) {
+
+        $user = $this->getAdminUser();
+
+        $enabled = $request->get('enabled');
+
+        if($enabled === 'true') {
+            $container = \Pimcore::getContainer();
+            $twoFactorService = $container->get('scheb_two_factor.security.google_authenticator');
+            $newSecret = $twoFactorService->generateSecret();
+            $user->setTwoFactorAuthentication(['enabled' => true, 'type' => 'google', 'secret' => $newSecret]);
+        } else {
+            $user->setTwoFactorAuthentication(['enabled' => false]);
+        }
+        $user->save();
+
+        Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+            Tool\Session::regenerateId();
+            $adminSession->set('2fa', false);
+        });
+
+        return $this->adminJson($user->getTwoFactorAuthentication());
+    }
+
+    /**
+     * @return string
+     */
+    protected function createQrCodeImage() {
+
+        $container = \Pimcore::getContainer();
+        $twoFactorService = $container->get('scheb_two_factor.security.google_authenticator');
+        $url = $twoFactorService->getQRContent($this->getUser());
+
+        $code = new \Endroid\QrCode\QrCode;
+        $code->setWriterByName('png');
+        $code->setText($url);
+        $code->setSize(200);
+
+        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $code->writeFile($tmpFile);
+
+        return $tmpFile;
+    }
+
+
     /**
      * @Route("/user/get-image")
      *
@@ -892,7 +974,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         // check permissions
         $unrestrictedActions = [
             'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
-            'getImageAction', 'uploadCurrentUserImageAction'
+            'getImageAction', 'uploadCurrentUserImageAction', 'get2FaQrCodeAction', 'renew2FaSecretAction'
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);

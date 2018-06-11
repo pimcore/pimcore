@@ -704,6 +704,26 @@ Ext.onReady(function () {
     pimcore.layout.treepanelmanager.startup();
 
     pimcore.helpers.registerKeyBindings(document);
+
+
+    if(pimcore.settings.twoFactorSetupRequired) {
+        Ext.Msg.show({
+            title: t('2fa_setup_title'),
+            message: t('2fa_setup_message'),
+            buttons: Ext.Msg.OK,
+            icon: Ext.Msg.INFO,
+            fn: function(btn) {
+                if(btn === 'ok') {
+                    try {
+                        pimcore.globalmanager.get("profile").activate();
+                    }
+                    catch (e) {
+                        pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
+                    }
+                }
+            }
+        });
+    }
 });
 
 

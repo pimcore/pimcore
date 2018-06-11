@@ -117,6 +117,14 @@ pimcore.settings.user.user.settings = Class.create({
             hidden: true
         });
 
+
+        generalItems.push({
+            xtype: "checkbox",
+            fieldLabel: t("2fa_enabled"),
+            name: "2fa_enabled",
+            checked: false
+        });
+
         var date = new Date();
         var image = "/admin/user/get-image?id=" + this.currentUser.id + "&_dc=" + date.getTime();
 

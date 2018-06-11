@@ -131,6 +131,13 @@ class User extends User\UserRole
      */
     public $keyBindings;
 
+
+    /**
+     * @var string
+     */
+    public $twoFactorAuthentication;
+
+
     /**
      * @return string
      */
@@ -970,5 +977,29 @@ class User extends User\UserRole
     public function setKeyBindings($keyBindings)
     {
         $this->keyBindings = $keyBindings;
+    }
+
+
+
+    public function getTwoFactorAuthentication() {
+
+        if($this->twoFactorAuthentication !== null) {
+            return json_decode($this->twoFactorAuthentication, true);
+        }
+
+        return [
+            'enabled' => false,
+            'secret' => '',
+            'type' => ''
+        ];
+    }
+
+
+    public function setTwoFactorAuthentication($twoFactorAuthentication) {
+        if(is_array($twoFactorAuthentication)) {
+            $this->twoFactorAuthentication = json_encode($twoFactorAuthentication);
+        }else {
+            $this->twoFactorAuthentication = $twoFactorAuthentication;
+        }
     }
 }

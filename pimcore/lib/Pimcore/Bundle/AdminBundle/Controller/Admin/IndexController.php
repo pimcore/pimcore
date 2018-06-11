@@ -81,6 +81,13 @@ class IndexController extends AdminController
         $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
+        $proxyUser = $this->getAdminUser(true);
+        if($proxyUser->isGoogleAuthenticatorEnabled() && !$proxyUser->getGoogleAuthenticatorSecret()) {
+            $settings->getParameters()->add([
+                'twoFactorSetupRequired' => true
+            ]);
+        }
+
         // allow to alter settings via an event
         $this->eventDispatcher->dispatch(AdminEvents::INDEX_SETTINGS, new IndexSettingsEvent($settings));
 

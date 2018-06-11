@@ -290,6 +290,8 @@ abstract class Kernel extends SymfonyKernel
                 );
             }
         }
+
+        $collection->addBundle(new \Scheb\TwoFactorBundle\SchebTwoFactorBundle());
     }
 
     protected function getEnvironmentsForDevBundles(): array
