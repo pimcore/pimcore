@@ -10,7 +10,7 @@ You can enable it in the profile settings menu
 **(Settings -> My Profile)**
 
 After enabling it a secret will be generated and you can setup your Google Authenticator App.
-**Please be aware if you don't setup the App properly wou will loose access to your account!**
+**Please be aware if you don't setup the App properly you will loose access to your account!**
 
 
  ![Settings](../img/two_factor_authentication_setup.png)
