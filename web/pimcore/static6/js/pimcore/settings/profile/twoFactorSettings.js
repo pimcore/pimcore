@@ -20,95 +20,48 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
         this.data = data;
     },
 
-
     getPanel: function () {
 
         var that = this;
-
         var twoFactorData = this.data;
 
-        var qrCode = this.getQrCodeUrl(twoFactorData.secret);
-
-        var twoFactorEnabledCheckbox = Ext.create({
-            xtype: "checkbox",
-            fieldLabel: t("2fa_enabled"),
-            name: "2fa_enabled",
-            checked: twoFactorData.enabled
-        });
-
-        var twoFactorSecretField = Ext.create({
-            xtype: "textfield",
-            fieldLabel: t("2fa_secret"),
-            name: "2fa_secret",
-            width: 400,
-            disabled: true,
-            value: twoFactorData.secret
-        });
-
-        var twoFactorQrCodePanel = Ext.create({
-            xtype: "container",
-            html: '<img src="' + qrCode +'"/>'
-        });
-
-        if(twoFactorData.secret) {
-            twoFactorQrCodePanel.setHeight(230);
-            twoFactorQrCodePanel.setWidth(230);
+        var buttonLabel = t('setup_two_factor');
+        if(this.data['isActive']) {
+            buttonLabel = t('renew_2fa_secret');
         }
 
-        return Ext.create({
+
+        var panelConf = {
             xtype: "fieldset",
-            title: t("2fa_settings"),
-            items:
-                [
-                    twoFactorEnabledCheckbox,
-                    twoFactorSecretField,
-                    twoFactorQrCodePanel,
-                    {
-                        xtype: "button",
-                        text: t("2fa_renew_button"),
-                        handler: function () {
+            title: t("two_factor_authentication"),
+            items: [{
+                xtype: "button",
+                text: buttonLabel,
+                style: "margin-right: 10px",
+                handler: function () {
+                    this.openSetupWindow();
+                }.bind(this)
+            }, {
+                xtype: "button",
+                text: t("2fa_disable"),
+                hidden: this.data['required'] || !this.data['isActive'],
+                handler: function () {
+                    Ext.Ajax.request({
+                        url: "/admin/user/disable-2fa",
+                        success: function (response) {
+                            window.location.reload();
+                        }.bind(this)
+                    });
+                }
+            }]
+        };
 
-                            Ext.Ajax.request({
-                                url: "/admin/user/renew-2fa-qr-secret",
-                                method: "post",
-                                params: {
-                                    'enabled': twoFactorEnabledCheckbox.checked
-                                },
-                                success: function (response) {
-
-                                    var res = Ext.decode(response.responseText);
-                                    if(res.enabled) {
-                                        qrCode = that.getQrCodeUrl(res.secret);
-                                        twoFactorQrCodePanel.setHtml('<img src="' + qrCode +'"/>');
-                                        twoFactorQrCodePanel.setHeight(230);
-                                        twoFactorQrCodePanel.setWidth(230);
-
-                                        twoFactorSecretField.setValue(res.secret);
-
-
-                                        var popup = that.getCodePopup(res.secret);
-                                        popup.show();
-
-                                    } else {
-                                        twoFactorQrCodePanel.setHtml('');
-                                        twoFactorQrCodePanel.setHeight(0);
-                                        twoFactorQrCodePanel.setWidth(0);
-                                        twoFactorSecretField.setValue('');
-                                    }
-                                }
-                            });
-                        }
-                    }
-                ]
-        });
+        return panelConf;
     },
 
-    getCodePopup: function(secret) {
-
-        var qrCode = this.getQrCodeUrl(secret);
-
-        return Ext.create('Ext.window.Window', {
-            title: t('2fa_alert_title'),
+    openSetupWindow: function () {
+        var win = Ext.create('Ext.window.Window', {
+            title: t('two_factor_authentication'),
             resizable: false,
             closable: false,
             draggable: false,
@@ -122,7 +75,7 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
             items: [
                 {
                     xtype: "container",
-                    html: '<img src="' + qrCode +'"/>',
+                    html: '<img src="/admin/user/renew-2fa-qr-secret"/>',
                     width: 230,
                     height: 230
                 },
@@ -139,18 +92,8 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
                     window.location.reload();
                 }
             }]
-        })
+        });
+
+        win.show();
     }
-    ,
-    getQrCodeUrl(secret) {
-
-        if(secret) {
-            var date = new Date();
-            return "/admin/user/get-2fa-qr-code?secret=" + secret + "&_dc=" + date.getTime();
-        }
-
-        return '';
-    }
-
-
 });

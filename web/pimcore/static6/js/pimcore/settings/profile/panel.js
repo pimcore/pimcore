@@ -24,7 +24,8 @@ pimcore.settings.profile.panel = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "profile",
-                title: t("profile"),
+                title: t("my_profile"),
+                iconCls: "pimcore_icon_user",
                 border: false,
                 closable: true,
                 layout: "fit",

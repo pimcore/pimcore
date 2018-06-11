@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Security\User;
 
 use Pimcore\Model\User as PimcoreUser;
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface as GoogleTwoFactorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -22,7 +23,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * Proxy user to pimcore model and expose roles as ROLE_* array. If we can safely change the roles on the user model
  * this proxy can be removed and the UserInterface can directly be implemented on the model.
  */
-class User implements UserInterface, EquatableInterface, \Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface
+class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterface
 {
     /**
      * @var PimcoreUser
@@ -129,8 +130,7 @@ class User implements UserInterface, EquatableInterface, \Scheb\TwoFactorBundle\
      */
     public function isGoogleAuthenticatorEnabled(): bool
     {
-        $twoFactorData = $this->user->getTwoFactorAuthentication();
-        if($twoFactorData['enabled']) {
+        if($this->user->getTwoFactorAuthentication('enabled')) {
             return true;
         }
 
@@ -155,7 +155,15 @@ class User implements UserInterface, EquatableInterface, \Scheb\TwoFactorBundle\
      */
     public function getGoogleAuthenticatorSecret(): string
     {
-        $twoFactorData = $this->user->getTwoFactorAuthentication();
-        return $twoFactorData['secret']?:'';
+        if($this->isGoogleAuthenticatorEnabled()) {
+            $secret = $this->user->getTwoFactorAuthentication('secret');
+            if(!$secret) {
+                // we return a dummy token
+                $twoFactorService = \Pimcore::getContainer()->get('scheb_two_factor.security.google_authenticator');
+                return $twoFactorService->generateSecret();
+            }
+
+            return $secret;
+        }
     }
 }

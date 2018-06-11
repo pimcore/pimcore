@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tmittendorfer
- * Date: 08.06.2018
- * Time: 14:13
- */
 
 $db = \Pimcore\Db::get();
 

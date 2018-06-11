@@ -188,7 +188,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         if (isset($credentials['user']) && $credentials['user'] instanceof UserModel) {
             $user = new User($credentials['user']);
             $session = Session::getReadOnly();
-            if($session->has('2fa') && $session->get('2fa') === false) {
+            if($session->has('2fa_required') && $session->get('2fa_required') === true) {
                 $this->twoFactorRequired = true;
             }
         } else {
@@ -239,7 +239,9 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
                     Session::regenerateId();
                     $adminSession->set('user', $pimcoreUser);
-                    $adminSession->set('2fa', false);
+
+                    // this flag gets removed after successful authentication in \Pimcore\Bundle\AdminBundle\EventListener\TwoFactorListener
+                    $adminSession->set('2fa_required', true);
                 });
             }
         }

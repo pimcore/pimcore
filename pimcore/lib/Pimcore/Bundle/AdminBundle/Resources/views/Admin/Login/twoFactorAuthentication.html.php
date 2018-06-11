@@ -1,12 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: tmittendorfer
- * Date: 05.06.2018
- * Time: 10:08
- */
-
-/**
  * @var \Pimcore\Templating\PhpEngine $this
  * @var \Pimcore\Templating\PhpEngine $view
  * @var \Pimcore\Templating\GlobalVariables $app

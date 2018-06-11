@@ -53,7 +53,6 @@ security:
 
     access_control:
         - { path: ^/admin/settings/display-custom-logo, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/user/get-2fa-qr-code, roles: [IS_AUTHENTICATED_2FA_IN_PROGRESS, ROLE_PIMCORE_USER]}
         - { path: ^/admin/login/2fa-verify, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS}
         - { path: ^/admin/login/2fa, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS}
         - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }

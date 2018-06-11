@@ -721,13 +721,13 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 <?php } else { ?>
 <?php
 
-$scriptContents = "";
-foreach ($scripts as $scriptUrl) {
-    if (is_file(PIMCORE_WEB_ROOT . "/pimcore/static6/js/" . $scriptUrl)) {
-        $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . "/pimcore/static6/js/" . $scriptUrl) . "\n\n\n";
+    $scriptContents = "";
+    foreach ($scripts as $scriptUrl) {
+        if (is_file(PIMCORE_WEB_ROOT . "/pimcore/static6/js/" . $scriptUrl)) {
+            $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . "/pimcore/static6/js/" . $scriptUrl) . "\n\n\n";
+        }
     }
-}
-$minimizedScriptPath = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents);
+    $minimizedScriptPath = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents);
 
 ?>
     <script src="<?= $minimizedScriptPath ?>"></script>

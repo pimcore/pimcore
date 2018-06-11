@@ -1,4 +1,4 @@
 imports:
     - { resource: default.yml }
     - { resource: security.yml }
-    - { resource: twoFactorAuthentication.yml }
+    - { resource: two_factor_authentication.yml }

@@ -708,19 +708,12 @@ Ext.onReady(function () {
 
     if(pimcore.settings.twoFactorSetupRequired) {
         Ext.Msg.show({
-            title: t('2fa_setup_title'),
+            title: t('setup_two_factor'),
             message: t('2fa_setup_message'),
             buttons: Ext.Msg.OK,
             icon: Ext.Msg.INFO,
             fn: function(btn) {
-                if(btn === 'ok') {
-                    try {
-                        pimcore.globalmanager.get("profile").activate();
-                    }
-                    catch (e) {
-                        pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
-                    }
-                }
+                pimcore.settings.profile.twoFactorSettings.prototype.openSetupWindow();
             }
         });
     }
