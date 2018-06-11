@@ -330,14 +330,6 @@ class Link extends Model\Document\Tag
     {
         return $this->data['tabindex'];
     }
-    
-    /**
-     * @return string
-     */
-    public function getClass()
-    {
-        return $this->data['class'];
-    }
 
     /**
      * @return string
