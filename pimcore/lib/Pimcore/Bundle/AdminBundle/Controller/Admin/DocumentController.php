@@ -1323,6 +1323,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         if ($sourceDocument && $targetDocument) {
             $service = new Document\Service;
+            if($service->getTranslationSourceId($targetDocument) != $targetDocument->getId()) {
+                throw new \Exception('Target Document already linked to Source Document ID('.$service->getTranslationSourceId($targetDocument).'). Please unlink existing relation first.');
+            }
             $service->addTranslation($sourceDocument, $targetDocument);
         }
 
