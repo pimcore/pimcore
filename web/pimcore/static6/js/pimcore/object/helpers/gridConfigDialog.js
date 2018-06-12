@@ -14,6 +14,7 @@
 pimcore.registerNS("pimcore.object.helpers.gridConfigDialog");
 pimcore.object.helpers.gridConfigDialog = Class.create({
 
+    showFieldname: true,
     data: {},
     brickKeys: [],
 
@@ -336,7 +337,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                 } else {
                     obj.key = child.data.key;
-                    obj.label = child.data.text;
+                    obj.label = child.data.layout ? child.data.layout.title : child.data.text;
                     obj.type = child.data.dataType;
                     obj.layout = child.data.layout;
                     if (child.data.width) {
@@ -485,8 +486,14 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     child = child[0];
                     child.renderer = nodeConf.attributes.renderer;
                 } else {
+                    var text = nodeConf.label;
+
+                    if (nodeConf.dataType !== "system" && this.showFieldname && nodeConf.key) {
+                        text = text + " (" + nodeConf.key.replace("~", ".") + ")";
+                    }
+
                     var child = {
-                        text: nodeConf.label,
+                        text: text,
                         key: nodeConf.key,
                         type: "data",
                         dataType: nodeConf.dataType,
@@ -813,7 +820,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
     getClassTree: function (url, classId, objectId) {
 
-        var classTreeHelper = new pimcore.object.helpers.classTree(true);
+        var classTreeHelper = new pimcore.object.helpers.classTree(this.showFieldname);
         var tree = classTreeHelper.getClassTree(url, classId, objectId);
 
         tree.addListener("itemdblclick", function (tree, record, item, index, e, eOpts) {

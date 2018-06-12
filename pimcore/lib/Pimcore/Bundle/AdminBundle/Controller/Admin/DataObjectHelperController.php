@@ -786,6 +786,7 @@ class DataObjectHelperController extends AdminController
                 $calculatedColumnConfig['position'] = $config['position'];
                 $calculatedColumnConfig['isOperator'] = true;
                 $calculatedColumnConfig['attributes'] = $config['fieldConfig']['attributes'];
+                $calculatedColumnConfig['width'] = $config['width'];
 
                 $existingColumns = $session->get('helpercolumns', []);
 
