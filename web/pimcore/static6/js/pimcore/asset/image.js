@@ -157,8 +157,18 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             var date = new Date();
             var dc = date.getTime();
 
-            var details = [];
-
+            var details = [{
+                title: t("tools"),
+                bodyStyle: "padding: 10px;",
+                items: [{
+                    xtype: "button",
+                    text: t("set_focal_point"),
+                    iconCls: "pimcore_icon_focal_point",
+                    handler: function () {
+                        this.addFocalPoint();
+                    }.bind(this)
+                }]
+            }];
 
             if (this.data.imageInfo.dimensions) {
 
@@ -328,18 +338,9 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 title: t("view"),
                 layout: "border",
                 iconCls: "pimcore_icon_view",
-                tbar: [{
-                    text: t("set_focal_point"),
-                    iconCls: "",
-                    handler: function () {
-
-                    }
-                }],
                 items: [{
                     region: "center",
-                    html: '&nbsp;',
-                    bodyStyle: "background: url(/admin/asset/get-image-thumbnail?id=" + this.id +
-                    "&treepreview=true&_dc=" + dc + ") center center no-repeat;"
+                    html: '<div class="pimcore_asset_image_preview"><img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&_dc=' + dc + '"></div>',
                 }, {
                     region: "east",
                     width: 300,
@@ -347,8 +348,75 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     scrollable: "y"
                 }]
             });
+
+            this.displayPanel.on('afterrender', function (ev) {
+                if(this.data['image'] && this.data['image']['focalPoint']) {
+                    this.addFocalPoint(this.data['image']['focalPoint']['x'], this.data['image']['focalPoint']['y']);
+                }
+            }.bind(this))
         }
 
         return this.displayPanel;
+    },
+
+    addFocalPoint: function (positionX, positionY) {
+
+        if(this["marker"]) {
+            return;
+        }
+
+        var area = this.displayPanel.getEl().down('.pimcore_asset_image_preview');
+        var marker = area.insertHtml('afterBegin', '<div class="marker"></div>');
+        marker = Ext.get(marker);
+
+        marker.on('contextmenu', function (ev) {
+            var menu = new Ext.menu.Menu();
+
+            menu.add(new Ext.menu.Item({
+                text: t("delete"),
+                iconCls: "pimcore_icon_delete",
+                handler: function (el) {
+                    marker.remove();
+                    delete this.marker;
+                }.bind(this)
+            }));
+
+            menu.showAt(ev.getXY());
+            ev.stopEvent();
+        }.bind(this));
+
+        if(positionX && positionY) {
+            marker.setTop(positionY + "%");
+            marker.setLeft(positionX + "%");
+        }
+
+        var markerDD = new Ext.dd.DD(marker);
+        markerDD.clearConstraints();
+
+        this.marker = marker;
+    },
+
+    getSaveData : function ($super, only) {
+        var parameters = $super(only);
+
+        if(this["marker"]) {
+
+            var top = intval(this.marker.getStyle('top'));
+            var left = intval(this.marker.getStyle('left'));
+
+            var boundingBox = this.marker.up().getSize();
+
+            var x = round(left * 100 / boundingBox.width, 8);
+            var y = round(top  * 100 / boundingBox.height, 8);
+
+            parameters["image"] = Ext.encode({
+                "focalPoint": {
+                    "x": x,
+                    "y": y
+                }
+            });
+        }
+
+        return parameters;
     }
 });

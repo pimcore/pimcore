@@ -1904,5 +1904,6 @@
   "setup_two_factor": "Setup Two Factor Authentication",
   "2fa_setup_message": "Two Factor Authentication is required for your account! You have to set it up in your profile settings, otherwise you will not be able to sign in again.",
   "2fa_reset_secret": "Reset 2FA Secret",
-  "2fa_reset_done": "The 2FA secret was reset, the user can generate a new one after login (My Profile section)."
+  "2fa_reset_done": "The 2FA secret was reset, the user can generate a new one after login (My Profile section).",
+  "set_focal_point": "Set Focal Point"
 }

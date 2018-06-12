@@ -1251,3 +1251,6 @@
     right: -4px;
 }
 
+.pimcore_icon_focal_point {
+    background: url(/pimcore/static6/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
+}
