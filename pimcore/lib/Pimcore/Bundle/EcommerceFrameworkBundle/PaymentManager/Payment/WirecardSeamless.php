@@ -536,8 +536,8 @@ class WirecardSeamless extends AbstractPayment
                 $orderIdent,
                 $response['orderNumber'],
                 $response['avsResponseMessage'],
-                $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
-                    ? IStatus::STATUS_CANCELLED
+                $response['orderNumber'] !== null && $response['paymentState'] == 'PENDING'
+                    ? IStatus::STATUS_PENDING
                     : IStatus::STATUS_CANCELLED,
                 [
                     'seamless_amount'       => '',
