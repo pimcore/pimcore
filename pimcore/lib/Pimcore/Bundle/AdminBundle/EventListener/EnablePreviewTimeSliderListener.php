@@ -84,7 +84,6 @@ class EnablePreviewTimeSliderListener implements EventSubscriberInterface
             return;
         }
 
-        // only inject analytics code on non-admin requests
         if (!$this->requestHelper->isFrontendRequestByAdmin($request)) {
             return;
         }
