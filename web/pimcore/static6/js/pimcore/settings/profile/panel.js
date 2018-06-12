@@ -23,7 +23,7 @@ pimcore.settings.profile.panel = Class.create({
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id: "profile",
+                id: "my_profile",
                 title: t("my_profile"),
                 iconCls: "pimcore_icon_user",
                 border: false,
@@ -35,7 +35,7 @@ pimcore.settings.profile.panel = Class.create({
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.setActiveItem("profile");
+            tabPanel.setActiveItem("my_profile");
 
             this.panel.on("destroy", function () {
                 pimcore.globalmanager.remove("profile");
@@ -116,14 +116,14 @@ pimcore.settings.profile.panel = Class.create({
 
         generalItems.push({
             xtype: "checkbox",
-            fieldLabel: t("show_welcome_screen"),
+            boxLabel: t("show_welcome_screen"),
             name: "welcomescreen",
             checked: this.currentUser.welcomescreen
         });
 
         generalItems.push({
             xtype: "checkbox",
-            fieldLabel: t("memorize_tabs"),
+            boxLabel: t("memorize_tabs"),
             name: "memorizeTabs",
             checked: this.currentUser.memorizeTabs
         });
@@ -209,7 +209,7 @@ pimcore.settings.profile.panel = Class.create({
             width: '100%',
             items: [{
                 xtype: "container",
-                id: "pimcore_user_image_" + this.currentUser.id,
+                id: "pimcore_profile_image_" + this.currentUser.id,
                 html: '<img src="' + image + '" />',
                 width: 45,
                 height: 45,
@@ -220,7 +220,7 @@ pimcore.settings.profile.panel = Class.create({
                 handler: function () {
                     pimcore.helpers.uploadDialog("/admin/user/upload-current-user-image?id="
                         + this.currentUser.id, null, function () {
-                        var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
+                        var cont = Ext.getCmp("pimcore_profile_image_" + this.currentUser.id);
                         var date = new Date();
                         cont.update('<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc='
                             + date.getTime() + '" />');
@@ -320,9 +320,7 @@ pimcore.settings.profile.panel = Class.create({
         });
     },
 
-
     activate: function () {
-        Ext.getCmp("pimcore_panel_tabs").setActiveItem("users");
+        Ext.getCmp("pimcore_panel_tabs").setActiveItem("my_profile");
     }
-
 });

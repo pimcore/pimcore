@@ -583,6 +583,16 @@ Ext.onReady(function () {
 
                     el.getEl().dom.addEventListener("dragenter", fn, true);
                     el.getEl().dom.addEventListener("dragover", fn, true);
+
+                    // open "My Profile" when clicking on avatar
+                    Ext.get("pimcore_avatar").on("click", function (ev) {
+                        try {
+                            pimcore.globalmanager.get("profile").activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
+                        }
+                    });
                 }
             }
         });

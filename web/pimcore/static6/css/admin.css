@@ -170,6 +170,7 @@
     bottom: 50px;
     width:36px;
     border-radius: 18px;
+    cursor: pointer;
 }
 
 #pimcore_loading.loaded {

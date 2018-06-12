@@ -778,13 +778,6 @@ pimcore.layout.toolbar = Class.create({
                     });
                 }
             }
-            if (perspectiveCfg.inToolbar("settings.users.myprofile")) {
-                settingsItems.push({
-                    text: t("my_profile"),
-                    iconCls: "pimcore_icon_user",
-                    handler: this.editProfile
-                });
-            }
 
             if (user.isAllowed("thumbnails") && perspectiveCfg.inToolbar("settings.thumbnails")) {
                 settingsItems.push({
@@ -1194,16 +1187,6 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("roles", new pimcore.settings.user.role.panel());
-        }
-    },
-
-    editProfile: function () {
-
-        try {
-            pimcore.globalmanager.get("profile").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
         }
     },
 

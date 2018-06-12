@@ -328,6 +328,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 title: t("view"),
                 layout: "border",
                 iconCls: "pimcore_icon_view",
+                tbar: [{
+                    text: t("set_focal_point"),
+                    iconCls: "",
+                    handler: function () {
+
+                    }
+                }],
                 items: [{
                     region: "center",
                     html: '&nbsp;',

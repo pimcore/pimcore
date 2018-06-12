@@ -158,7 +158,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
 </div>
 
 <div id="pimcore_avatar" style="display:none;">
-    <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?>"/>
+    <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
 </div>
 
 <a id="pimcore_logout" data-menu-tooltip="<?= $this->translate("logout") ?>" href="<?= $view->router()->path('pimcore_admin_logout') ?>" style="display: none">
