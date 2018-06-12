@@ -120,12 +120,12 @@ input:-webkit-autofill {
     text-align: right;
 }
 
-#loginform {
+#loginform, #twofactorform {
     border-top: 3px solid #cbcbcb;
     background: #eaeaec;
 }
 
-#loginform button {
+#loginform button, #twofactorform button {
     font-weight: 500;
     background: #6428b4;
     display: block;
@@ -195,7 +195,7 @@ input:-webkit-autofill {
     opacity: 1;
 }
 
-.imageservice #loginform button {
+.imageservice #loginform button, .imageservice #twofactorform button {
 
 }
 

@@ -1893,5 +1893,16 @@
   "keybinding_roles": "Roles",
   "keybinding_clearAllCaches": "Clear all Caches",
   "keybinding_clearDataCache": "Clear Data Cache",
-  "please_dont_forget_to_reload_pimcore": "<b>Plesae don't forget to reload pimcore after your modification!</b>"
+  "please_dont_forget_to_reload_pimcore": "<b>Please don't forget to reload pimcore after your modification!</b>",
+  "2fa_disable": "Disable 2FA",
+  "2fa_required": "Two Factor Authentication required",
+  "2fa_code": "Code",
+  "renew_2fa_secret": "Renew Two Factor Secret",
+  "two_factor_authentication": "Two Factor Authentication",
+  "2fa_alert_text": "Please scan the QR-Code and add it to your Google Authenticator. <br>If you don't have the Google Authenticator app installed on your mobile phone, please download it from the App Store/Play Store.<br><br> You will need to reload Pimcore and enter the code shown within the App afterwards!",
+  "2fa_alert_submit": "Reload Pimcore & Enter Code",
+  "setup_two_factor": "Setup Two Factor Authentication",
+  "2fa_setup_message": "Two Factor Authentication is required for your account! You have to set it up in your profile settings, otherwise you will not be able to sign in again.",
+  "2fa_reset_secret": "Reset 2FA Secret",
+  "2fa_reset_done": "The 2FA secret was reset, the user can generate a new one after login (My Profile section)."
 }

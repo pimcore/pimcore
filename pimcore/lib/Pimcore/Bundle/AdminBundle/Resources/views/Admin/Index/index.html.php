@@ -199,7 +199,7 @@ $styles = array(
     // see also: http://blogs.telerik.com/blogs/posts/10-05-03/internet-explorer-css-limits.aspx
     // @import bypasses this problem in an elegant way
     foreach ($styles as $style) { ?>
-        @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::$revision ?>);
+    @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::$revision ?>);
     <?php } ?>
 </style>
 
@@ -275,6 +275,7 @@ $scripts = array(
     "pimcore/settings/user/workspace/special.js",
     "pimcore/settings/user/role/settings.js",
     "pimcore/settings/profile/panel.js",
+    "pimcore/settings/profile/twoFactorSettings.js",
     "pimcore/settings/thumbnail/item.js",
     "pimcore/settings/thumbnail/panel.js",
     "pimcore/settings/videothumbnail/item.js",

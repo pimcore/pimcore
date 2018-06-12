@@ -117,6 +117,33 @@ pimcore.settings.user.user.settings = Class.create({
             hidden: true
         });
 
+
+        generalItems.push({
+            xtype: "fieldset",
+            title: t("two_factor_authentication"),
+            items: [{
+                xtype: "checkbox",
+                boxLabel: t("2fa_required"),
+                name: "2fa_required",
+                checked: this.currentUser["twoFactorAuthentication"]['required']
+            }, {
+                xtype: "button",
+                text: t("2fa_reset_secret"),
+                hidden: !this.currentUser['twoFactorAuthentication']['isActive'],
+                handler: function () {
+                    Ext.Ajax.request({
+                        url: "/admin/user/reset-2fa-secret",
+                        params: {
+                            id: this.currentUser.id
+                        },
+                        success: function (response) {
+                            Ext.MessageBox.alert(t("2fa_reset_secret"), t("2fa_reset_done"));
+                        }.bind(this)
+                    });
+                }.bind(this)
+            }]
+        });
+
         var date = new Date();
         var image = "/admin/user/get-image?id=" + this.currentUser.id + "&_dc=" + date.getTime();
 

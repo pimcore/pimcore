@@ -24,7 +24,8 @@ pimcore.settings.profile.panel = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "profile",
-                title: t("profile"),
+                title: t("my_profile"),
+                iconCls: "pimcore_icon_user",
                 border: false,
                 closable: true,
                 layout: "fit",
@@ -186,7 +187,7 @@ pimcore.settings.profile.panel = Class.create({
 
                             passwordField.setValue(pass);
                             retypePasswordField.setValue(pass);
-                            
+
                             passwordCheck(passwordField);
                             passwordCheck(retypePasswordField);
                         }.bind(this)
@@ -195,7 +196,12 @@ pimcore.settings.profile.panel = Class.create({
             }, retypePasswordField]
         });
 
+        var twoFactorSettings = new pimcore.settings.profile.twoFactorSettings(this.currentUser.twoFactorAuthentication);
+        generalItems.push(twoFactorSettings.getPanel());
+
+
         var date = new Date();
+
         var image = "/admin/user/get-image?id=" + this.currentUser.id + "&_dc=" + date.getTime();
         generalItems.push({
             xtype: "fieldset",

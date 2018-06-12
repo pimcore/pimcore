@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AdminController implements EventedControllerInterface
@@ -319,6 +320,10 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             }
 
+            if(isset($values['2fa_required'])) {
+                $user->setTwoFactorAuthentication('required', (bool) $values['2fa_required']);
+            }
+
             $user->setValues($values);
 
             // only admins are allowed to create admin users
@@ -395,6 +400,9 @@ class UserController extends AdminController implements EventedControllerInterfa
             return $this->adminJson(['success' => false]);
         }
 
+        /**
+         * @var $user User
+         */
         $user = User::getById(intval($request->get('id')));
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -449,10 +457,11 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         // unset confidential informations
         $userData = object2array($user);
-
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
+        $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
         unset($userData['password']);
+        unset($userData['twoFactorAuthentication']['secret']);
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
@@ -621,6 +630,9 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData['keyBindings'] = $user->getKeyBindings();
 
         unset($userData['password']);
+        $userData['twoFactorAuthentication'] = $user->getTwoFactorAuthentication();
+        unset($userData['twoFactorAuthentication']['secret']);
+        $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
 
         $response = new Response('pimcore.currentuser = ' . $this->encodeJson($userData));
         $response->headers->set('Content-Type', 'text/javascript');
@@ -769,6 +781,105 @@ class UserController extends AdminController implements EventedControllerInterfa
         return $response;
     }
 
+
+    /**
+     * @Route("/user/get-2fa-qr-code")
+     *
+     * @param Request $request
+     *
+     * @return
+     */
+    public function get2FaQrCodeAction(Request $request) {
+
+        $secret = $request->get('secret');
+        if($this->getUser()->getGoogleAuthenticatorSecret() == $secret) {
+
+        }
+
+        throw new AccessDeniedHttpException();
+    }
+
+    /**
+     * @Route("/user/renew-2fa-qr-secret")
+     *
+     * @param Request $request
+     */
+    public function renew2FaSecretAction(Request $request) {
+
+        $user = $this->getAdminUser();
+        $proxyUser = $this->getAdminUser(true);
+
+        $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
+        $newSecret = $twoFactorService->generateSecret();
+        $user->setTwoFactorAuthentication('enabled', true);
+        $user->setTwoFactorAuthentication('type', 'google');
+        $user->setTwoFactorAuthentication('secret', $newSecret);
+        $user->save();
+
+        Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+            Tool\Session::regenerateId();
+            $adminSession->set('2fa_required', true);
+        });
+
+
+        $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
+        $url = $twoFactorService->getQRContent($proxyUser);
+
+        $code = new \Endroid\QrCode\QrCode;
+        $code->setWriterByName('png');
+        $code->setText($url);
+        $code->setSize(200);
+
+        $qrCodeFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $code->writeFile($qrCodeFile);
+
+        $response = new BinaryFileResponse($qrCodeFile);
+        return $response;
+    }
+
+    /**
+     * @Route("/user/disable-2fa")
+     *
+     * @param Request $request
+     */
+    public function disable2FaSecretAction(Request $request) {
+
+        $user = $this->getAdminUser();
+        $success = false;
+
+        if(!$user->getTwoFactorAuthentication('required')) {
+            $user->setTwoFactorAuthentication([]);
+            $user->save();
+
+            $success = true;
+        }
+
+        return $this->adminJson([
+            'success' => $success
+        ]);
+    }
+
+    /**
+     * @Route("/user/reset-2fa-secret")
+     *
+     * @param Request $request
+     */
+    public function reset2FaSecretAction(Request $request) {
+
+        /**
+         * @var $user User
+         */
+        $user = User::getById(intval($request->get('id')));
+        $success = true;
+        $user->setTwoFactorAuthentication('enabled', false);
+        $user->setTwoFactorAuthentication('secret', '');
+        $user->save();
+
+        return $this->adminJson([
+            'success' => $success
+        ]);
+    }
+
     /**
      * @Route("/user/get-image")
      *
@@ -892,7 +1003,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         // check permissions
         $unrestrictedActions = [
             'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
-            'getImageAction', 'uploadCurrentUserImageAction'
+            'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction'
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);

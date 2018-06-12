@@ -661,6 +661,7 @@ CREATE TABLE `users` (
   `docTypes` varchar(255) DEFAULT NULL,
   `classes` varchar(255) DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
+  `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,
 	`websiteTranslationLanguagesEdit` LONGTEXT NULL DEFAULT NULL,

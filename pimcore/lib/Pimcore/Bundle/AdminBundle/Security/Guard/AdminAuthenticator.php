@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\Guard;
 
+use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Cache\Runtime;
@@ -75,6 +76,11 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      * @var BruteforceProtectionHandler
      */
     protected $bruteforceProtectionHandler;
+
+    /**
+     * @var bool
+     */
+    protected $twoFactorRequired = false;
 
     /**
      * @param TokenStorageInterface $tokenStorage
@@ -181,6 +187,10 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
         if (isset($credentials['user']) && $credentials['user'] instanceof UserModel) {
             $user = new User($credentials['user']);
+            $session = Session::getReadOnly();
+            if($session->has('2fa_required') && $session->get('2fa_required') === true) {
+                $this->twoFactorRequired = true;
+            }
         } else {
             if (!isset($credentials['username'])) {
                 throw new AuthenticationException('Missing username');
@@ -229,6 +239,9 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
                     Session::regenerateId();
                     $adminSession->set('user', $pimcoreUser);
+
+                    // this flag gets removed after successful authentication in \Pimcore\Bundle\AdminBundle\EventListener\TwoFactorListener
+                    $adminSession->set('2fa_required', true);
                 });
             }
         }
@@ -318,5 +331,18 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     public function supportsRememberMe()
     {
         return false;
+    }
+
+    public function createAuthenticatedToken(UserInterface $user, $providerKey)
+    {
+        if($this->twoFactorRequired) {
+            return new TwoFactorRequiredToken(
+                $user,
+                $providerKey,
+                $user->getRoles()
+            );
+        } else {
+            return parent::createAuthenticatedToken($user, $providerKey);
+        }
     }
 }
