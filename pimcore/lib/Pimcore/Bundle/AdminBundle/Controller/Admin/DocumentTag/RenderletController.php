@@ -76,6 +76,7 @@ class RenderletController extends AdminController
             $document = Document::getById($document);
             if ($document) {
                 $attributes = $actionRenderer->addDocumentAttributes($document, $attributes);
+                unset($attributes[DynamicRouter::CONTENT_TEMPLATE]);
             }
         }
 
