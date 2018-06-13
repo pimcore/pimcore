@@ -340,6 +340,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 iconCls: "pimcore_icon_view",
                 items: [{
                     region: "center",
+                    scrollable: "y",
                     html: '<div class="pimcore_asset_image_preview"><img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&_dc=' + dc + '"></div>',
                 }, {
                     region: "east",
@@ -391,7 +392,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         }
 
         var markerDD = new Ext.dd.DD(marker);
-        markerDD.clearConstraints();
 
         this.marker = marker;
     },
