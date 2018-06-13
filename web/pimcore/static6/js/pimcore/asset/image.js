@@ -340,7 +340,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 iconCls: "pimcore_icon_view",
                 items: [{
                     region: "center",
-                    scrollable: "y",
                     html: '<div class="pimcore_asset_image_preview"><img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&_dc=' + dc + '"></div>',
                 }, {
                     region: "east",
@@ -354,7 +353,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 if(this.data['image'] && this.data['image']['focalPoint']) {
                     this.addFocalPoint(this.data['image']['focalPoint']['x'], this.data['image']['focalPoint']['y']);
                 }
-            }.bind(this))
+            }.bind(this));
+
+            this.displayPanel.on('resize', function (el, width, height, rWidth, rHeight) {
+                var area = this.displayPanel.getEl().down('img');
+                area.setStyle('max-width', (width-40) + "px");
+                area.setStyle('max-height', (height-40) + "px");
+            }.bind(this));
         }
 
         return this.displayPanel;
