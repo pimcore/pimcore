@@ -131,12 +131,10 @@ class User extends User\UserRole
      */
     public $keyBindings;
 
-
     /**
      * @var string
      */
     public $twoFactorAuthentication;
-
 
     /**
      * @return string
@@ -979,13 +977,14 @@ class User extends User\UserRole
         $this->keyBindings = $keyBindings;
     }
 
-
     /**
      * @param null $key
+     *
      * @return array|mixed|null|string
      */
-    public function getTwoFactorAuthentication($key = null) {
-        if(!is_array($this->twoFactorAuthentication) || empty($this->twoFactorAuthentication)) {
+    public function getTwoFactorAuthentication($key = null)
+    {
+        if (!is_array($this->twoFactorAuthentication) || empty($this->twoFactorAuthentication)) {
             // set defaults if no data is present
             $this->twoFactorAuthentication = [
                 'required' => false,
@@ -995,8 +994,8 @@ class User extends User\UserRole
             ];
         }
 
-        if($key) {
-            if(isset($this->twoFactorAuthentication[$key])) {
+        if ($key) {
+            if (isset($this->twoFactorAuthentication[$key])) {
                 return $this->twoFactorAuthentication[$key];
             } else {
                 return null;
@@ -1008,16 +1007,18 @@ class User extends User\UserRole
 
     /**
      * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument
+     *
      * @param array|string $key
      * @param mixed $value
      */
-    public function setTwoFactorAuthentication($key, $value = null) {
-        if(is_string($key) && $value === null && strlen($key) > 3) {
+    public function setTwoFactorAuthentication($key, $value = null)
+    {
+        if (is_string($key) && $value === null && strlen($key) > 3) {
             $this->twoFactorAuthentication = json_decode($key, true);
-        } else if(is_array($key)) {
+        } elseif (is_array($key)) {
             $this->twoFactorAuthentication = $key;
         } else {
-            if(!is_array($this->twoFactorAuthentication)) {
+            if (!is_array($this->twoFactorAuthentication)) {
                 // load defaults
                 $this->getTwoFactorAuthentication();
             }

@@ -29,7 +29,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -220,16 +219,15 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         return $view;
     }
 
-
-
     /**
      * @Route("/login/2fa", name="pimcore_admin_2fa")
+     *
      * @param Request $request
      *
      * @TemplatePhp()
      */
-    public function twoFactorAuthenticationAction(Request $request) {
-
+    public function twoFactorAuthenticationAction(Request $request)
+    {
         $view = $this->buildLoginPageViewModel();
 
         $session = $request->getSession();
@@ -245,9 +243,10 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     /**
      * @Route("/login/2fa-verify", name="pimcore_admin_2fa-verify")
+     *
      * @param Request $request
      */
-    public function twoFactorAuthenticationVerifyAction(Request $request) {
-
+    public function twoFactorAuthenticationVerifyAction(Request $request)
+    {
     }
 }

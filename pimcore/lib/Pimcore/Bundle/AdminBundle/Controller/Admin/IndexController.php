@@ -81,7 +81,7 @@ class IndexController extends AdminController
         $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
-        if($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
+        if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
             // only one login is allowed to setup 2FA by the user himself
             $user->setTwoFactorAuthentication('enabled', true);
             // disable the 2FA prompt for the current session

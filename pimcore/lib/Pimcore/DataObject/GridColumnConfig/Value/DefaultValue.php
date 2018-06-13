@@ -31,6 +31,7 @@ class DefaultValue extends AbstractValue
      * @param null $brickType
      * @param null $brickKey
      * @param null $fieldDefinition
+     *
      * @return \stdClass
      *
      * @throws \Exception
@@ -53,7 +54,7 @@ class DefaultValue extends AbstractValue
         if (!$fieldDefinition) {
             $fieldDefinition = $object->getClass()->getFieldDefinition($key);
 
-            if (!$fieldDefinition && ($localizedFields = $object->getClass()->getFieldDefinition("localizedfields"))) {
+            if (!$fieldDefinition && ($localizedFields = $object->getClass()->getFieldDefinition('localizedfields'))) {
                 $fieldDefinition = $localizedFields->getFieldDefinition($key);
             }
         }
@@ -128,7 +129,7 @@ class DefaultValue extends AbstractValue
             if ($element instanceof AbstractObject) {
                 try {
                     $result = $this->getValueForObject($element, $this->attribute, $brickType, $brickKey);
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     $result = $this->getDefaultValue($element->$getter());
                 }
             } else {

@@ -118,11 +118,6 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
         return $user instanceof self && $user->getId() === $this->getId();
     }
 
-
-
-
-
-
     /**
      * Return true if the user should do two-factor authentication.
      *
@@ -130,7 +125,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
      */
     public function isGoogleAuthenticatorEnabled(): bool
     {
-        if($this->user->getTwoFactorAuthentication('enabled')) {
+        if ($this->user->getTwoFactorAuthentication('enabled')) {
             return true;
         }
 
@@ -155,11 +150,12 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
      */
     public function getGoogleAuthenticatorSecret(): string
     {
-        if($this->isGoogleAuthenticatorEnabled()) {
+        if ($this->isGoogleAuthenticatorEnabled()) {
             $secret = $this->user->getTwoFactorAuthentication('secret');
-            if(!$secret) {
+            if (!$secret) {
                 // we return a dummy token
                 $twoFactorService = \Pimcore::getContainer()->get('scheb_two_factor.security.google_authenticator');
+
                 return $twoFactorService->generateSecret();
             }
 

@@ -82,9 +82,9 @@ class Dao extends Model\Dao\AbstractDao
 
         $translations = [];
         foreach ($data as $translation) {
-            if ($translation['language'] == "source") {
+            if ($translation['language'] == 'source') {
                 $sourceDocument = Document::getById($translation['id']);
-                $translations[$sourceDocument->getProperty("language")] = $translation['id'];
+                $translations[$sourceDocument->getProperty('language')] = $translation['id'];
             } else {
                 $translations[$translation['language']] = $translation['id'];
             }
@@ -151,7 +151,7 @@ class Dao extends Model\Dao\AbstractDao
         if (empty($newSourceId)) {
             $sourceId = $document->getId();
         }
-        
+
         // Remove in both way
         $this->db->delete('documents_translations', ['id' => $targetDocument->getId(), 'sourceId' => $sourceId]);
         $this->db->delete('documents_translations', ['id' => $sourceId, 'sourceId' => $targetDocument->getId()]);

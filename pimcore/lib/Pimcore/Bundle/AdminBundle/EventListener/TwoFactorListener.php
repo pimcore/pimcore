@@ -20,7 +20,8 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class TwoFactorListener
 {
-    public function onAuthenticationComplete(TwoFactorAuthenticationEvent $event) {
+    public function onAuthenticationComplete(TwoFactorAuthenticationEvent $event)
+    {
         // this session flag is set in \Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
         // @TODO: check if there's a nicer way of doing this, actually it feels a bit like a hack :)
         Session::useSession(function (AttributeBagInterface $adminSession) {

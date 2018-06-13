@@ -118,7 +118,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $asset->imageInfo = $imageInfo;
 
-            if($asset->getCustomSetting('focalPointX')) {
+            if ($asset->getCustomSetting('focalPointX')) {
                 $asset->image = [
                     'focalPoint' => [
                         'x' => $asset->getCustomSetting('focalPointX'),
@@ -950,7 +950,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     if ($asset instanceof Asset\Image) {
                         if ($request->get('image')) {
                             $imageData = $this->decodeJson($request->get('image'));
-                            if(isset($imageData['focalPoint'])) {
+                            if (isset($imageData['focalPoint'])) {
                                 $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
                                 $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
                             }

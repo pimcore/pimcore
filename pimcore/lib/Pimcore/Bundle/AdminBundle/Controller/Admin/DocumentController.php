@@ -148,7 +148,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $eventDispatcher->dispatch(AdminEvents::DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
         $documents = $event->getArgument('documents');
 
-
         if ($allParams['limit']) {
             return $this->adminJson([
                 'offset' => $offset,
@@ -1331,7 +1330,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         if ($sourceDocument && $targetDocument) {
             $service = new Document\Service;
-            if($service->getTranslationSourceId($targetDocument) != $targetDocument->getId()) {
+            if ($service->getTranslationSourceId($targetDocument) != $targetDocument->getId()) {
                 throw new \Exception('Target Document already linked to Source Document ID('.$service->getTranslationSourceId($targetDocument).'). Please unlink existing relation first.');
             }
             $service->addTranslation($sourceDocument, $targetDocument);

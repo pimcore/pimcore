@@ -188,7 +188,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         if (isset($credentials['user']) && $credentials['user'] instanceof UserModel) {
             $user = new User($credentials['user']);
             $session = Session::getReadOnly();
-            if($session->has('2fa_required') && $session->get('2fa_required') === true) {
+            if ($session->has('2fa_required') && $session->get('2fa_required') === true) {
                 $this->twoFactorRequired = true;
             }
         } else {
@@ -335,7 +335,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
     public function createAuthenticatedToken(UserInterface $user, $providerKey)
     {
-        if($this->twoFactorRequired) {
+        if ($this->twoFactorRequired) {
             return new TwoFactorRequiredToken(
                 $user,
                 $providerKey,

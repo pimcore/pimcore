@@ -18,5 +18,4 @@ use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 class TwoFactorRequiredToken extends PostAuthenticationGuardToken
 {
-
 }

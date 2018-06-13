@@ -320,7 +320,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             }
 
-            if(isset($values['2fa_required'])) {
+            if (isset($values['2fa_required'])) {
                 $user->setTwoFactorAuthentication('required', (bool) $values['2fa_required']);
             }
 
@@ -781,7 +781,6 @@ class UserController extends AdminController implements EventedControllerInterfa
         return $response;
     }
 
-
     /**
      * @Route("/user/get-2fa-qr-code")
      *
@@ -789,11 +788,10 @@ class UserController extends AdminController implements EventedControllerInterfa
      *
      * @return
      */
-    public function get2FaQrCodeAction(Request $request) {
-
+    public function get2FaQrCodeAction(Request $request)
+    {
         $secret = $request->get('secret');
-        if($this->getUser()->getGoogleAuthenticatorSecret() == $secret) {
-
+        if ($this->getUser()->getGoogleAuthenticatorSecret() == $secret) {
         }
 
         throw new AccessDeniedHttpException();
@@ -804,8 +802,8 @@ class UserController extends AdminController implements EventedControllerInterfa
      *
      * @param Request $request
      */
-    public function renew2FaSecretAction(Request $request) {
-
+    public function renew2FaSecretAction(Request $request)
+    {
         $user = $this->getAdminUser();
         $proxyUser = $this->getAdminUser(true);
 
@@ -821,7 +819,6 @@ class UserController extends AdminController implements EventedControllerInterfa
             $adminSession->set('2fa_required', true);
         });
 
-
         $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
         $url = $twoFactorService->getQRContent($proxyUser);
 
@@ -834,6 +831,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $code->writeFile($qrCodeFile);
 
         $response = new BinaryFileResponse($qrCodeFile);
+
         return $response;
     }
 
@@ -842,12 +840,12 @@ class UserController extends AdminController implements EventedControllerInterfa
      *
      * @param Request $request
      */
-    public function disable2FaSecretAction(Request $request) {
-
+    public function disable2FaSecretAction(Request $request)
+    {
         $user = $this->getAdminUser();
         $success = false;
 
-        if(!$user->getTwoFactorAuthentication('required')) {
+        if (!$user->getTwoFactorAuthentication('required')) {
             $user->setTwoFactorAuthentication([]);
             $user->save();
 
@@ -864,7 +862,8 @@ class UserController extends AdminController implements EventedControllerInterfa
      *
      * @param Request $request
      */
-    public function reset2FaSecretAction(Request $request) {
+    public function reset2FaSecretAction(Request $request)
+    {
 
         /**
          * @var $user User
