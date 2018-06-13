@@ -106,7 +106,7 @@ DataObject\AbstractObject::setHideUnpublished(true);
 ```
 
 
-##Objects with Metadata 
+## Objects with Metadata 
 This data type is an extension to the objects data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.
 
