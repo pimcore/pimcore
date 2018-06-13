@@ -117,6 +117,15 @@ class AssetController extends ElementControllerBase implements EventedController
             $imageInfo['exiftoolAvailable'] = (bool) \Pimcore\Tool\Console::getExecutable('exiftool');
 
             $asset->imageInfo = $imageInfo;
+
+            if($asset->getCustomSetting('focalPointX')) {
+                $asset->image = [
+                    'focalPoint' => [
+                        'x' => $asset->getCustomSetting('focalPointX'),
+                        'y' => $asset->getCustomSetting('focalPointY')
+                    ]
+                ];
+            }
         }
 
         $asset->setStream(null);
@@ -928,6 +937,21 @@ class AssetController extends ElementControllerBase implements EventedController
 
                     if ($request->get('data')) {
                         $asset->setData($request->get('data'));
+                    }
+
+                    // image specific data
+                    if ($asset instanceof Asset\Image) {
+                        if ($request->get('image')) {
+                            $imageData = $this->decodeJson($request->get('image'));
+                            if(isset($imageData['focalPoint'])) {
+                                $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
+                                $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
+                            }
+                        } else {
+                            // wipe all data
+                            $asset->removeCustomSetting('focalPointX');
+                            $asset->removeCustomSetting('focalPointY');
+                        }
                     }
 
                     $asset->setUserModification($this->getAdminUser()->getId());

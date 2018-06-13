@@ -1579,3 +1579,23 @@ span.warning {
     left: 39px;
     z-index: 1000;
 }
+
+.pimcore_asset_image_preview {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+}
+
+.pimcore_asset_image_preview .marker {
+    position: absolute;
+    z-index: 10000;
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    left: 50%;
+    background: url(/pimcore/static6/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
+    cursor: pointer;
+    margin: -50px 0 0 -50px;
+}

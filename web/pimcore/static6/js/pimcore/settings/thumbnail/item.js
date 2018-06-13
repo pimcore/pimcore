@@ -560,7 +560,7 @@ pimcore.settings.thumbnail.items = {
 
     itemCover: function (panel, data, getName) {
 
-        var niceName = t("cover");
+        var niceName = t("cover") + " (" + t('focal_point_support') + ")";
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -598,9 +598,12 @@ pimcore.settings.thumbnail.items = {
                     value: data.height
                 }]
             },{
+                xtype: "container",
+                html: t('thumbnail_focal_point_notice')
+            },{
                 xtype: "combo",
                 name: "positioning",
-                fieldLabel: t("positioning"),
+                fieldLabel: t("default_positioning"),
                 value: data.positioning,
                 triggerAction: 'all',
                 editable: false,
