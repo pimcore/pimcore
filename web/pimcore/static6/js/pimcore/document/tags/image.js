@@ -119,6 +119,17 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         var menu = new Ext.menu.Menu();
 
         if(this.datax.id) {
+
+            if(this.options['focal_point_context_menu_item']) {
+                menu.add(new Ext.menu.Item({
+                    text: t('set_focal_point'),
+                    iconCls: "pimcore_icon_focal_point",
+                    handler: function (item) {
+                        pimcore.helpers.openAsset(this.datax.id, 'image');
+                    }.bind(this)
+                }));
+            }
+
             menu.add(new Ext.menu.Item({
                 text: t('select_specific_area_of_image'),
                 iconCls: "pimcore_icon_image_region",

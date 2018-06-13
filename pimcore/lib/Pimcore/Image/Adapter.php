@@ -245,6 +245,16 @@ abstract class Adapter
         } elseif ($orientation == 'bottomcenter') {
             $cropX = ($this->getWidth() - $width) / 2;
             $cropY = $this->getHeight() - $height;
+        } else if (is_array($orientation) && isset($orientation['x'])) {
+            // focal point given in percentage values
+            $focalPointXCoordinate = $orientation['x'] / 100 * $this->getWidth();
+            $focalPointYCoordinate = $orientation['y'] / 100 * $this->getHeight();
+
+            $cropY = $focalPointYCoordinate - ($height / 2);
+            $cropY = max($cropY, 0);
+
+            $cropX = $focalPointXCoordinate - ($width / 2);
+            $cropX = max($cropX, 0);
         } else {
             $cropX = null;
             $cropY = null;

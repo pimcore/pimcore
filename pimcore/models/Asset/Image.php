@@ -397,6 +397,23 @@ EOT;
     }
 
     /**
+     * @param string $key
+     * @param mixed $value
+     * @return Model\Asset
+     */
+    public function setCustomSetting($key, $value)
+    {
+        if(in_array($key, ['focalPointX', 'focalPointY'])) {
+            // if the focal point changes we need to clean all thumbnails on save
+            if($this->getCustomSetting($key) != $value) {
+                $this->setDataChanged();
+            }
+        }
+
+        return parent::setCustomSetting($key, $value);
+    }
+
+    /**
      * @return bool
      */
     public function isVectorGraphic()
