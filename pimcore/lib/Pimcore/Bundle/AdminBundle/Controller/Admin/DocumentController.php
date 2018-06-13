@@ -141,6 +141,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
+        //Hook for modifying return value - e.g. for changing permissions based on document data
+        $event = new GenericEvent($this, [
+            'documents' => $documents,
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $documents = $event->getArgument('documents');
+
+
         if ($allParams['limit']) {
             return $this->adminJson([
                 'offset' => $offset,

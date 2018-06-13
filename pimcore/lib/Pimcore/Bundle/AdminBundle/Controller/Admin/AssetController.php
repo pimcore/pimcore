@@ -209,6 +209,13 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         }
 
+        //Hook for modifying return value - e.g. for changing permissions based on asset data
+        $event = new GenericEvent($this, [
+            'assets' => $assets,
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $assets = $event->getArgument('assets');
+
         if ($allParams['limit']) {
             return $this->adminJson([
                 'offset' => $offset,
