@@ -340,7 +340,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 iconCls: "pimcore_icon_view",
                 items: [{
                     region: "center",
-                    html: '<div class="pimcore_asset_image_preview"><img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&_dc=' + dc + '"></div>',
+                    html: '<div class="pimcore_asset_image_preview"><img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&hdpi=true&_dc=' + dc + '"></div>',
                 }, {
                     region: "east",
                     width: 300,

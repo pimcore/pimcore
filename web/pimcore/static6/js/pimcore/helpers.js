@@ -1205,8 +1205,14 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
 
         var thumbnail = record.data["thumbnail"];
         if (thumbnail) {
+            var srcset = thumbnail + ' 1x';
+            var thumbnailHdpi = record.data["thumbnailHdpi"];
+            if(thumbnailHdpi) {
+                    srcset += ', ' + thumbnailHdpi + " 2x";
+            }
+
             imageHtml = '<div class="thumb big"><img src="' + uriPrefix + thumbnail
-                + '" onload="this.parentNode.className += \' complete\';" /></div>';
+                + '" onload="this.parentNode.className += \' complete\';" srcset="' + srcset + '" /></div>';
         }
 
         if (imageHtml) {
@@ -1258,6 +1264,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
                 '.complete { border:none; border-radius: 0; background:none; }' +
                 '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
                 '.small.complete img { min-width: 100%; max-height: 100%; } ' +
+                '.big.complete img { max-width: 100%; } ' +
                 '/* firefox fix: remove loading/broken image icon */ @-moz-document url-prefix() { img:-moz-loading { visibility: hidden; } img:-moz-broken { -moz-force-broken-image-icon: 0;}} ' +
                 '</style>' +
                 imageHtml;

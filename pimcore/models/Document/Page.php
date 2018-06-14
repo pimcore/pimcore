@@ -425,10 +425,16 @@ class Page extends TargetingDocument
     }
 
     /**
+     * @param bool $hdpi
      * @return string
      */
-    public function getPreviewImageFilesystemPath()
+    public function getPreviewImageFilesystemPath($hdpi = false)
     {
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . '.jpg';
+        $suffix = "";
+        if($hdpi) {
+            $suffix = "@2x";
+        }
+
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . $suffix . '.jpg';
     }
 }
