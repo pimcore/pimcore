@@ -144,11 +144,13 @@ class HeadMeta extends AbstractHelper
     /**
      * @param string $type
      * @param string $keyValue
+     *
      * @return mixed
      */
-    public function getItem($type, $keyValue) {
-        foreach($this->getContainer() as $item) {
-            if(isset($item->$type) && $item->$type == $keyValue) {
+    public function getItem($type, $keyValue)
+    {
+        foreach ($this->getContainer() as $item) {
+            if (isset($item->$type) && $item->$type == $keyValue) {
                 return $item->content;
             }
         }

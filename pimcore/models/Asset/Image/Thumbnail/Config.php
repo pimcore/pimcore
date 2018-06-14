@@ -167,6 +167,7 @@ class Config extends Model\AbstractModel
 
     /**
      * @param bool $hdpi
+     *
      * @return Config
      */
     public static function getPreviewConfig($hdpi = false)
@@ -183,7 +184,7 @@ class Config extends Model\AbstractModel
         $thumbnail->setQuality(60);
         $thumbnail->setFormat('PJPEG');
 
-        if($hdpi) {
+        if ($hdpi) {
             $thumbnail->setHighResolution(2);
         }
 

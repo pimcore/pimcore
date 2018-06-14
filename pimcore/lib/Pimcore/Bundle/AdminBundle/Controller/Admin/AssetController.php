@@ -750,7 +750,7 @@ class AssetController extends ElementControllerBase implements EventedController
     protected function getThumbnailUrl(Asset $asset, $hdpi = false)
     {
         $suffix = '';
-        if($hdpi) {
+        if ($hdpi) {
             $suffix .= '&hdpi=true';
         }
 
