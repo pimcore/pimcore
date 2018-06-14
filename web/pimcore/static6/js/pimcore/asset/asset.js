@@ -185,7 +185,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     tooltip: t("upload"),
                     iconCls: "pimcore_icon_upload",
                     scale: "medium",
-                    handler: this.upload.bind(this)
+                    handler: function () {
+                        pimcore.elementservice.replaceAsset(this.data.id, function () {
+                            this.reload();
+                        }.bind(this));
+                    }.bind(this)
                 });
                 buttons.push(this.toolbarButtons.upload);
             }
@@ -377,23 +381,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             "id": this.id
         };
         pimcore.elementservice.deleteElement(options);
-    },
-
-    upload: function () {
-        pimcore.helpers.uploadDialog('/admin/asset/replace-asset?id=' + this.data.id, "Filedata", function() {
-            this.reload();
-        }.bind(this), function (res) {
-            var message = false;
-            try {
-                var response = Ext.util.JSON.decode(res.response.responseText);
-                if(response.message) {
-                    message = response.message;
-                }
-
-            } catch(e) {}
-
-            Ext.MessageBox.alert(t("error"), message || t("error"));
-        });
     },
 
     isAllowed : function (key) {

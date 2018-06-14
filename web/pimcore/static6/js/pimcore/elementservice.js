@@ -798,3 +798,82 @@ pimcore.elementservice.integrateWorkflowManagement = function(elementType, eleme
     }
 
 };
+
+
+pimcore.elementservice.replaceAsset = function (id, callback) {
+    pimcore.helpers.uploadDialog('/admin/asset/replace-asset?id=' + id, "Filedata", function() {
+        if(typeof callback == "function") {
+            callback();
+        }
+    }.bind(this), function (res) {
+        var message = false;
+        try {
+            var response = Ext.util.JSON.decode(res.response.responseText);
+            if(response.message) {
+                message = response.message;
+            }
+
+        } catch(e) {}
+
+        Ext.MessageBox.alert(t("error"), message || t("error"));
+    });
+};
+
+
+pimcore.elementservice.downloadAssetFolderAsZip = function (id) {
+
+    var that = {};
+
+    Ext.Ajax.request({
+        url: "/admin/asset/download-as-zip-jobs",
+        params: {
+            id: id
+        },
+        success: function(response) {
+            var res = Ext.decode(response.responseText);
+
+            that.downloadProgressBar = new Ext.ProgressBar({
+                text: t('initializing')
+            });
+
+            that.downloadProgressWin = new Ext.Window({
+                title: t("download_as_zip"),
+                layout:'fit',
+                width:500,
+                bodyStyle: "padding: 10px;",
+                closable:false,
+                plain: true,
+                modal: true,
+                items: [that.downloadProgressBar]
+            });
+
+            that.downloadProgressWin.show();
+
+
+            var pj = new pimcore.tool.paralleljobs({
+                success: function () {
+                    if(that.downloadProgressWin) {
+                        that.downloadProgressWin.close();
+                    }
+
+                    that.downloadProgressBar = null;
+                    that.downloadProgressWin = null;
+
+                    pimcore.helpers.download('/admin/asset/download-as-zip?jobId='+ res.jobId + "&id=" + id);
+                },
+                update: function (currentStep, steps, percent) {
+                    if(that.downloadProgressBar) {
+                        var status = currentStep / steps;
+                        that.downloadProgressBar.updateProgress(status, percent + "%");
+                    }
+                },
+                failure: function (message) {
+                    that.downloadProgressWin.close();
+                    pimcore.helpers.showNotification(t("error"), t("error"),
+                        "error", t(message));
+                },
+                jobs: res.jobs
+            });
+        }
+    });
+};
