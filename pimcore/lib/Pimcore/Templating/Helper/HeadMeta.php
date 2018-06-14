@@ -142,19 +142,29 @@ class HeadMeta extends AbstractHelper
     }
 
     /**
+     * @param string $type
+     * @param string $keyValue
+     * @return mixed
+     */
+    public function getItem($type, $keyValue) {
+        foreach($this->getContainer() as $item) {
+            if(isset($item->$type) && $item->$type == $keyValue) {
+                return $item->content;
+            }
+        }
+    }
+
+    /**
      * Overload method access
      *
      * Allows the following 'virtual' methods:
      * - appendName($keyValue, $content, $modifiers = array())
-     * - offsetGetName($index, $keyValue, $content, $modifers = array())
      * - prependName($keyValue, $content, $modifiers = array())
      * - setName($keyValue, $content, $modifiers = array())
      * - appendHttpEquiv($keyValue, $content, $modifiers = array())
-     * - offsetGetHttpEquiv($index, $keyValue, $content, $modifers = array())
      * - prependHttpEquiv($keyValue, $content, $modifiers = array())
      * - setHttpEquiv($keyValue, $content, $modifiers = array())
      * - appendProperty($keyValue, $content, $modifiers = array())
-     * - offsetGetProperty($index, $keyValue, $content, $modifiers = array())
      * - prependProperty($keyValue, $content, $modifiers = array())
      * - setProperty($keyValue, $content, $modifiers = array())
      *
