@@ -357,7 +357,7 @@ pimcore.settings.email.log = Class.create({
                             },
                             params: { id : rec.get('id') }
                         });
-                        grid.getStore().removeAt(rowIndex);
+                        grid.getStore().reload();
                     }.bind(this)
                 }]
             }
