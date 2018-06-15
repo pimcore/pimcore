@@ -76,25 +76,63 @@ pimcore.element.dependencies = Class.create({
             return;
         }
         
-        
-        Ext.Ajax.request({
-            url: '/admin/element/get-requires-dependencies',
-            params: {
-                id: this.element.id,
-                elementType: this.type
+        this.requiresStore = new Ext.data.Store({
+            autoDestroy: true,
+            remoteSort: true,
+            pageSize: pimcore.helpers.grid.getDefaultPageSize(),
+            proxy : {
+                type: 'ajax',
+                url: '/admin/element/get-requires-dependencies',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'requiredBy'
+                },
+                extraParams: {
+                    id: this.element.id,
+                    elementType: this.type
+                }
             },
-            success: this.getRequiresLayout.bind(this)
-        });
-        
-        Ext.Ajax.request({
-            url: '/admin/element/get-required-by-dependencies',
-            params: {
-                id: this.element.id,
-                elementType: this.type
+            listeners: {
+                load: function(store, records, success, operation) {
+                    if (success) {
+                        var reader = store.getProxy().getReader(),
+                            response = operation.getResponse();
+                        this.getRequiresLayout(response);
+                    }
+                }.bind(this)
             },
-            success: this.getRequiredByLayout.bind(this)
+            autoLoad: true,
+            fields: ['id', 'path', 'type', 'subtype']
         });
 
+        this.requiredByStore = new Ext.data.Store({
+            autoDestroy: true,
+            remoteSort: true,
+            pageSize: pimcore.helpers.grid.getDefaultPageSize(),
+            proxy : {
+                type: 'ajax',
+                url: '/admin/element/get-required-by-dependencies',
+                reader: {
+                    type: 'json',
+                    rootProperty: 'requiredBy'
+                },
+                extraParams: {
+                    id: this.element.id,
+                    elementType: this.type
+                }
+            },
+            listeners: {
+                load: function(store, records, success, operation) {
+                    if (success) {
+                        var reader = store.getProxy().getReader(),
+                            response = operation.getResponse();
+                        this.getRequiredByLayout(response);
+                    }
+                }.bind(this)
+            },
+            autoLoad: true,
+            fields: ['id', 'path', 'type', 'subtype']
+        });
 
         this.waitForLoaded();
     },
@@ -103,20 +141,8 @@ pimcore.element.dependencies = Class.create({
         if (response != null) {
             this.requiresData = Ext.decode(response.responseText);
         }
-                
-        
-        this.requiresStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            data: this.requiresData,
-            fields: ['id', 'path', 'type', 'subtype'],
-            proxy: {
-                type: 'memory',
-                reader: {
-                    type: 'json',
-                    rootProperty: 'requires'
-                }
-            }
-        });                
+
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         this.requiresGrid = new Ext.grid.GridPanel({
             store: this.requiresStore,
@@ -134,7 +160,8 @@ pimcore.element.dependencies = Class.create({
             viewConfig: {
                 forceFit: true
             },
-            style: "margin-bottom: 30px;"
+            style: "margin-bottom: 30px;",
+            bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiresStore, {pageSize: pageSize})
         });
         this.requiresGrid.on("rowclick", this.click.bind(this));
         
@@ -143,7 +170,7 @@ pimcore.element.dependencies = Class.create({
             html:t('hidden_dependencies'),
             cls:'dependency-warning',
             border:false,
-            hidden: !this.requiresData.hasHidden                        
+            hidden: !this.requiresData.hasHidden
         });
         
         
@@ -154,19 +181,8 @@ pimcore.element.dependencies = Class.create({
         if (response != null) {
             this.requiredByData = Ext.decode(response.responseText);
         }
-                
-        this.requiredByStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            data: this.requiredByData,
-            fields: ['id', 'path', 'type', 'subtype'],
-            proxy: {
-                type: 'memory',
-                reader: {
-                    type: 'json',
-                    rootProperty: 'requiredBy'
-                }
-            }
-        });
+
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
                                 
         this.requiredByGrid = Ext.create('Ext.grid.Panel', {
             store: this.requiredByStore,
@@ -184,7 +200,8 @@ pimcore.element.dependencies = Class.create({
             title: t('required_by'),
             viewConfig: {
                 forceFit: true
-            }
+            },
+            bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiredByStore, {pageSize: pageSize})
         });
         this.requiredByGrid.on("rowclick", this.click.bind(this));
         
@@ -194,7 +211,7 @@ pimcore.element.dependencies = Class.create({
             html:t('hidden_dependencies'),
             cls:'dependency-warning',
             border:false,
-            hidden: !this.requiredByData.hasHidden                        
+            hidden: !this.requiredByData.hasHidden
         });
         
     
