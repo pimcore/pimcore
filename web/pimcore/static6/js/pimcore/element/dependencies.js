@@ -85,7 +85,7 @@ pimcore.element.dependencies = Class.create({
                 url: '/admin/element/get-requires-dependencies',
                 reader: {
                     type: 'json',
-                    rootProperty: 'requiredBy'
+                    rootProperty: 'requires'
                 },
                 extraParams: {
                     id: this.element.id,
