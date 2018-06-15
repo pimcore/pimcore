@@ -408,6 +408,7 @@ class DataObjectController extends AbstractElementController
         $this->checkPermission('objects');
 
         $condition   = urldecode($request->get('condition'));
+        $this->checkCondition($condition);
         $order       = $request->get('order');
         $orderKey    = $request->get('orderKey');
         $offset      = $request->get('offset');
@@ -470,6 +471,7 @@ class DataObjectController extends AbstractElementController
         $this->checkPermission('objects');
 
         $condition   = urldecode($request->get('condition'));
+        $this->checkCondition($condition);
         $groupBy     = $request->get('groupBy');
         $objectClass = $request->get('objectClass');
 

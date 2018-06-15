@@ -263,6 +263,7 @@ class DocumentController extends AbstractElementController
         $this->checkPermission('documents');
 
         $condition = urldecode($request->get('condition'));
+        $this->checkCondition($condition);
         $order     = $request->get('order');
         $orderKey  = $request->get('orderKey');
         $offset    = $request->get('offset');
@@ -294,6 +295,7 @@ class DocumentController extends AbstractElementController
         $this->checkPermission('documents');
 
         $condition = urldecode($request->get('condition'));
+        $this->checkCondition($condition);
         $groupBy   = $request->get('groupBy');
 
         $params = [];

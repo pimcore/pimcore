@@ -218,6 +218,7 @@ class ClassController extends AbstractRestController
         $this->checkPermission('classes');
 
         $condition = urldecode($request->get('condition'));
+        $this->checkCondition($condition);
 
         $list = new DataObject\QuantityValue\Unit\Listing();
         if ($condition) {
@@ -251,6 +252,7 @@ class ClassController extends AbstractRestController
         $this->checkPermission('classes');
 
         $condition = urldecode($request->get('condition'));
+        $this->checkCondition($condition);
 
         $definition = [];
 
