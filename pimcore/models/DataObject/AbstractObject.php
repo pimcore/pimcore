@@ -728,7 +728,7 @@ class AbstractObject extends Model\Element\AbstractElement
             }
 
             if (strlen($this->getKey()) < 1) {
-                throw new \Exception('Document requires key, generated key automatically');
+                throw new \Exception('DataObject requires key');
             }
         } elseif ($this->getId() == 1) {
             // some data in root node should always be the same
