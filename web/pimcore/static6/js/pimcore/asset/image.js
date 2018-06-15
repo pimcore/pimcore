@@ -164,8 +164,23 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     xtype: "button",
                     text: t("set_focal_point"),
                     iconCls: "pimcore_icon_focal_point",
+                    width: "100%",
+                    textAlign: "left",
                     handler: function () {
                         this.addFocalPoint();
+                    }.bind(this)
+                }, {
+                    xtype: "button",
+                    text: t("toggle_image_features"),
+                    iconCls: "pimcore_icon_image_features",
+                    width: "100%",
+                    textAlign: "left",
+                    style: "margin-top: 5px",
+                    handler: function () {
+                        var features = this.displayPanel.getEl().down('.pimcore_asset_image_preview').query('.image_feature');
+                        features.forEach(function (feature) {
+                           Ext.get(feature).toggle();
+                        });
                     }.bind(this)
                 }]
             }];
@@ -208,7 +223,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 items: [{
                     xtype: "button",
                     iconCls: "pimcore_icon_image",
-                    width: 260,
+                    width: "100%",
                     textAlign: "left",
                     style: "margin-bottom: 5px",
                     text: t("original_file"),
@@ -218,7 +233,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 },{
                     xtype: "button",
                     iconCls: "pimcore_icon_world",
-                    width: 260,
+                    width: "100%",
                     textAlign: "left",
                     style: "margin-bottom: 5px",
                     text: t("web_format"),
@@ -226,7 +241,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }, {
                     xtype: "button",
                     iconCls: "pimcore_icon_print",
-                    width: 260,
+                    width: "100%",
                     textAlign: "left",
                     style: "margin-bottom: 5px",
                     text: t("print_format"),
@@ -234,7 +249,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 },{
                     xtype: "button",
                     iconCls: "pimcore_icon_docx",
-                    width: 260,
+                    width: "100%",
                     textAlign: "left",
                     style: "margin-bottom: 5px",
                     text: t("office_format"),
@@ -350,8 +365,17 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
 
             this.displayPanel.on('afterrender', function (ev) {
-                if(this.data['customSettings'] && this.data['customSettings']['focalPointX']) {
-                    this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
+                if(this.data['customSettings']) {
+                    if (this.data['customSettings']['focalPointX']) {
+                        this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
+                    }
+
+                    if (this.data['customSettings']['faceCoordinates']) {
+                        this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
+                            this.addImageFeature(coord);
+                        }.bind(this));
+
+                    }
                 }
             }.bind(this));
 
@@ -363,6 +387,15 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         }
 
         return this.displayPanel;
+    },
+
+    addImageFeature: function (coords) {
+        var area = this.displayPanel.getEl().down('.pimcore_asset_image_preview');
+        var imageFeature = area.insertHtml('afterBegin', '<div class="image_feature"></div>', true);
+        imageFeature.setTop(coords['y'] + "%");
+        imageFeature.setLeft(coords['x'] + "%");
+        imageFeature.setWidth(coords['width'] + "%");
+        imageFeature.setHeight(coords['height'] + "%");
     },
 
     addFocalPoint: function (positionX, positionY) {

@@ -1908,5 +1908,6 @@
   "focal_point_support": "Focal Point Support",
   "set_focal_point": "Set Focal Point",
   "default_positioning": "Default Positioning",
-  "thumbnail_focal_point_notice": "The image is cropped automatically based on the focal point set on the source image. If no focal point is present, the default positioning setting below is used."
+  "thumbnail_focal_point_notice": "The image is cropped automatically based on the focal point set on the source image. If no focal point is present, the default positioning setting below is used.",
+  "toggle_image_features": "Toggle Image Features"
 }

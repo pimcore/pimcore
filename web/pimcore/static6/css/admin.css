@@ -1599,3 +1599,8 @@ span.warning {
     cursor: pointer;
     margin: -50px 0 0 -50px;
 }
+
+.pimcore_asset_image_preview .image_feature {
+    position: absolute;
+    border: 1px solid red;
+}

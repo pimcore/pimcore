@@ -64,9 +64,9 @@ class Image extends Model\Asset
             $this->setCustomSetting('imageDimensionsCalculated', true);
         }
 
-        parent::update($params);
-
         $this->clearThumbnails();
+
+        parent::update($params);
 
         // now directly create "system" thumbnails (eg. for the tree, ...)
         if ($this->getDataChanged()) {
@@ -82,6 +82,66 @@ class Image extends Model\Asset
             } catch (\Exception $e) {
                 Logger::error('Problem while creating system-thumbnails for image ' . $this->getRealFullPath());
                 Logger::error($e);
+            }
+        }
+    }
+
+    protected function postPersistData()
+    {
+        $this->detectFocalPoint();
+    }
+
+    public function detectFocalPoint() {
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['focal_point_detection'];
+
+        if (!$config['enabled']) {
+            return false;
+        }
+
+        $facedetectBin = \Pimcore\Tool\Console::getExecutable('facedetect');
+        if ($facedetectBin) {
+            $faceCoordinates = [];
+            $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
+            $image = $thumbnail->getFileSystemPath();
+            $imageWidth = $thumbnail->getWidth();
+            $imageHeight = $thumbnail->getHeight();
+
+            $result = \Pimcore\Tool\Console::exec($facedetectBin . " " . escapeshellarg($image));
+            if(strpos($result, "\n")) {
+                $faces = explode("\n", trim($result));
+                $xPoints = [];
+                $yPoints = [];
+
+                foreach($faces as $coordinates) {
+                    list($x, $y, $width, $height) = explode(' ', $coordinates);
+
+                    // percentages
+                    $Px = $x / $imageWidth * 100;
+                    $Py = $y / $imageHeight * 100;
+                    $Pw = $width / $imageWidth * 100;
+                    $Ph = $height / $imageHeight * 100;
+
+                    $faceCoordinates[] = [
+                        'x' => $Px,
+                        'y' => $Py,
+                        'width' => $Pw,
+                        'height' => $Ph
+                    ];
+
+                    // focal point calculation
+                    $xPoints[] = ($Px + $Px + $Pw) / 2;
+                    $yPoints[] = ($Py + + $Py + $Ph) / 2;
+                }
+
+                $this->setCustomSetting('faceCoordinates', $faceCoordinates);
+
+                if(!$this->getCustomSetting('focalPointX')) {
+                    $focalPointX = array_sum($xPoints) / count($xPoints);
+                    $focalPointY = array_sum($yPoints) / count($yPoints);
+
+                    $this->setCustomSetting('focalPointX', $focalPointX);
+                    $this->setCustomSetting('focalPointY', $focalPointY);
+                }
             }
         }
     }

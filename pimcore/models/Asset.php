@@ -726,6 +726,8 @@ class Asset extends Element\AbstractElement
             }
         }
 
+        $this->postPersistData();
+
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
@@ -769,6 +771,13 @@ class Asset extends Element\AbstractElement
         }
 
         $this->closeStream();
+    }
+
+    /**
+     *
+     */
+    protected function postPersistData() {
+        // hook for the save process, can be overwritten in implementations, such as Image
     }
 
     /**
