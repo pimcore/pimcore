@@ -350,8 +350,8 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
 
             this.displayPanel.on('afterrender', function (ev) {
-                if(this.data['image'] && this.data['image']['focalPoint']) {
-                    this.addFocalPoint(this.data['image']['focalPoint']['x'], this.data['image']['focalPoint']['y']);
+                if(this.data['customSettings'] && this.data['customSettings']['focalPointX']) {
+                    this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
                 }
             }.bind(this));
 

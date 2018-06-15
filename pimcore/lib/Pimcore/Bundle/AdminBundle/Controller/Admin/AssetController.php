@@ -117,15 +117,6 @@ class AssetController extends ElementControllerBase implements EventedController
             $imageInfo['exiftoolAvailable'] = (bool) \Pimcore\Tool\Console::getExecutable('exiftool');
 
             $asset->imageInfo = $imageInfo;
-
-            if ($asset->getCustomSetting('focalPointX')) {
-                $asset->image = [
-                    'focalPoint' => [
-                        'x' => $asset->getCustomSetting('focalPointX'),
-                        'y' => $asset->getCustomSetting('focalPointY')
-                    ]
-                ];
-            }
         }
 
         $asset->setStream(null);
