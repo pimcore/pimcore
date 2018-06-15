@@ -24,6 +24,9 @@ Advanced usage with allowed areas, below:
         "First Group" => ["iframe", "spacer"],
         "Second Group" => ["rssreader"]
     ],
+    "globalParams" => [ //global params are passed to all areablocks
+        "myGlobalParam" => "Global param value"
+    ],
     "params" => [
         "iframe" => [ // some additional parameters / configuration for the brick type "iframe"
             "parameter1" => "value1",
