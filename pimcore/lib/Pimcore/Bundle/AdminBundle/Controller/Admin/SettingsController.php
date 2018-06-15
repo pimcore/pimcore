@@ -1107,8 +1107,12 @@ class SettingsController extends AdminController
                 $list->setOrder($sortingSettings['order']);
             }
 
-            if ($request->get('filter')) {
-                $list->setCondition('`source` LIKE ' . $list->quote('%'.$request->get('filter').'%') . ' OR `target` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            if ($filterValue = $request->get('filter')) {
+                if(is_numeric($filterValue)) {
+                    $list->setCondition('id = ?', [$filterValue]);
+                } else {
+                    $list->setCondition('`source` LIKE ' . $list->quote('%' . $filterValue . '%') . ' OR `target` LIKE ' . $list->quote('%' . $filterValue . '%'));
+                }
             }
 
             $list->load();
