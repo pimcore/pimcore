@@ -79,7 +79,7 @@ pimcore.element.dependencies = Class.create({
         this.requiresStore = new Ext.data.Store({
             autoDestroy: true,
             remoteSort: true,
-            pageSize: pimcore.helpers.grid.getDefaultPageSize(),
+            pageSize: pimcore.helpers.grid.getDefaultPageSize(-1),
             proxy : {
                 type: 'ajax',
                 url: '/admin/element/get-requires-dependencies',
@@ -108,7 +108,7 @@ pimcore.element.dependencies = Class.create({
         this.requiredByStore = new Ext.data.Store({
             autoDestroy: true,
             remoteSort: true,
-            pageSize: pimcore.helpers.grid.getDefaultPageSize(),
+            pageSize: pimcore.helpers.grid.getDefaultPageSize(-1),
             proxy : {
                 type: 'ajax',
                 url: '/admin/element/get-required-by-dependencies',
