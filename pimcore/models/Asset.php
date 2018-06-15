@@ -773,10 +773,8 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
     }
 
-    /**
-     *
-     */
-    protected function postPersistData() {
+    protected function postPersistData()
+    {
         // hook for the save process, can be overwritten in implementations, such as Image
     }
 

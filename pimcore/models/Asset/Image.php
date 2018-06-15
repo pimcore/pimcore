@@ -91,7 +91,8 @@ class Image extends Model\Asset
         $this->detectFocalPoint();
     }
 
-    public function detectFocalPoint() {
+    public function detectFocalPoint()
+    {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['focal_point_detection'];
 
         if (!$config['enabled']) {
@@ -106,13 +107,13 @@ class Image extends Model\Asset
             $imageWidth = $thumbnail->getWidth();
             $imageHeight = $thumbnail->getHeight();
 
-            $result = \Pimcore\Tool\Console::exec($facedetectBin . " " . escapeshellarg($image));
-            if(strpos($result, "\n")) {
+            $result = \Pimcore\Tool\Console::exec($facedetectBin . ' ' . escapeshellarg($image));
+            if (strpos($result, "\n")) {
                 $faces = explode("\n", trim($result));
                 $xPoints = [];
                 $yPoints = [];
 
-                foreach($faces as $coordinates) {
+                foreach ($faces as $coordinates) {
                     list($x, $y, $width, $height) = explode(' ', $coordinates);
 
                     // percentages
@@ -135,7 +136,7 @@ class Image extends Model\Asset
 
                 $this->setCustomSetting('faceCoordinates', $faceCoordinates);
 
-                if(!$this->getCustomSetting('focalPointX')) {
+                if (!$this->getCustomSetting('focalPointX')) {
                     $focalPointX = array_sum($xPoints) / count($xPoints);
                     $focalPointY = array_sum($yPoints) / count($yPoints);
 
