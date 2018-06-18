@@ -260,6 +260,9 @@ class SettingsController extends AdminController
 
                 // save type
                 $property = Property\Predefined::getById($data['id']);
+                if (is_array($data['ctype'])) {
+                    $data['ctype'] = implode(',', $data['ctype']);
+                }
                 $property->setValues($data);
 
                 $property->save();

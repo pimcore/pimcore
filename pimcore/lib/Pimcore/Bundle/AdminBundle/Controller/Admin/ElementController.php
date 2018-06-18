@@ -692,7 +692,10 @@ class ElementController extends AdminController
         if (in_array($type, $allowedTypes)) {
             $list = new Model\Property\Predefined\Listing();
             $list->setFilter(function ($row) use ($type) {
-                if ($row['ctype'] == $type) {
+                if (is_array($row['ctype'])) {
+                    $row['ctype'] = implode(',', $row['ctype']);
+                }
+                if (strpos($row['ctype'], $type) !== false) {
                     return true;
                 }
 
