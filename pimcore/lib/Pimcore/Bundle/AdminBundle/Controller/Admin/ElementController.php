@@ -638,11 +638,13 @@ class ElementController extends AdminController
         $id = $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
+        $start = $request->get('start');
+        $limit = $request->get('limit');
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
             if ($element instanceof Model\Element\ElementInterface) {
-                $dependencies = Model\Element\Service::getRequiresDependenciesForFrontend($element->getDependencies());
+                $dependencies = Model\Element\Service::getRequiresDependenciesForFrontend($element->getDependencies(), $start, $limit);
 
                 return $this->adminJson($dependencies);
             }
