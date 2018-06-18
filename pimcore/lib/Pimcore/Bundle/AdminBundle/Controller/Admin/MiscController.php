@@ -344,6 +344,7 @@ class MiscController extends AdminController
             'success' => $success,
             'content' => $content,
             'writeable' => $writeable,
+            'filename' => basename($file),
             'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT) . '@', '', $file)
         ]);
     }
