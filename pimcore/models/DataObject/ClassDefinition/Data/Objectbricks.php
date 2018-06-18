@@ -287,6 +287,8 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
                     $brick = new $brickClass($object);
                 }
 
+                $brick->setFieldname($this->getName());
+
                 if ($collectionRaw['data'] == 'deleted') {
                     $brick->setDoDelete(true);
                 } else {
@@ -304,7 +306,6 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
                         }
                     }
                     $brick->setValues($collectionData);
-                    $brick->setFieldname($this->getName());
 
                     $setter = 'set' . ucfirst($collectionRaw['type']);
                     $container->$setter($brick);
