@@ -57,6 +57,7 @@ class CsrfPretectionListener implements EventSubscriberInterface
             'pimcore_admin_user_getimage', 'pimcore_admin_misc_admincss',
             'pimcore_admin_misc_jsontranslationssystem', 'pimcore_admin_user_getcurrentuser',
             'pimcore_admin_misc_availablelanguages', 'pimcore_settings_display_custom_logo',
+            'pimcore_admin_misc_scriptproxy',
 
             // thumbnails
             'pimcore_admin_asset_getdocumentthumbnail', 'pimcore_admin_asset_getimagethumbnail',
