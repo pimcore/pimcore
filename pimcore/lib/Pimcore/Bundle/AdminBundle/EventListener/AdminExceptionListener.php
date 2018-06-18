@@ -75,7 +75,7 @@ class AdminExceptionListener implements EventSubscriberInterface
         } elseif ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_WEBSERVICE)) {
             list($code, $headers, $message) = $this->getResponseData($ex);
 
-            if($ex instanceof \Doctrine\DBAL\DBALException) {
+            if ($ex instanceof \Doctrine\DBAL\DBALException) {
                 $message = 'Database error, see logs for details';
             }
 

@@ -283,10 +283,12 @@ abstract class AbstractRestController extends AdminController
 
     /**
      * @param $condition
+     *
      * @throws \Exception
      */
-    protected function checkCondition ($condition) {
-        if(strpos($condition, ';') !== false) {
+    protected function checkCondition($condition)
+    {
+        if (strpos($condition, ';') !== false) {
             throw new \Exception('Semicolon is not allowed as part of the condition');
         }
     }

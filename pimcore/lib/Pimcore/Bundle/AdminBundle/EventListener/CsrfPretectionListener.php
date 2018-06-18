@@ -72,7 +72,7 @@ class CsrfPretectionListener implements EventSubscriberInterface
         ];
 
         $route = $request->attributes->get('_route');
-        if(in_array($route, $exludedRoutes)) {
+        if (in_array($route, $exludedRoutes)) {
             return;
         }
 
@@ -81,7 +81,7 @@ class CsrfPretectionListener implements EventSubscriberInterface
         });
 
         $requestCsrfToken = $request->headers->get('x_pimcore_csrf_token');
-        if(!$requestCsrfToken) {
+        if (!$requestCsrfToken) {
             $requestCsrfToken = $request->get('csrfToken');
         }
 

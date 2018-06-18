@@ -1090,7 +1090,7 @@ class SettingsController extends AdminController
             }
 
             if ($filterValue = $request->get('filter')) {
-                if(is_numeric($filterValue)) {
+                if (is_numeric($filterValue)) {
                     $list->setCondition('id = ?', [$filterValue]);
                 } else {
                     $list->setCondition('`source` LIKE ' . $list->quote('%' . $filterValue . '%') . ' OR `target` LIKE ' . $list->quote('%' . $filterValue . '%'));
