@@ -108,7 +108,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $source = DataObject::getById($object['src_id']);
                 $destination = DataObject::getById($object['dest_id']);
 
-                if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassId() == $this->getAllowedClassId()) {
+                if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassName() == $this->getAllowedClassId()) {
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
@@ -217,7 +217,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 $o = DataObject::getById($object['id']);
-                if ($o && $o->getClassId() == $this->getAllowedClassId()) {
+                if ($o && $o->getClassName() == $this->getAllowedClassId()) {
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
@@ -317,7 +317,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 }
 
                 $o = $objectMetadata->getObject();
-                if ($o->getClassId() != $this->getAllowedClassId() || !($o instanceof DataObject\Concrete)) {
+                if ($o->getClassName() != $this->getAllowedClassId() || !($o instanceof DataObject\Concrete)) {
                     if ($o instanceof DataObject\Concrete) {
                         $id = $o->getId();
                     } else {
@@ -699,6 +699,12 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
      */
     public function setAllowedClassId($allowedClassId)
     {
+        if (is_numeric($allowedClassId)) {
+            $class = DataObject\ClassDefinition::getById($allowedClassId);
+            $allowedClassId = $class ? $class->getName() : null;
+
+        }
+
         $this->allowedClassId = $allowedClassId;
 
         return $this;
@@ -873,7 +879,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
             return;
         }
 
-        $class = DataObject\ClassDefinition::getById($classId);
+        $class = DataObject\ClassDefinition::getByName($classId);
 
         if (!$this->visibleFields) {
             return;
