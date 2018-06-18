@@ -49,6 +49,10 @@ class CsrfPretectionListener implements EventSubscriberInterface
         $exludedRoutes = [
             'pimcore_admin_index', // main view => /admin
 
+            // login
+            'pimcore_admin_login', 'pimcore_admin_login_fallback', 'pimcore_admin_login_check', 'pimcore_admin_login_lostpassword',
+            'pimcore_admin_login_deeplink', 'pimcore_admin_2fa', 'pimcore_admin_2fa',
+
             // embeded via <script>, <style>, <img> on /admin
             'pimcore_admin_user_getimage', 'pimcore_admin_misc_admincss',
             'pimcore_admin_misc_jsontranslationssystem', 'pimcore_admin_user_getcurrentuser',
