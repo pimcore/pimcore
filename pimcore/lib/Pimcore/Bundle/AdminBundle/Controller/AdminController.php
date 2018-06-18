@@ -180,31 +180,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * Check CSRF token
-     *
-     * @param Request $request
-     *
-     * @throws AccessDeniedHttpException
-     *      if CSRF token does not match
-     */
-    protected function protectCsrf(Request $request)
-    {
-        // TODO use isCsrfTokenValid() and the native CSRF token storage?
-
-        $csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-            return $adminSession->get('csrfToken');
-        });
-
-        if (!$csrfToken || $csrfToken !== $request->headers->get('x_pimcore_csrf_token')) {
-            $this->get('monolog.logger.security')->error('Detected CSRF attack on {request}', [
-                'request' => $request->getPathInfo()
-            ]);
-
-            throw new AccessDeniedHttpException('Detected CSRF Attack! Do not do evil things with pimcore ... ;-)');
-        }
-    }
-
-    /**
      * Translates the given message.
      *
      * @param string $id The message id (may also be an object that can be cast to string)

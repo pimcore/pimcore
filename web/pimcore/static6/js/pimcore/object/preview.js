@@ -26,6 +26,8 @@ pimcore.object.preview = Class.create({
             var iframeOnLoad = "pimcore.globalmanager.get('object_"
                                         + this.object.data.general.o_id + "').preview.iFrameLoaded()";
 
+            this.frameId = 'object_preview_iframe_' + this.object.id;
+
             this.layout = Ext.create('Ext.panel.Panel', {
                 title: t('preview'),
                 border: false,
@@ -34,7 +36,7 @@ pimcore.object.preview = Class.create({
                 iconCls: "pimcore_icon_preview",
                 bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" style="width: 100%;" onload="' + iframeOnLoad
-                    + '" frameborder="0" id="object_preview_iframe_' + this.object.data.general.o_id + '"></iframe>'
+                    + '" frameborder="0" id="' + this.frameId + '"></iframe>'
             });
 
             this.layout.on("resize", this.setLayoutFrameDimensions.bind(this));
@@ -59,7 +61,7 @@ pimcore.object.preview = Class.create({
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
-        Ext.get("object_preview_iframe_" + this.object.data.general.o_id).setStyle({
+        Ext.get(this.frameId).setStyle({
             height: (height-7) + "px"
         });
     },
@@ -73,10 +75,10 @@ pimcore.object.preview = Class.create({
     loadCurrentPreview: function () {
         var date = new Date();
 
-        var path = "/admin/object/preview?id=" + this.object.data.general.o_id + "&time=" + date.getTime();
-        
+        var url = "/admin/object/preview?id=" + this.object.data.general.o_id + "&time=" + date.getTime();
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
         try {
-            Ext.get("object_preview_iframe_" + this.object.data.general.o_id).dom.src = path;
+            Ext.get(this.frameId).dom.src = url;
         }
         catch (e) {
             console.log(e);

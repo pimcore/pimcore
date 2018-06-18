@@ -444,22 +444,18 @@ pimcore.helpers.getValidFilename = function (value, type) {
         return pimcore.helpers.getValidFilenameCache[value + type];
     }
 
-    // we use jQuery for the synchronous xhr request, because ExtJS doesn't provide this
-    var response = jQuery.ajax({
+    var response = Ext.Ajax.request({
         url: "/admin/misc/get-valid-filename",
-        data: {
+        async: false,
+        params: {
             value: value,
             type: type
-        },
-        async: false
+        }
     });
 
     var res = Ext.decode(response.responseText);
-
     pimcore.helpers.getValidFilenameCache[value + type] = res["filename"];
-
     return res["filename"];
-
 };
 
 pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack, code, hideDelay) {
@@ -868,6 +864,7 @@ pimcore.helpers.download = function (url) {
         pimcore.settings.showCloseConfirmation = true;
     }, 1000);
 
+    url = pimcore.helpers.addCsrfTokenToUrl(url);
     location.href = url;
 };
 
@@ -980,6 +977,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     }
 
     var url = '/admin/asset/add-asset-compatibility?parent' + ucfirst(parentType) + '=' + parent;
+    url = pimcore.helpers.addCsrfTokenToUrl(url);
 
     var uploadWindowCompatible = new Ext.Window({
         autoHeight: true,
@@ -1029,6 +1027,23 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     uploadWindowCompatible.updateLayout();
 };
 
+pimcore.helpers.addCsrfTokenToUrl = function (url) {
+
+    // only for /admin urls
+    if(url.indexOf('/admin') !== 0) {
+        return url;
+    }
+
+    if (url.indexOf('?') === -1) {
+        url = url + "?";
+    } else {
+        url = url + "&";
+    }
+    url = url + 'csrfToken=' + pimcore.settings['csrfToken'];
+
+    return url;
+};
+
 pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
 
     if (typeof success != "function") {
@@ -1044,6 +1059,8 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
     if (typeof filename != "string") {
         filename = "Filedata";
     }
+
+    url = pimcore.helpers.addCsrfTokenToUrl(url);
 
     if (empty(filename)) {
         filename = "Filedata";
@@ -1448,6 +1465,8 @@ pimcore.helpers.getMainTabMenuItems = function () {
 //};
 
 pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess, callbackProgress, callbackFailure) {
+
+    url = pimcore.helpers.addCsrfTokenToUrl(url);
 
     if (typeof callbackSuccess != "function") {
         callbackSuccess = function () {
@@ -2893,16 +2912,15 @@ pimcore.helpers.removeOtherConfigs = function (objectId, classId, gridConfigId, 
         fn: function (btn) {
             if (btn == "yes") {
                 Ext.Ajax.request({
-                        url: '/admin/object-helper/grid-config-apply-to-all',
-                        method: "post",
-                        params: {
-                            objectId: objectId,
-                            classId: classId,
-                            gridConfigId: gridConfigId,
-                            searchType: searchType,
-                        }
+                    url: '/admin/object-helper/grid-config-apply-to-all',
+                    method: "post",
+                    params: {
+                        objectId: objectId,
+                        classId: classId,
+                        gridConfigId: gridConfigId,
+                        searchType: searchType,
                     }
-                );
+                });
             }
 
         }.bind(this)

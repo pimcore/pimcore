@@ -90,8 +90,6 @@ class PortalController extends AdminController implements EventedControllerInter
      */
     public function createDashboardAction(Request $request)
     {
-        $this->protectCsrf($request);
-
         $dashboards = $this->dashboardHelper->getAllDashboards();
         $key = trim($request->get('key'));
 

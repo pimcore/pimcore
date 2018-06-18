@@ -164,6 +164,8 @@ pimcore.settings.email.log = Class.create({
                     icon: '/pimcore/static6/img/flat-color-icons/feedback.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
+                        var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=html';
+                        url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
                             title: t('email_log_iframe_title_html'),
                             width: iFrameSettings.width,
@@ -171,8 +173,7 @@ pimcore.settings.email.log = Class.create({
                             layout: 'fit',
                             items : [{
                                 xtype : 'box',
-                                autoEl: {tag: 'iframe', src: '/admin/email/show-email-log?id=' + rec.get('id')
-                                + '&type=html'}
+                                autoEl: {tag: 'iframe', src: url}
                             }]
                         });
                         iframe.show();
@@ -197,6 +198,8 @@ pimcore.settings.email.log = Class.create({
                     icon: '/pimcore/static6/img/flat-color-icons/text.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
+                        var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=text';
+                        url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
                             title: t('email_log_iframe_title_text'),
                             width: iFrameSettings.width,
@@ -204,8 +207,7 @@ pimcore.settings.email.log = Class.create({
                             layout: 'fit',
                             items : [{
                                 xtype : 'box',
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log?id=" + rec.get('id')
-                                + "&type=text"}
+                                autoEl: {tag: 'iframe', src: url}
                             }]
                         });
                         iframe.show();
@@ -230,11 +232,11 @@ pimcore.settings.email.log = Class.create({
                     icon: '/pimcore/static6/img/flat-color-icons/info.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
-
+                        var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=params';
                         var store = Ext.create('Ext.data.TreeStore', {
                             proxy: {
                                 type: 'ajax',
-                                url: '/admin/email/show-email-log?id=' + rec.get('id') + '&type=params',
+                                url: url,
                                 reader: {
                                     type: 'json'
                                 },
@@ -284,7 +286,7 @@ pimcore.settings.email.log = Class.create({
                         this.window = new Ext.Window({
                             modal: true,
                             width: 620,
-                            height: 700,
+                            height: "90%",
                             title: t('email_log_params'),
                             items: [this.tree],
                             layout: 'fit'

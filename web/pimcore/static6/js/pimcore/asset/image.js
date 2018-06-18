@@ -95,14 +95,17 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getEditPanel: function () {
 
         if (!this.editPanel) {
+            var url = '/admin/asset/image-editor?id=' + this.id;
+            url = pimcore.helpers.addCsrfTokenToUrl(url);
+            var frameId = 'asset_image_edit_' + this.id;
             this.editPanel = new Ext.Panel({
                 title: t("edit"),
-                html: '<iframe src="/admin/asset/image-editor?id=' + this.id + '" frameborder="0" ' +
-                'style="width: 100%;" id="asset_image_edit_' + this.id + '"></iframe>',
+                html: '<iframe src="' + url + '" frameborder="0" ' +
+                'style="width: 100%;" id="' + frameId + '"></iframe>',
                 iconCls: "pimcore_icon_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
-                Ext.get("asset_image_edit_" + this.id).setStyle({
+                Ext.get(frameId).setStyle({
                     height: (height - 7) + "px"
                 });
             }.bind(this));

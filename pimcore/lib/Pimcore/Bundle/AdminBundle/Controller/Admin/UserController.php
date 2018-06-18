@@ -111,8 +111,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function addAction(Request $request)
     {
-        $this->protectCsrf($request);
-
         try {
             $type = $request->get('type');
 
@@ -295,8 +293,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function updateAction(Request $request)
     {
-        $this->protectCsrf($request);
-
         $user = User\AbstractUser::getById(intval($request->get('id')));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -537,8 +533,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function updateCurrentUserAction(Request $request)
     {
-        $this->protectCsrf($request);
-
         $user = $this->getAdminUser();
         if ($user != null) {
             if ($user->getId() == $request->get('id')) {
