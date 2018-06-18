@@ -783,6 +783,18 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "checkbox",
+                    fieldLabel: t("key") + " (" + t("gridview") + ")",
+                    name: "propertyVisibility.grid.key",
+                    checked: this.data.propertyVisibility.grid.key
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("key") + " (" + t("search") + ")",
+                    name: "propertyVisibility.search.key",
+                    checked: this.data.propertyVisibility.search.key
+                },
+                {
+                    xtype: "checkbox",
                     fieldLabel: t("path") + " (" + t("gridview") + ")",
                     name: "propertyVisibility.grid.path",
                     checked: this.data.propertyVisibility.grid.path
