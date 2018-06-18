@@ -84,20 +84,20 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
             },
             buttons: [
                 {
+                    text: t("cancel"),
+                    iconCls: 'pimcore_icon_cancel',
+                    handler: function() {
+                        this.cancelEdit(false);
+                        this.editWin.close();
+                    }.bind(this)
+                },
+                {
                     text: t("save"),
                     iconCls: 'pimcore_icon_save',
                     handler: function() {
                         var newValue = tag.getCellEditValue();
                         this.setValue(newValue);
                         this.completeEdit(false);
-                        this.editWin.close();
-                    }.bind(this)
-                },
-                {
-                    text: t("cancel"),
-                    iconCls: 'pimcore_icon_cancel',
-                    handler: function() {
-                        this.cancelEdit(false);
                         this.editWin.close();
                     }.bind(this)
                 }
