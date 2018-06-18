@@ -129,12 +129,17 @@ pimcore.settings.properties.predefined = Class.create({
             {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
             {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config',
                                                                 editor: new Ext.form.TextField({})},
-            {text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype', editor: new Ext.ux.form.MultiSelect({
-                    multiselect: true,
-                triggerAction: 'all',
-                editable: false,
-                store: contentTypesStore
-            })},
+            {
+                text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
+                getEditor: function (fieldInfo) {
+                    return new pimcore.object.helpers.metadataMultiselectEditor({
+                        fieldInfo: fieldInfo
+                    });
+                }.bind(this, {value: "document;asset;object" })
+            }
+
+
+            ,
             inheritableCheck,
             {
                 xtype: 'actioncolumn',
