@@ -503,11 +503,13 @@ Ext.onReady(function () {
                                 minSize: 175,
                                 collapsible: true,
                                 collapseMode: 'header',
+                                hideCollapseTool: true,
                                 animCollapse: false,
                                 layout: 'accordion',
                                 layoutConfig: {
                                     animate: false
                                 },
+                                header: false,
                                 hidden: true,
                                 forceLayout: true,
                                 hideMode: "offsets",
