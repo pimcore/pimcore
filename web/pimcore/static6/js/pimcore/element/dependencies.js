@@ -122,7 +122,7 @@ pimcore.element.dependencies = Class.create({
             store: this.requiresStore,
             columns: [
                 {text: "ID", sortable: true, dataIndex: 'id'},
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, renderer: Ext.util.Format.htmlEncode},
                 {text: t("type"), sortable: true, dataIndex: 'type'},
                 {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
             ],
@@ -172,7 +172,7 @@ pimcore.element.dependencies = Class.create({
             store: this.requiredByStore,
             columns: [
                 {text: "ID", sortable: true, dataIndex: 'id'},
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, renderer: Ext.util.Format.htmlEncode},
                 {text: t("type"), sortable: true, dataIndex: 'type'},
                 {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
             ],

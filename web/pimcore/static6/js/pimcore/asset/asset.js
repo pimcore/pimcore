@@ -72,7 +72,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         this.tab = new Ext.Panel({
             id: tabId,
-            title: tabTitle,
+            title: htmlspecialchars(tabTitle),
             closable:true,
             layout: "border",
             items: [this.getLayoutToolbar(),this.getTabPanel()],

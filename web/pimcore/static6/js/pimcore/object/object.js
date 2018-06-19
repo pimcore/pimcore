@@ -167,7 +167,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var tabId = "object_" + this.id;
         this.tab = new Ext.Panel({
             id: tabId,
-            title: this.data.general.o_key,
+            title: htmlspecialchars(this.data.general.o_key),
             closable: true,
             layout: "border",
             items: [this.getLayoutToolbar(), this.getTabPanel()],

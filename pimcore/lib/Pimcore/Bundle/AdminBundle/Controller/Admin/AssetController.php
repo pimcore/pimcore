@@ -625,7 +625,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $tmpAsset = [
             'id' => $asset->getId(),
-            'text' => $asset->getFilename(),
+            'text' => htmlspecialchars($asset->getFilename()),
             'type' => $asset->getType(),
             'path' => $asset->getRealFullPath(),
             'basePath' => $asset->getRealPath(),
@@ -1551,7 +1551,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'id' => $asset->getId(),
                         'type' => $asset->getType(),
                         'filename' => $asset->getFilename(),
-                        'filenameDisplay' => $filenameDisplay,
+                        'filenameDisplay' => htmlspecialchars($filenameDisplay),
                         'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true',
                         'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
                     ];

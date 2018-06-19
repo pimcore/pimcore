@@ -101,7 +101,7 @@ pimcore.settings.recyclebin = Class.create({
                     return '<img src="/pimcore/static6/img/flat-color-icons/' + d + '.svg" style="height: 16px" />';
                 }
             },
-            {text: t("path"), flex: 200, sortable: true, dataIndex: 'path', filter: 'string'},
+            {text: t("path"), flex: 200, sortable: true, dataIndex: 'path', filter: 'string', renderer: Ext.util.Format.htmlEncode},
             {text: t("amount"), flex: 60, sortable: true, dataIndex: 'amount'},
             {text: t("deletedby"), flex: 80, sortable: true, dataIndex: 'deletedby', filter: 'string'},
             {

@@ -70,7 +70,7 @@ pimcore.asset.listfolder = Class.create({
 
         var typesColumns = [
             {text: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40, filter: 'numeric'},
-            {text: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string'},
+            {text: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string', renderer: Ext.util.Format.htmlEncode},
             {text: t("type"), sortable: true, dataIndex: 'type', editable: false, flex: 50, filter: 'string'}
         ];
 
