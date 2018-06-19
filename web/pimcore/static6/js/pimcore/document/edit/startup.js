@@ -62,6 +62,15 @@ Ext.supports.Touch = false;
 Ext.WindowManager.zseed = 200;
 
 
+Ext.Ajax.setDisableCaching(true);
+Ext.Ajax.setTimeout(900000);
+Ext.Ajax.setMethod("GET");
+Ext.Ajax.setDefaultHeaders({
+    'X-pimcore-csrf-token': parent.pimcore.settings["csrfToken"],
+    'X-pimcore-extjs-version-major': Ext.getVersion().getMajor(),
+    'X-pimcore-extjs-version-minor': Ext.getVersion().getMinor()
+});
+
 Ext.Loader.setConfig({
     enabled: true
 });
