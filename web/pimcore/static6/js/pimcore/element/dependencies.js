@@ -23,23 +23,16 @@ pimcore.element.dependencies = Class.create({
 
     getLayout: function() {
         
-        this.requiresPanel = new Ext.Panel({
-            flex: 1,
-            layout: "fit"
-        });
-        
-        this.requiredByPanel = new Ext.Panel({
-            flex: 1,
-            layout: "fit"
-        });
-        
         if (this.layout == null) {
             this.layout = new Ext.Panel({
                 tabConfig: {
                     tooltip: t('dependencies')
                 },
-                border: false,
-                scrollable: "y",
+                layout: {
+                    type: 'hbox',
+                    pack: 'start',
+                    align: 'stretch',
+                },
                 iconCls: "pimcore_icon_dependencies",
                 listeners:{
                     activate: this.getGridLayouts.bind(this)
@@ -58,12 +51,8 @@ pimcore.element.dependencies = Class.create({
     },
 
     completeLoad: function() {
-        
-        this.layout.add(this.requiresNote);
-        this.layout.add(this.requiresGrid);
-        
-        this.layout.add(this.requiredByNote);
-        this.layout.add(this.requiredByGrid);
+        this.layout.add(this.requiresPanel);
+        this.layout.add(this.requiredByPanel);
         
         this.layout.updateLayout();
     },
@@ -107,20 +96,20 @@ pimcore.element.dependencies = Class.create({
         this.requiresGrid = new Ext.grid.GridPanel({
             store: this.requiresStore,
             columns: [
-                {text: "ID", sortable: true, dataIndex: 'id'},
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
-                {text: t("type"), sortable: true, dataIndex: 'type'},
-                {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
+                {text: "ID", sortable: true, dataIndex: 'id', hidden:true},
+                {text: t("type"), sortable: true, dataIndex: 'type', hidden: true},
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 50,
+                  renderer:
+                    function (value, metaData, record, rowIndex, colIndex, store) {
+                        return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
+                            + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                    }
+                },
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1}
             ],
-            collapsible: true,
+            flex: 1,
             columnLines: true,
             stripeRows: true,
-            autoHeight: true,              
-            title: t('requires'),
-            viewConfig: {
-                forceFit: true
-            },
-            style: "margin-bottom: 30px;",
             bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiresStore, {pageSize: itemsPerPage})
         });
         this.requiresGrid.on("rowclick", this.click.bind(this));
@@ -141,8 +130,26 @@ pimcore.element.dependencies = Class.create({
         this.requiresNote = new Ext.Panel({
             html:t('hidden_dependencies'),
             cls:'dependency-warning',
-            border:false,
-            hidden: true
+            border: false,
+            hidden: true,
+            height: 50,
+            style: {
+                marginLeft: '10px'
+            },
+        });
+
+        this.requiresPanel = new Ext.Panel({
+            title: t('requires'),
+            flex: .5,
+            layout: {
+                  type: 'vbox',
+                  align: 'stretch'
+            },
+            resizable: true,
+            split: true,
+            collapsible: true,
+            collapseDirection: 'left',
+            items: [this.requiresNote, this.requiresGrid]
         });
 
         this.requiresLoaded = true;        
@@ -173,20 +180,20 @@ pimcore.element.dependencies = Class.create({
         this.requiredByGrid = Ext.create('Ext.grid.Panel', {
             store: this.requiredByStore,
             columns: [
-                {text: "ID", sortable: true, dataIndex: 'id'},
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
-                {text: t("type"), sortable: true, dataIndex: 'type'},
-                {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
+                {text: "ID", sortable: true, dataIndex: 'id', hidden:true},
+                {text: t("type"), sortable: true, dataIndex: 'type', hidden: true},
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 50,
+                 renderer:
+                    function (value, metaData, record, rowIndex, colIndex, store) {
+                        return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
+                            + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                    }
+                },
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1}
             ],
-            collapsible: true,
-            autoExpandColumn: "path",
             columnLines: true,
             stripeRows: true,
-            autoHeight: true,
-            title: t('required_by'),
-            viewConfig: {
-                forceFit: true
-            },
+            flex: 1,
             bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiredByStore,{pageSize: itemsPerPage})
         });
         this.requiredByGrid.on("rowclick", this.click.bind(this));
@@ -208,7 +215,26 @@ pimcore.element.dependencies = Class.create({
             html:t('hidden_dependencies'),
             cls:'dependency-warning',
             border:false,
-            hidden: true
+            hidden: true,
+            height: 50,
+            style: {
+                marginLeft: '10px'
+            },
+        });
+
+        this.requiredByPanel = new Ext.Panel({
+            title: t('required_by'),
+            flex: .5,
+            layout: {
+                  type: 'vbox',
+                  align: 'stretch'
+            },
+            resizable: true,
+            split: true,
+            collapsible: true,
+            collapseDirection: 'right',
+            autoExpandColumn: "path",
+            items: [this.requiredByNote, this.requiredByGrid]
         });
     
         this.requiredByLoaded = true;        
