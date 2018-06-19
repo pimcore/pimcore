@@ -547,9 +547,11 @@ Ext.onReady(function () {
                             collapsible: true,
                             collapseMode: 'header',
                             collapsed: false,
+                            hideCollapseTool: true,
                             animCollapse: false,
                             layout: 'accordion',
                             hidden: true,
+                            header: false,
                             layoutConfig: {
                                 animate: false
                             },
