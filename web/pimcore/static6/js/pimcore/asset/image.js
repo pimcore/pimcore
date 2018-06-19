@@ -178,6 +178,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     iconCls: "pimcore_icon_image_features",
                     width: "100%",
                     textAlign: "left",
+                    hidden: (this.data['customSettings'] && this.data['customSettings']['faceCoordinates']) ? false : true,
                     style: "margin-top: 5px",
                     handler: function () {
                         var features = this.displayPanel.getEl().down('.pimcore_asset_image_preview').query('.image_feature');
