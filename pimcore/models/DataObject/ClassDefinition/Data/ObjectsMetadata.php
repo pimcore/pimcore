@@ -702,7 +702,6 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
         if (is_numeric($allowedClassId)) {
             $class = DataObject\ClassDefinition::getById($allowedClassId);
             $allowedClassId = $class ? $class->getName() : null;
-
         }
 
         $this->allowedClassId = $allowedClassId;

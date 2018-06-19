@@ -34,6 +34,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          * @Route("/external_adminer/adminer")
          *
          * @param Request $request
+         *
          * @return Response
          */
         public function adminerAction(Request $request)
