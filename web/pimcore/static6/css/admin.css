@@ -1319,7 +1319,7 @@ span.warning {
 
     background-image: url(/pimcore/static6/img/logo-gray.svg);
     background-repeat: no-repeat;
-    background-position: right -5px top 4px;
+    background-position: right 5px top 4px;
     background-size: 105px;
 }
 
