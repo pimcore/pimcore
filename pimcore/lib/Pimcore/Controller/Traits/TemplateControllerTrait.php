@@ -27,8 +27,6 @@ trait TemplateControllerTrait
      */
     public function setViewAutoRender(Request $request, bool $autoRender, string $engine = null)
     {
-        $autoRender = (bool)$autoRender;
-
         if ($autoRender) {
             $request->attributes->set(TemplateControllerInterface::ATTRIBUTE_AUTO_RENDER, $autoRender);
 
