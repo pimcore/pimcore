@@ -72,6 +72,7 @@ pimcore.asset.tree = Class.create({
         rootNodeConfig.allowDrag = true;
         rootNodeConfig.id = "" +  rootNodeConfig.id;
         rootNodeConfig.iconCls = "pimcore_icon_home";
+        rootNodeConfig.cls = "pimcore_tree_node_root";
         rootNodeConfig.expanded = true;
 
         var store = Ext.create('pimcore.data.PagingTreeStore', {

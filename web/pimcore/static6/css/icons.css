@@ -126,8 +126,12 @@
 }
 
 
-.pimcore_icon_home, .pimcore_icon_site {
+.pimcore_icon_site {
     background: url(/pimcore/static6/img/flat-color-icons/home.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_home {
+    background: url(/pimcore/static6/img/flat-color-icons/home-gray.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_page {

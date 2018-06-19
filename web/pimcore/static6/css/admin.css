@@ -1604,3 +1604,36 @@ span.warning {
     position: absolute;
     border: 1px solid red;
 }
+
+.pimcore_main_accordion .x-panel-body {
+    padding: 0;
+    background-color: #FbFbFb;
+}
+
+.pimcore_main_accordion .x-grid-body {
+    padding-top: 8px;
+}
+
+.pimcore_main_accordion .x-panel-header {
+    cursor: pointer;
+}
+
+.pimcore_main_accordion .x-grid-item {
+    background: none;
+}
+
+.pimcore_main_accordion .x-grid-item.x-grid-item-over {
+    background-color: #f0f0f0;
+}
+
+.pimcore_main_accordion .x-grid-item.x-grid-item-selected, .pimcore_main_accordion .x-grid-item.x-grid-item-over.x-grid-item-selected {
+    background-color: #ffefbb;
+}
+
+.pimcore_tree_node_root .x-tree-expander {
+    display: none;
+}
+
+.pimcore_tree_node_root .x-tree-icon {
+    margin-left: 12px;
+}

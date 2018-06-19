@@ -498,6 +498,7 @@ Ext.onReady(function () {
                             {
                                 region: 'west',
                                 id: 'pimcore_panel_tree_left',
+                                cls: 'pimcore_main_accordion',
                                 split: true,
                                 width: 300,
                                 minSize: 175,
@@ -505,9 +506,9 @@ Ext.onReady(function () {
                                 collapseMode: 'header',
                                 hideCollapseTool: true,
                                 animCollapse: false,
-                                layout: 'accordion',
-                                layoutConfig: {
-                                    animate: false
+                                layout: {
+                                    type: 'accordion',
+                                    hideCollapseTool: true
                                 },
                                 header: false,
                                 hidden: true,
@@ -540,7 +541,7 @@ Ext.onReady(function () {
                         {
                             region: 'east',
                             id: 'pimcore_panel_tree_right',
-                            cls: "pimcore_panel_tree",
+                            cls: "pimcore_main_accordion",
                             split: true,
                             width: 300,
                             minSize: 175,
