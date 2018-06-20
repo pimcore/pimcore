@@ -2234,7 +2234,13 @@ class DataObjectHelperController extends AdminController
         $list->setOrderKey('o_id');
 
         if ($request->get('objecttype')) {
-            $list->setObjectTypes([$request->get('objecttype')]);
+            $objectTypes = [$request->get('objecttype')];
+
+            if ($class->getShowVariants()) {
+                $objectTypes[] = DataObject\AbstractObject::OBJECT_TYPE_VARIANT;
+            }
+
+            $list->setObjectTypes($objectTypes);
         }
 
         $jobs = $list->loadIdList();
