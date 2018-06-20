@@ -72,10 +72,11 @@ class Dependency extends AbstractModel
      *
      * @return Dependency
      */
-    public static function getBySourceId($id, $type, $start = null, $limit = null)
+    public static function getBySourceId($id, $type)
     {
         $d = new self();
-        $d->getDao()->getBySourceId($id, $type, $start, $limit);
+        $d->setSourceId($id);
+        $d->setSourceType($type);
 
         return $d;
     }
@@ -122,16 +123,20 @@ class Dependency extends AbstractModel
     /**
      * @return array
      */
-    public function getRequires()
+    public function getRequires($offset = null, $limit = null)
     {
+        $this->getDao()->getRequires($offset, $limit);
+
         return $this->requires;
     }
 
     /**
      * @return array
      */
-    public function getRequiredBy()
+    public function getRequiredBy($offset = null, $limit = null)
     {
+        $this->getDao()->getRequiredBy($offset, $limit);
+        
         return $this->requiredBy;
     }
 
@@ -239,7 +244,7 @@ class Dependency extends AbstractModel
      */
     public function isRequired()
     {
-        if (is_array($this->getRequiredBy()) && count($this->getRequiredBy()) > 0) {
+        if (is_array($this->getRequires(0,1)) && count($this->getRequires(0,1)) > 0) {
             return true;
         }
 
