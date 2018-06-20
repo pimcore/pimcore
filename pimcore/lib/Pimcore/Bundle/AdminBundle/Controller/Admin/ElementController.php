@@ -643,10 +643,15 @@ class ElementController extends AdminController
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
+            $dependencies = Model\Dependency::getBySourceId($element->getId(), $type, $start, $limit);
             if ($element instanceof Model\Element\ElementInterface) {
-                $dependencies = Model\Element\Service::getRequiresDependenciesForFrontend($element->getDependencies(), $start, $limit);
+                $dependenciesResult = Model\Element\Service::getRequiresDependenciesForFrontend($dependencies);
 
-                return $this->adminJson($dependencies);
+                $dependenciesResult['start'] = $start;
+                $dependenciesResult['limit'] = $limit;
+                $dependenciesResult['total'] = $dependencies->getRequiresTotalCount();
+
+                return $this->adminJson($dependenciesResult);
             }
         }
 
@@ -670,10 +675,15 @@ class ElementController extends AdminController
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
+            $dependencies = Model\Dependency::getBySourceId($element->getId(), $type, $start, $limit);
             if ($element instanceof Model\Element\ElementInterface) {
-                $dependencies = Model\Element\Service::getRequiredByDependenciesForFrontend($element->getDependencies(), $start, $limit);
+                $dependenciesResult = Model\Element\Service::getRequiredByDependenciesForFrontend($dependencies);
 
-                return $this->adminJson($dependencies);
+                $dependenciesResult['start'] = $start;
+                $dependenciesResult['limit'] = $limit;
+                $dependenciesResult['total'] = $dependencies->getRequiredByTotalCount();
+
+                return $this->adminJson($dependenciesResult);
             }
         }
 

@@ -51,6 +51,20 @@ class Dependency extends AbstractModel
     public $requiredBy = [];
 
     /**
+     * Total count of objects which are required for the given source object (sourceId/sourceType)
+     *
+     * @var int
+     */
+    public $requiresTotalCount;
+
+    /**
+     * Total count of objects that need the given source object (sourceId/sourceType)
+     *
+     * @var int
+     */
+    public $requiredByTotalCount;
+
+    /**
      * Static helper to get the dependencies for the given sourceId & type
      *
      * @param int $id
@@ -58,12 +72,12 @@ class Dependency extends AbstractModel
      *
      * @return Dependency
      */
-    public static function getBySourceId($id, $type)
+    public static function getBySourceId($id, $type, $start = null, $limit = null)
     {
         $d = new self();
         $d->setSourceId($id);
         $d->setSourceType($type);
-        $d->getDao()->getBySourceId();
+        $d->getDao()->getBySourceId($id, $type, $start, $limit);
 
         return $d;
     }
@@ -175,6 +189,47 @@ class Dependency extends AbstractModel
     public function setSourceType($sourceType)
     {
         $this->sourceType = $sourceType;
+
+        return $this;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getRequiresTotalCount()
+    {
+        return $this->requiresTotalCount;
+    }
+
+    /**
+     * @param int $requiresTotalCount
+     *
+     * @return $this
+     */
+    public function setRequiresTotalCount($requiresTotalCount)
+    {
+        $this->requiresTotalCount = $requiresTotalCount;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRequiredByTotalCount()
+    {
+        return $this->requiredByTotalCount;
+    }
+
+    /**
+     * @param int $requiresTotalCount
+     *
+     * @return $this
+     */
+    public function setRequiredByTotalCount($requiredByTotalCount)
+    {
+        $this->requiredByTotalCount = $requiredByTotalCount;
 
         return $this;
     }

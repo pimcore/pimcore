@@ -32,15 +32,21 @@ class Dao extends Model\Dao\AbstractDao
      * @param int $id
      * @param string $type
      */
-    public function getBySourceId($id = null, $type = null)
+    public function getBySourceId($id = null, $type = null, $start = null, $limit = null)
     {
         if ($id && $type) {
             $this->model->setSourceId($id);
-            $this->model->setSourceType($id);
+            $this->model->setSourceType($type);
         }
 
         // requires
-        $data = $this->db->fetchAll('SELECT * FROM dependencies WHERE sourceid = ? AND sourcetype = ?', [$this->model->getSourceId(), $this->model->getSourceType()]);
+        $requiesQuery = 'SELECT * FROM dependencies WHERE sourceid = ? AND sourcetype = ?';
+
+        if ($start !== null & $limit !== null) {
+            $requiesQuery = sprintf($requiesQuery.' LIMIT %d,%d', $start, $limit);
+        }
+
+        $data = $this->db->fetchAll($requiesQuery,[$this->model->getSourceId(),$this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
@@ -48,8 +54,18 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        //get total count of requires records
+        $requiresCount = (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE sourceid = ? AND sourcetype = ?', [$this->model->getSourceId(),$this->model->getSourceType()]);
+        $this->model->requiresTotalCount = $requiresCount;
+
         // required by
-        $data = $this->db->fetchAll('SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(), $this->model->getSourceType()]);
+        $requiredByQuery = 'SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?';
+
+        if ($start !== null & $limit !== null) {
+            $requiredByQuery = sprintf($requiredByQuery.' LIMIT %d,%d', $start, $limit);
+        }
+        
+        $data = $this->db->fetchAll($requiredByQuery, [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
@@ -59,6 +75,10 @@ class Dao extends Model\Dao\AbstractDao
                 ];
             }
         }
+
+        //get total count of required by records
+        $requiredByCount = (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(),$this->model->getSourceType()]);
+        $this->model->requiredByTotalCount = $requiredByCount;
     }
 
     /**
