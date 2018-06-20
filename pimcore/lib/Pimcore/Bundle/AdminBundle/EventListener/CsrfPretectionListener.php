@@ -29,6 +29,17 @@ class CsrfPretectionListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
     use LoggerAwareTrait;
 
+    protected $excludedRoutes = [];
+
+    /**
+     * CsrfPretectionListener constructor.
+     * @param $excludedRoutes
+     */
+    public function __construct($excludedRoutes)
+    {
+        $this->excludedRoutes = $excludedRoutes;
+    }
+
     /**
      * @inheritDoc
      */
