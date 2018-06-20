@@ -75,8 +75,6 @@ class Dependency extends AbstractModel
     public static function getBySourceId($id, $type, $start = null, $limit = null)
     {
         $d = new self();
-        $d->setSourceId($id);
-        $d->setSourceType($type);
         $d->getDao()->getBySourceId($id, $type, $start, $limit);
 
         return $d;
