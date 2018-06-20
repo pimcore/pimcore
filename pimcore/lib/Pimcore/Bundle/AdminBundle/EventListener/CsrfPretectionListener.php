@@ -33,6 +33,7 @@ class CsrfPretectionListener implements EventSubscriberInterface
 
     /**
      * CsrfPretectionListener constructor.
+     *
      * @param $excludedRoutes
      */
     public function __construct($excludedRoutes)
