@@ -1637,3 +1637,13 @@ span.warning {
 .pimcore_tree_node_root .x-tree-icon {
     margin-left: 12px;
 }
+
+.pimcore_document_preview_timeslider .x-slider-thumb {
+    cursor: pointer;
+}
+
+.pimcore_document_preview_timeslider {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
