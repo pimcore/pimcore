@@ -141,7 +141,8 @@ class Service extends Model\AbstractModel
     public static function getRequiredByDependenciesForFrontend(Dependency $d)
     {
         $dependencies['hasHidden'] = false;
-        $dependencies['requiredBy'] = [];        
+        $dependencies['requiredBy'] = [];
+
         // requiredBy
         foreach ($d->getRequiredBy() as $r) {
             if ($e = self::getDependedElement($r)) {
