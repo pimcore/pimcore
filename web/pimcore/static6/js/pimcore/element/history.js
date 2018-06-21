@@ -94,7 +94,8 @@ pimcore.element.history = Class.create({
                             flex:500,
                             align:'left',
                             sortable:true,
-                            filter: 'string'
+                            filter: 'string',
+                            renderer: Ext.util.Format.htmlEncode
                         }
 
                         ,

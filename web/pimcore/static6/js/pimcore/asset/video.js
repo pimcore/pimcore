@@ -84,20 +84,18 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
     getEditPanel: function () {
 
         if (!this.editPanel) {
+            var frameUrl = pimcore.helpers.addCsrfTokenToUrl('/admin/asset/get-preview-video?id=' + this.id);
+            this.previewFrameId = 'asset_video_edit_' + this.id;
             this.previewPanel = new Ext.Panel({
                 region: "center",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="/admin/asset/get-preview-video?id='
-                                            + this.id + '/" frameborder="0" id="asset_video_edit_'
-                                            + this.id + '" name="asset_video_edit_' + this.id + '" style="width:100%;"></iframe>'
+                html: '<iframe src="' + frameUrl + '" frameborder="0" id="' + this.previewFrameId + '" name="' + this.previewFrameId + '" style="width:100%;"></iframe>'
             });
             this.previewPanel.on("resize", function (el, width, height, rWidth, rHeight) {
-                Ext.get("asset_video_edit_" + this.id).setStyle({
+                Ext.get(this.previewFrameId).setStyle({
                     height: (height-7) + "px"
                 });
             }.bind(this));
-
-            this.previewFrameId = 'asset_video_edit_' + this.id;
 
             var date = new Date();
 

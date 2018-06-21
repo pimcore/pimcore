@@ -112,12 +112,13 @@ pimcore.object.versions = Class.create({
 
             grid.reference = this;
 
+            this.iframeId = 'object_version_iframe_' + this.object.id;
+
             var preview = new Ext.Panel({
                 title: t("preview"),
                 region: "center",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="object_version_iframe_' + this.object.id
-                                                                + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="' + this.iframeId + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -136,7 +137,7 @@ pimcore.object.versions = Class.create({
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
-        Ext.get("object_version_iframe_" + this.object.id).setStyle({
+        Ext.get(this.iframeId).setStyle({
             height: (height - 38) + "px"
         });
     },
@@ -160,8 +161,9 @@ pimcore.object.versions = Class.create({
 
             var selections = grid.getSelectionModel().getSelection();
 
-            var path = "/admin/object/diff-versions/from/" + selections[0].data.id + "/to/" + selections[1].data.id;
-            Ext.get("object_version_iframe_" + this.object.id).dom.src = path;
+            var url = "/admin/object/diff-versions/from/" + selections[0].data.id + "/to/" + selections[1].data.id;
+            url = pimcore.helpers.addCsrfTokenToUrl(url);
+            Ext.get(this.iframeId).dom.src = url;
         }
     },
 
@@ -171,8 +173,9 @@ pimcore.object.versions = Class.create({
         var data = store.getAt(rowIndex).data;
         var versionId = data.id;
 
-        var path = "/admin/object/preview-version?id=" + versionId;
-        Ext.get("object_version_iframe_" + this.object.id).dom.src = path;
+        var url = "/admin/object/preview-version?id=" + versionId;
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
+        Ext.get(this.iframeId).dom.src = url;
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {

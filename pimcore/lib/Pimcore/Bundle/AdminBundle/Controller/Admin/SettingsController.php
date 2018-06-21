@@ -260,6 +260,9 @@ class SettingsController extends AdminController
 
                 // save type
                 $property = Property\Predefined::getById($data['id']);
+                if (is_array($data['ctype'])) {
+                    $data['ctype'] = implode(',', $data['ctype']);
+                }
                 $property->setValues($data);
 
                 $property->save();
@@ -972,24 +975,6 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-languages")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableLanguagesAction(Request $request)
-    {
-        if ($languages = Tool::getValidLanguages()) {
-            return $this->adminJson($languages);
-        }
-
-        $t = new Model\Translation\Website();
-
-        return $this->adminJson($t->getAvailableLanguages());
-    }
-
-    /**
      * @Route("/get-available-admin-languages")
      *
      * @param Request $request
@@ -1107,8 +1092,12 @@ class SettingsController extends AdminController
                 $list->setOrder($sortingSettings['order']);
             }
 
-            if ($request->get('filter')) {
-                $list->setCondition('`source` LIKE ' . $list->quote('%'.$request->get('filter').'%') . ' OR `target` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            if ($filterValue = $request->get('filter')) {
+                if (is_numeric($filterValue)) {
+                    $list->setCondition('id = ?', [$filterValue]);
+                } else {
+                    $list->setCondition('`source` LIKE ' . $list->quote('%' . $filterValue . '%') . ' OR `target` LIKE ' . $list->quote('%' . $filterValue . '%'));
+                }
             }
 
             $list->load();

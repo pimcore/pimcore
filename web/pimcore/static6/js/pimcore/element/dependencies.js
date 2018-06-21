@@ -105,7 +105,7 @@ pimcore.element.dependencies = Class.create({
                             + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1}
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, renderer: Ext.util.Format.htmlEncode}
             ],
             flex: 1,
             columnLines: true,
@@ -189,7 +189,7 @@ pimcore.element.dependencies = Class.create({
                             + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1}
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, renderer: Ext.util.Format.htmlEncode}
             ],
             columnLines: true,
             stripeRows: true,

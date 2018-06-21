@@ -78,12 +78,16 @@ class Dao extends Model\Dao\AbstractDao
     public function getTranslations(Document $document)
     {
         $sourceId = $this->getTranslationSourceId($document);
-
-        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId = ?', [$sourceId]);
+        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id IN(?, ?)', [$sourceId, $document->getId(), $sourceId, $document->getId()]);
 
         $translations = [];
         foreach ($data as $translation) {
-            $translations[$translation['language']] = $translation['id'];
+            if ($translation['language'] == 'source') {
+                $sourceDocument = Document::getById($translation['id']);
+                $translations[$sourceDocument->getProperty('language')] = $translation['id'];
+            } else {
+                $translations[$translation['language']] = $translation['id'];
+            }
         }
 
         // add language from source document
@@ -137,7 +141,14 @@ class Dao extends Model\Dao\AbstractDao
     public function removeTranslationLink(Document $document, Document $targetDocument)
     {
         $sourceId = $this->getTranslationSourceId($document);
+
         if ($targetDocument->getId() == $sourceId) {
+            $sourceId = $document->getId();
+        }
+
+        $newSourceId = $this->db->fetchOne('SELECT id FROM documents_translations WHERE id = ? AND sourceId = ?', [$targetDocument->getId(), $sourceId]);
+
+        if (empty($newSourceId)) {
             $sourceId = $document->getId();
         }
 

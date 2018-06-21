@@ -107,7 +107,7 @@ pimcore.document.pages.preview = Class.create({
             this.timeSlider = Ext.create('Ext.slider.Single', {
                 region: 'center',
                 width: '100%',
-                style: 'padding-left: 10px; padding-right: 10px',
+                cls: 'pimcore_document_preview_timeslider',
                 tipText: function(thumb){
                     var date = new Date(thumb.value * 1000);
                     return Ext.Date.format(date, 'H:i');

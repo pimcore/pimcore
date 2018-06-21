@@ -211,6 +211,7 @@ class AssetController extends AbstractElementController
         $this->checkPermission('assets');
 
         $condition = urldecode($request->get('condition'));
+        $this->checkCondition($condition);
         $order     = $request->get('order');
         $orderKey  = $request->get('orderKey');
         $offset    = $request->get('offset');
@@ -242,6 +243,7 @@ class AssetController extends AbstractElementController
         $this->checkPermission('assets');
 
         $condition = urldecode($request->get('condition'));
+        $this->checkCondition($condition);
         $groupBy   = $request->get('groupBy');
 
         $params = [];

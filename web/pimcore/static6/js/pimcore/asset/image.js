@@ -95,14 +95,17 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getEditPanel: function () {
 
         if (!this.editPanel) {
+            var url = '/admin/asset/image-editor?id=' + this.id;
+            url = pimcore.helpers.addCsrfTokenToUrl(url);
+            var frameId = 'asset_image_edit_' + this.id;
             this.editPanel = new Ext.Panel({
                 title: t("edit"),
-                html: '<iframe src="/admin/asset/image-editor?id=' + this.id + '" frameborder="0" ' +
-                'style="width: 100%;" id="asset_image_edit_' + this.id + '"></iframe>',
+                html: '<iframe src="' + url + '" frameborder="0" ' +
+                'style="width: 100%;" id="' + frameId + '"></iframe>',
                 iconCls: "pimcore_icon_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
-                Ext.get("asset_image_edit_" + this.id).setStyle({
+                Ext.get(frameId).setStyle({
                     height: (height - 7) + "px"
                 });
             }.bind(this));
@@ -157,8 +160,34 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             var date = new Date();
             var dc = date.getTime();
 
-            var details = [];
-
+            var details = [{
+                title: t("tools"),
+                bodyStyle: "padding: 10px;",
+                items: [{
+                    xtype: "button",
+                    text: t("set_focal_point"),
+                    iconCls: "pimcore_icon_focal_point",
+                    width: "100%",
+                    textAlign: "left",
+                    handler: function () {
+                        this.addFocalPoint();
+                    }.bind(this)
+                }, {
+                    xtype: "button",
+                    text: t("toggle_image_features"),
+                    iconCls: "pimcore_icon_image_features",
+                    width: "100%",
+                    textAlign: "left",
+                    hidden: (this.data['customSettings'] && this.data['customSettings']['faceCoordinates']) ? false : true,
+                    style: "margin-top: 5px",
+                    handler: function () {
+                        var features = this.displayPanel.getEl().down('.pimcore_asset_image_preview').query('.image_feature');
+                        features.forEach(function (feature) {
+                           Ext.get(feature).toggle();
+                        });
+                    }.bind(this)
+                }]
+            }];
 
             if (this.data.imageInfo.dimensions) {
 
@@ -198,7 +227,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 items: [{
                     xtype: "button",
                     iconCls: "pimcore_icon_image",
-                    width: 260,
+                    width: "100%",
                     textAlign: "left",
                     style: "margin-bottom: 5px",
                     text: t("original_file"),
@@ -208,7 +237,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 },{
                     xtype: "button",
                     iconCls: "pimcore_icon_world",
-                    width: 260,
+                    width: "100%",
                     textAlign: "left",
                     style: "margin-bottom: 5px",
                     text: t("web_format"),
@@ -216,7 +245,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }, {
                     xtype: "button",
                     iconCls: "pimcore_icon_print",
-                    width: 260,
+                    width: "100%",
                     textAlign: "left",
                     style: "margin-bottom: 5px",
                     text: t("print_format"),
@@ -224,7 +253,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 },{
                     xtype: "button",
                     iconCls: "pimcore_icon_docx",
-                    width: 260,
+                    width: "100%",
                     textAlign: "left",
                     style: "margin-bottom: 5px",
                     text: t("office_format"),
@@ -330,9 +359,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 iconCls: "pimcore_icon_view",
                 items: [{
                     region: "center",
-                    html: '&nbsp;',
-                    bodyStyle: "background: url(/admin/asset/get-image-thumbnail?id=" + this.id +
-                    "&treepreview=true&_dc=" + dc + ") center center no-repeat;"
+                    html: '<div class="pimcore_asset_image_preview"><img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&hdpi=true&_dc=' + dc + '"></div>',
                 }, {
                     region: "east",
                     width: 300,
@@ -340,8 +367,98 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     scrollable: "y"
                 }]
             });
+
+            this.displayPanel.on('afterrender', function (ev) {
+                if(this.data['customSettings']) {
+                    if (this.data['customSettings']['focalPointX']) {
+                        this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
+                    }
+
+                    if (this.data['customSettings']['faceCoordinates']) {
+                        this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
+                            this.addImageFeature(coord);
+                        }.bind(this));
+
+                    }
+                }
+            }.bind(this));
+
+            this.displayPanel.on('resize', function (el, width, height, rWidth, rHeight) {
+                var area = this.displayPanel.getEl().down('img');
+                area.setStyle('max-width', (width-40) + "px");
+                area.setStyle('max-height', (height-40) + "px");
+            }.bind(this));
         }
 
         return this.displayPanel;
+    },
+
+    addImageFeature: function (coords) {
+        var area = this.displayPanel.getEl().down('.pimcore_asset_image_preview');
+        var imageFeature = area.insertHtml('afterBegin', '<div class="image_feature"></div>', true);
+        imageFeature.setTop(coords['y'] + "%");
+        imageFeature.setLeft(coords['x'] + "%");
+        imageFeature.setWidth(coords['width'] + "%");
+        imageFeature.setHeight(coords['height'] + "%");
+    },
+
+    addFocalPoint: function (positionX, positionY) {
+
+        if(this["marker"]) {
+            return;
+        }
+
+        var area = this.displayPanel.getEl().down('.pimcore_asset_image_preview');
+        var marker = area.insertHtml('afterBegin', '<div class="marker"></div>');
+        marker = Ext.get(marker);
+
+        marker.on('contextmenu', function (ev) {
+            var menu = new Ext.menu.Menu();
+
+            menu.add(new Ext.menu.Item({
+                text: t("delete"),
+                iconCls: "pimcore_icon_delete",
+                handler: function (el) {
+                    marker.remove();
+                    delete this.marker;
+                }.bind(this)
+            }));
+
+            menu.showAt(ev.getXY());
+            ev.stopEvent();
+        }.bind(this));
+
+        if(positionX && positionY) {
+            marker.setTop(positionY + "%");
+            marker.setLeft(positionX + "%");
+        }
+
+        var markerDD = new Ext.dd.DD(marker);
+
+        this.marker = marker;
+    },
+
+    getSaveData : function ($super, only) {
+        var parameters = $super(only);
+
+        if(this["marker"]) {
+
+            var top = intval(this.marker.getStyle('top'));
+            var left = intval(this.marker.getStyle('left'));
+
+            var boundingBox = this.marker.up().getSize();
+
+            var x = round(left * 100 / boundingBox.width, 8);
+            var y = round(top  * 100 / boundingBox.height, 8);
+
+            parameters["image"] = Ext.encode({
+                "focalPoint": {
+                    "x": x,
+                    "y": y
+                }
+            });
+        }
+
+        return parameters;
     }
 });

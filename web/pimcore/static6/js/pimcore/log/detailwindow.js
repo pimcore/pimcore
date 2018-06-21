@@ -115,8 +115,10 @@ pimcore.log.detailwindow = Class.create({
             if (fileObjectText.length > 60) {
                 fileObjectText = fileObjectText.substr(0, 60) + "...";
             }
+            var url = '/admin/log/show-file-object?filePath=' + this.data.fileobject;
+            url = pimcore.helpers.addCsrfTokenToUrl(url);
 
-            var html = Ext.String.format('<a href="/admin/log/show-file-object?filePath={0}" target="_blank">{1}</a>', this.data.fileobject, fileObjectText);
+            var html = Ext.String.format('<a href="{0}" target="_blank">{1}</a>', url, fileObjectText);
             items.push({
                 xtype: "displayfield",
                 fieldLabel: t('log_fileobject'),

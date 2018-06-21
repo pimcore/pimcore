@@ -33,11 +33,12 @@ class WebsiteConfigExtension extends \Twig_Extension
      *
      * @param null|mixed $key       Config key to directly load. If null, the whole config will be returned
      * @param null|mixed $default   Default value to use if the key is not set
+     * @param null|mixed $language  Language to use
      *
      * @return Config\Config|mixed
      */
-    public function getWebsiteConfig($key = null, $default = null)
+    public function getWebsiteConfig($key = null, $default = null, $language = null)
     {
-        return Config::getWebsiteConfigValue($key, $default);
+        return Config::getWebsiteConfigValue($key, $default, $language);
     }
 }

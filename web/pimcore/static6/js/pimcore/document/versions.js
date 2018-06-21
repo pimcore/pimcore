@@ -130,12 +130,14 @@ pimcore.document.versions = Class.create({
             }.bind(this));
             this.grid.reference = this;
 
+            this.frameId = 'document_version_iframe_' + this.document.id;
+
             var preview = new Ext.Panel({
                 title: t("preview"),
                 region: "center",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="document_version_iframe_'
-                    + this.document.id + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="'
+                    + this.frameId + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -153,7 +155,7 @@ pimcore.document.versions = Class.create({
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
-        Ext.get("document_version_iframe_" + this.document.id).setStyle({
+        Ext.get(this.frameId).setStyle({
             height: (height - 38) + "px"
         });
     },
@@ -179,13 +181,15 @@ pimcore.document.versions = Class.create({
     },
 
     compareVersions: function (id1, id2) {
-        var path = "/admin/document/diff-versions/from/" + id1 + "/to/" + id2;
-        Ext.get("document_version_iframe_" + this.document.id).dom.src = path;
+        var url = "/admin/document/diff-versions/from/" + id1 + "/to/" + id2;
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
+        Ext.get(this.frameId).dom.src = url;
     },
 
     showVersionPreview: function (id) {
-        var path = this.document.data.path + this.document.data.key + "?pimcore_version=" + id;
-        Ext.get("document_version_iframe_" + this.document.id).dom.src = path;
+        var url = this.document.data.path + this.document.data.key + "?pimcore_version=" + id;
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
+        Ext.get(this.frameId).dom.src = url;
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {

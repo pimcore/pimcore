@@ -509,6 +509,10 @@
     background-color: #ffefbb;
 }
 
+.pimcore_tag_scheduledblock .x-slider-thumb {
+    cursor: pointer;
+}
+
 .pimcore_tag_scheduledblock .x-slider-thumb.selected:before {
     color: #e9d097;
 }

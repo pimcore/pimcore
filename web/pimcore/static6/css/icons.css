@@ -126,8 +126,12 @@
 }
 
 
-.pimcore_icon_home, .pimcore_icon_site {
+.pimcore_icon_site {
     background: url(/pimcore/static6/img/flat-color-icons/home.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_home {
+    background: url(/pimcore/static6/img/flat-color-icons/home-gray.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_page {
@@ -1251,3 +1255,10 @@
     right: -4px;
 }
 
+.pimcore_icon_focal_point {
+    background: url(/pimcore/static6/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_image_features {
+    background: url(/pimcore/static6/img/flat-color-icons/butting_in.svg) center center no-repeat !important;
+}

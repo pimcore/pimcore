@@ -12,7 +12,6 @@
 <div class="wrapper">
 
     <div class="submenu">
-        <a class="logo" href="">miniPaint</a>
         <div class="block attributes" id="action_attributes"></div>
         <div class="clear"></div>
     </div>
@@ -96,11 +95,12 @@
             Layers.convert_layers_to_canvas(tempCtx);
             var dataUri = tempCanvas.toDataURL('image/"<?= (\Pimcore\File::getFileExtension($this->asset->getFilename()) == "png") ? "png" : "jpg" ?>"');
 
-            $.ajax({
+            parent.Ext.Ajax.request({
                 url: "/admin/asset/image-editor-save?id=<?= $this->asset->getId() ?>",
-                method: "POST",
-                data: { dataUri : dataUri },
-                dataType: "json"
+                method: 'post',
+                params: {
+                    dataUri: dataUri
+                }
             });
 
             return false;

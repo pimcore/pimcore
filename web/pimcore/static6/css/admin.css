@@ -170,6 +170,7 @@
     bottom: 50px;
     width:36px;
     border-radius: 18px;
+    cursor: pointer;
 }
 
 #pimcore_loading.loaded {
@@ -1318,7 +1319,7 @@ span.warning {
 
     background-image: url(/pimcore/static6/img/logo-gray.svg);
     background-repeat: no-repeat;
-    background-position: right -5px top 4px;
+    background-position: right 5px top 4px;
     background-size: 105px;
 }
 
@@ -1578,3 +1579,71 @@ span.warning {
     left: 39px;
     z-index: 1000;
 }
+
+.pimcore_asset_image_preview {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+}
+
+.pimcore_asset_image_preview .marker {
+    position: absolute;
+    z-index: 10000;
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    left: 50%;
+    background: url(/pimcore/static6/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
+    cursor: pointer;
+    margin: -50px 0 0 -50px;
+}
+
+.pimcore_asset_image_preview .image_feature {
+    position: absolute;
+    border: 1px solid red;
+}
+
+.pimcore_main_accordion .x-panel-body {
+    padding: 0;
+    background-color: #FbFbFb;
+}
+
+.pimcore_main_accordion .x-grid-body {
+    padding-top: 8px;
+}
+
+.pimcore_main_accordion .x-panel-header {
+    cursor: pointer;
+}
+
+.pimcore_main_accordion .x-grid-item {
+    background: none;
+}
+
+.pimcore_main_accordion .x-grid-item.x-grid-item-over {
+    background-color: #f0f0f0;
+}
+
+.pimcore_main_accordion .x-grid-item.x-grid-item-selected, .pimcore_main_accordion .x-grid-item.x-grid-item-over.x-grid-item-selected {
+    background-color: #ffefbb;
+}
+
+.pimcore_tree_node_root .x-tree-expander {
+    display: none;
+}
+
+.pimcore_tree_node_root .x-tree-icon {
+    margin-left: 12px;
+}
+
+.pimcore_document_preview_timeslider .x-slider-thumb {
+    cursor: pointer;
+}
+
+.pimcore_document_preview_timeslider {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+

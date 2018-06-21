@@ -112,12 +112,13 @@ pimcore.asset.versions = Class.create({
 
             grid.reference = this;
 
+            this.frameId = 'asset_version_iframe_' + this.asset.id;
+
             var preview = new Ext.Panel({
                 title: t("preview"),
                 region: "center",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="asset_version_iframe_'
-                                                                    + this.asset.id + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="' + this.frameId + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -136,7 +137,7 @@ pimcore.asset.versions = Class.create({
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
-        Ext.get("asset_version_iframe_" + this.asset.id).setStyle({
+        Ext.get(this.frameId).setStyle({
             height: (height - 38) + "px"
         });
     },
@@ -145,8 +146,9 @@ pimcore.asset.versions = Class.create({
         var data = grid.getStore().getAt(rowIndex).data;
 
         var versionId = data.id;
-        var path = "/admin/asset/show-version?id=" + versionId;
-        Ext.get("asset_version_iframe_" + this.asset.id).dom.src = path;
+        var url = "/admin/asset/show-version?id=" + versionId;
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
+        Ext.get(this.frameId).dom.src = url;
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {

@@ -95,7 +95,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         this.tab = new Ext.Panel({
             id: tabId,
-            title: tabTitle,
+            title: htmlspecialchars(tabTitle),
             closable:true,
             layout: "border",
             items: [

@@ -254,6 +254,17 @@ final class AdminEvents
     const ASSET_GET_PRE_SEND_DATA = 'pimcore.admin.asset.get.preSendData';
 
     /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Arguments:
+     *  - assets | array | the list of asset tree nodes
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.asset.treeGetChildsById.preSendData';
+
+    /**
      * Fired before the request params are parsed.
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase
@@ -266,6 +277,17 @@ final class AdminEvents
      * @var string
      */
     const DOCUMENT_GET_PRE_SEND_DATA = 'pimcore.admin.document.get.preSendData';
+
+    /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DocumentController
+     * Arguments:
+     *  - documents | array | the list of document tree nodes
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildsById.preSendData';
 
     /**
      * Fired before the request params are parsed.

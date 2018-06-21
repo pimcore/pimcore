@@ -166,9 +166,11 @@ class Config extends Model\AbstractModel
     }
 
     /**
+     * @param bool $hdpi
+     *
      * @return Config
      */
-    public static function getPreviewConfig()
+    public static function getPreviewConfig($hdpi = false)
     {
         $thumbnail = new self();
         $thumbnail->setName('pimcore-system-treepreview');
@@ -181,6 +183,10 @@ class Config extends Model\AbstractModel
         ]);
         $thumbnail->setQuality(60);
         $thumbnail->setFormat('PJPEG');
+
+        if ($hdpi) {
+            $thumbnail->setHighResolution(2);
+        }
 
         return $thumbnail;
     }

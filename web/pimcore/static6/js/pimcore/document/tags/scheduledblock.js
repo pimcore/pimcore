@@ -55,9 +55,9 @@ pimcore.document.tags.scheduledblock = Class.create(pimcore.document.tags.block,
 
     renderControls: function() {
 
-        var tabDiv = Ext.get(this.id).query('.pimcore_scheduled_block_controls')[0];
+        var controlDiv = Ext.get(this.id).query('.pimcore_scheduled_block_controls')[0];
 
-        var tabs = [];
+        var controlItems = [];
 
         var initialDate = new Date();
         if(top.pimcore.globalmanager.get(this.getTmpStoreId())) {
@@ -75,7 +75,7 @@ pimcore.document.tags.scheduledblock = Class.create(pimcore.document.tags.block,
                 }.bind(this)
             }
         });
-        tabs.push(this.dateField);
+        controlItems.push(this.dateField);
 
         this.slider = Ext.create('Ext.pimcore.slider.Milestone', {
             width: '100%',
@@ -83,7 +83,7 @@ pimcore.document.tags.scheduledblock = Class.create(pimcore.document.tags.block,
             style: 'padding-left: 10px; padding-right: 10px'
         });
 
-        tabs.push(this.slider);
+        controlItems.push(this.slider);
         var plusButton = new Ext.Button({
             cls: "pimcore_block_button_plus",
             iconCls: "pimcore_icon_plus",
@@ -94,7 +94,7 @@ pimcore.document.tags.scheduledblock = Class.create(pimcore.document.tags.block,
                 }.bind(this)
             }
         });
-        tabs.push(plusButton);
+        controlItems.push(plusButton);
 
         var jumpMenuEntries = [];
         for (var i = 0; i < this.elements.length; i++) {
@@ -147,16 +147,17 @@ pimcore.document.tags.scheduledblock = Class.create(pimcore.document.tags.block,
             region: 'east',
             menu: jumpMenuEntries
         });
-        tabs.push(jumpButton);
+        controlItems.push(jumpButton);
 
 
-        var tabBar = new Ext.Panel({
-            items: tabs,
+        var controlBar = new Ext.Panel({
+            items: controlItems,
             layout: 'border',
             height: 35,
-            border: false
+            border: false,
+            style: "margin-bottom: 10px"
         });
-        tabBar.render(tabDiv);
+        controlBar.render(controlDiv);
 
         this.loadTimestampsForDate();
     },
@@ -271,10 +272,7 @@ pimcore.document.tags.scheduledblock = Class.create(pimcore.document.tags.block,
             date = new Date();
         }
 
-        //var args = [index, 0];
-
         nextKey++;
-        //args.push({key: nextKey, date: (date.getTime()) / 1000});
 
         this.elements.push({key: nextKey, date: (date.getTime()) / 1000});
 

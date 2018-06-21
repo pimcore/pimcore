@@ -200,6 +200,13 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         }
 
+        //Hook for modifying return value - e.g. for changing permissions based on asset data
+        $event = new GenericEvent($this, [
+            'assets' => $assets,
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $assets = $event->getArgument('assets');
+
         if ($allParams['limit']) {
             return $this->adminJson([
                 'offset' => $offset,
@@ -618,7 +625,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $tmpAsset = [
             'id' => $asset->getId(),
-            'text' => $asset->getFilename(),
+            'text' => htmlspecialchars($asset->getFilename()),
             'type' => $asset->getType(),
             'path' => $asset->getRealFullPath(),
             'basePath' => $asset->getRealPath(),
@@ -678,6 +685,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($asset->getType() == 'image') {
             try {
                 $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
 
                 // this is for backward-compatibility, to calculate the dimensions if they are not there
                 if (!$asset->getCustomSetting('imageDimensionsCalculated')) {
@@ -696,6 +704,7 @@ class AssetController extends ElementControllerBase implements EventedController
             try {
                 if (\Pimcore\Video::isAvailable()) {
                     $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                    $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -705,6 +714,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
                 if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
                     $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                    $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -724,17 +734,23 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @param Asset $asset
+     * @param bool $hdpi
      *
      * @return null|string
      */
-    protected function getThumbnailUrl(Asset $asset)
+    protected function getThumbnailUrl(Asset $asset, $hdpi = false)
     {
+        $suffix = '';
+        if ($hdpi) {
+            $suffix .= '&hdpi=true';
+        }
+
         if ($asset instanceof Asset\Image) {
-            return '/admin/asset/get-image-thumbnail?id=' . $asset->getId() . '&treepreview=true';
+            return '/admin/asset/get-image-thumbnail?id=' . $asset->getId() . '&treepreview=true' . $suffix;
         } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
-            return '/admin/asset/get-video-thumbnail?id=' . $asset->getId() . '&treepreview=true';
+            return '/admin/asset/get-video-thumbnail?id=' . $asset->getId() . '&treepreview=true'. $suffix;
         } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
-            return '/admin/asset/get-document-thumbnail?id=' . $asset->getId() . '&treepreview=true';
+            return '/admin/asset/get-document-thumbnail?id=' . $asset->getId() . '&treepreview=true' . $suffix;
         }
 
         return null;
@@ -928,6 +944,21 @@ class AssetController extends ElementControllerBase implements EventedController
 
                     if ($request->get('data')) {
                         $asset->setData($request->get('data'));
+                    }
+
+                    // image specific data
+                    if ($asset instanceof Asset\Image) {
+                        if ($request->get('image')) {
+                            $imageData = $this->decodeJson($request->get('image'));
+                            if (isset($imageData['focalPoint'])) {
+                                $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
+                                $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
+                            }
+                        } else {
+                            // wipe all data
+                            $asset->removeCustomSetting('focalPointX');
+                            $asset->removeCustomSetting('focalPointY');
+                        }
                     }
 
                     $asset->setUserModification($this->getAdminUser()->getId());
@@ -1177,7 +1208,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         if ($request->get('cropPercent')) {
@@ -1233,7 +1264,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $thumbnail = array_merge($request->request->all(), $request->query->all());
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         $time = null;
@@ -1292,7 +1323,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         $page = 1;
@@ -1520,7 +1551,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'id' => $asset->getId(),
                         'type' => $asset->getType(),
                         'filename' => $asset->getFilename(),
-                        'filenameDisplay' => $filenameDisplay,
+                        'filenameDisplay' => htmlspecialchars($filenameDisplay),
                         'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true',
                         'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
                     ];

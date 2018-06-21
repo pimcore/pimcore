@@ -25,9 +25,15 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         this.fieldConfig = fieldConfig;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var className = classStore.getById(fieldConfig.allowedClassId);
+        var classIdx = classStore.findExact("text", fieldConfig.allowedClassId);
+        var classNameText;
+        if (classIdx >= 0) {
+            var classRecord = classStore.getAt(classIdx);
+            classNameText = classRecord.data.text;
+        } else {
+            classNameText = "";
+        }
 
-        var classNameText = className ? className.data.text : '';
         this.fieldConfig.classes = [{classes: classNameText, id: fieldConfig.allowedClassId}];
 
         if (data) {
@@ -493,11 +499,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var classname = data.className;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var classId = classStore.getAt(classStore.findExact("text", classname));
+        var classRecord = classStore.getAt(classStore.findExact("text", classname));
         var isAllowedClass = false;
 
-        if (classId) {
-            if (this.fieldConfig.allowedClassId == classId.id) {
+        if (classRecord) {
+            if (this.fieldConfig.allowedClassId == classRecord.data.text) {
                 isAllowedClass = true;
             }
         }

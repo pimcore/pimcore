@@ -498,16 +498,19 @@ Ext.onReady(function () {
                             {
                                 region: 'west',
                                 id: 'pimcore_panel_tree_left',
+                                cls: 'pimcore_main_accordion',
                                 split: true,
                                 width: 300,
                                 minSize: 175,
                                 collapsible: true,
                                 collapseMode: 'header',
+                                hideCollapseTool: true,
                                 animCollapse: false,
-                                layout: 'accordion',
-                                layoutConfig: {
-                                    animate: false
+                                layout: {
+                                    type: 'accordion',
+                                    hideCollapseTool: true
                                 },
+                                header: false,
                                 hidden: true,
                                 forceLayout: true,
                                 hideMode: "offsets",
@@ -538,16 +541,18 @@ Ext.onReady(function () {
                         {
                             region: 'east',
                             id: 'pimcore_panel_tree_right',
-                            cls: "pimcore_panel_tree",
+                            cls: "pimcore_main_accordion",
                             split: true,
                             width: 300,
                             minSize: 175,
                             collapsible: true,
                             collapseMode: 'header',
                             collapsed: false,
+                            hideCollapseTool: true,
                             animCollapse: false,
                             layout: 'accordion',
                             hidden: true,
+                            header: false,
                             layoutConfig: {
                                 animate: false
                             },
@@ -583,6 +588,16 @@ Ext.onReady(function () {
 
                     el.getEl().dom.addEventListener("dragenter", fn, true);
                     el.getEl().dom.addEventListener("dragover", fn, true);
+
+                    // open "My Profile" when clicking on avatar
+                    Ext.get("pimcore_avatar").on("click", function (ev) {
+                        try {
+                            pimcore.globalmanager.get("profile").activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
+                        }
+                    });
                 }
             }
         });
@@ -704,6 +719,19 @@ Ext.onReady(function () {
     pimcore.layout.treepanelmanager.startup();
 
     pimcore.helpers.registerKeyBindings(document);
+
+
+    if(pimcore.settings.twoFactorSetupRequired) {
+        Ext.Msg.show({
+            title: t('setup_two_factor'),
+            message: t('2fa_setup_message'),
+            buttons: Ext.Msg.OK,
+            icon: Ext.Msg.INFO,
+            fn: function(btn) {
+                pimcore.settings.profile.twoFactorSettings.prototype.openSetupWindow();
+            }
+        });
+    }
 });
 
 

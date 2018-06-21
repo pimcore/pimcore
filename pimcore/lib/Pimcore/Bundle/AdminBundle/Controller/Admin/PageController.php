@@ -304,6 +304,12 @@ class PageController extends DocumentControllerBase
                     $im->scaleByWidth(400);
                     $im->save($file, 'jpeg', 85);
 
+                    // HDPi version
+                    $im = \Pimcore\Image::getInstance();
+                    $im->load($tmpFile);
+                    $im->scaleByWidth(800);
+                    $im->save($doc->getPreviewImageFilesystemPath(true), 'jpeg', 85);
+
                     unlink($tmpFile);
 
                     $success = true;
@@ -327,7 +333,7 @@ class PageController extends DocumentControllerBase
     {
         $document = Document::getById($request->get('id'));
         if ($document instanceof Document\Page) {
-            return new BinaryFileResponse($document->getPreviewImageFilesystemPath(), 200, ['Content-Type' => 'image/jpg']);
+            return new BinaryFileResponse($document->getPreviewImageFilesystemPath((bool) $request->get('hdpi')), 200, ['Content-Type' => 'image/jpg']);
         }
     }
 

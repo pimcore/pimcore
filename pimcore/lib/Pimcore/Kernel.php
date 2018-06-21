@@ -27,6 +27,7 @@ use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Presta\SitemapBundle\PrestaSitemapBundle;
+use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -250,12 +251,9 @@ abstract class Kernel extends SymfonyKernel
             new SwiftmailerBundle(),
             new DoctrineBundle(),
             new SensioFrameworkExtraBundle(),
-
-            // CMF bundles
             new CmfRoutingBundle(),
-
-            // Sitemaps
-            new PrestaSitemapBundle()
+            new PrestaSitemapBundle(),
+            new SchebTwoFactorBundle()
         ], 100);
 
         // pimcore bundles

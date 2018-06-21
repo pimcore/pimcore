@@ -73,6 +73,11 @@ abstract class AbstractElementController extends AbstractRestController
 
         $connection = $this->get('database_connection');
         $qb = $connection->createQueryBuilder();
+
+        array_walk($idList, function (&$item) use ($connection) {
+            $item = $connection->quote($item);
+        });
+
         $qb
             ->select($col)
             ->from($table)

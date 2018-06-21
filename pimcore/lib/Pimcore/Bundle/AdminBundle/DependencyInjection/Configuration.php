@@ -36,6 +36,16 @@ class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildAsstsNode());
         $rootNode->append($this->buildDocumentsNode());
 
+        $rootNode->children()
+            ->arrayNode('csrf_protection')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('excluded_routes')
+                ->prototype('scalar')->end()
+            ->end()
+            ->end()
+        ;
+
         return $treeBuilder;
     }
 

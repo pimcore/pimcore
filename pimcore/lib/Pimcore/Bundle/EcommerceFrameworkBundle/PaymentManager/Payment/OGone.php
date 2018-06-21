@@ -256,7 +256,7 @@ class OGone extends AbstractPayment
             'amount'            => $amount,
             'currency'          => $currency,
             'ip'                => $ip,
-            'customerName' >= $customerName
+            'customerName'      => $customerName
         ]);
 
         $responseStatus = new Status(

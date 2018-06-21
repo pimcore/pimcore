@@ -87,6 +87,7 @@ pimcore.element.replace_assignments = Class.create({
                                             name: "path",
                                             itemId: "path",
                                             width: 650,
+                                            renderer: Ext.util.Format.htmlEncode,
                                             listeners: {
                                                 "render": function (el) {
                                                     new Ext.dd.DropZone(el.getEl(), {

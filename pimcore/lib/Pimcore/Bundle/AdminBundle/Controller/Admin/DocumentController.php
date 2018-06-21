@@ -141,6 +141,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
+        //Hook for modifying return value - e.g. for changing permissions based on document data
+        $event = new GenericEvent($this, [
+            'documents' => $documents,
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $documents = $event->getArgument('documents');
+
         if ($allParams['limit']) {
             return $this->adminJson([
                 'offset' => $offset,
@@ -1095,6 +1102,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
             // only if the thumbnail exists and isn't out of time
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
                 $tmpDocument['thumbnail'] = $this->generateUrl('pimcore_admin_page_display_preview_image', ['id' => $childDocument->getId()]);
+                $thumbnailFileHdpi = $childDocument->getPreviewImageFilesystemPath(true);
+                if (file_exists($thumbnailFileHdpi)) {
+                    $tmpDocument['thumbnailHdpi'] = $this->generateUrl('pimcore_admin_page_display_preview_image',
+                        ['id' => $childDocument->getId(), 'hdpi' => true]);
+                }
             }
         }
 
@@ -1323,6 +1335,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         if ($sourceDocument && $targetDocument) {
             $service = new Document\Service;
+            if ($service->getTranslationSourceId($targetDocument) != $targetDocument->getId()) {
+                throw new \Exception('Target Document already linked to Source Document ID('.$service->getTranslationSourceId($targetDocument).'). Please unlink existing relation first.');
+            }
             $service->addTranslation($sourceDocument, $targetDocument);
         }
 

@@ -77,7 +77,7 @@
     "neitanod/forceutf8": "~2",
     "nesbot/carbon": "~1",
     "ocramius/package-versions": "1.2.0",
-    "ocramius/proxy-manager": "2.0.*",
+    "ocramius/proxy-manager": "2.1.*",
     "oyejorge/less.php": "~1.7",
     "pear/net_url2": "~2.2",
     "phive/twig-extensions-deferred": "^2.0",
@@ -105,7 +105,8 @@
     "wikimedia/composer-merge-plugin": "^1.4",
     "zendframework/zend-code": "~3.1.0",
     "zendframework/zend-paginator": "^2.7",
-    "zendframework/zend-servicemanager": "^3.2"
+    "zendframework/zend-servicemanager": "^3.2",
+    "scheb/two-factor-bundle": "~3.0"
   },
   "require-dev": {
     "cache/integration-tests": "^0.15.0",
