@@ -26,6 +26,32 @@ use Pimcore\Model\Element;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+
+    /**
+     * Loads the relations for the given sourceId and type
+     *
+     * @param int $id
+     * @param string $type
+     */
+    public function getBySourceId($id = null, $type = null)
+    {
+        if ($id && $type) {
+            $this->model->setSourceId($id);
+            $this->model->setSourceType($id);
+        }
+
+        // requires
+        $data = $this->db->fetchAll('SELECT * FROM dependencies WHERE sourceid = ? AND sourcetype = ?', [$this->model->getSourceId(), $this->model->getSourceType()]);
+
+        if (is_array($data) && count($data) > 0) {
+            foreach ($data as $d) {
+                $this->model->addRequirement($d['targetid'], $d['targettype']);
+            }
+        }
+
+    }
+
+
     /**
      * Clear all relations in the database
      *
@@ -84,36 +110,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-
-    /**
-     * Loads the relations which are required for the given source object
-     *
-     * @param int $offset
-     * @param int $limit
-     */
-    public function getRequires($offset = null, $limit = null)
-    {
-        $query = 'SELECT * FROM dependencies WHERE sourceid = ? AND sourcetype = ?';
-
-        if ($offset !== null & $limit !== null) {
-            $query = sprintf($query.' LIMIT %d,%d', $offset, $limit);
-        }
-
-        $data = $this->db->fetchAll($query,[$this->model->getSourceId(),$this->model->getSourceType()]);
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $d) {
-                $this->model->addRequirement($d['targetid'], $d['targettype']);
-            }
-        }
-
-        //get total count of requires records
-        $requiresCount = (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE sourceid = ? AND sourcetype = ?', [$this->model->getSourceId(),$this->model->getSourceType()]);
-
-        $this->model->requiresTotalCount = $requiresCount;
-    }
-
-
     /**
      * Loads the relations that need the given source object
      *
@@ -130,18 +126,27 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchAll($query, [$this->model->getSourceId(), $this->model->getSourceType()]);
 
+        $requiredBy = [];
+
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
-                $this->model->requiredBy[] = [
+                $requiredBy[] = [
                     'id' => $d['sourceid'],
                     'type' => $d['sourcetype']
                 ];
             }
         }
 
-        //get total count of required by records
-        $requiredByCount = (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(),$this->model->getSourceType()]);
+        return $requiredBy;
 
-        $this->model->requiredByTotalCount = $requiredByCount;
+    }
+
+    /**
+     * get total count of required by records
+     *
+     * @return int
+     */
+    public function getRequiredByTotalCount() {
+        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(),$this->model->getSourceType()]);
     }
 }

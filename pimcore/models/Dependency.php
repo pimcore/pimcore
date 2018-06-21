@@ -39,30 +39,10 @@ class Dependency extends AbstractModel
     /**
      * Contains the ID/type of objects which are required for the given source object (sourceId/sourceType)
      *
-     * @var int
+     * @var array
      */
     public $requires = [];
 
-    /**
-     * Contains the ID/type of objects that need the given source object (sourceId/sourceType)
-     *
-     * @var int
-     */
-    public $requiredBy = [];
-
-    /**
-     * Total count of objects which are required for the given source object (sourceId/sourceType)
-     *
-     * @var int
-     */
-    public $requiresTotalCount;
-
-    /**
-     * Total count of objects that need the given source object (sourceId/sourceType)
-     *
-     * @var int
-     */
-    public $requiredByTotalCount;
 
     /**
      * Static helper to get the dependencies for the given sourceId & type
@@ -75,8 +55,7 @@ class Dependency extends AbstractModel
     public static function getBySourceId($id, $type)
     {
         $d = new self();
-        $d->setSourceId($id);
-        $d->setSourceType($type);
+        $d->getDao()->getBySourceId($id, $type);
 
         return $d;
     }
@@ -121,23 +100,23 @@ class Dependency extends AbstractModel
     }
 
     /**
+     * @param null $offset
+     * @param null $limit
      * @return array
      */
     public function getRequires($offset = null, $limit = null)
     {
-        $this->getDao()->getRequires($offset, $limit);
-
-        return $this->requires;
+        return array_slice($this->requires, $offset, $limit);
     }
 
     /**
+     * @param null $offset
+     * @param null $limit
      * @return array
      */
     public function getRequiredBy($offset = null, $limit = null)
     {
-        $this->getDao()->getRequiredBy($offset, $limit);
-        
-        return $this->requiredBy;
+        return $this->getDao()->getRequiredBy($offset, $limit);
     }
 
     /**
@@ -202,39 +181,16 @@ class Dependency extends AbstractModel
      */
     public function getRequiresTotalCount()
     {
-        return $this->requiresTotalCount;
+        return count($this->requires);
     }
 
-    /**
-     * @param int $requiresTotalCount
-     *
-     * @return $this
-     */
-    public function setRequiresTotalCount($requiresTotalCount)
-    {
-        $this->requiresTotalCount = $requiresTotalCount;
-
-        return $this;
-    }
 
     /**
      * @return int
      */
     public function getRequiredByTotalCount()
     {
-        return $this->requiredByTotalCount;
-    }
-
-    /**
-     * @param int $requiresTotalCount
-     *
-     * @return $this
-     */
-    public function setRequiredByTotalCount($requiredByTotalCount)
-    {
-        $this->requiredByTotalCount = $requiredByTotalCount;
-
-        return $this;
+        return $this->getDao()->getRequiredByTotalCount();
     }
 
     /**
@@ -244,7 +200,7 @@ class Dependency extends AbstractModel
      */
     public function isRequired()
     {
-        if (is_array($this->getRequires(0,1)) && count($this->getRequires(0,1)) > 0) {
+        if (is_array($this->getRequires()) && $this->getRequiresTotalCount() > 0) {
             return true;
         }
 
