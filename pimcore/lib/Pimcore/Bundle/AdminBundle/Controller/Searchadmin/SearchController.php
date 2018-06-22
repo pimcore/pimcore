@@ -55,14 +55,7 @@ class SearchController extends AdminController
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
-        $query = $allParams['query'];
-        if ($query == '*') {
-            $query = '';
-        }
-
-        $query = str_replace('%', '*', $query);
-        $query = str_replace('@', '#', $query);
-        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
+        $query = $this->filterQueryParam($allParams['query']);
 
         $types = explode(',', $allParams['type']);
         $subtypes = explode(',', $allParams['subtype']);
@@ -382,6 +375,28 @@ class SearchController extends AdminController
     }
 
     /**
+     * @param string $query
+     * @return string
+     */
+    protected function filterQueryParam(string $query) {
+
+        if ($query == '*') {
+            $query = '';
+        }
+
+        $query = str_replace('%', '*', $query);
+        $query = str_replace('@', '#', $query);
+        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
+
+        $query = str_replace(['<','>','(',')','~'], ' ', $query);
+
+        // it is not allowed to have * behind another *
+        $query = preg_replace ('#[*]+#', '*', $query);
+
+        return $query;
+    }
+
+    /**
      * @Route("/quicksearch")
      *
      * @param Request $request
@@ -390,7 +405,10 @@ class SearchController extends AdminController
      */
     public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $query = $request->get('query') . '*';
+        $query = $this->filterQueryParam($request->get('query'));
+        if(strpos($query, '*') === false) {
+            $query = $query . '*';
+        }
         $db = \Pimcore\Db::get();
         $searcherList = new Data\Listing();
 
