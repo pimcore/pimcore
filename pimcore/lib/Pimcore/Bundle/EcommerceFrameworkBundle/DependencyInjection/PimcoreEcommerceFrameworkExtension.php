@@ -374,7 +374,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             if (!empty($profileConfig)) {
                 $provider->setArgument('$options', $profileConfig);
             }
-            $provider->addMethodCall("setConfigurationKey", [$name]);
+            $provider->addMethodCall('setConfigurationKey', [$name]);
 
             $serviceId = sprintf('pimcore_ecommerce.payment_manager.provider.%s', $name);
             $container->setDefinition($serviceId, $provider);

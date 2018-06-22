@@ -317,10 +317,11 @@ class SearchController extends AdminController
 
     /**
      * @param array $types
+     *
      * @return array
      */
-    protected function getForbiddenCondition($types = ['assets','documents','objects']) {
-
+    protected function getForbiddenCondition($types = ['assets', 'documents', 'objects'])
+    {
         $user = $this->getAdminUser();
         $db = \Pimcore\Db::get();
 
@@ -376,10 +377,11 @@ class SearchController extends AdminController
 
     /**
      * @param string $query
+     *
      * @return string
      */
-    protected function filterQueryParam(string $query) {
-
+    protected function filterQueryParam(string $query)
+    {
         if ($query == '*') {
             $query = '';
         }
@@ -388,10 +390,10 @@ class SearchController extends AdminController
         $query = str_replace('@', '#', $query);
         $query = preg_replace("@([^ ])\-@", '$1 ', $query);
 
-        $query = str_replace(['<','>','(',')','~'], ' ', $query);
+        $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
 
         // it is not allowed to have * behind another *
-        $query = preg_replace ('#[*]+#', '*', $query);
+        $query = preg_replace('#[*]+#', '*', $query);
 
         return $query;
     }
@@ -406,7 +408,7 @@ class SearchController extends AdminController
     public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $query = $this->filterQueryParam($request->get('query'));
-        if(strpos($query, '*') === false) {
+        if (strpos($query, '*') === false) {
             $query = $query . '*';
         }
         $db = \Pimcore\Db::get();
@@ -446,10 +448,10 @@ class SearchController extends AdminController
                     'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
                     'fullpath' => htmlspecialchars($element->getFullPath()),
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getFullPath())),
-                    'iconCls' => "pimcore_icon_asset_default"
+                    'iconCls' => 'pimcore_icon_asset_default'
                 ];
 
-                if($element instanceof Asset) {
+                if ($element instanceof Asset) {
                     $data['iconCls'] .= ' pimcore_icon_' . \Pimcore\File::getFileExtension($element->getFilename());
                 } else {
                     $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
@@ -472,27 +474,30 @@ class SearchController extends AdminController
         $elements = $afterListLoadEvent->getArgument('list');
 
         $result = ['data' => $elements, 'success' => true];
+
         return $this->adminJson($result);
     }
 
     /**
      * @param $path
+     *
      * @return string
      */
-    protected function shortenPath($path) {
+    protected function shortenPath($path)
+    {
         $parts = explode('/', trim($path, '/'));
-        $count = count($parts)-1;
+        $count = count($parts) - 1;
 
-        for($i=$count; $i>=0; $i--) {
+        for ($i=$count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
-            if(strlen($shortPath) <= 50 || $i===0) {
+            if (strlen($shortPath) <= 50 || $i === 0) {
                 break;
             }
-            array_splice($parts, $i-1, 1, '...');
+            array_splice($parts, $i - 1, 1, '...');
         }
 
-        if(strlen($shortPath) > 50) {
-            $shortPath = substr($shortPath, 0, 47) . "...";
+        if (strlen($shortPath) > 50) {
+            $shortPath = substr($shortPath, 0, 47) . '...';
         }
 
         return $shortPath;

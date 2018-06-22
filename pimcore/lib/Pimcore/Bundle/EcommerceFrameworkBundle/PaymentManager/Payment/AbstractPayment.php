@@ -88,5 +88,4 @@ abstract class AbstractPayment implements IPayment
     {
         $this->configurationKey = $configurationKey;
     }
-
 }

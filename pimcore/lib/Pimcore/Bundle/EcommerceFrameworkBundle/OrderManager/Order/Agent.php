@@ -259,7 +259,7 @@ class Agent implements IOrderAgent
                     /* @var \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData $providerData */
 
                     // get provider data
-                    if(method_exists($providerData, "getConfigurationKey") && $providerData->getConfigurationKey()) {
+                    if (method_exists($providerData, 'getConfigurationKey') && $providerData->getConfigurationKey()) {
                         $name = $providerData->getConfigurationKey();
                     } else {
                         $name = strtolower(str_replace(Agent::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
@@ -327,7 +327,7 @@ class Agent implements IOrderAgent
             $providerData->setPaymentFinished(new \DateTime());
         }
 
-        if(method_exists($providerData, 'setConfigurationKey')) {
+        if (method_exists($providerData, 'setConfigurationKey')) {
             $providerData->setConfigurationKey($paymentProvider->getConfigurationKey());
         }
 
