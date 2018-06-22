@@ -1030,6 +1030,18 @@ pimcore.layout.toolbar = Class.create({
 
         if (perspectiveCfg.inToolbar("search")) {
             var searchItems = [];
+
+            if ((user.isAllowed("documents") || user.isAllowed("asset") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
+                searchItems.push({
+                    text: t("quicksearch"),
+                    iconCls: "pimcore_icon_search",
+                    handler: function () {
+                        pimcore.helpers.showQuickSearch();
+                    }
+                });
+                searchItems.push('-');
+            }
+
             var searchAction = function (type) {
                 pimcore.helpers.itemselector(false, function (selection) {
                         pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);

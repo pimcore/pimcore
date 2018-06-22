@@ -325,4 +325,32 @@ final class AdminEvents
      * @var string
      */
     const CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA = 'pimcore.admin.class.objectbrickList.preSendData';
+
+    /**
+     * Allows you to modify the search backend list before it is loaded.
+     *
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
+     * Arguments:
+     *  - list | the search backend list
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const QUICKSEARCH_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.quickSearch.list.beforeListLoad';
+
+    /**
+     * Allows you to modify the the result after the list was loaded.
+     *
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
+     * Arguments:
+     *  - list | raw result as an array
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const QUICKSEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.quickSearch.list.afterListLoad';
 }

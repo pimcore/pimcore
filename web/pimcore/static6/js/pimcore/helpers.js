@@ -3431,5 +3431,29 @@ pimcore.helpers.keyBindingMapping = {
     "clearDataCache": pimcore.helpers.clearDataCache
 };
 
+pimcore.helpers.showQuickSearch = function () {
 
+    // close all windows
+    // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
+    Ext.WindowManager.each(function (win) {
+        win.close();
+    });
 
+    var quicksearchContainer = Ext.get('pimcore_quicksearch');
+    quicksearchContainer.show();
+    quicksearchContainer.removeCls('filled');
+
+    var combo = Ext.getCmp('quickSearchCombo');
+    combo.reset();
+    combo.focus();
+
+    Ext.get('pimcore_body').addCls('blurry');
+    Ext.get('pimcore_sidebar').addCls('blurry');
+};
+
+pimcore.helpers.hideQuickSearch = function () {
+    var quicksearchContainer = Ext.get('pimcore_quicksearch');
+    quicksearchContainer.hide();
+    Ext.get('pimcore_body').removeCls('blurry');
+    Ext.get('pimcore_sidebar').removeCls('blurry');
+};
