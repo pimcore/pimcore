@@ -17,6 +17,12 @@ The look & feel of the areablock toolbar and inline controls have changed.
 The config option `areablock_toolbar` on areablocks has now [less flags](https://github.com/pimcore/pimcore/blob/0e5d8de0c3ac0829d4e85b6360b9dc409b45d108/pimcore/models/Document/Tag/Areablock.php#L264) to customize the toolbar and 
 a the new option `controlsAlign` was introduced. 
 
+#### Build 267 (2018-06-22)
+To the PaymentProvider* object bricks the (optional) input field `configurationKey` was added. Since it is optional, this is 
+not added to existing object bricks. If issue [#2908](https://github.com/pimcore/pimcore/issues/2908) is a problem for you,
+you need to add `configurationKey` manually to your PaymentProvider object bricks. 
+
+
 
 
 ## Version 5.2.3

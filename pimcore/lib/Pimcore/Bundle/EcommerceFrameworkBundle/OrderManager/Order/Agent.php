@@ -256,10 +256,14 @@ class Agent implements IOrderAgent
             foreach ($order->getPaymentProvider()->getBrickGetters() as $method) {
                 $providerData = $order->getPaymentProvider()->{$method}();
                 if ($providerData) {
-                    /* @var \Pimcore\Model\DataObject\Objectbrick\Data\PaymentAuthorizedQpay $providerData */
+                    /* @var \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData $providerData */
 
                     // get provider data
-                    $name = strtolower(str_replace(Agent::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
+                    if(method_exists($providerData, "getConfigurationKey") && $providerData->getConfigurationKey()) {
+                        $name = $providerData->getConfigurationKey();
+                    } else {
+                        $name = strtolower(str_replace(Agent::PAYMENT_PROVIDER_BRICK_PREFIX, '', $providerData->getType()));
+                    }
                     $authorizedData = [];
                     foreach ($providerData->getObjectVars() as $field => $value) {
                         if (preg_match('#^auth_(?<name>\w+)$#i', $field, $match)) {
@@ -321,6 +325,10 @@ class Agent implements IOrderAgent
 
         if (method_exists($providerData, 'setPaymentFinished')) {
             $providerData->setPaymentFinished(new \DateTime());
+        }
+
+        if(method_exists($providerData, 'setConfigurationKey')) {
+            $providerData->setConfigurationKey($paymentProvider->getConfigurationKey());
         }
 
         /* recurring payment data */

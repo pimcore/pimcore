@@ -27,6 +27,11 @@ abstract class AbstractPayment implements IPayment
     protected $recurringPaymentEnabled;
 
     /**
+     * @var string
+     */
+    protected $configurationKey;
+
+    /**
      * @param array $options
      */
     protected function processOptions(array $options)
@@ -67,4 +72,21 @@ abstract class AbstractPayment implements IPayment
     {
         throw new NotImplementedException('getRecurringPaymentDataProperties not implemented for ' . get_class($this));
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConfigurationKey()
+    {
+        return $this->configurationKey;
+    }
+
+    /**
+     * @param string $configurationKey
+     */
+    public function setConfigurationKey(string $configurationKey)
+    {
+        $this->configurationKey = $configurationKey;
+    }
+
 }

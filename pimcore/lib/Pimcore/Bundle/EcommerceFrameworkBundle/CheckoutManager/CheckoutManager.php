@@ -351,7 +351,7 @@ class CheckoutManager implements ICheckoutManager
         /* @var Agent $targetOrderAgent */
         $targetOrderAgent = $orderManager->createOrderAgent($targetOrder);
 
-        $targetOrderAgent->setPaymentProvider($paymentProvider);
+        $targetOrderAgent->setPaymentProvider($paymentProvider, $sourceOrder);
         $price = new Price(
             Decimal::create($targetOrder->getTotalPrice(), 2),
             $sourceOrderAgent->getCurrency()
