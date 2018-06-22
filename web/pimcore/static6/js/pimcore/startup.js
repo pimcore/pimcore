@@ -732,6 +732,124 @@ Ext.onReady(function () {
             }
         });
     }
+
+    // Quick Search
+    var quickSearchTimeout = null;
+    var quicksearchMap = new Ext.util.KeyMap({
+        target: document,
+        binding: [{
+            key:  Ext.event.Event.ESC,
+            fn: function () {
+                pimcore.helpers.hideQuickSearch();
+            }
+        }, {
+            key: Ext.event.Event.CTRL,
+            fn: function () {
+                // press 2x CTRL within 200ms
+                if(quickSearchTimeout) {
+                    pimcore.helpers.showQuickSearch();
+                } else {
+                    quickSearchTimeout = window.setTimeout(function () {
+                        if (quickSearchTimeout) {
+                            window.clearTimeout(quickSearchTimeout);
+                            quickSearchTimeout = null;
+                        }
+                    }, 200);
+                }
+            }
+        }]
+    });
+
+    var quicksearchStore = new Ext.data.Store({
+        proxy: {
+            type: 'ajax',
+            url: '/admin/search/search/quicksearch',
+            reader: {
+                type: 'json',
+                rootProperty: 'data'
+            }
+        },
+        listeners: {
+            "beforeload": function () {
+                var previewEl = Ext.get('pimcore_quicksearch_preview');
+                if(previewEl) {
+                    previewEl.setHtml('');
+                }
+            }
+        },
+        fields: ["id", 'type', "subtype", "className", "fullpath"]
+    });
+
+    var quickSearchTpl = new Ext.XTemplate(
+        '<tpl for=".">',
+            '<li role="option" unselectable="on" class="x-boundlist-item">' +
+                '<div class="list-icon {iconCls}"></div>' +
+                '<div class="list-path" title="{fullpath}">{fullpathList}</div>' +
+            '</li>',
+        '</tpl>'
+    );
+
+    var quicksearchContainer = Ext.get('pimcore_quicksearch');
+    var quickSearchCombo = Ext.create('Ext.form.ComboBox', {
+        width: 900,
+        hideTrigger: true,
+        border: false,
+        shadow: false,
+        tpl: quickSearchTpl,
+        listConfig: {
+            shadow: false,
+            border: false,
+            cls: 'pimcore_quicksearch_picker',
+            navigationModel: 'quicksearch.boundlist',
+            listeners: {
+                "highlightitem": function (view, node, opts) {
+                    var record = quicksearchStore.getAt(node.dataset.recordindex);
+                    var previewHtml = record.get('preview');
+                    if(!previewHtml) {
+                        previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';
+                    }
+
+                    Ext.get('pimcore_quicksearch_preview').setHtml(previewHtml);
+                }
+            }
+        },
+        id: 'quickSearchCombo',
+        store: quicksearchStore,
+        loadingText: t('searching'),
+        queryDelay: 100,
+        minChars: 4,
+        renderTo: quicksearchContainer,
+        enableKeyEvents: true,
+        displayField: 'fullpath',
+        valueField: "id",
+        typeAhead: true,
+        listeners: {
+            "expand": function (combo) {
+                if(!document.getElementById('pimcore_quicksearch_preview')) {
+                    combo.getPicker().getEl().insertHtml('beforeEnd', '<div id="pimcore_quicksearch_preview"></div>');
+                }
+            },
+            "keyup": function (field) {
+                if(field.getValue()) {
+                    quicksearchContainer.addCls('filled');
+                }
+            },
+            "select": function (combo, record, index) {
+                pimcore.helpers.openElement(record.get('id'), record.get('type'), record.get('subtype'));
+                pimcore.helpers.hideQuickSearch();
+            }
+        }
+    });
+
+    Ext.getBody().on('click', function (event) {
+        // hide on click outside
+        if(!quicksearchContainer.isAncestor(event.target)) {
+            var pickerEl = quickSearchCombo.getPicker().getEl();
+            if(!pickerEl || !pickerEl.isAncestor(event.target)) {
+                pimcore.helpers.hideQuickSearch();
+            }
+        }
+    });
 });
 
 

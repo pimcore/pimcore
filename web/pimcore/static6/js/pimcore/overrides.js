@@ -944,3 +944,65 @@ Ext.override(Ext.picker.Date, {
         }
     }
 });
+
+
+/**
+ * A specialized {@link Ext.view.BoundListKeyNav} implementation for navigating in the quicksearch.
+ * This is needed because in the default implementation the Crtl+A combination is disabled, but this is needed
+ * for the purpose of the quicksearch
+ */
+Ext.define('Pimcore.view.BoundListKeyNav', {
+    extend: 'Ext.view.BoundListKeyNav',
+
+    alias: 'view.navigation.quicksearch.boundlist',
+
+    initKeyNav: function(view) {
+        var me = this,
+            field = view.pickerField;
+
+        // Add the regular KeyNav to the view.
+        // Unless it's already been done (we may have to defer a call until the field is rendered.
+        if (!me.keyNav) {
+            me.callParent([view]);
+
+            // Add ESC handling to the View's KeyMap to collapse the field
+            me.keyNav.map.addBinding({
+                key: Ext.event.Event.ESC,
+                fn: me.onKeyEsc,
+                scope: me
+            });
+        }
+
+        // BoundLists must be able to function standalone with no bound field
+        if (!field) {
+            return;
+        }
+
+        if (!field.rendered) {
+            field.on('render', Ext.Function.bind(me.initKeyNav, me, [view], 0), me, {single: true});
+            return;
+        }
+
+        // BoundListKeyNav also listens for key events from the field to which it is bound.
+        me.fieldKeyNav = new Ext.util.KeyNav({
+            disabled: true,
+            target: field.inputEl,
+            forceKeyDown: true,
+            up: me.onKeyUp,
+            down: me.onKeyDown,
+            right: me.onKeyRight,
+            left: me.onKeyLeft,
+            pageDown: me.onKeyPageDown,
+            pageUp: me.onKeyPageUp,
+            home: me.onKeyHome,
+            end: me.onKeyEnd,
+            tab: me.onKeyTab,
+            space: me.onKeySpace,
+            enter: me.onKeyEnter,
+            // This object has to get its key processing in first.
+            // Specifically, before any Editor's key hyandling.
+            priority: 1001,
+            scope: me
+        });
+    }
+});

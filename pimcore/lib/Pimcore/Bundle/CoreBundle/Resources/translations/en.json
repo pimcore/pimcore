@@ -1,4 +1,5 @@
 {
+  "quicksearch": "Quick Search (press 2x Ctrl)",
   "grid_options": "Grid Options",
   "admin_interface": "Admin Interface",
   "login_screen": "Login Screen",
@@ -1893,6 +1894,7 @@
   "keybinding_roles": "Roles",
   "keybinding_clearAllCaches": "Clear all Caches",
   "keybinding_clearDataCache": "Clear Data Cache",
+  "keybinding_quickSearch": "Quick Search",
   "please_dont_forget_to_reload_pimcore": "<b>Please don't forget to reload pimcore after your modification!</b>",
   "2fa_disable": "Disable 2FA",
   "2fa_required": "Two Factor Authentication required",
