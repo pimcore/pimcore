@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         if ($id && $type) {
             $this->model->setSourceId($id);
-            $this->model->setSourceType($id);
+            $this->model->setSourceType($type);
         }
 
         // requires
