@@ -26,7 +26,6 @@ use Pimcore\Model\Element;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     /**
      * Loads the relations for the given sourceId and type
      *
@@ -48,9 +47,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->model->addRequirement($d['targetid'], $d['targettype']);
             }
         }
-
     }
-
 
     /**
      * Clear all relations in the database
@@ -138,7 +135,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         return $requiredBy;
-
     }
 
     /**
@@ -146,7 +142,8 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return int
      */
-    public function getRequiredByTotalCount() {
-        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(),$this->model->getSourceType()]);
+    public function getRequiredByTotalCount()
+    {
+        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(), $this->model->getSourceType()]);
     }
 }

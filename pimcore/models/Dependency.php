@@ -43,7 +43,6 @@ class Dependency extends AbstractModel
      */
     public $requires = [];
 
-
     /**
      * Static helper to get the dependencies for the given sourceId & type
      *
@@ -102,6 +101,7 @@ class Dependency extends AbstractModel
     /**
      * @param null $offset
      * @param null $limit
+     *
      * @return array
      */
     public function getRequires($offset = null, $limit = null)
@@ -112,6 +112,7 @@ class Dependency extends AbstractModel
     /**
      * @param null $offset
      * @param null $limit
+     *
      * @return array
      */
     public function getRequiredBy($offset = null, $limit = null)
@@ -175,7 +176,6 @@ class Dependency extends AbstractModel
         return $this;
     }
 
-
     /**
      * @return int
      */
@@ -183,7 +183,6 @@ class Dependency extends AbstractModel
     {
         return count($this->requires);
     }
-
 
     /**
      * @return int

@@ -166,7 +166,7 @@ class Service extends Model\AbstractModel
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requires'] = [];
-        
+
         // requires
         foreach ($d->getRequires($offset, $limit) as $r) {
             if ($e = self::getDependedElement($r)) {
