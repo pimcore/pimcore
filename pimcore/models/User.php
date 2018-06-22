@@ -964,8 +964,13 @@ class User extends User\UserRole
                         'action' => 'clearDataCache',
                         'key' => ord('C'),
                         'alt' => true
+                    ],
+                    [
+                        'action' => 'quickSearch',
+                        'key' => ord('F'),
+                        'ctrl' => true,
+                        'shift' => true
                     ]
-
                 ]);
     }
 

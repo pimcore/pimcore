@@ -3393,8 +3393,36 @@ pimcore.helpers.clearDataCache = function() {
     }
 };
 
-pimcore.helpers.keyBindingMapping = {
+pimcore.helpers.showQuickSearch = function () {
 
+    // close all windows
+    // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
+    Ext.WindowManager.each(function (win) {
+        win.close();
+    });
+
+    var quicksearchContainer = Ext.get('pimcore_quicksearch');
+    quicksearchContainer.show();
+    quicksearchContainer.removeCls('filled');
+
+    var combo = Ext.getCmp('quickSearchCombo');
+    combo.reset();
+    combo.focus();
+
+    Ext.get('pimcore_body').addCls('blurry');
+    Ext.get('pimcore_sidebar').addCls('blurry');
+};
+
+pimcore.helpers.hideQuickSearch = function () {
+    var quicksearchContainer = Ext.get('pimcore_quicksearch');
+    quicksearchContainer.hide();
+    Ext.get('pimcore_body').removeCls('blurry');
+    Ext.get('pimcore_sidebar').removeCls('blurry');
+};
+
+
+// HAS TO BE THE VERY LAST ENTRY !!!
+pimcore.helpers.keyBindingMapping = {
     "save": pimcore.helpers.handleCtrlS,
     "publish": pimcore.helpers.togglePublish.bind(this, true),
     "unpublish": pimcore.helpers.togglePublish.bind(this, false),
@@ -3428,32 +3456,6 @@ pimcore.helpers.keyBindingMapping = {
     "users": pimcore.helpers.users,
     "roles": pimcore.helpers.roles,
     "clearAllCaches": pimcore.helpers.clearAllCaches,
-    "clearDataCache": pimcore.helpers.clearDataCache
-};
-
-pimcore.helpers.showQuickSearch = function () {
-
-    // close all windows
-    // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
-    Ext.WindowManager.each(function (win) {
-        win.close();
-    });
-
-    var quicksearchContainer = Ext.get('pimcore_quicksearch');
-    quicksearchContainer.show();
-    quicksearchContainer.removeCls('filled');
-
-    var combo = Ext.getCmp('quickSearchCombo');
-    combo.reset();
-    combo.focus();
-
-    Ext.get('pimcore_body').addCls('blurry');
-    Ext.get('pimcore_sidebar').addCls('blurry');
-};
-
-pimcore.helpers.hideQuickSearch = function () {
-    var quicksearchContainer = Ext.get('pimcore_quicksearch');
-    quicksearchContainer.hide();
-    Ext.get('pimcore_body').removeCls('blurry');
-    Ext.get('pimcore_sidebar').removeCls('blurry');
+    "clearDataCache": pimcore.helpers.clearDataCache,
+    "quickSearch": pimcore.helpers.showQuickSearch
 };
