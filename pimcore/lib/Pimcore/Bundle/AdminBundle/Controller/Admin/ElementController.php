@@ -638,13 +638,21 @@ class ElementController extends AdminController
         $id = $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
+        $offset = $request->get('start');
+        $limit = $request->get('limit');
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
-            if ($element instanceof Model\Element\ElementInterface) {
-                $dependencies = Model\Element\Service::getRequiresDependenciesForFrontend($element->getDependencies());
+            $dependencies = $element->getDependencies();
 
-                return $this->adminJson($dependencies);
+            if ($element instanceof Model\Element\ElementInterface) {
+                $dependenciesResult = Model\Element\Service::getRequiresDependenciesForFrontend($dependencies, $offset, $limit);
+
+                $dependenciesResult['start'] = $offset;
+                $dependenciesResult['limit'] = $limit;
+                $dependenciesResult['total'] = $dependencies->getRequiresTotalCount();
+
+                return $this->adminJson($dependenciesResult);
             }
         }
 
@@ -663,13 +671,21 @@ class ElementController extends AdminController
         $id = $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
+        $offset = $request->get('start');
+        $limit = $request->get('limit');
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
-            if ($element instanceof Model\Element\ElementInterface) {
-                $dependencies = Model\Element\Service::getRequiredByDependenciesForFrontend($element->getDependencies());
+            $dependencies = $element->getDependencies();
 
-                return $this->adminJson($dependencies);
+            if ($element instanceof Model\Element\ElementInterface) {
+                $dependenciesResult = Model\Element\Service::getRequiredByDependenciesForFrontend($dependencies, $offset, $limit);
+
+                $dependenciesResult['start'] = $offset;
+                $dependenciesResult['limit'] = $limit;
+                $dependenciesResult['total'] = $dependencies->getRequiredByTotalCount();
+
+                return $this->adminJson($dependenciesResult);
             }
         }
 

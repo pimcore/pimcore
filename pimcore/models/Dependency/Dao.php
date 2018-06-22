@@ -26,6 +26,7 @@ use Pimcore\Model\Element;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+
     /**
      * Loads the relations for the given sourceId and type
      *
@@ -36,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         if ($id && $type) {
             $this->model->setSourceId($id);
-            $this->model->setSourceType($id);
+            $this->model->setSourceType($type);
         }
 
         // requires
@@ -48,18 +49,8 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        // required by
-        $data = $this->db->fetchAll('SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(), $this->model->getSourceType()]);
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $d) {
-                $this->model->requiredBy[] = [
-                    'id' => $d['sourceid'],
-                    'type' => $d['sourcetype']
-                ];
-            }
-        }
     }
+
 
     /**
      * Clear all relations in the database
@@ -117,5 +108,45 @@ class Dao extends Model\Dao\AbstractDao
                 ]);
             }
         }
+    }
+
+    /**
+     * Loads the relations that need the given source object
+     *
+     * @param int $offset
+     * @param int $limit
+     */
+    public function getRequiredBy($offset = null, $limit = null)
+    {
+        $query = 'SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?';
+
+        if ($offset !== null & $limit !== null) {
+            $query = sprintf($query.' LIMIT %d,%d', $offset, $limit);
+        }
+
+        $data = $this->db->fetchAll($query, [$this->model->getSourceId(), $this->model->getSourceType()]);
+
+        $requiredBy = [];
+
+        if (is_array($data) && count($data) > 0) {
+            foreach ($data as $d) {
+                $requiredBy[] = [
+                    'id' => $d['sourceid'],
+                    'type' => $d['sourcetype']
+                ];
+            }
+        }
+
+        return $requiredBy;
+
+    }
+
+    /**
+     * get total count of required by records
+     *
+     * @return int
+     */
+    public function getRequiredByTotalCount() {
+        return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targetid = ? AND targettype = ?', [$this->model->getSourceId(),$this->model->getSourceType()]);
     }
 }

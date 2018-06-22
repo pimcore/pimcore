@@ -138,13 +138,13 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function getRequiredByDependenciesForFrontend(Dependency $d)
+    public static function getRequiredByDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requiredBy'] = [];
 
         // requiredBy
-        foreach ($d->getRequiredBy() as $r) {
+        foreach ($d->getRequiredBy($offset, $limit) as $r) {
             if ($e = self::getDependedElement($r)) {
                 if ($e->isAllowed('list')) {
                     $dependencies['requiredBy'][] = self::getDependencyForFrontend($e);
@@ -162,13 +162,13 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function getRequiresDependenciesForFrontend(Dependency $d)
+    public static function getRequiresDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requires'] = [];
-
+        
         // requires
-        foreach ($d->getRequires() as $r) {
+        foreach ($d->getRequires($offset, $limit) as $r) {
             if ($e = self::getDependedElement($r)) {
                 if ($e->isAllowed('list')) {
                     $dependencies['requires'][] = self::getDependencyForFrontend($e);
