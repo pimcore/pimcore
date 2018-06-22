@@ -386,6 +386,7 @@
 
 .pimcore_areablock_toolbar.x-layer {
     position: fixed !important;
+    z-index: 10000 !important;
 }
 
 .pimcore_areablock_toolbar .x-btn-default-small {
