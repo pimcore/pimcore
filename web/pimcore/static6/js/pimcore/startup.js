@@ -617,6 +617,12 @@ Ext.onReady(function () {
         var perspective = pimcore.globalmanager.get("perspective");
         var elementTree = perspective.getElementTree();
 
+        var locateConfigs = {
+            document: [],
+            asset: [],
+            object: []
+        }
+
         for (var i = 0; i < elementTree.length; i++) {
 
             var treeConfig = elementTree[i];
@@ -625,12 +631,14 @@ Ext.onReady(function () {
             var expanded = treeConfig["expanded"];
             var treepanel = null;
             var tree = null;
+            var treetype = null;
 
             var locateKey = "layout_" + type + "_locateintree_tree";
 
             switch (type) {
                 case "documents":
                     if (user.isAllowed("documents") && !treeConfig.hidden) {
+                        treetype = "document";
                         tree = new pimcore.document.tree(null, treeConfig);
                         pimcore.globalmanager.add("layout_document_tree", tree);
                         treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
@@ -639,6 +647,7 @@ Ext.onReady(function () {
                     break;
                 case "assets":
                     if (user.isAllowed("assets") && !treeConfig.hidden) {
+                        treetype = "asset";
                         tree = new pimcore.asset.tree(null, treeConfig);
                         pimcore.globalmanager.add("layout_asset_tree", tree);
                         treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
@@ -647,6 +656,7 @@ Ext.onReady(function () {
                     break;
                 case "objects":
                     if (user.isAllowed("objects")) {
+                        treetype = "object";
                         if (!treeConfig.hidden) {
                             treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
                             tree = new pimcore.object.tree(null, treeConfig);
@@ -657,7 +667,7 @@ Ext.onReady(function () {
                     break;
                 case "customview":
                     if (!treeConfig.hidden) {
-                        var treetype = treeConfig.treetype ? treeConfig.treetype : "object";
+                        treetype = treeConfig.treetype ? treeConfig.treetype : "object";
                         locateKey = "layout_" + treetype + "s_locateintree_tree";
 
                         if (user.isAllowed(treetype + "s")) {
@@ -687,10 +697,20 @@ Ext.onReady(function () {
                     break;
             }
 
-            if (!pimcore.globalmanager.get(locateKey)) {
-                pimcore.globalmanager.add(locateKey, tree);
+
+            if (tree && treetype) {
+                locateConfigs[treetype].push({
+                    key: locateKey,
+                    side: side,
+                    tree: tree
+                }
+                );
+
             }
+            
         }
+        pimcore.globalmanager.add("tree_locate_configs", locateConfigs);
+
     }
     catch (e) {
         console.log(e);
