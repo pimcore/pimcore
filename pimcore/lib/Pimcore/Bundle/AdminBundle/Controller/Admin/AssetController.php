@@ -1733,10 +1733,13 @@ class AssetController extends ElementControllerBase implements EventedController
             $db = \Pimcore\Db::get();
             $conditionFilters = [];
             $selectedIds = $request->get('selectedIds', []);
-
-            if (!empty($selectedIds)) {
+            $quotedSelectedIds = [];
+            foreach ($selectedIds as $selectedId) {
+                $quotedSelectedIds[] = $db->quote($selectedId);
+            }
+            if (!empty($quotedSelectedIds)) {
                 //add a condition if id numbers are specified
-                $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
+                $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
             }
             $conditionFilters[] .= 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
