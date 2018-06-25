@@ -274,7 +274,7 @@ pimcore.document.versions = Class.create({
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
 
-        window.open(this.document.data.path + this.document.data.key + '?v=' + versionId,'_blank');
+        window.open(this.document.data.path + this.document.data.key + '?pimcore_version=' + versionId,'_blank');
     },
 
     editVersion: function (index, grid) {
