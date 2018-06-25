@@ -1794,9 +1794,13 @@ class DataObjectHelperController extends AdminController
 
         //parameters specified in the objects grid
         $ids = $request->get('ids', []);
-        if (!empty($ids)) {
+        $quotedIds = [];
+        foreach ($ids as $id) {
+            $quotedIds[] = $list->quote($id);
+        }
+        if (!empty($quotedIds)) {
             //add a condition if id numbers are specified
-            $list->addConditionParam("{$objectTableName}.o_id IN (" . implode(',', $ids) . ')');
+            $list->addConditionParam("{$objectTableName}.o_id IN (" . implode(',', $quotedIds) . ')');
         }
 
         $list->setOrder('ASC');
@@ -1883,9 +1887,15 @@ class DataObjectHelperController extends AdminController
          * @var $list \Pimcore\Model\DataObject\Listing
          */
         $list = new $listClass();
+
+        $quotedIds = [];
+        foreach ($ids as $id) {
+            $quotedIds[] = $list->quote($id);
+        }
+
         $list->setObjectTypes(['object', 'folder', 'variant']);
-        $list->setCondition('o_id IN (' . implode(',', $ids) . ')');
-        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $ids) . ')', false);
+        $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
+        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
 
         list($fields, $bricks) = $this->extractFieldsAndBricks($request);
 
