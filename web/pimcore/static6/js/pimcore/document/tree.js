@@ -800,48 +800,82 @@ pimcore.document.tree = Class.create({
     populatePredefinedDocumentTypes: function(documentMenu, tree, record) {
         var document_types = pimcore.globalmanager.get("document_types_store");
 
+        var groups = {
+            page: {},
+            snippet: {},
+            email: {},
+            newsletter: {},
+            printPage: {}
+        };
+
         document_types.sort([{property: 'priority', direction: 'DESC'},
             {property: 'name', direction: 'ASC'}]);
 
         document_types.each(function (documentMenu, typeRecord) {
             if (typeRecord.get("type") == "page") {
-                documentMenu.page.push({
+                docTypeMenu = {
                     text: ts(typeRecord.get("name")),
                     iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "page", typeRecord.get("id"))
-                });
+                };
+                menuOption = "page";
             }
             else if (typeRecord.get("type") == "snippet") {
-                documentMenu.snippet.push({
+                docTypeMenu = {
                     text: ts(typeRecord.get("name")),
                     iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "snippet", typeRecord.get("id"))
-                });
+                };
+                menuOption = "snippet";
             } else if (typeRecord.get("type") == "email") {
-                documentMenu.email.push({
+                docTypeMenu = {
                     text: ts(typeRecord.get("name")),
                     iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "email", typeRecord.get("id"))
-                });
+                };
+                menuOption = "email";
             } else if (typeRecord.get("type") == "newsletter") {
-                documentMenu.newsletter.push({
+                docTypeMenu = {
                     text: ts(typeRecord.get("name")),
                     iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "newsletter", typeRecord.get("id"))
-                });
+                };
+                menuOption = "newsletter";
             } else if (typeRecord.get("type") == "printpage") {
-                documentMenu.printPage.push({
+                docTypeMenu = {
                     text: ts(typeRecord.get("name")),
                     iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printpage", typeRecord.get("id"))
-                });
+                };
+                menuOption = "printPage";
             } else if (typeRecord.get("type") == "printcontainer") {
-                documentMenu.printPage.push({
+                docTypeMenu = {
                     text: ts(typeRecord.get("name")),
                     iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printcontainer", typeRecord.get("id"))
-                });
+                };
+                menuOption = "printPage";
             }
+
+            // check if the class is within a group
+            if(typeRecord.get("group")) {
+                if(!groups[menuOption][typeRecord.get("group")]) {
+                    groups[menuOption][typeRecord.get("group")] = {
+                        text: typeRecord.get("group"),
+                        iconCls: "pimcore_icon_folder",
+                        hideOnClick: false,
+                        menu: {
+                            items: []
+                        }
+                    };
+                    documentMenu[menuOption].push(groups[menuOption][typeRecord.get("group")]);
+                }
+
+                groups[menuOption][typeRecord.get("group")]["menu"]["items"].push(docTypeMenu);
+            } else {
+                documentMenu[menuOption].push(docTypeMenu);
+            }
+
         }.bind(this, documentMenu), documentMenu);
 
         return documentMenu;

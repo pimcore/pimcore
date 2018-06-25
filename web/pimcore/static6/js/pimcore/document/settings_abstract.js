@@ -179,7 +179,10 @@ pimcore.document.settings_abstract = Class.create({
                     rootProperty: "docTypes"
                 }
             },
-            fields: ["id","name","module","controller","action","template"]
+            fields: ["id","module","controller","action","template",{
+               name: 'name',
+               convert: function(v, rec) { return rec['data']['group'] +' > '+ rec['data']['name'] }
+            }]
 
         });
 
