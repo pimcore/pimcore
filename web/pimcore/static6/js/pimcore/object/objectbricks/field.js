@@ -301,9 +301,15 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         }
     },
 
-    saveOnComplete: function () {
-        this.parentPanel.tree.getStore().load();
-        pimcore.helpers.showNotification(t("success"), t("objectbrick_saved_successfully"), "success");
+    saveOnComplete: function (response) {
+        var rdata = Ext.decode(response.responseText);
+        if (rdata && rdata.success) {
+            this.parentPanel.tree.getStore().load();
+            pimcore.helpers.showNotification(t("success"), t("objectbrick_saved_successfully"), "success");
+        } else {
+            pimcore.helpers.showNotification(t("save_error"), rdata.message, "error");
+        }
+
     },
 
     upload: function () {
