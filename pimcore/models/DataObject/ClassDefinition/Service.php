@@ -21,6 +21,11 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice;
 
+/**
+ * Class Service
+ *
+ * @package Pimcore\Model\DataObject\ClassDefinition
+ */
 class Service
 {
     /**
@@ -41,12 +46,31 @@ class Service
         unset($data->userModification);
         unset($data->fieldDefinitions);
 
+        self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
+
         //add propertyVisibility to export data
         $data->propertyVisibility = $class->propertyVisibility;
 
         $json = json_encode($data, JSON_PRETTY_PRINT);
 
         return $json;
+    }
+
+    public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
+    {
+        if (method_exists($layout, 'getChilds')) {
+            $children = $layout->getChildren();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    if ($child instanceof DataObject\ClassDefinition\Data\Select) {
+                        if ($child->getOptionsProviderClass()) {
+                            $child->options = null;
+                        }
+                    }
+                    self::removeDynamicOptionsFromLayoutDefinition($child);
+                }
+            }
+        }
     }
 
     /**
