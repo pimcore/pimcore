@@ -188,8 +188,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             }
         }
 
-        if($options['globalParams']){
-            $params = array_merge($options['globalParams'],(array)$params);
+        if ($options['globalParams']) {
+            $params = array_merge($options['globalParams'], (array)$params);
         }
 
         $info->setParams($params);
