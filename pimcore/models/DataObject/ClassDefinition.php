@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\File;
@@ -33,7 +34,7 @@ class ClassDefinition extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var int
+     * @var string
      */
     public $id;
 
@@ -266,23 +267,25 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
-        $isUpdate = false;
-        if ($this->getId()) {
-            $isUpdate = true;
+
+        $existingDefinition = ClassDefinition::getById($this->getId());
+
+        $isUpdate = !is_null($existingDefinition);
+        if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::PRE_UPDATE,
+                DataObjectClassDefinitionEvents::PRE_ADD,
                 new ClassDefinitionEvent($this)
             );
         } else {
             \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::PRE_ADD,
+                DataObjectClassDefinitionEvents::PRE_UPDATE,
                 new ClassDefinitionEvent($this)
             );
         }
 
         $this->setModificationDate(time());
 
-        $this->getDao()->save();
+        $this->getDao()->save($isUpdate);
 
         $infoDocBlock = $this->getInfoDocBlock();
 
@@ -361,7 +364,7 @@ class ClassDefinition extends Model\AbstractModel
             $cd .= "\n";
         }
 
-        $cd .= 'public $o_classId = '.$this->getId().";\n";
+        $cd .= 'public $o_classId = "' . $this->getId(). "\";\n";
         $cd .= 'public $o_className = "'.$this->getName().'"'.";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
@@ -446,7 +449,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'class Listing extends DataObject\\Listing\\Concrete {';
         $cd .= "\n\n";
 
-        $cd .= 'public $classId = '.$this->getId().";\n";
+        $cd .= 'public $classId = "'. $this->getId()."\";\n";
         $cd .= 'public $className = "'.$this->getName().'"'.";\n";
 
         $cd .= "\n\n";
@@ -570,7 +573,7 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
-        $customLayouts->setCondition('classId = '.$this->getId());
+        $customLayouts->setCondition('classId = ?', $this->getId());
         $customLayouts = $customLayouts->load();
 
         foreach ($customLayouts as $customLayout) {
@@ -635,7 +638,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getId()
     {
@@ -683,13 +686,13 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = (int)$id;
+        $this->id = $id;
 
         return $this;
     }

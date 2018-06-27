@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -102,11 +103,17 @@ class ClassController extends AdminController implements EventedControllerInterf
             $classes = $tmpClasses;
         }
 
-        $getClassConfig = function ($class) use ($defaultIcon) {
+        $withId = $request->get("withId");
+        $getClassConfig = function ($class) use ($defaultIcon, $withId) {
+
+            $text = $class->getname();
+            if ($withId) {
+                $text .= " (" . $class->getId() . ")";
+
+            }
             return [
                 'id' => $class->getId(),
-                'text' => $class->getName(),
-                'leaf' => true,
+                'text' => $text,                 'leaf' => true,
                 'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
                 'propertyVisibility' => $class->getPropertyVisibility(),
                 'qtipCfg' => [
@@ -118,6 +125,9 @@ class ClassController extends AdminController implements EventedControllerInterf
         // build groups
         $groups = [];
         foreach ($classes as $class) {
+            if (!$class) {
+                continue;
+            }
             if ($class->getGroup()) {
                 $type = 'manual';
                 $groupName = $class->getGroup();
@@ -195,7 +205,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function getAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
         $class->setFieldDefinitions(null);
 
         return $this->adminJson($class);
@@ -224,12 +234,23 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function addAction(Request $request)
     {
+        $className = $request->get('className');
+        $className = $this->correctClassname($className);
+
+        $classId = $request->get("classIdentifier");
+        $existingClass = DataObject\ClassDefinition::getById($classId);
+        if ($existingClass) {
+            throw new \Exception("Class identifier already exists");
+        }
+
         $class = DataObject\ClassDefinition::create(
-            ['name' => $this->correctClassname($request->get('name')),
+            ['name' => $className,
                 'userOwner' => $this->getAdminUser()->getId()]
         );
 
-        $class->save();
+        $class->setId($classId);
+
+        $class->save(true);
 
         return $this->adminJson(['success' => true, 'id' => $class->getId()]);
     }
@@ -264,7 +285,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function deleteAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
         $class->delete();
 
         return new Response();
@@ -338,7 +359,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function saveAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
 
         $configuration = $this->decodeJson($request->get('configuration'));
         $values = $this->decodeJson($request->get('values'));
@@ -426,7 +447,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function importClassAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
         $json = file_get_contents($_FILES['Filedata']['tmp_name']);
 
         $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
@@ -563,7 +584,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function exportClassAction(Request $request)
     {
-        $id = intval($request->get('id'));
+        $id = $request->get('id');
         $class = DataObject\ClassDefinition::getById($id);
 
         if (!$class instanceof DataObject\ClassDefinition) {
@@ -836,7 +857,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function getClassDefinitionForColumnConfigAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
         $objectId = intval($request->get('oid'));
 
         $filteredDefinitions = DataObject\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
@@ -1441,5 +1462,26 @@ class ClassController extends AdminController implements EventedControllerInterf
         }
 
         return $this->adminJson($result);
+    }
+
+    /**
+     * @Route("/suggest-class-identifier")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function suggestClassIdentifierAction() {
+        $db = Db::get();
+        $maxId = $db->fetchOne("select max(cast(`id` as int)) from classes;");
+
+        $existingIds = $db->fetchCol("select LOWER(id) from classes");
+
+        $result = [
+            "suggestedIdentifier" => $maxId ? $maxId + 1 : 1,
+            "existingIds" => $existingIds
+            ];
+        return $this->adminJson($result);
+
     }
 }

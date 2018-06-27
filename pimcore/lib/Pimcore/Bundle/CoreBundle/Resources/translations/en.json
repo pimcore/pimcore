@@ -1911,5 +1911,9 @@
   "set_focal_point": "Set Focal Point",
   "default_positioning": "Default Positioning",
   "thumbnail_focal_point_notice": "The image is cropped automatically based on the focal point set on the source image. If no focal point is present, the default positioning setting below is used.",
-  "toggle_image_features": "Toggle Image Features"
+  "toggle_image_features": "Toggle Image Features",
+  "class_identifier_warning": "Be careful with the unique class identifier because table names can contain only up to 64 characters.",
+  "class_identifier": "Unique class identifier",
+  "invalid_class_identifier": "Invalid class identifier",
+  "class_identifier_already_exists": "Class Identifier already exists"
 }

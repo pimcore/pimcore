@@ -66,20 +66,20 @@ class Dao extends Model\Dao\AbstractDao
         return $id;
     }
 
-    /**
-     * Save object to database
-     *
-     * @return bool
-     *
-     * @todo: update() or create() don't return anything
+
+    /** Updates the class definition
+     * @param bool $isUpdate
+     * @return bool|void
+     * @throws \Exception
      */
-    public function save()
+    public function save($isUpdate = true)
     {
-        if ($this->model->getId()) {
+        if (!$this->model->getId() || !$isUpdate) {
+            return $this->create();
+
+        } else {
             return $this->update();
         }
-
-        return $this->create();
     }
 
     /**
@@ -111,7 +111,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
-			  `oo_classId` int(11) default '" . $this->model->getId() . "',
+			  `oo_classId` varchar(50) default '" . $this->model->getId() . "',
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
 			  PRIMARY KEY  (`oo_id`)
 			) DEFAULT CHARSET=utf8mb4;");
@@ -223,8 +223,8 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert('classes', ['name' => $this->model->getName()]);
-        $this->model->setId($this->db->lastInsertId());
+        $this->db->insert('classes', ['name' => $this->model->getName(), 'id' => $this->model->getId()]);
+//        $this->model->setId($this->db->lastInsertId());
         $this->save();
     }
 

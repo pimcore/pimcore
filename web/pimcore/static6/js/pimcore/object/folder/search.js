@@ -53,7 +53,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     data: data,
                     sorters: 'translatedText',
                     fields: [
-                        {name: 'id', type: 'number'},
+                        {name: 'id', type: 'string'},
                         {name: 'name', type: 'string'},
                         {name: 'translatedText', type: 'string'}
                     ]
