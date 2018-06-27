@@ -406,7 +406,7 @@ EOT;
         if (!$dimensions) {
             $image = self::getImageTransformInstance();
 
-            $status = $image->load($path, ['preserveColor' => true]);
+            $status = $image->load($path, ['preserveColor' => true, 'asset' => $this]);
             if ($status === false) {
                 return;
             }

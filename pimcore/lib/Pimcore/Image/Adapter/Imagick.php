@@ -67,12 +67,18 @@ class Imagick extends Adapter
             $imagePath = $tmpFilePath;
         }
 
-        if (!stream_is_local($imagePath)) {
+        if (!stream_is_local($imagePath) && isset($options['asset'])) {
             // imagick is only able to deal with local files
             // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($imagePath);
-            copy($imagePath, $tmpFilePath);
-            $imagePath = $tmpFilePath;
+            $imagePath = $options['asset']->getTemporaryFile();
+            $this->tmpFiles[] = $imagePath;
+        }
+
+        if(isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
+            // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes
+            // Inkscape to completely go crazy -> Debian 8.10, Inkscape 0.48.5 r10040, Imagick 6.8.9-9 Q16, Imagick 3.4.3
+            // we create a local temp file, to workaround this problem
+            $imagePath = $options['asset']->getTemporaryFile();
             $this->tmpFiles[] = $imagePath;
         }
 

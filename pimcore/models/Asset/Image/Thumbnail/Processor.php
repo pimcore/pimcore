@@ -190,7 +190,7 @@ class Processor
         $image = Asset\Image::getImageTransformInstance();
         $image->setPreserveColor($config->isPreserveColor());
         $image->setPreserveMetaData($config->isPreserveMetaData());
-        if (!$image->load($fileSystemPath)) {
+        if (!$image->load($fileSystemPath, ['asset' => $asset])) {
             return self::returnPath($errorImage, $returnAbsolutePath);
         }
 
