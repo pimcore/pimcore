@@ -112,7 +112,7 @@ class Imagick extends Adapter
                 return false;
             }
 
-            $this->resource = $i; // this is because of HHVM which has problems with $this->resource->readImage();
+            $this->resource = $i;
 
             // set dimensions
             $dimensions = $this->getDimensions();
