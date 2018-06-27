@@ -105,11 +105,7 @@ class Imagick extends Adapter
             $imagePathLoad = $imagePath;
 
             if (strpos($imagePathLoad, ':') !== false) {
-                $imagePathLoad = ':' . $imagePathLoad;
-            }
-
-            if (!defined('HHVM_VERSION')) {
-                $imagePathLoad .= '[0]'; // not supported by HHVM implementation - selects the first layer/page in layered/pages file formats
+                $imagePathLoad = ':' . $imagePathLoad . '[0]';
             }
 
             if (!$i->readImage($imagePathLoad) || !filesize($imagePath)) {
@@ -240,7 +236,7 @@ class Imagick extends Adapter
             $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
         }
 
-        if (defined('HHVM_VERSION') || !stream_is_local($path)) {
+        if (!stream_is_local($path)) {
             $success = File::put($path, $i->getImageBlob());
         } else {
             $success = $i->writeImage($format . ':' . $path);
