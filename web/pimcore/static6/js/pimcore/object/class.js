@@ -254,6 +254,16 @@ pimcore.object.klass = Class.create({
             buttons: [
                 {
                     xtype: 'button',
+                    text: t('cancel'),
+                    iconCls: 'pimcore_icon_cancel',
+                    style: 'margin:15px',
+                    handler: function () {
+                        this.win.close();
+
+                    }.bind(this)
+                },
+                {
+                    xtype: 'button',
                     text: t('OK'),
                     style: 'margin:15px',
                     iconCls: 'pimcore_icon_save',
@@ -262,16 +272,6 @@ pimcore.object.klass = Class.create({
                             this.win.close();
                         }
                     }.bind(this, nameField, identifierField, classes)
-                },
-                {
-                    xtype: 'button',
-                    text: t('cancel'),
-                    iconCls: 'pimcore_icon_cancel',
-                    style: 'margin:15px',
-                    handler: function () {
-                        this.win.close();
-
-                    }.bind(this)
                 }
             ]
         })
