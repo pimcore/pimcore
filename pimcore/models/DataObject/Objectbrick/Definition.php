@@ -103,6 +103,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     {
         $tables = [];
         $key = $this->getKey();
+        if (!$this->getFieldDefinitions()) {
+            return;
+        }
         $isLocalized = $this->getFieldDefinition('localizedfields') ? true : false;
 
         $classDefinitions = $this->getClassDefinitions();
