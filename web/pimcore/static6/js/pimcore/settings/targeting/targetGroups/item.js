@@ -81,6 +81,7 @@ pimcore.settings.targeting.targetGroups.item = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/targeting/target-group/save",
+            method: 'PUT',
             params: {
                 id: this.data.id,
                 data: Ext.encode(saveData)

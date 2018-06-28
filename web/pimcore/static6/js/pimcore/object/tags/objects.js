@@ -176,6 +176,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         if (!invalid) {
             Ext.Ajax.request({
                 url: "/admin/object/add",
+                method: 'POST',
                 params: {
                     className: className,
                     classId: classId,

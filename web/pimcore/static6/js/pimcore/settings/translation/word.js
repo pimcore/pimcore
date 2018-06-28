@@ -235,6 +235,7 @@ pimcore.settings.translation.word = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/translation/content-export-jobs",
+            method: 'POST',
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
                 data: Ext.encode(tmData),

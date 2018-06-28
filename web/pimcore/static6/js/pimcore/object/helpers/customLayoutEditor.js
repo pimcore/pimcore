@@ -760,7 +760,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             if (this.getDataSuccess) {
                 Ext.Ajax.request({
                     url: "/admin/class/save-custom-layout",
-                    method: "post",
+                    method: "PUT",
                     params: {
                         configuration: m,
                         values: n,
@@ -802,6 +802,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             && !in_array(value.toLowerCase(), this.forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/add-custom-layout",
+                method: 'POST',
                 params: {
                     name: value,
                     classId: this.klass.id
@@ -847,6 +848,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 if (btn == 'yes'){
                     Ext.Ajax.request({
                         url: "/admin/class/delete-custom-layout",
+                        method: 'DELETE',
                         params: {
                             id: id
                         }

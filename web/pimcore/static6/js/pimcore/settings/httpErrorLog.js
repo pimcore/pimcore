@@ -159,6 +159,7 @@ pimcore.settings.httpErrorLog = Class.create({
                 handler: function () {
                     Ext.Ajax.request({
                         url: "/admin/misc/http-error-log-flush",
+                        method: "DELETE",
                         success: function () {
                             var input = field;
                             var proxy = this.store.getProxy();

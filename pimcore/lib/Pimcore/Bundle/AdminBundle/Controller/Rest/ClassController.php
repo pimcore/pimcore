@@ -19,7 +19,7 @@ use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\DataObject;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class ClassController extends AbstractRestController
 {

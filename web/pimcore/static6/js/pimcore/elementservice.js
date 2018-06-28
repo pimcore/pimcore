@@ -179,7 +179,7 @@ pimcore.elementservice.updateAsset = function (id, data, callback) {
 
     Ext.Ajax.request({
         url: "/admin/asset/update",
-        method: "post",
+        method: "PUT",
         params: data,
         success: callback
     });
@@ -196,7 +196,7 @@ pimcore.elementservice.updateDocument = function (id, data, callback) {
 
     Ext.Ajax.request({
         url: "/admin/document/update",
-        method: "post",
+        method: "PUT",
         params: data,
         success: callback
     });
@@ -211,7 +211,7 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
 
     Ext.Ajax.request({
         url: "/admin/object/update",
-        method: "post",
+        method: "PUT",
         params: {
             id: id,
             values: Ext.encode(values)
@@ -565,6 +565,7 @@ pimcore.elementservice.addObject = function(options) {
 
     Ext.Ajax.request({
         url: url,
+        method: 'POST',
         params: options,
         success: pimcore.elementservice.addObjectComplete.bind(this, options)
     });
@@ -578,6 +579,7 @@ pimcore.elementservice.addDocument = function(options) {
 
     Ext.Ajax.request({
         url: url,
+        method: 'POST',
         params: options,
         success: pimcore.elementservice.addDocumentComplete.bind(this, options)
     });
@@ -687,6 +689,7 @@ pimcore.elementservice.unlockElement = function(options) {
     try {
         Ext.Ajax.request({
             url: "/admin/element/unlock-propagate",
+            method: 'PUT',
             params: {
                 id: options.id,
                 type: options.elementType

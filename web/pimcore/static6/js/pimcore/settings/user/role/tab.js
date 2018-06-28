@@ -89,7 +89,7 @@ pimcore.settings.user.role.tab = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/user/update",
-            method: "post",
+            method: "PUT",
             params: data,
             success: function (transport) {
                 try{

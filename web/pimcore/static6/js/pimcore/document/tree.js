@@ -1019,6 +1019,7 @@ pimcore.document.tree = Class.create({
     removeSite: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/document/remove-site",
+            method: 'DELETE',
             params: {
                 id: record.data.id
             },
@@ -1123,6 +1124,7 @@ pimcore.document.tree = Class.create({
 
                     Ext.Ajax.request({
                         url: "/admin/document/update-site",
+                        method: 'PUT',
                         params: data,
                         success: function (response) {
                             var site = Ext.decode(response.responseText);
@@ -1269,7 +1271,7 @@ pimcore.document.tree = Class.create({
 
         Ext.Ajax.request({
             url: '/admin/' + type + '/save?task=' + task,
-            method: "post",
+            method: "PUT",
             params: parameters,
             success: function (task, response) {
                 try {
@@ -1357,7 +1359,7 @@ pimcore.document.tree = Class.create({
 
                     Ext.Ajax.request({
                         url: "/admin/document/convert",
-                        method: "post",
+                        method: "PUT",
                         params: {
                             id: record.data.id,
                             type: type

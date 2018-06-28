@@ -99,6 +99,7 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
                                     if (button == "yes") {
                                         Ext.Ajax.request({
                                             url: "/admin/user/delete",
+                                            method: 'DELETE',
                                             params: {
                                                 id: data.data.id
                                             },

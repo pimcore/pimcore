@@ -89,6 +89,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.data.id,
                     type: "asset"
@@ -235,6 +236,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     handler: function () {
                         Ext.Ajax.request({
                             url: "/admin/asset/clear-thumbnail",
+                            method: 'POST',
                             params: {
                                 id: this.data.id
                             }
@@ -332,7 +334,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         Ext.Ajax.request({
             url: '/admin/asset/save',
-            method: "post",
+            method: "PUT",
             success: function (response) {
                 try{
                     var rdata = Ext.decode(response.responseText);

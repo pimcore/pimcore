@@ -18,7 +18,8 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class ElementControllerBase extends AdminController
 {
@@ -34,6 +35,7 @@ class ElementControllerBase extends AdminController
 
     /**
      * @Route("/tree-get-root")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

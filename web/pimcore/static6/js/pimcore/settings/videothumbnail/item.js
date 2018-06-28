@@ -169,7 +169,7 @@ pimcore.settings.videothumbnail.item = Class.create({
         var m = Ext.encode(this.panel.getForm().getFieldValues());
         Ext.Ajax.request({
             url: "/admin/settings/video-thumbnail-update",
-            method: "post",
+            method: "PUT",
             params: {
                 configuration: m,
                 name: this.data.name

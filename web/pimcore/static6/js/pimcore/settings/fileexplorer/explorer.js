@@ -142,6 +142,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                             function (node, button, value) {
                                 Ext.Ajax.request({
                                     url: "/admin/misc/fileexplorer-add",
+                                    method: "POST",
                                     success: function (node, response) {
                                         node.data.loaded = false;
 
@@ -166,6 +167,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                             function (node, button, value) {
                                 Ext.Ajax.request({
                                     url: "/admin/misc/fileexplorer-add-folder",
+                                    method: "POST",
                                     success: function (node, response) {
                                         node.data.loaded = false;
 
@@ -191,6 +193,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
             function (node, button, value) {
                 Ext.Ajax.request({
                     url: "/admin/misc/fileexplorer-rename",
+                    method: 'PUT',
                     success: function (node, response) {
                         if (this.openfiles[node.id]) {
                             this.openfiles[node.id].updatePath(node.parentNode.id + value);
@@ -214,6 +217,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/misc/fileexplorer-delete",
+            method: 'DELETE',
             success: function (node, response) {
                 this.treePanel.getStore().load({
                     node: node.parentNode

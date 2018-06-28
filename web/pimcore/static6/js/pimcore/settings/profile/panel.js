@@ -284,7 +284,7 @@ pimcore.settings.profile.panel = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/user/update-current-user",
-            method: "post",
+            method: "PUT",
             params: {
                 id: this.currentUser.id,
                 data: Ext.encode(values),

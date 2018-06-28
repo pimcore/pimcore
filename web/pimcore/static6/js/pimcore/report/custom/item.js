@@ -772,7 +772,7 @@ pimcore.report.custom.item = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/reports/custom-report/update",
-            method: "post",
+            method: "PUT",
             params: {
                 configuration: Ext.encode(m),
                 name: this.data.name

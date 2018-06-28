@@ -109,6 +109,7 @@ pimcore.layout.portlets.feed = Class.create(pimcore.layout.portlets.abstract, {
                                 this.config = Ext.getCmp("pimcore_portlet_feed_url").getValue();
                                 Ext.Ajax.request({
                                     url: "/admin/portal/update-portlet-config",
+                                    method: 'PUT',
                                     params: {
                                         key: this.portal.key,
                                         id: this.layout.portletId,

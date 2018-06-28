@@ -195,6 +195,7 @@ pimcore.object.fieldcollection = Class.create({
         if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/fieldcollection-update",
+                method: 'PUT',
                 params: {
                     key: value
                 },
@@ -226,6 +227,7 @@ pimcore.object.fieldcollection = Class.create({
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: "/admin/class/fieldcollection-delete",
+                    method: 'DELETE',
                     params: {
                         id: record.data.id
                     }

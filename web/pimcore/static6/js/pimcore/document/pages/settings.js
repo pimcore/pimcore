@@ -322,6 +322,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                     "keyup": function (el) {
                                         Ext.Ajax.request({
                                             url: "/admin/page/check-pretty-url",
+                                            method: "POST",
                                             params: {
                                                 id: this.document.id,
                                                 path: el.getValue()

@@ -106,6 +106,7 @@ pimcore.layout.toolbar = Class.create({
                                         if (button == "ok") {
                                             Ext.Ajax.request({
                                                 url: "/admin/portal/create-dashboard",
+                                                method: 'POST',
                                                 params: {
                                                     key: value
                                                 },
@@ -1535,6 +1536,7 @@ pimcore.layout.toolbar = Class.create({
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: '/admin/settings/clear-cache',
+                    method: "DELETE",
                     params: params
                 });
             }
@@ -1543,7 +1545,8 @@ pimcore.layout.toolbar = Class.create({
 
     clearOutputCache: function () {
         Ext.Ajax.request({
-            url: '/admin/settings/clear-output-cache'
+            url: '/admin/settings/clear-output-cache',
+            method: 'DELETE'
         });
     },
 
@@ -1551,7 +1554,8 @@ pimcore.layout.toolbar = Class.create({
         Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
             if (btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/admin/settings/clear-temporary-files'
+                    url: '/admin/settings/clear-temporary-files',
+                    method: "DELETE"
                 });
             }
         });

@@ -109,6 +109,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.id,
                     type: "object"
@@ -318,7 +319,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         Ext.Ajax.request({
             url: '/admin/object/save-folder?task=' + task,
-            method: "post",
+            method: "PUT",
             params: this.getSaveData(),
             success: function (response) {
                 try{

@@ -97,7 +97,7 @@
 
             parent.Ext.Ajax.request({
                 url: "/admin/asset/image-editor-save?id=<?= $this->asset->getId() ?>",
-                method: 'post',
+                method: 'PUT',
                 params: {
                     dataUri: dataUri
                 }

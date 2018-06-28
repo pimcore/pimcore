@@ -23,7 +23,8 @@ use Pimcore\Model\Element;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/link")
@@ -32,6 +33,7 @@ class LinkController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -84,6 +86,7 @@ class LinkController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *

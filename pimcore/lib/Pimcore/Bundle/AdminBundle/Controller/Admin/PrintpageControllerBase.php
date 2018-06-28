@@ -26,12 +26,14 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class PrintpageControllerBase extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -89,6 +91,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -169,6 +172,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
     /**
      * @Route("/active-generate-process")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -209,6 +213,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
     /**
      * @Route("/pdf-download")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -238,6 +243,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
     /**
      * @Route("/start-pdf-generation")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -275,6 +281,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
     /**
      * @Route("/check-pdf-dirty")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -294,6 +301,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
     /**
      * @Route("/get-processing-options")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -351,6 +359,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
     /**
      * @Route("/cancel-generation")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *

@@ -213,6 +213,7 @@ pimcore.object.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/element/delete-version",
+            method: 'DELETE',
             params: {id: versionId}
         });
 
@@ -230,6 +231,7 @@ pimcore.object.versions = Class.create({
                     
                     Ext.Ajax.request({
                         url: "/admin/element/delete-all-versions",
+                        method: 'DELETE',
                         params: {id: elememntId, date: modificationDate}
                     });
                     
@@ -255,6 +257,7 @@ pimcore.object.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/object/publish-version",
+            method: "POST",
             params: {id: versionId},
             success: function(response) {
                 this.object.reload();
@@ -277,6 +280,7 @@ pimcore.object.versions = Class.create({
         if (operation == "edit") {
             Ext.Ajax.request({
                 url: "/admin/element/version-update",
+                method: 'PUT',
                 params: {
                     data: Ext.encode(record.data)
                 }

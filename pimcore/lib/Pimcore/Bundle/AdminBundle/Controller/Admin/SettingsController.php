@@ -42,7 +42,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/settings")
@@ -51,6 +52,7 @@ class SettingsController extends AdminController
 {
     /**
      * @Route("/display-custom-logo", name="pimcore_settings_display_custom_logo")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -81,6 +83,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/upload-custom-logo")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -110,6 +113,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/delete-custom-logo")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -129,6 +133,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/metadata")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -216,6 +221,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/get-predefined-metadata")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -238,6 +244,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/properties")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -368,6 +375,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/get-system")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -448,6 +456,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/set-system")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -665,6 +674,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/get-web2print")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -698,6 +708,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/set-web2print")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -731,6 +742,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/clear-cache")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      * @param KernelInterface $kernel
@@ -840,6 +852,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/clear-output-cache")
+     * @Method({"DELETE"})
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -862,6 +875,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/clear-temporary-files")
+     * @Method({"DELETE"})
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -888,6 +902,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/staticroutes")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -976,6 +991,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/get-available-admin-languages")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1001,6 +1017,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/redirects")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1123,6 +1140,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/glossary")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1234,6 +1252,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/get-available-sites")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1273,6 +1292,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/get-available-countries")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1301,6 +1321,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/thumbnail-adapter-check")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1322,6 +1343,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/thumbnail-tree")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1348,6 +1370,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/thumbnail-add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1374,6 +1397,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/thumbnail-delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -1391,6 +1415,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/thumbnail-get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1407,6 +1432,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/thumbnail-update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1447,6 +1473,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/video-thumbnail-adapter-check")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1467,6 +1494,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/video-thumbnail-tree")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1493,6 +1521,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/video-thumbnail-add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1519,6 +1548,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/video-thumbnail-delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -1536,6 +1566,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/video-thumbnail-get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1552,6 +1583,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/video-thumbnail-update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1594,15 +1626,57 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/robots-txt")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function robotsTxtAction(Request $request)
+    public function robotsTxtGetAction(Request $request)
     {
         $this->checkPermission('robots.txt');
 
+        $robotsPath = $this->getRobotsTxtPath($request);
+
+        $data = '';
+        if (is_file($robotsPath)) {
+            $data = file_get_contents($robotsPath);
+        }
+
+        return $this->adminJson([
+            'success' => true,
+            'data' => $data,
+            'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt')
+        ]);
+
+    }
+
+    /**
+     * @Route("/robots-txt")
+     * @Method({"PUT"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function robotsTxtPutAction(Request $request)
+    {
+        $this->checkPermission('robots.txt');
+
+        $robotsPath = $this->getRobotsTxtPath($request);
+        File::put($robotsPath, $request->get('data'));
+
+        return $this->adminJson([
+            'success' => true
+        ]);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    protected function getRobotsTxtPath(Request $request) {
         if ($request->get('site')) {
             $siteSuffix = '-' . $request->get('site');
         } else {
@@ -1610,31 +1684,12 @@ class SettingsController extends AdminController
         }
 
         $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';
-
-        if ($request->get('data') !== null) {
-            // save data
-            File::put($robotsPath, $request->get('data'));
-
-            return $this->adminJson([
-                'success' => true
-            ]);
-        } else {
-            // get data
-            $data = '';
-            if (is_file($robotsPath)) {
-                $data = file_get_contents($robotsPath);
-            }
-
-            return $this->adminJson([
-                'success' => true,
-                'data' => $data,
-                'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt')
-            ]);
-        }
+        return $robotsPath;
     }
 
     /**
      * @Route("/tag-management-tree")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1661,6 +1716,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/tag-management-add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1687,6 +1743,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/tag-management-delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -1704,6 +1761,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/tag-management-get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1720,6 +1778,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/tag-management-update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1773,6 +1832,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/website-settings")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1932,6 +1992,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/get-available-algorithms")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1982,6 +2043,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/test-web2print")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

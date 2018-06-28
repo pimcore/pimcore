@@ -133,6 +133,7 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
         if (button == "ok" && value.length > 2) {
             Ext.Ajax.request({
                 url: "/admin/targeting/target-group/add",
+                method: 'POST',
                 params: {
                     name: value
                 },
@@ -161,6 +162,7 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
     deleteTargetGroup: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/targeting/target-group/delete",
+            method: 'DELETE',
             params: {
                 id: record.data.id
             },

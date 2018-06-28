@@ -215,6 +215,7 @@ pimcore.object.klass = Class.create({
             && !in_array(value.toLowerCase(), this.forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/add",
+                method: 'POST',
                 params: {
                     name: value
                 },
@@ -247,6 +248,7 @@ pimcore.object.klass = Class.create({
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: "/admin/class/delete",
+                    method: 'DELETE',
                     params: {
                         id: record.data.id
                     },

@@ -278,6 +278,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                                 if (button == "yes") {
                                     Ext.Ajax.request({
                                         url: '/admin/email/delete-email-log',
+                                        method: 'DELETE',
                                         success: function(response){
                                             var data = Ext.decode( response.responseText );
                                             if(!data.success){
