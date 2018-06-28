@@ -118,15 +118,15 @@ class Installer extends MigrationInstaller
      * @var array
      */
     private $classesToInstall = [
-        'FilterDefinition',
-        'OnlineShopOrderItem',
-        'OnlineShopVoucherSeries',
-        'OnlineShopVoucherToken',
-        'OnlineShopOrder',
-        'OfferToolCustomProduct',
-        'OfferToolOfferItem',
-        'OfferToolOffer',
-        'OnlineShopTaxClass',
+            'FilterDefinition' => 'EF_FD',
+            'OfferToolCustomProduct' => 'EF_OTCP',
+            'OfferToolOffer' => 'EF_OTO',
+            'OfferToolOfferItem' => 'EF_OTOI',
+            'OnlineShopOrder' => 'EF_OSO',
+            'OnlineShopOrderItem' => 'EF_OSOI',
+            'OnlineShopTaxClass' => 'EF_OSTC',
+            'OnlineShopVoucherSeries' => 'EF_OSVS',
+            'OnlineShopVoucherToken' => 'EF_OSVT',
     ];
 
     /**
@@ -141,7 +141,8 @@ class Installer extends MigrationInstaller
         BundleInterface $bundle,
         Connection $connection,
         MigrationManager $migrationManager
-    ) {
+    )
+    {
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
 
         parent::__construct($bundle, $connection, $migrationManager);
@@ -182,10 +183,10 @@ class Installer extends MigrationInstaller
     private function getClassesToInstall(): array
     {
         $result = [];
-        foreach ($this->classesToInstall as $className) {
+        foreach (array_keys($this->classesToInstall) as $className) {
             $filename = sprintf('class_%s_export.json', $className);
-            $path     = $this->installSourcesPath . '/class_sources/' . $filename;
-            $path     = realpath($path);
+            $path = $this->installSourcesPath . '/class_sources/' . $filename;
+            $path = realpath($path);
 
             if (false === $path || !is_file($path)) {
                 throw new AbortMigrationException(sprintf(
@@ -205,6 +206,8 @@ class Installer extends MigrationInstaller
     {
         $classes = $this->getClassesToInstall();
 
+        $mapping = $this->classesToInstall;
+
         foreach ($classes as $key => $path) {
             $class = ClassDefinition::getByName($key);
 
@@ -218,9 +221,13 @@ class Installer extends MigrationInstaller
             }
 
             $class = new ClassDefinition();
-            $class->setName($key);
 
-            $data    = file_get_contents($path);
+            $classId = $mapping[$key];
+
+            $class->setName($key);
+            $class->setId($classId);
+
+            $data = file_get_contents($path);
             $success = Service::importClassDefinitionFromJson($class, $data);
 
             if (!$success) {
@@ -256,7 +263,7 @@ class Installer extends MigrationInstaller
                 $fieldCollection->setKey($key);
             }
 
-            $data    = file_get_contents($path);
+            $data = file_get_contents($path);
             $success = Service::importFieldCollectionFromJson($fieldCollection, $data);
 
             if (!$success) {
@@ -292,7 +299,7 @@ class Installer extends MigrationInstaller
                 $brick->setKey($key);
             }
 
-            $data    = file_get_contents($path);
+            $data = file_get_contents($path);
             $success = Service::importObjectBrickFromJson($brick, $data);
 
             if (!$success) {
@@ -395,7 +402,7 @@ class Installer extends MigrationInstaller
         $results = [];
         foreach ($finder as $file) {
             if (preg_match($pattern, $file->getFilename(), $matches)) {
-                $key           = $matches[1];
+                $key = $matches[1];
                 $results[$key] = $file->getRealPath();
             }
         }

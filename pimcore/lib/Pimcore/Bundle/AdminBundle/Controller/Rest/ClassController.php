@@ -25,14 +25,14 @@ class ClassController extends AbstractRestController
 {
     /**
      * @Method("GET")
-     * @Route("/class/id/{id}", requirements={"id": "\d+"})
+     * @Route("/class/id/{id}")
      *
      * end point for the class definition
      *
      *  GET http://[YOUR-DOMAIN]/webservice/rest/class/id/1281?apikey=[API-KEY]
      *      returns the class definition for the given class
      *
-     * @param int $id
+     * @param string $id
      *
      * @return JsonResponse
      *
@@ -52,7 +52,7 @@ class ClassController extends AbstractRestController
             $this->getLogger()->error($e);
         }
 
-        throw $this->createNotFoundResponseException(sprintf('Class %d does not exist', $id), $e);
+        throw $this->createNotFoundResponseException(sprintf('Class %s does not exist', $id), $e);
     }
 
     /**

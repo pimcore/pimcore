@@ -989,7 +989,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getClassById($id, $decode = true)
     {
-        $response     = $this->getJsonResponse('GET', sprintf('/class/id/%d', $id));
+        $response     = $this->getJsonResponse('GET', sprintf('/class/id/%s', $id));
         $responseData = $response->data;
 
         if (!$decode) {

@@ -238,12 +238,13 @@ pimcore.object.klass = Class.create({
         this.win = new Ext.Window({
             title: t('enter_the_name_of_the_new_class'),
             width: 400,
-            height: 350,
+            height: 250,
             draggable: false,
             border: false,
             modal: true,
             bodyStyle: "padding: 10px;",
-            resizable: false,
+            resizable: true,
+            buttonAlign: 'center',
             items: [
                 nameField,
                 identifierField, {
@@ -256,7 +257,6 @@ pimcore.object.klass = Class.create({
                     xtype: 'button',
                     text: t('cancel'),
                     iconCls: 'pimcore_icon_cancel',
-                    style: 'margin:15px',
                     handler: function () {
                         this.win.close();
 
@@ -265,7 +265,6 @@ pimcore.object.klass = Class.create({
                 {
                     xtype: 'button',
                     text: t('OK'),
-                    style: 'margin:15px',
                     iconCls: 'pimcore_icon_save',
                     handler: function ( nameField, identifierField, classes, button) {
                         if (this.addClassComplete(nameField.getValue(), identifierField.getValue(), classes)) {

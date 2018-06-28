@@ -74,7 +74,7 @@ class Service
     }
 
     /**
-     * @param $class
+     * @param $class DataObject\ClassDefinition
      * @param $json
      * @param bool $throwException
      *
