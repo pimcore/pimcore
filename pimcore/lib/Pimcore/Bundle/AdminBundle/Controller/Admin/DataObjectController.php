@@ -1583,206 +1583,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/grid-proxy")
-     * @Method({"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function gridProxyGetAction(Request $request, EventDispatcherInterface $eventDispatcher)
-    {
-        $allParams = array_merge($request->request->all(), $request->query->all());
-        $folder = DataObject::getById($allParams['folderId']);
-        $class = DataObject\ClassDefinition::getById($allParams['classId']);
-        $className = $class->getName();
-
-        $colMappings = [
-            'key' => 'o_key',
-            'filename' => 'o_key',
-            'fullpath' => ['o_path', 'o_key'],
-            'id' => 'oo_id',
-            'published' => 'o_published',
-            'modificationDate' => 'o_modificationDate',
-            'creationDate' => 'o_creationDate'
-        ];
-
-        $start = 0;
-        $limit = 20;
-        $orderKey = 'oo_id';
-        $order = 'ASC';
-
-        $fields = [];
-        $bricks = [];
-        if ($allParams['fields']) {
-            $fields = $allParams['fields'];
-
-            foreach ($fields as $f) {
-                $parts = explode('~', $f);
-                if (substr($f, 0, 1) == '~') {
-                    $type = $parts[1];
-                } elseif (count($parts) > 1) {
-                    $brickType = $parts[0];
-
-                    if (strpos($brickType, '?') !== false) {
-                        $brickDescriptor = substr($brickType, 1);
-                        $brickDescriptor = json_decode($brickDescriptor, true);
-                        $brickType = $brickDescriptor['containerKey'];
-                        $bricks[$brickType] = $brickDescriptor;
-                    } else {
-                        $bricks[$parts[0]] = $brickType;
-                    }
-                }
-            }
-        }
-
-        if ($allParams['limit']) {
-            $limit = $allParams['limit'];
-        }
-        if ($allParams['start']) {
-            $start = $allParams['start'];
-        }
-
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
-
-        $doNotQuote = false;
-
-        if ($sortingSettings['order']) {
-            $order = $sortingSettings['order'];
-        }
-        if (strlen($sortingSettings['orderKey']) > 0) {
-            $orderKey = $sortingSettings['orderKey'];
-            if (!(substr($orderKey, 0, 1) == '~')) {
-                if (array_key_exists($orderKey, $colMappings)) {
-                    $orderKey = $colMappings[$orderKey];
-                } elseif ($class->getFieldDefinition($orderKey) instanceof  DataObject\ClassDefinition\Data\QuantityValue) {
-                    $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
-                    $doNotQuote = true;
-                } elseif ($class->getFieldDefinition($orderKey) instanceof  DataObject\ClassDefinition\Data\RgbaColor) {
-                    $orderKey = 'concat(' . $orderKey . '__rgb, ' . $orderKey . '__a)';
-                    $doNotQuote = true;
-                } elseif (strpos($orderKey, '~') !== false) {
-                    $orderKeyParts = explode('~', $orderKey);
-
-                    if (strpos($orderKey, '?') !== false) {
-                        $brickDescriptor = substr($orderKeyParts[0], 1);
-                        $brickDescriptor = json_decode($brickDescriptor, true);
-                        $db = Db::get();
-                        $orderKey = $db->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') . '.' . $db->quoteIdentifier($brickDescriptor['brickfield']);
-                        $doNotQuote = true;
-                    } else {
-                        if (count($orderKeyParts) == 2) {
-                            $orderKey = $orderKeyParts[1];
-                        }
-                    }
-                }
-            }
-        }
-
-        $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
-        /**
-         * @var $list DataObject\Listing\Concrete
-         */
-        $list = new $listClass();
-
-        $conditionFilters = [];
-        if ($allParams['only_direct_children'] == 'true') {
-            $conditionFilters[] = 'o_parentId = ' . $folder->getId();
-        } else {
-            $quotedPath = $list->quote($folder->getRealFullPath());
-            $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
-            $conditionFilters[] = '(o_path = ' . $quotedPath . ' OR o_path LIKE ' . $quotedWildcardPath . ')';
-        }
-
-        if (!$this->getAdminUser()->isAdmin()) {
-            $userIds = $this->getAdminUser()->getRoles();
-            $userIds[] = $this->getAdminUser()->getId();
-            $conditionFilters[] .= ' (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
-        }
-
-        $featureJoins = [];
-        $featureFilters = false;
-
-        // create filter condition
-        if ($allParams['filter']) {
-            $conditionFilters[] = DataObject\Service::getFilterCondition($allParams['filter'], $class);
-            $featureFilters = DataObject\Service::getFeatureFilters($allParams['filter'], $class);
-            if ($featureFilters) {
-                $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
-            }
-        }
-
-        if ($allParams['condition'] && $this->getAdminUser()->isAdmin()) {
-            $conditionFilters[] = '(' . $allParams['condition'] . ')';
-        }
-
-        if (!empty($bricks)) {
-            foreach ($bricks as $b) {
-                $brickType = $b;
-                if (is_array($brickType)) {
-                    $brickType = $brickType['containerKey'];
-                }
-                $list->addObjectbrick($brickType);
-            }
-        }
-
-        $list->setCondition(implode(' AND ', $conditionFilters));
-        $list->setLimit($limit);
-        $list->setOffset($start);
-
-        if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
-            $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId']. '_' . $sortingSettings['keyId'];
-            $list->setOrderKey($orderKey);
-            $list->setGroupBy('o_id');
-
-            $featureJoins[] = $sortingSettings;
-        } else {
-            $list->setOrderKey($orderKey, !$doNotQuote);
-        }
-        $list->setOrder($order);
-
-        if ($class->getShowVariants()) {
-            $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
-        }
-
-        DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
-
-        $beforeListLoadEvent = new GenericEvent($this, [
-            'list' => $list,
-            'context' => $allParams
-        ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
-        $list = $beforeListLoadEvent->getArgument('list');
-
-        $list->load();
-
-        $objects = [];
-        foreach ($list->getObjects() as $object) {
-            $o = DataObject\Service::gridObjectData($object, $fields, $requestedLanguage);
-            // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_object is insufficient and could lead security breach
-            if ($object->isAllowed('list')) {
-                $objects[] = $o;
-            }
-        }
-
-        $result = ['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()];
-
-        $afterListLoadEvent = new GenericEvent($this, [
-            'list' => $result,
-            'context' => $allParams
-        ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
-        $result = $afterListLoadEvent->getArgument('list');
-
-        return $this->adminJson($result);
-    }
-
-    /**
-     * @Route("/grid-proxy")
-     * @Method({"POST", "PUT"})
+     * @Method({"GET", "POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1810,69 +1611,179 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         if ($allParams['data']) {
-            try {
-                $data = $this->decodeJson($allParams['data']);
+            $this->checkCsrfToken($request);
+            if ($allParams['xaction'] == 'update') {
+                try {
+                    $data = $this->decodeJson($allParams['data']);
 
-                // save
-                $object = DataObject::getById($data['id']);
-                /** @var DataObject\ClassDefinition $class */
-                $class = $object->getClass();
+                    // save
+                    $object = DataObject::getById($data['id']);
+                    /** @var DataObject\ClassDefinition $class */
+                    $class = $object->getClass();
 
-                if (!$object->isAllowed('publish')) {
-                    throw new \Exception("Permission denied. You don't have the rights to save this object.");
-                }
+                    if (!$object->isAllowed('publish')) {
+                        throw new \Exception("Permission denied. You don't have the rights to save this object.");
+                    }
 
-                $user = Tool\Admin::getCurrentUser();
-                $allLanguagesAllowed = false;
-                if (!$user->isAdmin()) {
-                    $languagePermissions = $object->getPermissions('lEdit', $user);
+                    $user = Tool\Admin::getCurrentUser();
+                    $allLanguagesAllowed = false;
+                    if (!$user->isAdmin()) {
+                        $languagePermissions = $object->getPermissions('lEdit', $user);
 
-                    //sets allowed all languages modification when the lEdit column is empty
-                    $allLanguagesAllowed = $languagePermissions['lEdit'] == '';
+                        //sets allowed all languages modification when the lEdit column is empty
+                        $allLanguagesAllowed = $languagePermissions['lEdit'] == '';
 
-                    $languagePermissions = explode(',', $languagePermissions['lEdit']);
-                }
+                        $languagePermissions = explode(',', $languagePermissions['lEdit']);
+                    }
 
-                $objectData = [];
-                foreach ($data as $key => $value) {
-                    $parts = explode('~', $key);
-                    if (substr($key, 0, 1) == '~') {
-                        $type = $parts[1];
-                        $field = $parts[2];
-                        $keyid = $parts[3];
+                    $objectData = [];
+                    foreach ($data as $key => $value) {
+                        $parts = explode('~', $key);
+                        if (substr($key, 0, 1) == '~') {
+                            $type = $parts[1];
+                            $field = $parts[2];
+                            $keyid = $parts[3];
 
-                        if ($type == 'classificationstore') {
-                            $groupKeyId = explode('-', $keyid);
-                            $groupId = $groupKeyId[0];
-                            $keyid = $groupKeyId[1];
+                            if ($type == 'classificationstore') {
+                                $groupKeyId = explode('-', $keyid);
+                                $groupId = $groupKeyId[0];
+                                $keyid = $groupKeyId[1];
 
-                            $getter = 'get' . ucfirst($field);
-                            if (method_exists($object, $getter)) {
+                                $getter = 'get' . ucfirst($field);
+                                if (method_exists($object, $getter)) {
 
-                                /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
-                                $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
-                                $csLanguage = $requestedLanguage;
-                                if (!$csFieldDefinition->isLocalized()) {
-                                    $csLanguage = 'default';
+                                    /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
+                                    $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                                    $csLanguage = $requestedLanguage;
+                                    if (!$csFieldDefinition->isLocalized()) {
+                                        $csLanguage = 'default';
+                                    }
+
+                                    /** @var $classificationStoreData DataObject\Classificationstore */
+                                    $classificationStoreData = $object->$getter();
+
+                                    $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyid);
+                                    if ($keyConfig) {
+                                        $fieldDefinition = $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
+                                            json_decode($keyConfig->getDefinition()),
+                                            $keyConfig->getType()
+                                        );
+                                        if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
+                                            $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
+                                        }
+                                    }
+
+                                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $csLanguage);
                                 }
+                            }
+                        } elseif (count($parts) > 1) {
+                            $brickType = $parts[0];
 
-                                /** @var $classificationStoreData DataObject\Classificationstore */
-                                $classificationStoreData = $object->$getter();
+                            if (strpos($brickType, '?') !== false) {
+                                $brickDescriptor = substr($brickType, 1);
+                                $brickDescriptor = json_decode($brickDescriptor, true);
+                                $brickType = $brickDescriptor['containerKey'];
+                            }
+                            $brickKey = $parts[1];
+                            $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
 
-                                $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyid);
-                                if ($keyConfig) {
-                                    $fieldDefinition = $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
-                                        json_decode($keyConfig->getDefinition()),
-                                        $keyConfig->getType()
-                                    );
-                                    if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
-                                        $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
+                            $fieldGetter = 'get' . ucfirst($brickField);
+                            $brickGetter = 'get' . ucfirst($brickType);
+                            $valueSetter = 'set' . ucfirst($brickKey);
+
+                            $brick = $object->$fieldGetter()->$brickGetter();
+                            if (empty($brick)) {
+                                $classname = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickType);
+                                $brickSetter = 'set' . ucfirst($brickType);
+                                $brick = new $classname($object);
+                                $object->$fieldGetter()->$brickSetter($brick);
+                            }
+
+                            if ($brickDescriptor) {
+                                $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
+                                $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
+                                $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
+                            } else {
+                                $fieldDefinition = $this->getFieldDefinitionFromBrick($brickType, $brickKey);
+                            }
+
+                            if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
+                                $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
+                            }
+
+                            if ($brickDescriptor) {
+                                /** @var $localizedFields DataObject\Localizedfield */
+                                $localizedFields = $brick->getLocalizedfields();
+                                $localizedFields->setLocalizedValue($brickKey, $value);
+                            } else {
+                                $brick->$valueSetter($value);
+                            }
+                        } else {
+                            if (!$user->isAdmin() && $languagePermissions) {
+                                $fd = $class->getFieldDefinition($key);
+                                if (!$fd) {
+                                    // try to get via localized fields
+                                    $localized = $class->getFieldDefinition('localizedfields');
+                                    if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                                        $field = $localized->getFieldDefinition($key);
+                                        if ($field) {
+                                            $currentLocale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                                            if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
+                                                continue;
+                                            }
+                                        }
                                     }
                                 }
-
-                                $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $csLanguage);
                             }
+
+                            $fieldDefinition = $this->getFieldDefinition($class, $key);
+                            if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
+                                $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
+                            }
+
+                            $objectData[$key] = $value;
                         }
+                    }
+
+                    $object->setValues($objectData);
+
+                    $object->save();
+
+                    return $this->adminJson(['data' => DataObject\Service::gridObjectData($object, $allParams['fields'], $requestedLanguage), 'success' => true]);
+                } catch (\Exception $e) {
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                }
+            }
+        } else {
+            // get list of objects
+            $folder = DataObject::getById($allParams['folderId']);
+            $class = DataObject\ClassDefinition::getById($allParams['classId']);
+            $className = $class->getName();
+
+            $colMappings = [
+                'key' => 'o_key',
+                'filename' => 'o_key',
+                'fullpath' => ['o_path', 'o_key'],
+                'id' => 'oo_id',
+                'published' => 'o_published',
+                'modificationDate' => 'o_modificationDate',
+                'creationDate' => 'o_creationDate'
+            ];
+
+            $start = 0;
+            $limit = 20;
+            $orderKey = 'oo_id';
+            $order = 'ASC';
+
+            $fields = [];
+            $bricks = [];
+            if ($allParams['fields']) {
+                $fields = $allParams['fields'];
+
+                foreach ($fields as $f) {
+                    $parts = explode('~', $f);
+                    if (substr($f, 0, 1) == '~') {
+                        $type = $parts[1];
                     } elseif (count($parts) > 1) {
                         $brickType = $parts[0];
 
@@ -1880,77 +1791,157 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             $brickDescriptor = substr($brickType, 1);
                             $brickDescriptor = json_decode($brickDescriptor, true);
                             $brickType = $brickDescriptor['containerKey'];
-                        }
-                        $brickKey = $parts[1];
-                        $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
-
-                        $fieldGetter = 'get' . ucfirst($brickField);
-                        $brickGetter = 'get' . ucfirst($brickType);
-                        $valueSetter = 'set' . ucfirst($brickKey);
-
-                        $brick = $object->$fieldGetter()->$brickGetter();
-                        if (empty($brick)) {
-                            $classname = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickType);
-                            $brickSetter = 'set' . ucfirst($brickType);
-                            $brick = new $classname($object);
-                            $object->$fieldGetter()->$brickSetter($brick);
-                        }
-
-                        if ($brickDescriptor) {
-                            $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
-                            $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
-                            $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
+                            $bricks[$brickType] = $brickDescriptor;
                         } else {
-                            $fieldDefinition = $this->getFieldDefinitionFromBrick($brickType, $brickKey);
+                            $bricks[$parts[0]] = $brickType;
                         }
-
-                        if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
-                            $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
-                        }
-
-                        if ($brickDescriptor) {
-                            /** @var $localizedFields DataObject\Localizedfield */
-                            $localizedFields = $brick->getLocalizedfields();
-                            $localizedFields->setLocalizedValue($brickKey, $value);
-                        } else {
-                            $brick->$valueSetter($value);
-                        }
-                    } else {
-                        if (!$user->isAdmin() && $languagePermissions) {
-                            $fd = $class->getFieldDefinition($key);
-                            if (!$fd) {
-                                // try to get via localized fields
-                                $localized = $class->getFieldDefinition('localizedfields');
-                                if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                                    $field = $localized->getFieldDefinition($key);
-                                    if ($field) {
-                                        $currentLocale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
-                                        if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
-                                            continue;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        $fieldDefinition = $this->getFieldDefinition($class, $key);
-                        if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
-                            $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
-                        }
-
-                        $objectData[$key] = $value;
                     }
                 }
-
-                $object->setValues($objectData);
-
-                $object->save();
-
-                return $this->adminJson(['data' => DataObject\Service::gridObjectData($object, $allParams['fields'], $requestedLanguage), 'success' => true]);
-            } catch (\Exception $e) {
-                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
 
+            if ($allParams['limit']) {
+                $limit = $allParams['limit'];
+            }
+            if ($allParams['start']) {
+                $start = $allParams['start'];
+            }
+
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+
+            $doNotQuote = false;
+
+            if ($sortingSettings['order']) {
+                $order = $sortingSettings['order'];
+            }
+            if (strlen($sortingSettings['orderKey']) > 0) {
+                $orderKey = $sortingSettings['orderKey'];
+                if (!(substr($orderKey, 0, 1) == '~')) {
+                    if (array_key_exists($orderKey, $colMappings)) {
+                        $orderKey = $colMappings[$orderKey];
+                    } elseif ($class->getFieldDefinition($orderKey) instanceof  DataObject\ClassDefinition\Data\QuantityValue) {
+                        $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
+                        $doNotQuote = true;
+                    } elseif ($class->getFieldDefinition($orderKey) instanceof  DataObject\ClassDefinition\Data\RgbaColor) {
+                        $orderKey = 'concat(' . $orderKey . '__rgb, ' . $orderKey . '__a)';
+                        $doNotQuote = true;
+                    } elseif (strpos($orderKey, '~') !== false) {
+                        $orderKeyParts = explode('~', $orderKey);
+
+                        if (strpos($orderKey, '?') !== false) {
+                            $brickDescriptor = substr($orderKeyParts[0], 1);
+                            $brickDescriptor = json_decode($brickDescriptor, true);
+                            $db = Db::get();
+                            $orderKey = $db->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') . '.' . $db->quoteIdentifier($brickDescriptor['brickfield']);
+                            $doNotQuote = true;
+                        } else {
+                            if (count($orderKeyParts) == 2) {
+                                $orderKey = $orderKeyParts[1];
+                            }
+                        }
+                    }
+                }
+            }
+
+            $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
+            /**
+             * @var $list DataObject\Listing\Concrete
+             */
+            $list = new $listClass();
+
+            $conditionFilters = [];
+            if ($allParams['only_direct_children'] == 'true') {
+                $conditionFilters[] = 'o_parentId = ' . $folder->getId();
+            } else {
+                $quotedPath = $list->quote($folder->getRealFullPath());
+                $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
+                $conditionFilters[] = '(o_path = ' . $quotedPath . ' OR o_path LIKE ' . $quotedWildcardPath . ')';
+            }
+
+            if (!$this->getAdminUser()->isAdmin()) {
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
+                $conditionFilters[] .= ' (
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )';
+            }
+
+            $featureJoins = [];
+            $featureFilters = false;
+
+            // create filter condition
+            if ($allParams['filter']) {
+                $conditionFilters[] = DataObject\Service::getFilterCondition($allParams['filter'], $class);
+                $featureFilters = DataObject\Service::getFeatureFilters($allParams['filter'], $class);
+                if ($featureFilters) {
+                    $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
+                }
+            }
+
+            if ($allParams['condition'] && $this->getAdminUser()->isAdmin()) {
+                $conditionFilters[] = '(' . $allParams['condition'] . ')';
+            }
+
+            if (!empty($bricks)) {
+                foreach ($bricks as $b) {
+                    $brickType = $b;
+                    if (is_array($brickType)) {
+                        $brickType = $brickType['containerKey'];
+                    }
+                    $list->addObjectbrick($brickType);
+                }
+            }
+
+            $list->setCondition(implode(' AND ', $conditionFilters));
+            $list->setLimit($limit);
+            $list->setOffset($start);
+
+            if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
+                $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId']. '_' . $sortingSettings['keyId'];
+                $list->setOrderKey($orderKey);
+                $list->setGroupBy('o_id');
+
+                $featureJoins[] = $sortingSettings;
+            } else {
+                $list->setOrderKey($orderKey, !$doNotQuote);
+            }
+            $list->setOrder($order);
+
+            if ($class->getShowVariants()) {
+                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+            }
+
+            DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
+
+            $beforeListLoadEvent = new GenericEvent($this, [
+                'list' => $list,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $list = $beforeListLoadEvent->getArgument('list');
+
+            $list->load();
+
+            $objects = [];
+            foreach ($list->getObjects() as $object) {
+                $o = DataObject\Service::gridObjectData($object, $fields, $requestedLanguage);
+                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_object is insufficient and could lead security breach
+                if ($object->isAllowed('list')) {
+                    $objects[] = $o;
+                }
+            }
+
+            $result = ['data' => $objects, 'success' => true, 'total' => $list->getTotalCount()];
+
+            $afterListLoadEvent = new GenericEvent($this, [
+                'list' => $result,
+                'context' => $allParams
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $result = $afterListLoadEvent->getArgument('list');
+
+            return $this->adminJson($result);
         }
     }
 
