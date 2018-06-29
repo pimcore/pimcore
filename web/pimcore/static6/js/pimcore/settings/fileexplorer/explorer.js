@@ -24,7 +24,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
             iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
             border: false,
             layout: "border",
-            closable:true,
+            closable: true,
             items: [this.getTreePanel(), this.getEditorPanel()]
         });
 
@@ -40,7 +40,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     getTreePanel: function () {
 
-        if(!this.treePanel) {
+        if (!this.treePanel) {
 
             var store = Ext.create('Ext.data.TreeStore', {
                 proxy: {
@@ -61,7 +61,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                 rootVisible: true,
                 enableDD: false,
                 scrollable: true,
-                folderSort:true,
+                folderSort: true,
                 split: true,
                 root: {
                     iconCls: "pimcore_icon_home",
@@ -72,8 +72,8 @@ pimcore.settings.fileexplorer.explorer = Class.create({
                     writeable: true
                 },
                 listeners: {
-                    itemclick: function (tree, record, item, index, e, eOpts ) {
-                        if(record.data.type != "folder") {
+                    itemclick: function (tree, record, item, index, e, eOpts) {
+                        if (record.data.type != "folder") {
                             this.openFile(record.data.id);
                         } else {
                             record.expand();
@@ -87,7 +87,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
         return this.treePanel;
     },
 
-    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
+    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
         e.stopEvent();
         var menu = new Ext.menu.Menu();
 
@@ -139,75 +139,82 @@ pimcore.settings.fileexplorer.explorer = Class.create({
     addNewFile: function (node) {
 
         Ext.MessageBox.prompt(t('new_file'), t('please_enter_the_name_of_the_new_file'),
-                            function (node, button, value) {
-                                Ext.Ajax.request({
-                                    url: "/admin/misc/fileexplorer-add",
-                                    success: function (node, response) {
-                                        node.data.loaded = false;
+            function (node, button, value) {
+                Ext.Ajax.request({
+                    url: "/admin/misc/fileexplorer-add",
+                    success: function (node, response) {
+                        node.data.loaded = false;
 
-                                        this.treePanel.getStore().load({
-                                            node: node,
-                                            callback: function() {
-                                                node.expand();
-                                            }
-                                        });
-                                    }.bind(this, node),
-                                    params: {
-                                        path: node.id,
-                                        filename: value
-                                    }
-                                });
-                            }.bind(this, node));
+                        this.treePanel.getStore().load({
+                            node: node,
+                            callback: function () {
+                                node.expand();
+                            }
+                        });
+                    }.bind(this, node),
+                    params: {
+                        path: node.id,
+                        filename: value
+                    }
+                });
+            }.bind(this, node));
     },
 
     addNewFolder: function (node) {
 
         Ext.MessageBox.prompt(t('new_folder'), t('please_enter_the_name_of_the_new_folder'),
-                            function (node, button, value) {
-                                Ext.Ajax.request({
-                                    url: "/admin/misc/fileexplorer-add-folder",
-                                    success: function (node, response) {
-                                        node.data.loaded = false;
+            function (node, button, value) {
+                Ext.Ajax.request({
+                    url: "/admin/misc/fileexplorer-add-folder",
+                    success: function (node, response) {
+                        node.data.loaded = false;
 
-                                        this.treePanel.getStore().load({
-                                            node: node,
-                                            callback: function() {
-                                                node.expand();
-                                            }
-                                        });
+                        this.treePanel.getStore().load({
+                            node: node,
+                            callback: function () {
+                                node.expand();
+                            }
+                        });
 
-                                    }.bind(this, node),
-                                    params: {
-                                        path: node.id,
-                                        filename: value
-                                    }
-                                });
-                            }.bind(this, node));
+                    }.bind(this, node),
+                    params: {
+                        path: node.id,
+                        filename: value
+                    }
+                });
+            }.bind(this, node));
     },
 
     rename: function (node) {
 
         Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
             function (node, button, value) {
-                Ext.Ajax.request({
-                    url: "/admin/misc/fileexplorer-rename",
-                    success: function (node, response) {
-                        if (this.openfiles[node.id]) {
-                            this.openfiles[node.id].updatePath(node.parentNode.id + value);
-                        }
-                        this.treePanel.getStore().load({
-                            node: node.parentNode,
-                            callback: function() {
-                                node.parentNode.expand();
+                if (button == "ok") {
+                    Ext.Ajax.request({
+                        url: "/admin/misc/fileexplorer-rename",
+                        success: function (node, response) {
+                            if (this.openfiles[node.id]) {
+                                this.openfiles[node.id].updatePath(node.parentNode.id + value);
                             }
-                        });
-                    }.bind(this, node),
-                    params: {
-                        path: node.id,
-                        newPath: node.parentNode.id + value
-                    }
-                });
-            }.bind(this, node));
+                            this.treePanel.getStore().load({
+                                node: node.parentNode,
+                                callback: function (parentNode) {
+                                    if (parentNode) {
+                                        parentNode.expand();
+                                    }
+                                }.bind(this, node.parentNode)
+                            });
+                        }.bind(this, node),
+                        params: {
+                            path: node.id,
+                            newPath: node.parentNode.id + "/" + value
+                        }
+                    });
+                }
+            }.bind(this, node),
+            this,
+            false,
+            node.data.text);
     },
 
     deleteFile: function (node) {
@@ -227,10 +234,10 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     getEditorPanel: function () {
 
-        if(!this.editorPanel) {
+        if (!this.editorPanel) {
             this.editorPanel = new Ext.TabPanel({
                 region: "center",
-                enableTabScroll:true
+                enableTabScroll: true
             });
         }
 
@@ -239,7 +246,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     openFile: function (path) {
 
-        if(typeof this.openfiles[path] != "undefined") {
+        if (typeof this.openfiles[path] != "undefined") {
             this.openfiles[path].activate();
         } else {
             this.openfiles[path] = new pimcore.settings.fileexplorer.file(path, this);
