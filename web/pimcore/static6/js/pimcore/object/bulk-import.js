@@ -61,7 +61,7 @@ pimcore.object.bulkimport = Class.create({
             var checkColumn = Ext.create('Ext.grid.column.Check', {
                 text: t("import"),
                 dataIndex: 'checked',
-                width: 30
+                width: 50
             });
 
             this.gridPanel = new Ext.grid.Panel({
@@ -128,6 +128,7 @@ pimcore.object.bulkimport = Class.create({
                 width: 800,
                 height: 500,
                 border: false,
+                modal: true,
                 layout: "fit",
                 iconCls: "pimcore_icon_import",
                 items: [this.gridPanel],
