@@ -952,7 +952,7 @@ class Service extends Model\AbstractModel
     public static function fixAllowedTypes($data, $type)
     {
         // this is the new method with Ext.form.MultiSelect
-        if ((is_string($data) && !empty($data)) || (is_array($data) && count($data))) {
+        if (is_array($data) && count($data)) {
             $first = reset($data);
             if (!is_array($first)) {
                 $parts = $data;

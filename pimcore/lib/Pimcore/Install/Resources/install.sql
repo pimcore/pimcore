@@ -75,16 +75,16 @@ CREATE TABLE `cache_tags` (
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(190) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
+	`id` VARCHAR(50) NOT NULL,
+	`name` VARCHAR(190) NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `custom_layouts` ;
 CREATE TABLE `custom_layouts` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`classId` INT(11) UNSIGNED NOT NULL,
+	`classId` VARCHAR(50) NOT NULL,
 	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` TEXT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
@@ -372,7 +372,7 @@ CREATE TABLE `objects` (
   `o_modificationDate` int(11) unsigned DEFAULT NULL,
   `o_userOwner` int(11) unsigned DEFAULT NULL,
   `o_userModification` int(11) unsigned DEFAULT NULL,
-  `o_classId` int(11) unsigned DEFAULT NULL,
+  `o_classId` VARCHAR(50) NULL DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
   `o_childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
   PRIMARY KEY (`o_id`),
@@ -878,7 +878,7 @@ DROP TABLE IF EXISTS `gridconfigs`;
 CREATE TABLE `gridconfigs` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`ownerId` INT(11) NULL,
-	`classId` INT(11) NULL,
+	`classId` VARCHAR(50) NULL DEFAULT NULL,
 	`name` VARCHAR(50) NULL,
 	`searchType` VARCHAR(50) NULL,
 	`config` LONGTEXT NULL,
@@ -898,8 +898,8 @@ DEFAULT CHARSET=utf8mb4;
 DROP TABLE IF EXISTS `gridconfig_favourites`;
 CREATE TABLE `gridconfig_favourites` (
 	`ownerId` INT(11) NOT NULL,
-	`classId` INT(11) NOT NULL,
-  `objectId` INT(11) NOT NULL DEFAULT '0',
+	`classId` VARCHAR(50) NOT NULL,
+    `objectId` INT(11) NOT NULL DEFAULT '0',
 	`gridConfigId` INT(11) NULL,
 	`searchType` VARCHAR(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
@@ -925,7 +925,7 @@ DROP TABLE IF EXISTS `importconfigs`;
 CREATE TABLE `importconfigs` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`ownerId` INT(11) NULL,
-	`classId` INT(11) NULL,
+	`classId` VARCHAR(50) NULL DEFAULT NULL,
 	`name` VARCHAR(50) NULL,
 	`config` LONGTEXT NULL,
   `description` LONGTEXT NULL,

@@ -687,6 +687,13 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "textfield",
+                    fieldLabel: t("class_identifier"),
+                    disabled: true,
+                    value: this.data.id,
+                    width: 500
+                },
+                {
+                    xtype: "textfield",
                     fieldLabel: t("PHP Class Name"),
                     name: "phpClassName",
                     itemId: "phpClassName",

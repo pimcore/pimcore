@@ -127,7 +127,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $longestTablename = end($tables);
 
         $length = strlen($longestTablename);
-        if ($length >= 64) {
+        if ($length > 64) {
             throw new \Exception('table name ' . $longestTablename . ' would be too long. Max length is 64. Current length would be ' .  $length . ".");
         }
     }

@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Helper;
 
 use Codeception\Module;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
@@ -44,6 +45,7 @@ class ClassManager extends Module
     {
         // class either already exists or it must be created
         if (!$this->hasClass($name)) {
+
             $this->debug(sprintf('[CLASSMANAGER] Setting up class %s', $name));
 
             $json = $this->loadJson($filename);
@@ -51,10 +53,15 @@ class ClassManager extends Module
             $class = new ClassDefinition();
             $class->setName($name);
             $class->setUserOwner(1);
+            $class->setId($name);
 
             ClassDefinition\Service::importClassDefinitionFromJson($class, $json, true);
 
             $class->save();
+
+
+            $this->debug(sprintf('[CLASSMANAGER] Setting up class %s DONE', $name));
+
 
             $class = ClassDefinition::getById($class->getId());
             $class->setUserModification(1);

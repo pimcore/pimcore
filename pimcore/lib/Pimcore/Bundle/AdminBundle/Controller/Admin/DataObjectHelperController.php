@@ -86,7 +86,7 @@ class DataObjectHelperController extends AdminController
         $db = Db::get();
         $configListingConditionParts = [];
         $configListingConditionParts[] = 'ownerId = ' . $userId;
-        $configListingConditionParts[] = 'classId = ' . $classId;
+        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
 
         if ($searchType) {
             $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
@@ -114,7 +114,7 @@ class DataObjectHelperController extends AdminController
         $db = Db::get();
         $configListingConditionParts = [];
         $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
-        $configListingConditionParts[] = 'classId = ' . $classId;
+        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
 
         if ($searchType) {
             $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
@@ -126,10 +126,11 @@ class DataObjectHelperController extends AdminController
         // collect all roles
         $userIds = array_merge($userIds, $user->getRoles());
         $userIds = implode(',', $userIds);
+        $db = Db::get();
 
         $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
-                    where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $classId . ')
-                            UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = ' . $classId;
+                    where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
+                            UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId);
 
         $ids = $db->fetchCol($query);
         if ($ids) {
@@ -436,7 +437,7 @@ class DataObjectHelperController extends AdminController
             $db = Db::get();
             $configListingConditionParts = [];
             $configListingConditionParts[] = 'ownerId = ' . $userId;
-            $configListingConditionParts[] = 'classId = ' . $class->getId();
+            $configListingConditionParts[] = 'classId = ' . $db->quote($class->getId());
 
             if ($searchType) {
                 $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
@@ -878,7 +879,7 @@ class DataObjectHelperController extends AdminController
             $db = Db::get();
             $db->query('delete from gridconfig_favourites where '
                 . 'ownerId = ' . $user->getId()
-                . ' and classId = ' . $classId .
+                . ' and classId = ' . $db->quote($classId) .
                 ' and searchType = ' . $db->quote($searchType)
                 . ' and objectId != ' . $objectId . ' and objectId != 0');
 
@@ -934,7 +935,7 @@ class DataObjectHelperController extends AdminController
                 $db = Db::get();
                 $count = $db->fetchOne('select * from gridconfig_favourites where '
                     . 'ownerId = ' . $user->getId()
-                    . ' and classId = ' . $classId .
+                    . ' and classId = ' . $db->quote($classId ).
                     ' and searchType = ' . $db->quote($searchType)
                     . ' and objectId != ' . $objectId . ' and objectId != 0');
                 $specializedConfigs = $count > 0;

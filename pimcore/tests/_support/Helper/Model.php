@@ -51,7 +51,7 @@ class Model extends AbstractDefinitionHelper
             /** @var ClassDefinition\Data\ObjectsMetadata $fd */
             $fd = $class->getFieldDefinition('objectswithmetadata');
             if ($fd) {
-                $fd->setAllowedClassId($class->getId());
+                $fd->setAllowedClassId($class->getName());
                 $class->save();
             }
 

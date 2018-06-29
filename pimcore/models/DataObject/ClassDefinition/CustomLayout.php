@@ -386,7 +386,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getClassId()
     {

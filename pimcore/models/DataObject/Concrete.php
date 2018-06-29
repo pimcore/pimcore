@@ -44,7 +44,7 @@ class Concrete extends AbstractObject
     public $o_class;
 
     /**
-     * @var int
+     * @var string
      */
     public $o_classId;
 
@@ -406,21 +406,21 @@ class Concrete extends AbstractObject
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getClassId()
     {
-        return (int) $this->o_classId;
+        return $this->o_classId;
     }
 
     /**
-     * @param int $o_classId
+     * @param string $o_classId
      *
      * @return $this
      */
     public function setClassId($o_classId)
     {
-        $this->o_classId = (int) $o_classId;
+        $this->o_classId = $o_classId;
 
         return $this;
     }
