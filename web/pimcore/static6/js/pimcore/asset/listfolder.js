@@ -161,10 +161,7 @@ pimcore.asset.listfolder = Class.create({
                         }
 
                         if(ids.length) {
-                            this.element.downloadZip({
-                                id: this.element.id,
-                                "selectedIds[]": ids
-                            });
+                            pimcore.elementservice.downloadAssetFolderAsZip(this.element.id, ids);
                         } else {
                             Ext.Msg.alert(t('error'), t('please_select_items_to_download'));
                         }

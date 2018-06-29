@@ -825,14 +825,20 @@ pimcore.elementservice.replaceAsset = function (id, callback) {
 };
 
 
-pimcore.elementservice.downloadAssetFolderAsZip = function (id) {
+pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
 
     var that = {};
+
+    var idsParam = '';
+    if(selectedIds && selectedIds.length) {
+        idsParam = selectedIds.join(',');
+    }
 
     Ext.Ajax.request({
         url: "/admin/asset/download-as-zip-jobs",
         params: {
-            id: id
+            id: id,
+            selectedIds: idsParam
         },
         success: function(response) {
             var res = Ext.decode(response.responseText);

@@ -1764,10 +1764,12 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $db = \Pimcore\Db::get();
             $conditionFilters = [];
-            $selectedIds = $request->get('selectedIds', []);
+            $selectedIds = explode(',', $request->get('selectedIds', ''));
             $quotedSelectedIds = [];
             foreach ($selectedIds as $selectedId) {
-                $quotedSelectedIds[] = $db->quote($selectedId);
+                if($selectedId) {
+                    $quotedSelectedIds[] = $db->quote($selectedId);
+                }
             }
             if (!empty($quotedSelectedIds)) {
                 //add a condition if id numbers are specified
