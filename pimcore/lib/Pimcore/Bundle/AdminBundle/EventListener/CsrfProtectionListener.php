@@ -19,12 +19,13 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class CsrfPretectionListener implements EventSubscriberInterface
+class CsrfProtectionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
     use LoggerAwareTrait;
@@ -32,8 +33,6 @@ class CsrfPretectionListener implements EventSubscriberInterface
     protected $excludedRoutes = [];
 
     /**
-     * CsrfPretectionListener constructor.
-     *
      * @param $excludedRoutes
      */
     public function __construct($excludedRoutes)
@@ -47,36 +46,28 @@ class CsrfPretectionListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'checkCsrfToken'
+            KernelEvents::REQUEST => 'handleRequest'
         ];
     }
 
-    public function checkCsrfToken(GetResponseEvent $event)
-    {
+    /**
+     * @param GetResponseEvent $event
+     */
+    public function handleRequest(GetResponseEvent $event) {
         $request = $event->getRequest();
+
+        if($request->getMethod() == Request::METHOD_GET) {
+            return;
+        }
+
         if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             return;
         }
 
         $exludedRoutes = [
-            'pimcore_admin_index', // main view => /admin
-
             // login
             'pimcore_admin_login', 'pimcore_admin_login_fallback', 'pimcore_admin_login_check', 'pimcore_admin_login_lostpassword',
             'pimcore_admin_login_deeplink', 'pimcore_admin_2fa', 'pimcore_admin_2fa',
-
-            // embeded via <script>, <style>, <img> on /admin
-            'pimcore_admin_user_getimage', 'pimcore_admin_misc_admincss',
-            'pimcore_admin_misc_jsontranslationssystem', 'pimcore_admin_user_getcurrentuser',
-            'pimcore_admin_misc_availablelanguages', 'pimcore_settings_display_custom_logo',
-            'pimcore_admin_misc_scriptproxy', 'pimcore_admin_user_renew2fasecret',
-
-            // thumbnails
-            'pimcore_admin_asset_getdocumentthumbnail', 'pimcore_admin_asset_getimagethumbnail',
-            'pimcore_admin_asset_getvideothumbnail',
-
-            // previews / versioning
-            'pimcore_admin_document_diffversionsimage', 'pimcore_admin_page_display_preview_image',
 
             // WebDAV
             'pimcore_admin_webdav',
@@ -86,9 +77,6 @@ class CsrfPretectionListener implements EventSubscriberInterface
             'pimcore_admin_external_linfo_index', 'pimcore_admin_external_linfo_layout',
             'pimcore_admin_external_adminer_adminer', 'pimcore_admin_external_adminer_proxy',
             'pimcore_admin_external_adminer_proxy_1', 'pimcore_admin_external_adminer_proxy_2',
-
-            // ecommerce
-            'pimcore_ecommerceframework_config_jsconfig'
         ];
 
         $route = $request->attributes->get('_route');
@@ -96,6 +84,14 @@ class CsrfPretectionListener implements EventSubscriberInterface
             return;
         }
 
+        $this->checkCsrfToken($request);
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function checkCsrfToken(Request $request)
+    {
         $csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
             return $adminSession->get('csrfToken');
         });

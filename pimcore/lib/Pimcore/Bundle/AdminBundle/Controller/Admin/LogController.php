@@ -50,7 +50,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
     /**
      * @Route("/log/show")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *

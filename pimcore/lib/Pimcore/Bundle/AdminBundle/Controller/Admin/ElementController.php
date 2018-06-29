@@ -152,7 +152,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/note-list")
-     * @Method({"GET"})
+     * @Method({"POST"})
      *
      * @param Request $request
      *

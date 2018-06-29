@@ -560,7 +560,7 @@ class MiscController extends AdminController
 
     /**
      * @Route("/http-error-log")
-     * @Method({"GET"})
+     * @Method({"POST"})
      *
      * @param Request $request
      *

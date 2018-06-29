@@ -14,7 +14,8 @@ services:
         arguments:
             $unauthenticatedRoutes: '%pimcore.admin.unauthenticated_routes%'
 
-    Pimcore\Bundle\AdminBundle\EventListener\CsrfPretectionListener:
+    Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener:
+        public: true
         arguments: ['%pimcore_admin.csrf_protection.excluded_routes%']
         calls:
             - [setLogger, ['@logger']]

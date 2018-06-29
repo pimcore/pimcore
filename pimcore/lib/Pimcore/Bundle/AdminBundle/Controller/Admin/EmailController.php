@@ -478,48 +478,9 @@ class EmailController extends DocumentControllerBase
         ]);
     }
 
-
     /**
      * @Route("/blacklist")
-     * @Method({"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function blacklistGetAction(Request $request)
-    {
-        $list = new Tool\Email\Blacklist\Listing();
-
-        $list->setLimit($request->get('limit'));
-        $list->setOffset($request->get('start'));
-
-        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($request->query->all());
-        if ($sortingSettings['orderKey']) {
-            $orderKey = $sortingSettings['orderKey'];
-        }
-        if ($sortingSettings['order']) {
-            $order  = $sortingSettings['order'];
-        }
-
-        if ($request->get('filter')) {
-            $list->setCondition('`address` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
-        }
-
-        $data = $list->load();
-
-        return $this->adminJson([
-            'success' => true,
-            'data' => $data,
-            'total' => $list->getTotalCount()
-        ]);
-    }
-
-    /**
-     * @Route("/blacklist")
-     * @Method({"POST", "PUT"})
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -564,6 +525,33 @@ class EmailController extends DocumentControllerBase
 
                 return $this->adminJson(['data' => $address, 'success' => true]);
             }
+        } else {
+            // get list of routes
+
+            $list = new Tool\Email\Blacklist\Listing();
+
+            $list->setLimit($request->get('limit'));
+            $list->setOffset($request->get('start'));
+
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($request->query->all());
+            if ($sortingSettings['orderKey']) {
+                $orderKey = $sortingSettings['orderKey'];
+            }
+            if ($sortingSettings['order']) {
+                $order  = $sortingSettings['order'];
+            }
+
+            if ($request->get('filter')) {
+                $list->setCondition('`address` LIKE ' . $list->quote('%'.$request->get('filter').'%'));
+            }
+
+            $data = $list->load();
+
+            return $this->adminJson([
+                'success' => true,
+                'data' => $data,
+                'total' => $list->getTotalCount()
+            ]);
         }
 
         return $this->adminJson(false);
