@@ -137,7 +137,7 @@ pimcore.settings.robotstxt = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/settings/robots-txt",
-            method: "post",
+            method: "PUT",
             params: {
                 data: this.editArea.getValue(),
                 site: this.site

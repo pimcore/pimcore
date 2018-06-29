@@ -755,6 +755,7 @@ Ext.onReady(function () {
 
     // Quick Search
     var quickSearchTimeout = null;
+    var quickSearchCount = 0;
     var quicksearchMap = new Ext.util.KeyMap({
         target: document,
         binding: [{
@@ -765,16 +766,27 @@ Ext.onReady(function () {
         }, {
             key: Ext.event.Event.CTRL,
             fn: function () {
+                quickSearchCount++;
                 // press 2x CTRL within 200ms
-                if(quickSearchTimeout) {
-                    pimcore.helpers.showQuickSearch();
-                } else {
-                    quickSearchTimeout = window.setTimeout(function () {
-                        if (quickSearchTimeout) {
-                            window.clearTimeout(quickSearchTimeout);
-                            quickSearchTimeout = null;
+                if(quickSearchCount === 2) {
+                    window.setTimeout(function () {
+                        if (quickSearchCount == 2) {
+                            pimcore.helpers.showQuickSearch();
+                            quickSearchCount = 0;
                         }
                     }, 200);
+                } else {
+                    if(quickSearchTimeout) {
+                        window.clearTimeout(quickSearchTimeout);
+                    }
+
+                    var lastCount = quickSearchCount;
+                    quickSearchTimeout = window.setTimeout(function () {
+                        if(lastCount === quickSearchCount) {
+                            quickSearchTimeout = null;
+                            quickSearchCount = 0;
+                        }
+                    }, 1000);
                 }
             }
         }]
@@ -886,7 +898,7 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
         }
         pimcore.globalmanager.add("translations_admin_missing", new Array());
         Ext.Ajax.request({
-            method: "post",
+            method: "POST",
             url: "/admin/translation/add-admin-translation-keys",
             params: {keys: params}
         });

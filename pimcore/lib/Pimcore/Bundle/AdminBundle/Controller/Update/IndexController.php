@@ -22,7 +22,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/index")
@@ -31,6 +32,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 {
     /**
      * @Route("/check-debug-mode")
+     * @Method({"GET"})
      *
      * @param KernelInterface $kernel
      *
@@ -45,6 +47,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/check-composer-installed")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -59,6 +62,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/check-file-permissions")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -73,6 +77,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-available-updates")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -87,6 +92,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-jobs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -101,6 +107,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/job-parallel")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -117,6 +124,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/job-procedural")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

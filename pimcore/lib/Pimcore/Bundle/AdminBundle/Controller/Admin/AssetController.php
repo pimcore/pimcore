@@ -33,7 +33,8 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
  * @Route("/asset")
@@ -47,6 +48,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -140,6 +142,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/tree-get-childs-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -221,6 +224,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/add-asset")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -235,6 +239,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/add-asset-compatibility")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -384,6 +389,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/replace-asset")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -442,6 +448,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/add-folder")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -472,6 +479,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -517,6 +525,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/delete-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -549,6 +558,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($asset instanceof Asset) {
                 $recycleJobs[] = [[
                     'url' => '/admin/recyclebin/add',
+                    'method' => 'POST',
                     'params' => [
                         'type' => 'asset',
                         'id' => $asset->getId()
@@ -573,6 +583,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                             $deleteJobs[] = [[
                                 'url' => '/admin/asset/delete',
+                                'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
                                     'amount' => $deleteObjectsPerRequest,
@@ -587,6 +598,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 // the asset itself is the last one
                 $deleteJobs[] = [[
                     'url' => '/admin/asset/delete',
+                    'method' => 'DELETE',
                     'params' => [
                         'id' => $asset->getId()
                     ]
@@ -758,6 +770,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -876,6 +889,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/save")
+     * @Method({"PUT","POST"})
      *
      * @param Request $request
      *
@@ -993,6 +1007,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/publish-version")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1020,6 +1035,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/show-version")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1046,6 +1062,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1066,6 +1083,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-image-thumbnail")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1170,6 +1188,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-image-thumbnail")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1244,6 +1263,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-video-thumbnail")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1302,6 +1322,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-document-thumbnail")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1360,6 +1381,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-preview-document")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1379,6 +1401,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-preview-video")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1424,6 +1447,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/image-editor")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @TemplatePhp()
@@ -1443,6 +1467,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/image-editor-save")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1468,6 +1493,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-folder-content-preview")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1575,6 +1601,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/copy-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1595,6 +1622,7 @@ class AssetController extends ElementControllerBase implements EventedController
             // first of all the new parent
             $pasteJobs[] = [[
                 'url' => '/admin/asset/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -1616,6 +1644,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
                             'url' => '/admin/asset/copy',
+                            'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
                                 'targetParentId' => $request->get('targetId'),
@@ -1631,6 +1660,7 @@ class AssetController extends ElementControllerBase implements EventedController
             // the object itself is the last one
             $pasteJobs[] = [[
                 'url' => '/admin/asset/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -1647,6 +1677,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/copy")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1712,6 +1743,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-as-zip-jobs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1762,6 +1794,7 @@ class AssetController extends ElementControllerBase implements EventedController
             for ($i = 0; $i < ceil($assetList->getTotalCount() / $filesPerJob); $i++) {
                 $jobs[] = [[
                     'url' => '/admin/asset/download-as-zip-add-files',
+                    'method' => 'GET',
                     'params' => [
                         'id' => $asset->getId(),
                         'selectedIds' => implode(',', $selectedIds),
@@ -1782,6 +1815,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-as-zip-add-files")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1857,6 +1891,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-as-zip")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1883,6 +1918,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-zip")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1909,6 +1945,7 @@ class AssetController extends ElementControllerBase implements EventedController
             for ($i = 0; $i < $jobAmount; $i++) {
                 $jobs[] = [[
                     'url' => '/admin/asset/import-zip-files',
+                    'method' => 'POST',
                     'params' => [
                         'parentId' => $asset->getId(),
                         'offset' => $i * $filesPerJob,
@@ -1935,6 +1972,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-zip-files")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2004,6 +2042,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-server")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2030,6 +2069,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if (count($jobFiles) >= $filesPerJob || $i >= ($count - 1)) {
                     $jobs[] = [[
                         'url' => '/admin/asset/import-server-files',
+                        'method' => 'POST',
                         'params' => [
                             'parentId' => $request->get('parentId'),
                             'serverPath' => $importDirectory,
@@ -2049,6 +2089,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-server-files")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2091,6 +2132,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-url")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2134,6 +2176,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/clear-thumbnail")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2161,6 +2204,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/grid-proxy")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -2178,9 +2222,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         if ($allParams['data']) {
-            if ($allParams['xaction'] == 'update') {
-                //TODO probably not needed
-            }
+            //TODO probably not needed
         } else {
             $db = \Pimcore\Db::get();
             // get list of objects
@@ -2330,6 +2372,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-text")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

@@ -160,6 +160,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
         if (button == "ok" && value.length > 2 && regresult == value) {
             Ext.Ajax.request({
                 url: "/admin/targeting/rule/add",
+                method: 'POST',
                 params: {
                     name: value
                 },
@@ -193,6 +194,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
     deleteTarget: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/targeting/rule/delete",
+            method: 'DELETE',
             params: {
                 id: record.data.id
             },

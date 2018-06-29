@@ -332,6 +332,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/object-helper/batch",
+            method: 'PUT',
             params: this.batchParameters,
             success: function (jobs, currentJob, response) {
 
@@ -582,6 +583,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/object-helper/do-export",
+            method: 'POST',
             params: this.exportParameters,
             success: function (jobs, currentJob, response) {
 

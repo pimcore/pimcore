@@ -26,7 +26,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class LogController extends AdminController implements EventedControllerInterface
 {
@@ -49,6 +50,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
     /**
      * @Route("/log/show")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -196,6 +198,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
     /**
      * @Route("/log/priority-json")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -213,6 +216,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
     /**
      * @Route("/log/component-json")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -230,6 +234,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
     /**
      * @Route("/log/show-file-object")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

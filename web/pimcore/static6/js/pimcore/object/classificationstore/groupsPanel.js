@@ -53,8 +53,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         readerFields.push({name: 'mandatory', allowBlank: true, type: 'bool'});
 
-        var url = "/admin/classificationstore/relations?";
         var proxy = {
+            url: "/admin/classificationstore/relations",
             type: 'ajax',
             batchActions: false,
             reader: {
@@ -67,12 +67,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                 writeAllFields: true,
                 rootProperty: 'data',
                 encode: 'true'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
             },
             extraParams: {
                 storeId: this.storeConfig.id
@@ -151,6 +145,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
                         Ext.Ajax.request({
                             url: "/admin/classificationstore/delete-relation",
+                            method: 'DELETE',
                             params: {
                                 keyId: keyId,
                                 groupId: groupId
@@ -231,19 +226,13 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             readerFields.push({name: this.groupsFields[i], allowBlank: true});
         }
 
-        var url = "/admin/classificationstore/groups?";
         var proxy = {
+            url: "/admin/classificationstore/groups",
             type: 'ajax',
             batchActions: false,
             reader: {
                 type: 'json',
                 rootProperty: 'data'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
             },
             writer: {
                 type: 'json',
@@ -325,6 +314,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
                         Ext.Ajax.request({
                             url: "/admin/classificationstore/delete-group",
+                            method: 'DELETE',
                             params: {
                                 id: id
                             },
@@ -416,6 +406,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
                 url: "/admin/classificationstore/create-group",
+                method: 'POST',
                 params: {
                     name: value,
                     storeId: this.storeConfig.id

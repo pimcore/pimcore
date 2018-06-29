@@ -91,7 +91,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         if (this.getDataSuccess) {
             Ext.Ajax.request({
                 url: "/admin/class/fieldcollection-update",
-                method: "post",
+                method: 'PUT',
                 params: {
                     configuration: m,
                     values: n,

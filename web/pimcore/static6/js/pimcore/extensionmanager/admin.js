@@ -140,6 +140,7 @@ pimcore.extensionmanager.admin = Class.create({
 
                                 Ext.Ajax.request({
                                     url: '/admin/settings/clear-cache',
+                                    method: 'DELETE',
                                     params: {
                                         only_symfony_cache: true
                                     },
@@ -265,6 +266,7 @@ pimcore.extensionmanager.admin = Class.create({
 
                         Ext.Ajax.request({
                             url: '/admin/extensionmanager/admin/toggle-extension-state',
+                            method: 'PUT',
                             params: {
                                 method: method,
                                 id: self.getExtensionId(rec),
@@ -309,6 +311,7 @@ pimcore.extensionmanager.admin = Class.create({
 
                         Ext.Ajax.request({
                             url: '/admin/extensionmanager/admin/' + method,
+                            method: 'POST',
                             params: {
                                 id: self.getExtensionId(rec),
                                 type: rec.get("type"),
@@ -350,6 +353,7 @@ pimcore.extensionmanager.admin = Class.create({
 
                         Ext.Ajax.request({
                             url: '/admin/extensionmanager/admin/update',
+                            method: 'POST',
                             params: {
                                 id: self.getExtensionId(rec),
                                 type: rec.get("type"),

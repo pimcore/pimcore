@@ -98,7 +98,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
             Ext.Ajax.request({
                 url: this.urlprefix + this.getType() + '/save?task=' + task,
-                method: "post",
+                method: "PUT",
                 params: saveData,
                 success: function (response) {
                     try{
@@ -323,6 +323,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
                     Ext.Ajax.request({
                         url: "/admin/document/translation-add",
+                        method: 'POST',
                         params: {
                             sourceId: this.id,
                             targetPath: win.getComponent("translation").getValue()
@@ -479,6 +480,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
                                     Ext.Ajax.request({
                                         url: "/admin/document/add",
+                                        method: 'POST',
                                         params: params,
                                         success: function (response) {
                                             response = Ext.decode(response.responseText);
@@ -522,6 +524,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     handler: function () {
                         Ext.Ajax.request({
                             url: "/admin/document/translation-remove",
+                            method: 'DELETE',
                             params: {
                                 sourceId: me.id,
                                 targetId: documentId

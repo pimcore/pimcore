@@ -133,6 +133,7 @@ pimcore.settings.user.user.settings = Class.create({
                 handler: function () {
                     Ext.Ajax.request({
                         url: "/admin/user/reset-2fa-secret",
+                        method: 'PUT',
                         params: {
                             id: this.currentUser.id
                         },

@@ -23,7 +23,8 @@ use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class VoucherController
@@ -57,6 +58,7 @@ class VoucherController extends FrontendController
      * Loads and shows voucherservice backend tab
      *
      * @Route("/voucher-code-tab", name="pimcore_ecommerce_backend_voucher_voucher-code-tab")
+     * @Method({"GET"})
      */
     public function voucherCodeTabAction(Request $request)
     {
@@ -88,6 +90,7 @@ class VoucherController extends FrontendController
      * Export tokens to file. The action should implement all export formats defined in IExportableTokenManager.
      *
      * @Route("/export-tokens", name="pimcore_ecommerce_backend_voucher_export-tokens")
+     * @Method({"GET"})
      */
     public function exportTokensAction(Request $request)
     {
@@ -107,7 +110,6 @@ class VoucherController extends FrontendController
         $suffix      = null;
         $download    = true;
 
-        $result = '';
         switch ($format) {
             case IExportableTokenManager::FORMAT_CSV:
                 $result      = $tokenManager->exportCsv($request->query->all());
@@ -137,24 +139,11 @@ class VoucherController extends FrontendController
         return $response;
     }
 
-    //    /**
-    //     * @param OnlineShopVoucherSeries $onlineShopVoucherSeries
-    //     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager
-    //     * @param array $params
-    //     * @return Response
-    //     */
-    //    protected function renderTab(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $onlineShopVoucherSeries, \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager $tokenManager, $params = [])
-    //    {
-    //        $paramsBag = [];
-    //        $paramsBag['series'] = $onlineShopVoucherSeries;
-    //        $renderScript = $tokenManager->prepareConfigurationView($paramsBag, $params);
-    //        return $this->render($renderScript);
-    //    }
-
     /**
      * Generates new Tokens or Applies single token settings.
      *
      * @Route("/generate", name="pimcore_ecommerce_backend_voucher_generate")
+     * @Method({"GET"})
      */
     public function generateAction(Request $request)
     {
@@ -186,6 +175,7 @@ class VoucherController extends FrontendController
      * Removes tokens due to given filter parameters.
      *
      * @Route("/cleanup", name="pimcore_ecommerce_backend_voucher_cleanup")
+     * @Method({"POST"})
      */
     public function cleanupAction(Request $request)
     {
@@ -221,6 +211,7 @@ class VoucherController extends FrontendController
      * Removes token reservations due to given duration.
      *
      * @Route("/cleanup-reservations", name="pimcore_ecommerce_backend_voucher_cleanup-reservations")
+     * @Method({"POST"})
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */

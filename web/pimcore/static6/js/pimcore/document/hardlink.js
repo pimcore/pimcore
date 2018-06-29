@@ -111,6 +111,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.data.id,
                     type: "document"

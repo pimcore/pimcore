@@ -128,6 +128,7 @@ pimcore.element.tag.tree = Class.create({
 
                             Ext.Ajax.request({
                                 url: "/admin/tags/update",
+                                method: 'PUT',
                                 params: {
                                     id: data.records[0].id,
                                     parentId: overModel.id
@@ -229,6 +230,7 @@ pimcore.element.tag.tree = Class.create({
                         if (btn == 'yes') {
                             Ext.Ajax.request({
                                 url: "/admin/tags/delete",
+                                method: 'DELETE',
                                 params: {
                                     id: record.data.id
                                 },
@@ -252,6 +254,7 @@ pimcore.element.tag.tree = Class.create({
                         if (button == "ok" && value.length > 2) {
                             Ext.Ajax.request({
                                 url: "/admin/tags/update",
+                                method: 'PUT',
                                 params: {
                                     id: record.id,
                                     text: value
@@ -283,6 +286,7 @@ pimcore.element.tag.tree = Class.create({
         if (button == "ok" && value.length > 2) {
             Ext.Ajax.request({
                 url: "/admin/tags/add",
+                method: 'POST',
                 params: {
                     parentId: record.data.id,
                     text: value

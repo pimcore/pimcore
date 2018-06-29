@@ -958,7 +958,7 @@ pimcore.object.tree = Class.create({
 
         Ext.Ajax.request({
             url: '/admin/object/save?task=' + task,
-            method: "post",
+            method: "PUT",
             params: parameters,
             success: function (tree, record, task, response) {
                 try {
@@ -1002,7 +1002,7 @@ pimcore.object.tree = Class.create({
 
         Ext.Ajax.request({
             url: '/admin/object/change-children-sort-by',
-            method: "post",
+            method: "PUT",
             params: parameters,
             success: function (tree, record, sortBy, response) {
                 try {

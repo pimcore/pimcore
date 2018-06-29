@@ -91,6 +91,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                             });
                             Ext.Ajax.request({
                                 url: "/admin/portal/update-portlet-config",
+                                method: 'PUT',
                                 params: {
                                     key: this.portal.key,
                                     id: portletId,

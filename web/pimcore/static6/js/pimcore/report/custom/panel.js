@@ -176,6 +176,7 @@ pimcore.report.custom.panel = Class.create({
 
             Ext.Ajax.request({
                 url: "/admin/reports/custom-report/add",
+                method: 'POST',
                 params: {
                     name: value
                 },
@@ -205,6 +206,7 @@ pimcore.report.custom.panel = Class.create({
     deleteField: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/reports/custom-report/delete",
+            method: 'DELETE',
             params: {
                 name: record.data.id
             }
@@ -224,6 +226,7 @@ pimcore.report.custom.panel = Class.create({
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/reports/custom-report/clone",
+                method: 'POST',
                 params: {
                     name: record.data.id,
                     newName: value

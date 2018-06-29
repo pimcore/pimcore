@@ -28,12 +28,14 @@ use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class ElementController extends AdminController
 {
     /**
      * @Route("/element/lock-element")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -48,6 +50,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/unlock-element")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -61,30 +64,10 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-id-path")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getIdPathAction(Request $request)
-    {
-        $id = (int) $request->get('id');
-        $type = $request->get('type');
-
-        $response = ['success' => true];
-
-        if ($element = Element\Service::getElementById($type, $id)) {
-            $response['idPath'] = Element\Service::getIdPath($element);
-        }
-
-        return $this->adminJson($response);
-    }
-
-    /**
      * Returns the element data denoted by the given type and ID or path.
      *
      * @Route("/element/get-subtype")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -146,6 +129,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/note-types")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -168,6 +152,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/note-list")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -287,6 +272,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/note-add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -312,6 +298,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/find-usages")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -354,6 +341,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/replace-assignments")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -401,6 +389,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/unlock-propagate")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -423,6 +412,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/type-path")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -455,6 +445,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/version-update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -474,6 +465,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-nice-path")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -545,6 +537,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-versions")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -591,6 +584,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/delete-version")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -606,6 +600,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/delete-all-versions")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -628,6 +623,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-requires-dependencies")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -661,6 +657,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-required-by-dependencies")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -694,6 +691,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-predefined-properties")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -730,6 +728,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/analyze-permissions")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

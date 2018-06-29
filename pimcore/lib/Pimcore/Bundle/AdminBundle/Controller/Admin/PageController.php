@@ -28,7 +28,8 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/page")
@@ -37,6 +38,7 @@ class PageController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -99,6 +101,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -249,6 +252,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/get-list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -268,6 +272,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/generate-screenshot")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -324,6 +329,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/display-preview-image", name="pimcore_admin_page_display_preview_image")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -339,6 +345,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/check-pretty-url")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -382,6 +389,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/clear-editable-data")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *

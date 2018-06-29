@@ -23,7 +23,8 @@ use Pimcore\Controller\EventedControllerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class ConfigController
@@ -46,7 +47,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
     /**
      * @Route("/list")
-     * definierte preisregeln ausgeben
+     * @Method({"GET"})
      */
     public function listAction()
     {
@@ -83,6 +84,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
     /**
      * @Route("/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      * preisregel details als json ausgeben
@@ -123,6 +125,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      * add new rule
@@ -153,6 +156,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      * delete exiting rule
@@ -180,6 +184,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
     /**
      * @Route("/save")
+     * @Method({"PUT"})
      *
      * @param Request $request
      * save rule config
@@ -271,6 +276,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
     /**
      * @Route("/save-order")
+     * @Method({"PUT"})
      *
      * @param Request $request
      */
@@ -298,6 +304,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
     /**
      * @Route("/get-config")
+     * @Method({"GET"})
      *
      * @return JsonResponse
      */

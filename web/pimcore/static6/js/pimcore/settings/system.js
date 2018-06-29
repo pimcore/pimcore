@@ -255,7 +255,7 @@ pimcore.settings.system = Class.create({
                                 handler: function () {
                                     Ext.Ajax.request({
                                         url: "/admin/settings/delete-custom-logo",
-                                        method: "get",
+                                        method: "DELETE",
                                         success: function (response) {
                                             var cont = Ext.getCmp("pimcore_custom_branding_logo");
                                             var date = new Date();
@@ -1305,7 +1305,7 @@ pimcore.settings.system = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/settings/set-system",
-            method: "post",
+            method: "PUT",
             params: {
                 data: Ext.encode(values)
             },

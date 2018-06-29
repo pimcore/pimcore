@@ -48,6 +48,7 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
                 handler: function () {
                     Ext.Ajax.request({
                         url: "/admin/user/disable-2fa",
+                        method: 'DELETE',
                         success: function (response) {
                             window.location.reload();
                         }.bind(this)

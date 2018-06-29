@@ -220,7 +220,6 @@ pimcore.object.klass = Class.create({
     addClass: function (classes) {
 
         var suggestedIdentifier = classes["suggestedIdentifier"];
-
         var nameField = new Ext.form.field.Text(
             {
                 fieldLabel: 'Class name',
@@ -302,6 +301,7 @@ pimcore.object.klass = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/class/add",
+            method: "POST",
             params: {
                 className: className,
                 classIdentifier: classIdentifier
@@ -331,6 +331,7 @@ pimcore.object.klass = Class.create({
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: "/admin/class/delete",
+                    method: 'DELETE',
                     params: {
                         id: record.data.id
                     },

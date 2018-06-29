@@ -21,7 +21,7 @@ use Pimcore\Model\Webservice\Data\Asset\File\In as WebserviceAssetFileIn;
 use Pimcore\Model\Webservice\Data\Asset\Folder\In as WebserviceAssetFolderIn;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class AssetController extends AbstractElementController
 {

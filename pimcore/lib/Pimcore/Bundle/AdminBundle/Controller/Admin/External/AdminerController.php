@@ -21,7 +21,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
     use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-    use Symfony\Component\Routing\Annotation\Route;
+    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
     class AdminerController extends AdminController implements EventedControllerInterface
     {

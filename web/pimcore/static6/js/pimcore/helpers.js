@@ -761,6 +761,7 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
             if (buttonValue == "yes") {
                 Ext.Ajax.request({
                     url: "/admin/element/unlock-element",
+                    method: 'PUT',
                     params: {
                         id: lock[0],
                         type: lock[1]
@@ -832,7 +833,8 @@ pimcore.helpers.itemselector = function (muliselect, callback, restrictions, con
 pimcore.helpers.activateMaintenance = function () {
 
     Ext.Ajax.request({
-        url: "/admin/misc/maintenance?activate=true"
+        url: "/admin/misc/maintenance?activate=true",
+        method: "POST"
     });
 
     var button = Ext.get("pimcore_menu_maintenance");
@@ -844,7 +846,8 @@ pimcore.helpers.activateMaintenance = function () {
 pimcore.helpers.deactivateMaintenance = function () {
 
     Ext.Ajax.request({
-        url: "/admin/misc/maintenance?deactivate=true"
+        url: "/admin/misc/maintenance?deactivate=true",
+        method: "POST"
     });
 
     var button = Ext.get("pimcore_menu_maintenance");
@@ -1181,6 +1184,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
     if (pimcore.settings.htmltoimage) {
         Ext.Ajax.request({
             url: '/admin/page/generate-screenshot',
+            method: "POST",
             ignoreErrors: true,
             params: {
                 id: id
@@ -1554,6 +1558,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
                 }
                 jobs.push([{
                     url: "/admin/" + type + "/update",
+                    method: 'PUT',
                     params: params
                 }]);
             }

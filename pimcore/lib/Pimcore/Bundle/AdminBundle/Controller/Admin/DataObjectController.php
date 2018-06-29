@@ -32,7 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/object")
@@ -46,6 +47,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/tree-get-childs-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -260,6 +262,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/get-id-path-paging-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -311,6 +314,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -601,21 +605,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/lock")
-     *
-     * @param Request $request
-     */
-    public function lockAction(Request $request)
-    {
-        $object = DataObject::getById($request->get('id'));
-        if ($object instanceof DataObject\AbstractObject) {
-            $object->setLocked((bool)$request->get('locked'));
-            //TODO: if latest version published - publish
-            //if latest version not published just save new version
-        }
-    }
-
-    /**
      * @param $layout
      * @param $allowedView
      * @param $allowedEdit
@@ -705,6 +694,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/get-folder")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -784,6 +774,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -859,6 +850,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/add-folder")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -900,6 +892,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -944,6 +937,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/change-children-sort-by")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -965,6 +959,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/delete-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -997,6 +992,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object instanceof DataObject\AbstractObject) {
                 $recycleJobs[] = [[
                     'url' => '/admin/recyclebin/add',
+                    'method' => 'POST',
                     'params' => [
                         'type' => 'object',
                         'id' => $object->getId()
@@ -1021,6 +1017,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                             $deleteJobs[] = [[
                                 'url' => '/admin/object/delete',
+                                'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
                                     'amount' => $deleteObjectsPerRequest,
@@ -1035,6 +1032,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 // the object itself is the last one
                 $deleteJobs[] = [[
                     'url' => '/admin/object/delete',
+                    'method' => 'DELETE',
                     'params' => [
                         'id' => $object->getId()
                     ]
@@ -1061,6 +1059,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1196,6 +1195,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/save")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1396,6 +1396,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/save-folder")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1472,6 +1473,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/publish-version")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1507,6 +1509,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/preview-version")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @TemplatePhp()
@@ -1538,6 +1541,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/diff-versions/from/{from}/to/{to}")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1579,6 +1583,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/grid-proxy")
+     * @Method({"GET", "POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1606,6 +1611,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         if ($allParams['data']) {
+            $this->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);
@@ -1978,6 +1984,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/copy-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1998,6 +2005,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // first of all the new parent
             $pasteJobs[] = [[
                 'url' => '/admin/object/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -2020,6 +2028,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
                             'url' => '/admin/object/copy',
+                            'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
                                 'targetParentId' => $request->get('targetId'),
@@ -2037,6 +2046,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 for ($i = 0; $i < (count($childIds) + 1); $i++) {
                     $pasteJobs[] = [[
                         'url' => '/admin/object/copy-rewrite-ids',
+                        'method' => 'PUT',
                         'params' => [
                             'transactionId' => $transactionId,
                             '_dc' => uniqid()
@@ -2048,6 +2058,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // the object itself is the last one
             $pasteJobs[] = [[
                 'url' => '/admin/object/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -2064,6 +2075,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/copy-rewrite-ids")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -2105,6 +2117,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/copy")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2179,6 +2192,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/preview")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

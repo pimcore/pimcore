@@ -141,6 +141,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
                         Ext.Ajax.request({
                             url: "/admin/classificationstore/delete-collection-relation",
+                            method: 'DELETE',
                             params: {
                                 colId: colId,
                                 groupId: groupId
@@ -220,19 +221,13 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             readerFields.push({name: this.groupsFields[i], allowBlank: true});
         }
 
-        var url = "/admin/classificationstore/collections?";
         var proxy = {
+            url: "/admin/classificationstore/collections",
             batchActions: false,
             type: 'ajax',
             reader: {
                 type: 'json',
                 rootProperty: 'data'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
             },
             writer: {
                 type: 'json',
@@ -314,6 +309,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
 
                         Ext.Ajax.request({
                             url: "/admin/classificationstore/delete-collection",
+                            method: 'DELETE',
                             params: {
                                 id: id
                             },
@@ -409,6 +405,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
                 url: "/admin/classificationstore/create-collection",
+                method: 'POST',
                 params: {
                     name: value,
                     storeId: this.storeConfig.id

@@ -231,6 +231,7 @@ pimcore.settings.recyclebin = Class.create({
     onFlush: function (btn, ev) {
         Ext.Ajax.request({
             url: "/admin/recyclebin/flush",
+            method: 'DELETE',
             success: function () {
                 this.store.reload();
                 this.grid.getView().refresh();
@@ -276,6 +277,7 @@ pimcore.settings.recyclebin = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/recyclebin/restore",
+            method: 'POST',
             params: {
                 id: ids[offset]
             },

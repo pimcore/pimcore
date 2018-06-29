@@ -19,7 +19,8 @@ use Pimcore\Db\Connection;
 use Pimcore\Tool\Requirements;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/install")
@@ -28,6 +29,7 @@ class InstallController extends AdminController
 {
     /**
      * @Route("/check")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      * @param Connection $db

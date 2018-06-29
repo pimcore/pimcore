@@ -33,7 +33,8 @@ use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Zend\Paginator\Paginator;
 
 /**
@@ -80,9 +81,8 @@ class AdminOrderController extends FrontendController
     }
 
     /**
-     * Bestellungen auflisten
-     *
      * @Route("/list", name="pimcore_ecommerce_backend_admin-order_list")
+     * @Method({"GET"})
      */
     public function listAction(Request $request)
     {
@@ -162,9 +162,8 @@ class AdminOrderController extends FrontendController
     }
 
     /**
-     * details der bestellung anzeigen
-     *
      * @Route("/detail", name="pimcore_ecommerce_backend_admin-order_detail")
+     * @Method({"GET"})
      */
     public function detailAction(Request $request)
     {
@@ -279,9 +278,8 @@ class AdminOrderController extends FrontendController
     }
 
     /**
-     * cancel order item
-     *
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel")
+     * @Method({"GET"})
      */
     public function itemCancelAction(Request $request)
     {
@@ -309,9 +307,8 @@ class AdminOrderController extends FrontendController
     }
 
     /**
-     * edit item
-     *
      * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit")
+     * @Method({"GET"})
      */
     public function itemEditAction(Request $request)
     {
@@ -337,9 +334,8 @@ class AdminOrderController extends FrontendController
     }
 
     /**
-     * complaint item
-     *
      * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint")
+     * @Method({"GET"})
      */
     public function itemComplaintAction(Request $request)
     {

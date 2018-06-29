@@ -45,6 +45,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     } else {
                         Ext.Ajax.request({
                             url: "/admin/element/lock-element",
+                            method: 'PUT',
                             params: {id: this.getStore().getAt(index).data.id, type: 'object'}
                         });
                         this.getStore().removeAt(index);
@@ -344,6 +345,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     } else {
                         Ext.Ajax.request({
                             url: "/admin/element/lock-element",
+                            method: 'PUT',
                             params: {id: item.id, type: 'object'}
                         });
                         var toBeRequested = new Ext.util.Collection();

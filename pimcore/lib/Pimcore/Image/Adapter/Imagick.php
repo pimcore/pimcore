@@ -67,12 +67,18 @@ class Imagick extends Adapter
             $imagePath = $tmpFilePath;
         }
 
-        if (!stream_is_local($imagePath)) {
+        if (!stream_is_local($imagePath) && isset($options['asset'])) {
             // imagick is only able to deal with local files
             // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($imagePath);
-            copy($imagePath, $tmpFilePath);
-            $imagePath = $tmpFilePath;
+            $imagePath = $options['asset']->getTemporaryFile();
+            $this->tmpFiles[] = $imagePath;
+        }
+
+        if(isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
+            // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes
+            // Inkscape to completely go crazy -> Debian 8.10, Inkscape 0.48.5 r10040, Imagick 6.8.9-9 Q16, Imagick 3.4.3
+            // we create a local temp file, to workaround this problem
+            $imagePath = $options['asset']->getTemporaryFile();
             $this->tmpFiles[] = $imagePath;
         }
 
@@ -105,18 +111,14 @@ class Imagick extends Adapter
             $imagePathLoad = $imagePath;
 
             if (strpos($imagePathLoad, ':') !== false) {
-                $imagePathLoad = ':' . $imagePathLoad;
-            }
-
-            if (!defined('HHVM_VERSION')) {
-                $imagePathLoad .= '[0]'; // not supported by HHVM implementation - selects the first layer/page in layered/pages file formats
+                $imagePathLoad = ':' . $imagePathLoad . '[0]';
             }
 
             if (!$i->readImage($imagePathLoad) || !filesize($imagePath)) {
                 return false;
             }
 
-            $this->resource = $i; // this is because of HHVM which has problems with $this->resource->readImage();
+            $this->resource = $i;
 
             // set dimensions
             $dimensions = $this->getDimensions();
@@ -240,7 +242,7 @@ class Imagick extends Adapter
             $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
         }
 
-        if (defined('HHVM_VERSION') || !stream_is_local($path)) {
+        if (!stream_is_local($path)) {
             $success = File::put($path, $i->getImageBlob());
         } else {
             $success = $i->writeImage($format . ':' . $path);
