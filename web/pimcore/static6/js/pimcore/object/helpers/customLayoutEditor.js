@@ -871,10 +871,11 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     upload: function() {
 
         pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function() {
+            var layoutId = this.data.id;
             Ext.Ajax.request({
                 url: "/admin/class/get-custom-layout",
                 params: {
-                    id: this.data.id
+                    id: layoutId
                 },
                 success: function(response) {
                     this.editPanel.removeAll();
