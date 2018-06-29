@@ -35,7 +35,7 @@ class SearchController extends AdminController
 {
     /**
      * @Route("/find")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *

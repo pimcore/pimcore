@@ -174,8 +174,18 @@ class QuantityValueController extends AdminController
 
         /** @var Unit $unit */
         foreach ($units as $unit) {
-            $unit->setAbbreviation(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getAbbreviation(), true, true));
-            $unit->setLongname(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getLongname(), true, true));
+            try {
+                if ($unit->getAbbreviation()) {
+                    $unit->setAbbreviation(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getAbbreviation(),
+                        true, true));
+                }
+                if ($unit->getLongname()) {
+                    $unit->setLongname(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getLongname(), true,
+                        true));
+                }
+            } catch (\Exception $e) {
+                // nothing to do ...
+            }
         }
 
         return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);

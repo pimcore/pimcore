@@ -118,7 +118,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/rule/save")
-     * @Method({"GET"})
+     * @Method({"PUT"})
      *
      * @param Request $request
      *

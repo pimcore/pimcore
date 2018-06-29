@@ -32,7 +32,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 {
     /**
      * @Route("/tree")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *

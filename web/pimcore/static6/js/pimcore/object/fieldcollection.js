@@ -195,9 +195,10 @@ pimcore.object.fieldcollection = Class.create({
         if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/fieldcollection-update",
-                method: 'PUT',
+                method: 'POST',
                 params: {
-                    key: value
+                    key: value,
+                    task: 'add'
                 },
                 success: function (response) {
                     this.tree.getStore().load();

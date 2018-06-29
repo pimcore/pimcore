@@ -1220,7 +1220,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/thumbnail-tree")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1371,7 +1371,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/video-thumbnail-tree")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1566,7 +1566,7 @@ class SettingsController extends AdminController
 
     /**
      * @Route("/tag-management-tree")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *

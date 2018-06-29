@@ -1558,6 +1558,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
                 }
                 jobs.push([{
                     url: "/admin/" + type + "/update",
+                    method: 'PUT',
                     params: params
                 }]);
             }

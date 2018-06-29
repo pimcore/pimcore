@@ -32,7 +32,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 {
     /**
      * @Route("/tree")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *

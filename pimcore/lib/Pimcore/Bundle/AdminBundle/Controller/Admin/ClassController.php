@@ -80,7 +80,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-tree")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -659,7 +659,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-update")
-     * @Method({"PUT"})
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -781,7 +781,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-tree")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -937,7 +937,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-update")
-     * @Method({"PUT"})
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -1061,7 +1061,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-tree")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
