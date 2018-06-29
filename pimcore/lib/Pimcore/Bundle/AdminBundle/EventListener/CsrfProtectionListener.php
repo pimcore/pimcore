@@ -53,10 +53,11 @@ class CsrfProtectionListener implements EventSubscriberInterface
     /**
      * @param GetResponseEvent $event
      */
-    public function handleRequest(GetResponseEvent $event) {
+    public function handleRequest(GetResponseEvent $event)
+    {
         $request = $event->getRequest();
 
-        if($request->getMethod() == Request::METHOD_GET) {
+        if ($request->getMethod() == Request::METHOD_GET) {
             return;
         }
 

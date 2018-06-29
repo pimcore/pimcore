@@ -20,14 +20,14 @@ use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class LogController extends AdminController implements EventedControllerInterface
 {

@@ -25,11 +25,11 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class ElementController extends AdminController
 {

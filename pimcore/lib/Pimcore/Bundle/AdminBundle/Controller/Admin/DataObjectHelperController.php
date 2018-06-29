@@ -34,6 +34,8 @@ use Pimcore\Model\ImportConfigShare;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,8 +43,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/object-helper")
@@ -935,7 +935,7 @@ class DataObjectHelperController extends AdminController
                 $db = Db::get();
                 $count = $db->fetchOne('select * from gridconfig_favourites where '
                     . 'ownerId = ' . $user->getId()
-                    . ' and classId = ' . $db->quote($classId ).
+                    . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
                     . ' and objectId != ' . $objectId . ' and objectId != 0');
                 $specializedConfigs = $count > 0;

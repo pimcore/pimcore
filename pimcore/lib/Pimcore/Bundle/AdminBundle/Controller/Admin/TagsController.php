@@ -17,12 +17,12 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/tags")

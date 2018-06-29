@@ -23,8 +23,8 @@ use Pimcore\Model\Webservice\Data\DataObject\Folder\In as WebserviceFolderIn;
 use Pimcore\Model\Webservice\Data\DataObject\Folder\Out as WebserviceFolderOut;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**

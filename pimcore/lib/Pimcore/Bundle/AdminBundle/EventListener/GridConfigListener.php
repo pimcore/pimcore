@@ -59,7 +59,7 @@ class GridConfigListener implements EventSubscriberInterface
 
         // collect gridConfigs for that class id
         $db = Db::get();
-        $gridConfigIds = $db->fetchCol('select id from gridconfigs where classId = ?',  $classId);
+        $gridConfigIds = $db->fetchCol('select id from gridconfigs where classId = ?', $classId);
         if ($gridConfigIds) {
             $db->query('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
         }

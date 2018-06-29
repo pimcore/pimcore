@@ -21,11 +21,11 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\Newsletter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/newsletter")

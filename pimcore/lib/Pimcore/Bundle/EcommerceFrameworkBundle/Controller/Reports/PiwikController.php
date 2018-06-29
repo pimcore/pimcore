@@ -19,8 +19,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller\Reports;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Reports\Piwik\PiwikReportsProvider;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
  * @Route("/reports/piwik")

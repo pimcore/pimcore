@@ -22,13 +22,13 @@ use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
 use Pimcore\Tool\Session;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {

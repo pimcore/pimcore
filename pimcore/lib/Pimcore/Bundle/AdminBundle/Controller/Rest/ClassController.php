@@ -18,8 +18,8 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\DataObject;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 class ClassController extends AbstractRestController
 {

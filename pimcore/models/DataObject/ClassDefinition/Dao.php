@@ -66,17 +66,17 @@ class Dao extends Model\Dao\AbstractDao
         return $id;
     }
 
-
     /** Updates the class definition
      * @param bool $isUpdate
+     *
      * @return bool|void
+     *
      * @throws \Exception
      */
     public function save($isUpdate = true)
     {
         if (!$this->model->getId() || !$isUpdate) {
             return $this->create();
-
         } else {
             return $this->update();
         }

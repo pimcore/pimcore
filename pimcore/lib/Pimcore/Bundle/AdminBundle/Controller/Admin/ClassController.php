@@ -24,13 +24,13 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/class")
@@ -107,14 +107,13 @@ class ClassController extends AdminController implements EventedControllerInterf
             $classes = $tmpClasses;
         }
 
-        $withId = $request->get("withId");
+        $withId = $request->get('withId');
         $getClassConfig = function ($class) use ($defaultIcon, $withId) {
-
             $text = $class->getname();
             if ($withId) {
-                $text .= " (" . $class->getId() . ")";
-
+                $text .= ' (' . $class->getId() . ')';
             }
+
             return [
                 'id' => $class->getId(),
                 'text' => $text,                 'leaf' => true,
@@ -244,10 +243,10 @@ class ClassController extends AdminController implements EventedControllerInterf
         $className = $request->get('className');
         $className = $this->correctClassname($className);
 
-        $classId = $request->get("classIdentifier");
+        $classId = $request->get('classIdentifier');
         $existingClass = DataObject\ClassDefinition::getById($classId);
         if ($existingClass) {
-            throw new \Exception("Class identifier already exists");
+            throw new \Exception('Class identifier already exists');
         }
 
         $class = DataObject\ClassDefinition::create(
@@ -1509,17 +1508,18 @@ class ClassController extends AdminController implements EventedControllerInterf
      *
      * @return Response
      */
-    public function suggestClassIdentifierAction() {
+    public function suggestClassIdentifierAction()
+    {
         $db = Db::get();
-        $maxId = $db->fetchOne("select max(cast(`id` as int)) from classes;");
+        $maxId = $db->fetchOne('select max(cast(`id` as int)) from classes;');
 
-        $existingIds = $db->fetchCol("select LOWER(id) from classes");
+        $existingIds = $db->fetchCol('select LOWER(id) from classes');
 
         $result = [
-            "suggestedIdentifier" => $maxId ? $maxId + 1 : 1,
-            "existingIds" => $existingIds
+            'suggestedIdentifier' => $maxId ? $maxId + 1 : 1,
+            'existingIds' => $existingIds
             ];
-        return $this->adminJson($result);
 
+        return $this->adminJson($result);
     }
 }

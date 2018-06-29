@@ -18,7 +18,6 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
-use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\File;
@@ -267,7 +266,6 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
-
         $existingDefinition = ClassDefinition::getById($this->getId());
 
         $isUpdate = !is_null($existingDefinition);

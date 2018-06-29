@@ -18,10 +18,10 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Classificationstore;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/classificationstore")

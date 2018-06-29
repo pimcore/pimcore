@@ -30,11 +30,11 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\User;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Zend\Paginator\Paginator;
 
 /**

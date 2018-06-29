@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\DataObject\AbstractObject;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 

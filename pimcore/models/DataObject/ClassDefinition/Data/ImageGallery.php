@@ -491,7 +491,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
         $resultItems = [];
         if (is_array($value)) {
             $fd = new Hotspotimage();
-            $fd->setName("image");
+            $fd->setName('image');
 
             foreach ($value as $item) {
                 $resultItems[] = $fd->getFromWebserviceImport($item, $object, $params, $idMapper);

@@ -18,10 +18,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class QuantityValueController extends AdminController
 {
@@ -81,7 +81,6 @@ class QuantityValueController extends AdminController
 
         return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
     }
-
 
     /**
      * @Route("/quantity-value/unit-proxy")

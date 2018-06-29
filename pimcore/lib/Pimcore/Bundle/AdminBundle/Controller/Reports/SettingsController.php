@@ -16,10 +16,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Pimcore\Config;
 use Pimcore\Config\ReportConfigWriter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/settings")

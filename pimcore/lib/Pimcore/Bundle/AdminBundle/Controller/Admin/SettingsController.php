@@ -29,11 +29,12 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Glossary;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
-use Pimcore\Model\Redirect;
 use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Tag;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -42,8 +43,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/settings")
@@ -1525,7 +1524,6 @@ class SettingsController extends AdminController
             'data' => $data,
             'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt')
         ]);
-
     }
 
     /**
@@ -1546,14 +1544,15 @@ class SettingsController extends AdminController
         return $this->adminJson([
             'success' => true
         ]);
-
     }
 
     /**
      * @param Request $request
+     *
      * @return string
      */
-    protected function getRobotsTxtPath(Request $request) {
+    protected function getRobotsTxtPath(Request $request)
+    {
         if ($request->get('site')) {
             $siteSuffix = '-' . $request->get('site');
         } else {
@@ -1561,6 +1560,7 @@ class SettingsController extends AdminController
         }
 
         $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';
+
         return $robotsPath;
     }
 

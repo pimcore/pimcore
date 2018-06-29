@@ -21,8 +21,8 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * end point for document related data.

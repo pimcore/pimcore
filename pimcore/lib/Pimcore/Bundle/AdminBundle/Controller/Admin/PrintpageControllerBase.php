@@ -21,13 +21,13 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Session;
 use Pimcore\Web2Print\Processor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class PrintpageControllerBase extends DocumentControllerBase
 {

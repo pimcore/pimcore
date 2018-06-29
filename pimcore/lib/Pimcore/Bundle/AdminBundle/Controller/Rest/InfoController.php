@@ -18,8 +18,8 @@ use Pimcore\ExtensionManager;
 use Pimcore\Tool\Console;
 use Pimcore\Version;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Contains actions to gather information about the API. The /user endpoint
