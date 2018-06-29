@@ -135,7 +135,7 @@ pimcore.report.settings = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/reports/settings/save",
-            method: "post",
+            method: "PUT",
             params: {
                 data: Ext.encode(values)
             },

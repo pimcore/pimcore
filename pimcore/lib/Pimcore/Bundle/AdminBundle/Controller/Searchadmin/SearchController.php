@@ -26,6 +26,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/search")
@@ -34,6 +35,7 @@ class SearchController extends AdminController
 {
     /**
      * @Route("/find")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -400,6 +402,7 @@ class SearchController extends AdminController
 
     /**
      * @Route("/quicksearch")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
