@@ -128,6 +128,7 @@ pimcore.object.bulkimport = Class.create({
                 width: 800,
                 height: 500,
                 border: false,
+                modal: true,
                 layout: "fit",
                 iconCls: "pimcore_icon_import",
                 items: [this.gridPanel],
