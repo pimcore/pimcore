@@ -125,6 +125,7 @@ pimcore.document.newsletters.sendingPanel = Class.create({
                     handler: function() {
                         Ext.Ajax.request({
                             url: "/admin/newsletter/stop-send",
+                            method: "POST",
                             params: {id: this.document.id}
                         });
                     }.bind(this)

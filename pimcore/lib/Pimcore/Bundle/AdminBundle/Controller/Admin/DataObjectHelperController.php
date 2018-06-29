@@ -41,7 +41,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/object-helper")
@@ -52,6 +53,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/load-object-data")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -144,6 +146,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-export-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -245,6 +248,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/get-export-configs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -280,6 +284,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/delete-import-config")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -307,6 +312,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-delete-column-config")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -337,6 +343,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-get-column-config")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -818,6 +825,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/prepare-helper-column-configs")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -851,6 +859,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-config-apply-to-all")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -881,6 +890,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-mark-favourite-column-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -972,6 +982,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-save-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1033,6 +1044,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-save-column-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1272,6 +1284,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/prepare-import-preview")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1300,6 +1313,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-preview")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1447,6 +1461,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-upload")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1478,6 +1493,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-get-file-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1592,6 +1608,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-process")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1841,6 +1858,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/get-export-jobs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1862,6 +1880,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/do-export")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param Locale $localeService
@@ -1930,6 +1949,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/download-csv-file")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -2213,6 +2233,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/get-batch-jobs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -2260,6 +2281,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/generate-link")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -2282,6 +2304,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/batch")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *

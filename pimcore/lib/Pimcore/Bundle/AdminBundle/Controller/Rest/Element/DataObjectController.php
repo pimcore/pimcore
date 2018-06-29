@@ -24,7 +24,7 @@ use Pimcore\Model\Webservice\Data\DataObject\Folder\Out as WebserviceFolderOut;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**

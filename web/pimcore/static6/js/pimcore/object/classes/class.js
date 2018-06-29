@@ -1179,7 +1179,7 @@ pimcore.object.classes.klass = Class.create({
             if (this.getDataSuccess) {
                 Ext.Ajax.request({
                     url: "/admin/class/save",
-                    method: "post",
+                    method: "PUT",
                     params: {
                         configuration: m,
                         values: n,

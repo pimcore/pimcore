@@ -88,8 +88,10 @@ pimcore.document.settings_abstract = Class.create({
                                         Ext.getCmp("contentMasterDocumentPath_"
                                             + this.document.id).setValue("");
                                         Ext.Ajax.request({
-                                            url:"/admin/page/change-master-document?id=" + this.document.id,
+                                            url:"/admin/page/change-master-document",
+                                            method: 'PUT',
                                             params:{
+                                                id: this.document.id,
                                                 contentMasterDocumentPath:""
                                             },
                                             success:function () {
@@ -116,8 +118,10 @@ pimcore.document.settings_abstract = Class.create({
                                 function (buttonValue) {
                                     if (buttonValue == "yes") {
                                         Ext.Ajax.request({
-                                            url:"/admin/page/change-master-document?id=" + this.document.id,
+                                            url:"/admin/page/change-master-document",
+                                            method: 'PUT',
                                             params:{
+                                                id: this.document.id,
                                                 contentMasterDocumentPath:Ext.getCmp(
                                                     "contentMasterDocumentPath_" + this.document.id).getValue()
                                             },

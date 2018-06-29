@@ -183,6 +183,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
     applyConfig: function(storeId, newData) {
         Ext.Ajax.request({
                 url: "/admin/classificationstore/edit-store",
+                method: 'PUT',
                 params: {
                     id: storeId,
                     data: Ext.encode(newData)
@@ -217,7 +218,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/user/update",
-            method: "post",
+            method: "PUT",
             params: {
                 id: userId,
                 data: Ext.encode(values)
@@ -252,6 +253,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
                 url: "/admin/classificationstore/create-store",
+                method: 'POST',
                 params: {
                     name: value
                 },

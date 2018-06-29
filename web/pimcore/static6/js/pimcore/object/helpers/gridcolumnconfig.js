@@ -85,6 +85,7 @@ pimcore.object.helpers.gridcolumnconfig = {
         if (btn == 'ok') {
             Ext.Ajax.request({
                 url: "/admin/object-helper/grid-delete-column-config",
+                method: "DELETE",
                 params: {
                     id: this.classId,
                     objectId:

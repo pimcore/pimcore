@@ -196,6 +196,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
             Ext.Ajax.request({
                 url: "/admin/settings/video-thumbnail-add",
+                method: "POST",
                 params: {
                     name: value
                 },
@@ -223,6 +224,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
     deleteField: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/settings/video-thumbnail-delete",
+            method: 'DELETE',
             params: {
                 name: record.data.id
             }

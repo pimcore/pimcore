@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller\Reports;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Reports\Piwik\PiwikReportsProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/reports/piwik")
@@ -28,6 +29,7 @@ class PiwikController extends AdminController
 {
     /**
      * @Route("/reports")
+     * @Method({"GET"})
      */
     public function reportsAction(PiwikReportsProvider $reportsProvider)
     {

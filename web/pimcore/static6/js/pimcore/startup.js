@@ -898,7 +898,7 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
         }
         pimcore.globalmanager.add("translations_admin_missing", new Array());
         Ext.Ajax.request({
-            method: "post",
+            method: "POST",
             url: "/admin/translation/add-admin-translation-keys",
             params: {keys: params}
         });

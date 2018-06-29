@@ -290,7 +290,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         if (this.getDataSuccess) {
             Ext.Ajax.request({
                 url: "/admin/class/objectbrick-update",
-                method: "post",
+                method: "PUT",
                 params: {
                     configuration: m,
                     values: n,

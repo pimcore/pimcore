@@ -75,6 +75,7 @@ pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
 
                                 Ext.Ajax.request({
                                     url: "/admin/newsletter/checksql",
+                                    method: "POST",
                                     params: this.layout.getForm().getFieldValues(),
                                     success: function (response) {
                                         var res = Ext.decode(response.responseText);

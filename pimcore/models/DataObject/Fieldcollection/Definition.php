@@ -161,7 +161,7 @@ class Definition extends Model\AbstractModel
      */
     public function getFieldDefinition($key, $context = [])
     {
-        if (array_key_exists($key, $this->fieldDefinitions)) {
+        if (is_array($this->fieldDefinitions) && array_key_exists($key, $this->fieldDefinitions)) {
             if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
                 return $this->fieldDefinitions[$key];
             }

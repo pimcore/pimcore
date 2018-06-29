@@ -24,7 +24,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/email")
@@ -33,6 +34,7 @@ class EmailController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -86,6 +88,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -168,6 +171,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/email-logs")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -233,6 +237,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/show-email-log")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -352,6 +357,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/delete-email-log")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -379,6 +385,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/resend-email")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -439,6 +446,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/send-test-email")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -472,6 +480,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/blacklist")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

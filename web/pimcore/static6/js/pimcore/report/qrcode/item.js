@@ -312,7 +312,7 @@ pimcore.report.qrcode.item = Class.create({
         var m = Ext.encode(this.form.getForm().getFieldValues());
         Ext.Ajax.request({
             url: "/admin/reports/qrcode/update",
-            method: "post",
+            method: "PUT",
             params: {
                 configuration: m,
                 name: this.data.name

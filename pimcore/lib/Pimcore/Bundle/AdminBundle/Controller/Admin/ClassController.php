@@ -28,7 +28,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * @Route("/class")
@@ -37,6 +38,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 {
     /**
      * @Route("/get-document-types")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -57,6 +59,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-asset-types")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -77,6 +80,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-tree")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -188,6 +192,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -203,6 +208,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-custom-layout")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -217,6 +223,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -236,6 +243,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/add-custom-layout")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -257,6 +265,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -272,6 +281,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/delete-custom-layout")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -289,6 +299,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/save-custom-layout")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -329,6 +340,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/save")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -419,6 +431,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/import-class")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -443,6 +456,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/import-custom-layout-definition")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -481,6 +495,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-custom-layout-definitions")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -508,6 +523,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-all-layouts")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -556,6 +572,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-class")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -583,6 +600,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-custom-layout-definition")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -626,6 +644,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -640,6 +659,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-update")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -692,6 +712,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/import-fieldcollection")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -718,6 +739,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-fieldcollection")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -743,6 +765,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -758,6 +781,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-tree")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -782,6 +806,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -829,6 +854,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-class-definition-for-column-config")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -896,6 +922,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -910,6 +937,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-update")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -965,6 +993,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/import-objectbrick")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -990,6 +1019,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-objectbrick")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1015,6 +1045,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -1030,6 +1061,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-tree")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1054,6 +1086,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1125,6 +1158,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-import")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1185,6 +1219,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-commit")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1295,6 +1330,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-export")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1382,6 +1418,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-fieldcollection-usages")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1414,6 +1451,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-bricks-usages")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

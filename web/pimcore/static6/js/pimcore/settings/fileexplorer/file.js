@@ -84,7 +84,7 @@ pimcore.settings.fileexplorer.file = Class.create({
     saveFile: function () {
         var content = this.textarea.getValue();
         Ext.Ajax.request({
-            method: "post",
+            method: "put",
             url: "/admin/misc/fileexplorer-content-save",
             params: {
                 path: this.responsePath,

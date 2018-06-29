@@ -22,12 +22,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class RecyclebinController extends AdminController implements EventedControllerInterface
 {
     /**
      * @Route("/recyclebin/list")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -131,6 +133,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
 
     /**
      * @Route("/recyclebin/restore")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -146,6 +149,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
 
     /**
      * @Route("/recyclebin/flush")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -161,6 +165,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
 
     /**
      * @Route("/recyclebin/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

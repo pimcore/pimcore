@@ -259,7 +259,7 @@ pimcore.settings.thumbnail.item = Class.create({
     save: function () {
         Ext.Ajax.request({
             url: "/admin/settings/thumbnail-update",
-            method: "post",
+            method: "PUT",
             params: this.getData(),
             success: this.saveOnComplete.bind(this)
         });

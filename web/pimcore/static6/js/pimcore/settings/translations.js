@@ -378,6 +378,7 @@ pimcore.settings.translations = Class.create({
     cleanup: function () {
         Ext.Ajax.request({
             url: this.cleanupUrl,
+            method: 'DELETE',
             success: function (response) {
                 this.store.reload();
             }.bind(this)

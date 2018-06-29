@@ -929,6 +929,7 @@ pimcore.asset.tree = Class.create({
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/asset/add-folder",
+                method: "POST",
                 params: {
                     parentId: record.data.id,
                     name: pimcore.helpers.getValidFilename(value, "asset")
@@ -1123,6 +1124,7 @@ pimcore.asset.tree = Class.create({
 
                         Ext.Ajax.request({
                             url: "/admin/asset/import-server",
+                            method: 'POST',
                             params: {
                                 parentId: record.id,
                                 serverPath: selectedNode.id
@@ -1202,6 +1204,7 @@ pimcore.asset.tree = Class.create({
 
                 Ext.Ajax.request({
                     url: "/admin/asset/import-url",
+                    method: 'POST',
                     params: {
                         id: record.data.id,
                         url: value

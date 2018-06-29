@@ -16,7 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * Class ConfigController
@@ -27,6 +28,7 @@ class ConfigController extends AdminController
 {
     /**
      * @Route("/js-config")
+     * @Method({"GET"})
      *
      * @return string
      */

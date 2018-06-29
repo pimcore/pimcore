@@ -48,6 +48,7 @@ pimcore.document.edit = Class.create({
             var cleanupFunction = function () {
                 Ext.Ajax.request({
                     url: "/admin/page/clear-editable-data",
+                    method: "PUT",
                     params: {
                         targetGroup: this["targetGroup"] ? this.targetGroup.getValue() : "",
                         id: this.document.id

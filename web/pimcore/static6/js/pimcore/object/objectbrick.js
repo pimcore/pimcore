@@ -150,8 +150,10 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         if (button == "ok" && value.length > 2 && regresult == value && !in_arrayi(value, forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/objectbrick-update",
+                method: 'POST',
                 params: {
-                    key: value
+                    key: value,
+                    task: 'add'
                 },
                 success: function (response) {
                     this.tree.getStore().load();
@@ -181,6 +183,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: "/admin/class/objectbrick-delete",
+                    method: 'DELETE',
                     params: {
                         id: record.data.id
                     }

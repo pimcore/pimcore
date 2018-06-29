@@ -412,7 +412,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
                 id: this.data.id,
                 data: Ext.encode(saveData)
             },
-            method: "post",
+            method: "PUT",
             success: this.saveOnComplete.bind(this)
         });
     },

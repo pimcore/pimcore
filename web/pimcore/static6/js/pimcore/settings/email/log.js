@@ -311,6 +311,7 @@ pimcore.settings.email.log = Class.create({
                                     if (btn == 'yes'){
                                         Ext.Ajax.request({
                                             url: '/admin/email/resend-email',
+                                            method: 'POST',
                                             success: function(response){
                                                 var data = Ext.decode( response.responseText );
                                                 if(data.success){
@@ -348,6 +349,7 @@ pimcore.settings.email.log = Class.create({
                         var rec = grid.getStore().getAt(rowIndex);
                         Ext.Ajax.request({
                             url: '/admin/email/delete-email-log',
+                            method: 'DELETE',
                             success: function(response){
                                 var data = Ext.decode( response.responseText );
                                 if(!data.success){

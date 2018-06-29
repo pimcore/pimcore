@@ -194,6 +194,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
 
             Ext.Ajax.request({
                 url: "/admin/settings/tag-management-add",
+                method: 'POST',
                 params: {
                     name: value
                 },
@@ -221,6 +222,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
     deleteField: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/settings/tag-management-delete",
+            method: 'DELETE',
             params: {
                 name: record.data.id
             }

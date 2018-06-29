@@ -199,6 +199,7 @@ pimcore.report.qrcode.panel = Class.create({
 
             Ext.Ajax.request({
                 url: "/admin/reports/qrcode/add",
+                method: 'POST',
                 params: {
                     name: value
                 },
@@ -226,6 +227,7 @@ pimcore.report.qrcode.panel = Class.create({
     deleteField: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/reports/qrcode/delete",
+            method: 'DELETE',
             params: {
                 name: record.data.id
             }

@@ -308,7 +308,7 @@ pimcore.settings.web2print = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/settings/set-web2print",
-            method: "post",
+            method: "PUT",
             params: {
                 data: Ext.encode(values)
             },

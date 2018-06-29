@@ -151,6 +151,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
     /**
      * @Route("/admin/toggle-extension-state")
+     * @Method({"PUT"})
      *
      * @param Request $request
      * @param KernelInterface $kernel
@@ -244,6 +245,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
     /**
      * @Route("/admin/install")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -260,6 +262,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
     /**
      * @Route("/admin/uninstall")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -276,6 +279,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
     /**
      * @Route("/admin/update")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

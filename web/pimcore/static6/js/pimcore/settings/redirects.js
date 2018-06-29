@@ -56,7 +56,7 @@ pimcore.settings.redirects = Class.create({
         var that = this;
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = '/admin/settings/redirects?';
+        var url = '/admin/redirects/list?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,

@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
  * @Route("/targeting")
@@ -35,6 +35,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/rule/list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -64,6 +65,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/rule/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -80,6 +82,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/rule/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -100,6 +103,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/rule/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -114,6 +118,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/rule/save")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -183,6 +188,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/target-group/list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -219,6 +225,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/target-group/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
@@ -239,6 +246,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/target-group/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
@@ -263,6 +271,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/target-group/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -278,6 +287,7 @@ class TargetingController extends AdminController implements EventedControllerIn
 
     /**
      * @Route("/target-group/save")
+     * @Method({"PUT"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
