@@ -1063,4 +1063,17 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson(['success' => true, 'total' => count($roles), 'data' => $roles]);
     }
+
+    /**
+     * @param Request $request
+     * @Route("/user/get-default-key-bindings")
+     * @Method({"GET"})
+     */
+    public function getDefaultKeyBindingsAction(Request $request)
+    {
+        $data = User::getDefaultKeyBindings();
+
+        return $this->adminJson(['success' => true, 'data' => $data]);
+    }
+
 }

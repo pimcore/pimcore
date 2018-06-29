@@ -105,7 +105,19 @@ pimcore.settings.user.usertab = Class.create({
         }
 
         try {
-            data.keyBindings = Ext.encode(this.keyBindings.getValues());
+            var keyBindingsFromForm = this.keyBindings.getValues();
+            var userBindings = {};
+
+            for (var key in keyBindingsFromForm) {
+                if (keyBindingsFromForm.hasOwnProperty(key)) {
+                    userBindings[key] = Ext.decode(keyBindingsFromForm[key]);
+                }
+            }
+
+            var user = pimcore.globalmanager.get("user");
+            user.keyBindings = Ext.encode(userBindings);
+
+            data.keyBindings = Ext.encode(keyBindingsFromForm);
         } catch (e3) {
             console.log(e3);
         }
