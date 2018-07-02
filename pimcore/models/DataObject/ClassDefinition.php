@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\File;
@@ -266,6 +267,13 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
+
+        if (!$this->getId()) {
+            $db = Db::get();
+            $maxId = $db->fetchOne('select max(cast(`id` as int)) from classes;');
+            $this->setId($maxId ? $maxId +  1 : 1);
+        }
+
         $existingDefinition = ClassDefinition::getById($this->getId());
 
         $isUpdate = !is_null($existingDefinition);
