@@ -270,7 +270,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (!$this->getId()) {
             $db = Db::get();
-            $maxId = $db->fetchOne('select max(cast(`id` as int)) from classes;');
+            $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
             $this->setId($maxId ? $maxId +  1 : 1);
         }
 

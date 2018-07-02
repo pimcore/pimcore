@@ -1511,7 +1511,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     public function suggestClassIdentifierAction()
     {
         $db = Db::get();
-        $maxId = $db->fetchOne('select max(cast(`id` as int)) from classes;');
+        $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
 
         $existingIds = $db->fetchCol('select LOWER(id) from classes');
 
