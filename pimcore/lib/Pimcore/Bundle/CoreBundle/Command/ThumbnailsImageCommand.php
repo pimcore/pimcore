@@ -138,7 +138,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                         )
                     );
                     $progress->setMessage(
-                        'generated thumbnail: '.$image->getThumbnail($thumbnail)->getFilesystemPath()
+                        'generated thumbnail: ' . str_replace(PIMCORE_PROJECT_ROOT.'/', '', $image->getThumbnail($thumbnail)->getFilesystemPath())
                     );
 
                     $progress->advance(1);
