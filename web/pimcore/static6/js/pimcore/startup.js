@@ -754,8 +754,6 @@ Ext.onReady(function () {
     }
 
     // Quick Search
-    var quickSearchTimeout = null;
-    var quickSearchCount = 0;
     var quicksearchMap = new Ext.util.KeyMap({
         target: document,
         binding: [{
@@ -764,30 +762,10 @@ Ext.onReady(function () {
                 pimcore.helpers.hideQuickSearch();
             }
         }, {
-            key: Ext.event.Event.CTRL,
+            key: Ext.event.Event.SPACE,
+            ctrl: true,
             fn: function () {
-                quickSearchCount++;
-                // press 2x CTRL within 200ms
-                if(quickSearchCount === 2) {
-                    window.setTimeout(function () {
-                        if (quickSearchCount == 2) {
-                            pimcore.helpers.showQuickSearch();
-                            quickSearchCount = 0;
-                        }
-                    }, 200);
-                } else {
-                    if(quickSearchTimeout) {
-                        window.clearTimeout(quickSearchTimeout);
-                    }
-
-                    var lastCount = quickSearchCount;
-                    quickSearchTimeout = window.setTimeout(function () {
-                        if(lastCount === quickSearchCount) {
-                            quickSearchTimeout = null;
-                            quickSearchCount = 0;
-                        }
-                    }, 1000);
-                }
+                pimcore.helpers.showQuickSearch();
             }
         }]
     });
