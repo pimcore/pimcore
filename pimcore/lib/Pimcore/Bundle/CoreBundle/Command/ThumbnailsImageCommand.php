@@ -118,13 +118,15 @@ class ThumbnailsImageCommand extends AbstractCommand
                     continue;
                 }
 
-                foreach ($thumbnailsToGenerate as $thumbnail) {
-                    if ($thumbnail === 'system') {
+                foreach ($thumbnailsToGenerate as $thumbnailName) {
+                    $thumbnail = $thumbnailName;
+
+                    if ($thumbnailName === 'system') {
                         $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
                     }
 
                     if ($input->getOption('force')) {
-                        $image->clearThumbnail($thumbnail);
+                        $image->clearThumbnail($thumbnailName);
                     }
 
                     $progress->setMessage(
@@ -132,7 +134,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                             'generating thumbnail to image %s | %d | Thumbnail: %s',
                             $image->getRealFullPath(),
                             $image->getId(),
-                            is_string($thumbnail) ? $thumbnail : 'System Preview (tree)'
+                            is_string($thumbnail) ? $thumbnailName : 'System Preview (tree)'
                         )
                     );
                     $progress->setMessage(
