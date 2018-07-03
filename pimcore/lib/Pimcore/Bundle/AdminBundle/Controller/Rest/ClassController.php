@@ -222,10 +222,9 @@ class ClassController extends AbstractRestController
         $condition = $this->buildCondition($request);
         $this->checkCondition($condition);
 
-        $eventData = new FilterEvent($request, "class", "quantityValueUnitDefinition", $condition);
+        $eventData = new FilterEvent($request, 'class', 'quantityValueUnitDefinition', $condition);
         \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
         $condition = $eventData->getCondition();
-
 
         $list = new DataObject\QuantityValue\Unit\Listing();
         if ($condition) {
@@ -260,7 +259,7 @@ class ClassController extends AbstractRestController
 
         $condition = $this->buildCondition($request);
 
-        $eventData = new FilterEvent($request, "class", "classificationstoreDefinition", $condition);
+        $eventData = new FilterEvent($request, 'class', 'classificationstoreDefinition', $condition);
         \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
         $condition = $eventData->getCondition();
 

@@ -266,7 +266,7 @@ class DocumentController extends AbstractElementController
 
         $condition = $this->buildCondition($request);
 
-        $eventData = new FilterEvent($request, "document", "list", $condition);
+        $eventData = new FilterEvent($request, 'document', 'list', $condition);
         \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
         $condition = $eventData->getCondition();
 
@@ -303,7 +303,7 @@ class DocumentController extends AbstractElementController
 
         $condition = $this->buildCondition($request);
 
-        $eventData = new FilterEvent($request, "document", "count", $condition);
+        $eventData = new FilterEvent($request, 'document', 'count', $condition);
         \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
         $condition = $eventData->getCondition();
 

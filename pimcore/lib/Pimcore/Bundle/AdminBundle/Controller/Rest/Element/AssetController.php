@@ -214,7 +214,7 @@ class AssetController extends AbstractElementController
 
         $condition = $this->buildCondition($request);
 
-        $eventData = new FilterEvent($request, "asset", "list", $condition);
+        $eventData = new FilterEvent($request, 'asset', 'list', $condition);
         \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
         $condition = $eventData->getCondition();
 
@@ -251,7 +251,7 @@ class AssetController extends AbstractElementController
 
         $condition = $this->buildCondition($request);
 
-        $eventData = new FilterEvent($request, "asset", "count", $condition);
+        $eventData = new FilterEvent($request, 'asset', 'count', $condition);
         \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
         $condition = $eventData->getCondition();
 

@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Webservice;
 
-use Pimcore\Model\Listing\AbstractListing;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -37,6 +36,7 @@ class FilterEvent extends Event
 
     /**
      * FilterEvent constructor.
+     *
      * @param $request
      * @param $type
      * @param $action
@@ -113,7 +113,4 @@ class FilterEvent extends Event
     {
         $this->condition = $condition;
     }
-
-
-
 }

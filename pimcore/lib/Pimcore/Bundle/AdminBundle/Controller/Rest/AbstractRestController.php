@@ -294,7 +294,6 @@ abstract class AbstractRestController extends AdminController
         }
     }
 
-
     /**
      * @param Request $request
      *
@@ -318,7 +317,6 @@ abstract class AbstractRestController extends AdminController
 
         return $condition;
     }
-
 
     protected function doBuildCondition($q, $op = null, $subject = null)
     {
@@ -344,12 +342,11 @@ abstract class AbstractRestController extends AdminController
         //
         // where ( ((`o_published` = '0') )  AND  ((`o_modificationDate` > '1000') AND  ((`o_id` = '3') OR (`o_key` LIKE '%lorem-ipsum%') )  )  )
 
-
         if (!$op) {
             $op = 'AND';
         }
         $mappingTable = ['$gt' => '>', '$gte' => '>=', '$lt' => '<', '$lte' => '<', '$like' => 'LIKE', '$notlike' => 'NOT LIKE', '$notnull' => 'IS NOT NULL',
-                '$not' => "NOT"];
+                '$not' => 'NOT'];
         $ops = array_keys($mappingTable);
 
         $db = Db::get();
@@ -380,7 +377,7 @@ abstract class AbstractRestController extends AdminController
                     foreach ($objectVars as $objectVar => $objectValue) {
                         if (array_search(strtolower($objectVar), $ops) !== false) {
                             $innerOp = $mappingTable[strtolower($objectVar)];
-                            if ($innerOp == "NOT") {
+                            if ($innerOp == 'NOT') {
                                 $parts[] = '( NOT ' . $db->quoteIdentifier($key) . ' =' . $db->quote($objectValue) . ')';
                             } else {
                                 $parts[] = '(' . $db->quoteIdentifier($key) . ' ' . $innerOp . ' ' . $db->quote($objectValue) . ')';
@@ -398,7 +395,7 @@ abstract class AbstractRestController extends AdminController
                 } else {
                     if (array_search(strtolower($key), $ops) !== false) {
                         $innerOp = $mappingTable[strtolower($key)];
-                        if ($innerOp == "NOT") {
+                        if ($innerOp == 'NOT') {
                             $parts[] = '(NOT' . $db->quoteIdentifier($subject) . ' = ' . $db->quote($value) . ')';
                         } else {
                             $parts[] = '(' . $db->quoteIdentifier($subject) . ' ' . $innerOp . ' ' . $db->quote($value) . ')';

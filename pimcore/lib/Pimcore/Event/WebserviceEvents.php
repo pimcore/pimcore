@@ -24,6 +24,4 @@ final class WebserviceEvents
      * @var string
      */
     const BEFORE_LIST_LOAD = 'pimcore.webservice.before.list.load';
-
-
 }
