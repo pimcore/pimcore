@@ -304,7 +304,6 @@ class ClassDefinition extends Model\AbstractModel
 
         $clone = clone $this;
         $clone->setDao(null);
-        unset($clone->id);
         unset($clone->fieldDefinitions);
 
         self::cleanupForExport($clone->layoutDefinitions);
