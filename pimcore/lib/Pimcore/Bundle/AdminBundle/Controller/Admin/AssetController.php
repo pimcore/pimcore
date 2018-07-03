@@ -1767,7 +1767,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $selectedIds = explode(',', $request->get('selectedIds', ''));
             $quotedSelectedIds = [];
             foreach ($selectedIds as $selectedId) {
-                if($selectedId) {
+                if ($selectedId) {
                     $quotedSelectedIds[] = $db->quote($selectedId);
                 }
             }

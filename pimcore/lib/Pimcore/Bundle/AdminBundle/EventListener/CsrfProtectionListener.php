@@ -122,9 +122,9 @@ class CsrfProtectionListener implements EventSubscriberInterface
     /**
      * @return string
      */
-    public function getCsrfToken() {
-
-        if(!$this->csrfToken) {
+    public function getCsrfToken()
+    {
+        if (!$this->csrfToken) {
             $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
                 return $adminSession->get('csrfToken');
             });

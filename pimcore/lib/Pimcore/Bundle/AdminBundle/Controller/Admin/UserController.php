@@ -1075,5 +1075,4 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson(['success' => true, 'data' => $data]);
     }
-
 }

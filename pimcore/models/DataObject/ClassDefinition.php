@@ -267,11 +267,10 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
-
         if (!$this->getId()) {
             $db = Db::get();
             $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
-            $this->setId($maxId ? $maxId +  1 : 1);
+            $this->setId($maxId ? $maxId + 1 : 1);
         }
 
         $existingDefinition = ClassDefinition::getById($this->getId());

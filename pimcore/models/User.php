@@ -767,7 +767,8 @@ class User extends User\UserRole
     /**
      * @return string
      */
-    public static function getDefaultKeyBindings() {
+    public static function getDefaultKeyBindings()
+    {
         return json_encode(
             [
                 [
@@ -969,7 +970,6 @@ class User extends User\UserRole
                     'shift' => true
                 ]
             ]);
-
     }
 
     /**
