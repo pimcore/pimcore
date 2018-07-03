@@ -54,7 +54,7 @@ class AssetTest extends RestTestCase
         $this->assertEquals('bla', $property->getData());
 
         // as the asset key is unique there must be exactly one object with that key
-        $list = $this->restClient->getAssetList("filename = '" . $asset->getKey() . "'");
+        $list = $this->restClient->getAssetList('{"filename" :"' . $asset->getKey() . '"}');
         $this->assertEquals(1, count($list));
 
         // now check if the file exists
