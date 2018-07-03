@@ -288,11 +288,12 @@ class AdminOrderController extends AdminController implements EventedControllerI
     /**
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel")
      * @Method({"GET", "POST"})
+     * @TemplatePhp()
      */
     public function itemCancelAction(Request $request)
     {
         // init
-        $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
@@ -313,6 +314,8 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
             return $this->redirect($url);
         }
+
+        return ['orderItem' => $orderItem];
     }
 
     /**
