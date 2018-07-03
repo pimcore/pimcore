@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -22,7 +23,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
-use Pimcore\Controller\FrontendController;
+use Pimcore\Controller\Configuration\TemplatePhp;
+use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -42,8 +45,10 @@ use Zend\Paginator\Paginator;
  *
  * @Route("/admin-order")
  */
-class AdminOrderController extends FrontendController
+class AdminOrderController extends AdminController implements EventedControllerInterface
 {
+    use TemplateControllerTrait;
+
     /**
      * @var IOrderManager
      */
@@ -67,9 +72,6 @@ class AdminOrderController extends FrontendController
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
-
-        // enable view auto-rendering
-        $this->setViewAutoRender($event->getRequest(), true, 'php');
     }
 
     /**
@@ -83,6 +85,7 @@ class AdminOrderController extends FrontendController
     /**
      * @Route("/list", name="pimcore_ecommerce_backend_admin-order_list")
      * @Method({"GET"})
+     * @TemplatePhp()
      */
     public function listAction(Request $request)
     {
@@ -157,13 +160,13 @@ class AdminOrderController extends FrontendController
         $paginator->setItemCountPerPage(10);
         $paginator->setCurrentPageNumber($request->get('page', 1));
 
-        // view
-        $this->view->paginator = $paginator;
+        return ['paginator' => $paginator];
     }
 
     /**
      * @Route("/detail", name="pimcore_ecommerce_backend_admin-order_detail")
      * @Method({"GET"})
+     * @TemplatePhp()
      */
     public function detailAction(Request $request)
     {
@@ -172,7 +175,7 @@ class AdminOrderController extends FrontendController
         // init
         $order = OnlineShopOrder::getById($request->get('id'));
         /* @var AbstractOrder $order */
-        $orderAgent = $this->view->orderAgent = $this->orderManager->createOrderAgent($order);
+        $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
          * @param array $address
@@ -196,9 +199,9 @@ class AdminOrderController extends FrontendController
         };
 
         // get geo point
-        $this->view->geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
+        $geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
         if ($order->getDeliveryStreet() && $order->getDeliveryZip()) {
-            $this->view->geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
+            $geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
         }
 
         // get customer info
@@ -235,8 +238,6 @@ class AdminOrderController extends FrontendController
                 }
             };
             $addOrderCount();
-
-            $this->view->arrCustomerAccount = $arrCustomerAccount;
         }
 
         // create timeline
@@ -274,12 +275,19 @@ class AdminOrderController extends FrontendController
                 'icon' => $arrIcons[$note->getTitle()], 'context' => $arrContext[$note->getTitle()] ?: 'default', 'type' => $note->getTitle(), 'date' => $dateFormatter->formatDateTime($date->setTimestamp($note->getDate()), IntlFormatter::DATETIME_MEDIUM), 'avatar' => $avatar, 'user' => $user ? $user->getName() : null, 'message' => $note->getData()['message']['data'], 'title' => $title ?: $note->getTitle()
             ];
         }
-        $this->view->timeLine = $arrTimeline;
+
+        return [
+            'orderAgent' => $orderAgent,
+            'timeLine' => $arrTimeline,
+            'geoAddressInvoice' => $geoAddressInvoice,
+            'arrCustomerAccount' => $arrCustomerAccount,
+            'geoAddressDelivery' => $geoAddressDelivery
+        ];
     }
 
     /**
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      */
     public function itemCancelAction(Request $request)
     {
@@ -289,6 +297,7 @@ class AdminOrderController extends FrontendController
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
+            $this->checkCsrfToken($request);
             // init
             $agent = $this->orderManager->createOrderAgent($order);
 
@@ -308,16 +317,19 @@ class AdminOrderController extends FrontendController
 
     /**
      * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
+     * @TemplatePhp()
      */
     public function itemEditAction(Request $request)
     {
         // init
-        $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
+            $this->checkCsrfToken($request);
+
             // change item
             $agent = $this->orderManager->createOrderAgent($order);
             $note = $agent->itemChangeAmount($orderItem, $request->get('quantity'));
@@ -331,20 +343,25 @@ class AdminOrderController extends FrontendController
 
             return $this->redirect($url);
         }
+
+        return ['orderItem' => $orderItem];
     }
 
     /**
      * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
+     * @TemplatePhp()
      */
     public function itemComplaintAction(Request $request)
     {
         // init
-        $this->view->orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
         /* @var \Pimcore\Model\DataObject\OnlineShopOrderItem $orderItem */
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
+            $this->checkCsrfToken($request);
+
             // change item
             $agent = $this->orderManager->createOrderAgent($order);
             $note = $agent->itemComplaint($orderItem, $request->get('quantity'));
@@ -358,5 +375,7 @@ class AdminOrderController extends FrontendController
 
             return $this->redirect($url);
         }
+
+        return ['orderItem' => $orderItem];
     }
 }

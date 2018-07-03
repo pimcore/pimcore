@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
+use Pimcore\Templating\PhpEngine;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -32,12 +33,21 @@ class CsrfProtectionListener implements EventSubscriberInterface
 
     protected $excludedRoutes = [];
 
+    protected $csrfToken = null;
+
+    /**
+     * @var PhpEngine
+     */
+    protected $phpTemplatingEngine;
+
     /**
      * @param $excludedRoutes
+     * @param PhpEngine $phpTemplatingEngine
      */
-    public function __construct($excludedRoutes)
+    public function __construct($excludedRoutes, PhpEngine $phpTemplatingEngine)
     {
         $this->excludedRoutes = $excludedRoutes;
+        $this->phpTemplatingEngine = $phpTemplatingEngine;
     }
 
     /**
@@ -56,12 +66,13 @@ class CsrfProtectionListener implements EventSubscriberInterface
     public function handleRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-
-        if ($request->getMethod() == Request::METHOD_GET) {
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             return;
         }
 
-        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
+        $this->phpTemplatingEngine->addGlobal('csrfToken', $this->getCsrfToken());
+
+        if ($request->getMethod() == Request::METHOD_GET) {
             return;
         }
 
@@ -93,10 +104,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
      */
     public function checkCsrfToken(Request $request)
     {
-        $csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-            return $adminSession->get('csrfToken');
-        });
-
+        $csrfToken = $this->getCsrfToken();
         $requestCsrfToken = $request->headers->get('x_pimcore_csrf_token');
         if (!$requestCsrfToken) {
             $requestCsrfToken = $request->get('csrfToken');
@@ -109,5 +117,19 @@ class CsrfProtectionListener implements EventSubscriberInterface
 
             throw new AccessDeniedHttpException('Detected CSRF Attack! Do not do evil things with pimcore ... ;-)');
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCsrfToken() {
+
+        if(!$this->csrfToken) {
+            $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
+                return $adminSession->get('csrfToken');
+            });
+        }
+
+        return $this->csrfToken;
     }
 }
