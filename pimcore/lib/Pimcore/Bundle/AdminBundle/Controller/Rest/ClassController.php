@@ -15,6 +15,8 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Event\Webservice\FilterEvent;
+use Pimcore\Event\WebserviceEvents;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\DataObject;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -217,8 +219,13 @@ class ClassController extends AbstractRestController
     {
         $this->checkPermission('classes');
 
-        $condition = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
         $this->checkCondition($condition);
+
+        $eventData = new FilterEvent($request, "class", "quantityValueUnitDefinition", $condition);
+        \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
+        $condition = $eventData->getCondition();
+
 
         $list = new DataObject\QuantityValue\Unit\Listing();
         if ($condition) {
@@ -251,7 +258,12 @@ class ClassController extends AbstractRestController
     {
         $this->checkPermission('classes');
 
-        $condition = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
+
+        $eventData = new FilterEvent($request, "class", "classificationstoreDefinition", $condition);
+        \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
+        $condition = $eventData->getCondition();
+
         $this->checkCondition($condition);
 
         $definition = [];

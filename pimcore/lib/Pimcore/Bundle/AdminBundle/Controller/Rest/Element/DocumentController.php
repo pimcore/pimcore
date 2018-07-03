@@ -15,6 +15,8 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Event\Webservice\FilterEvent;
+use Pimcore\Event\WebserviceEvents;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;
@@ -244,10 +246,10 @@ class DocumentController extends AbstractElementController
      *
      * Returns a list of document id/type pairs matching the given criteria.
      *  Example:
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/document-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/document-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&q={"type":%20"folder"}
      *
      * Parameters:
-     *      - condition
+     *      - query filter (q)
      *      - sort order (if supplied then also the key must be provided)
      *      - sort order key
      *      - offset
@@ -262,7 +264,12 @@ class DocumentController extends AbstractElementController
     {
         $this->checkPermission('documents');
 
-        $condition = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
+
+        $eventData = new FilterEvent($request, "document", "list", $condition);
+        \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
+        $condition = $eventData->getCondition();
+
         $this->checkCondition($condition);
         $order     = $request->get('order');
         $orderKey  = $request->get('orderKey');
@@ -280,10 +287,10 @@ class DocumentController extends AbstractElementController
      * @Route("/document-count")
      *
      * Returns the total number of documents matching the given condition
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&q={"type": "folder"}
      *
      * Parameters:
-     *      - condition
+     *      - query filter (q)
      *      - group by key
      *
      * @param Request $request
@@ -294,7 +301,12 @@ class DocumentController extends AbstractElementController
     {
         $this->checkPermission('documents');
 
-        $condition = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
+
+        $eventData = new FilterEvent($request, "document", "count", $condition);
+        \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
+        $condition = $eventData->getCondition();
+
         $this->checkCondition($condition);
         $groupBy   = $request->get('groupBy');
 
