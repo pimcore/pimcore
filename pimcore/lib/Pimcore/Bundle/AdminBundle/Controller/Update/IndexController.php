@@ -107,7 +107,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/job-parallel")
-     * @Method({"POST"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -124,7 +124,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/job-procedural")
-     * @Method({"POST"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -176,6 +176,8 @@ class IndexController extends AdminController implements EventedControllerInterf
         Update::clearOPCaches();
 
         $this->checkPermission('update');
+
+        $this->checkCsrfToken($event->getRequest());
     }
 
     /**
