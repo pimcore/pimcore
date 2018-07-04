@@ -48,6 +48,10 @@ class GD extends Adapter
         $this->setWidth($width);
         $this->setHeight($height);
 
+        if(!$this->sourceImageFormat) {
+            $this->sourceImageFormat = \Pimcore\File::getFileExtension($imagePath);
+        }
+
         if (in_array(\Pimcore\File::getFileExtension($imagePath), ['png', 'gif'])) {
             // in GD only gif and PNG can have an alphachannel
             $this->setIsAlphaPossible(true);
@@ -67,10 +71,15 @@ class GD extends Adapter
      */
     public function save($path, $format = null, $quality = null)
     {
-        $format = strtolower($format);
         if (!$format || $format == 'png32') {
             $format = 'png';
         }
+
+        if ($format == 'original') {
+            $format = $this->sourceImageFormat;
+        }
+
+        $format = strtolower($format);
 
         if (!$this->reinitializing && $this->getUseContentOptimizedFormat()) {
             $format = 'pjpeg';

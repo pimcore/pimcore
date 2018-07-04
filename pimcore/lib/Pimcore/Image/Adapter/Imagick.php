@@ -125,6 +125,10 @@ class Imagick extends Adapter
             $this->setWidth($dimensions['width']);
             $this->setHeight($dimensions['height']);
 
+            if(!$this->sourceImageFormat) {
+                $this->sourceImageFormat = $i->getImageFormat();
+            }
+
             // check if image can have alpha channel
             if (!$this->reinitializing) {
                 $alphaChannel = $i->getImageAlphaChannel();
@@ -162,15 +166,17 @@ class Imagick extends Adapter
         if (!$format) {
             $format = 'png32';
         }
+
+        if ($format == 'original') {
+            $format = $this->sourceImageFormat;
+        }
+
         $format = strtolower($format);
 
         if ($format == 'png') {
             // we need to force imagick to create png32 images, otherwise this can cause some strange effects
             // when used with gray-scale images
             $format = 'png32';
-        }
-        if ($format == 'original') {
-            $format = strtolower($this->resource->getImageFormat());
         }
 
         $originalFilename = null;

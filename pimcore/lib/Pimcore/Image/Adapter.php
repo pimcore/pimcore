@@ -64,6 +64,11 @@ abstract class Adapter
     protected $preserveMetaData = false;
 
     /**
+     * @var string
+     */
+    protected $sourceImageFormat;
+
+    /**
      * @param $height
      *
      * @return $this
