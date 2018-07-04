@@ -210,7 +210,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $tmpObject['allowChildren'] = true;
         $tmpObject['leaf'] = !$hasChildren;
-        $tmpObject['cls'] = '';
+        $tmpObject['cls'] = 'pimcore_class_icon ';
 
         $tmpObject['qtipCfg'] = $child->getElementAdminStyle()->getElementQtipConfig();
 

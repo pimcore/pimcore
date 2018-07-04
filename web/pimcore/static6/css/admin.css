@@ -1822,3 +1822,6 @@ span.warning {
     border-left-color: #d0d0d0 !important;
 }
 
+.pimcore_class_icon .x-tree-icon {
+    background-size: contain;
+}
