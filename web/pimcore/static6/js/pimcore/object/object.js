@@ -17,7 +17,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     initialize: function (id, options) {
         this.id = intval(id);
         this.options = options;
-        
+
         pimcore.plugin.broker.fireEvent("preOpenObject", this, "object");
 
         this.addLoadingPanel();
@@ -232,7 +232,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         //    console.log(e);
         //}
 
-        if (!empty(this.data.previewUrl)) {
+        if (this.data.hasPreview) {
             try {
                 items.push(this.preview.getLayout());
             } catch (e) {
@@ -466,27 +466,18 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             });
 
 
-            if (this.data.general.linkGeneratorReference) {
+            if (this.data.hasPreview) {
                 buttons.push("-");
                 buttons.push({
                     tooltip: t("open"),
                     iconCls: "pimcore_icon_open",
                     scale: "medium",
                     handler: function () {
-                        Ext.Ajax.request({
-                            url: "/admin/object-helper/generate-link",
-                            params: {
-                                id: this.id
-                            },
-                            success: function (response) {
-                                var res = Ext.decode(response.responseText);
-                                if (res["success"]) {
-                                    window.open(res["link"]);
-                                }
-
-                            }.bind(this)
+                        var date = new Date();
+                        var path = "/admin/object/preview?id=" + this.data.general.o_id + "&time=" + date.getTime();
+                        this.saveToSession(function () {
+                            window.open(path);
                         });
-
                     }.bind(this)
                 });
             }

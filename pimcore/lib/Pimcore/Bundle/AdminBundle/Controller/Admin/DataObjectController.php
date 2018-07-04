@@ -344,7 +344,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData = [];
 
             $objectData['idPath'] = Element\Service::getIdPath($object);
-            $objectData['previewUrl'] = $object->getClass()->getPreviewUrl();
+
+            $objectData['hasPreview'] = false;
+            if($object->getClass()->getPreviewUrl() || $object->getClass()->getLinkGeneratorReference()) {
+                $objectData['hasPreview'] = true;
+            }
 
             $objectData['general'] = [];
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_modificationDate', 'o_creationDate', 'o_classId', 'o_className', 'o_locked', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
@@ -2211,18 +2215,28 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         $url = $object->getClass()->getPreviewUrl();
-
-        // replace named variables
-        $vars = get_object_vars($object);
-        foreach ($vars as $key => $value) {
-            if (!empty($value) && (is_string($value) || is_numeric($value))) {
-                $url = str_replace('%' . $key, urlencode($value), $url);
-            } else {
-                if (strpos($url, '%' . $key) !== false) {
-                    return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
+        if($url) {
+            // replace named variables
+            $vars = get_object_vars($object);
+            foreach ($vars as $key => $value) {
+                if (!empty($value) && (is_string($value) || is_numeric($value))) {
+                    $url = str_replace('%' . $key, urlencode($value), $url);
+                } else {
+                    if (strpos($url, '%' . $key) !== false) {
+                        return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
+                    }
                 }
             }
+        } else if($linkGeneratorReference = $object->getClass()->getLinkGeneratorReference()) {
+            if($generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($linkGeneratorReference)) {
+                $url = $generator->generate($object, []);
+            }
         }
+
+        if(!$url) {
+            return new Response("Preview not available, it seems that there's a problem with this object.");
+        }
+
 
         // replace all remainaing % signs
         $url = str_replace('%', '%25', $url);
