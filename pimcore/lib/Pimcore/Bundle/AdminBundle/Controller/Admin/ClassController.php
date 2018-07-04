@@ -1265,8 +1265,6 @@ class ClassController extends AdminController implements EventedControllerInterf
             unset($item['userOwner']);
             unset($item['userModification']);
 
-            unset($item['id']);
-
             if ($type == 'class' && $item['name'] == $name) {
                 $class = DataObject\ClassDefinition::getByName($name);
                 if (!$class) {
