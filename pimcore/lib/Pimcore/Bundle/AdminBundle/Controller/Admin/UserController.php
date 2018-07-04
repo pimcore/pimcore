@@ -460,7 +460,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData = object2array($user);
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
-        $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
+        $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
         unset($userData['password']);
         unset($userData['twoFactorAuthentication']['secret']);
 
@@ -859,7 +859,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function reset2FaSecretAction(Request $request)
     {
-
         /**
          * @var $user User
          */
