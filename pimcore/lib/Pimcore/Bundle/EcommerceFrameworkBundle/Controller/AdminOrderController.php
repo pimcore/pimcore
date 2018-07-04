@@ -211,7 +211,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
             $customer = $order->getCustomer();
 
             // register
-            $register = new \DateTime($order->getCreationDate());
+            $register = \DateTime::createFromFormat('U', $order->getCreationDate());
             $arrCustomerAccount['created'] = $dateFormatter->formatDateTime($register, IntlFormatter::DATE_MEDIUM);
 
             // mail
