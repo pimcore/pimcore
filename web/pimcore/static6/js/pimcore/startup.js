@@ -264,6 +264,9 @@ Ext.onReady(function () {
         }
     });
 
+    var user = new pimcore.user(pimcore.currentuser);
+    pimcore.globalmanager.add("user", user);
+
     var docTypesUrl = '/admin/document/doc-types?';
     // document types
     Ext.define('pimcore.model.doctypes', {
@@ -304,15 +307,17 @@ Ext.onReady(function () {
         }
     });
 
-    var store = new Ext.data.Store({
-        id: 'doctypes',
-        model: 'pimcore.model.doctypes',
-        remoteSort: false,
-        autoSync: true,
-        autoLoad: true
-    });
+    if (user.isAllowed("documents")) {
+        var store = new Ext.data.Store({
+            id: 'doctypes',
+            model: 'pimcore.model.doctypes',
+            remoteSort: false,
+            autoSync: true,
+            autoLoad: true
+        });
 
-    pimcore.globalmanager.add("document_types_store", store);
+        pimcore.globalmanager.add("document_types_store", store);
+    }
 
     //translation admin keys
     pimcore.globalmanager.add("translations_admin_missing", new Array());
@@ -377,8 +382,6 @@ Ext.onReady(function () {
 
     pimcore.globalmanager.add("perspective", new pimcore.perspective(pimcore.settings.perspective));
 
-    // current user
-    pimcore.globalmanager.add("user", new pimcore.user(pimcore.currentuser));
 
     //pimcore languages
     Ext.define('pimcore.model.languages', {
@@ -481,8 +484,6 @@ Ext.onReady(function () {
 
     // init general layout
     try {
-        var user = pimcore.globalmanager.get("user");
-
         pimcore.viewport = Ext.create('Ext.container.Viewport', {
             id: "pimcore_viewport",
             layout: 'fit',
