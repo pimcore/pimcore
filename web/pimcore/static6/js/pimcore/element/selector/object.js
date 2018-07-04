@@ -322,8 +322,9 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         }
 
         var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find", null, true);
+        gridHelper.limit = this.itemsPerPage;
         this.store = gridHelper.getStore();
-        this.store.setPageSize(pimcore.helpers.grid.getDefaultPageSize());
+        this.store.setPageSize(this.itemsPerPage);
         this.applyExtraParamsToStore();
         var gridColumns = gridHelper.getGridColumns();
         var gridfilters = gridHelper.getGridFilters();
@@ -342,10 +343,11 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     initDefaultStore: function () {
+        this.itemsPerPage =  pimcore.helpers.grid.getDefaultPageSize(-1);
         this.store = new Ext.data.Store({
             autoDestroy: true,
             remoteSort: true,
-            pageSize: pimcore.helpers.grid.getDefaultPageSize(),
+            pageSize: this.itemsPerPage,
             proxy : {
                 type: 'ajax',
                 url: "/admin/search/search/find",
@@ -378,8 +380,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 
     getGridPanel: function (columns, gridfilters, selectedClass) {
-
-        this.pagingtoolbar = this.getPagingToolbar(t("no_objects_found"));
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store,{pageSize: this.itemsPerPage});
         this.gridPanel = Ext.create('Ext.grid.Panel', {
             store: this.store,
             border: false,
@@ -466,6 +467,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             function(data) {
                 this.saveColumnConfigButton.show(); //unhide save config button
                 this.gridLanguage = data.language;
+                this.itemsPerPage = data.pageSize;
                 this.initClassStore(selectedClass, data.columns);
             }.bind(this), null, false
         );
