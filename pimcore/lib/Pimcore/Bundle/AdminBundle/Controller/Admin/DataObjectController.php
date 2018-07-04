@@ -2210,6 +2210,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $session = Tool\Session::getReadOnly('pimcore_objects');
         if ($session->has($key)) {
+            /**
+             * @var DataObject\Concrete $object
+             */
             $object = $session->get($key);
         } else {
             return new Response("Preview not available, it seems that there's a problem with this object.");
@@ -2228,10 +2231,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
                 }
             }
-        } else if($linkGeneratorReference = $object->getClass()->getLinkGeneratorReference()) {
-            if($generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($linkGeneratorReference)) {
-                $url = $generator->generate($object, []);
-            }
+        } else if($linkGenerator = $object->getClass()->getLinkGenerator()) {
+            $url = $linkGenerator->generate($object, [['preview' => true, 'context' => $this]]);
         }
 
         if(!$url) {
