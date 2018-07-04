@@ -74,7 +74,7 @@ The link generator will receive the referenced object and additional data depend
 ```php
 <ul class="foo">
     <?php foreach($this->newsList as $news) { ?>
-        <a href="<?= $app->getContainer()->get('website.news_linkgenerator')->generate($news); ?>"><?= $news->getTitle() ?></a>
+        <a href="<?= $this->pimcoreUrl(['object' => $news]); ?>"><?= $news->getTitle() ?></a>
     <?php } ?>
 </ul>
  ``` 
