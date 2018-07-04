@@ -48,7 +48,7 @@ class GD extends Adapter
         $this->setWidth($width);
         $this->setHeight($height);
 
-        if(!$this->sourceImageFormat) {
+        if (!$this->sourceImageFormat) {
             $this->sourceImageFormat = \Pimcore\File::getFileExtension($imagePath);
         }
 

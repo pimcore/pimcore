@@ -125,7 +125,7 @@ class Imagick extends Adapter
             $this->setWidth($dimensions['width']);
             $this->setHeight($dimensions['height']);
 
-            if(!$this->sourceImageFormat) {
+            if (!$this->sourceImageFormat) {
                 $this->sourceImageFormat = $i->getImageFormat();
             }
 
