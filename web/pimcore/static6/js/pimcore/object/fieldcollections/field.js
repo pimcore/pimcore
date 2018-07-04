@@ -65,7 +65,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 xtype: "textfield",
                 width: 400,
                 name: "parentClass",
-                fieldLabel: t("parent_class"),
+                fieldLabel: t("parent_php_class"),
                 value: this.data.parentClass
             }, {
                 xtype: 'displayfield',

@@ -864,7 +864,7 @@
   "add_object": "Add object",
   "basic_configuration": "Basic configuration",
   "allow_inherit": "Allow inheritance",
-  "parent_class": "Parent class",
+  "parent_php_class": "Parent PHP Class",
   "use_traits": "Use (traits)",
   "general_settings": "General Settings",
   "layout_settings": "Layout Settings (Pimcore Admin)",
@@ -1916,7 +1916,5 @@
   "class_identifier_warning": "Be careful with the unique class identifier because table names can contain only up to 64 characters.",
   "class_identifier": "Unique class identifier",
   "invalid_class_identifier": "Invalid class identifier",
-  "class_identifier_already_exists": "Class Identifier already exists",
-  "iframe_url": "IFrame URL"
-
+  "class_identifier_already_exists": "Class Identifier already exists"
 }

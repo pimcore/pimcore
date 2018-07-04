@@ -46,7 +46,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                 xtype: "textfield",
                 width: 400,
                 name: "parentClass",
-                fieldLabel: t("parent_class"),
+                fieldLabel: t("parent_php_class"),
                 value: this.data.parentClass
             }
                 , this.getClassDefinitionPanel()

@@ -218,34 +218,6 @@ pimcore.settings.user.user.settings = Class.create({
             }
         });
 
-        generalItems.push({
-            xtype: "checkbox",
-            fieldLabel: t("show_welcome_screen"),
-            name: "welcomescreen",
-            checked: this.currentUser.welcomescreen
-        });
-
-        generalItems.push({
-            xtype: "checkbox",
-            fieldLabel: t("memorize_tabs"),
-            name: "memorizeTabs",
-            checked: this.currentUser.memorizeTabs
-        });
-
-        generalItems.push({
-            xtype: "checkbox",
-            fieldLabel: t("allow_dirty_close"),
-            name: "allowDirtyClose",
-            checked: this.currentUser.allowDirtyClose
-        });
-
-        generalItems.push({
-            xtype: "checkbox",
-            fieldLabel: t("show_close_warning"),
-            name: "closeWarning",
-            checked: this.currentUser.closeWarning
-        });
-
         var rolesStore = Ext.create('Ext.data.ArrayStore', {
             fields: ["id", "name"],
             data: this.data.roles
@@ -288,6 +260,35 @@ pimcore.settings.user.user.settings = Class.create({
         generalItems.push(this.perspectivesField);
 
 
+        generalItems.push({
+            xtype: "checkbox",
+            boxLabel: t("show_welcome_screen"),
+            name: "welcomescreen",
+            checked: this.currentUser.welcomescreen
+        });
+
+        generalItems.push({
+            xtype: "checkbox",
+            boxLabel: t("memorize_tabs"),
+            name: "memorizeTabs",
+            checked: this.currentUser.memorizeTabs
+        });
+
+        generalItems.push({
+            xtype: "checkbox",
+            boxLabel: t("allow_dirty_close"),
+            name: "allowDirtyClose",
+            checked: this.currentUser.allowDirtyClose
+        });
+
+        generalItems.push({
+            xtype: "checkbox",
+            boxLabel: t("show_close_warning"),
+            name: "closeWarning",
+            checked: this.currentUser.closeWarning
+        });
+
+
         this.generalSet = new Ext.form.FieldSet({
             collapsible: true,
             title: t("general"),
@@ -301,7 +302,7 @@ pimcore.settings.user.user.settings = Class.create({
             // only admins are allowed to create new admin users and to manage API related settings
             adminItems.push({
                 xtype: "checkbox",
-                fieldLabel: t("admin"),
+                boxLabel: t("admin"),
                 name: "admin",
                 disabled: user.id == this.currentUser.id,
                 checked: this.currentUser.admin,
@@ -413,7 +414,7 @@ pimcore.settings.user.user.settings = Class.create({
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
             availPermsItems.push({
                 xtype: "checkbox",
-                fieldLabel: t(this.data.availablePermissions[i].key),
+                boxLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
                 checked: this.data.permissions[this.data.availablePermissions[i].key],
                 labelStyle: "width: 200px;"
