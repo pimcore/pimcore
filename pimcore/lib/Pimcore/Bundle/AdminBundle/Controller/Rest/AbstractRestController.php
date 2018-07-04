@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Db;
+use Pimcore\Event\Webservice\FilterEvent;
+use Pimcore\Event\WebserviceEvents;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Webservice\Service;
@@ -410,5 +412,18 @@ abstract class AbstractRestController extends AdminController
         $subCondition = ' (' . implode(' ' . $op . ' ', $parts) . ' ) ';
 
         return $subCondition;
+    }
+
+
+    /**
+     * @param FilterEvent $event
+     */
+    public function dispatchBeforeLoadEvent(Request $request, FilterEvent $eventData) {
+        if ($request->get('condition')) {
+            \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
+            if (!$eventData->isConditionDirty()) {
+                throw new \Exception("the condition parameter is not supported anymore");
+            }
+        }
     }
 }
