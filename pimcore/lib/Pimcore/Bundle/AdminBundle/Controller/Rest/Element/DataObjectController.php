@@ -412,7 +412,7 @@ class DataObjectController extends AbstractElementController
         $condition = $this->buildCondition($request);
 
         $eventData = new FilterEvent($request, 'object', 'list', $condition);
-        \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
+        $this->dispatchBeforeLoadEvent($request, $eventData);
         $condition = $eventData->getCondition();
 
         $this->checkCondition($condition);
@@ -480,7 +480,7 @@ class DataObjectController extends AbstractElementController
         $condition = $this->buildCondition($request);
 
         $eventData = new FilterEvent($request, 'object', 'count', $condition);
-        \Pimcore::getEventDispatcher()->dispatch(WebserviceEvents::BEFORE_LIST_LOAD, $eventData);
+        $this->dispatchBeforeLoadEvent($request, $eventData);
         $condition = $eventData->getCondition();
 
         $this->checkCondition($condition);

@@ -58,6 +58,7 @@ q={"o_type":%20{"$not":%20"folder"}}
 ## Legacy Mode
 
 SQL condition filters are not supported anymore. However, you can still enable them by implementing a event listener as scribbled below.
+If you don't but still pass a condition parameter an exception will be thrown.
 
 ```
 <?php
