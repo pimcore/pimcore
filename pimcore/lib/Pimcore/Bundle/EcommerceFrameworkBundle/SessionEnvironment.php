@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
-use Pimcore\Localization\Locale;
+use Pimcore\Localization\LocaleInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -41,7 +41,7 @@ class SessionEnvironment extends Environment implements IEnvironment
      */
     protected $sessionLoaded = false;
 
-    public function __construct(SessionInterface $session, Locale $localeService, array $options = [])
+    public function __construct(SessionInterface $session, LocaleInterface $localeService, array $options = [])
     {
         parent::__construct($localeService, $options);
 

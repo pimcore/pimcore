@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Localization\Locale;
+use Pimcore\Localization\LocaleInterface;
 use Pimcore\Tool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,7 +24,7 @@ class Environment implements IEnvironment
     const USER_ID_NOT_SET = -1;
 
     /**
-     * @var Locale
+     * @var LocaleInterface
      */
     protected $localeService;
 
@@ -73,7 +73,7 @@ class Environment implements IEnvironment
      */
     protected $currentTransientCheckoutTenant;
 
-    public function __construct(Locale $localeService, array $options = [])
+    public function __construct(LocaleInterface $localeService, array $options = [])
     {
         $this->localeService = $localeService;
 

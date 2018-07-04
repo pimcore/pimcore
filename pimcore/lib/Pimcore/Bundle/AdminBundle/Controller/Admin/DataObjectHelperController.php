@@ -22,7 +22,7 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectImportEvents;
 use Pimcore\Event\Model\DataObjectImportEvent;
 use Pimcore\File;
-use Pimcore\Localization\Locale;
+use Pimcore\Localization\LocaleInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\FactoryInterface;
@@ -1318,7 +1318,7 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      * @param ImportService $importService
-     * @param Locale $localeService
+     * @param LocaleInterface $localeService
      * @param FactoryInterface $modelFactory
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -1327,7 +1327,7 @@ class DataObjectHelperController extends AdminController
     public function importPreviewAction(
         Request $request,
         ImportService $importService,
-        Locale $localeService,
+        LocaleInterface $localeService,
         FactoryInterface $modelFactory,
         EventDispatcherInterface $eventDispatcher
     ) {
@@ -1415,7 +1415,7 @@ class DataObjectHelperController extends AdminController
 
     protected function populateObject(
         ImportService $importService,
-        Locale $localeService,
+        LocaleInterface $localeService,
         $object,
         $configData,
         $rowData,
@@ -1613,7 +1613,7 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      * @param ImportService $importService
-     * @param Locale $localeService
+     * @param LocaleInterface $localeService
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
@@ -1623,7 +1623,7 @@ class DataObjectHelperController extends AdminController
     public function importProcessAction(
         Request $request,
         ImportService $importService,
-        Locale $localeService,
+        LocaleInterface $localeService,
         EventDispatcherInterface $eventDispatcher
     ) {
         $parentId = $request->get('parentId');
@@ -1884,11 +1884,11 @@ class DataObjectHelperController extends AdminController
      * @Method({"POST"})
      *
      * @param Request $request
-     * @param Locale $localeService
+     * @param LocaleInterface $localeService
      *
      * @return JsonResponse
      */
-    public function doExportAction(Request $request, Locale $localeService)
+    public function doExportAction(Request $request, LocaleInterface $localeService)
     {
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $ids = $request->get('ids');
@@ -2007,14 +2007,14 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @param Request $request
-     * @param Locale $localeService
+     * @param LocaleInterface $localeService
      * @param $list
      * @param $fields
      * @param bool $addTitles
      *
      * @return string
      */
-    protected function getCsvData(Request $request, Locale $localeService, $list, $fields, $addTitles = true)
+    protected function getCsvData(Request $request, LocaleInterface $localeService, $list, $fields, $addTitles = true)
     {
         $requestedLanguage = $this->extractLanguage($request);
         $mappedFieldnames = [];
