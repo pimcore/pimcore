@@ -1817,3 +1817,8 @@ span.warning {
     filter: blur(10px);
 }
 
+.pimcore_layout_iframe_border .x-panel-default-outer-border-rl {
+    border-right-color: #d0d0d0 !important;
+    border-left-color: #d0d0d0 !important;
+}
+

@@ -479,6 +479,7 @@ $scripts = array(
     "pimcore/object/classes/layout/region.js",
     "pimcore/object/classes/layout/tabpanel.js",
     "pimcore/object/classes/layout/button.js",
+    "pimcore/object/classes/layout/iframe.js",
     "pimcore/object/classes/layout/text.js",
     "pimcore/object/fieldcollection.js",
     "pimcore/object/fieldcollections/field.js",
@@ -596,6 +597,7 @@ $scripts = array(
     "pimcore/object/folder.js",
     "pimcore/object/variant.js",
     "pimcore/object/tree.js",
+    "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
 

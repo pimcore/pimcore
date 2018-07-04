@@ -1224,6 +1224,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/rgbacolor.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_iframe {
+    background: url(/pimcore/static6/img/flat-color-icons/frame.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_encryptedField {
     background: url(/pimcore/static6/img/flat-color-icons/data_encryption.svg) center center no-repeat !important;
 }

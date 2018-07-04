@@ -447,6 +447,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
+            DataObject\Service::removeObjectFromSession($object->getId());
             return $this->adminJson($data);
         } else {
             Logger::debug('prevented getting object id [ ' . $object->getId() . ' ] because of missing permissions');
@@ -2367,4 +2368,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         // nothing to do
     }
+
+
 }
