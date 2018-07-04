@@ -29,35 +29,40 @@ pimcore.object.layout.iframe = Class.create(pimcore.object.abstract, {
         var html = '<iframe src="' + this.config.iframeUrl + "?" + queryString + '"frameborder="0" width="100%" height="' + (this.config.height - 90) + '"></iframe>';
 
         this.component = new Ext.Panel({
-            title: this.config.title,
             border: true,
             cls: "pimcore_layout_iframe_border",
             height: this.config.height,
             width: this.config.width,
             scrollable: true,
             html: html,
-            tbar: [
-                {
-                    xtype: 'button',
-                    text: t('refresh'),
-                    iconCls: 'pimcore_icon_reload',
-                    handler: function () {
-                        var key = "object_" + this.context.objectId;
+            tbar: {
+                items: [
+                    {
+                        xtype: "tbtext",
+                        text: this.config.title
+                    }, "->",
+                    {
+                        xtype: 'button',
+                        text: t('refresh'),
+                        iconCls: 'pimcore_icon_reload',
+                        handler: function () {
+                            var key = "object_" + this.context.objectId;
 
-                        if (pimcore.globalmanager.exists(key)) {
-                            var objectTab = pimcore.globalmanager.get(key);
-                            objectTab.saveToSession(function() {
-                                console.log("done");
-                                this.component.setHtml(html);
-                            }.bind(this));
+                            if (pimcore.globalmanager.exists(key)) {
+                                var objectTab = pimcore.globalmanager.get(key);
+                                objectTab.saveToSession(function () {
+                                    console.log("done");
+                                    this.component.setHtml(html);
+                                }.bind(this));
 
 
-                        }
+                            }
 
 
-                    }.bind(this)
-                }
-            ]
+                        }.bind(this)
+                    }
+                ]
+            }
         });
         return this.component;
 
