@@ -28,7 +28,7 @@ class VariantsController extends AdminController
 {
     /**
      * @Route("/update-key")
-     * @Method({"GET"})
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -56,7 +56,7 @@ class VariantsController extends AdminController
 
     /**
      * @Route("/get-variants")
-     * @Method({"GET"})
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
