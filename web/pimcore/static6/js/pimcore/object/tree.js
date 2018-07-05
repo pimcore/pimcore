@@ -347,7 +347,7 @@ pimcore.object.tree = Class.create({
             // add special icon
             if (classRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
                 tmpMenuEntry.icon = classRecord.get("icon");
-                tmpMenuEntry.iconCls = "";
+                tmpMenuEntry.iconCls = "pimcore_class_icon";
             }
 
             tmpMenuEntryImport = {
@@ -359,9 +359,10 @@ pimcore.object.tree = Class.create({
             // add special icon
             if (classRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
                 tmpMenuEntryImport.icon = classRecord.get("icon");
-                tmpMenuEntryImport.iconCls = "";
+                tmpMenuEntryImport.iconCls = "pimcore_class_icon";
             }
 
+            console.log(tmpMenuEntryImport);
 
             // check if the class is within a group
             if(classRecord.get("group")) {

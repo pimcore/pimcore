@@ -1825,3 +1825,7 @@ span.warning {
 .pimcore_class_icon .x-tree-icon {
     background-size: contain;
 }
+
+.pimcore_class_icon.x-menu-item-icon {
+    background-size: contain;
+}
