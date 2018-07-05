@@ -591,6 +591,14 @@
     background: url(/pimcore/static6/img/flat-color-icons/delete.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_plus_down {
+    background: url(/pimcore/static6/img/flat-color-icons/plus-down.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_plus_up {
+    background: url(/pimcore/static6/img/flat-color-icons/plus-up.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_up {
     background: url(/pimcore/static6/img/flat-color-icons/collapse.svg) center center no-repeat !important;
 }
