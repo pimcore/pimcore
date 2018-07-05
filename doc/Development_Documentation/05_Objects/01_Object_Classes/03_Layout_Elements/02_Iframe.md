@@ -5,6 +5,8 @@ Provide a URL and make use of the context paramater to render a response of your
 ## Class Configuration
 ![Class Definition](../../../img/iframe_class_definition.png)
 
+Note that you can provide a freely selectable string that will be added to the context information. See the output of the example below.
+
 ## Sample Controller Code
 ```
 <?php

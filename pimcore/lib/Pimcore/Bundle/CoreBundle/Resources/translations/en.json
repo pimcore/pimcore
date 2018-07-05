@@ -839,7 +839,7 @@
   "add_layout_component": "Add Layout Component",
   "add_data_component": "Add Data Component",
   "accordion": "Accordion",
-  "iframe": "Iframe",
+  "iframe": "Preview / Iframe",
   "fieldset": "Fieldset",
   "panel": "Panel",
   "tabpanel": "Tabpanel",
@@ -1916,5 +1916,6 @@
   "class_identifier_warning": "Be careful with the unique class identifier because table names can contain only up to 64 characters.",
   "class_identifier": "Unique class identifier",
   "invalid_class_identifier": "Invalid class identifier",
-  "class_identifier_already_exists": "Class Identifier already exists"
+  "class_identifier_already_exists": "Class Identifier already exists",
+  "iframe_url": "IFrame URL"
 }
