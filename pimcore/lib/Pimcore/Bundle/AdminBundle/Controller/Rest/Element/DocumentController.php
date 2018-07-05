@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Event\Webservice\FilterEvent;
-use Pimcore\Event\WebserviceEvents;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;

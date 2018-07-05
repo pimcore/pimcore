@@ -87,7 +87,7 @@ class PimcoreUrl extends Helper
             $name = $this->getCurrentRoute();
         }
 
-        if(isset($parameters['object']) && $parameters['object'] instanceof Concrete) {
+        if (isset($parameters['object']) && $parameters['object'] instanceof Concrete) {
             /**
              * @var $object Concrete
              */

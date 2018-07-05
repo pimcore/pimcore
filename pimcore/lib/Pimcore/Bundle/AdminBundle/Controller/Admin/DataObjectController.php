@@ -346,7 +346,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['idPath'] = Element\Service::getIdPath($object);
 
             $objectData['hasPreview'] = false;
-            if($object->getClass()->getPreviewUrl() || $object->getClass()->getLinkGeneratorReference()) {
+            if ($object->getClass()->getPreviewUrl() || $object->getClass()->getLinkGeneratorReference()) {
                 $objectData['hasPreview'] = true;
             }
 
@@ -452,6 +452,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $data = $event->getArgument('data');
 
             DataObject\Service::removeObjectFromSession($object->getId());
+
             return $this->adminJson($data);
         } else {
             Logger::debug('prevented getting object id [ ' . $object->getId() . ' ] because of missing permissions');
@@ -2219,7 +2220,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         $url = $object->getClass()->getPreviewUrl();
-        if($url) {
+        if ($url) {
             // replace named variables
             $vars = get_object_vars($object);
             foreach ($vars as $key => $value) {
@@ -2231,14 +2232,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
                 }
             }
-        } else if($linkGenerator = $object->getClass()->getLinkGenerator()) {
+        } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
             $url = $linkGenerator->generate($object, [['preview' => true, 'context' => $this]]);
         }
 
-        if(!$url) {
+        if (!$url) {
             return new Response("Preview not available, it seems that there's a problem with this object.");
         }
-
 
         // replace all remainaing % signs
         $url = str_replace('%', '%25', $url);
@@ -2383,6 +2383,4 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         // nothing to do
     }
-
-
 }

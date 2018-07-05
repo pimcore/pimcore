@@ -18,7 +18,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
 use Pimcore\Tests\Helper\Pimcore;
-use Symfony\Component\Templating\DelegatingEngine;
 
 class Iframe extends Model\DataObject\ClassDefinition\Layout
 {
@@ -67,7 +66,6 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout
         $this->renderingData = $renderingData;
     }
 
-
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
      * @param $object Model\DataObject\Concrete
      * @param array $context additional contextual data
@@ -77,6 +75,4 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout
         $this->width = $this->getWidth() ? $this->getWidth() : 500;
         $this->height = $this->getHeight() ? $this->getHeight() : 500;
     }
-
-
 }

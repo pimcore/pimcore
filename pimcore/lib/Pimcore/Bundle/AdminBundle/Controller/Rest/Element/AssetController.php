@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Event\Webservice\FilterEvent;
-use Pimcore\Event\WebserviceEvents;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Webservice\Data\Asset\File\In as WebserviceAssetFileIn;
