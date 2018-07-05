@@ -160,7 +160,8 @@ pimcore.settings.profile.panel = Class.create({
                 fieldLabel: t("old_password"),
                 name: "old_password",
                 inputType: "password",
-                width: 400
+                width: 400,
+                hidden: this.currentUser.isPasswordReset
             }, {
                 xtype: "fieldcontainer",
                 layout: 'hbox',

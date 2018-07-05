@@ -637,6 +637,10 @@ class UserController extends AdminController implements EventedControllerInterfa
         unset($userData['twoFactorAuthentication']['secret']);
         $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
 
+        $userData['isPasswordReset'] = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+            return $adminSession->get('password_reset');
+        });
+
         $response = new Response('pimcore.currentuser = ' . $this->encodeJson($userData));
         $response->headers->set('Content-Type', 'text/javascript');
 
