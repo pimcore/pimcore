@@ -68,6 +68,15 @@ innodb_large_prefix = 1
 innodb_file_per_table = 1
 ```
 
+### Redis (optional but recommended for caching)
+All versions > 3 are supported
+##### Configuration 
+```
+maxmemory 1gb                   # depending on your data
+maxmemory-policy volatile-lru   # IMPORTANT! 
+save ""
+```
+
 ### Operating System
 Please ensure you have installed all required packages to ensure proper locale support by PHP.
 On Debian based systems, you can use the following command to install all required packages: 
