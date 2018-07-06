@@ -61,6 +61,9 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
+            defaults:{
+                labelWidth: 200
+            },
             items: [{
                 xtype: "textfield",
                 width: 400,
@@ -68,13 +71,20 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 fieldLabel: t("parent_php_class"),
                 value: this.data.parentClass
             }, {
-                xtype: 'displayfield',
-                text: '<b>' + t("used_by_class") + '</b>'
+                xtype: "textfield",
+                width: 400,
+                name: "title",
+                fieldLabel: t("title"),
+                value: this.data.title
             },
+                {
+                    xtype: 'displayfield',
+                    text: '<b>' + t("used_by_class") + '</b>'
+                },
                 usagesGrid]
         });
 
-        this.rootPanel.on("afterrender", function() {
+        this.rootPanel.on("afterrender", function () {
             this.usagesStore.reload()
         }.bind(this));
 
@@ -95,7 +105,8 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 params: {
                     configuration: m,
                     values: n,
-                    key: this.data.key
+                    key: this.data.key,
+                    title: this.data.title
                 },
                 success: this.saveOnComplete.bind(this)
             });

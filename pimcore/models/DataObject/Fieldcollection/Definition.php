@@ -39,6 +39,11 @@ class Definition extends Model\AbstractModel
     public $parentClass;
 
     /**
+     * @var string
+     */
+    public $title;
+
+    /**
      * @var array
      */
     public $layoutDefinitions;
@@ -82,6 +87,24 @@ class Definition extends Model\AbstractModel
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+
 
     /**
      * @return array

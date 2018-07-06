@@ -140,6 +140,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                     i,
                     {
                         type: this.data[i].type,
+                        title: this.data[i].title,
                         oIndex: this.data[i].oIndex
                     },
                     this.data[i].data,
@@ -150,13 +151,13 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.component.updateLayout();
     },
 
-    getControls: function (blockElement) {
+    getControls: function (blockElement, title) {
 
         var collectionMenu = [];
 
         this.fieldstore.each(function (blockElement, rec) {
             collectionMenu.push({
-                text: ts(rec.data.key),
+                text: rec.data.title ? ts(rec.data.title): ts(rec.data.key),
                 handler: this.addBlock.bind(this,blockElement, rec.data.key),
                 iconCls: "pimcore_icon_fieldcollection"
             });
@@ -185,8 +186,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             });
         }
 
-
-
         if(blockElement) {
             items.push({
                 disabled: this.fieldConfig.disallowAddRemove,
@@ -214,6 +213,15 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                     "click": this.moveBlockDown.bind(this, blockElement)
                 }
             });
+
+            if (title) {
+                items.push('->');
+
+                items.push({
+                    xtype: "tbtext",
+                    text: ts(title)
+                });
+            }
         }
 
         var toolbar = new Ext.Toolbar({
@@ -323,6 +331,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         var type = config.type;
         var oIndex = config.oIndex;
+        var title = config.title ? config.title : type;
 
         this.closeOpenEditors();
 
@@ -364,7 +373,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             disabled: this.fieldConfig.noteditable
         });
 
-        blockElement.insert(0, this.getControls(blockElement));
+        blockElement.insert(0, this.getControls(blockElement, title));
 
         blockElement.key = this.currentElements.length;
         blockElement.fieldtype = type;

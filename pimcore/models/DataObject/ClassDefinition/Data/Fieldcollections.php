@@ -144,7 +144,8 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                 $editmodeData[] = [
                     'data' => $collectionData,
                     'type' => $item->getType(),
-                    'oIndex' => $idx
+                    'oIndex' => $idx,
+                    'title' => $collectionDef->getTitle()
                 ];
             }
         }

@@ -691,6 +691,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         try {
             $key = $request->get('key');
+            $title = $request->get('title');
 
             if ($request->get('task') == 'add') {
                 // check for existing fieldcollection with same name with different lower/upper cases
@@ -706,6 +707,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $fc = new DataObject\Fieldcollection\Definition();
             $fc->setKey($key);
+            $fc->setTitle($title);
 
             if ($request->get('values')) {
                 $values = $this->decodeJson($request->get('values'));
