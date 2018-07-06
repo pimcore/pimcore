@@ -187,9 +187,11 @@ class Video extends Model\Asset
 
     /**
      * @return array
+     *
      * @throws \Exception
      */
-    protected function getDimensionsFromBackend() {
+    protected function getDimensionsFromBackend()
+    {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
             $converter->load($this->getFileSystemPath());
@@ -251,9 +253,10 @@ class Video extends Model\Asset
     /**
      * @return int|null
      */
-    public function getWidth() {
+    public function getWidth()
+    {
         $dimensions = $this->getDimensions();
-        if($dimensions) {
+        if ($dimensions) {
             return $dimensions['width'];
         }
     }
@@ -261,20 +264,19 @@ class Video extends Model\Asset
     /**
      * @return int|null
      */
-    public function getHeight() {
+    public function getHeight()
+    {
         $dimensions = $this->getDimensions();
-        if($dimensions) {
+        if ($dimensions) {
             return $dimensions['height'];
         }
     }
 
-    /**
-     *
-     */
-    public function getSphericalMetaData() {
+    public function getSphericalMetaData()
+    {
         $data = [];
 
-        if(in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
+        if (in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
             $chunkSize = 1024;
             if (!is_int($chunkSize)) {
                 throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
@@ -299,7 +301,7 @@ class Video extends Model\Asset
                 }
                 if (($position = strpos($chunk, $tag)) === false) {
                     // if open tag not found, back up just in case the open tag is on the split.
-                    fseek($file_pointer, $tagLength*-1, SEEK_CUR);
+                    fseek($file_pointer, $tagLength * -1, SEEK_CUR);
                 } else {
                     $buffer = substr($chunk, $position);
                 }
@@ -337,9 +339,9 @@ class Video extends Model\Asset
         array_walk($data, function ($value, $key) use (&$resultData) {
             $parts = explode('____', $key);
             $length = count($parts);
-            if($length > 1) {
-                $name = $parts[$length-1];
-                if(!isset($resultData[$name])) {
+            if ($length > 1) {
+                $name = $parts[$length - 1];
+                if (!isset($resultData[$name])) {
                     $key = $name;
                 }
             }

@@ -93,7 +93,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($asset instanceof Asset\Video) {
             $videoInfo = [];
 
-            if(\Pimcore\Video::isAvailable()) {
+            if (\Pimcore\Video::isAvailable()) {
                 $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
                 $thumbnail = $asset->getThumbnail($config, ['mp4']);
                 if ($thumbnail) {
@@ -103,7 +103,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         $videoInfo['height'] = $asset->getHeight();
 
                         $metaData = $asset->getSphericalMetaData();
-                        if(isset($metaData['ProjectionType']) && strtolower($metaData['ProjectionType']) == 'equirectangular') {
+                        if (isset($metaData['ProjectionType']) && strtolower($metaData['ProjectionType']) == 'equirectangular') {
                             $videoInfo['isVrVideo'] = true;
                         }
                     }
@@ -131,8 +131,8 @@ class AssetController extends ElementControllerBase implements EventedController
             if (!empty($xmpData)) {
                 // flatten to a one-dimensional array
                 array_walk($xmpData, function (&$value) {
-                    if(is_array($value)) {
-                        $value = implode_recursive($value, " | ");
+                    if (is_array($value)) {
+                        $value = implode_recursive($value, ' | ');
                     }
                 });
                 $imageInfo['xmp'] = $xmpData;
@@ -140,7 +140,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             // check for VR meta-data
             $mergedMetaData = array_merge($exifData, $xmpData);
-            if(isset($mergedMetaData['ProjectionType']) && $mergedMetaData['ProjectionType'] == 'equirectangular') {
+            if (isset($mergedMetaData['ProjectionType']) && $mergedMetaData['ProjectionType'] == 'equirectangular') {
                 $imageInfo['isVrImage'] = true;
             }
 

@@ -587,11 +587,11 @@ EOT;
         return $data;
     }
 
-    public function getXMPData() {
-
+    public function getXMPData()
+    {
         $data = [];
 
-        if(in_array(File::getFileExtension($this->getFilename()), ['jpg', 'jpeg', 'jp2', 'png', 'gif', 'webp', 'j2k', 'jpf', 'jpx', 'jpm'])) {
+        if (in_array(File::getFileExtension($this->getFilename()), ['jpg', 'jpeg', 'jp2', 'png', 'gif', 'webp', 'j2k', 'jpf', 'jpx', 'jpm'])) {
             $chunkSize = 1024;
             if (!is_int($chunkSize)) {
                 throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
@@ -616,7 +616,7 @@ EOT;
                 }
                 if (($position = strpos($chunk, $tag)) === false) {
                     // if open tag not found, back up just in case the open tag is on the split.
-                    fseek($file_pointer, $tagLength*-1, SEEK_CUR);
+                    fseek($file_pointer, $tagLength * -1, SEEK_CUR);
                 } else {
                     $buffer = substr($chunk, $position);
                 }
@@ -664,9 +664,9 @@ EOT;
         array_walk($data, function ($value, $key) use (&$resultData) {
             $parts = explode('____', $key);
             $length = count($parts);
-            if($length > 1) {
-                $name = $parts[$length-1];
-                if(!isset($resultData[$name])) {
+            if ($length > 1) {
+                $name = $parts[$length - 1];
+                if (!isset($resultData[$name])) {
                     $key = $name;
                 }
             }

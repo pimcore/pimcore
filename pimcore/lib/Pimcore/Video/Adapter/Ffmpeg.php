@@ -173,9 +173,11 @@ class Ffmpeg extends Adapter
 
     /**
      * @return string
+     *
      * @throws \Exception
      */
-    protected function getVideoInfo() {
+    protected function getVideoInfo()
+    {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
         $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file));
@@ -210,10 +212,11 @@ class Ffmpeg extends Adapter
     /**
      * @return array
      */
-    public function getDimensions() {
+    public function getDimensions()
+    {
         $output = $this->getVideoInfo();
 
-        preg_match("/( [0-9]+x[0-9]+ )/", $output, $matches);
+        preg_match('/( [0-9]+x[0-9]+ )/', $output, $matches);
         $durationRaw = trim($matches[1]);
         list($width, $height) = explode('x', $durationRaw);
 

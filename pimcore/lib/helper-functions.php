@@ -643,9 +643,11 @@ function generateRandomSymfonySecret()
 /**
  * @param array $array
  * @param string $glue
+ *
  * @return string
  */
-function implode_recursive($array, $glue) {
+function implode_recursive($array, $glue)
+{
     $ret = '';
 
     foreach ($array as $item) {
@@ -656,7 +658,7 @@ function implode_recursive($array, $glue) {
         }
     }
 
-    $ret = substr($ret, 0, 0-strlen($glue));
+    $ret = substr($ret, 0, 0 - strlen($glue));
 
     return $ret;
 }

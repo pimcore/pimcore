@@ -104,8 +104,6 @@ class Definition extends Model\AbstractModel
         $this->title = $title;
     }
 
-
-
     /**
      * @return array
      */
