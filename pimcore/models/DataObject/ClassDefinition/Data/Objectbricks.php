@@ -115,6 +115,7 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
     private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $objectFromVersion, $level = 0)
     {
         $parent = DataObject\Service::hasInheritableParentObject($data->getObject());
+        /** @var $item DataObject\Objectbrick\Definition */
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
             $data = $parent->{'get' . ucfirst($this->getName())}();
@@ -160,11 +161,14 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
             }
         }
 
+        $brickDefinition = DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
+
         $editmodeDataItem = [
             'data' => $brickData,
             'type' => $item->getType(),
             'metaData' => $brickMetaData,
-            'inherited' => $inherited
+            'inherited' => $inherited,
+            'title' => $brickDefinition->getTitle()
         ];
 
         return $editmodeDataItem;

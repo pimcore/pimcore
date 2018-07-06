@@ -42,13 +42,22 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
+            defaults: {
+                labelWidth: 200
+            },
             items: [{
                 xtype: "textfield",
                 width: 400,
                 name: "parentClass",
                 fieldLabel: t("parent_php_class"),
                 value: this.data.parentClass
-            }
+            }, {
+                xtype: "textfield",
+                width: 400,
+                name: "title",
+                fieldLabel: t("title"),
+                value: this.data.title
+            },
                 , this.getClassDefinitionPanel()
             ]
         });
@@ -294,7 +303,8 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                 params: {
                     configuration: m,
                     values: n,
-                    key: this.data.key
+                    key: this.data.key,
+                    title: this.data.title
                 },
                 success: this.saveOnComplete.bind(this)
             });
