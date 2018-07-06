@@ -172,12 +172,10 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return int
-     *
+     * @return string
      * @throws \Exception
      */
-    public function getDuration()
-    {
+    protected function getVideoInfo() {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
         $cmd = self::getFfmpegCli() . ' -i ' . escapeshellarg(realpath($this->file));
@@ -186,7 +184,40 @@ class Ffmpeg extends Adapter
         $contents = file_get_contents($tmpFile);
         unlink($tmpFile);
 
-        return $this->extractDuration($contents);
+        return $contents;
+    }
+
+    /**
+     * @return int
+     *
+     * @throws \Exception
+     */
+    public function getDuration()
+    {
+        $output = $this->getVideoInfo();
+
+        // get total video duration
+        preg_match("/Duration: ([0-9:\.]+),/", $output, $matches);
+        $durationRaw = $matches[1];
+        $durationParts = explode(':', $durationRaw);
+
+        // calculate duration in seconds
+        $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
+
+        return $duration;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDimensions() {
+        $output = $this->getVideoInfo();
+
+        preg_match("/( [0-9]+x[0-9]+ )/", $output, $matches);
+        $durationRaw = trim($matches[1]);
+        list($width, $height) = explode('x', $durationRaw);
+
+        return ['width' => $width, 'height' => $height];
     }
 
     public function destroy()
@@ -200,24 +231,6 @@ class Ffmpeg extends Adapter
     public function deleteConversionLogFile()
     {
         @unlink($this->getConversionLogFile());
-    }
-
-    /**
-     * @param $output
-     *
-     * @return int
-     */
-    protected function extractDuration($output)
-    {
-        // get total video duration
-        preg_match("/Duration: ([0-9:\.]+),/", $output, $matches);
-        $durationRaw = $matches[1];
-        $durationParts = explode(':', $durationRaw);
-
-        // calculate duration in seconds
-        $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
-
-        return $duration;
     }
 
     /**

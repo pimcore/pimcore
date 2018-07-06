@@ -226,6 +226,7 @@ $scriptLibs = array(
     "lib/ext-plugins/portlet/PortalPanel.js",
 
     "lib/ckeditor/ckeditor.js",
+    "lib/vrview/build/vrview.min.js",
 
     // locale
     "lib/ext/classic/locale/locale-" . $language . ".js",

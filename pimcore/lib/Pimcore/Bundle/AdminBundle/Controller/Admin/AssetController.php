@@ -90,6 +90,29 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         }
 
+        if ($asset instanceof Asset\Video) {
+            $videoInfo = [];
+
+            if(\Pimcore\Video::isAvailable()) {
+                $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+                $thumbnail = $asset->getThumbnail($config, ['mp4']);
+                if ($thumbnail) {
+                    if ($thumbnail['status'] == 'finished') {
+                        $videoInfo['previewUrl'] = $thumbnail['formats']['mp4'];
+                        $videoInfo['width'] = $asset->getWidth();
+                        $videoInfo['height'] = $asset->getHeight();
+
+                        $metaData = $asset->getSphericalMetaData();
+                        if(isset($metaData['ProjectionType']) && strtolower($metaData['ProjectionType']) == 'equirectangular') {
+                            $videoInfo['isVrVideo'] = true;
+                        }
+                    }
+                }
+            }
+
+            $asset->videoInfo = $videoInfo;
+        }
+
         if ($asset instanceof Asset\Image) {
             $imageInfo = [];
 
@@ -102,6 +125,23 @@ class AssetController extends ElementControllerBase implements EventedController
             $exifData = $asset->getEXIFData();
             if (!empty($exifData)) {
                 $imageInfo['exif'] = $exifData;
+            }
+
+            $xmpData = $asset->getXMPData();
+            if (!empty($xmpData)) {
+                // flatten to a one-dimensional array
+                array_walk($xmpData, function (&$value) {
+                    if(is_array($value)) {
+                        $value = implode_recursive($value, " | ");
+                    }
+                });
+                $imageInfo['xmp'] = $xmpData;
+            }
+
+            // check for VR meta-data
+            $mergedMetaData = array_merge($exifData, $xmpData);
+            if(isset($mergedMetaData['ProjectionType']) && $mergedMetaData['ProjectionType'] == 'equirectangular') {
+                $imageInfo['isVrImage'] = true;
             }
 
             $iptcData = $asset->getIPTCData();

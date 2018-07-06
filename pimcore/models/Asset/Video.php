@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\FrontendEvents;
+use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -185,6 +186,21 @@ class Video extends Model\Asset
     }
 
     /**
+     * @return array
+     * @throws \Exception
+     */
+    protected function getDimensionsFromBackend() {
+        if (\Pimcore\Video::isAvailable()) {
+            $converter = \Pimcore\Video::getInstance();
+            $converter->load($this->getFileSystemPath());
+
+            return $converter->getDimensions();
+        }
+
+        return null;
+    }
+
+    /**
      * @return mixed
      */
     public function getDuration()
@@ -202,5 +218,135 @@ class Video extends Model\Asset
         }
 
         return $duration;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDimensions()
+    {
+        $dimensions = null;
+        $width = $this->getCustomSetting('videoWidth');
+        $height = $this->getCustomSetting('videoHeight');
+        if (!$width || !$height) {
+            $dimensions = $this->getDimensionsFromBackend();
+            if ($dimensions) {
+                $this->setCustomSetting('videoWidth', $dimensions['width']);
+                $this->setCustomSetting('videoHeight', $dimensions['height']);
+
+                Model\Version::disable();
+                $this->save(); // auto save
+                Model\Version::enable();
+            }
+        } else {
+            $dimensions = [
+                'width' => $width,
+                'height' => $height
+            ];
+        }
+
+        return $dimensions;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getWidth() {
+        $dimensions = $this->getDimensions();
+        if($dimensions) {
+            return $dimensions['width'];
+        }
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getHeight() {
+        $dimensions = $this->getDimensions();
+        if($dimensions) {
+            return $dimensions['height'];
+        }
+    }
+
+    /**
+     *
+     */
+    public function getSphericalMetaData() {
+        $data = [];
+
+        if(in_array(File::getFileExtension($this->getFilename()), ['mp4', 'webm'])) {
+            $chunkSize = 1024;
+            if (!is_int($chunkSize)) {
+                throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
+            }
+
+            if ($chunkSize < 12) {
+                throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
+            }
+
+            if (($file_pointer = fopen($this->getFileSystemPath(), 'rb')) === false) {
+                throw new \RuntimeException('Could not open file for reading');
+            }
+
+            $tag = '<rdf:SphericalVideo';
+            $tagLength = strlen($tag);
+            $buffer = false;
+
+            // find open tag
+            while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
+                if (strlen($chunk) <= $tagLength) {
+                    break;
+                }
+                if (($position = strpos($chunk, $tag)) === false) {
+                    // if open tag not found, back up just in case the open tag is on the split.
+                    fseek($file_pointer, $tagLength*-1, SEEK_CUR);
+                } else {
+                    $buffer = substr($chunk, $position);
+                }
+            }
+
+            if ($buffer !== false) {
+                $tag = '</rdf:SphericalVideo>';
+                $tagLength = strlen($tag);
+                $offset = 0;
+                while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
+                        $chunkSize)) !== false && !empty($chunk)) {
+                    $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
+                    $buffer .= $chunk;
+                }
+
+                if ($position === false) {
+                    // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
+                    throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
+                } else {
+                    $buffer = substr($buffer, 0, $position + $tagLength);
+                }
+
+                $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
+                $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
+
+                $xml = @simplexml_load_string($buffer);
+                $data = object2array($xml);
+            }
+
+            fclose($file_pointer);
+        }
+
+        // remove namespace prefixes if possible
+        $resultData = [];
+        array_walk($data, function ($value, $key) use (&$resultData) {
+            $parts = explode('____', $key);
+            $length = count($parts);
+            if($length > 1) {
+                $name = $parts[$length-1];
+                if(!isset($resultData[$name])) {
+                    $key = $name;
+                }
+            }
+
+            $resultData[$key] = $value;
+        });
+
+        return $resultData;
     }
 }

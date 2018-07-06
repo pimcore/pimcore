@@ -422,6 +422,8 @@
   "use_current_player_position_as_preview": "Use current player position as preview",
   "select_image_preview": "Select Image Preview",
   "preview_not_available": "Preview not available",
+  "vr_viewer": "VR Viewer",
+  "standard_preview": "Standard Preview",
   "status": "Status",
   "video_preview_in_progress": "The preview for this video is currently in progress.",
   "video_bitrate": "Video Bitrate (kB/s)",

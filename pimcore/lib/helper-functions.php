@@ -639,3 +639,24 @@ function generateRandomSymfonySecret()
 {
     return base64_encode(random_bytes(24));
 }
+
+/**
+ * @param array $array
+ * @param string $glue
+ * @return string
+ */
+function implode_recursive($array, $glue) {
+    $ret = '';
+
+    foreach ($array as $item) {
+        if (is_array($item)) {
+            $ret .= implode_recursive($item, $glue) . $glue;
+        } else {
+            $ret .= $item . $glue;
+        }
+    }
+
+    $ret = substr($ret, 0, 0-strlen($glue));
+
+    return $ret;
+}

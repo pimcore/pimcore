@@ -276,6 +276,10 @@
     background-repeat: no-repeat;
 }
 
+.pimcore_icon_vr {
+    background: url(/pimcore/static6/img/flat-color-icons/vr.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_pdf {
     background: url(/pimcore/static6/img/flat-color-icons/pdf.svg) center center no-repeat !important;
 }
