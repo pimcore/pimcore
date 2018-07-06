@@ -45,7 +45,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public $title;
 
-
     /**
      * @param $classDefinitions
      *
@@ -552,7 +551,4 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     {
         $this->title = $title;
     }
-
-
-
 }

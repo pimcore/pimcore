@@ -747,10 +747,11 @@ class Config extends Model\AbstractModel
     /**
      * @return bool
      */
-    public function isSvgTargetFormatPossible() {
+    public function isSvgTargetFormatPossible()
+    {
         $supportedTransformations = ['resize', 'scaleByWidth', 'scaleByHeight'];
-        foreach($this->getItems() as $item) {
-            if(!in_array($item['method'], $supportedTransformations)) {
+        foreach ($this->getItems() as $item) {
+            if (!in_array($item['method'], $supportedTransformations)) {
                 return false;
             }
         }
