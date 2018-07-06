@@ -118,6 +118,7 @@ pimcore.settings.thumbnail.item = Class.create({
                 }, {
                     xtype: "numberfield",
                     name: "highResolution",
+                    style: "margin-bottom:0",
                     value: this.data.highResolution,
                     fieldLabel: t("high_resolution"),
                     width: 210,
@@ -129,18 +130,27 @@ pimcore.settings.thumbnail.item = Class.create({
                 }, {
                     xtype: "checkbox",
                     name: "preserveColor",
-                    labelWidth: 350,
-                    fieldLabel: t("preserve_color") + " (Imagick, ORIGINAL)",
+                    boxLabel: t("preserve_color") + " (Imagick, ORIGINAL)",
                     checked: this.data.preserveColor
                 }, {
                     xtype: "checkbox",
                     name: "preserveMetaData",
-                    labelWidth: 350,
-                    fieldLabel: t("preserve_meta_data") + " (Imagick, ORIGINAL)",
+                    style: "margin-bottom:0",
+                    boxLabel: t("preserve_meta_data") + " (Imagick, ORIGINAL)",
                     checked: this.data.preserveMetaData
                 }, {
                     xtype: "container",
                     html: "<small>(" + t("thumbnail_preserve_info_text") + ")</small>",
+                    style: "margin-bottom: 20px"
+                }, {
+                    xtype: "checkbox",
+                    name: "rasterizeSVG",
+                    style: "margin-bottom:0",
+                    boxLabel: t("rasterize_svg") + " (Imagick)",
+                    checked: this.data.rasterizeSVG
+                }, {
+                    xtype: "container",
+                    html: "<small>(" + t("rasterize_svg_info_text") + ")</small>",
                     style: "margin-bottom: 20px"
                 }]
             }]
