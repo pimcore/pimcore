@@ -101,7 +101,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             for (var i=0; i<this.data.length; i++) {
                 if(this.data[i] != null) {
                     this.preventDelete[this.data[i].type] = this.data[i].inherited;
-                    this.addBlockElement(i,this.data[i].type, this.data[i], true);
+                    this.addBlockElement(i,this.data[i].type, this.data[i], true, this.data[i].title);
                 }
             }
         }
@@ -111,7 +111,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         pimcore.layout.refresh();
     },
 
-    getControls: function (blockElement) {
+    getControls: function (blockElement, title) {
 
         var collectionMenu = [];
 
@@ -119,8 +119,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
             if(!this.addedTypes[rec.data.key]) {
                 collectionMenu.push({
-                    text: ts(rec.data.key),
-                    handler: this.addBlock.bind(this,blockElement, rec.data.key),
+                    text: rec.data.title ? ts(rec.data.title) : ts(rec.data.key),
+                    handler: this.addBlock.bind(this,blockElement, rec.data.key, rec.data.title),
                     iconCls: "pimcore_icon_objectbricks"
                 });
             }
@@ -146,6 +146,15 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
+        if (title) {
+            items.push('->');
+
+            items.push({
+                xtype: "tbtext",
+                text: ts(title)
+            });
+        }
+
         var toolbar = new Ext.Toolbar({
             items: items
         });
@@ -153,7 +162,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         return toolbar;
     },
 
-    getDeleteControl: function(type, blockElement) {
+    getDeleteControl: function(type, blockElement, title) {
         var items = [];
         if(!this.preventDelete[type]) {
             items.push({
@@ -166,7 +175,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         }
         items.push({
             xtype: "tbtext",
-            text: ts(type)
+            text: title ? ts(title) : ts(type),
         });
 
         var toolbar = new Ext.Toolbar({
@@ -176,11 +185,11 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         return toolbar;
     },
 
-    addBlock: function (blockElement, type) {
+    addBlock: function (blockElement, type, title) {
 
         var index = 0;
 
-        this.addBlockElement(index, type);
+        this.addBlockElement(index, type, null, false, title);
     },
 
     removeBlock: function (blockElement) {
@@ -217,7 +226,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         return i;
     },
 
-    addBlockElement: function (index, type, blockData, ignoreChange) {
+    addBlockElement: function (index, type, blockData, ignoreChange, title) {
         if(!type){
             return;
         }
@@ -261,7 +270,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             style: "margin: 0 0 10px 0;",
             autoHeight: true,
             border: false,
-            title: ts(type),
+            title: title ? ts(title) : ts(type),
             // items: items
             items: [],
             listeners: {
@@ -307,7 +316,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.addedTypes[type] = true;
 
         if(!this.fieldConfig.noteditable) {
-            var control = this.getDeleteControl(type, blockElement);
+            var control = this.getDeleteControl(type, blockElement, title);
             if(control) {
                 blockElement.insert(0, control);
             }
@@ -316,7 +325,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         blockElement.key = type;
         blockElement.fieldtype = type;
         this.tabpanel.add(blockElement);
-        this.component.insert(0, this.getControls());
+        this.component.insert(0, this.getControls(null, title));
 
         this.tabpanel.updateLayout();
         this.component.updateLayout();

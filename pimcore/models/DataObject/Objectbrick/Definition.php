@@ -41,6 +41,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     private $oldClassDefinitions = [];
 
     /**
+     * @var string
+     */
+    public $title;
+
+
+    /**
      * @param $classDefinitions
      *
      * @return $this
@@ -530,4 +536,23 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         return $classFile;
     }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+
+
 }
