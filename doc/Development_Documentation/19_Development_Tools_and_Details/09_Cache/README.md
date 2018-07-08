@@ -78,14 +78,16 @@ but those (array, filesystem) are mainly used for testing.
 
 
 ### Recommended Redis Configuration (`redis.conf`)
-
 ```
-maxmemory 1gb # depending on your data
-maxmemory-policy volatile-lru
+# select an appropriate value for your data (min. 128mb)
+maxmemory 1gb
+                   
+# IMPORTANT! 
+maxmemory-policy volatile-lru   
 save ""
 ```
 
-> With the default settings, the minimum supported Redis version is 2.6.0 as it uses Redis' Lua scripting feature.
+> With the default settings, the minimum supported Redis version is 3.0.
 
 > Please note that the Redis adapter currently doesn't properly support Redis Cluster setups.
 

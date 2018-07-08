@@ -72,8 +72,11 @@ innodb_file_per_table = 1
 All versions > 3 are supported
 ##### Configuration 
 ```
-maxmemory 1gb                   # depending on your data
-maxmemory-policy volatile-lru   # IMPORTANT! 
+# select an appropriate value for your data (min. 128mb)
+maxmemory 1gb
+                   
+# IMPORTANT! 
+maxmemory-policy volatile-lru   
 save ""
 ```
 
