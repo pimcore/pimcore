@@ -1,4 +1,4 @@
-# IFrame
+# Preview / Iframe Panel
 
 Provide a URL and make use of the context paramater to render a response of your choice.
  

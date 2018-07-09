@@ -22,7 +22,7 @@ And last but not least there are three extra layout elements:
 a field's tooltip. Please note that since release 4.4.2 it is possible to generate this text dynamically.
 Please read this [page](./01_Dynamic_Text_Labels.md) for further details.
 * IFrame - provide a URL and make use of the context paramater to render the response of your choice.
-Please read this [page](./02_Iframe.md) for further details.
+Please read this [page](./02_Preview_Iframe.md) for further details.
 
 Pimcore uses Ext JS layout components for all object layout elements. For a deeper understanding of the layout elements, 
 please have a look at the [Ext JS documentation pages](http://docs.sencha.com/extjs/6.0/6.0.1-classic/) and 
