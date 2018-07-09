@@ -2,6 +2,20 @@
 
 
 ## Version 5.3.0
+
+#### Build 277 (2018-07-09)
+Admin Localization: Only languages with a [translation progress](https://poeditor.com/projects/view?order=trans_desc&id=38068) over 70% are included in the standard distribution. 
+For the current status this means that the following languages are no longer provided: CA, PL, ZH_Hans, ZH_Hant, SV, JA, PT, PT_BR, RU, FA, TR, UK. 
+Languages with a lower progress need to be installed manually. 
+
+#### Build 276 (2018-07-06)
+Image Thumbnails: SVGs are no longer automatically rasterized when using only one of the following transformations: Resize, Scale By Width, Scale By Height.
+To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on the relevant thumbnail configuration. 
+
+#### Build 270 (2018-06-29)
+Data Object Class ID's can now be manually specified (alphanumeric) and are therefore no longer auto-generated (numeric/auto-increment). 
+This can have unexpected side-effects under certain circumstances, see also: https://github.com/pimcore/pimcore/issues/2916 
+
 #### Build 251 (2018-06-05)
 - **PHP 7.1 is required** 
 - CKEditor update from 4.6.2 to 4.9.2, for details see: https://ckeditor.com/cke4/release-notes 
