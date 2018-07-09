@@ -729,6 +729,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
                                 // for internal use ID.
                                 pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
+
+                                this.reload(this.layoutId);
                             }
                             else {
                                 pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
