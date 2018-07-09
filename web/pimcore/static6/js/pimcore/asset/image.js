@@ -208,7 +208,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     }.bind(this)
                 }, {
                     xtype: "button",
-                    text: t("vr_viewer"),
+                    text: t("360_viewer"),
                     iconCls: "pimcore_icon_vr",
                     width: "100%",
                     textAlign: "left",
