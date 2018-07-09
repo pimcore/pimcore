@@ -385,6 +385,43 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
             details.push(this.customDownloadBox);
 
+            var thumbnailsStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/settings/thumbnail-tree'
+                },
+                fields: ['id']
+            });
+            thumbnailsStore.load();
+
+            this.thumbnailDownloadBox = new Ext.form.FormPanel({
+                title: t("download_thumbnail"),
+                bodyStyle: "padding: 10px;",
+                style: "margin: 10px 0",
+                items: [{
+                    xtype: "combo",
+                    name: "thumbnail",
+                    fieldLabel: t("thumbnail"),
+                    store: thumbnailsStore,
+                    editable: false
+                }],
+                buttons: [{
+                    text: t("download"),
+                    iconCls: "pimcore_icon_download",
+                    handler: function () {
+                        var config = this.thumbnailDownloadBox.getForm().getFieldValues();
+                        if (!config.thumbnail) {
+                            pimcore.helpers.showNotification(t("error"), t("no_thumbnail_selected"), "error");
+                        } else {
+                            pimcore.helpers.download("/admin/asset/download-image-thumbnail?id=" + this.id
+                                + "&thumbnail=" + config.thumbnail);
+                        }
+                    }.bind(this)
+                }]
+            });
+            details.push(this.thumbnailDownloadBox);
+
             this.previewContainerId = 'pimcore_asset_image_preview_' + this.id;
             this.previewMode = 'image';
             if(this.data.imageInfo["isVrImage"]) {
