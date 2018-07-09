@@ -6,7 +6,7 @@ makes it easy to integrate a search engine into your website.
 
 [Further information about Google CSE](http://www.google.com/cse/)
 
-## Setup in CSE Control Panel and Google API Console
+## Setup in CSE Control Panel and Google Cloud Console
 * Create and configure a new search engine at [http://www.google.com/cse/](http://www.google.com/cse/) - 
 for more information please visit: [http://support.google.com/customsearch/](http://support.google.com/customsearch/) .
 * Test your search engine first using the preview on the right hand side. 
