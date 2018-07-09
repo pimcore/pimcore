@@ -406,22 +406,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }]
             });
 
-            this.displayPanel.on('afterrender', function (ev) {
-                if(this.data['customSettings']) {
-                    if (this.data['customSettings']['focalPointX']) {
-                        this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
-                    }
-
-                    if (this.data['customSettings']['faceCoordinates']) {
-                        this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
-                            this.addImageFeature(coord);
-                        }.bind(this));
-
-                    }
-                }
-
-            }.bind(this));
-
             this.displayPanel.on('resize', function (el, width, height, rWidth, rHeight) {
                 if(this.previewMode == 'vr') {
                     this.initPreviewVr();
@@ -459,6 +443,19 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         Ext.get(this.previewContainerId).setHtml(html);
 
         this.previewMode = 'image';
+
+        if(this.data['customSettings']) {
+            if (this.data['customSettings']['focalPointX']) {
+                this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
+            }
+
+            if (this.data['customSettings']['faceCoordinates']) {
+                this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
+                    this.addImageFeature(coord);
+                }.bind(this));
+
+            }
+        }
     },
 
     addImageFeature: function (coords) {
