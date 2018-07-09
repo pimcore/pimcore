@@ -929,7 +929,13 @@ pimcore.object.tree = Class.create({
             dialogText =  t('please_enter_the_name_of_the_new_object');
         }
 
-        Ext.MessageBox.prompt(sprintf(t('add_object_mbx_title'), ts(className)), dialogText,
+        var dialogTitle = t("object_add_dialog_custom_title" + "." + className);
+
+        if (dialogTitle == "object_add_dialog_custom_title" + "." + className) {
+            dialogTitle =  sprintf(t('add_object_mbx_title'), ts(className));
+        }
+
+        Ext.MessageBox.prompt(dialogTitle, dialogText,
             this.addObjectCreate.bind(this, classId, className, tree, record));
     },
 
