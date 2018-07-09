@@ -668,7 +668,7 @@ pimcore.asset.tree = Class.create({
             } else {
                 if (record.data.permissions.publish) {
                     menu.add(new Ext.menu.Item({
-                        text: t('upload'),
+                        text: t('upload_new_version'),
                         iconCls: "pimcore_icon_upload",
                         handler: function () {
                             pimcore.elementservice.replaceAsset(record.data.id, function () {
