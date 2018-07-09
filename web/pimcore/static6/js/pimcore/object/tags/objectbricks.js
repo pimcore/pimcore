@@ -146,15 +146,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if (title) {
-            items.push('->');
-
-            items.push({
-                xtype: "tbtext",
-                text: ts(title)
-            });
-        }
-
         var toolbar = new Ext.Toolbar({
             items: items
         });
