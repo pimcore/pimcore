@@ -19,16 +19,16 @@ namespace Pimcore\DataObject\Import\ColumnConfig\Operator\Factory;
 
 use Pimcore\DataObject\Import\ColumnConfig\Operator\LocaleSwitcher;
 use Pimcore\DataObject\Import\ColumnConfig\Operator\OperatorInterface;
-use Pimcore\Localization\LocaleInterface;
+use Pimcore\Localization\LocaleServiceInterface;
 
 class LocaleSwitcherFactory implements OperatorFactoryInterface
 {
     /**
-     * @var LocaleInterface
+     * @var LocaleServiceInterface
      */
     private $localeService;
 
-    public function __construct(LocaleInterface $localeService)
+    public function __construct(LocaleServiceInterface $localeService)
     {
         $this->localeService = $localeService;
     }

@@ -18,12 +18,12 @@
 namespace Pimcore\DataObject\Import\ColumnConfig\Operator;
 
 use Pimcore\DataObject\Import\ColumnConfig\AbstractConfigElement;
-use Pimcore\Localization\LocaleInterface;
+use Pimcore\Localization\LocaleServiceInterface;
 
 class LocaleSwitcher extends AbstractOperator
 {
     /**
-     * @var LocaleInterface
+     * @var LocaleServiceInterface
      */
     private $localeService;
 
@@ -32,7 +32,7 @@ class LocaleSwitcher extends AbstractOperator
      */
     private $locale;
 
-    public function __construct(LocaleInterface $localeService, \stdClass $config, $context = null)
+    public function __construct(LocaleServiceInterface $localeService, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 

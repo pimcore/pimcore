@@ -15,9 +15,8 @@
 
 namespace Pimcore\Localization;
 
-interface LocaleInterface
+interface LocaleServiceInterface
 {
-
     public function isLocale($locale);
 
     public function findLocale();
