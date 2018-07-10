@@ -127,18 +127,17 @@ pimcore.settings.thumbnail.panel = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
-            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //newChildNode.data.expanded = true;
-                newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_thumbnails";
-            }
+            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this)
         };
 
         return treeNodeListeners;
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
         this.openThumbnail(record.data.id);
     },
 
@@ -165,6 +164,10 @@ pimcore.settings.thumbnail.panel = Class.create({
     },
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
         e.stopEvent();
 
         tree.select();

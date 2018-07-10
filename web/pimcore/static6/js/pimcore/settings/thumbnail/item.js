@@ -25,12 +25,12 @@ pimcore.settings.thumbnail.item = Class.create({
 
 
         // add default panel
-        this.addMediaPanel("default", this.data.items ,false, true);
+        this.addMediaPanel("default", this.data.items, false, true);
 
         // add medias
-        if(this.data["medias"]) {
+        if (this.data["medias"]) {
             Ext.iterate(this.data.medias, function (key, items) {
-                this.addMediaPanel(key, items ,true, false);
+                this.addMediaPanel(key, items, true, false);
             }.bind(this));
         }
     },
@@ -59,15 +59,21 @@ pimcore.settings.thumbnail.item = Class.create({
                 iconCls: "pimcore_icon_add",
                 handler: function () {
                     Ext.MessageBox.prompt("", t("please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail"), function (button, value) {
-                        if(button == "ok" && is_numeric(value)) {
+                        if (button == "ok" && is_numeric(value)) {
                             value = value + "w"; // add the width indicator here, to be future-proof
-                            this.addMediaPanel(value, null ,true, true);
+                            this.addMediaPanel(value, null, true, true);
                         }
                     }.bind(this));
                 }.bind(this)
             }]
-
         };
+
+        this.groupField = new Ext.form.field.Text({
+            name: "group",
+            value: this.data.group,
+            fieldLabel: t("group"),
+            width: 450
+        });
 
         this.settings = new Ext.form.FormPanel({
             border: false,
@@ -80,80 +86,81 @@ pimcore.settings.thumbnail.item = Class.create({
                     url: "/admin/settings/thumbnail-adapter-check",
                     autoLoad: true
                 }
-            },{
+            }, {
                 xtype: "textfield",
                 name: "name",
                 value: this.data.name,
                 fieldLabel: t("name"),
                 width: 450,
                 disabled: true
-            }, {
-                xtype: "textarea",
-                name: "description",
-                value: this.data.description,
-                fieldLabel: t("description"),
-                width: 450,
-                height: 50
-            }, {
-                xtype: "combo",
-                name: "format",
-                fieldLabel: t("format"),
-                value: this.data.format,
-                triggerAction: 'all',
-                editable: false,
-                store: [["SOURCE", "Auto (Web-optimized - recommended)"], ["ORIGINAL","ORIGINAL"], ["PNG","PNG"],["GIF","GIF"], ["JPEG","JPEG"], ["PJPEG","JPEG (progressive)"],["TIFF","TIFF"],
-                        ["PRINT","Print (PNG,JPG,SVG,TIFF)"]],
-                width: 450
-            }, {
-                xtype: "fieldset",
-                title: t("advanced_settings"),
-                collapsible: true,
-                collapsed: true,
-                items: [{
-                    xtype: "numberfield",
-                    name: "quality",
-                    value: this.data.quality,
-                    fieldLabel: t("quality") + " (JPEG)",
-                    width: 210
+            },
+                {
+                    xtype: "textarea",
+                    name: "description",
+                    value: this.data.description,
+                    fieldLabel: t("description"),
+                    width: 450,
+                    height: 50
+                }, this.groupField, {
+                    xtype: "combo",
+                    name: "format",
+                    fieldLabel: t("format"),
+                    value: this.data.format,
+                    triggerAction: 'all',
+                    editable: false,
+                    store: [["SOURCE", "Auto (Web-optimized - recommended)"], ["ORIGINAL", "ORIGINAL"], ["PNG", "PNG"], ["GIF", "GIF"], ["JPEG", "JPEG"], ["PJPEG", "JPEG (progressive)"], ["TIFF", "TIFF"],
+                        ["PRINT", "Print (PNG,JPG,SVG,TIFF)"]],
+                    width: 450
                 }, {
-                    xtype: "numberfield",
-                    name: "highResolution",
-                    style: "margin-bottom:0",
-                    value: this.data.highResolution,
-                    fieldLabel: t("high_resolution"),
-                    width: 210,
-                    decimalPrecision: 1
-                }, {
-                    xtype: "container",
-                    html: "<small>(" + t("high_resolution_info_text") + ")</small>",
-                    style: "margin-bottom: 20px"
-                }, {
-                    xtype: "checkbox",
-                    name: "preserveColor",
-                    boxLabel: t("preserve_color") + " (Imagick, ORIGINAL)",
-                    checked: this.data.preserveColor
-                }, {
-                    xtype: "checkbox",
-                    name: "preserveMetaData",
-                    style: "margin-bottom:0",
-                    boxLabel: t("preserve_meta_data") + " (Imagick, ORIGINAL)",
-                    checked: this.data.preserveMetaData
-                }, {
-                    xtype: "container",
-                    html: "<small>(" + t("thumbnail_preserve_info_text") + ")</small>",
-                    style: "margin-bottom: 20px"
-                }, {
-                    xtype: "checkbox",
-                    name: "rasterizeSVG",
-                    style: "margin-bottom:0",
-                    boxLabel: t("rasterize_svg") + " (Imagick)",
-                    checked: this.data.rasterizeSVG
-                }, {
-                    xtype: "container",
-                    html: "<small>(" + t("rasterize_svg_info_text") + ")</small>",
-                    style: "margin-bottom: 20px"
+                    xtype: "fieldset",
+                    title: t("advanced_settings"),
+                    collapsible: true,
+                    collapsed: true,
+                    items: [{
+                        xtype: "numberfield",
+                        name: "quality",
+                        value: this.data.quality,
+                        fieldLabel: t("quality") + " (JPEG)",
+                        width: 210
+                    }, {
+                        xtype: "numberfield",
+                        name: "highResolution",
+                        style: "margin-bottom:0",
+                        value: this.data.highResolution,
+                        fieldLabel: t("high_resolution"),
+                        width: 210,
+                        decimalPrecision: 1
+                    }, {
+                        xtype: "container",
+                        html: "<small>(" + t("high_resolution_info_text") + ")</small>",
+                        style: "margin-bottom: 20px"
+                    }, {
+                        xtype: "checkbox",
+                        name: "preserveColor",
+                        boxLabel: t("preserve_color") + " (Imagick, ORIGINAL)",
+                        checked: this.data.preserveColor
+                    }, {
+                        xtype: "checkbox",
+                        name: "preserveMetaData",
+                        style: "margin-bottom:0",
+                        boxLabel: t("preserve_meta_data") + " (Imagick, ORIGINAL)",
+                        checked: this.data.preserveMetaData
+                    }, {
+                        xtype: "container",
+                        html: "<small>(" + t("thumbnail_preserve_info_text") + ")</small>",
+                        style: "margin-bottom: 20px"
+                    }, {
+                        xtype: "checkbox",
+                        name: "rasterizeSVG",
+                        style: "margin-bottom:0",
+                        boxLabel: t("rasterize_svg") + " (Imagick)",
+                        checked: this.data.rasterizeSVG
+                    }, {
+                        xtype: "container",
+                        html: "<small>(" + t("rasterize_svg_info_text") + ")</small>",
+                        style: "margin-bottom: 20px"
+                    }]
                 }]
-            }]
         });
 
         this.panel = new Ext.Panel({
@@ -176,28 +183,28 @@ pimcore.settings.thumbnail.item = Class.create({
 
     addMediaPanel: function (name, items, closable, activate) {
 
-        if(this.medias[name]) {
+        if (this.medias[name]) {
             return;
         }
 
         var addMenu = [];
         var itemTypes = Object.keys(pimcore.settings.thumbnail.items);
-        for(var i=0; i<itemTypes.length; i++) {
-            if(itemTypes[i].indexOf("item") == 0) {
+        for (var i = 0; i < itemTypes.length; i++) {
+            if (itemTypes[i].indexOf("item") == 0) {
                 addMenu.push({
                     iconCls: "pimcore_icon_add",
                     handler: this.addItem.bind(this, name, itemTypes[i]),
-                    text: pimcore.settings.thumbnail.items[itemTypes[i]](null, null,true)
+                    text: pimcore.settings.thumbnail.items[itemTypes[i]](null, null, true)
                 });
             }
         }
 
         var title = "";
-        if(name == "default") {
+        if (name == "default") {
             title = t("default");
         } else {
             // remove the width indicator (maybe there will be more complex syntax in the future)
-            var tmpName = name.replace("w","");
+            var tmpName = name.replace("w", "");
             title = "max. width: " + tmpName + "px";
         }
 
@@ -220,8 +227,8 @@ pimcore.settings.thumbnail.item = Class.create({
 
         this.medias[name] = itemContainer;
 
-        if(items && items.length > 0) {
-            for(var i=0; i<items.length; i++) {
+        if (items && items.length > 0) {
+            for (var i = 0; i < items.length; i++) {
                 this.addItem(name, "item" + ucfirst(items[i].method), items[i].arguments);
             }
         }
@@ -231,7 +238,7 @@ pimcore.settings.thumbnail.item = Class.create({
         this.mediaPanel.updateLayout();
 
         // activate the default panel
-        if(activate) {
+        if (activate) {
             this.mediaPanel.setActiveTab(itemContainer);
         }
 
@@ -254,7 +261,7 @@ pimcore.settings.thumbnail.item = Class.create({
         Ext.iterate(this.medias, function (key, value) {
             mediaData[key] = [];
             var items = value.items.getRange();
-            for (var i=0; i<items.length; i++) {
+            for (var i = 0; i < items.length; i++) {
                 mediaData[key].push(items[i].getForm().getFieldValues());
             }
         });
@@ -267,18 +274,27 @@ pimcore.settings.thumbnail.item = Class.create({
     },
 
     save: function () {
+        var reload = false;
+        var newGroup = this.groupField.getValue();
+        if (newGroup != this.data.group) {
+            this.data.group = newGroup;
+            reload = true;
+        }
+
         Ext.Ajax.request({
             url: "/admin/settings/thumbnail-update",
-            method: "PUT",
-            params: this.getData(),
-            success: this.saveOnComplete.bind(this)
+            method: "PUT", params: this.getData(),
+            success: this.saveOnComplete.bind(this, reload)
+
         });
     },
 
-    saveOnComplete: function () {
-        this.parentPanel.tree.getStore().load({
-            node: this.parentPanel.tree.getRootNode()
-        });
+    saveOnComplete: function (reload) {
+        if (reload) {
+            this.parentPanel.tree.getStore().load({
+                node: this.parentPanel.tree.getRootNode()
+            });
+        }
 
         pimcore.helpers.showNotification(t("success"), t("thumbnail_saved_successfully"), "success");
     },
@@ -299,7 +315,7 @@ pimcore.settings.thumbnail.items = {
         return [{
             xtype: "tbtext",
             text: "<b>" + name + "</b>"
-        },"-",{
+        }, "-", {
             iconCls: "pimcore_icon_up",
             handler: function (blockId, parent) {
 
@@ -308,7 +324,7 @@ pimcore.settings.thumbnail.items = {
 
                 container.moveBefore(blockElement, blockElement.previousSibling());
             }.bind(window, index, parent)
-        },{
+        }, {
             iconCls: "pimcore_icon_down",
             handler: function (blockId, parent) {
 
@@ -317,7 +333,7 @@ pimcore.settings.thumbnail.items = {
 
                 container.moveAfter(blockElement, blockElement.nextSibling());
             }.bind(window, index, parent)
-        },"->",{
+        }, "->", {
             iconCls: "pimcore_icon_delete",
             handler: function (index, parent) {
                 parent.remove(Ext.getCmp(index));
@@ -328,16 +344,16 @@ pimcore.settings.thumbnail.items = {
     itemResize: function (panel, data, getName) {
 
         var niceName = t("resize");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -349,13 +365,13 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("width"),
                 width: 210,
                 value: data.width
-            },{
+            }, {
                 xtype: 'numberfield',
                 name: "height",
                 fieldLabel: t("height"),
                 width: 210,
                 value: data.height
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "resize"
@@ -368,16 +384,16 @@ pimcore.settings.thumbnail.items = {
     itemScaleByHeight: function (panel, data, getName) {
 
         var niceName = t("scalebyheight");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -389,12 +405,12 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("height"),
                 width: 210,
                 value: data.height
-            },{
+            }, {
                 xtype: "checkbox",
                 name: "forceResize",
                 checked: data["forceResize"],
                 fieldLabel: t("force_resize")
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "scaleByHeight"
@@ -407,16 +423,16 @@ pimcore.settings.thumbnail.items = {
     itemScaleByWidth: function (panel, data, getName) {
 
         var niceName = t("scalebywidth");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -428,12 +444,12 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("width"),
                 width: 210,
                 value: data.width
-            },{
+            }, {
                 xtype: "checkbox",
                 name: "forceResize",
                 checked: data["forceResize"],
                 fieldLabel: t("force_resize")
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "scaleByWidth"
@@ -446,16 +462,16 @@ pimcore.settings.thumbnail.items = {
     itemContain: function (panel, data, getName) {
 
         var niceName = t("contain");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -475,19 +491,19 @@ pimcore.settings.thumbnail.items = {
                     width: 210,
                     value: data.width
                 },
-                {
-                    xtype: 'numberfield',
-                    name: "height",
-                    hideLabel: true,
-                    width: 95,
-                    value: data.height
-                }]
-            },{
+                    {
+                        xtype: 'numberfield',
+                        name: "height",
+                        hideLabel: true,
+                        width: 95,
+                        value: data.height
+                    }]
+            }, {
                 xtype: "checkbox",
                 name: "forceResize",
                 checked: data["forceResize"],
                 fieldLabel: t("force_resize")
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "contain"
@@ -501,16 +517,16 @@ pimcore.settings.thumbnail.items = {
     itemCrop: function (panel, data, getName) {
 
         var niceName = t("crop");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -530,14 +546,14 @@ pimcore.settings.thumbnail.items = {
                     width: 210,
                     value: data.width
                 },
-                {
-                    xtype: 'numberfield',
-                    name: "height",
-                    hideLabel: true,
-                    width: 95,
-                    value: data.height
-                }]
-            },{
+                    {
+                        xtype: 'numberfield',
+                        name: "height",
+                        hideLabel: true,
+                        width: 95,
+                        value: data.height
+                    }]
+            }, {
                 xtype: 'fieldset',
                 layout: 'hbox',
                 style: "border-top: none !important;",
@@ -551,14 +567,14 @@ pimcore.settings.thumbnail.items = {
                     width: 210,
                     value: data.x
                 },
-                {
-                    xtype: 'numberfield',
-                    name: "y",
-                    hideLabel: true,
-                    width: 95,
-                    value: data.y
-                }]
-            },{
+                    {
+                        xtype: 'numberfield',
+                        name: "y",
+                        hideLabel: true,
+                        width: 95,
+                        value: data.y
+                    }]
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "crop"
@@ -571,16 +587,16 @@ pimcore.settings.thumbnail.items = {
     itemCover: function (panel, data, getName) {
 
         var niceName = t("cover") + " (" + t('focal_point_support') + ")";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -600,32 +616,32 @@ pimcore.settings.thumbnail.items = {
                     width: 210,
                     value: data.width
                 },
-                {
-                    xtype: 'numberfield',
-                    name: "height",
-                    hideLabel: true,
-                    width: 95,
-                    value: data.height
-                }]
-            },{
+                    {
+                        xtype: 'numberfield',
+                        name: "height",
+                        hideLabel: true,
+                        width: 95,
+                        value: data.height
+                    }]
+            }, {
                 xtype: "container",
                 html: t('thumbnail_focal_point_notice')
-            },{
+            }, {
                 xtype: "combo",
                 name: "positioning",
                 fieldLabel: t("default_positioning"),
                 value: data.positioning,
                 triggerAction: 'all',
                 editable: false,
-                store: ["center","topleft","topright","bottomleft","bottomright","centerleft","centerright",
-                            "topcenter","bottomcenter"],
+                store: ["center", "topleft", "topright", "bottomleft", "bottomright", "centerleft", "centerright",
+                    "topcenter", "bottomcenter"],
                 width: 250
-            },{
+            }, {
                 xtype: "checkbox",
                 name: "forceResize",
                 checked: data["forceResize"],
                 fieldLabel: t("force_resize")
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "cover"
@@ -638,16 +654,16 @@ pimcore.settings.thumbnail.items = {
     itemFrame: function (panel, data, getName) {
 
         var niceName = t("frame");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -667,19 +683,19 @@ pimcore.settings.thumbnail.items = {
                     width: 210,
                     value: data.width
                 },
-                {
-                    xtype: 'numberfield',
-                    name: "height",
-                    hideLabel: true,
-                    width: 95,
-                    value: data.height
-                }]
-            },{
+                    {
+                        xtype: 'numberfield',
+                        name: "height",
+                        hideLabel: true,
+                        width: 95,
+                        value: data.height
+                    }]
+            }, {
                 xtype: "checkbox",
                 name: "forceResize",
                 checked: data["forceResize"],
                 fieldLabel: t("force_resize")
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "frame"
@@ -692,16 +708,16 @@ pimcore.settings.thumbnail.items = {
     itemTrim: function (panel, data, getName) {
 
         var niceName = t("trim") + " (Imagick)";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -715,7 +731,7 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("tolerance"),
                 width: 210,
                 value: data.tolerance ? data.tolerance : 0
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "trim"
@@ -728,16 +744,16 @@ pimcore.settings.thumbnail.items = {
     itemRotate: function (panel, data, getName) {
 
         var niceName = t("rotate");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -749,7 +765,7 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("angle"),
                 width: 210,
                 value: data.angle
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "rotate"
@@ -762,16 +778,16 @@ pimcore.settings.thumbnail.items = {
     itemSetBackgroundColor: function (panel, data, getName) {
 
         var niceName = t("setbackgroundcolor");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -783,7 +799,7 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("color") + " (#hex)",
                 width: 210,
                 value: data.color
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "setBackgroundColor"
@@ -797,16 +813,16 @@ pimcore.settings.thumbnail.items = {
     itemRoundCorners: function (panel, data, getName) {
 
         var niceName = t("roundcorners") + " (Imagick)";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -827,14 +843,14 @@ pimcore.settings.thumbnail.items = {
                     width: 210,
                     value: data.width
                 },
-                {
-                    xtype: 'numberfield',
-                    name: "height",
-                    hideLabel: true,
-                    width: 95,
-                    value: data.height
-                }]
-            },{
+                    {
+                        xtype: 'numberfield',
+                        name: "height",
+                        hideLabel: true,
+                        width: 95,
+                        value: data.height
+                    }]
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "roundCorners"
@@ -847,16 +863,16 @@ pimcore.settings.thumbnail.items = {
     itemSetBackgroundImage: function (panel, data, getName) {
 
         var niceName = t("setbackgroundimage");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -868,14 +884,14 @@ pimcore.settings.thumbnail.items = {
                 name: "path",
                 value: data.path,
                 width: 450
-            },{
+            }, {
                 xtype: "combo",
                 name: "mode",
                 fieldLabel: t("mode"),
                 value: data.mode,
                 triggerAction: 'all',
                 editable: false,
-                store: [["", "fit"], ["cropTopLeft","cropTopLeft"]],
+                store: [["", "fit"], ["cropTopLeft", "cropTopLeft"]],
                 width: 300
             }, {
                 xtype: "hidden",
@@ -890,34 +906,34 @@ pimcore.settings.thumbnail.items = {
     itemAddOverlay: function (panel, data, getName) {
 
         var niceName = t("addoverlay") + " (Imagick)";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
 
         //set some sane default values, maybe the data parameter should already contain these values?
-        if(typeof data.x == "undefined" || data.x == "") {
+        if (typeof data.x == "undefined" || data.x == "") {
             data.x = 0;
         }
-        if(typeof data.y == "undefined" || data.y == "") {
+        if (typeof data.y == "undefined" || data.y == "") {
             data.y = 0;
         }
-        if(typeof data.origin == "undefined" || data.origin == "") {
+        if (typeof data.origin == "undefined" || data.origin == "") {
             data.origin = "top-left";
         }
-        if(typeof data.alpha == "undefined" || data.alpha == "") {
+        if (typeof data.alpha == "undefined" || data.alpha == "") {
             data.alpha = 100;
         }
-        if(typeof data.composite == "undefined" || data.composite == "") {
+        if (typeof data.composite == "undefined" || data.composite == "") {
             data.composite = "COMPOSITE_DEFAULT";
         }
 
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -929,7 +945,7 @@ pimcore.settings.thumbnail.items = {
                 name: "path",
                 value: data.path,
                 width: 450
-            },{
+            }, {
                 xtype: 'fieldset',
                 layout: 'hbox',
                 style: "border-top: none !important;",
@@ -943,14 +959,14 @@ pimcore.settings.thumbnail.items = {
                     width: 210,
                     value: data.x
                 },
-                {
-                    xtype: 'numberfield',
-                    name: "y",
-                    hideLabel: true,
-                    width: 95,
-                    value: data.y
-                }]
-            },{
+                    {
+                        xtype: 'numberfield',
+                        name: "y",
+                        hideLabel: true,
+                        width: 95,
+                        value: data.y
+                    }]
+            }, {
                 xtype: "combo",
                 name: "origin",
                 fieldLabel: t("origin"),
@@ -959,13 +975,13 @@ pimcore.settings.thumbnail.items = {
                 editable: false,
                 store: ["top-left", "top-right", "bottom-left", "bottom-right", "center"],
                 width: 300
-            },{
+            }, {
                 xtype: 'numberfield',
                 name: "alpha",
                 fieldLabel: t("opacity") + " (0-100)",
                 width: 210,
                 value: data.alpha
-            },{
+            }, {
                 xtype: "combo",
                 name: "composite",
                 fieldLabel: t("composite"),
@@ -974,7 +990,7 @@ pimcore.settings.thumbnail.items = {
                 editable: false,
                 store: ["COMPOSITE_DEFAULT", "COMPOSITE_HARDLIGHT", "COMPOSITE_EXCLUSION"],
                 width: 300
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "addOverlay"
@@ -987,22 +1003,22 @@ pimcore.settings.thumbnail.items = {
     itemAddOverlayFit: function (panel, data, getName) {
 
         var niceName = t("addoverlay_fit") + " (Imagick)";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
 
         //set some sane default values, maybe the data parameter should already contain these values?
-        if(typeof data.composite == "undefined" || data.composite == "") {
+        if (typeof data.composite == "undefined" || data.composite == "") {
             data.composite = "COMPOSITE_DEFAULT";
         }
 
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -1014,7 +1030,7 @@ pimcore.settings.thumbnail.items = {
                 name: "path",
                 value: data.path,
                 width: 450
-            },{
+            }, {
                 xtype: "combo",
                 name: "composite",
                 fieldLabel: t("composite"),
@@ -1023,7 +1039,7 @@ pimcore.settings.thumbnail.items = {
                 editable: false,
                 store: ["COMPOSITE_DEFAULT", "COMPOSITE_HARDLIGHT", "COMPOSITE_EXCLUSION"],
                 width: 300
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "addOverlayFit"
@@ -1036,16 +1052,16 @@ pimcore.settings.thumbnail.items = {
     itemApplyMask: function (panel, data, getName) {
 
         var niceName = t("applymask") + " (Imagick)";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -1057,7 +1073,7 @@ pimcore.settings.thumbnail.items = {
                 name: "path",
                 value: data.path,
                 width: 450
-            },{
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "applyMask"
@@ -1070,16 +1086,16 @@ pimcore.settings.thumbnail.items = {
     itemGrayscale: function (panel, data, getName) {
 
         var niceName = t("grayscale");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -1099,16 +1115,16 @@ pimcore.settings.thumbnail.items = {
     itemSepia: function (panel, data, getName) {
 
         var niceName = t("sepia");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -1128,16 +1144,16 @@ pimcore.settings.thumbnail.items = {
     itemSharpen: function (panel, data, getName) {
 
         var niceName = t("sharpen") + " (Imagick)";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -1153,7 +1169,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: true,
                 incrementValue: 0.1,
                 value: data.radius || 0
-            },{
+            }, {
                 xtype: 'numberfield',
                 name: 'sigma',
                 fieldLabel: t('sigma'),
@@ -1163,7 +1179,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: true,
                 incrementValue: 0.1,
                 value: data.sigma || 1
-            },{
+            }, {
                 xtype: 'numberfield',
                 name: 'amount',
                 fieldLabel: t('amount'),
@@ -1173,7 +1189,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: true,
                 incrementValue: 0.1,
                 value: data.amount || 1
-            },{
+            }, {
                 xtype: 'numberfield',
                 name: 'threshold',
                 fieldLabel: t('threshold'),
@@ -1183,7 +1199,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: true,
                 incrementValue: 0.01,
                 value: data.threshold || 0.05
-            },{
+            }, {
                 xtype: 'hidden',
                 name: 'type',
                 value: 'sharpen'
@@ -1196,16 +1212,16 @@ pimcore.settings.thumbnail.items = {
     itemGaussianBlur: function (panel, data, getName) {
 
         var niceName = t("gaussianBlur") + " (Imagick)";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -1221,7 +1237,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: true,
                 incrementValue: 0.1,
                 value: data.radius || 0
-            },{
+            }, {
                 xtype: 'numberfield',
                 name: 'sigma',
                 width: 210,
@@ -1231,7 +1247,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: true,
                 incrementValue: 0.1,
                 value: data.sigma || 1
-            },{
+            }, {
                 xtype: 'hidden',
                 name: 'type',
                 value: 'gaussianBlur'
@@ -1244,16 +1260,16 @@ pimcore.settings.thumbnail.items = {
     itemBrightnessSaturation: function (panel, data, getName) {
 
         var niceName = t("brightness") + " / " + t("saturation") + " / " + t("hue") + " (Imagick)";
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -1267,7 +1283,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: false,
                 incrementValue: 1,
                 value: data.brightness || 100
-            },{
+            }, {
                 xtype: 'numberfield',
                 name: 'saturation',
                 fieldLabel: t('saturation'),
@@ -1275,7 +1291,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: false,
                 incrementValue: 1,
                 value: data.saturation || 100
-            },{
+            }, {
                 xtype: 'numberfield',
                 name: 'hue',
                 fieldLabel: t('hue'),
@@ -1283,7 +1299,7 @@ pimcore.settings.thumbnail.items = {
                 allowDecimals: false,
                 incrementValue: 1,
                 value: data.hue || 100
-            },{
+            }, {
                 xtype: 'hidden',
                 name: 'type',
                 value: 'brightnessSaturation'
@@ -1296,16 +1312,16 @@ pimcore.settings.thumbnail.items = {
     itemTifforiginal: function (panel, data, getName) {
 
         var niceName = t("use_original_tiff");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.form.FormPanel({
+        var item = new Ext.form.FormPanel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
