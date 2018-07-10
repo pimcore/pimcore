@@ -249,6 +249,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                     }
                 }
 
+                // aliases support
+                $aliasesPath = $this->getKernel()->locateResource($this->getAdminPath() . '/aliases.json');
+                $aliases = json_decode(file_get_contents($aliasesPath), true);
+                foreach($aliases as $aliasTarget => $aliasSource) {
+                    if(isset($data[$aliasSource]) && !isset($data[$aliasTarget])) {
+                        $data[$aliasTarget] = $data[$aliasSource];
+                    }
+                }
+
                 $data = [$domain => $data];
                 $catalogue = new MessageCatalogue($locale, $data);
 
