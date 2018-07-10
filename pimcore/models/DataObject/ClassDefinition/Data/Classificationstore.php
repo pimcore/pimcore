@@ -468,6 +468,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                     ];
 
                     foreach ($validLanguages as $language) {
+                        $context['language'] = $language;
                         $value = $fd->getForWebserviceExport($object, ['context' => $context, 'language' => $language]);
                         $groupResult[$language][] = [
                             'id' => $keyId,
