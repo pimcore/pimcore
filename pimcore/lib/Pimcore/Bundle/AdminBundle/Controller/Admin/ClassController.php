@@ -692,6 +692,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         try {
             $key = $request->get('key');
             $title = $request->get('title');
+            $group = $request->get('group');
 
             if ($request->get('task') == 'add') {
                 // check for existing fieldcollection with same name with different lower/upper cases
@@ -708,6 +709,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             $fc = new DataObject\Fieldcollection\Definition();
             $fc->setKey($key);
             $fc->setTitle($title);
+            $fc->setGroup($group);
 
             if ($request->get('values')) {
                 $values = $this->decodeJson($request->get('values'));
@@ -816,16 +818,72 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list = new DataObject\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
-        $items = [];
+        $forObjectEditor = $request->get('forObjectEditor');
 
-        foreach ($list as $fc) {
-            $items[] = [
-                'id' => $fc->getKey(),
-                'text' => $fc->getKey()
-            ];
+        $layoutDefinitions = [];
+
+        $definitions = [];
+
+        $allowedTypes = null;
+        if ($request->query->has('allowedTypes')) {
+            $allowedTypes = explode(',', $request->get('allowedTypes'));
         }
 
-        return $this->adminJson($items);
+        $groups = [];
+        /** @var  $item DataObject\Fieldcollection\Definition */
+        foreach ($list as $item) {
+
+            if ($allowedTypes && !in_array($item->getKey(), $allowedTypes)) {
+                continue;
+            }
+
+            if ($item->getGroup()) {
+                if (!$groups[$item->getGroup()]) {
+                    $groups[$item->getGroup()] = [
+                        'id' => "group_" . $item->getKey(),
+                        'text' => $item->getGroup(),
+                        'expandable' => true,
+                        'leaf' => false,
+                        'allowChildren' => true,
+                        'iconCls' => 'pimcore_icon_folder',
+                        'group' => $item->getGroup(),
+                        'children' => []
+                    ];
+                }
+                if ($forObjectEditor) {
+                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                }
+                $groups[$item->getGroup()]['children'][] =
+                    [
+                        'id' => $item->getKey(),
+                        'text' => $item->getKey(),
+                        'key' => $item->getKey(),
+                        'leaf' => true,
+                        'iconCls' => 'pimcore_icon_fieldcollection'
+                    ];
+            } else {
+                if ($forObjectEditor) {
+                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                }
+                $definitions[] = [
+                    'id' => $item->getKey(),
+                    'text' => $item->getKey(),
+                    'key' => $item->getKey(),
+                    'leaf' => true,
+                    'iconCls' => 'pimcore_icon_fieldcollection'
+                ];
+            }
+        }
+
+        foreach ($groups as $group) {
+            $definitions[] = $group;
+        }
+
+        if ($forObjectEditor) {
+            return $this->adminJson(["fieldcollections" => $definitions, "layoutDefinitions" => $layoutDefinitions]);
+        } else {
+            return $this->adminJson($definitions);
+        }
     }
 
     /**
