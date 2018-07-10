@@ -79,10 +79,10 @@ but those (array, filesystem) are mainly used for testing.
 
 ### Recommended Redis Configuration (`redis.conf`)
 ```
-# select an appropriate value for your data (min. 128mb)
-maxmemory 1gb
+# select an appropriate value for your data
+maxmemory 768mb
                    
-# IMPORTANT! 
+# IMPORTANT! Other policies will cause random inconsistencies of your data!
 maxmemory-policy volatile-lru   
 save ""
 ```
