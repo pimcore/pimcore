@@ -10,7 +10,7 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-function t(key) {
+function t(key, defaultValue) {
     if(!key) {
         return "";
     }
@@ -18,6 +18,7 @@ function t(key) {
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
     if(!alreadyTranslated) {
         alreadyTranslated = [];
+        pimcore.globalmanager.add("translations_admin_translated_values", []);
     }
 
     // remove plus at the start and the end to avoid double translations
@@ -26,32 +27,22 @@ function t(key) {
     });
 
     if (pimcore && pimcore.system_i18n && pimcore.system_i18n[key]) {
-        // add here a "zero width joiner" to detect if a key is already translated
-
-        alreadyTranslated.push(pimcore.system_i18n[key]);
-
-        if(pimcore.globalmanager.exists("translations_admin_translated_values")) {
-            pimcore.globalmanager.add("translations_admin_translated_values", alreadyTranslated);
-        }
-
+        pimcore.globalmanager.get("translations_admin_translated_values").push(pimcore.system_i18n[key]);
         return pimcore.system_i18n[key];
     } else {
-
-        // if the key contains a "zero width joiner" it is already translated
-        if(in_array(key, alreadyTranslated)) {
-            return key;
-        }
-
-        if(pimcore.globalmanager.exists("translations_admin_missing")) {
-            if (!in_array(key, pimcore.globalmanager.get("translations_admin_added"))) {
-                var missingTranslations = pimcore.globalmanager.get("translations_admin_missing");
-                missingTranslations.push(key);
-                pimcore.globalmanager.add("translations_admin_missing", missingTranslations);
+        if(!defaultValue && !in_array(key, alreadyTranslated)) {
+            if(pimcore.globalmanager.exists("translations_admin_missing")) {
+                if (!in_array(key, pimcore.globalmanager.get("translations_admin_added"))) {
+                    pimcore.globalmanager.get("translations_admin_missing").push(key);
+                }
             }
         }
     }
+
     if(parent.pimcore.settings.debug_admin_translations){ // use parent here, because it's also used in the editmode iframe
         return "+" + key + "+";
+    }  else if (defaultValue) {
+        return defaultValue;
     } else {
         return key;
     }
