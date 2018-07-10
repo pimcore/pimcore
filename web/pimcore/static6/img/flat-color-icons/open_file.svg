@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="43px" height="39px" viewBox="0 0 43 39" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="opened_folder_with_file">
+            <path d="M34,11 L18,11 L14,7 L4,7 C1.8,7 0,8.8 0,11 L0,35 C0,37.2 1.8,39 4,39 L35,39 C36.7,39 38,37.7 38,36 L38,15 C38,12.8 36.2,11 34,11 Z" id="Shape" fill="#BD9662" fill-rule="nonzero"></path>
+            <rect id="Rectangle" fill="#FFFFFF" x="12" y="0.398925781" width="22" height="18.6860352"></rect>
+            <rect id="Rectangle-2" fill="#C1B8B8" x="15.1552734" y="4.26220703" width="16" height="1.95263672"></rect>
+            <rect id="Rectangle-2" fill="#C1B8B8" x="15.1552734" y="8.26220703" width="16" height="1.95263672"></rect>
+            <rect id="Rectangle-2" fill="#C1B8B8" x="15.1552734" y="12.262207" width="16" height="1.95263672"></rect>
+            <path d="M38.2,17 L11.3,17 C9.4,17 7.7,18.4 7.4,20.3 L4,39 L35.7,39 C37.6,39 39.3,37.6 39.6,35.7 L42.1,21.7 C42.6,19.3 40.7,17 38.2,17 Z" id="Shape" fill="#FFDB76" fill-rule="nonzero"></path>
+        </g>
+    </g>
+</svg>

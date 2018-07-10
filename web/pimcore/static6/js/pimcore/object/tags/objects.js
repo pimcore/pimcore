@@ -344,7 +344,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     items: [
                         {
                             tooltip: t('open'),
-                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 pimcore.helpers.openObject(data.data.id, "object");
@@ -511,7 +511,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     items: [
                         {
                             tooltip: t('open'),
-                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 pimcore.helpers.openObject(data.data.id, "object");
