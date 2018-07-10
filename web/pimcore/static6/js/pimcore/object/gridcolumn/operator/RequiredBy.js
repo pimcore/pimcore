@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
     type: "operator",
     class: "RequiredBy",
     iconCls: "pimcore_icon_operator_requiredby",
-    defaultText: "operator_requiredby",
+    defaultText: "Required By",
     group: "other",
 
     getConfigTreeNode: function (configAttributes) {
@@ -46,7 +46,7 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -145,7 +145,7 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
             width: 400,
             height: 400,
             modal: true,
-            title: t('operator_requiredby_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

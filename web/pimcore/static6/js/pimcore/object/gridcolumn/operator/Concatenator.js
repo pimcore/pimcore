@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
     type: "operator",
     class: "Concatenator",
     iconCls: "pimcore_icon_operator_concatenator",
-    defaultText: "operator_concatenator",
+    defaultText: "Concatenator",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {
@@ -44,7 +44,7 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true

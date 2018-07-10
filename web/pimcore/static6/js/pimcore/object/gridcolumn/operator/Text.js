@@ -20,7 +20,7 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
     type: "operator",
     class: "Text",
     iconCls: "pimcore_icon_operator_text",
-    defaultText: "operator_text",
+    defaultText: "Text",
     group: "string",
 
 
@@ -42,7 +42,7 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true

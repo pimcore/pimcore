@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
     type: "operator",
     class: "BooleanFormatter",
     iconCls: "pimcore_icon_operator_booleanformatter",
-    defaultText: "operator_booleanformatter",
+    defaultText: "Boolean Formatter",
     group: "boolean",
 
     getConfigTreeNode: function(configAttributes) {
@@ -29,7 +29,7 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
+                text: configAttributes.label ? configAttributes.label : this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 expanded: true,
@@ -41,12 +41,12 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class, label: this.getDefaultText()};
 
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -120,7 +120,7 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_booleanformatter_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

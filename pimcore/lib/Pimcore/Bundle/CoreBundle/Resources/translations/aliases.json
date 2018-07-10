@@ -121,5 +121,6 @@
   "keybinding_notesEvents": "notes_events",
   "keybinding_searchAsset": "asset_search",
   "keybinding_searchDocument": "document_search",
-  "keybinding_searchObject": "object_search"
+  "keybinding_searchObject": "object_search",
+  "bool": "boolean"
 }

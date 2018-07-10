@@ -710,7 +710,7 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("database.params.dbname")
                             },
                             {
-                                fieldLabel: t('database_port'),
+                                fieldLabel: t('port'),
                                 disabled: true,
                                 name: 'database.params.port',
                                 value: this.getValue("database.params.port")

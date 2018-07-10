@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.ob
     type: "operator",
     class: "AssetMetadataGetter",
     iconCls: "pimcore_icon_operator_assetmetadatagetter",
-    defaultText: "operator_assetmetadatagetter",
+    defaultText: "Asset Metadata Getter",
     group: "getter",
 
     getConfigTreeNode: function (configAttributes) {
@@ -45,7 +45,7 @@ pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.ob
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true
@@ -142,7 +142,7 @@ pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.ob
             width: 400,
             height: 400,
             modal: true,
-            title: t('operator_assetmetadatagetter_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

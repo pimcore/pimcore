@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcol
     type: "operator",
     class: "PHPCode",
     iconCls: "pimcore_icon_operator_phpcode",
-    defaultText: "operator_phpcode",
+    defaultText: "PHP Code",
     group: "other",
 
     getConfigTreeNode: function (configAttributes) {
@@ -45,7 +45,7 @@ pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcol
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -117,7 +117,7 @@ pimcore.object.gridcolumn.operator.phpcode = Class.create(pimcore.object.gridcol
             width: 600,
             height: 300,
             modal: true,
-            title: t('operator_phpcode_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

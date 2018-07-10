@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
     type: "operator",
     class: "Trimmer",
     iconCls: "pimcore_icon_operator_trimmer",
-    defaultText: "operator_trimmer",
+    defaultText: "Trimmer",
     group: "string",
 
     getConfigTreeNode: function (configAttributes) {
@@ -46,7 +46,7 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -122,7 +122,7 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_trim_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
