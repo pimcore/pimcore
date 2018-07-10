@@ -240,7 +240,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     editable: false,
                     width: 120,
                     renderer: function(value) {
-                        return t("web2print_" + value);
+                        return t("web2print_" + value, value);
                     },
                     sortable: true
                 },

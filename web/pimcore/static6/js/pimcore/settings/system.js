@@ -873,12 +873,12 @@ pimcore.settings.system = Class.create({
                                 minValue: 0
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
+                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (Imagick)",
                                 name: 'assets.icc_rgb_profile',
                                 value: this.getValue("assets.icc_rgb_profile")
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (imagick)",
+                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (Imagick)",
                                 name: 'assets.icc_cmyk_profile',
                                 value: this.getValue("assets.icc_cmyk_profile")
                             },

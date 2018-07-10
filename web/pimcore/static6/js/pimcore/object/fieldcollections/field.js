@@ -58,10 +58,18 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
             }
         });
 
+        this.groupField = new Ext.form.field.Text(
+            {
+                width: 400,
+                name: "group",
+                fieldLabel: t("group"),
+                value: this.data.group
+            });
+
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
-            defaults:{
+            defaults: {
                 labelWidth: 200
             },
             items: [{
@@ -77,6 +85,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 fieldLabel: t("title"),
                 value: this.data.title
             },
+                this.groupField,
                 {
                     xtype: 'displayfield',
                     text: '<b>' + t("used_by_class") + '</b>'
@@ -93,6 +102,13 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
     save: function () {
 
+        var reload = false;
+        var newGroup = this.groupField.getValue();
+        if (newGroup != this.data.group) {
+            this.data.group = newGroup;
+            reload = true;}
+
+
         this.saveCurrentNode();
 
         var m = Ext.encode(this.getData());
@@ -106,18 +122,21 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                     configuration: m,
                     values: n,
                     key: this.data.key,
-                    title: this.data.title
+                    title: this.data.title,
+                    group: this.data.group
                 },
-                success: this.saveOnComplete.bind(this)
+                success: this.saveOnComplete.bind(this, reload)
             });
         }
     },
 
-    saveOnComplete: function (response) {
+    saveOnComplete: function (reload, response) {
         try {
             var res = Ext.decode(response.responseText);
             if (res.success) {
-                this.parentPanel.tree.getStore().load();
+                if (reload) {
+                    this.parentPanel.tree.getStore().load();
+                }
                 pimcore.helpers.showNotification(t("success"), t("fieldcollection_saved_successfully"), "success");
             } else {
                 throw "save was not successful, see log files in /var/logs";

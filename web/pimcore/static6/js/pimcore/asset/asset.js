@@ -183,7 +183,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             if (this.isAllowed("publish")) {
                 this.toolbarButtons.upload = new Ext.Button({
-                    tooltip: t("upload"),
+                    tooltip: t("upload_new_version"),
                     iconCls: "pimcore_icon_upload",
                     scale: "medium",
                     handler: function () {

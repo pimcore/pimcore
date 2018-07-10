@@ -245,6 +245,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         });
         var title = append ? t("batch_append_to") + " " + fieldInfo.text : t("batch_edit_field") + " " + fieldInfo.text;
         this.batchWin = new Ext.Window({
+            autoScroll: true,
             modal: false,
             title: title,
             items: [formPanel],

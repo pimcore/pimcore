@@ -22,8 +22,8 @@ pimcore.settings.videothumbnail.item = Class.create({
 
         this.addLayout();
 
-        if(this.data.items && this.data.items.length > 0) {
-            for(var i=0; i<this.data.items.length; i++) {
+        if (this.data.items && this.data.items.length > 0) {
+            for (var i = 0; i < this.data.items.length; i++) {
                 this.addItem("item" + ucfirst(this.data.items[i].method), this.data.items[i].arguments);
             }
         }
@@ -32,29 +32,29 @@ pimcore.settings.videothumbnail.item = Class.create({
 
     addLayout: function () {
 
-/*        this.editpanel = new Ext.Panel({
-            region: "center",
-            bodyStyle: "padding: 20px;",
-            autoScroll: true
-        });
-*/
+        /*        this.editpanel = new Ext.Panel({
+                    region: "center",
+                    bodyStyle: "padding: 20px;",
+                    autoScroll: true
+                });
+        */
 
         var panelButtons = [];
         panelButtons.push({
             text: t("save"),
             iconCls: "pimcore_icon_apply",
             handler: this.save.bind(this)
-        }); 
+        });
 
 
         var addMenu = [];
         var itemTypes = Object.keys(pimcore.settings.videothumbnail.items);
-        for(var i=0; i<itemTypes.length; i++) {
-            if(itemTypes[i].indexOf("item") == 0) {
+        for (var i = 0; i < itemTypes.length; i++) {
+            if (itemTypes[i].indexOf("item") == 0) {
                 addMenu.push({
                     iconCls: "pimcore_icon_add",
                     handler: this.addItem.bind(this, itemTypes[i]),
-                    text: pimcore.settings.videothumbnail.items[itemTypes[i]](null, null,true)
+                    text: pimcore.settings.videothumbnail.items[itemTypes[i]](null, null, true)
                 });
             }
         }
@@ -67,6 +67,13 @@ pimcore.settings.videothumbnail.item = Class.create({
                 text: t("transformations")
             }],
             border: false
+        });
+
+        this.groupField = new Ext.form.field.Text({
+            name: "group",
+            value: this.data.group,
+            fieldLabel: t("group"),
+            width: 450
         });
 
         this.panel = new Ext.form.FormPanel({
@@ -86,7 +93,7 @@ pimcore.settings.videothumbnail.item = Class.create({
                     url: "/admin/settings/video-thumbnail-adapter-check",
                     autoLoad: true
                 }
-            },{
+            }, {
                 xtype: "textfield",
                 name: "name",
                 value: this.data.name,
@@ -100,21 +107,21 @@ pimcore.settings.videothumbnail.item = Class.create({
                 fieldLabel: t("description"),
                 width: 450,
                 height: 100
-            }, {
+            }, this.groupField, {
                 xtype: "combo",
                 name: "present",
                 fieldLabel: t("select_presetting"),
                 triggerAction: "all",
                 mode: "local",
                 width: 300,
-                store: [["average",t("average")],["good", t("good")],["best",t("best")]],
+                store: [["average", t("average")], ["good", t("good")], ["best", t("best")]],
                 listeners: {
                     select: function (el) {
                         var sel = el.getValue();
                         var vb = "";
                         var ab = "";
 
-                        if(sel == "average") {
+                        if (sel == "average") {
                             vb = 400;
                             ab = 128;
                         } else if (sel == "good") {
@@ -164,7 +171,16 @@ pimcore.settings.videothumbnail.item = Class.create({
         this.currentIndex++;
     },
 
+
     save: function () {
+
+        var reload = false;
+        var newGroup = this.groupField.getValue();
+        if (newGroup != this.data.group) {
+            this.data.group = newGroup;
+            reload = true;
+        }
+
 
         var m = Ext.encode(this.panel.getForm().getFieldValues());
         Ext.Ajax.request({
@@ -174,14 +190,16 @@ pimcore.settings.videothumbnail.item = Class.create({
                 configuration: m,
                 name: this.data.name
             },
-            success: this.saveOnComplete.bind(this)
+            success: this.saveOnComplete.bind(this, reload)
         });
     },
 
-    saveOnComplete: function () {
-        this.parentPanel.tree.getStore().load({
-            node: this.parentPanel.tree.getRootNode()
-        });
+    saveOnComplete: function (reload) {
+        if (reload) {
+            this.parentPanel.tree.getStore().load({
+                node: this.parentPanel.tree.getRootNode()
+            });
+        }
 
         pimcore.helpers.showNotification(t("success"), t("thumbnail_saved_successfully"), "success");
     },
@@ -191,7 +209,6 @@ pimcore.settings.videothumbnail.item = Class.create({
     }
 
 });
-
 
 
 /** ITEM TYPES **/
@@ -204,7 +221,7 @@ pimcore.settings.videothumbnail.items = {
         return [{
             xtype: "tbtext",
             text: "<b>" + name + "</b>"
-        },"->",{
+        }, "->", {
             iconCls: "pimcore_icon_delete",
             handler: function (index, parent) {
                 parent.itemContainer.remove(Ext.getCmp(index));
@@ -215,16 +232,16 @@ pimcore.settings.videothumbnail.items = {
     itemResize: function (panel, data, getName) {
 
         var niceName = t("resize");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.Panel({
+        var item = new Ext.Panel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -238,22 +255,22 @@ pimcore.settings.videothumbnail.items = {
                 padding: 0,
                 items: [{
                     xtype: 'numberfield',
-                    name: "item." + myId  + ".width",
+                    name: "item." + myId + ".width",
                     style: "padding-right: 10px",
                     fieldLabel: t("width") + ", " + t("height"),
                     width: 210,
                     value: data.width
                 },
-                {
-                    xtype: 'numberfield',
-                    name: "item." + myId  + ".height",
-                    hideLabel: true,
-                    width: 95,
-                    value: data.height
-                }]
-            },{
+                    {
+                        xtype: 'numberfield',
+                        name: "item." + myId + ".height",
+                        hideLabel: true,
+                        width: 95,
+                        value: data.height
+                    }]
+            }, {
                 xtype: "hidden",
-                name: "item." + myId  + ".type",
+                name: "item." + myId + ".type",
                 value: "resize"
             }, {
                 xtype: "displayfield",
@@ -268,16 +285,16 @@ pimcore.settings.videothumbnail.items = {
     itemScaleByHeight: function (panel, data, getName) {
 
         var niceName = t("scalebyheight");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.Panel({
+        var item = new Ext.Panel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -285,13 +302,13 @@ pimcore.settings.videothumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'numberfield',
-                name: "item." + myId  + ".height",
+                name: "item." + myId + ".height",
                 fieldLabel: t("height"),
                 width: 250,
                 value: data.height
-            },{
+            }, {
                 xtype: "hidden",
-                name: "item." + myId  + ".type",
+                name: "item." + myId + ".type",
                 value: "scaleByHeight"
             }]
         });
@@ -302,16 +319,16 @@ pimcore.settings.videothumbnail.items = {
     itemScaleByWidth: function (panel, data, getName) {
 
         var niceName = t("scalebywidth");
-        if(typeof getName != "undefined" && getName) {
+        if (typeof getName != "undefined" && getName) {
             return niceName;
         }
 
-        if(typeof data == "undefined") {
+        if (typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
 
-        var item =  new Ext.Panel({
+        var item = new Ext.Panel({
             id: myId,
             style: "margin-top: 10px",
             border: true,
@@ -319,13 +336,13 @@ pimcore.settings.videothumbnail.items = {
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'numberfield',
-                name: "item." + myId  + ".width",
+                name: "item." + myId + ".width",
                 fieldLabel: t("width"),
                 width: 250,
                 value: data.width
-            },{
+            }, {
                 xtype: "hidden",
-                name: "item." + myId  + ".type",
+                name: "item." + myId + ".type",
                 value: "scaleByWidth"
             }]
         });

@@ -1,5 +1,6 @@
 
 # Bug Report
+<!--
 ## Please make sure all the following boxes are checked before submitting your issue - thank you!
 - [ ] This is not a security issue / vulnerability -> use [this form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/) instead
 - [ ] Behavior is reproducible on http://demo-basic.pimcore.org/admin/ (admin/demo) 
@@ -9,6 +10,7 @@ or on a clean install of the latest build (out of your project, to avoid problem
 - [ ] Remove unused sections from below and this bullet points
 
 ## Please answer the following questions 
+--> 
   
 ### Expected behavior 
   
@@ -23,9 +25,10 @@ or on a clean install of the latest build (out of your project, to avoid problem
 
 
 # Feature Request 
+<!--
 ## Please make sure all the following boxes are checked before submitting your feature request - thank you!
 - [ ] There is no existing issue regarding the same topic
-
+-->
 ## Feature description 
   
   

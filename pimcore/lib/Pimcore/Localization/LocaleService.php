@@ -17,7 +17,7 @@ namespace Pimcore\Localization;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class Locale
+class LocaleService implements LocaleServiceInterface
 {
     /**
      * @var string
