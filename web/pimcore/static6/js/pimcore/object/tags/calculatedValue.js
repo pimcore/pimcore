@@ -20,8 +20,28 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
         this.data = data;
         this.fieldConfig = fieldConfig;
 
+        pimcore.eventDispatcher.registerTarget(null, this);
     },
 
+    postSaveObject: function(obj) {
+        if (obj.id !== this.object.id) {
+            return;
+        }
+
+        var data = this.object.data.data;
+        if (this.context.containerType !== 'localizedfield' && data[this.fieldConfig.name] !== undefined) {
+            this.data = data[this.fieldConfig.name];
+            this.component.setValue(this.data);
+            return;
+        }
+
+        if (this.context.containerType === 'localizedfield'
+            && data.localizedfields.data[this.context.language][this.fieldConfig.name] !== undefined
+        ) {
+            this.data = data.localizedfields.data[this.context.language][this.fieldConfig.name];
+            this.component.setValue(this.data);
+        }
+    },
 
     getLayoutEdit: function () {
 

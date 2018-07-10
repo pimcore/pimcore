@@ -331,6 +331,29 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         Element\Editlock::lock($request->get('id'), 'object');
 
         $object = DataObject::getById(intval($request->get('id')));
+        $data = $this->getObjectData(
+            $object,
+            $request->get('layoutId', null),
+            $eventDispatcher
+        );
+        if ($data) {
+            return $this->adminJson($data);
+        } else {
+            Logger::debug('prevented getting object id [ ' . $object->getId() . ' ] because of missing permissions');
+
+            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+        }
+    }
+
+    /**
+     * @param DataObject $object
+     * @param mixed $currentLayoutId
+     * @param EventDispatcherInterface $eventDispatcher
+     * @return false|array
+     * @throws \Exception
+     */
+    private function getObjectData(DataObject $object, $currentLayoutId, EventDispatcherInterface $eventDispatcher)
+    {
         $object = clone $object;
 
         // set the latest available version for editmode
@@ -340,8 +363,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $objectFromVersion = $latestObject === $object ? false : true;
         $object = $latestObject;
 
-        if ($object->isAllowed('view')) {
-            $objectData = [];
+        if (!$object->isAllowed('view')) {
+            return false;
+        }
+
+        $objectData = [];
 
             $objectData['idPath'] = Element\Service::getIdPath($object);
 
@@ -350,53 +376,64 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $objectData['hasPreview'] = true;
             }
 
-            $objectData['general'] = [];
-            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_modificationDate', 'o_creationDate', 'o_classId', 'o_className', 'o_locked', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
+        $objectData['general'] = [];
+        $allowedKeys = [
+            'o_published',
+            'o_key',
+            'o_id',
+            'o_modificationDate',
+            'o_creationDate',
+            'o_classId',
+            'o_className',
+            'o_locked',
+            'o_type',
+            'o_parentId',
+            'o_userOwner',
+            'o_userModification'
+        ];
 
-            foreach (get_object_vars($object) as $key => $value) {
-                if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
-                    $objectData['general'][$key] = $value;
-                }
+        foreach (get_object_vars($object) as $key => $value) {
+            if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
+                $objectData['general'][$key] = $value;
             }
+        }
 
-            $objectData['general']['o_locked'] = $object->isLocked();
+        $objectData['general']['o_locked'] = $object->isLocked();
 
-            $this->getDataForObject($object, $objectFromVersion);
-            $objectData['data'] = $this->objectData;
+        $this->getDataForObject($object, $objectFromVersion);
+        $objectData['data'] = $this->objectData;
 
-            $objectData['metaData'] = $this->metaData;
+        $objectData['metaData'] = $this->metaData;
 
-            $objectData['layout'] = $object->getClass()->getLayoutDefinitions();
+        $objectData['layout'] = $object->getClass()->getLayoutDefinitions();
 
-            $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
-            $objectData['userPermissions'] = $object->getUserPermissions();
-            $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
-            $objectData['versions'] = array_splice($objectVersions, 0, 1);
-            $objectData['scheduledTasks'] = $object->getScheduledTasks();
-            $objectData['general']['allowVariants'] = $object->getClass()->getAllowVariants();
-            $objectData['general']['showVariants'] = $object->getClass()->getShowVariants();
-            $objectData['general']['showAppLoggerTab'] = $object->getClass()->getShowAppLoggerTab();
-            $objectData['general']['fullpath'] = $object->getRealFullPath();
-            $objectData['general']['versionDate'] = $object->getModificationDate();
+        $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
+        $objectData['userPermissions'] = $object->getUserPermissions();
+        $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
+        $objectData['versions'] = array_splice($objectVersions, 0, 1);
+        $objectData['scheduledTasks'] = $object->getScheduledTasks();
+        $objectData['general']['allowVariants'] = $object->getClass()->getAllowVariants();
+        $objectData['general']['showVariants'] = $object->getClass()->getShowVariants();
+        $objectData['general']['showAppLoggerTab'] = $object->getClass()->getShowAppLoggerTab();
+        $objectData['general']['fullpath'] = $object->getRealFullPath();
+        $objectData['general']['versionDate'] = $object->getModificationDate();
 
-            if ($object->getElementAdminStyle()->getElementIcon()) {
-                $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
-            }
-            if ($object->getElementAdminStyle()->getElementIconClass()) {
-                $objectData['general']['iconCls'] = $object->getElementAdminStyle()->getElementIconClass();
-            }
+        if ($object->getElementAdminStyle()->getElementIcon()) {
+            $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
+        }
+        if ($object->getElementAdminStyle()->getElementIconClass()) {
+            $objectData['general']['iconCls'] = $object->getElementAdminStyle()->getElementIconClass();
+        }
 
-            if ($object instanceof DataObject\Concrete) {
-                $objectData['lazyLoadedFields'] = $object->getLazyLoadedFields();
-                $objectData['general']['linkGeneratorReference'] = $object->getClass()->getLinkGeneratorReference();
-            }
+        if ($object instanceof DataObject\Concrete) {
+            $objectData['lazyLoadedFields'] = $object->getLazyLoadedFields();
+            $objectData['general']['linkGeneratorReference'] = $object->getClass()->getLinkGeneratorReference();
+        }
 
-            $objectData['childdata']['id'] = $object->getId();
-            $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
+        $objectData['childdata']['id'] = $object->getId();
+        $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
-            $currentLayoutId = $request->get('layoutId', null);
-
-            $validLayouts = DataObject\Service::getValidLayouts($object);
+        $validLayouts = DataObject\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
             if (is_null($currentLayoutId) && !empty($validLayouts)) {
@@ -414,56 +451,49 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if (!empty($validLayouts)) {
                 $objectData['validLayouts'] = [ ];
 
-                foreach ($validLayouts as $validLayout) {
-                    $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
-                }
-
-                $user = Tool\Admin::getCurrentUser();
-
-                if (!is_null($currentLayoutId)) {
-                    if ($currentLayoutId == 0 && !$user->isAdmin()) {
-                        $first = reset($validLayouts);
-                        $currentLayoutId = $first->getId();
-                    }
-                }
-
-                if ($currentLayoutId > 0) {
-                    // check if user has sufficient rights
-                    if ($validLayouts && $validLayouts[$currentLayoutId]) {
-                        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId);
-                        $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                        $objectData['layout'] = $customLayoutDefinition;
-                    } else {
-                        $currentLayoutId = 0;
-                    }
-                } elseif ($currentLayoutId == -1 && $user->isAdmin()) {
-                    $layout = DataObject\Service::getSuperLayoutDefinition($object);
-                    $objectData['layout'] = $layout;
-                }
-
-                $objectData['currentLayoutId'] = $currentLayoutId;
+            foreach ($validLayouts as $validLayout) {
+                $objectData['validLayouts'][] = ['id' => $validLayout->getId(), 'name' => $validLayout->getName()];
             }
 
-            $objectData = $this->filterLocalizedFields($object, $objectData);
-            DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
+            $user = Tool\Admin::getCurrentUser();
 
-            //Hook for modifying return value - e.g. for changing permissions based on object data
-            //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-            $event = new GenericEvent($this, [
-                'data' => $objectData,
-                'object' => $object,
-            ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
-            $data = $event->getArgument('data');
+            if (!is_null($currentLayoutId)) {
+                if ($currentLayoutId == 0 && !$user->isAdmin()) {
+                    $first = reset($validLayouts);
+                    $currentLayoutId = $first->getId();
+                }
+            }
 
-            DataObject\Service::removeObjectFromSession($object->getId());
+            if ($currentLayoutId > 0) {
+                // check if user has sufficient rights
+                if ($validLayouts && $validLayouts[$currentLayoutId]) {
+                    $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId);
+                    $customLayoutDefinition = $customLayout->getLayoutDefinitions();
+                    $objectData['layout'] = $customLayoutDefinition;
+                } else {
+                    $currentLayoutId = 0;
+                }
+            } elseif ($currentLayoutId == -1 && $user->isAdmin()) {
+                $layout = DataObject\Service::getSuperLayoutDefinition($object);
+                $objectData['layout'] = $layout;
+            }
 
-            return $this->adminJson($data);
-        } else {
-            Logger::debug('prevented getting object id [ ' . $object->getId() . ' ] because of missing permissions');
-
-            return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+            $objectData['currentLayoutId'] = $currentLayoutId;
         }
+
+        $objectData = $this->filterLocalizedFields($object, $objectData);
+        DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
+
+        //Hook for modifying return value - e.g. for changing permissions based on object data
+        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        $event = new GenericEvent($this, [
+            'data' => $objectData,
+            'object' => $object,
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
+        DataObject\Service::removeObjectFromSession($object->getId());
+
+        return $event->getArgument('data');
     }
 
     /**
@@ -1209,12 +1239,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @Method({"POST", "PUT"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         try {
             $object = DataObject::getById($request->get('id'));
@@ -1321,9 +1352,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 return $this->adminJson([
                     'success' => true,
-                    'general' => ['o_modificationDate' => $object->getModificationDate(),
-                        'versionDate' => $newObject->getModificationDate()
-                    ],
+                    'data' => $this->getObjectData(
+                        $object,
+                        $request->get('data'),
+                        $eventDispatcher
+                    ),
                     'treeData' => $treeData]);
             } elseif ($request->get('task') == 'session') {
 
@@ -1344,10 +1377,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                     return $this->adminJson([
                         'success' => true,
-                        'general' => ['o_modificationDate' => $object->getModificationDate(),
-                            'versionDate' => $newObject->getModificationDate()
-                        ],
-
+                        'data' => $this->getObjectData(
+                            $object,
+                            $request->get('data'),
+                            $eventDispatcher
+                        ),
                         'treeData' => $treeData]);
                 }
             }

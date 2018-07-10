@@ -678,6 +678,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.tab.mask();
 
         var saveData = this.getSaveData(only, omitMandatoryCheck);
+        saveData.layoutId = this.options.layoutId || null;
 
         if (saveData && saveData.data != false && saveData.data != "false") {
 
@@ -722,7 +723,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
                                     "success");
                                 this.resetChanges();
-                                Ext.apply(this.data.general, rdata.general);
+                                this.data = rdata.data;
 
                                 pimcore.helpers.updateObjectStyle(this.id, rdata.treeData);
                                 pimcore.plugin.broker.fireEvent("postSaveObject", this);
