@@ -830,9 +830,8 @@ class ClassController extends AdminController implements EventedControllerInterf
         }
 
         $groups = [];
-        /** @var  $item DataObject\Fieldcollection\Definition */
+        /** @var $item DataObject\Fieldcollection\Definition */
         foreach ($list as $item) {
-
             if ($allowedTypes && !in_array($item->getKey(), $allowedTypes)) {
                 continue;
             }
@@ -840,7 +839,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             if ($item->getGroup()) {
                 if (!$groups[$item->getGroup()]) {
                     $groups[$item->getGroup()] = [
-                        'id' => "group_" . $item->getKey(),
+                        'id' => 'group_' . $item->getKey(),
                         'text' => $item->getGroup(),
                         'expandable' => true,
                         'leaf' => false,
@@ -880,7 +879,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         }
 
         if ($forObjectEditor) {
-            return $this->adminJson(["fieldcollections" => $definitions, "layoutDefinitions" => $layoutDefinitions]);
+            return $this->adminJson(['fieldcollections' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
         } else {
             return $this->adminJson($definitions);
         }

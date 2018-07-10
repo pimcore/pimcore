@@ -1235,12 +1235,12 @@ class SettingsController extends AdminController
         $items = $list->load();
 
         $groups = [];
-        /** @var  $item Asset\Image\Thumbnail\Config */
+        /** @var $item Asset\Image\Thumbnail\Config */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (!$groups[$item->getGroup()]) {
                     $groups[$item->getGroup()] = [
-                        'id' => "group_" . $item->getName(),
+                        'id' => 'group_' . $item->getName(),
                         'text' =>  $item->getGroup(),
                         'expandable' => true,
                         'leaf' => false,
@@ -1249,7 +1249,7 @@ class SettingsController extends AdminController
                         'group' => $item->getGroup(),
                         'children' => []
                         ];
-                    }
+                }
                 $groups[$item->getGroup()]['children'][] =
                     [
                         'id' => $item->getName(),
@@ -1257,8 +1257,7 @@ class SettingsController extends AdminController
                         'leaf' => true,
                         'iconCls' => 'pimcore_icon_thumbnails'
                     ];
-                }
-            else {
+            } else {
                 $thumbnails[] = [
                     'id' => $item->getName(),
                     'text' => $item->getName(),
@@ -1267,7 +1266,6 @@ class SettingsController extends AdminController
                 ];
             }
         }
-
 
         foreach ($groups as $group) {
             $thumbnails[] = $group;
@@ -1418,12 +1416,12 @@ class SettingsController extends AdminController
         $items = $list->load();
 
         $groups = [];
-        /** @var  $item Asset\Image\Thumbnail\Config */
+        /** @var $item Asset\Image\Thumbnail\Config */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (!$groups[$item->getGroup()]) {
                     $groups[$item->getGroup()] = [
-                        'id' => "group_" . $item->getName(),
+                        'id' => 'group_' . $item->getName(),
                         'text' => $item->getGroup(),
                         'expandable' => true,
                         'leaf' => false,

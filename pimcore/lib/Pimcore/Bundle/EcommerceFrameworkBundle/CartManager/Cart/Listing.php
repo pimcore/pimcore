@@ -35,11 +35,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 
     /**
      * @param string $key The key to check
+     *
      * @return bool
      */
     public function isValidOrderKey($key)
     {
-        return in_array($key, ["userId", "name", "creationDateTimestamp", "modificationDateTimestamp"]);
+        return in_array($key, ['userId', 'name', 'creationDateTimestamp', 'modificationDateTimestamp']);
     }
 
     /**

@@ -92,7 +92,7 @@ class Thumbnail
         $fsPath = $this->getFileSystemPath($deferredAllowed);
         $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
 
-        if($this->getConfig()) {
+        if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 // we still generate the raster image, to get the final size of the thumbnail
                 $path = $this->asset->getFullPath();
@@ -113,11 +113,12 @@ class Thumbnail
 
     /**
      * @param string $filename
+     *
      * @return bool
      */
-    protected function useOriginalFile($filename) {
-
-        if($this->getConfig()) {
+    protected function useOriginalFile($filename)
+    {
+        if ($this->getConfig()) {
             if (!$this->getConfig()->isRasterizeSVG() && preg_match("@\.svgz?$@", $filename)) {
                 return true;
             }

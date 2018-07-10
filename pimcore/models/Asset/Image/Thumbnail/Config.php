@@ -779,6 +779,4 @@ class Config extends Model\AbstractModel
     {
         $this->group = $group;
     }
-
-
 }
