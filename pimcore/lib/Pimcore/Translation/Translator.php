@@ -219,7 +219,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                         $locale . '.extended.json' => 'en.extended.json'
                     ];
 
-                    foreach($jsonFiles as $sourceFile => $fallbackFile) {
+                    foreach ($jsonFiles as $sourceFile => $fallbackFile) {
                         try {
                             $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/' . $sourceFile);
                         } catch (\Exception $e) {
