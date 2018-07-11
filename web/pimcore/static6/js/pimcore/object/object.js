@@ -678,7 +678,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.tab.mask();
 
         var saveData = this.getSaveData(only, omitMandatoryCheck);
-        saveData.layoutId = this.options.layoutId || null;
+        if (this.options !== undefined) {
+            saveData.layoutId = this.options.layoutId || null;
+        }
 
         if (saveData && saveData.data != false && saveData.data != "false") {
 

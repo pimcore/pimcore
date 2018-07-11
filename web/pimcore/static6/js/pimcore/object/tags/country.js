@@ -20,5 +20,6 @@ pimcore.object.tags.country = Class.create(pimcore.object.tags.select, {
         this.data = data;
         this.fieldConfig = fieldConfig;
         this.fieldConfig.width = 300;
+        pimcore.eventDispatcher.registerTarget(null, this);
     }
 });
