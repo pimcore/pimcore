@@ -39,6 +39,14 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.currentElements = [];
         this.initClassData();
 
+        this.groupField = new Ext.form.field.Text(
+            {
+                width: 400,
+                name: "group",
+                fieldLabel: t("group"),
+                value: this.data.group
+            });
+
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
@@ -58,7 +66,8 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                 fieldLabel: t("title"),
                 value: this.data.title
             },
-                , this.getClassDefinitionPanel()
+                this.groupField,
+                this.getClassDefinitionPanel()
             ]
         });
 
@@ -285,6 +294,13 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
     },
 
     save: function () {
+        var reload = false;
+        var newGroup = this.groupField.getValue();
+        if (newGroup != this.data.group) {
+            this.data.group = newGroup;
+            reload = true;
+        }
+
         this.saveCurrentNode();
 
         var m = Ext.encode(this.getData());
@@ -304,17 +320,20 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                     configuration: m,
                     values: n,
                     key: this.data.key,
-                    title: this.data.title
+                    title: this.data.title,
+                    group: this.data.group
                 },
-                success: this.saveOnComplete.bind(this)
+                success: this.saveOnComplete.bind(this, reload)
             });
         }
     },
 
-    saveOnComplete: function (response) {
+    saveOnComplete: function (reload, response) {
         var rdata = Ext.decode(response.responseText);
         if (rdata && rdata.success) {
-            this.parentPanel.tree.getStore().load();
+            if (reload) {
+                this.parentPanel.tree.getStore().load();
+            }
             pimcore.helpers.showNotification(t("success"), t("objectbrick_saved_successfully"), "success");
         } else {
             pimcore.helpers.showNotification(t("save_error"), rdata.message, "error");

@@ -1029,6 +1029,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         try {
             $key = $request->get('key');
             $title = $request->get('title');
+            $group = $request->get('group');
 
             if ($request->get('task') == 'add') {
                 // check for existing brick with same name with different lower/upper cases
@@ -1046,6 +1047,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             $fc = new DataObject\Objectbrick\Definition();
             $fc->setKey($key);
             $fc->setTitle($title);
+            $fc->setGroup($group);
 
             if ($request->get('values')) {
                 $values = $this->decodeJson($request->get('values'));
@@ -1155,16 +1157,111 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
 
-        $items = [];
+        $forObjectEditor = $request->get('forObjectEditor');
 
-        foreach ($list as $fc) {
-            $items[] = [
-                'id' => $fc->getKey(),
-                'text' => $fc->getKey()
-            ];
+        $layoutDefinitions = [];
+        $groups = [];
+
+        if ($request->query->has('class_id') && $request->query->has('field_name')) {
+            $classId = $request->get('class_id');
+            $fieldname = $request->get('field_name');
+            $classDefinition = DataObject\ClassDefinition::getById($classId);
+            $className = $classDefinition->getName();
         }
 
-        return $this->adminJson($items);
+        /** @var $item DataObject\Objectbrick\Definition */
+        foreach ($list as $item) {
+            if ($request->query->has('class_id') && $request->query->has('field_name')) {
+                $keep = false;
+                /** @var $type DataObject\Objectbrick\Definition */
+                $clsDefs = $item->getClassDefinitions();
+                if (!empty($clsDefs)) {
+                    foreach ($clsDefs as $cd) {
+                        if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
+                            $keep = true;
+                            continue;
+                        }
+                    }
+                }
+                if (!$keep) {
+                    continue;
+                }
+            }
+
+            if ($item->getGroup()) {
+                if (!$groups[$item->getGroup()]) {
+                    $groups[$item->getGroup()] = [
+                        'id' => 'group_' . $item->getKey(),
+                        'text' => $item->getGroup(),
+                        'expandable' => true,
+                        'leaf' => false,
+                        'allowChildren' => true,
+                        'iconCls' => 'pimcore_icon_folder',
+                        'group' => $item->getGroup(),
+                        'children' => []
+                    ];
+                }
+                if ($forObjectEditor) {
+                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                }
+                $groups[$item->getGroup()]['children'][] =
+                    [
+                        'id' => $item->getKey(),
+                        'text' => $item->getKey(),
+                        'key' => $item->getKey(),
+                        'leaf' => true,
+                        'iconCls' => 'pimcore_icon_objectbricks'
+                    ];
+            } else {
+                if ($forObjectEditor) {
+                    $layout = $item->getLayoutDefinitions();
+
+                    $currentLayoutId = $request->get('layoutId', null);
+
+                    $user = $this->getAdminUser();
+                    if ($currentLayoutId == -1 && $user->isAdmin()) {
+                        DataObject\Service::createSuperLayout($layout);
+                        $objectData['layout'] = $layout;
+                    }
+
+                    $context = [
+                        'containerType' => 'objectbrick',
+                        'containerKey' => $item->getKey(),
+                        'outerFieldname' => $request->get('field_name')
+                    ];
+
+                    $object = DataObject\AbstractObject::getById($request->get('object_id'));
+
+                    DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
+
+                    $layoutDefinitions[$item->getKey()] = $layout;
+                }
+                $definitions[] = [
+                    'id' => $item->getKey(),
+                    'text' => $item->getKey(),
+                    'key' => $item->getKey(),
+                    'leaf' => true,
+                    'iconCls' => 'pimcore_icon_objectbricks'
+                ];
+            }
+        }
+
+        foreach ($groups as $group) {
+            $definitions[] = $group;
+        }
+
+        $event = new GenericEvent($this, [
+            'list' => $definitions,
+            'objectId'=>$request->get('object_id')
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
+        $definitions = $event->getArgument('list');
+
+        if ($forObjectEditor) {
+            return $this->adminJson(['objectbricks' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
+        } else {
+            return $this->adminJson($definitions);
+        }
     }
 
     /**
