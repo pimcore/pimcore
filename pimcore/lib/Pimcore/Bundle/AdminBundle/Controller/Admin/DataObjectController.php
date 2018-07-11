@@ -400,8 +400,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $objectData['general']['o_locked'] = $object->isLocked();
 
-        ['objectData' => $objectData, 'metaData' => $metaData] = DataObject\Service::getDataForObject($object, $objectFromVersion);
-        $objectData['data'] = $objectData;
+        ['objectData' => $data, 'metaData' => $metaData] = DataObject\Service::getDataForObject($object, $objectFromVersion);
+        $objectData['data'] = $data;
 
         $objectData['metaData'] = $metaData;
 
