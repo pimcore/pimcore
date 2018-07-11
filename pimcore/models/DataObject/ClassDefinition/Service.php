@@ -38,7 +38,6 @@ class Service
     public static function generateClassDefinitionJson($class)
     {
         $data = Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
-        unset($data->id);
         unset($data->name);
         unset($data->creationDate);
         unset($data->modificationDate);
@@ -80,7 +79,7 @@ class Service
      *
      * @return bool
      */
-    public static function importClassDefinitionFromJson($class, $json, $throwException = false)
+    public static function importClassDefinitionFromJson($class, $json, $throwException = false, $ignoreId = false)
     {
         $userId = 0;
         $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -100,6 +99,9 @@ class Service
         }
 
         // set properties of class
+        if ($importData['id'] && !$ignoreId) {
+            $class->setId($importData['id']);
+        }
         $class->setDescription($importData['description']);
         $class->setModificationDate(time());
         $class->setUserModification($userId);

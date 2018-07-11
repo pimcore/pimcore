@@ -464,7 +464,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         $json = file_get_contents($_FILES['Filedata']['tmp_name']);
 
-        $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
+        $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, $json, false, true);
 
         $response = $this->adminJson([
             'success' => $success
