@@ -777,7 +777,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         try {
             var res = Ext.decode(response.responseText);
             if(res.success) {
-                pimcore.helpers.showNotification(t("success"), t("layout_saved_successfully"), "success");
+                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                 this.layoutComboStore.reload();
                 this.data = res.data;
             } else {

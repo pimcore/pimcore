@@ -329,11 +329,11 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                         this.resetChanges();
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error",t(rdata.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
 
                 this.tab.unmask();

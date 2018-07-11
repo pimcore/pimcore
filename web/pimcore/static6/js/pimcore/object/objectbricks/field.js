@@ -334,7 +334,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             if (reload) {
                 this.parentPanel.tree.getStore().load();
             }
-            pimcore.helpers.showNotification(t("success"), t("objectbrick_saved_successfully"), "success");
+            pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
         } else {
             pimcore.helpers.showNotification(t("save_error"), rdata.message, "error");
         }

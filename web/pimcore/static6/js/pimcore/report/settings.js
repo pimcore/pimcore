@@ -143,7 +143,7 @@ pimcore.report.settings = Class.create({
                 try{
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("system_settings_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
                         Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
                             if (buttonValue == "yes") {

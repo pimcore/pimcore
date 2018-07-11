@@ -277,12 +277,12 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 try{
                     var res = Ext.decode(transport.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error",t(res.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this)
         });

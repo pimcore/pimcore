@@ -194,7 +194,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                         pimcore.helpers.openElement(data.id, "object", "object");
                         this.window.close();
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error", data.message);
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error", data.message);
                     }
 
                 }.bind(this)
