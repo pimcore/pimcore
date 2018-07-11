@@ -38,6 +38,29 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
         });
 
         pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), fieldConfig.validUnits);
+        pimcore.eventDispatcher.registerTarget(null, this);
+    },
+
+    postSaveObject: function(obj) {
+        if (obj.id !== this.object.id) {
+            return;
+        }
+
+        var data = this.object.data.data;
+        if (this.context.containerType !== 'localizedfield' && data[this.fieldConfig.name] !== undefined) {
+            this.data = data[this.fieldConfig.name];
+            this.unitField.select(this.data.unit);
+            this.inputField.setValue(this.data.value);
+            return;
+        }
+
+        if (this.context.containerType === 'localizedfield'
+            && data.localizedfields.data[this.context.language][this.fieldConfig.name] !== undefined
+        ) {
+            this.data = data.localizedfields.data[this.context.language][this.fieldConfig.name];
+            this.unitField.select(this.data.unit);
+            this.inputField.setValue(this.data.value);
+        }
     },
 
     setData: function(data) {
