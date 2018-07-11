@@ -323,3 +323,13 @@
 .leaflet-oldie .leaflet-draw-toolbar {
 	border: 1px solid #999;
 }
+
+
+ul.leaflet-draw-actions.leaflet-draw-actions-bottom li:first-child {
+    display: none !important;
+}
+
+
+ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:first-child {
+    display: inline-block !important;
+}
