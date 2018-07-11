@@ -186,6 +186,8 @@ if ($disableMinifyJs) {
 $styles = array(
     "/admin/misc/admin-css",
     "/pimcore/static6/css/icons.css",
+    "/pimcore/static6/css/leaflet/leaflet.css",
+    "/pimcore/static6/css/leaflet/leaflet.draw.css",
     "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
     "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/charts-all" . $debugSuffix . ".css",
     "/pimcore/static6/css/admin.css"
@@ -227,6 +229,8 @@ $scriptLibs = array(
     "lib/ext-plugins/portlet/PortalPanel.js",
 
     "lib/ckeditor/ckeditor.js",
+    "lib/leaflet/leaflet.js",
+    "lib/leaflet/leaflet.draw.js",
 
     // locale
     "lib/ext/classic/locale/locale-" . $language . ".js",

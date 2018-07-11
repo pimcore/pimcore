@@ -20,10 +20,6 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
 
     getLayoutEdit: function () {
 
-        if(!this.isMapsAvailable()) {
-            return this.getErrorLayout();
-        }
-
         this.mapImageID = uniqid();
 
         this.component = new Ext.Panel({
@@ -33,14 +29,14 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             border: true,
             style: "margin-bottom: 10px",
             componentCls: 'object_field object_geo_field',
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"></div>',
+            html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
                 xtype: 'button',
                 text: t('empty'),
                 iconCls: "pimcore_icon_empty",
                 handler: function () {
                     this.data = null;
-                    this.updatePreviewImage();
+                    this.updateMap();
                     this.dirty = true;
                 }.bind(this)
             }, '->', {
@@ -52,66 +48,96 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         });
 
         this.component.on('afterrender', function () {
-            this.updatePreviewImage();
+            this.updateMap();
         }.bind(this));
 
         return this.component;
     },
 
     getMapUrl: function (fieldConfig, data, width, height) {
-
-        // static maps api image url
         var mapZoom = fieldConfig.zoom;
-        var mapUrl;
+        var lat = fieldConfig.lat;
+        var lng = fieldConfig.lng;
+        this.data = null;
+        this.latlngs = [];
+        var Map;
+        var editableLayers = new L.FeatureGroup();
+        var drawControlFull = new L.Control.Draw({
+                 position: 'topright',
+                draw: {
+                    circle: false,
+                    marker: false,
+                    circlemarker: false,
+                    rectangle: false,
+                    polyline: false
+                },
+                edit: {
+                    featureGroup: editableLayers, //REQUIRED!!
+                    remove: true
+                }
+            });
 
-        if (!width) {
-            width = 300;
-        }
-        if(!height) {
-            height = 300;
-        }
-
-        var py = height;
-        var px = width;
+            var drawControlEditOnly = new L.Control.Draw({
+                edit: {
+                    featureGroup: editableLayers
+                },
+                draw: false
+        });
 
         try {
-            if (data) {
+            if(data) {
 
-                var pointConfig = [];
-
-                var bounds = new google.maps.LatLngBounds();
+                document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = "<div id='polygonmap' style='height:400px;width:650px;'></div>";
+                Map = L.map('polygonmap').setView([lat, lng], mapZoom);
+                L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(Map);
 
                 for (var i = 0; i < data.length; i++) {
-                    bounds.extend(new google.maps.LatLng(data[i].latitude, data[i].longitude));
-                    pointConfig.push(data[i].latitude + "," + data[i].longitude);
+                    this.latlngs.push([data[i].latitude,data[i].longitude]);
                 }
 
-                // add startpoint also as endpoint
-                pointConfig.push(data[0].latitude + "," + data[0].longitude);
+                var polygon = L.polygon(this.latlngs, {color: '0x00000073'}).addTo(Map);
+                Map.fitBounds(polygon.getBounds());
 
-                var center = bounds.getCenter();
-                mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
+            } else {
+ 
+                document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = "<div id='polygonmap' style='height:400px;width:650px;'></div>";
+                Map = L.map('polygonmap').setView([lat, lng], mapZoom);
+                L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(Map);
+            }
+            Map.addLayer(editableLayers);
+            Map.addControl(drawControlFull);
+            Map.on(L.Draw.Event.CREATED, function (e) {
+                this.dirty = true;
+                Map.removeLayer(polygon);
+                layer = e.layer;
+                type = e.layerType;
+                editableLayers.addLayer(layer);
+                if (editableLayers.getLayers().length === 1) {
+                    this.data = [];
+                    drawControlFull.remove(Map);
+                    drawControlEditOnly.addTo(Map);
+                    latlngs = layer.getLatLngs();
+                    for (var i=0; i< latlngs[0].length; i++) {
+                            this.data.push({
+                                latitude: latlngs[0][i].lat,
+                                longitude: latlngs[0][i].lng
+                            });
+                        }
+                }
+            }.bind(this));
 
-                var path = 'weight:0|fillcolor:0x00000073|' + pointConfig.join('|');
-                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.lat() + ','
-                    + center.lng() + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
-                    + '&path=' + path + '&maptype=' + fieldConfig.mapType;
-            }
-            else {
-                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
-                    + fieldConfig.lat + ',' + fieldConfig.lng
-                    + '&zoom=' + mapZoom + '&size='
-                    + px + 'x' + py + '&maptype=' + fieldConfig.mapType;
-            }
-
-            if (pimcore.settings.google_maps_api_key) {
-                mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
-            }
+            Map.on("draw:deleted", function(e) {
+                drawControlEditOnly.remove(Map);
+                drawControlFull.addTo(Map);
+            });
         }
         catch (e) {
             console.log(e);
         }
-        return mapUrl;
     },
 
     openPicker: function () {

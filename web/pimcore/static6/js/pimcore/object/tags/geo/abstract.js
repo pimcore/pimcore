@@ -19,31 +19,24 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
 
         // extend google maps to support the getBounds() method
-        if (this.isMapsAvailable() && !google.maps.Polygon.prototype.getBounds) {
-
-            google.maps.Polygon.prototype.getBounds = function(latLng) {
-
-                var bounds = new google.maps.LatLngBounds();
-                var paths = this.getPaths();
-                var path;
-
-                for (var p = 0; p < paths.getLength(); p++) {
-                    path = paths.getAt(p);
-                    for (var i = 0; i < path.getLength(); i++) {
-                        bounds.extend(path.getAt(i));
-                    }
-                }
-
-                return bounds;
-            };
-        }
-    },
-
-    isMapsAvailable: function() {
-        if(typeof google != "undefined" && pimcore.settings.google_maps_api_key) {
-            return true;
-        }
-        return false;
+//        if (this.isMapsAvailable() && !google.maps.Polygon.prototype.getBounds) {
+//
+//            google.maps.Polygon.prototype.getBounds = function(latLng) {
+//
+//                var bounds = new google.maps.LatLngBounds();
+//                var paths = this.getPaths();
+//                var path;
+//
+//                for (var p = 0; p < paths.getLength(); p++) {
+//                    path = paths.getAt(p);
+//                    for (var i = 0; i < path.getLength(); i++) {
+//                        bounds.extend(path.getAt(i));
+//                    }
+//                }
+//
+//                return bounds;
+//            };
+//        }
     },
 
     getErrorLayout: function() {
@@ -71,13 +64,8 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
                 if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += ' grid_value_inherited';
                 }
-
                 if (value) {
-                    var width = 200;
-
-                    var mapUrl = this.getMapUrl(field, value, width, 100);
-
-                    return '<img src="' + mapUrl + '" />';
+                    return ts('preview_not_available');
                 }
             }.bind(this, field.key)
         };
@@ -90,19 +78,17 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    updatePreviewImage: function () {
-        var width = Ext.get('google_maps_container_' + this.mapImageID).getWidth();
+    updateMap: function () {
+      //  var width = Ext.get('google_maps_container_' + this.mapImageID).getWidth();
+//
+//        if (width > 640) {
+//            width = 640;
+//        }
+//        if (width < 10) {
+//            //window.setTimeout(this.updatePreviewImage.bind(this), 1000);
+       // }
+        this.getMapUrl(this.fieldConfig, this.data);
 
-        if (width > 640) {
-            width = 640;
-        }
-        if (width < 10) {
-            window.setTimeout(this.updatePreviewImage.bind(this), 1000);
-        }
-
-        Ext.get('google_maps_container_' + this.mapImageID).dom.innerHTML =
-            '<img align="center" width="' + width + '" height="300" src="' +
-                this.getMapUrl(this.fieldConfig, this.data, width) + '" />';
     },
 
     geocode: function () {

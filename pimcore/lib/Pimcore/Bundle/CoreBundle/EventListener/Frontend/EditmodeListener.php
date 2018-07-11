@@ -294,7 +294,9 @@ class EditmodeListener implements EventSubscriberInterface
             '/pimcore/static6/js/lib/prototype-light.js',
             '/pimcore/static6/js/lib/jquery-3.3.1.min.js',
             '/pimcore/static6/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
-            '/pimcore/static6/js/lib/ckeditor/ckeditor.js'
+            '/pimcore/static6/js/lib/ckeditor/ckeditor.js',
+             '/pimcore/static6/js/lib/leaflet/leaflet.js',
+            '/pimcore/static6/js/lib/leaflet/leaflet.draw.js'
         ];
     }
 
@@ -348,6 +350,7 @@ class EditmodeListener implements EventSubscriberInterface
         return array_merge(
             [
                 '/pimcore/static6/css/icons.css',
+               
                 '/pimcore/static6/css/editmode.css?_dc=' . time()
             ],
             $this->bundleManager->getEditmodeCssPaths()
