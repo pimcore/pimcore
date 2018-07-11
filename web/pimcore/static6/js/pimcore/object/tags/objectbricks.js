@@ -38,33 +38,19 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     loadFieldDefinitions: function () {
-        this.fieldstore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: "/admin/class/objectbrick-list",
-                reader: {
-                    type: 'json',
-                    rootProperty: 'objectbricks',
-                    idProperty: 'key'
-                },
-                extraParams: {
-                    class_id: this.object.data.general.o_classId,
-                    object_id: this.object.id,
-                    field_name: this.getName(),
-                    layoutId: this.object.data.currentLayoutId
-                }
+
+        Ext.Ajax.request({
+            url: "/admin/class/objectbrick-tree",
+            params: {
+                class_id: this.object.data.general.o_classId,
+                object_id: this.object.id,
+                field_name: this.getName(),
+                layoutId: this.object.data.currentLayoutId,
+                forObjectEditor: 1
+
             },
-            autoDestroy: false,
-
-            fields: ['key', {name: "fieldConfigigurations", convert: function (v, rec) {
-                this.layoutDefinitions[rec.data.key] = rec.data.layoutDefinitions;
-            }.bind(this)}],
-            listeners: {
-                load: this.initData.bind(this)
-            }
+            success: this.initData.bind(this)
         });
-
-        this.fieldstore.load();
 
     },
 
@@ -91,9 +77,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    initData: function (store, records, successful, eOpts ) {
+    initData: function (response) {
 
-        this.component.insert(0, this.getControls(null));
+        var bricksData = Ext.decode(response.responseText);
+        this.objectbricks = bricksData.objectbricks;
+        this.layoutDefinitions = bricksData.layoutDefinitions;
+
+        this.component.insert(0, this.getControls());
         if(this.data.length > 0) {
             for (var i=0; i<this.data.length; i++) {
                 if(this.data[i] != null) {
@@ -108,37 +98,61 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         pimcore.layout.refresh();
     },
 
+    buildMenu: function(data, blockElement) {
+        var menu = [];
+
+        if (data) {
+            for(var i=0; i<data.length; i++) {
+
+                var elementData = data[i];
+                if(this.addedTypes[elementData.key]) {
+                    continue;
+                }
+
+                var menuItem = {
+                    text: ts(elementData.text),
+                    iconCls: elementData.iconCls
+                };
+                if (elementData.group) {
+                    var subMenu = this.buildMenu(elementData.children, blockElement);
+                    if (subMenu.length == 0) {
+                        continue;
+                    }
+                    menuItem.menu = subMenu;
+                } else {
+                    menuItem.handler = this.addBlock.bind(this, blockElement, elementData.key, elementData.title);
+                }
+
+                menu.push(menuItem);
+
+
+            }
+        }
+        return menu;
+    },
+
+
     getControls: function (blockElement) {
 
-        var collectionMenu = [];
-
-        this.fieldstore.each(function (blockElement, rec) {
-
-            if(!this.addedTypes[rec.data.key]) {
-                collectionMenu.push({
-                    text: rec.data.title ? ts(rec.data.title) : ts(rec.data.key),
-                    handler: this.addBlock.bind(this,blockElement, rec.data.key, rec.data.title),
-                    iconCls: "pimcore_icon_objectbricks"
-                });
-            }
-
-        }.bind(this, blockElement));
+        var menuData = this.objectbricks;
+        var menu = this.buildMenu(menuData, blockElement);
 
         var items = [];
 
         if(!this.fieldConfig.noteditable) {
 
-            if(collectionMenu.length == 1) {
+            if(menu.length == 1) {
+                var handler = menu[0].menu ? menu[0].menu[0].handler : menu[0].handler;
                 items.push({
                     cls: "pimcore_block_button_plus",
                     iconCls: "pimcore_icon_plus",
-                    handler: collectionMenu[0].handler
+                    handler: handler
                 });
-            } else if (collectionMenu.length > 1) {
+            } else if (menu.length > 1) {
                 items.push({
                     cls: "pimcore_block_button_plus",
                     iconCls: "pimcore_icon_plus",
-                    menu: collectionMenu
+                    menu: menu
                 });
             }
         }

@@ -10,7 +10,11 @@ Languages with a lower progress need to be installed manually.
 
 #### Build 276 (2018-07-06)
 Image Thumbnails: SVGs are no longer automatically rasterized when using only one of the following transformations: Resize, Scale By Width, Scale By Height.
-To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on the relevant thumbnail configuration. 
+To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on the relevant thumbnail configuration.
+
+#### Build 273 (2018-07-06)
+Webservices API: Support for SQL condition parameters has been removed. Use [Query Filters](../../24_Web_Services/01_Query_Filters.md) instead.
+If you still want to support such conditions, implement your own event listener as described on the same page in the `Legacy Mode`section.. 
 
 #### Build 270 (2018-06-29)
 Data Object Class ID's can now be manually specified (alphanumeric) and are therefore no longer auto-generated (numeric/auto-increment). 

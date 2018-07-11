@@ -1313,7 +1313,7 @@ pimcore.settings.system = Class.create({
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("system_settings_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
                         Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
                             if (buttonValue == "yes") {
@@ -1321,11 +1321,11 @@ pimcore.settings.system = Class.create({
                             }
                         }.bind(this));
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error", t(res.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }
         });

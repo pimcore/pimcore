@@ -344,11 +344,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                         pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
                     }
                     else {
-                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_asset"),
+                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
                             rdata.message, rdata.stack, rdata.code);
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_asset"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
                 // reload versions
                 if (this.isAllowed("versions")) {

@@ -296,7 +296,7 @@ pimcore.settings.thumbnail.item = Class.create({
             });
         }
 
-        pimcore.helpers.showNotification(t("success"), t("thumbnail_saved_successfully"), "success");
+        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
     },
 
     getCurrentIndex: function () {

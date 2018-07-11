@@ -51,9 +51,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                     type: 'ajax',
                     url: '/admin/class/objectbrick-tree',
                     reader: {
-                        type: 'json',
-                        totalProperty : 'total',
-                        rootProperty: 'nodes'
+                        type: 'json'
 
                     },
                     extraParams: {
@@ -98,17 +96,15 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //newChildNode.data.expanded = true;
-                newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_objectbricks";
-            }
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
         };
         return treeNodeListeners;
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
+        if (!record.isLeaf()) {
+            return;
+        }
         this.openBrick(record.data.id);
     },
 

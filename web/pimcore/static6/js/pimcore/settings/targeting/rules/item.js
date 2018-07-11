@@ -309,7 +309,7 @@ pimcore.settings.targeting.rules.item = Class.create({
             },
             success: function () {
                 this.parent.getTree().getStore().load();
-                pimcore.helpers.showNotification(t("success"), t("item_saved_successfully"), "success");
+                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
             }.bind(this)
         });
     },

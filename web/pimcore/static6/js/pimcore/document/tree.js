@@ -1160,12 +1160,12 @@ pimcore.document.tree = Class.create({
 
         if(type == "page") {
 
-            textKeyTitle = "add_document";
-            textKeyMessage = "please_enter_the_name_of_the_new_document";
+            textKeyTitle = t("add_document");
+            textKeyMessage = t("please_enter_the_name_of_the_new_document");
 
             //create a custom form
             var pageForm = new Ext.form.FormPanel({
-                title: t(textKeyMessage),
+                title: textKeyMessage,
                 border: false,
                 bodyStyle: "padding: 10px;",
                 items: [{
@@ -1216,7 +1216,7 @@ pimcore.document.tree = Class.create({
             var messageBox = new Ext.Window({
                 modal: true,
                 width: 400,
-                title: t(textKeyTitle),
+                title: textKeyTitle,
                 items: pageForm,
                 buttons: [{
                     text: t('OK'),
@@ -1240,14 +1240,14 @@ pimcore.document.tree = Class.create({
         } else {
 
             if (type == "folder") {
-                textKeyTitle = "add_folder";
-                textKeyMessage = "please_enter_the_name_of_the_new_folder";
+                textKeyTitle = t("add_folder");
+                textKeyMessage = t("please_enter_the_name_of_the_new_folder");
             } else {
-                textKeyTitle = "add_document";
-                textKeyMessage = "please_enter_the_name_of_the_new_document";
+                textKeyTitle = t("add_document");
+                textKeyMessage = t("please_enter_the_name_of_the_new_document");
             }
 
-            Ext.MessageBox.prompt(t(textKeyTitle), t(textKeyMessage), function (tree, record, type, docTypeId, button, value, object) {
+            Ext.MessageBox.prompt(textKeyTitle, textKeyMessage, function (tree, record, type, docTypeId, button, value, object) {
                 if (button == "ok") {
 
                     this.addDocumentCreate(

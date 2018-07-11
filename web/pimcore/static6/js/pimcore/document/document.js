@@ -113,11 +113,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             pimcore.plugin.broker.fireEvent("postSaveDocument", this, this.getType(), task, only);
                         }
                         else {
-                            pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_document"),
+                            pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
                                 rdata.message, rdata.stack, rdata.code);
                         }
                     } catch (e) {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error");
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                     }
 
 
