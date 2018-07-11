@@ -404,13 +404,17 @@ class Pimcore
     {
         // special request log -> if parameter pimcore_log is set
         if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode(DebugMode::MAGIC_PARAMS)) {
-            if (empty($_REQUEST['pimcore_log'])) {
-                $requestLogName = date('Y-m-d_H-i-s');
-            } else {
-                $requestLogName = $_REQUEST['pimcore_log'];
+            $requestLogName = date('Y-m-d_H-i-s');
+            if (!empty($_REQUEST['pimcore_log'])) {
+                // slashed are not allowed, replace them with hyphens
+                $requestLogName = str_replace('/', '-', $_REQUEST['pimcore_log']);
             }
 
-            $requestLogFile = PIMCORE_LOG_DIRECTORY . '/request-' . $requestLogName . '.log';
+            $requestLogFile = resolvePath(PIMCORE_LOG_DIRECTORY . '/request-' . $requestLogName . '.log');
+            if (strpos($requestLogFile, PIMCORE_LOG_DIRECTORY) !== 0) {
+                throw new \Exception('Not allowed');
+            }
+
             if (!file_exists($requestLogFile)) {
                 File::put($requestLogFile, '');
             }

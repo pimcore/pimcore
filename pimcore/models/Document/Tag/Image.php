@@ -181,6 +181,28 @@ class Image extends Model\Document\Tag
     }
 
     /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        $options = parent::getOptions();
+        if (isset($options['thumbnail']) && !isset($options['focal_point_context_menu_item'])) {
+            $thumbConfig = Asset\Image\Thumbnail\Config::getByAutoDetect($options['thumbnail']);
+            if ($thumbConfig) {
+                foreach ($thumbConfig->getItems() as $item) {
+                    if ($item['method'] == 'cover') {
+                        $options['focal_point_context_menu_item'] = true;
+                        $this->options['focal_point_context_menu_item'] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $options;
+    }
+
+    /**
      * @see TagInterface::frontend
      *
      * @return string

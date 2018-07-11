@@ -94,8 +94,8 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         this.dataview = new Ext.Panel({
             layout:'fit',
             bodyCls: "asset_folder_preview",
-            title: t("content"),
-            iconCls: "pimcore_icon_asset",
+            title: t("preview"),
+            iconCls: "pimcore_icon_preview",
             items: new Ext.DataView({
                 store: this.store,
                 autoScroll: true,
@@ -237,15 +237,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 tooltip: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 scale: "medium",
-                handler: function () {
-                    var options = {
-                        elementType: "asset",
-                        elementSubType: this.getType(),
-                        id: this.id,
-                        default: this.data.filename
-                    }
-                    pimcore.elementservice.editElementKey(options);
-                }.bind(this)
+                handler: this.rename.bind(this)
             });
 
             buttons.push("-");
@@ -261,7 +253,9 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 tooltip: t("download_as_zip"),
                 iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
                 scale: "medium",
-                handler: this.downloadZip.bind(this)
+                handler: function () {
+                    pimcore.elementservice.downloadAssetFolderAsZip(this.id)
+                }.bind(this)
             });
 
             buttons.push({
@@ -293,7 +287,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.id,
+                text: t("id") + " " + this.data.id,
                 scale: "medium"
             });
 
@@ -308,61 +302,6 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         }
 
         return this.toolbar;
-    },
-
-    downloadZip: function () {
-        //pimcore.helpers.download('/admin/asset/download-as-zip?id='+ this.id);
-
-        Ext.Ajax.request({
-            url: "/admin/asset/download-as-zip-jobs",
-            params: {id: this.id},
-            success: function(response) {
-                var res = Ext.decode(response.responseText);
-
-                this.downloadProgressBar = new Ext.ProgressBar({
-                    text: t('initializing')
-                });
-
-                this.downloadProgressWin = new Ext.Window({
-                    title: t("download_as_zip"),
-                    layout:'fit',
-                    width:500,
-                    bodyStyle: "padding: 10px;",
-                    closable:false,
-                    plain: true,
-                    modal: true,
-                    items: [this.downloadProgressBar]
-                });
-
-                this.downloadProgressWin.show();
-
-
-                var pj = new pimcore.tool.paralleljobs({
-                    success: function (jobId) {
-                        if(this.downloadProgressWin) {
-                            this.downloadProgressWin.close();
-                        }
-
-                        this.downloadProgressBar = null;
-                        this.downloadProgressWin = null;
-
-                        pimcore.helpers.download('/admin/asset/download-as-zip?jobId='+ jobId + "&id=" + this.id);
-                    }.bind(this, res.jobId),
-                    update: function (currentStep, steps, percent) {
-                        if(this.downloadProgressBar) {
-                            var status = currentStep / steps;
-                            this.downloadProgressBar.updateProgress(status, percent + "%");
-                        }
-                    }.bind(this),
-                    failure: function (message) {
-                        this.downloadProgressWin.close();
-                        pimcore.helpers.showNotification(t("error"), t("error"),
-                            "error", t(message));
-                    }.bind(this),
-                    jobs: res.jobs
-                });
-            }.bind(this)
-        });
     },
 
     showMetaInfo: function() {
@@ -400,6 +339,18 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 value: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
             }
         ], "folder");
+    },
+
+    rename: function () {
+        if (this.isAllowed("rename") && !this.data.locked && this.data.id != 1) {
+            var options = {
+                elementType: "asset",
+                elementSubType: this.getType(),
+                id: this.id,
+                default: this.data.filename
+            }
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 });
 

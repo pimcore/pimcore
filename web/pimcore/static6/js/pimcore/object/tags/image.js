@@ -62,33 +62,42 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             height: this.fieldConfig.height,
             border: true,
             style: "padding-bottom: 10px",
-            tbar: [{
-                xtype: "tbspacer",
-                width: 20,
-                height: 16,
-                cls: "pimcore_icon_droptarget"
+            tbar: {
+                overflowHandler: 'menu',
+                items:
+                    [{
+                        xtype: "tbspacer",
+                        width: 20,
+                        height: 16,
+                        cls: "pimcore_icon_droptarget"
+
+                    },
+                        {
+                            xtype: "tbtext",
+                            text: "<b>" + this.fieldConfig.title + "</b>"
+                        }, "->", {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_upload",
+                        overflowText: t("upload"),
+                        cls: "pimcore_inline_upload",
+                        handler: this.uploadDialog.bind(this)
+                    }, {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_open",
+                        overflowText: t("open"),
+                        handler: this.openImage.bind(this)
+                    }, {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_delete",
+                        overflowText: t("delete"),
+                        handler: this.empty.bind(this)
+                    }, {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        overflowText: t("search"),
+                        handler: this.openSearchEditor.bind(this)
+                    }]
             },
-                {
-                    xtype: "tbtext",
-                    text: "<b>" + this.fieldConfig.title + "</b>"
-                }, "->", {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_upload",
-                    cls: "pimcore_inline_upload",
-                    handler: this.uploadDialog.bind(this)
-                }, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_open",
-                    handler: this.openImage.bind(this)
-                }, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                }, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                }],
             componentCls: "object_field",
             bodyCls: "pimcore_droptarget_image pimcore_image_container"
         };

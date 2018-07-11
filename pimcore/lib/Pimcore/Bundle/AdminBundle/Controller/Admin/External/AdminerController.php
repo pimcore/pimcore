@@ -17,11 +17,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
     use Pimcore\Bundle\AdminBundle\Controller\AdminController;
     use Pimcore\Controller\EventedControllerInterface;
     use Pimcore\Tool\Session;
+    use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
     use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-    use Symfony\Component\Routing\Annotation\Route;
 
     class AdminerController extends AdminController implements EventedControllerInterface
     {
@@ -33,12 +33,16 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         /**
          * @Route("/external_adminer/adminer")
          *
+         * @param Request $request
+         *
          * @return Response
          */
-        public function adminerAction()
+        public function adminerAction(Request $request)
         {
             $conf = \Pimcore\Config::getSystemConfig()->database->params;
-            if (empty($_SERVER['QUERY_STRING'])) {
+            $request->query->remove('csrfToken');
+
+            if (!$request->query->count()) {
                 return $this->redirect('/admin/external_adminer/adminer?username=' . $conf->username . '&db=' . $conf->dbname);
             }
 

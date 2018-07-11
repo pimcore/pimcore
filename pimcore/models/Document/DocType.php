@@ -39,6 +39,13 @@ class DocType extends Model\AbstractModel
     public $name;
 
     /**
+     * Group of document-types
+     *
+     * @var string
+     */
+    public $group;
+
+    /**
      * @var string
      */
     public $module;
@@ -160,6 +167,14 @@ class DocType extends Model\AbstractModel
     /**
      * @return string
      */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * @return string
+     */
     public function getTemplate()
     {
         return $this->template;
@@ -209,6 +224,18 @@ class DocType extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @param string $group
+     *
+     * @return $this
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
 
         return $this;
     }

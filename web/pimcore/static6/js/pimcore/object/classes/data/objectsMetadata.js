@@ -117,7 +117,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             triggerAction: 'all',
             width: 600,
             store: pimcore.globalmanager.get("object_types_store"),
-            valueField: 'id',
+            valueField: 'text',
             editable: true,
             displayField: 'text',
             fieldLabel: t('objectsMetadata_allowed_class'),
@@ -128,7 +128,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 change: function(field, classNamevalue, oldValue) {
                     this.datax.allowedClassId = classNamevalue;
                     if (this.datax.allowedClassId != null) {
-                        this.fieldStore.load({params:{id:this.datax.allowedClassId}});
+                        this.fieldStore.load({params:{name:this.datax.allowedClassId}});
                     }
                 }.bind(this)
             }
@@ -144,7 +144,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 extraParams: {
                     no_brick_columns: "true",
                     gridtype: 'all',
-                    id: this.datax.allowedClassId
+                    name: this.datax.allowedClassId
                 },
                 reader: {
                     type: 'json',

@@ -17,6 +17,11 @@ pimcore.document.pages.preview = Class.create({
     initialize: function(page) {
         this.page = page;
         this.mode = "full";
+        this.previewTime = new Date();
+        this.previewTime.setHours(0);
+        this.previewTime.setMinutes(0);
+        this.previewTime.setSeconds(0);
+        this.previewTime.setMilliseconds(0);
 
         this.availableHeight = null;
     },
@@ -99,14 +104,55 @@ pimcore.document.pages.preview = Class.create({
                     'name="' + this.iframeName + '"></iframe>'
             });
 
+            this.timeSlider = Ext.create('Ext.slider.Single', {
+                region: 'center',
+                width: '100%',
+                cls: 'pimcore_document_preview_timeslider',
+                tipText: function(thumb){
+                    var date = new Date(thumb.value * 1000);
+                    return Ext.Date.format(date, 'H:i');
+                },
+                listeners: {
+                    change: function(field, newValue, oldValue) {
+                        this.previewTime = new Date(newValue * 1000);
+                        this.loadCurrentPreview();
+                    }.bind(this)
+                }
+            });
+
+            this.timeSelectPanel = new Ext.Panel({
+                border: false,
+                region: "south",
+                layout: 'border',
+                hidden: true,
+                scrollable: false,
+                collapsible: false,
+                height: 33,
+                items: [
+                    Ext.create('Ext.form.DateField', {
+                        region: 'west',
+                        cls: "pimcore_block_field_date",
+                        value: this.previewTime,
+                        listeners: {
+                            'change': function (field, newValue, oldValue) {
+                                this.updateTimeSlider(newValue);
+                            }.bind(this)
+                        }
+                    }),
+                    this.timeSlider
+                ]
+            });
+            this.updateTimeSlider(this.previewTime);
+
             this.layout = new Ext.Panel({
                 title: t("preview"),
                 border: false,
                 layout: "border",
                 tbar: tbar,
+                height: 200,
                 iconCls: "pimcore_icon_preview",
                 bodyCls: "pimcore_preview_body",
-                items: [this.framePanel]
+                items: [this.framePanel, this.timeSelectPanel]
             });
 
             this.layout.on("activate", function () {
@@ -167,7 +213,9 @@ pimcore.document.pages.preview = Class.create({
             left: left + "px"
         });
 
-        this.loadCurrentPreview(mode["device"]);
+        this.mode = mode["device"];
+
+        this.loadCurrentPreview();
     },
 
     onLayoutResize: function (el, width, height, rWidth, rHeight) {
@@ -207,12 +255,26 @@ pimcore.document.pages.preview = Class.create({
         return Ext.get(this.getIframeDocument().getElementsByTagName("body")[0]);
     },
 
+    showTimeSlider: function() {
+        this.timeSelectPanel.show();
+    },
 
-    loadCurrentPreview: function (device) {
+    updateTimeSlider: function(date) {
+        var startDate = date.getTime() / 1000;
+
+        this.timeSlider.setMinValue(startDate);
+        this.timeSlider.setMaxValue(startDate + 86399);
+        this.timeSlider.setValue(startDate);
+    },
+
+    loadCurrentPreview: function () {
+
+        var device = this.mode;
+
         var date = new Date();
         var path;
 
-        path = this.page.data.path + this.page.data.key + "?pimcore_preview=true&time=" + date.getTime() + "&forceDeviceType=" + device;
+        path = this.page.data.path + this.page.data.key + "?pimcore_preview=true&time=" + date.getTime() + "&forceDeviceType=" + device + "&pimcore_override_output_timestamp=" + (this.previewTime.getTime() / 1000);
 
         // add target group parameter if available
         if(this.page["edit"] && this.page.edit["targetGroup"]) {

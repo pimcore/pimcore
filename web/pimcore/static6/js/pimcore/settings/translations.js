@@ -162,9 +162,17 @@ pimcore.settings.translations = Class.create({
             clicksToEdit: 1,
             listeners: {
                 beforeedit: function(editor, context, eOpts) {
-                    //need to clear cached editors of cell-editing editor in order to
-                    //enable different editors per row
-                    editor.editors.each(Ext.destroy, Ext);
+                    editor.editors.each(function (e) {
+                        try {
+                            // complete edit, so the value is stored when hopping around with TAB
+                            e.completeEdit();
+                            Ext.destroy(e);
+                        } catch (exception) {
+                            // garbage collector was faster
+                            // already destroyed
+                        }
+                    });
+
                     editor.editors.clear();
                 }
             }
@@ -252,11 +260,12 @@ pimcore.settings.translations = Class.create({
                     var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
                     if (htmlRegex.test(data)) {
                         record.set("editor", "html");
-                    } else if (data.match(/\n/gm))  {
+                    } else if (data && data.match(/\n/gm))  {
                         record.set("editor", "plain");
                     } else {
                         record.set("editor", null);
                     }
+                    return true;
 
                 }.bind(this)
             }
@@ -369,6 +378,7 @@ pimcore.settings.translations = Class.create({
     cleanup: function () {
         Ext.Ajax.request({
             url: this.cleanupUrl,
+            method: 'DELETE',
             success: function (response) {
                 this.store.reload();
             }.bind(this)

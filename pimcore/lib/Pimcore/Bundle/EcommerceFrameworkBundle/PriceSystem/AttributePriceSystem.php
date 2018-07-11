@@ -136,7 +136,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
 
                 return Decimal::create($sum);
             } else {
-                return Decimal::create($product->$getter());
+                return Decimal::create((float) $product->$getter());
             }
         }
 

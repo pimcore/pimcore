@@ -56,10 +56,11 @@ pimcore.settings.fileexplorer.file = Class.create({
                 this.editor = new Ext.Panel({
                     closable: true,
                     layout: "fit",
-                    bbar: Ext.create('Ext.Toolbar', {
-                        cls: 'main-toolbar',
-                        items: toolbarItems
-                    }),
+                    bbar: toolbarItems,
+                    tbar: [{
+                        xtype: "tbtext",
+                        text: response.path
+                    }],
                     bodyStyle: "position:relative;"
                 });
 
@@ -69,7 +70,7 @@ pimcore.settings.fileexplorer.file = Class.create({
 
             }
             this.editor.removeAll();
-            this.editor.setTitle(response.path);
+            this.editor.setTitle(response.filename);
             this.editor.add(this.textarea);
 
             if (isNew) {
@@ -83,7 +84,7 @@ pimcore.settings.fileexplorer.file = Class.create({
     saveFile: function () {
         var content = this.textarea.getValue();
         Ext.Ajax.request({
-            method: "post",
+            method: "put",
             url: "/admin/misc/fileexplorer-content-save",
             params: {
                 path: this.responsePath,

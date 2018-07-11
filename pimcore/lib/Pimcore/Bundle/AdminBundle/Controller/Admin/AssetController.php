@@ -23,6 +23,8 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -33,7 +35,6 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/asset")
@@ -47,6 +48,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -88,6 +90,29 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         }
 
+        if ($asset instanceof Asset\Video) {
+            $videoInfo = [];
+
+            if (\Pimcore\Video::isAvailable()) {
+                $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+                $thumbnail = $asset->getThumbnail($config, ['mp4']);
+                if ($thumbnail) {
+                    if ($thumbnail['status'] == 'finished') {
+                        $videoInfo['previewUrl'] = $thumbnail['formats']['mp4'];
+                        $videoInfo['width'] = $asset->getWidth();
+                        $videoInfo['height'] = $asset->getHeight();
+
+                        $metaData = $asset->getSphericalMetaData();
+                        if (isset($metaData['ProjectionType']) && strtolower($metaData['ProjectionType']) == 'equirectangular') {
+                            $videoInfo['isVrVideo'] = true;
+                        }
+                    }
+                }
+            }
+
+            $asset->videoInfo = $videoInfo;
+        }
+
         if ($asset instanceof Asset\Image) {
             $imageInfo = [];
 
@@ -100,6 +125,23 @@ class AssetController extends ElementControllerBase implements EventedController
             $exifData = $asset->getEXIFData();
             if (!empty($exifData)) {
                 $imageInfo['exif'] = $exifData;
+            }
+
+            $xmpData = $asset->getXMPData();
+            if (!empty($xmpData)) {
+                // flatten to a one-dimensional array
+                array_walk($xmpData, function (&$value) {
+                    if (is_array($value)) {
+                        $value = implode_recursive($value, ' | ');
+                    }
+                });
+                $imageInfo['xmp'] = $xmpData;
+            }
+
+            // check for VR meta-data
+            $mergedMetaData = array_merge($exifData, $xmpData);
+            if (isset($mergedMetaData['ProjectionType']) && $mergedMetaData['ProjectionType'] == 'equirectangular') {
+                $imageInfo['isVrImage'] = true;
             }
 
             $iptcData = $asset->getIPTCData();
@@ -140,6 +182,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/tree-get-childs-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -200,6 +243,13 @@ class AssetController extends ElementControllerBase implements EventedController
             }
         }
 
+        //Hook for modifying return value - e.g. for changing permissions based on asset data
+        $event = new GenericEvent($this, [
+            'assets' => $assets,
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $assets = $event->getArgument('assets');
+
         if ($allParams['limit']) {
             return $this->adminJson([
                 'offset' => $offset,
@@ -214,6 +264,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/add-asset")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -228,6 +279,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/add-asset-compatibility")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -377,6 +429,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/replace-asset")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -435,6 +488,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/add-folder")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -465,6 +519,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -510,6 +565,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/delete-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -542,6 +598,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($asset instanceof Asset) {
                 $recycleJobs[] = [[
                     'url' => '/admin/recyclebin/add',
+                    'method' => 'POST',
                     'params' => [
                         'type' => 'asset',
                         'id' => $asset->getId()
@@ -566,6 +623,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                             $deleteJobs[] = [[
                                 'url' => '/admin/asset/delete',
+                                'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
                                     'amount' => $deleteObjectsPerRequest,
@@ -580,6 +638,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 // the asset itself is the last one
                 $deleteJobs[] = [[
                     'url' => '/admin/asset/delete',
+                    'method' => 'DELETE',
                     'params' => [
                         'id' => $asset->getId()
                     ]
@@ -618,7 +677,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $tmpAsset = [
             'id' => $asset->getId(),
-            'text' => $asset->getFilename(),
+            'text' => htmlspecialchars($asset->getFilename()),
             'type' => $asset->getType(),
             'path' => $asset->getRealFullPath(),
             'basePath' => $asset->getRealPath(),
@@ -678,6 +737,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($asset->getType() == 'image') {
             try {
                 $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
 
                 // this is for backward-compatibility, to calculate the dimensions if they are not there
                 if (!$asset->getCustomSetting('imageDimensionsCalculated')) {
@@ -696,6 +756,7 @@ class AssetController extends ElementControllerBase implements EventedController
             try {
                 if (\Pimcore\Video::isAvailable()) {
                     $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                    $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -705,6 +766,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 // add the PDF check here, otherwise the preview layer in admin is shown without content
                 if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
                     $tmpAsset['thumbnail'] = $this->getThumbnailUrl($asset);
+                    $tmpAsset['thumbnailHdpi'] = $this->getThumbnailUrl($asset, true);
                 }
             } catch (\Exception $e) {
                 Logger::debug('Cannot get dimensions of video, seems to be broken.');
@@ -724,17 +786,23 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @param Asset $asset
+     * @param bool $hdpi
      *
      * @return null|string
      */
-    protected function getThumbnailUrl(Asset $asset)
+    protected function getThumbnailUrl(Asset $asset, $hdpi = false)
     {
+        $suffix = '';
+        if ($hdpi) {
+            $suffix .= '&hdpi=true';
+        }
+
         if ($asset instanceof Asset\Image) {
-            return '/admin/asset/get-image-thumbnail?id=' . $asset->getId() . '&treepreview=true';
+            return '/admin/asset/get-image-thumbnail?id=' . $asset->getId() . '&treepreview=true' . $suffix;
         } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
-            return '/admin/asset/get-video-thumbnail?id=' . $asset->getId() . '&treepreview=true';
+            return '/admin/asset/get-video-thumbnail?id=' . $asset->getId() . '&treepreview=true'. $suffix;
         } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
-            return '/admin/asset/get-document-thumbnail?id=' . $asset->getId() . '&treepreview=true';
+            return '/admin/asset/get-document-thumbnail?id=' . $asset->getId() . '&treepreview=true' . $suffix;
         }
 
         return null;
@@ -742,6 +810,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -860,6 +929,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/save")
+     * @Method({"PUT","POST"})
      *
      * @param Request $request
      *
@@ -930,6 +1000,21 @@ class AssetController extends ElementControllerBase implements EventedController
                         $asset->setData($request->get('data'));
                     }
 
+                    // image specific data
+                    if ($asset instanceof Asset\Image) {
+                        if ($request->get('image')) {
+                            $imageData = $this->decodeJson($request->get('image'));
+                            if (isset($imageData['focalPoint'])) {
+                                $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
+                                $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
+                            }
+                        } else {
+                            // wipe all data
+                            $asset->removeCustomSetting('focalPointX');
+                            $asset->removeCustomSetting('focalPointY');
+                        }
+                    }
+
                     $asset->setUserModification($this->getAdminUser()->getId());
 
                     try {
@@ -962,6 +1047,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/publish-version")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -989,6 +1075,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/show-version")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1015,6 +1102,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1035,6 +1123,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-image-thumbnail")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1139,6 +1228,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-image-thumbnail")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1177,7 +1267,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         if ($request->get('cropPercent')) {
@@ -1213,6 +1303,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-video-thumbnail")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1233,7 +1324,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $thumbnail = array_merge($request->request->all(), $request->query->all());
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         $time = null;
@@ -1271,6 +1362,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-document-thumbnail")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1292,7 +1384,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         $page = 1;
@@ -1329,6 +1421,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-preview-document")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1348,6 +1441,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-preview-video")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1393,6 +1487,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/image-editor")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @TemplatePhp()
@@ -1412,6 +1507,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/image-editor-save")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1437,6 +1533,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-folder-content-preview")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1520,7 +1617,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'id' => $asset->getId(),
                         'type' => $asset->getType(),
                         'filename' => $asset->getFilename(),
-                        'filenameDisplay' => $filenameDisplay,
+                        'filenameDisplay' => htmlspecialchars($filenameDisplay),
                         'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true',
                         'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
                     ];
@@ -1544,6 +1641,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/copy-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1564,6 +1662,7 @@ class AssetController extends ElementControllerBase implements EventedController
             // first of all the new parent
             $pasteJobs[] = [[
                 'url' => '/admin/asset/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -1585,6 +1684,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
                             'url' => '/admin/asset/copy',
+                            'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
                                 'targetParentId' => $request->get('targetId'),
@@ -1600,6 +1700,7 @@ class AssetController extends ElementControllerBase implements EventedController
             // the object itself is the last one
             $pasteJobs[] = [[
                 'url' => '/admin/asset/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -1616,6 +1717,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/copy")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1681,6 +1783,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-as-zip-jobs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1701,6 +1804,17 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $db = \Pimcore\Db::get();
             $conditionFilters = [];
+            $selectedIds = explode(',', $request->get('selectedIds', ''));
+            $quotedSelectedIds = [];
+            foreach ($selectedIds as $selectedId) {
+                if ($selectedId) {
+                    $quotedSelectedIds[] = $db->quote($selectedId);
+                }
+            }
+            if (!empty($quotedSelectedIds)) {
+                //add a condition if id numbers are specified
+                $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
+            }
             $conditionFilters[] .= 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
@@ -1722,8 +1836,10 @@ class AssetController extends ElementControllerBase implements EventedController
             for ($i = 0; $i < ceil($assetList->getTotalCount() / $filesPerJob); $i++) {
                 $jobs[] = [[
                     'url' => '/admin/asset/download-as-zip-add-files',
+                    'method' => 'GET',
                     'params' => [
                         'id' => $asset->getId(),
+                        'selectedIds' => implode(',', $selectedIds),
                         'offset' => $i * $filesPerJob,
                         'limit' => $filesPerJob,
                         'jobId' => $jobId
@@ -1741,6 +1857,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-as-zip-add-files")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1768,6 +1885,14 @@ class AssetController extends ElementControllerBase implements EventedController
 
                 $db = \Pimcore\Db::get();
                 $conditionFilters = [];
+
+                $selectedIds = $request->get('selectedIds', []);
+
+                if (!empty($selectedIds)) {
+                    $selectedIds = explode(',', $selectedIds);
+                    //add a condition if id numbers are specified
+                    $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
+                }
                 $conditionFilters[] .= "type != 'folder' AND path LIKE " . $db->quote($parentPath . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
@@ -1808,6 +1933,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/download-as-zip")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1834,6 +1960,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-zip")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1860,6 +1987,7 @@ class AssetController extends ElementControllerBase implements EventedController
             for ($i = 0; $i < $jobAmount; $i++) {
                 $jobs[] = [[
                     'url' => '/admin/asset/import-zip-files',
+                    'method' => 'POST',
                     'params' => [
                         'parentId' => $asset->getId(),
                         'offset' => $i * $filesPerJob,
@@ -1886,6 +2014,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-zip-files")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1955,6 +2084,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-server")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1981,6 +2111,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if (count($jobFiles) >= $filesPerJob || $i >= ($count - 1)) {
                     $jobs[] = [[
                         'url' => '/admin/asset/import-server-files',
+                        'method' => 'POST',
                         'params' => [
                             'parentId' => $request->get('parentId'),
                             'serverPath' => $importDirectory,
@@ -2000,6 +2131,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-server-files")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2042,6 +2174,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/import-url")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2085,6 +2218,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/clear-thumbnail")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2112,6 +2246,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/grid-proxy")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -2129,9 +2264,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
         if ($allParams['data']) {
-            if ($allParams['xaction'] == 'update') {
-                //TODO probably not needed
-            }
+            //TODO probably not needed
         } else {
             $db = \Pimcore\Db::get();
             // get list of objects
@@ -2281,6 +2414,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-text")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

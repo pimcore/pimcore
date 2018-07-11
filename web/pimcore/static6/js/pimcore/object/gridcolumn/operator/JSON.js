@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn
     type: "operator",
     class: "JSON",
     iconCls: "pimcore_icon_operator_json",
-    defaultText: "operator_json",
+    defaultText: "JSON",
     group: "other",
 
     getConfigTreeNode: function (configAttributes) {
@@ -47,7 +47,7 @@ pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -122,7 +122,7 @@ pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_json_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -143,7 +143,7 @@ pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
         if (configAttributes.mode == "d" || configAttributes.mode == "e") {
             var mode = configAttributes.mode == "d" ? t("decode") : t("encode");
 

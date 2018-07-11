@@ -30,7 +30,7 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (options,
         var res = Ext.decode(response.responseText);
         var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.elementKey) {
-            message += "<br /><b style='display: block; text-align: center; padding: 10px 0;'>\"" + res.elementKey + "\"</b>";
+            message += "<br /><b style='display: block; text-align: center; padding: 10px 0;'>\"" + htmlspecialchars(res.elementKey) + "\"</b>";
         }
         if (res.hasDependencies) {
             message += "<br />" + t('delete_message_dependencies');
@@ -179,7 +179,7 @@ pimcore.elementservice.updateAsset = function (id, data, callback) {
 
     Ext.Ajax.request({
         url: "/admin/asset/update",
-        method: "post",
+        method: "PUT",
         params: data,
         success: callback
     });
@@ -196,7 +196,7 @@ pimcore.elementservice.updateDocument = function (id, data, callback) {
 
     Ext.Ajax.request({
         url: "/admin/document/update",
-        method: "post",
+        method: "PUT",
         params: data,
         success: callback
     });
@@ -211,7 +211,7 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
 
     Ext.Ajax.request({
         url: "/admin/object/update",
-        method: "post",
+        method: "PUT",
         params: {
             id: id,
             values: Ext.encode(values)
@@ -565,6 +565,7 @@ pimcore.elementservice.addObject = function(options) {
 
     Ext.Ajax.request({
         url: url,
+        method: 'POST',
         params: options,
         success: pimcore.elementservice.addObjectComplete.bind(this, options)
     });
@@ -578,6 +579,7 @@ pimcore.elementservice.addDocument = function(options) {
 
     Ext.Ajax.request({
         url: url,
+        method: 'POST',
         params: options,
         success: pimcore.elementservice.addDocumentComplete.bind(this, options)
     });
@@ -687,6 +689,7 @@ pimcore.elementservice.unlockElement = function(options) {
     try {
         Ext.Ajax.request({
             url: "/admin/element/unlock-propagate",
+            method: 'PUT',
             params: {
                 id: options.id,
                 type: options.elementType
@@ -765,7 +768,9 @@ pimcore.elementservice.reloadVersions = function(options) {
 };
 
 pimcore.elementservice.showLocateInTreeButton = function(elementType) {
-    if (pimcore.globalmanager.get("layout_" + elementType + "s_locateintree_tree")) {
+    var locateConfigs = pimcore.globalmanager.get("tree_locate_configs");
+
+    if (locateConfigs[elementType]) {
         return true;
     }
     return false;
@@ -797,4 +802,89 @@ pimcore.elementservice.integrateWorkflowManagement = function(elementType, eleme
 
     }
 
+};
+
+
+pimcore.elementservice.replaceAsset = function (id, callback) {
+    pimcore.helpers.uploadDialog('/admin/asset/replace-asset?id=' + id, "Filedata", function() {
+        if(typeof callback == "function") {
+            callback();
+        }
+    }.bind(this), function (res) {
+        var message = false;
+        try {
+            var response = Ext.util.JSON.decode(res.response.responseText);
+            if(response.message) {
+                message = response.message;
+            }
+
+        } catch(e) {}
+
+        Ext.MessageBox.alert(t("error"), message || t("error"));
+    });
+};
+
+
+pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
+
+    var that = {};
+
+    var idsParam = '';
+    if(selectedIds && selectedIds.length) {
+        idsParam = selectedIds.join(',');
+    }
+
+    Ext.Ajax.request({
+        url: "/admin/asset/download-as-zip-jobs",
+        params: {
+            id: id,
+            selectedIds: idsParam
+        },
+        success: function(response) {
+            var res = Ext.decode(response.responseText);
+
+            that.downloadProgressBar = new Ext.ProgressBar({
+                text: t('initializing')
+            });
+
+            that.downloadProgressWin = new Ext.Window({
+                title: t("download_as_zip"),
+                layout:'fit',
+                width:500,
+                bodyStyle: "padding: 10px;",
+                closable:false,
+                plain: true,
+                modal: true,
+                items: [that.downloadProgressBar]
+            });
+
+            that.downloadProgressWin.show();
+
+
+            var pj = new pimcore.tool.paralleljobs({
+                success: function () {
+                    if(that.downloadProgressWin) {
+                        that.downloadProgressWin.close();
+                    }
+
+                    that.downloadProgressBar = null;
+                    that.downloadProgressWin = null;
+
+                    pimcore.helpers.download('/admin/asset/download-as-zip?jobId='+ res.jobId + "&id=" + id);
+                },
+                update: function (currentStep, steps, percent) {
+                    if(that.downloadProgressBar) {
+                        var status = currentStep / steps;
+                        that.downloadProgressBar.updateProgress(status, percent + "%");
+                    }
+                },
+                failure: function (message) {
+                    that.downloadProgressWin.close();
+                    pimcore.helpers.showNotification(t("error"), t("error"),
+                        "error", t(message));
+                },
+                jobs: res.jobs
+            });
+        }
+    });
 };

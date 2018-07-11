@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Asset;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -69,15 +70,27 @@ class ThumbnailsImageCommand extends AbstractCommand
             $allowedThumbs = explode(',', $input->getOption('thumbnails'));
         }
 
+        $thumbnailsToGenerate = [];
+
+        foreach ($thumbnails as $thumbnail) {
+            if (empty($allowedThumbs) || in_array($thumbnail, $allowedThumbs)) {
+                $thumbnailsToGenerate[] = $thumbnail;
+            }
+        }
+
+        if ($input->getOption('system')) {
+            $thumbnailsToGenerate[] = 'system';
+        }
+
         // get only images
         $conditions = ["type = 'image'"];
 
         if ($input->getOption('parent')) {
             $parent = Asset::getById($input->getOption('parent'));
             if ($parent instanceof Asset\Folder) {
-                $conditions[] = "path LIKE '" . $parent->getRealFullPath() . "/%'";
+                $conditions[] = "path LIKE '".$parent->getRealFullPath()."/%'";
             } else {
-                $this->writeError($input->getOption('parent') . ' is not a valid asset folder ID!');
+                $this->writeError($input->getOption('parent').' is not a valid asset folder ID!');
                 exit;
             }
         }
@@ -87,34 +100,53 @@ class ThumbnailsImageCommand extends AbstractCommand
         $total = $list->getTotalCount();
         $perLoop = 10;
 
-        for ($i=0; $i < (ceil($total / $perLoop)); $i++) {
+        $totalToGenerate = $total * count($thumbnailsToGenerate);
+
+        $progress = new ProgressBar($output, $totalToGenerate);
+        $progress->setFormat(
+            ' %current%/%max% [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%) %memory:6s%: %message%'
+        );
+        $progress->start();
+
+        for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
 
             $images = $list->load();
             foreach ($images as $image) {
-                foreach ($thumbnails as $thumbnail) {
-                    if ((empty($allowedThumbs) && !$input->getOption('system')) || in_array($thumbnail, $allowedThumbs)) {
-                        if ($input->getOption('force')) {
-                            $image->clearThumbnail($thumbnail);
-                        }
-
-                        $this->output->writeln('generating thumbnail for image: ' . $image->getRealFullPath() . ' | ' . $image->getId() . ' | Thumbnail: ' . $thumbnail . ' : ' . formatBytes(memory_get_usage()));
-                        $this->output->writeln('generated thumbnail: ' . $image->getThumbnail($thumbnail)->getFilesystemPath());
-                    }
+                if (!$image instanceof Asset\Image) {
+                    continue;
                 }
 
-                if ($input->getOption('system')) {
-                    $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
-                    if ($input->getOption('force')) {
-                        $image->clearThumbnail($thumbnail->getName());
+                foreach ($thumbnailsToGenerate as $thumbnailName) {
+                    $thumbnail = $thumbnailName;
+
+                    if ($thumbnailName === 'system') {
+                        $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
                     }
 
-                    $this->output->writeln('generating thumbnail for image: ' . $image->getRealFullPath() . ' | ' . $image->getId() . ' | Thumbnail: System Preview (tree) : ' . formatBytes(memory_get_usage()));
-                    $this->output->writeln('generated thumbnail: ' . $image->getThumbnail($thumbnail)->getFilesystemPath());
+                    if ($input->getOption('force')) {
+                        $image->clearThumbnail($thumbnailName);
+                    }
+
+                    $progress->setMessage(
+                        sprintf(
+                            'generating thumbnail to image %s | %d | Thumbnail: %s',
+                            $image->getRealFullPath(),
+                            $image->getId(),
+                            is_string($thumbnail) ? $thumbnailName : 'System Preview (tree)'
+                        )
+                    );
+                    $progress->setMessage(
+                        'generated thumbnail: ' . str_replace(PIMCORE_PROJECT_ROOT.'/', '', $image->getThumbnail($thumbnail)->getFilesystemPath())
+                    );
+
+                    $progress->advance(1);
                 }
             }
             \Pimcore::collectGarbage();
         }
+
+        $progress->finish();
     }
 }

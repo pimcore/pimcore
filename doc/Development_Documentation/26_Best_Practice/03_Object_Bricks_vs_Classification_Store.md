@@ -27,7 +27,7 @@ be displayed, filtered and edited in the object grid view.
 | |  Object Bricks |  Classification Store
 |--------|--------------|---------------------
 | Design options in the object editor | All layout options provided by ExtJS and Pimcore (Panels, Tabs, Regions, Fieldsets, Text Descriptions, ...) ![Object Bricks](./img/ObjectsBricks_object_example.png)| All attributes are arranged among themselves in regions, little influence possibilities. ![Classification Store](../img/Objects_ClassificationStore_edit_object.png)
-| Available data types | Almost all Pimcore data types, apart from structured data types such as Localized Fields, Field Collections, Classification Store, Object Bricks | Only very limited simple data types such as text fields, numbers, dates, selects and multiselects (eg also no relations).
+| Available data types | Almost all Pimcore data types, apart from structured data types such as Field Collections, Classification Store, Object Bricks | Only very limited simple data types such as text fields, numbers, dates, selects and multiselects (eg also no relations).
 | Storage of the data | Pimcore standard schema in own database tables with one column per attribute.	| 	Entity Attribute Value (EAV) schema, ie in a very long database table with one line per attribute (has the same effect on loading and filtering).
 | Access to the data via API | Quite simply via getter and setter as known from Pimcore objects - see [here](../05_Objects/01_Object_Classes/01_Data_Types/21_Object_Bricks.md#page_Working-with-PHP-API) | Slightly harder on generic getter / setter calls - see [here](../05_Objects/01_Object_Classes/01_Data_Types/13_Classification_Store.md#page_Using-Classification-Store-via-PHP-API)
 | Filter in object listings | Using JOINs directly in the Object-Listing Query, see [here](../05_Objects/01_Object_Classes/01_Data_Types/21_Object_Bricks.md#page_Querying-for-Objectbrick-data) | Only possible via custom subqueries and rather tedious.
@@ -39,7 +39,6 @@ be displayed, filtered and edited in the object grid view.
 - Once there will be a lot of categories (more than 30) with a lot of attributes, then rather use Classification Store.
 
 ### In addition, there are a few more questions which can help you make a decision
-- Do the values themselves have to be translatable - ie are there text input fields that must be translated? → works only with **Classification Store**
 - Are there relations in the attributes? → currently only works with **Object Bricks**
 - Do the attributes have to be created automatically (eg via interface)? → easier with **Classification Store**
 

@@ -18,6 +18,8 @@ use Pimcore\Logger;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class WebsiteSetting extends AbstractModel
 {

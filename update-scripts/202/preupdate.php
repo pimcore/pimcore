@@ -7,6 +7,12 @@ use Pimcore\Migrations\InstallVersion;
 if (PimcoreEcommerceFrameworkBundle::isInstalled()) {
     $db = \Pimcore\Db::get();
 
+    // create migration table if not exists
+    $factory = \Pimcore::getContainer()->get('Pimcore\Migrations\Configuration\ConfigurationFactory');
+    $bundle = \Pimcore::getKernel()->getBundle('PimcoreEcommerceFrameworkBundle');
+    $config = $factory->getForBundle($bundle, $db);
+    $config->createMigrationTable();
+
     $sql = <<<'SQL'
 INSERT IGNORE INTO
     pimcore_migrations (migration_set, version, migrated_at)

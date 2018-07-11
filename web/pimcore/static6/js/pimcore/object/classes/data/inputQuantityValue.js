@@ -55,7 +55,7 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
                 value: this.datax.width
             },
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("default_value"),
                 name: "defaultValue",
                 value: this.datax.defaultValue

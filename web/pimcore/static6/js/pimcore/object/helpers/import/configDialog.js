@@ -528,6 +528,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         if (btn == 'ok') {
             Ext.Ajax.request({
                 url: "/admin/object-helper/delete-import-config",
+                method: "DELETE",
                 params: {
                     importConfigId: this.importConfigId
 
@@ -578,6 +579,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/object-helper/import-export-config",
+            method: 'POST',
             params: {
                 gridConfigId: gridConfigId,
                 classId: this.classId

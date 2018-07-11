@@ -214,7 +214,7 @@ class Link extends Model\Document\Tag
         if (strlen($this->data['anchor'] ?? '') > 0) {
             $anchor = $this->getAnchor();
             $anchor = str_replace('"', urlencode('"'), $anchor);
-            $url .= "#" . str_replace("#", "", $anchor);
+            $url .= '#' . str_replace('#', '', $anchor);
         }
 
         return $url;
@@ -342,14 +342,16 @@ class Link extends Model\Document\Tag
     /**
      * @return mixed
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->data['class'];
     }
 
     /**
      * @return mixed
      */
-    public function getAttributes() {
+    public function getAttributes()
+    {
         return $this->data['attributes'];
     }
 

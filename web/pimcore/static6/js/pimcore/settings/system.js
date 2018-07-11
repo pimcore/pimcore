@@ -255,7 +255,7 @@ pimcore.settings.system = Class.create({
                                 handler: function () {
                                     Ext.Ajax.request({
                                         url: "/admin/settings/delete-custom-logo",
-                                        method: "get",
+                                        method: "DELETE",
                                         success: function (response) {
                                             var cont = Ext.getCmp("pimcore_custom_branding_logo");
                                             var date = new Date();
@@ -710,7 +710,7 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("database.params.dbname")
                             },
                             {
-                                fieldLabel: t('database_port'),
+                                fieldLabel: t('port'),
                                 disabled: true,
                                 name: 'database.params.port',
                                 value: this.getValue("database.params.port")
@@ -873,12 +873,12 @@ pimcore.settings.system = Class.create({
                                 minValue: 0
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
+                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (Imagick)",
                                 name: 'assets.icc_rgb_profile',
                                 value: this.getValue("assets.icc_rgb_profile")
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (imagick)",
+                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (Imagick)",
                                 name: 'assets.icc_cmyk_profile',
                                 value: this.getValue("assets.icc_cmyk_profile")
                             },
@@ -1305,7 +1305,7 @@ pimcore.settings.system = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/settings/set-system",
-            method: "post",
+            method: "PUT",
             params: {
                 data: Ext.encode(values)
             },

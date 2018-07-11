@@ -56,8 +56,8 @@ pimcore.report.settings = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_reports_settings",
-                title: t("report_settings"),
-                iconCls: "pimcore_icon_reports",
+                title: t("marketing_settings"),
+                iconCls: "pimcore_icon_system",
                 border: false,
                 layout: "fit",
                 closable:true,
@@ -135,7 +135,7 @@ pimcore.report.settings = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/reports/settings/save",
-            method: "post",
+            method: "PUT",
             params: {
                 data: Ext.encode(values)
             },

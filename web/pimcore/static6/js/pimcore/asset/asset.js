@@ -72,7 +72,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         this.tab = new Ext.Panel({
             id: tabId,
-            title: tabTitle,
+            title: htmlspecialchars(tabTitle),
             closable:true,
             layout: "border",
             items: [this.getLayoutToolbar(),this.getTabPanel()],
@@ -89,6 +89,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.data.id,
                     type: "asset"
@@ -175,25 +176,21 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     tooltip: t('rename'),
                     iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                     scale: "medium",
-                    handler: function () {
-                        var options = {
-                            elementType: "asset",
-                            elementSubType: this.getType(),
-                            id: this.id,
-                            default: this.data.filename
-                        }
-                        pimcore.elementservice.editElementKey(options);
-                    }.bind(this)
+                    handler: this.rename.bind(this)
                 });
                 buttons.push(this.toolbarButtons.rename);
             }
 
             if (this.isAllowed("publish")) {
                 this.toolbarButtons.upload = new Ext.Button({
-                    tooltip: t("upload"),
+                    tooltip: t("upload_new_version"),
                     iconCls: "pimcore_icon_upload",
                     scale: "medium",
-                    handler: this.upload.bind(this)
+                    handler: function () {
+                        pimcore.elementservice.replaceAsset(this.data.id, function () {
+                            this.reload();
+                        }.bind(this));
+                    }.bind(this)
                 });
                 buttons.push(this.toolbarButtons.upload);
             }
@@ -239,6 +236,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     handler: function () {
                         Ext.Ajax.request({
                             url: "/admin/asset/clear-thumbnail",
+                            method: 'POST',
                             params: {
                                 id: this.data.id
                             }
@@ -336,7 +334,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         Ext.Ajax.request({
             url: '/admin/asset/save',
-            method: "post",
+            method: "PUT",
             success: function (response) {
                 try{
                     var rdata = Ext.decode(response.responseText);
@@ -385,23 +383,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             "id": this.id
         };
         pimcore.elementservice.deleteElement(options);
-    },
-
-    upload: function () {
-        pimcore.helpers.uploadDialog('/admin/asset/replace-asset?id=' + this.data.id, "Filedata", function() {
-            this.reload();
-        }.bind(this), function (res) {
-            var message = false;
-            try {
-                var response = Ext.util.JSON.decode(res.response.responseText);
-                if(response.message) {
-                    message = response.message;
-                }
-
-            } catch(e) {}
-
-            Ext.MessageBox.alert(t("error"), message || t("error"));
-        });
     },
 
     isAllowed : function (key) {
@@ -465,6 +446,18 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 value: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
             }
         ], "asset");
+    },
+
+    rename: function () {
+        if (this.isAllowed("rename") && !this.data.locked) {
+            var options = {
+                elementType: "asset",
+                elementSubType: this.getType(),
+                id: this.id,
+                default: this.data.filename
+            }
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 
 });

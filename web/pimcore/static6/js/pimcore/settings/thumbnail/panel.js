@@ -29,7 +29,7 @@ pimcore.settings.thumbnail.panel = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_thumbnails",
-                title: t("thumbnails"),
+                title: t("image_thumbnails"),
                 iconCls: "pimcore_icon_thumbnails",
                 border: false,
                 layout: "border",
@@ -90,7 +90,7 @@ pimcore.settings.thumbnail.panel = Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_thumbnail"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addField.bind(this)
                         }
@@ -127,18 +127,17 @@ pimcore.settings.thumbnail.panel = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
-            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //newChildNode.data.expanded = true;
-                newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_thumbnails";
-            }
+            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this)
         };
 
         return treeNodeListeners;
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
         this.openThumbnail(record.data.id);
     },
 
@@ -165,6 +164,10 @@ pimcore.settings.thumbnail.panel = Class.create({
     },
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
         e.stopEvent();
 
         tree.select();
@@ -202,6 +205,7 @@ pimcore.settings.thumbnail.panel = Class.create({
 
             Ext.Ajax.request({
                 url: "/admin/settings/thumbnail-add",
+                method: "POST",
                 params: {
                     name: value
                 },
@@ -229,6 +233,7 @@ pimcore.settings.thumbnail.panel = Class.create({
     deleteField: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/settings/thumbnail-delete",
+            method: 'DELETE',
             params: {
                 name: record.data.id
             }

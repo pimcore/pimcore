@@ -106,6 +106,7 @@ pimcore.layout.toolbar = Class.create({
                                         if (button == "ok") {
                                             Ext.Ajax.request({
                                                 url: "/admin/portal/create-dashboard",
+                                                method: 'POST',
                                                 params: {
                                                     key: value
                                                 },
@@ -297,8 +298,8 @@ pimcore.layout.toolbar = Class.create({
                             iconCls: "pimcore_icon_translations",
                             handler: this.xliffImportExport
                         }, {
-                            text: "MS Word " + t("export"),
-                            iconCls: "pimcore_icon_translations",
+                            text: "Microsoft® Word " + t("export"),
+                            iconCls: "pimcore_icon_docx",
                             handler: this.wordExport
                         }]
                     }
@@ -715,7 +716,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("website_settings") && perspectiveCfg.inToolbar("settings.website")) {
                 settingsItems.push({
-                    text: t("website"),
+                    text: t("website_settings"),
                     iconCls: "pimcore_icon_website",
                     handler: this.websiteSettings
                 });
@@ -723,7 +724,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
                 settingsItems.push({
-                    text: t("web2print"),
+                    text: t("web2print_settings"),
                     iconCls: "pimcore_icon_printpage pimcore_icon_overlay_setting",
                     handler: this.web2printSettings
                 });
@@ -775,14 +776,6 @@ pimcore.layout.toolbar = Class.create({
                             shadow: false,
                             items: userItems
                         }
-                    });
-                }
-            } else {
-                if (perspectiveCfg.inToolbar("settings.users.myprofile")) {
-                    settingsItems.push({
-                        text: t("my_profile"),
-                        iconCls: "pimcore_icon_user",
-                        handler: this.editProfile
                     });
                 }
             }
@@ -1038,15 +1031,27 @@ pimcore.layout.toolbar = Class.create({
 
         if (perspectiveCfg.inToolbar("search")) {
             var searchItems = [];
+
+            if ((user.isAllowed("documents") || user.isAllowed("asset") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
+                searchItems.push({
+                    text: t("quicksearch"),
+                    iconCls: "pimcore_icon_search",
+                    handler: function () {
+                        pimcore.helpers.showQuickSearch();
+                    }
+                });
+                searchItems.push('-');
+            }
+
             var searchAction = function (type) {
                 pimcore.helpers.itemselector(false, function (selection) {
-                    pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
-                }, {type: [type]},
+                        pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
+                    }, {type: [type]},
                     {moveToTab: true,
                         context: {
                             scope: "globalSearch"
                         }
-                });
+                    });
             };
 
             if (user.isAllowed("documents") && perspectiveCfg.inToolbar("search.documents")) {
@@ -1141,10 +1146,7 @@ pimcore.layout.toolbar = Class.create({
     },
 
     closeAllTabs: function () {
-        pimcore.helpers.closeAllElements();
-
-        // clear the opentab store, so that also non existing elements are flushed
-        pimcore.helpers.clearOpenTab();
+        pimcore.helpers.closeAllTabs();
     },
 
     editDocumentTypes: function () {
@@ -1198,16 +1200,6 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("roles", new pimcore.settings.user.role.panel());
-        }
-    },
-
-    editProfile: function () {
-
-        try {
-            pimcore.globalmanager.get("profile").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
         }
     },
 
@@ -1544,6 +1536,7 @@ pimcore.layout.toolbar = Class.create({
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: '/admin/settings/clear-cache',
+                    method: "DELETE",
                     params: params
                 });
             }
@@ -1552,7 +1545,8 @@ pimcore.layout.toolbar = Class.create({
 
     clearOutputCache: function () {
         Ext.Ajax.request({
-            url: '/admin/settings/clear-output-cache'
+            url: '/admin/settings/clear-output-cache',
+            method: 'DELETE'
         });
     },
 
@@ -1560,7 +1554,8 @@ pimcore.layout.toolbar = Class.create({
         Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
             if (btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/admin/settings/clear-temporary-files'
+                    url: '/admin/settings/clear-temporary-files',
+                    method: "DELETE"
                 });
             }
         });

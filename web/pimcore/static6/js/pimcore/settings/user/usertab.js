@@ -56,11 +56,13 @@ pimcore.settings.user.usertab = Class.create({
         this.settings = new pimcore.settings.user.user.settings(this);
         this.workspaces = new pimcore.settings.user.workspaces(this);
         this.objectrelations = new pimcore.settings.user.user.objectrelations(this);
+        this.keyBindings = new pimcore.settings.user.user.keyBindings(this);
 
 
         this.panel.add(this.settings.getPanel());
         this.panel.add(this.workspaces.getPanel());
         this.panel.add(this.objectrelations.getPanel());
+        this.panel.add(this.keyBindings.getPanel());
 
         if(this.data.user.admin) {
             this.workspaces.disable();
@@ -102,9 +104,28 @@ pimcore.settings.user.usertab = Class.create({
             console.log(e2);
         }
 
+        try {
+            var keyBindingsFromForm = this.keyBindings.getValues();
+            var userBindings = {};
+
+            for (var key in keyBindingsFromForm) {
+                if (keyBindingsFromForm.hasOwnProperty(key)) {
+                    userBindings[key] = Ext.decode(keyBindingsFromForm[key]);
+                }
+            }
+
+            var user = pimcore.globalmanager.get("user");
+            user.keyBindings = Ext.encode(userBindings);
+
+            data.keyBindings = Ext.encode(keyBindingsFromForm);
+        } catch (e3) {
+            console.log(e3);
+        }
+
+
         Ext.Ajax.request({
             url: "/admin/user/update",
-            method: "post",
+            method: "PUT",
             params: data,
             success: function (transport) {
                 try{

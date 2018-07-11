@@ -258,11 +258,14 @@ class Builder
 
             if ($child instanceof Document\Hardlink) {
                 $child = Document\Hardlink\Service::wrap($child);
+                if (!$child) {
+                    continue;
+                }
             }
 
             // infinite loop detection, we use array keys here, because key lookups are much faster
-            if(isset($parents[$child->getId()])) {
-                Logger::critical('Navigation: Document with ID ' . $child->getId() . ' would produce an infinite loop -> skipped, parent IDs (' . implode(",", array_keys($parents)) . ')');
+            if (isset($parents[$child->getId()])) {
+                Logger::critical('Navigation: Document with ID ' . $child->getId() . ' would produce an infinite loop -> skipped, parent IDs (' . implode(',', array_keys($parents)) . ')');
                 continue;
             }
 

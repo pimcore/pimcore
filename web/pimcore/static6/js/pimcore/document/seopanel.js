@@ -229,7 +229,7 @@ pimcore.document.seopanel = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/document/update",
-            method: "post",
+            method: "PUT",
             params: values,
             success: function (node) {
                 if (values.id == 1) {

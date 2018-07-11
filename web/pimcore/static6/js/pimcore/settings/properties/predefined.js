@@ -98,6 +98,17 @@ pimcore.settings.properties.predefined = Class.create({
             width: 50
         });
 
+        var contentTypesStore = Ext.create('Ext.data.ArrayStore', {
+            fields: ['value', 'text'],
+            data: [
+                ['document', 'document'],
+                ['asset', 'asset'],
+                ['object', 'object']
+            ],
+            autoLoad: true
+        });
+
+
         var propertiesColumns = [
             {text: t("name"), flex: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
             {text: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}),
@@ -118,11 +129,17 @@ pimcore.settings.properties.predefined = Class.create({
             {text: t("value"), flex: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
             {text: t("configuration"), flex: 50, sortable: false, dataIndex: 'config',
                                                                 editor: new Ext.form.TextField({})},
-            {text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype', editor: new Ext.form.ComboBox({
-                triggerAction: 'all',
-                editable: false,
-                store: ["document","asset","object"]
-            })},
+            {
+                text: t("content_type"), flex: 50, sortable: true, dataIndex: 'ctype',
+                getEditor: function (fieldInfo) {
+                    return new pimcore.object.helpers.metadataMultiselectEditor({
+                        fieldInfo: fieldInfo
+                    });
+                }.bind(this, {value: "document;asset;object" })
+            }
+
+
+            ,
             inheritableCheck,
             {
                 xtype: 'actioncolumn',

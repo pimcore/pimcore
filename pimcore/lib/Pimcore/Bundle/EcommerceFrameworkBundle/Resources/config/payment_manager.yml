@@ -31,6 +31,10 @@ services:
             $options: []
             $formFactory: '@form.factory'
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Mpay24Seamless:
+        arguments:
+            $options: []
+
     Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless:
         arguments:
             $options: []

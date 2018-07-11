@@ -151,7 +151,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
     /**
      * @inheritdoc
      */
-    public function commitOrderPayment(IStatus $paymentStatus, IPayment $paymentProvider)
+    public function commitOrderPayment(IStatus $paymentStatus, IPayment $paymentProvider, AbstractOrder $sourceOrder = null)
     {
         // acquire lock to make sure only one process is committing order payment
         Lock::acquire(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
@@ -172,7 +172,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         }
 
         $orderAgent = $orderManager->createOrderAgent($order);
-        $orderAgent->setPaymentProvider($paymentProvider);
+        $orderAgent->setPaymentProvider($paymentProvider, $sourceOrder);
 
         $order = $orderAgent->updatePayment($paymentStatus)->getOrder();
         $this->applyAdditionalDataToOrder($order, $paymentStatus, $paymentProvider);

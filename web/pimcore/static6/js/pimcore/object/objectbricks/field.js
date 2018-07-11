@@ -42,13 +42,22 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
+            defaults: {
+                labelWidth: 200
+            },
             items: [{
                 xtype: "textfield",
                 width: 400,
                 name: "parentClass",
-                fieldLabel: t("parent_class"),
+                fieldLabel: t("parent_php_class"),
                 value: this.data.parentClass
-            }
+            }, {
+                xtype: "textfield",
+                width: 400,
+                name: "title",
+                fieldLabel: t("title"),
+                value: this.data.title
+            },
                 , this.getClassDefinitionPanel()
             ]
         });
@@ -290,20 +299,27 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         if (this.getDataSuccess) {
             Ext.Ajax.request({
                 url: "/admin/class/objectbrick-update",
-                method: "post",
+                method: "PUT",
                 params: {
                     configuration: m,
                     values: n,
-                    key: this.data.key
+                    key: this.data.key,
+                    title: this.data.title
                 },
                 success: this.saveOnComplete.bind(this)
             });
         }
     },
 
-    saveOnComplete: function () {
-        this.parentPanel.tree.getStore().load();
-        pimcore.helpers.showNotification(t("success"), t("objectbrick_saved_successfully"), "success");
+    saveOnComplete: function (response) {
+        var rdata = Ext.decode(response.responseText);
+        if (rdata && rdata.success) {
+            this.parentPanel.tree.getStore().load();
+            pimcore.helpers.showNotification(t("success"), t("objectbrick_saved_successfully"), "success");
+        } else {
+            pimcore.helpers.showNotification(t("save_error"), rdata.message, "error");
+        }
+
     },
 
     upload: function () {

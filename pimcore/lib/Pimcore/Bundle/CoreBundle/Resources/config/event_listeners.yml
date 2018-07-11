@@ -155,3 +155,6 @@ services:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleSearchConsoleVerificationListener: ~
+
+
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\OutputTimestampListener: ~

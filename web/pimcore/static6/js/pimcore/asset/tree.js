@@ -72,6 +72,7 @@ pimcore.asset.tree = Class.create({
         rootNodeConfig.allowDrag = true;
         rootNodeConfig.id = "" +  rootNodeConfig.id;
         rootNodeConfig.iconCls = "pimcore_icon_home";
+        rootNodeConfig.cls = "pimcore_tree_node_root";
         rootNodeConfig.expanded = true;
 
         var store = Ext.create('pimcore.data.PagingTreeStore', {
@@ -652,6 +653,41 @@ pimcore.asset.tree = Class.create({
             }));
         }
 
+        // upload & download
+        if (record.data.permissions.view) {
+            menu.add("-");
+
+            if(record.data.type == "folder") {
+                menu.add({
+                    text: t("download_as_zip"),
+                    iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
+                    handler: function () {
+                        pimcore.elementservice.downloadAssetFolderAsZip(record.data.id)
+                    }
+                });
+            } else {
+                if (record.data.permissions.publish) {
+                    menu.add(new Ext.menu.Item({
+                        text: t('upload_new_version'),
+                        iconCls: "pimcore_icon_upload",
+                        handler: function () {
+                            pimcore.elementservice.replaceAsset(record.data.id, function () {
+                                pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.id);
+                            });
+                        }
+                    }));
+                }
+
+                menu.add(new Ext.menu.Item({
+                    text: t('download'),
+                    iconCls: "pimcore_icon_download",
+                    handler: function () {
+                        pimcore.helpers.download("/admin/asset/download?id=" + record.data.id);
+                    }
+                }));
+            }
+        }
+
         // advanced menu
         var advancedMenuItems = [];
         var user = pimcore.globalmanager.get("user");
@@ -893,6 +929,7 @@ pimcore.asset.tree = Class.create({
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/asset/add-folder",
+                method: "POST",
                 params: {
                     parentId: record.data.id,
                     name: pimcore.helpers.getValidFilename(value, "asset")
@@ -1087,6 +1124,7 @@ pimcore.asset.tree = Class.create({
 
                         Ext.Ajax.request({
                             url: "/admin/asset/import-server",
+                            method: 'POST',
                             params: {
                                 parentId: record.id,
                                 serverPath: selectedNode.id
@@ -1166,6 +1204,7 @@ pimcore.asset.tree = Class.create({
 
                 Ext.Ajax.request({
                     url: "/admin/asset/import-url",
+                    method: 'POST',
                     params: {
                         id: record.data.id,
                         url: value

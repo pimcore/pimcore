@@ -139,7 +139,7 @@ class Sold extends AbstractOrder implements ICondition
     }
 
     /**
-     * Returns a count how often the rule is already uses in the cart
+     * Returns a count how often the rule is already used in the cart
      *
      * @param ICart $cart
      * @param IRule $rule

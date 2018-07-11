@@ -21,7 +21,7 @@ pimcore.object.importcolumn.operator.localeswitcher = Class.create(pimcore.objec
     type: "operator",
     class: "LocaleSwitcher",
     iconCls: "pimcore_icon_operator_localeswitcher",
-    defaultText: "operator_localeswitcher",
+    defaultText: "Locale Switcher",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -45,7 +45,7 @@ pimcore.object.importcolumn.operator.localeswitcher = Class.create(pimcore.objec
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,

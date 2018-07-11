@@ -268,7 +268,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
 
         Ext.Ajax.request({
             url: "/admin/user/update",
-            method: "post",
+            method: "PUT",
             params: {
                 id: userId,
                 data: Ext.encode(values)

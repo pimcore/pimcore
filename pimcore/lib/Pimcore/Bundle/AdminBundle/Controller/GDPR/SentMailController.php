@@ -14,7 +14,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Tool\Email\Log;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -44,6 +46,7 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
     /**
      * @param Request $request
      * @Route("/export")
+     * @Method({"GET"})
      */
     public function exportDataObjectAction(Request $request)
     {
@@ -53,8 +56,10 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
         $sentMailArray['htmlBody'] = $sentMail->getHtmlLog();
         $sentMailArray['textBody'] = $sentMail->getTextLog();
 
-        $jsonResponse = $this->adminJson($sentMailArray);
-        $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"');
+        $json = $this->encodeJson($sentMailArray, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
+        $jsonResponse = new JsonResponse($json, 200, [
+            'Content-Disposition' => 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"'
+        ], true);
 
         return $jsonResponse;
     }

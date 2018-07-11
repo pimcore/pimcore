@@ -21,6 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Logger;
+use Pimcore\Model\DataObject\Listing\Concrete;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -28,7 +30,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Datatrans implements IPayment
+class Datatrans extends AbstractPayment
 {
     const TRANS_TYPE_DEBIT = '05';
     const TRANS_TYPE_CREDIT = '06';
@@ -82,6 +84,8 @@ class Datatrans implements IPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         $this->merchantId = $options['merchant_id'];
         $this->sign       = $options['sign'];
 
@@ -110,6 +114,8 @@ class Datatrans implements IPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'mode',
             'merchant_id',
@@ -264,6 +270,8 @@ class Datatrans implements IPayment
         if ($config['useAlias']) {
             $form->add('useAlias', HiddenType::class);
             $formData['useAlias'] = 'yes';
+            $form->add('uppRememberMe', HiddenType::class);
+            $formData['uppRememberMe'] = 'checked';
         }
 
         // add submit button
@@ -295,6 +303,8 @@ class Datatrans implements IPayment
         $required = $this->getRequiredResponseFields($response);
         $authorizedData = [
             'aliasCC'          => null,
+            'maskedCC'         => null,
+            'pmethod'         => null,
             'expm'             => null,
             'expy'             => null,
             'reqtype'          => null,
@@ -305,9 +315,9 @@ class Datatrans implements IPayment
         ];
 
         // check fields
-        $response = array_intersect_key($response, $required);
-        if (count($required) != count($response)) {
-            throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $response)))));
+        $requiredResponse = array_intersect_key($response, $required);
+        if (count($required) != count($requiredResponse)) {
+            throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $requiredResponse)))));
         }
 
         // handle
@@ -770,5 +780,35 @@ XML;
         curl_close($ch);
 
         return simplexml_load_string($output);
+    }
+
+    public function isRecurringPaymentEnabled()
+    {
+        return $this->recurringPaymentEnabled;
+    }
+
+    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
+    {
+        if (method_exists($paymentBrick, 'setSourceOrder')) {
+            $paymentBrick->setSourceOrder($sourceOrder);
+        } else {
+            Logger::err('Could not set source order for performed alias payment.');
+        }
+    }
+
+    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = [])
+    {
+        $providerBrickName = "PaymentProvider{$this->getName()}";
+        $orderListing->addObjectbrick($providerBrickName);
+
+        if ($paymentMethod = $additionalParameters['paymentMethod']) {
+            $orderListing->addConditionParam("{$providerBrickName}.auth_pmethod = '{$paymentMethod}'");
+        }
+
+        $orderListing->addConditionParam("{$providerBrickName}.auth_aliasCC IS NOT NULL");
+        $orderListing->addConditionParam("LAST_DAY(STR_TO_DATE(CONCAT({$providerBrickName}.auth_expm,'/',{$providerBrickName}.auth_expy), '%m/%Y')) >= CURDATE()");
+
+        $orderListing->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
+        $orderListing->setOrder('DESC');
     }
 }

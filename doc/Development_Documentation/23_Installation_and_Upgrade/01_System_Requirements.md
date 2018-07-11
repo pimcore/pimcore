@@ -9,9 +9,8 @@ For production we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 7.0
+### PHP >= 7.1
 Both **mod_php** and **FCGI (FPM)** are supported.  
-Please note that the usage of **PHP 7.1 is strongly recommended** as future versions of Pimcore 5 will require PHP 7.1. 
 
 #### Required Settings and Modules & Extensions
 - `memory_limit` >= 128M
@@ -69,6 +68,18 @@ innodb_large_prefix = 1
 innodb_file_per_table = 1
 ```
 
+### Redis (optional but recommended for caching)
+All versions > 3 are supported
+##### Configuration 
+```
+# select an appropriate value for your data
+maxmemory 768mb
+                   
+# IMPORTANT! Other policies will cause random inconsistencies of your data!
+maxmemory-policy volatile-lru   
+save ""
+```
+
 ### Operating System
 Please ensure you have installed all required packages to ensure proper locale support by PHP.
 On Debian based systems, you can use the following command to install all required packages: 
@@ -93,6 +104,7 @@ On Debian based systems, you can use the following command to install all requir
 - cjpeg ([MozJPEG](https://github.com/mozilla/mozjpeg))
 - exiftool
 - SQIP - SVG Placeholder
+- [facedetect](https://github.com/wavexx/facedetect) 
 
 Please visit [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md) for additional information. 
 

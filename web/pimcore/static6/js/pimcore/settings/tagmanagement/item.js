@@ -276,7 +276,7 @@ pimcore.settings.tagmanagement.item = Class.create({
         formValues.name = this.data.name;
         Ext.Ajax.request({
             url: "/admin/settings/tag-management-update",
-            method: "post",
+            method: "PUT",
             params: {
                 configuration: Ext.encode(formValues),
                 name: this.data.name

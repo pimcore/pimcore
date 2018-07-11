@@ -208,7 +208,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
 
         Ext.Ajax.request({
             url: "/admin/portal/update-portlet-config",
-            method: "POST",
+            method: 'PUT',
             params: {
                 key: this.portal.key,
                 id: this.layout.portletId,

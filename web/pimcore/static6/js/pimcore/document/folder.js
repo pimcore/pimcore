@@ -84,6 +84,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.data.id,
                     type: "document"
@@ -140,15 +141,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 tooltip: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 scale: "medium",
-                handler: function () {
-                    var options = {
-                        elementType: "document",
-                        elementSubType: this.getType(),
-                        id: this.id,
-                        default: this.data.key
-                    }
-                    pimcore.elementservice.editElementKey(options);
-                }.bind(this)
+                handler: this.rename.bind(this)
             });
 
             var buttons = [];
@@ -194,7 +187,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.id,
+                text: t("id") + " " + this.data.id,
                 scale: "medium"
             });
 
@@ -283,6 +276,18 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 value: pimcore.helpers.getDeeplink("document", this.data.id, this.data.type)
             }
         ], "folder");
+    },
+
+    rename: function () {
+        if(this.isAllowed("rename") && !this.data.locked) {
+            var options = {
+                elementType: "document",
+                elementSubType: this.getType(),
+                id: this.id,
+                default: this.data.key
+            }
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 });
 

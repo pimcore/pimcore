@@ -86,9 +86,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             items: [this.tabpanel]
         };
 
-        if(this.fieldConfig.title) {
-            panelConf.title = this.fieldConfig.title;
-        }
         this.component = new Ext.Panel(panelConf);
 
         return this.component;
@@ -96,12 +93,12 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
     initData: function (store, records, successful, eOpts ) {
 
-        this.component.insert(0, this.getControls());
+        this.component.insert(0, this.getControls(null));
         if(this.data.length > 0) {
             for (var i=0; i<this.data.length; i++) {
                 if(this.data[i] != null) {
                     this.preventDelete[this.data[i].type] = this.data[i].inherited;
-                    this.addBlockElement(i,this.data[i].type, this.data[i], true);
+                    this.addBlockElement(i,this.data[i].type, this.data[i], true, this.data[i].title);
                 }
             }
         }
@@ -119,8 +116,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
             if(!this.addedTypes[rec.data.key]) {
                 collectionMenu.push({
-                    text: ts(rec.data.key),
-                    handler: this.addBlock.bind(this,blockElement, rec.data.key),
+                    text: rec.data.title ? ts(rec.data.title) : ts(rec.data.key),
+                    handler: this.addBlock.bind(this,blockElement, rec.data.key, rec.data.title),
                     iconCls: "pimcore_icon_objectbricks"
                 });
             }
@@ -146,27 +143,9 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        var toolbar = new Ext.Toolbar({
-            items: items
-        });
-
-        return toolbar;
-    },
-
-    getDeleteControl: function(type, blockElement) {
-        var items = [];
-        if(!this.preventDelete[type]) {
-            items.push({
-                cls: "pimcore_block_button_minus",
-                iconCls: "pimcore_icon_minus",
-                listeners: {
-                    "click": this.removeBlock.bind(this, blockElement)
-                }
-            });
-        }
         items.push({
             xtype: "tbtext",
-            text: ts(type)
+            text: ts(this.fieldConfig.title)
         });
 
         var toolbar = new Ext.Toolbar({
@@ -176,11 +155,11 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         return toolbar;
     },
 
-    addBlock: function (blockElement, type) {
+    addBlock: function (blockElement, type, title) {
 
         var index = 0;
 
-        this.addBlockElement(index, type);
+        this.addBlockElement(index, type, null, false, title);
     },
 
     removeBlock: function (blockElement) {
@@ -217,7 +196,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         return i;
     },
 
-    addBlockElement: function (index, type, blockData, ignoreChange) {
+    addBlockElement: function (index, type, blockData, ignoreChange, title) {
         if(!type){
             return;
         }
@@ -259,9 +238,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         var blockElement = new Ext.Panel({
             //bodyStyle: "padding:10px;",
             style: "margin: 0 0 10px 0;",
+            closable: !this.fieldConfig.noteditable,
             autoHeight: true,
             border: false,
-            title: ts(type),
+            title: title ? ts(title) : ts(type),
             // items: items
             items: [],
             listeners: {
@@ -302,21 +282,18 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         });
 
+        if(!this.fieldConfig.noteditable) {
+            blockElement.on("close", this.removeBlock.bind(this, blockElement));
+        }
+
         this.component.remove(this.component.getComponent(0));
 
         this.addedTypes[type] = true;
 
-        if(!this.fieldConfig.noteditable) {
-            var control = this.getDeleteControl(type, blockElement);
-            if(control) {
-                blockElement.insert(0, control);
-            }
-        }
-
         blockElement.key = type;
         blockElement.fieldtype = type;
         this.tabpanel.add(blockElement);
-        this.component.insert(0, this.getControls());
+        this.component.insert(0, this.getControls(null));
 
         this.tabpanel.updateLayout();
         this.component.updateLayout();
@@ -358,14 +335,15 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 } else {
                     for (var u=0; u<element.fields.length; u++) {
 
+                        var field = element.fields[u];
                         try {
-                            if(element.fields[u].isDirty()) {
-                                element.fields[u].unmarkInherited();
-                                elementData[element.fields[u].getName()] = element.fields[u].getValue();
+                            if(field.isDirty()) {
+                                field.unmarkInherited();
+                                elementData[field.getName()] = field.getValue();
                             }
                         } catch (e) {
                             console.log(e);
-                            elementData[element.fields[u].getName()] = "";
+                            elementData[field.getName()] = "";
                         }
 
                     }
@@ -396,10 +374,20 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 var element = this.currentElements[types[t]];
                 if(element.action != "deleted") {
                     for (var u=0; u<element.fields.length; u++) {
-                        if(element.fields[u].isDirty()) {
-                            element.fields[u].unmarkInherited();
+                        var field = element.fields[u];
+                        if(field.isDirty()) {
+
                             this.dirty = true;
+
+                            if (field.fieldConfig.fieldtype == "localizedfields") {
+                                field.dataIsNotInherited(true);
+                            } else {
+                                field.unmarkInherited();
+                            }
+
+
                             return this.dirty;
+
                         }
                     }
                 }
@@ -420,8 +408,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 var element = this.currentElements[types[t]];
                 if(element.action != "deleted") {
                     for (var u=0; u<element.fields.length; u++) {
-                        if(element.fields[u].isDirty()) {
-                            element.fields[u].unmarkInherited();
+                        var field = element.fields[u];
+                        if(field.isDirty()) {
+                            if (field.fieldConfig.fieldtype == "localizedfields") {
+                                field.dataIsNotInherited(true);
+                            } else {
+                                field.unmarkInherited();
+                            }
                         }
                     }
                 }

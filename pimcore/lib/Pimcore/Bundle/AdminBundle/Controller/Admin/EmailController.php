@@ -20,11 +20,12 @@ use Pimcore\Mail;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/email")
@@ -33,6 +34,7 @@ class EmailController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -86,6 +88,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -168,6 +171,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/email-logs")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -233,6 +237,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/show-email-log")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -250,7 +255,9 @@ class EmailController extends DocumentControllerBase
         $emailLog = Tool\Email\Log::getById($request->get('id'));
 
         if ($request->get('type') == 'text') {
-            return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $emailLog->getTextLog() . '</pre></body></html>');
+            $templatingEnginePhp = $this->get('pimcore.templating.engine.php');
+
+            return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $templatingEnginePhp->escape($emailLog->getTextLog()) . '</pre></body></html>');
         } elseif ($request->get('type') == 'html') {
             return new Response($emailLog->getHtmlLog());
         } elseif ($request->get('type') == 'params') {
@@ -350,6 +357,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/delete-email-log")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -377,6 +385,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/resend-email")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -437,6 +446,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/send-test-email")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -470,6 +480,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @Route("/blacklist")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

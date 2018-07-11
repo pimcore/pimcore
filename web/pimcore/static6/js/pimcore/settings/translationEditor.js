@@ -239,6 +239,7 @@ Ext.define('pimcore.settings.translationEditor', {
 
         //prevent override important settings!
         eConfig.resize_enabled = false;
+        eConfig.enterMode = CKEDITOR.ENTER_BR;
         eConfig.entities = false;
         eConfig.entities_greek = false;
         eConfig.entities_latin = false;

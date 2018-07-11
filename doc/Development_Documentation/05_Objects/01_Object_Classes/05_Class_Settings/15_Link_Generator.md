@@ -1,8 +1,10 @@
 # Link Generator
 
 ### Summary
+Link Generators are used to dynamically generate web-links for objects and are automatically called when objects 
+are linked in document link editables, link document types and object link tags.
 
-A Link Generator can be used in document link editables, link document types and object link tags to resolve links pointing to Pimcore objects.
+Additionally they are also enabling the preview tab for data objects.  
 
 Link generators are defined on class level, there are two ways to do this. 
 
@@ -74,7 +76,7 @@ The link generator will receive the referenced object and additional data depend
 ```php
 <ul class="foo">
     <?php foreach($this->newsList as $news) { ?>
-        <a href="<?= $app->getContainer()->get('website.news_linkgenerator')->generate($news); ?>"><?= $news->getTitle() ?></a>
+        <a href="<?= $this->pimcoreUrl(['object' => $news]); ?>"><?= $news->getTitle() ?></a>
     <?php } ?>
 </ul>
  ``` 

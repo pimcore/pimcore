@@ -412,7 +412,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
                 id: this.data.id,
                 data: Ext.encode(saveData)
             },
-            method: "post",
+            method: "PUT",
             success: this.saveOnComplete.bind(this)
         });
     },
@@ -1141,6 +1141,76 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
                 width: 350,
                 value: data.tenant
             }]
+        });
+
+        return item;
+    },
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    conditionTargetGroup: function (panel, data, getName) {
+        var niceName = t("bundle_ecommerce_pricing_config_condition_targetgroup");
+        if (typeof getName !== "undefined" && getName) {
+            return niceName;
+        }
+
+        // check params
+        if (typeof data === "undefined") {
+            data = {};
+        }
+
+
+        this.targetGroupStore = Ext.create('Ext.data.JsonStore', {
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                url: "/admin/targeting/target-group/list"
+            },
+            fields: ["id", "text"],
+            listeners: {
+                load: function() {
+                    this.targetGroup.setValue(data.targetGroupId);
+                }.bind(this)
+            }
+        });
+
+        this.targetGroup = new Ext.form.ComboBox({
+            displayField:'text',
+            valueField: "id",
+            name: "targetGroupId",
+            fieldLabel: t("bundle_ecommerce_pricing_config_condition_targetgroup_targetgroup"),
+            store: this.targetGroupStore,
+            editable: false,
+            triggerAction: 'all',
+            width: 500,
+            listeners: {
+            }
+        });
+
+
+        // create item
+        var myId = Ext.id();
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            type: 'TargetGroup',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionTargetGroup"),
+            items: [
+                this.targetGroup,
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("bundle_ecommerce_pricing_config_condition_targetgroup_threshold"),
+                    name: "threshold",
+                    width: 200,
+                    value: data.threshold
+                }
+            ]
         });
 
         return item;

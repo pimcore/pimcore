@@ -503,8 +503,8 @@ class Pdf extends Model\Document\Tag
             </div>
 
             <link rel="stylesheet" type="text/css" href="/pimcore/static6/js/frontend/pdfViewer/styles.css" />
-            <script type="text/javascript" src="/pimcore/static6/js/frontend/pdfViewer/viewer.js"></script>
-            <script type="text/javascript">
+            <script src="/pimcore/static6/js/frontend/pdfViewer/viewer.js"></script>
+            <script>
                 var pimcore_pdf = pimcore_pdf || {};
                 pimcore_pdf["$jsVarName"] = new pimcore.pdf({
                     id: "$divId",

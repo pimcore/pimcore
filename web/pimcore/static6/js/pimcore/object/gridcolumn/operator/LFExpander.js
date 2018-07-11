@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
     type: "operator",
     class: "LFExpander",
     iconCls: "pimcore_icon_operator_lfexpander",
-    defaultText: "operator_lfexpander",
+    defaultText: "LF Expander",
     group: "other",
 
     getConfigTreeNode: function(configAttributes) {
@@ -46,7 +46,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,

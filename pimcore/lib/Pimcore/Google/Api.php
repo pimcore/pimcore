@@ -26,7 +26,7 @@ class Api
      */
     public static function getPrivateKeyPath()
     {
-        $path = \Pimcore\Config::locateConfigFile('google-api-private-key.p12');
+        $path = \Pimcore\Config::locateConfigFile('google-api-private-key.json');
 
         return $path;
     }
@@ -113,20 +113,16 @@ class Api
             $scope = ['https://www.googleapis.com/auth/analytics.readonly'];
         }
 
-        $clientConfig = new \Google_Config();
-        $clientConfig->setClassConfig('Google_Cache_File', 'directory', PIMCORE_CACHE_DIRECTORY);
+        $client = new \Google_Client();
 
-        $client = new \Google_Client($clientConfig);
+        $cache = \Pimcore::getContainer()->get('pimcore.cache.core.pool');
+        $client->setCache($cache);
+
         $client->setApplicationName('pimcore CMF');
+        $json = self::getPrivateKeyPath();
+        $client->setAuthConfig($json);
 
-        $key = file_get_contents(self::getPrivateKeyPath());
-        $client->setAssertionCredentials(
-            new \Google_Auth_AssertionCredentials(
-            $config->email,
-            $scope,
-            $key
-        )
-        );
+        $client->setScopes($scope);
 
         $client->setClientId($config->client_id);
 
@@ -141,8 +137,8 @@ class Api
         }
 
         if (!$token) {
-            $client->getAuth()->refreshTokenWithAssertion();
-            $token = $client->getAuth()->getAccessToken();
+            $client->refreshTokenWithAssertion();
+            $token = json_encode($client->getAccessToken());
 
             // 1 hour (3600s) is the default expiry time
             TmpStore::add($tokenId, $token, null, 3600);
@@ -162,10 +158,11 @@ class Api
             return false;
         }
 
-        $clientConfig = new \Google_Config();
-        $clientConfig->setClassConfig('Google_Cache_File', 'directory', PIMCORE_CACHE_DIRECTORY);
+        $client = new \Google_Client();
 
-        $client = new \Google_Client($clientConfig);
+        $cache = \Pimcore::getContainer()->get('pimcore.cache.core.pool');
+        $client->setCache($cache);
+
         $client->setApplicationName('pimcore CMF');
         $client->setDeveloperKey(Config::getSystemConfig()->services->google->simpleapikey);
 

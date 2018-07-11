@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pimcore
  *
@@ -12,13 +13,21 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Image\Adapter;
+namespace Pimcore\Localization;
 
-/**
- * @deprecated
- */
-class InkscapeImagick extends Imagick
+interface LocaleServiceInterface
 {
-    // this is deprecated
-    // use ImageMagick delegates instead
+    public function isLocale($locale);
+
+    public function findLocale();
+
+    public function getLocaleList();
+
+    public function getDisplayRegions($locale = null);
+
+    public function getLocale();
+
+    public function setLocale($locale);
+
+    public function hasLocale();
 }

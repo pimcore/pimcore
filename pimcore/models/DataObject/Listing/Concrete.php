@@ -71,7 +71,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getClassId()
     {

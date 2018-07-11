@@ -91,6 +91,14 @@ class Thumbnail
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
         $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
+
+        if ($this->getConfig()) {
+            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                // we still generate the raster image, to get the final size of the thumbnail
+                $path = $this->asset->getFullPath();
+            }
+        }
+
         $path = urlencode_ignore_slash($path);
 
         $event = new GenericEvent($this, [
@@ -101,6 +109,22 @@ class Thumbnail
         $path = $event->getArgument('frontendPath');
 
         return $path;
+    }
+
+    /**
+     * @param string $filename
+     *
+     * @return bool
+     */
+    protected function useOriginalFile($filename)
+    {
+        if ($this->getConfig()) {
+            if (!$this->getConfig()->isRasterizeSVG() && preg_match("@\.svgz?$@", $filename)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -452,7 +476,7 @@ class Thumbnail
 
         $thumbConfig = $this->getConfig();
 
-        if ($this->getConfig() && !$this->getConfig()->hasMedias()) {
+        if ($this->getConfig() && !$this->getConfig()->hasMedias() && !$this->useOriginalFile($path)) {
             // generate the srcset
             $srcSetValues = [];
             foreach ([1, 2] as $highRes) {

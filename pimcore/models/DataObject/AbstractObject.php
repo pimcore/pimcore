@@ -320,7 +320,7 @@ class AbstractObject extends Model\Element\AbstractElement
      * @param string $path
      * @param bool $force
      *
-     * @return self
+     * @return static
      */
     public static function getByPath($path, $force = false)
     {
@@ -436,7 +436,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list = new Listing();
             $list->setUnpublished($unpublished);
             $list->setCondition('o_parentId = ?', $this->getId());
-            $list->setOrderKey('o_key');
+            $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
             $list->setOrder('asc');
             $list->setObjectTypes($objectTypes);
             $this->o_childs = $list->load();
@@ -728,7 +728,7 @@ class AbstractObject extends Model\Element\AbstractElement
             }
 
             if (strlen($this->getKey()) < 1) {
-                throw new \Exception('Document requires key, generated key automatically');
+                throw new \Exception('DataObject requires key');
             }
         } elseif ($this->getId() == 1) {
             // some data in root node should always be the same

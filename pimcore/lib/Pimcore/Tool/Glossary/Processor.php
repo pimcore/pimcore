@@ -102,6 +102,7 @@ class Processor
 
         // get initial document from request (requested document, if it was a "document" request)
         $currentDocument = $this->documentResolver->getDocument();
+        $currentUri = $this->requestHelper->getMasterRequest()->getRequestUri();
 
         foreach ($data as $entry) {
             if ($currentDocument && $currentDocument instanceof Document) {
@@ -114,6 +115,11 @@ class Processor
                 if ($currentDocument->getFullPath() == rtrim($entry['linkTarget'], ' /')) {
                     continue;
                 }
+            }
+
+            // check if the current URI is the target link (path check)
+            if ($currentUri == rtrim($entry['linkTarget'], ' /')) {
+                continue;
             }
 
             $tmpData['search'][]  = $entry['search'];

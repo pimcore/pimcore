@@ -44,7 +44,9 @@ class HtmlToImage
 
     /**
      * @deprecated
+     *
      * @return bool|mixed|string
+     *
      * @throws \Exception
      */
     public static function getXvfbBinary()
@@ -68,9 +70,12 @@ class HtmlToImage
 
         $options = [
             '--width ' . $screenWidth,
-            '--format ' . $format,
-            '--cookie ' .  Session::getSessionName() . ' ' . Session::getSessionId()
+            '--format ' . $format
         ];
+
+        if (php_sapi_name() != 'cli') {
+            $options[] = '--cookie ' .  Session::getSessionName() . ' ' . Session::getSessionId();
+        }
 
         $arguments = ' ' . implode(' ', $options) . ' "' . $url . '" ' . $outputFile;
 

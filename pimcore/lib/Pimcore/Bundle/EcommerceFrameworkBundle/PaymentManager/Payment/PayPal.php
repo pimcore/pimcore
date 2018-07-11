@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PayPal implements IPayment
+class PayPal extends AbstractPayment
 {
     /**
      * @var string
@@ -59,6 +59,8 @@ class PayPal implements IPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         // set endpoint depending on mode
         if ('live' === $options['mode']) {
             $this->endpointUrlPart = 'paypal';
@@ -100,6 +102,8 @@ class PayPal implements IPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'mode',
             'api_username',

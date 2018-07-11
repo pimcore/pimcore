@@ -87,6 +87,7 @@ pimcore.element.replace_assignments = Class.create({
                                             name: "path",
                                             itemId: "path",
                                             width: 650,
+                                            renderer: Ext.util.Format.htmlEncode,
                                             listeners: {
                                                 "render": function (el) {
                                                     new Ext.dd.DropZone(el.getEl(), {
@@ -274,6 +275,7 @@ pimcore.element.replace_assignments = Class.create({
         for (var i = 0; i < selectedRows.length; i++) {
             jobs.push({
                 url: "/admin/element/replace-assignments",
+                method: 'POST',
                 params: array_merge(params, {
                     id: selectedRows[i].get("id"),
                     type: selectedRows[i].get("type")
