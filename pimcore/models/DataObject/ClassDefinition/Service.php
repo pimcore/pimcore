@@ -99,7 +99,7 @@ class Service
         }
 
         // set properties of class
-        if ($importData['id'] && !$ignoreId) {
+        if (isset($importData['id']) && $importData['id'] && !$ignoreId) {
             $class->setId($importData['id']);
         }
         $class->setDescription($importData['description']);
