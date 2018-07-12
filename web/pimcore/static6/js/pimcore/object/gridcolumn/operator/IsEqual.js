@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.isequal");
 
-pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "IsEqual",
     iconCls: "pimcore_icon_operator_isequal",

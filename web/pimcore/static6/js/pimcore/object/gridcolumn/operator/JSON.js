@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.json");
 
-pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.json = Class.create(pimcore.object.gridcolumn.operator.text, {
     type: "operator",
     class: "JSON",
     iconCls: "pimcore_icon_operator_json",

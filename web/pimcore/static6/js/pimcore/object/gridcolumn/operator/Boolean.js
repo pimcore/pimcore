@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.boolean");
 
-pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Boolean",
     iconCls: "pimcore_icon_operator_boolean",

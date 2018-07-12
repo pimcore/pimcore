@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.anonymizer");
 
-pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.gridcolumn.operator.text, {
     type: "operator",
     class: "Anonymizer",
     iconCls: "pimcore_icon_operator_anonymizer",

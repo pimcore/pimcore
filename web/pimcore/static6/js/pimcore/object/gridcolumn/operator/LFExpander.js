@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.lfexpander");
 
-pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.gridcolumn.operator.text, {
     type: "operator",
     class: "LFExpander",
     iconCls: "pimcore_icon_operator_lfexpander",

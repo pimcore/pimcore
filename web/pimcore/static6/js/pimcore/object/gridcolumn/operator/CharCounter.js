@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.charcounter");
 
-pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "CharCounter",
     iconCls: "pimcore_icon_operator_charcounter",
