@@ -127,9 +127,10 @@ class DataObjectHelperController extends AdminController
 
         $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $classId . ')
-                            UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = ' . $classId;
+                            UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = ' . $classId . '  and c2.ownerId != ' . $user->getId();
 
         $ids = $db->fetchCol($query);
+
         if ($ids) {
             $ids = implode(',', $ids);
             $configListing = new GridConfig\Listing();
@@ -447,7 +448,7 @@ class DataObjectHelperController extends AdminController
                         $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     }
                     $userIds = implode(',', $userIds);
-                    $shared = $savedGridConfig->isShareGlobally() || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
+                    $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
 
 //                    $shared = $savedGridConfig->isShareGlobally() ||GridConfigShare::getByGridConfigAndSharedWithId($savedGridConfig->getId(), $this->getUser()->getId());
                 } catch (\Exception $e) {
