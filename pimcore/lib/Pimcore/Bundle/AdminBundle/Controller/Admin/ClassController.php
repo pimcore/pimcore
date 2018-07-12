@@ -853,6 +853,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                     [
                         'id' => $item->getKey(),
                         'text' => $item->getKey(),
+                        'title' => $item->getTitle(),
                         'key' => $item->getKey(),
                         'leaf' => true,
                         'iconCls' => 'pimcore_icon_fieldcollection'
@@ -864,6 +865,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $definitions[] = [
                     'id' => $item->getKey(),
                     'text' => $item->getKey(),
+                    'title' => $item->getTitle(),
                     'key' => $item->getKey(),
                     'leaf' => true,
                     'iconCls' => 'pimcore_icon_fieldcollection'

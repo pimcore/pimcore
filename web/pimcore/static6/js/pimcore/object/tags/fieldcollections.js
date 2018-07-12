@@ -148,14 +148,14 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 var elementData = data[i];
 
                 var menuItem = {
-                    text: ts(elementData.text),
+                    text: elementData.title ? ts(elementData.title) : ts(elementData.text),
                     iconCls: elementData.iconCls
                 };
                 if (elementData.group) {
                     var subMenu = this.buildMenu(elementData.children, blockElement);
                     menuItem.menu = subMenu;
                 } else {
-                    menuItem.handler = this.addBlock.bind(this, blockElement, elementData.key);
+                    menuItem.handler = this.addBlock.bind(this, blockElement, elementData.key, elementData.title);
                 }
 
                 collectionMenu.push(menuItem);
@@ -267,7 +267,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
     },
 
-    addBlock: function (blockElement, type) {
+    addBlock: function (blockElement, type, title) {
 
         this.closeOpenEditors();
 
@@ -291,7 +291,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
 
         this.addBlockElement(index + 1, {
-            type: type
+            type: type,
+            title: title
         });
     },
 
