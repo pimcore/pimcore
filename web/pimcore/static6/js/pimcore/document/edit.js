@@ -61,7 +61,6 @@ pimcore.document.edit = Class.create({
 
             this.areaToolbarTrigger = new Ext.button.Button({
                 iconCls: "pimcore_icon_plus",
-                tooltip: t("add_area_block"),
                 tooltipType: 'title',
                 cls: "pimcore_button_black",
                 enableToggle: true,

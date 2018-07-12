@@ -29,6 +29,10 @@ pimcore.object.importcolumn.Abstract = Class.create({
         this.objectClassId = classId;
     },
 
+    getDefaultText: function () {
+        return t(this.type + "_" + this.defaultText, t('operator') + " " + this.defaultText);
+    },
+
     getConfigTreeNode: function(configAttributes) {
         return {};
     },

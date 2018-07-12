@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.elementcounter");
 
-pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "ElementCounter",
     iconCls: "pimcore_icon_operator_elementcounter",
-    defaultText: "operator_elementcounter",
+    defaultText: "Element Counter",
 
     getConfigTreeNode: function(configAttributes) {
         if(configAttributes) {
@@ -44,7 +44,7 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true
@@ -109,7 +109,7 @@ pimcore.object.gridcolumn.operator.elementcounter = Class.create(pimcore.object.
             width: 400,
             height: 200,
             modal: true,
-            title: t('operator_elementcounter_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

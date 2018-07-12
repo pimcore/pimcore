@@ -325,15 +325,15 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 try{
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         this.resetChanges();
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error",t(rdata.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
 
                 this.tab.unmask();

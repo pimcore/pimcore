@@ -82,7 +82,7 @@ pimcore.extensionmanager.admin = Class.create({
                 extend: 'Ext.data.Model',
                 fields: [
                     "id", "extensionId", "type", "name", "description", "installed", "installable", "uninstallable", "active",
-                    "configuration", "updateable", "canChangeState", "xmlEditorFile", "version", "priority", "environments"
+                    "configuration", "updateable", "canChangeState", "version", "priority", "environments"
                 ],
                 proxy: {
                     type: 'ajax',
@@ -375,7 +375,7 @@ pimcore.extensionmanager.admin = Class.create({
                     getClass: function (v, meta, rec) {
                         var klass = "pimcore_action_column ";
                         if (rec.get('active') && rec.get('installed')) {
-                            if (rec.get("configuration") || rec.get("xmlEditorFile")) {
+                            if (rec.get("configuration")) {
                                 return "pimcore_action_column pimcore_icon_edit";
                             }
                         }
@@ -394,36 +394,13 @@ pimcore.extensionmanager.admin = Class.create({
                             iframeSrc = null;
                         }
 
-                        var handled = false;
                         var extensionId = self.getExtensionId(rec);
-
-                        if (self.isLegacyType(rec.get('type'))) {
-                            // TODO DEPRECATED xml editor is deprecated as of pimcore 5
-                            var xmlEditorFile = rec.get("xmlEditorFile");
-
-                            if (xmlEditorFile) {
-                                try {
-                                    pimcore.globalmanager.get("extension_settings_" + extensionId + "_" + type).activate();
-                                }
-                                catch (e) {
-                                    pimcore.globalmanager.add("extension_settings_" + extensionId + "_" + type, new pimcore.extensionmanager.xmlEditor(extensionId, type, xmlEditorFile));
-                                }
-
-                                handled = true;
-                            }
-                        }
-
-                        if (!handled && iframeSrc) {
+                        if (iframeSrc) {
                             extensionId = extensionId.replace(/[/\\*]/g, "_");
                             pimcore.helpers.openGenericIframeWindow("extension_settings_" + extensionId + "_" + type, iframeSrc, "pimcore_icon_plugin", extensionId);
                         }
                     }.bind(this)
                 }]
-            },
-            {
-                dataIndex: 'xmlEditorFile',
-                hidden: true,
-                hideable: false
             },
             {
                 text: t("priority"),

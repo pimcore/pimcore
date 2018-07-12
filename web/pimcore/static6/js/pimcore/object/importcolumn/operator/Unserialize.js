@@ -21,7 +21,7 @@ pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.g
     type: "operator",
     class: "Unserialize",
     iconCls: "pimcore_icon_operator_php",
-    defaultText: "operator_unserialize",
+    defaultText: "Unserialize",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -46,7 +46,7 @@ pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.g
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -106,7 +106,7 @@ pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.g
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_unserialize_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -126,7 +126,7 @@ pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.g
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
 
         return nodeLabel;
     },

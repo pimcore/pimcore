@@ -245,7 +245,7 @@ pimcore.object.bulkimport = Class.create({
                             pimcore.helpers.showNotification(t("success"), t("definitions_saved"));
                         }
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("definition_save_error") + " " + this.values[idx].displayName);
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed") + " " + this.values[idx].displayName);
                     }
 
                     this.batchProgressWin.close();
@@ -254,7 +254,7 @@ pimcore.object.bulkimport = Class.create({
                 failure: function(transport) {
                     this.batchProgressWin.close();
                     var response = Ext.decode(transport.responseText);
-                    pimcore.helpers.showNotification(t("error"), t("definition_save_error") + " " + this.values[idx].displayName);
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed") + " " + this.values[idx].displayName);
                 }.bind(this)
             });
         }

@@ -141,7 +141,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         $credentials = null;
 
         if ($request->attributes->get('_route') === 'pimcore_admin_login_check') {
-            if (!null === $username = $request->get('username')) {
+            $username = $request->get('username');
+            if (null === $username) {
                 throw new AuthenticationException('Missing username');
             }
 

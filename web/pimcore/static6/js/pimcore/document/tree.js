@@ -369,28 +369,28 @@ pimcore.document.tree = Class.create({
 
                 // empty page
                 documentMenu.page.push({
-                    text: "&gt; " + t("empty_page"),
+                    text: "&gt; " + t("blank"),
                     iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "page")
                 });
 
                 // empty snippet
                 documentMenu.snippet.push({
-                    text: "&gt; " + t("empty_snippet"),
+                    text: "&gt; " + t("blank"),
                     iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "snippet")
                 });
 
                 // empty email
                 documentMenu.email.push({
-                    text: "&gt; " + t("empty_email"),
+                    text: "&gt; " + t("blank"),
                     iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "email")
                 });
 
                 // empty newsletter
                 documentMenu.newsletter.push({
-                    text: "&gt; " + t("empty_newsletter"),
+                    text: "&gt; " + t("blank"),
                     iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "newsletter")
                 });
@@ -469,7 +469,7 @@ pimcore.document.tree = Class.create({
             if (perspectiveCfg.inTreeContextMenu("document.addFolder")) {
 
                 menu.add(new Ext.menu.Item({
-                    text: t('add_folder'),
+                    text: t('create_folder'),
                     iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "folder")
                 }));
@@ -907,11 +907,11 @@ pimcore.document.tree = Class.create({
                 }
                 else {
                     tree.loadMask.hide();
-                    pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error", t(rdata.message));
+                    pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error", t(rdata.message));
 
                 }
             } catch(e) {
-                pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error");
+                pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
             }
 
             pimcore.elementservice.refreshNodeAllTrees("document", oldParent.id);
@@ -975,7 +975,7 @@ pimcore.document.tree = Class.create({
                             this.pasteComplete(record);
                         } catch(e) {
                             console.log(e);
-                            pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error");
+                            pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error");
                             pimcore.elementservice.refreshNodeAllTrees("document", record.id);
                         }
                     }.bind(this),
@@ -989,7 +989,7 @@ pimcore.document.tree = Class.create({
                         record.pasteWindow.close();
                         record.pasteProgressBar = null;
 
-                        pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error", t(message));
+                        pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error", t(message));
                         pimcore.elementservice.refreshNodeAllTrees("document", record.id);
                     }.bind(this),
                     jobs: res.pastejobs
@@ -1160,12 +1160,12 @@ pimcore.document.tree = Class.create({
 
         if(type == "page") {
 
-            textKeyTitle = "add_document";
-            textKeyMessage = "please_enter_the_name_of_the_new_document";
+            textKeyTitle = t("add_page");
+            textKeyMessage = t("enter_the_name_of_the_new_item");
 
             //create a custom form
             var pageForm = new Ext.form.FormPanel({
-                title: t(textKeyMessage),
+                title: textKeyMessage,
                 border: false,
                 bodyStyle: "padding: 10px;",
                 items: [{
@@ -1216,7 +1216,7 @@ pimcore.document.tree = Class.create({
             var messageBox = new Ext.Window({
                 modal: true,
                 width: 400,
-                title: t(textKeyTitle),
+                title: textKeyTitle,
                 items: pageForm,
                 buttons: [{
                     text: t('OK'),
@@ -1240,14 +1240,14 @@ pimcore.document.tree = Class.create({
         } else {
 
             if (type == "folder") {
-                textKeyTitle = "add_folder";
-                textKeyMessage = "please_enter_the_name_of_the_new_folder";
+                textKeyTitle = t("create_folder");
+                textKeyMessage = t("enter_the_name_of_the_new_item");
             } else {
-                textKeyTitle = "add_document";
-                textKeyMessage = "please_enter_the_name_of_the_new_document";
+                textKeyTitle = t("add_" + type);
+                textKeyMessage = t("enter_the_name_of_the_new_item");
             }
 
-            Ext.MessageBox.prompt(t(textKeyTitle), t(textKeyMessage), function (tree, record, type, docTypeId, button, value, object) {
+            Ext.MessageBox.prompt(textKeyTitle, textKeyMessage, function (tree, record, type, docTypeId, button, value, object) {
                 if (button == "ok") {
 
                     this.addDocumentCreate(

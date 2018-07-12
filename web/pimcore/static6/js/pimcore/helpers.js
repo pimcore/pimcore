@@ -227,8 +227,6 @@ pimcore.helpers.updateObjectStyle = function (id, treeData) {
             var store = tree.getStore();
             var record = store.getById(id);
             if (record) {
-                record.set("qtitle", treeData.qtipCfg.title);
-                record.set("qtip", treeData.qtipCfg.text);
                 if (typeof treeData.icon !== "undefined") {
                     record.set("icon", treeData.icon);
                 }

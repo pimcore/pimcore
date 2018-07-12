@@ -323,7 +323,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
     getGridPanel: function (columns, gridfilters, selectedClass) {
 
-        this.pagingtoolbar = this.getPagingToolbar(t("no_objects_found"));
+        this.pagingtoolbar = this.getPagingToolbar();
         this.gridPanel = Ext.create('Ext.grid.Panel', {
             store: this.store,
             border: false,

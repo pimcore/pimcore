@@ -56,9 +56,13 @@ pimcore.element.properties = Class.create({
                 store: predefinedPropertiesStore,
                 editable: false,
                 triggerAction: 'all',
-                listWidth: 200,
-                emptyText: t("select_a_property"),
-                listClass: "pimcore_predefined_property_select"
+                listWidth: 300,
+                width: 250,
+                emptyText: t("predefined_properties"),
+                listClass: "pimcore_predefined_property_select",
+                listeners: [{
+                    select: this.addSetFromPredefined.bind(this, predefinedPropertiesStore)
+                }]
             });
 
             var propertyTypes = new Ext.data.ArrayStore({
@@ -212,11 +216,7 @@ pimcore.element.properties = Class.create({
                 plugins: [
                     this.cellEditing
                 ],
-                tbar: [predefinedcombo,{
-                    xtype: "button",
-                    handler: this.addSetFromPredefined.bind(this, predefinedcombo, predefinedPropertiesStore),
-                    iconCls: "pimcore_icon_add"
-                },"-",{
+                tbar: [predefinedcombo,"-",{
                     xtype: "tbtext",
                     text: t('add_a_custom_property') + " "
                 },
@@ -548,7 +548,7 @@ pimcore.element.properties = Class.create({
         }
     },
  
-    addSetFromPredefined: function (combo, data) {
+    addSetFromPredefined: function (data, combo) {
         try {
             var id = combo.getValue();
             var selectedData = data.getAt(data.findExact("id", id)).data;

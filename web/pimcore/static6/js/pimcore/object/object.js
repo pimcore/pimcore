@@ -695,7 +695,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
                     this.tab.unmask();
-                    pimcore.helpers.showPrettyError('object', t("error"), t("error_saving_object"), e.message);
+                    pimcore.helpers.showPrettyError('object', t("error"), t("saving_failed"), e.message);
                     return false;
                 }
 
@@ -719,7 +719,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 successCallback(rdata);
                             }
                             if (rdata && rdata.success) {
-                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
+                                pimcore.helpers.showNotification(t("success"), t("saved_successfully"),
                                     "success");
                                 this.resetChanges();
                                 Ext.apply(this.data.general, rdata.general);
@@ -731,11 +731,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
                             }
                             else {
-                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
+                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
                                     rdata.message, rdata.stack, rdata.code);
                             }
                         } catch (e) {
-                            pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                            pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                         }
                         // reload versions
                         if (this.isAllowed("versions")) {

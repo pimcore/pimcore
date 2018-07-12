@@ -21,7 +21,7 @@ pimcore.object.importcolumn.operator.splitter = Class.create(pimcore.object.grid
     type: "operator",
     class: "Splitter",
     iconCls: "pimcore_icon_operator_splitter",
-    defaultText: "operator_splitter",
+    defaultText: "Splitter",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -45,7 +45,7 @@ pimcore.object.importcolumn.operator.splitter = Class.create(pimcore.object.grid
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -112,7 +112,7 @@ pimcore.object.importcolumn.operator.splitter = Class.create(pimcore.object.grid
             width: 400,
             height: 200,
             modal: true,
-            title: t('splitter_operator_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

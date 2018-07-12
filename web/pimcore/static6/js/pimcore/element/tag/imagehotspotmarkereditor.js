@@ -309,7 +309,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
 
             menu.add(new Ext.menu.Item({
-                text: t("duplicate"),
+                text: t("clone"),
                 iconCls: "pimcore_icon_copy",
                 handler: function (id, type, item) {
                     item.parentMenu.destroy();

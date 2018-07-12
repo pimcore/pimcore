@@ -46,6 +46,11 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     public $title;
 
     /**
+     * @var string
+     */
+    public $group;
+
+    /**
      * @param $classDefinitions
      *
      * @return $this

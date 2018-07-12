@@ -176,7 +176,6 @@ define("PIMCORE_TRANSFORMED_ASSET_URL", $s3BaseUrl . "/" . $s3BucketName . "/ass
 // the following paths should be private!
 define("PIMCORE_VERSION_DIRECTORY", $s3FileWrapperPrefix . "/versions");
 define("PIMCORE_RECYCLEBIN_DIRECTORY", $s3FileWrapperPrefix . "/recyclebin");
-define("PIMCORE_BACKUP_DIRECTORY", $s3FileWrapperPrefix . "/backup");
 define("PIMCORE_LOG_MAIL_PERMANENT", $s3FileWrapperPrefix . "/email");
 define("PIMCORE_LOG_FILEOBJECT_DIRECTORY", $s3FileWrapperPrefix . "/fileobjects");
 ```

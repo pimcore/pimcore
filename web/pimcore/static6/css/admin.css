@@ -1660,7 +1660,7 @@ span.warning {
     position: absolute;
     z-index: 10000;
     top: 50%;
-    left: calc(50% - 300px);
+    left: calc(50% - 450px);
     width: 900px;
     opacity: 0.9;
     box-shadow: 0px 18px 88px -12px #000;

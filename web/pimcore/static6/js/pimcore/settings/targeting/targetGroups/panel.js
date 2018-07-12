@@ -64,7 +64,7 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_target_group"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addTargetGroup.bind(this)
                         }
@@ -118,7 +118,7 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
     },
 
     addTargetGroup: function () {
-        Ext.MessageBox.prompt(t('add_target_group'), t('enter_the_name_of_the_new_target_group'),
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                                 this.addTargetGroupComplete.bind(this), null, null, "");
     },
 
@@ -143,7 +143,7 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
                     this.tree.getStore().reload();
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_target_group'), t('problem_creating_new_target_group'));
+                        Ext.Msg.alert(' ', t('failed_to_create_new_item'));
                     } else {
                         this.openTargetGroup(intval(data.id));
 
@@ -155,7 +155,7 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_target_group'), t('naming_requirements_3chars'));
+            Ext.Msg.alert(' ', t('naming_requirements_3chars'));
         }
     },
 

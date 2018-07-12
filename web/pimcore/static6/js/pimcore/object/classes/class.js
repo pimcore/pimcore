@@ -437,7 +437,7 @@ pimcore.object.classes.klass = Class.create({
             if (record.data.type == "data") {
                 var dataComps = Object.keys(pimcore.object.classes.data);
                 menu.add(new Ext.menu.Item({
-                    text: t('duplicate'),
+                    text: t('clone'),
                     iconCls: "pimcore_icon_clone",
                     hideOnClick: true,
                     handler: this.changeDataType.bind(this, tree, record, record.data.editor.type, false, this.context)
@@ -1198,7 +1198,7 @@ pimcore.object.classes.klass = Class.create({
                 });
             }
         } else {
-            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
+            Ext.Msg.alert(' ', t('invalid_class_name'));
         }
     },
 
@@ -1215,7 +1215,7 @@ pimcore.object.classes.klass = Class.create({
                 // set the current modification date, to detect modifcations on the class which are not made here
                 this.data.modificationDate = res['class'].modificationDate;
 
-                pimcore.helpers.showNotification(t("success"), t("class_saved_successfully"), "success");
+                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
             } else {
                 throw "save was not successful, see log files in /var/logs";
             }
@@ -1226,7 +1226,7 @@ pimcore.object.classes.klass = Class.create({
     },
 
     saveOnError: function () {
-        pimcore.helpers.showNotification(t("error"), t("class_save_error"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     },
 
     onRefresh: function() {
