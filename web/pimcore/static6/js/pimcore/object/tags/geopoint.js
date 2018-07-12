@@ -21,6 +21,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     getLayoutEdit: function () {
 
         this.mapImageID = uniqid();
+        this.divImageID = uniqid();
 
         var coordConf = {
             decimalPrecision: 15,
@@ -90,10 +91,11 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         var mapZoom = fieldConfig.zoom;
         var lat = fieldConfig.lat;
         var lng = fieldConfig.lng;
-        var Map;
-        var myIcon = L.icon({
-                iconUrl: '/pimcore/static6/img/marker-icon.png'
-            });
+        var leafletMap;
+        var markerIcon = L.icon({
+                iconUrl: '/pimcore/static6/img/leaflet/marker-icon.png',
+                shadowUrl: '/pimcore/static6/img/leaflet/marker-shadow.png'
+        });
 
         var editableLayers = new L.FeatureGroup();
         var drawControlFull = new L.Control.Draw({
@@ -106,12 +108,12 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 circlemarker: false
             },
             edit: {
-                featureGroup: editableLayers, //REQUIRED!!
+                featureGroup: editableLayers,
                 remove: true
             }
         });
-
         var drawControlEditOnly = new L.Control.Draw({
+            position: 'topright',
             edit: {
                 featureGroup: editableLayers
             },
@@ -122,40 +124,38 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             lat = data.latitude;
             lng = data.longitude;
             mapZoom = 15;
-            document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = "<div id='map' style='height:400px;width:650px;'></div>";
-            Map =  L.map('map').setView([lat, lng], mapZoom);
-
+            document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="map'+ this.divImageID +'" style="height:400px;width:650px;"></div>';
+            leafletMap =  L.map('map' +this.divImageID).setView([lat, lng], mapZoom);
             L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(Map);
+            }).addTo(leafletMap);
 
         } else {
-            document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = "<div id='map' style='height:400px;width:650px;'></div>";
-            Map =  L.map('map').setView([lat, lng], mapZoom);
-
+            document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="map'+ this.divImageID +'" style="height:400px;width:650px;"></div>';
+            leafletMap =  L.map('map'+this.divImageID).setView([lat, lng], mapZoom);
             L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(Map);
+            }).addTo(leafletMap);
 
         }
-        marker = L.marker([lat, lng], {icon: myIcon}).addTo(Map);
-        Map.addLayer(editableLayers);
-        Map.addControl(drawControlFull);
-        Map.on(L.Draw.Event.CREATED, function (e) {
-            Map.removeLayer(marker);
-            layer = e.layer;
+        marker = L.marker([lat, lng], {icon: markerIcon}).addTo(leafletMap);
+        leafletMap.addLayer(editableLayers);
+        leafletMap.addControl(drawControlFull);
+        leafletMap.on(L.Draw.Event.CREATED, function (e) {
+            leafletMap.removeLayer(marker);
+            var layer = e.layer;
             editableLayers.addLayer(layer);
             if (editableLayers.getLayers().length === 1) {
-                drawControlFull.remove(Map);
-                drawControlEditOnly.addTo(Map);
+                drawControlFull.remove(leafletMap);
+                drawControlEditOnly.addTo(leafletMap);
                 this.latitude.setValue(layer.getLatLng().lat);
                 this.longitude.setValue(layer.getLatLng().lng)
             }
         }.bind(this));
 
-        Map.on("draw:deleted", function (e) {
-            drawControlEditOnly.remove(Map);
-            drawControlFull.addTo(Map);
+        leafletMap.on("draw:deleted", function (e) {
+            drawControlEditOnly.remove(leafletMap);
+            drawControlFull.addTo(leafletMap);
         });
 
     },
