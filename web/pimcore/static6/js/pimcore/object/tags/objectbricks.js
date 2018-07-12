@@ -110,7 +110,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 var menuItem = {
-                    text: ts(elementData.text),
+                    text: elementData.title ? ts(elementData.title) : ts(elementData.text),
                     iconCls: elementData.iconCls
                 };
                 if (elementData.group) {
