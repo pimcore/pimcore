@@ -3,6 +3,9 @@
 
 ## Version 5.3.0
 
+#### Build 280 (2018-07-12)
+Extensions: removed support for `xmlEditorFile` for legacy plugins (compatibility mode).  
+
 #### Build 277 (2018-07-09)
 Admin Localization: Only languages with a [translation progress](https://poeditor.com/projects/view?order=trans_desc&id=38068) over 70% are included in the standard distribution. 
 For the current status this means that the following languages are no longer provided: CA, PL, ZH_Hans, ZH_Hant, SV, JA, PT, PT_BR, RU, FA, TR, UK. 
