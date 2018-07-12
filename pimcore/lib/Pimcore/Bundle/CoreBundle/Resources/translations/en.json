@@ -1924,5 +1924,6 @@
   "iframe_url": "IFrame URL",
   "thumbnail": "Thumbnail",
   "download_thumbnail": "Download Thumbnail",
-  "no_thumbnail_selected": "No thumbnail selected"
+  "no_thumbnail_selected": "No thumbnail selected",
+  "list_thumbnail_in_download_section_on_image_detail_view": "List as option in download section on image detail view"
 }

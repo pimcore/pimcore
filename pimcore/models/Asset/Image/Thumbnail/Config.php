@@ -89,6 +89,11 @@ class Config extends Model\AbstractModel
     public $rasterizeSVG = false;
 
     /**
+     * @var bool
+     */
+    public $downloadable = false;
+
+    /**
      * @var int
      */
     public $modificationDate;
@@ -757,5 +762,21 @@ class Config extends Model\AbstractModel
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDownloadable(): bool
+    {
+        return $this->downloadable;
+    }
+
+    /**
+     * @param bool $downloadable
+     */
+    public function setDownloadable(bool $downloadable): void
+    {
+        $this->downloadable = $downloadable;
     }
 }

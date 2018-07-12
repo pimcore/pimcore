@@ -1234,6 +1234,36 @@ class SettingsController extends AdminController
         $list = new Asset\Image\Thumbnail\Config\Listing();
         $items = $list->load();
 
+        /** @var Asset\Image\Thumbnail\Config $item */
+        foreach ($items as $item) {
+            $thumbnails[] = [
+                'id' => $item->getName(),
+                'text' => $item->getName()
+            ];
+        }
+
+        return $this->adminJson($thumbnails);
+    }
+
+    /**
+     * @Route("/thumbnail-downloadable")
+     * @Method("GET")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function thumbnailsGetAction(Request $request)
+    {
+        $thumbnails = [];
+
+        $list  = new Asset\Image\Thumbnail\Config\Listing();
+        $list->setFilter(function (array $config) {
+            return array_key_exists('downloadable', $config) ? $config['downloadable'] : false;
+        });
+        $items = $list->load();
+
+        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             $thumbnails[] = [
                 'id' => $item->getName(),
