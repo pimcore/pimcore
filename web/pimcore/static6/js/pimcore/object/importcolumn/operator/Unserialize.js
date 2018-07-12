@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.unserialize");
 
-pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.importcolumn.operator.unserialize = Class.create(pimcore.object.gridcolumn.operator.text, {
     type: "operator",
     class: "Unserialize",
     iconCls: "pimcore_icon_operator_php",

@@ -2881,27 +2881,27 @@ pimcore.helpers.markColumnConfigAsFavourite = function (objectId, classId, gridC
                     var rdata = Ext.decode(response.responseText);
 
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("success"), t("your_favourite_has_been_saved"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
                         if (rdata.spezializedConfigs) {
                             pimcore.helpers.removeOtherConfigs(objectId, classId, gridConfigId, searchType);
                         }
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error", t(rdata.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this),
             failure: function () {
-                pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+                pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
             }
         });
 
     } catch (e3) {
-        pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     }
 };
 

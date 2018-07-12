@@ -93,7 +93,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
         });
 
         var helpButton = new Ext.Button({
-            text: t("click_for_help"),
+            text: t("help"),
             handler: function () {
                 window.open("http://php.net/manual/en/function.date.php");
             },

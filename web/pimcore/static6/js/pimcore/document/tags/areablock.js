@@ -919,7 +919,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             modal: true,
             width: editmodeWindowWidth,
             height: editmodeWindowHeight,
-            title: t("edit_block"),
+            title: t("edit"),
             closeAction: "hide",
             bodyStyle: "padding: 10px;",
             closable: false,

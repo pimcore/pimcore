@@ -175,7 +175,7 @@ pimcore.settings.translation.translationmerger = Class.create({
             });
 
             this.panel = new Ext.Panel({
-                title: t("translation_merger_" + this.translationType),
+                title: t("merge_translations"),
                 iconCls: "pimcore_icon_translations",
                 border: false,
                 layout: "fit",

@@ -109,7 +109,7 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
             width: 400,
             height: 200,
             modal: true,
-            title: t('concatenator_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

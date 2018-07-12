@@ -99,7 +99,7 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
         });
 
         this.indexField = new Ext.form.NumberField({
-            fieldLabel: t('offset'),
+            fieldLabel: t('offset') + " (0-...)",
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.idx

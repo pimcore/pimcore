@@ -138,7 +138,7 @@ pimcore.object.gridcolumn.operator.localeswitcher = Class.create(pimcore.object.
             width: 400,
             height: 200,
             modal: true,
-            title: t('localeswitcher_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

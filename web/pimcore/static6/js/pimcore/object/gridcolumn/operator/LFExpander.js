@@ -140,7 +140,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
             width: 400,
             height: 500,
             modal: true,
-            title: t('lfexpander_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

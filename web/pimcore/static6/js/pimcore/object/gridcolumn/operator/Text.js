@@ -98,7 +98,7 @@ pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn
             width: 400,
             height: 160,
             modal: true,
-            title: t('text_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

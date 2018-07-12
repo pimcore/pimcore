@@ -113,7 +113,7 @@ pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcol
             width: 400,
             height: 200,
             modal: true,
-            title: t('isequal_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

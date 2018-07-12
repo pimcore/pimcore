@@ -79,7 +79,7 @@ pimcore.element.tag.imagecropper = Class.create({
             resizable: false,
             bodyStyle: validImage ? "background: url(" + imageUrl + ") center center no-repeat;position:relative;" : "",
             bbar: ["->", button],
-            html: validImage ? '<img id="selectorImage" src="' + imageUrl + '" />' : '<span style="padding:10px;">' + t("no_image_assigned") + '</span>'
+            html: validImage ? '<img id="selectorImage" src="' + imageUrl + '" />' : '<span style="padding:10px;">' + t("no_data_to_display") + '</span>'
         });
 
         var checkSize = function () {

@@ -103,7 +103,6 @@
   "clear_fullpage_cache": "full_page_cache",
   "piwik_site_id": "site_id",
   "substring_operator_settings": "operator_substring_settings",
-  "custom_title": "config_title_custom",
   "delete_importconfig_dblcheck": "delete_gridconfig_dblcheck",
   "operator_objectbricksetter_settings": "operator_objectbricksetter",
   "piwik_widget_date": "end_date",
@@ -125,5 +124,6 @@
   "routes": "static_routes",
   "plugins": "extensions",
   "log_search_message": "message",
+  "rgbaColor": "color",
   "bool": "boolean"
 }

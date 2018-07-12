@@ -630,7 +630,6 @@
   "no_further_sources_allowed": "No further data sources allowed",
   "column_configuration": "Manage & Share Column Configuration",
   "show_in_google_anaytics": "Show in Google Analytics",
-  "medium": "Medium",
   "style": "Style",
   "foreground_color": "Foreground Color",
   "background_color": "Background Color",
@@ -678,6 +677,10 @@
   "classification_store": "Classification Store",
   "quantityValue_field": "Quantity Value",
   "expanded": "Expanded",
-
-  "LAST_LINE": "LAST LINE"
+  "display_type": "Display Type",
+  "custom_report_class": "Report class",
+  "hide": "Hide",
+  "full_page_cache": "Clear Full Page Cache",
+  "all_caches": "All Caches",
+  "data_cache": "Data Cache"
 }

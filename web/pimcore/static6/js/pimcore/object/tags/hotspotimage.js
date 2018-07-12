@@ -412,7 +412,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         if (replacement && this.hasData()) {
 
             Ext.MessageBox.show({
-                title: t('clear_hotspots_title'),
                 msg: t('clear_hotspots_msg'),
                 buttons: Ext.Msg.YESNO,
                 icon: Ext.MessageBox.INFO,

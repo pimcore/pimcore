@@ -103,7 +103,7 @@ pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gri
             width: 400,
             height: 200,
             modal: true,
-            title: t('concatenator_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

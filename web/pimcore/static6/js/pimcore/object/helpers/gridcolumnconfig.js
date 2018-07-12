@@ -74,7 +74,7 @@ pimcore.object.helpers.gridcolumnconfig = {
 
         Ext.MessageBox.show({
             title: t('delete'),
-            msg: t('delete_gridconfig_dblcheck'),
+            msg: t('delete_message'),
             buttons: Ext.Msg.OKCANCEL,
             icon: Ext.MessageBox.INFO,
             fn: this.deleteGridConfigConfirmed.bind(this)
@@ -97,11 +97,10 @@ pimcore.object.helpers.gridcolumnconfig = {
                 success: function (response) {
 
                     decodedResponse = Ext.decode(response.responseText);
-                    if (decodedResponse.deleteSuccess) {
-                        pimcore.helpers.showNotification(t("success"), t("gridconfig_removed"), "success");
-                    } else {
-                        pimcore.helpers.showNotification(t("error"), t("gridconfig_not_removed"), "error");
+                    if (!decodedResponse.deleteSuccess) {
+                        pimcore.helpers.showNotification(t("error"), t("error_deleting_item"), "error");
                     }
+
                     this.createGrid(false, response);
                 }.bind(this)
             });
@@ -163,7 +162,7 @@ pimcore.object.helpers.gridcolumnconfig = {
             });
 
             menu.add({
-                text: t('remove_config'),
+                text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 disabled: !this.settings.gridConfigId || this.settings.isShared,
                 handler: this.deleteGridConfig.bind(this)

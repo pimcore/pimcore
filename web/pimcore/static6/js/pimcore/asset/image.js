@@ -325,7 +325,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     triggerAction: "all",
                     name: "resize_mode",
                     itemId: "resize_mode",
-                    fieldLabel: t("resize_mode"),
+                    fieldLabel: t("mode"),
                     forceSelection: true,
                     store: [["scaleByWidth", t("scalebywidth")], ["scaleByHeight", t("scalebyheight")], ["resize", t("resize")]],
                     mode: "local",

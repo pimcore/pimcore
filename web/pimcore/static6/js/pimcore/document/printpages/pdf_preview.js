@@ -274,7 +274,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
         }
 
         if (type == "select") {
-            return t("web2print_" + value);
+            return t("web2print_" + value, value);
         }
 
         return value;
@@ -310,7 +310,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
             var values = data.values;
             var storeValues = [];
             for(var i=0; i < values.length; i++) {
-                storeValues.push([values[i], t("web2print_" + values[i])]);
+                storeValues.push([values[i], t("web2print_" + values[i], values[i])]);
             }
 
             property = new Ext.form.ComboBox({
@@ -404,7 +404,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     this.statusUpdateBox.show();
 
                     if(result.statusUpdate) {
-                        var text = result.statusUpdate.status + "% (" + t("web2print_" + result.statusUpdate.statusUpdate) + ")";
+                        var text = result.statusUpdate.status + "% (" + t("web2print_" + result.statusUpdate.statusUpdate, result.statusUpdate.statusUpdate) + ")";
                         this.progressBar.updateProgress(result.statusUpdate.status / 100, text);
                     }
 
