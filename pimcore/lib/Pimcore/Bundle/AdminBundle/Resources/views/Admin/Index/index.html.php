@@ -632,7 +632,6 @@ $scripts = array(
     "pimcore/report/qrcode/item.js",
 
     // extension manager
-    "pimcore/extensionmanager/xmlEditor.js",
     "pimcore/extensionmanager/admin.js",
 
     // application logging
