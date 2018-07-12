@@ -1160,6 +1160,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $layoutDefinitions = [];
         $groups = [];
+        $definitions= [];
 
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
