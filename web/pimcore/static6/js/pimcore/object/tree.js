@@ -362,8 +362,6 @@ pimcore.object.tree = Class.create({
                 tmpMenuEntryImport.iconCls = "pimcore_class_icon";
             }
 
-            console.log(tmpMenuEntryImport);
-
             // check if the class is within a group
             if(classRecord.get("group")) {
                 if(!groups["objects"][classRecord.get("group")]) {
@@ -422,7 +420,7 @@ pimcore.object.tree = Class.create({
 
                 if (perspectiveCfg.inTreeContextMenu("object.addFolder")) {
                     menu.add(new Ext.menu.Item({
-                        text: t('add_folder'),
+                        text: t('create_folder'),
                         iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                         handler: this.addFolder.bind(this, tree, record)
                     }));
@@ -699,7 +697,7 @@ pimcore.object.tree = Class.create({
     },
 
     createVariant: function (tree, record) {
-        Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'),
+        Ext.MessageBox.prompt(t('add_variant'), t('enter_the_name_of_the_new_item'),
             this.addVariantCreate.bind(this, tree, record));
     },
 
@@ -926,7 +924,7 @@ pimcore.object.tree = Class.create({
         var dialogText = t("object_add_dialog_custom_text" + "." + className);
 
         if (dialogText == "object_add_dialog_custom_text" + "." + className) {
-            dialogText =  t('please_enter_the_name_of_the_new_object');
+            dialogText =  t('enter_the_name_of_the_new_item');
         }
 
         var dialogTitle = t("object_add_dialog_custom_title" + "." + className);
@@ -941,7 +939,7 @@ pimcore.object.tree = Class.create({
 
 
     addFolder: function (tree, record) {
-        Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_new_folder'),
+        Ext.MessageBox.prompt(t('create_folder'), t('enter_the_name_of_the_new_item'),
             this.addFolderCreate.bind(this, tree, record));
     },
 

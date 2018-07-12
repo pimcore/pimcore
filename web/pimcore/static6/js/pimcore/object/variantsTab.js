@@ -324,7 +324,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
 
     onAdd: function (btn, ev) {
-        Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'), this.doAdd.bind(this));
+        Ext.MessageBox.prompt(t('add_variant'), t('enter_the_name_of_the_new_item'), this.doAdd.bind(this));
     },
 
     doAdd: function (button, value) {

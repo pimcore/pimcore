@@ -629,7 +629,7 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.redirect_to_maindomain")
                             },
                             {
-                                fieldLabel: t("default_error_page"),
+                                fieldLabel: t("error_page") + " (" + t("default") + ")",
                                 name: "documents.error_pages.default",
                                 fieldCls: "input_drop_target",
                                 value: this.getValue("documents.error_pages.default"),

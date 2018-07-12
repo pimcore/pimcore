@@ -111,7 +111,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
 
         if (record.data.allowChildren) {
             menu.add(new Ext.menu.Item({
-                text: t('add_folder'),
+                text: t('create_folder'),
                 iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                 listeners: {
                     "click": this.add.bind(this, "rolefolder", null, record)
@@ -126,7 +126,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
             }));
         } else if (record.data.elementType == "role") {
             menu.add(new Ext.menu.Item({
-                text: t('clone_role'),
+                text: t('clone'),
                 iconCls: "pimcore_icon_roles pimcore_icon_overlay_add",
                 listeners: {
                     "click": this.add.bind(this, "role", record, record)

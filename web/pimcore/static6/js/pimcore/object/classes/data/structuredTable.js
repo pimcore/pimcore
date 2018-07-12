@@ -138,7 +138,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                                      "resource","parentClass","definition","locked","language"]) == false) {
                     return true;
                 } else {
-                    return t("structuredtable_invalid_key");
+                    return t("invalid_name");
                 }
             }
         });

@@ -133,7 +133,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_objectbrick'), t('enter_the_name_of_the_new_objectbrick'),
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                                     this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -165,7 +165,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
             return;
         }
         else {
-            Ext.Msg.alert(t('add_objectbrick'), t('problem_creating_new_objectbrick'));
+            Ext.Msg.alert(' ', t('failed_to_create_new_item'));
         }
     },
 

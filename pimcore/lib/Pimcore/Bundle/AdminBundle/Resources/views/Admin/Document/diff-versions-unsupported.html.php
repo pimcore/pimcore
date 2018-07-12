@@ -29,7 +29,7 @@
         <?= $this->translate("unsupported_feature"); ?>
         <br>
         <br>
-        <b>wkhtmltoimage binary and PHP extension Imagick are required!</b>
+        <b>Wkhtmltoimage binary and PHP extension Imagick are required!</b>
     </div>
 
 </body>

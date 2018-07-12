@@ -267,7 +267,7 @@ pimcore.asset.tree = Class.create({
                         var percentComplete = evt.loaded / evt.total;
                         var progressText = file.name + " ( " + Math.floor(percentComplete*100) + "% )";
                         if(percentComplete == 1) {
-                            progressText = file.name + " " + t("converting") + "... ";
+                            progressText = file.name + " " + t("please_wait");
                         }
 
                         pbar.updateProgress(percentComplete, progressText);
@@ -565,7 +565,7 @@ pimcore.asset.tree = Class.create({
 
                 if (perspectiveCfg.inTreeContextMenu("asset.addFolder")) {
                     menu.add(new Ext.menu.Item({
-                        text: t('add_folder'),
+                        text: t('create_folder'),
                         iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                         handler: this.addFolder.bind(this, tree, record)
                     }));
@@ -920,7 +920,7 @@ pimcore.asset.tree = Class.create({
     },
 
     addFolder : function (tree, record) {
-        Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_folder'),
+        Ext.MessageBox.prompt(t('create_folder'), t('enter_the_name_of_the_new_item'),
             this.addFolderCreate.bind(this, tree, record));
     },
 
@@ -948,11 +948,11 @@ pimcore.asset.tree = Class.create({
                 record.expand();
             }
             else {
-                pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_creating_a_folder"),
+                pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"),
                     "error",t(rdata.message));
             }
         } catch(e){
-            pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_creating_a_folder"), "error");
+            pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error");
         }
         pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
     },

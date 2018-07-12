@@ -180,7 +180,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_thumbnail'), t('enter_the_name_of_the_new_thumbnail'),
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -192,8 +192,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
             var thumbnails = this.tree.getRootNode().childNodes;
             for (var i = 0; i < thumbnails.length; i++) {
                 if (thumbnails[i].text == value) {
-                    Ext.MessageBox.alert(t('add_thumbnail'),
-                                         t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                    Ext.MessageBox.alert(' ', t('name_already_in_use'));
                     return;
                 }
             }
@@ -210,7 +209,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
                     this.tree.getStore().load();
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_thumbnail'), t('problem_creating_new_thumbnail'));
+                        Ext.Msg.alert(' ', t('failed_to_create_new_item'));
                     } else {
                         this.openThumbnail(data.id);
                     }
@@ -221,7 +220,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_thumbnail'), t('problem_creating_new_thumbnail'));
+            Ext.Msg.alert(' ', t('failed_to_create_new_item'));
         }
     },
 

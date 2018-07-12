@@ -415,7 +415,7 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                 var parentChilds = record.parentNode.childNodes;
                 for (var i = 0; i < parentChilds.length; i++) {
                     if (parentChilds[i].data.text == value && this != parentChilds[i].data.text) {
-                        Ext.MessageBox.alert(t('rename'), t('the_filename_is_already_in_use'));
+                        Ext.MessageBox.alert(t('rename'), t('name_already_in_use'));
                         return;
                     }
                 }
@@ -523,7 +523,7 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
     for (var i = 0; i < parentChilds.length; i++) {
         if (parentChilds[i].data.text == key && node != parentChilds[i]) {
             Ext.MessageBox.alert(t('edit_key'),
-                t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                t('name_already_in_use'));
             return true;
         }
     }

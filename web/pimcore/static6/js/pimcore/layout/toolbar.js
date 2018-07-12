@@ -101,7 +101,7 @@ pimcore.layout.toolbar = Class.create({
                             text: t("add_dashboard"),
                             iconCls: "pimcore_icon_add",
                             handler: function () {
-                                Ext.MessageBox.prompt(t('create_new_dashboard'), t('please_enter_the_name_of_the_new_dashboard'),
+                                Ext.MessageBox.prompt(t('create_new_dashboard'), t('enter_the_name_of_the_new_item'),
                                     function (button, value, object) {
                                         if (button == "ok") {
                                             Ext.Ajax.request({
@@ -361,7 +361,7 @@ pimcore.layout.toolbar = Class.create({
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
-                            text: t("email_logs") + " (" + t("global") + ")",
+                            text: t("email_logs"),
                             iconCls: "pimcore_icon_email",
                             handler: this.sentEmailsLog
                         }, {

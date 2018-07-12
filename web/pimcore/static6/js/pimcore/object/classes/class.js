@@ -437,7 +437,7 @@ pimcore.object.classes.klass = Class.create({
             if (record.data.type == "data") {
                 var dataComps = Object.keys(pimcore.object.classes.data);
                 menu.add(new Ext.menu.Item({
-                    text: t('duplicate'),
+                    text: t('clone'),
                     iconCls: "pimcore_icon_clone",
                     hideOnClick: true,
                     handler: this.changeDataType.bind(this, tree, record, record.data.editor.type, false, this.context)
@@ -1198,7 +1198,7 @@ pimcore.object.classes.klass = Class.create({
                 });
             }
         } else {
-            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
+            Ext.Msg.alert(' ', t('invalid_class_name'));
         }
     },
 

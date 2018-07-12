@@ -178,7 +178,7 @@ pimcore.object.fieldcollection = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_fieldcollection'), t('enter_the_name_of_the_new_fieldcollection'),
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                                         this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -210,7 +210,7 @@ pimcore.object.fieldcollection = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_fieldcollection'), t('problem_creating_new_fieldcollection'));
+            Ext.Msg.alert(' ', t('failed_to_create_new_item'));
         }
     },
 

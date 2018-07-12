@@ -34,7 +34,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
                 items: [this.getStoreTree(), this.getEditContainer()],
                 tbar: [
                     {
-                        text: t('add_store'),
+                        text: t('add'),
                         handler: this.onAdd.bind(this),
                         iconCls: "pimcore_icon_add"
                     }

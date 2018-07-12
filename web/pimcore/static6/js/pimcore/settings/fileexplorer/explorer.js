@@ -138,7 +138,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     addNewFile: function (node) {
 
-        Ext.MessageBox.prompt(t('new_file'), t('please_enter_the_name_of_the_new_file'),
+        Ext.MessageBox.prompt(t('new_file'), t('enter_the_name_of_the_new_item'),
             function (node, button, value) {
                 Ext.Ajax.request({
                     url: "/admin/misc/fileexplorer-add",
@@ -163,7 +163,7 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     addNewFolder: function (node) {
 
-        Ext.MessageBox.prompt(t('new_folder'), t('please_enter_the_name_of_the_new_folder'),
+        Ext.MessageBox.prompt(t('new_folder'), t('enter_the_name_of_the_new_item'),
             function (node, button, value) {
                 Ext.Ajax.request({
                     url: "/admin/misc/fileexplorer-add-folder",

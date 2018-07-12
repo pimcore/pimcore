@@ -793,7 +793,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     addLayout: function () {
-        Ext.MessageBox.prompt(t('add_layout'), t('enter_the_name_of_the_new_layout'), this.addLayoutComplete.bind(this),
+        Ext.MessageBox.prompt(t('add_layout'), t('enter_the_name_of_the_new_item'), this.addLayoutComplete.bind(this),
             null, null, "");
     },
 
@@ -829,7 +829,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
+            Ext.Msg.alert(' ', t('invalid_class_name'));
         }
     },
 
