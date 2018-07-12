@@ -427,7 +427,7 @@ pimcore.object.classes.klass = Class.create({
             if (changeTypeAllowed) {
                 var changeDataMenu = getDataMenu(allowedTypes, record.parentNode.data.editor.type, true);
                 menu.add(new Ext.menu.Item({
-                    text: t('change_type'),
+                    text: t('convert_to'),
                     iconCls: "pimcore_icon_convert",
                     hideOnClick: false,
                     menu: changeDataMenu

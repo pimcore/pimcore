@@ -669,7 +669,15 @@
   "every": "Every",
   "categories": "Categories",
   "revision": "Build",
-
+  "objectbricks": "Objectbricks",
+  "class_definitions": "Class Definitions",
+  "custom_layout_changed": "Layout was changed in the meantime. Please reload the layout and try again",
+  "rule_violation": "Rule Violation",
+  "emails": "Emails",
+  "log_applicationlog": "Application Logger",
+  "classification_store": "Classification Store",
+  "quantityValue_field": "Quantity Value",
+  "expanded": "Expanded",
 
   "LAST_LINE": "LAST LINE"
 }

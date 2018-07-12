@@ -455,7 +455,7 @@ pimcore.asset.tree = Class.create({
 
         // check new parent's permission
         if(!newParent.data.permissions.create){
-            Ext.MessageBox.alert(t('missing_permission'), t('element_cannot_be_moved'));
+            Ext.MessageBox.alert(' ', t('element_cannot_be_moved'));
             return false;
         }
 

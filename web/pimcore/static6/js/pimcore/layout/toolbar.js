@@ -98,10 +98,10 @@ pimcore.layout.toolbar = Class.create({
 
                         this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
                         this.dashboardMenu.menu.add({
-                            text: t("add_dashboard"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: function () {
-                                Ext.MessageBox.prompt(t('create_new_dashboard'), t('enter_the_name_of_the_new_item'),
+                                Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                     function (button, value, object) {
                                         if (button == "ok") {
                                             Ext.Ajax.request({
@@ -857,7 +857,7 @@ pimcore.layout.toolbar = Class.create({
 
                     if (perspectiveCfg.inToolbar("settings.objects.classificationstore")) {
                         objectMenu.menu.items.push({
-                            text: t("classificationstore_menu_config"),
+                            text: t("classification_store"),
                             iconCls: "pimcore_icon_classificationstore",
                             handler: this.editClassificationStoreConfig
                         });

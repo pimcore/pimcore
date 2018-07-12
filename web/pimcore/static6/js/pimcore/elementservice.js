@@ -120,7 +120,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                         }
                     } catch (e) {
                         console.log(e);
-                        pimcore.helpers.showNotification(t("error"), t("error_deleting_" + elementType), "error");
+                        pimcore.helpers.showNotification(t("error"), t("error_deleting_item"), "error");
                         if (node) {
                             tree.getStore().load({
                                 node: node.parentNode
@@ -149,7 +149,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
             failure: function (id, message) {
                 this.deleteWindow.close();
 
-                pimcore.helpers.showNotification(t("error"), t("error_deleting_" + elementType), "error", t(message));
+                pimcore.helpers.showNotification(t("error"), t("error_deleting_item"), "error", t(message));
                 for (var index = 0; index < affectedNodes.length; index++) {
                     try {
                         var node = affectedNodes[i];
@@ -296,7 +296,7 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
                     record.set("text", originalText);
                     record.set("path", originalPath);
                 }
-                pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
+                pimcore.helpers.showNotification(t("error"), t("error_renaming_item"),
                     "error");
                 return;
             }
@@ -316,11 +316,11 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
                     if (rdata && rdata.success) {
                         pimcore.elementservice.reopenElement(options);
                     }  else {
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_item"), "error",
                             t(rdata.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("error_renaming_item"), "error");
                 }
             }
         }.bind(this));
@@ -369,7 +369,7 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
                         // removes loading indicator added in the applyNewKey method
                         pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
                     }  else {
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error",
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_item"), "error",
                             t(rdata.message));
                         for (index = 0; index < affectedNodes.length; index++) {
                             record = affectedNodes[index];
@@ -377,7 +377,7 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
                         }
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("error_renaming_item"), "error");
                     for (index = 0; index < affectedNodes.length; index++) {
                         record = affectedNodes[index];
                         pimcore.elementservice.refreshNode(record.parentNode);
@@ -441,7 +441,7 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                             record.set("text", originalText);
                             record.set("path", originalPath);
                         }
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_item"),
                             "error");
                         return;
                     }
@@ -461,11 +461,11 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                             if (rdata && rdata.success) {
                                 pimcore.elementservice.reopenElement(options);
                             }  else {
-                                pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
+                                pimcore.helpers.showNotification(t("error"), t("error_renaming_item"),
                                     "error", t(rdata.message));
                             }
                         } catch (e) {
-                            pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
+                            pimcore.helpers.showNotification(t("error"), t("error_renaming_item"),
                                 "error");
                         }
                     }

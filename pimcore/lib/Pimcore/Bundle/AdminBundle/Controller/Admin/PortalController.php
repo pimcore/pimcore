@@ -97,7 +97,7 @@ class PortalController extends AdminController implements EventedControllerInter
         $key = trim($request->get('key'));
 
         if ($dashboards[$key]) {
-            return $this->adminJson(['success' => false, 'message' => 'dashboard_already_exists']);
+            return $this->adminJson(['success' => false, 'message' => 'name_already_in_use']);
         } elseif (!empty($key)) {
             $this->dashboardHelper->saveDashboard($key);
 

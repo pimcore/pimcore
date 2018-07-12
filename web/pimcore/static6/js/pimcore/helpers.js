@@ -477,7 +477,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
 
     if (stack) {
         stack = str_replace("#", "<br>#", stack);
-        var htmlValue = '<a href="#">' + t("detailed_info") + '</a>';
+        var htmlValue = '<a href="#">' + t("details") + '</a>';
         var detailedInfo = {
             xtype: "displayfield",
             readOnly: true,
@@ -488,7 +488,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
                     c.getEl().on('click', function () {
                         var detailedWindow = new Ext.Window({
                             modal: true,
-                            title: t('detailed_info'),
+                            title: t('details'),
                             width: 1000,
                             height: 600,
                             html: stack,
@@ -2956,23 +2956,23 @@ pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, s
                         if (typeof callback == "function") {
                             callback(rdata);
                         }
-                        pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error", t(rdata.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this),
             failure: function () {
-                pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
             }
         });
 
     } catch (e3) {
-        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     }
 };
 

@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.published");
 
-pimcore.object.importcolumn.operator.published = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.importcolumn.operator.published = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Published",
     iconCls: "pimcore_icon_operator_published",

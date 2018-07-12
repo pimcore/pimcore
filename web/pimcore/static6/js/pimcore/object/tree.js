@@ -294,7 +294,7 @@ pimcore.object.tree = Class.create({
 
         // check new parent's permission
         if(!newParent.data.permissions.create){
-            Ext.MessageBox.alert(t('missing_permission'), t('element_cannot_be_moved'));
+            Ext.MessageBox.alert(' ', t('element_cannot_be_moved'));
             return false;
         }
 
@@ -779,10 +779,10 @@ pimcore.object.tree = Class.create({
                 }
             }
             else {
-                pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error", t(rdata.message));
+                pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error", t(rdata.message));
             }
         } catch (e) {
-            pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error");
+            pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error");
         }
         pimcore.elementservice.refreshNode(record);
     },

@@ -242,7 +242,7 @@ pimcore.settings.translations = Class.create({
             tbar: toolbar,
             viewConfig: {
                 forceFit: true,
-                loadingText: t('loading_texts'),
+                loadingText: t('please_wait'),
                 enableTextSelection: true
             },
             listeners: {

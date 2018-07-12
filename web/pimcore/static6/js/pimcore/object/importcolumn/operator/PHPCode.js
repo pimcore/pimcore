@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.phpcode");
 
-pimcore.object.importcolumn.operator.phpcode = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.importcolumn.operator.phpcode = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "PHPCode",
     iconCls: "pimcore_icon_operator_phpcode",

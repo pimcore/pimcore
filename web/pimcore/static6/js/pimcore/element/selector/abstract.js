@@ -141,7 +141,7 @@ pimcore.element.selector.abstract = Class.create({
         var selectedRows = selModel.getSelection();
 
         menu.add(new Ext.menu.Item({
-            text: t('add_selected'),
+            text: t('add'),
             iconCls: "pimcore_icon_add",
             handler: function (data) {
                 var selModel = grid.getSelectionModel();

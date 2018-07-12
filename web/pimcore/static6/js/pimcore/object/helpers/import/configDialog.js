@@ -288,23 +288,23 @@ pimcore.object.helpers.import.configDialog = Class.create({
                             this.config.isShared = false;
                             this.deleteButton.setDisabled(false);
                             this.containerPanel.setTitle(this.getWindowTitle());
-                            pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
+                            pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         }
                         else {
-                            pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"),
+                            pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                                 "error", t(rdata.message));
                         }
                     } catch (e) {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                     }
                 }.bind(this),
                 failure: function () {
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             });
 
         } catch (e3) {
-            pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+            pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
         }
 
     },

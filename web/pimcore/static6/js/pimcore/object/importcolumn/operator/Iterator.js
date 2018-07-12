@@ -17,7 +17,7 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.iterator");
 
-pimcore.object.importcolumn.operator.iterator = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.importcolumn.operator.iterator = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Iterator",
     iconCls: "pimcore_icon_operator_iterator",

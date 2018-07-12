@@ -182,7 +182,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
                 }
 
                 var navigationEnhanced = new Ext.form.FieldSet({
-                    title: t('enhanced'),
+                    title: t('advanced'),
                     autoHeight: true,
                     collapsible: true,
                     collapsed: true,

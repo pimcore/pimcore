@@ -27,7 +27,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
             this.panel = new Ext.Panel({
                 iconCls: "pimcore_icon_classificationstore",
                 id: "pimcore_object_classificationstore_configpanel",
-                title: t("classificationstore_menu_config"),
+                title: t("classification_store"),
                 border: false,
                 layout: "border",
                 closable:true,

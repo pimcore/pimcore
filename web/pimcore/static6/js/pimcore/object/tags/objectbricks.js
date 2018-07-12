@@ -178,7 +178,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
     removeBlock: function (blockElement) {
 
-        Ext.MessageBox.confirm(t('delete_objectbrick'), t('delete_objectbrick_text'), function(blockElement, answer) {
+        Ext.MessageBox.confirm(' ', t('delete_message'), function(blockElement, answer) {
             if(answer == "yes") {
 
                 var key = blockElement.key;

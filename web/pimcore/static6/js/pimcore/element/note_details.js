@@ -30,7 +30,7 @@ pimcore.element.note_details = Class.create({
             this.detailWindow = new Ext.Window({
                 width: 700,
                 height: 530,
-                title: t('note_details'),
+                title: t('details'),
                 closeAction:'close',
                 plain: true,
                 autoScroll: true,
@@ -38,7 +38,7 @@ pimcore.element.note_details = Class.create({
                 buttons: [
                     {
                         text: t('close'),
-                        iconCls: "pimcore_icon_empty",
+                        iconCls: "pimcore_icon_close",
                         handler: function(){
                             this.detailWindow.hide();
                             this.detailWindow.destroy();

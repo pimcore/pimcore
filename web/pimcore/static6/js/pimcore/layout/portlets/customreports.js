@@ -98,7 +98,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             width: 600,
             height: 150,
             modal: true,
-            title: t('portlet_customreport_settings'),
+            title: t('settings'),
             closeAction: "destroy",
             items: [
                 {

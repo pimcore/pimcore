@@ -60,7 +60,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
             var lockDetails = "<br /><br />" + t("element_implicit_edit_question");
 
-            Ext.MessageBox.confirm(t("element_is_open"), t("element_open_message") + lockDetails,
+            Ext.MessageBox.confirm(' ', t("element_open_message") + lockDetails,
                     function (lock, buttonValue) {
                         if (buttonValue == "yes") {
                             this.getStore().removeAt(index);
@@ -363,7 +363,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
             var lockDetails = "<br /><br />" + t("element_implicit_edit_question");
 
-            Ext.MessageBox.confirm(t("element_is_open"), t("element_open_message") + lockDetails,
+            Ext.MessageBox.confirm(' ', t("element_open_message") + lockDetails,
                     function (item, buttonValue) {
                         if (buttonValue == "yes") {
                             this.store.add({

@@ -283,7 +283,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             this.batchWin.close();
 
             this.batchProgressBar = new Ext.ProgressBar({
-                text: t('Initializing'),
+                text: t('initializing'),
                 style: "margin: 10px;",
                 width: 500
             });
@@ -541,7 +541,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 settings: settings
             };
             this.exportProgressBar = new Ext.ProgressBar({
-                text: t('Initializing'),
+                text: t('initializing'),
                 style: "margin: 10px;",
                 width: 500
             });
