@@ -147,7 +147,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
     },
 
     saveOnError: function () {
-        pimcore.helpers.showNotification(t("error"), t("definition_save_error"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     },
 
     upload: function () {

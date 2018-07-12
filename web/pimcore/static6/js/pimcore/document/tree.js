@@ -907,11 +907,11 @@ pimcore.document.tree = Class.create({
                 }
                 else {
                     tree.loadMask.hide();
-                    pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error", t(rdata.message));
+                    pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error", t(rdata.message));
 
                 }
             } catch(e) {
-                pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error");
+                pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
             }
 
             pimcore.elementservice.refreshNodeAllTrees("document", oldParent.id);

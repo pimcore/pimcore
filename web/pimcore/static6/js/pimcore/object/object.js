@@ -719,7 +719,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 successCallback(rdata);
                             }
                             if (rdata && rdata.success) {
-                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
+                                pimcore.helpers.showNotification(t("success"), t("saved_successfully"),
                                     "success");
                                 this.resetChanges();
                                 Ext.apply(this.data.general, rdata.general);

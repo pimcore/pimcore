@@ -789,7 +789,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     saveOnError: function () {
-        pimcore.helpers.showNotification(t("error"), t("layout_save_error"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     },
 
     addLayout: function () {
@@ -820,7 +820,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         this.layoutChangeCombo.setValue(data.id);
                         this.initLayoutFields(true, response);
                     } else {
-                        Ext.Msg.alert(t('error'), t('custom_layout_save_error'));
+                        Ext.Msg.alert(t('error'), t('saving_failed'));
                     }
                 }.bind(this)
             });

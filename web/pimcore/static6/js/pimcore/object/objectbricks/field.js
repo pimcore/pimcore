@@ -336,7 +336,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             }
             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
         } else {
-            pimcore.helpers.showNotification(t("save_error"), rdata.message, "error");
+            pimcore.helpers.showNotification(t("saving_failed"), rdata.message, "error");
         }
 
     },

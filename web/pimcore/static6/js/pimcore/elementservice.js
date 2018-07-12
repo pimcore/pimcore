@@ -640,11 +640,11 @@ pimcore.elementservice.addDocumentComplete = function (options, response) {
                 pimcore.helpers.openDocument(response.id, response.type);
             }
         }  else {
-            pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error",
+            pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error",
                 t(response.message));
         }
     } catch(e) {
-        pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error");
+        pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error");
     }
 };
 
@@ -660,10 +660,10 @@ pimcore.elementservice.addObjectComplete = function(options, response) {
                 }
             }
         }  else {
-            pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error", t(rdata.message));
+            pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error", t(rdata.message));
         }
     } catch (e) {
-        pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error");
+        pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error");
     }
 
 };

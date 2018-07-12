@@ -283,7 +283,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
                 extrasItems.push({
-                    text: t("translation"),
+                    text: t("translations"),
                     iconCls: "pimcore_icon_translations",
                     hideOnClick: false,
                     menu: {

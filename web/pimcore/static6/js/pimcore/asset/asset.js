@@ -339,7 +339,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 try{
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("save"), t("successful_saved_asset"), "success");
+                        pimcore.helpers.showNotification(t("save"), t("saved_successfully"), "success");
                         this.resetChanges();
                         pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
                     }

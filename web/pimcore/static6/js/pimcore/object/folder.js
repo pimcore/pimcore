@@ -325,7 +325,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 try{
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         this.resetChanges();
                     }
                     else {

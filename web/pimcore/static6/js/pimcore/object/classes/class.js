@@ -1226,7 +1226,7 @@ pimcore.object.classes.klass = Class.create({
     },
 
     saveOnError: function () {
-        pimcore.helpers.showNotification(t("error"), t("class_save_error"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     },
 
     onRefresh: function() {
