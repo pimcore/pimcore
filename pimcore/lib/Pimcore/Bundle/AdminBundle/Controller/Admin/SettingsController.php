@@ -1253,7 +1253,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function thumbnailsGetAction(Request $request)
+    public function thumbnailDownloadableAction(Request $request)
     {
         $thumbnails = [];
 
