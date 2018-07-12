@@ -89,7 +89,7 @@ class AnyGetter extends AbstractOperator
                 $valueContainer = $c->getLabeledValue($forwardObject);
 
                 $value = $valueContainer->value;
-                if ($this->getReturnLastResult()) {
+                if ($value || $this->getReturnLastResult()) {
                     $resultElementValue = $value;
                 } else {
                     $resultElementValue = null;

@@ -308,7 +308,7 @@ pimcore.settings.web2print = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/settings/set-web2print",
-            method: "post",
+            method: "PUT",
             params: {
                 data: Ext.encode(values)
             },
@@ -316,7 +316,7 @@ pimcore.settings.web2print = Class.create({
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("settings_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
                         Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
                             if (buttonValue == "yes") {
@@ -324,11 +324,11 @@ pimcore.settings.web2print = Class.create({
                             }
                         }.bind(this));
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("web2print_settings_save_error"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error", t(res.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("web2print_settings_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }
         });

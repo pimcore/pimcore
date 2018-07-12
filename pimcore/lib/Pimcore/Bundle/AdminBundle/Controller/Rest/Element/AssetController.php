@@ -15,13 +15,14 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Event\Webservice\FilterEvent;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Webservice\Data\Asset\File\In as WebserviceAssetFileIn;
 use Pimcore\Model\Webservice\Data\Asset\Folder\In as WebserviceAssetFolderIn;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class AssetController extends AbstractElementController
 {
@@ -192,10 +193,10 @@ class AssetController extends AbstractElementController
      *
      * Returns a list of assets id/type pairs matching the given criteria.
      *  Example:
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&q={"type":%20"folder"}
      *
      * Parameters:
-     *      - condition
+     *      - q (query filter)
      *      - sort order (if supplied then also the key must be provided)
      *      - sort order key
      *      - offset
@@ -210,7 +211,12 @@ class AssetController extends AbstractElementController
     {
         $this->checkPermission('assets');
 
-        $condition = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
+
+        $eventData = new FilterEvent($request, 'asset', 'list', $condition);
+        $this->dispatchBeforeLoadEvent($request, $eventData);
+        $condition = $eventData->getCondition();
+
         $this->checkCondition($condition);
         $order     = $request->get('order');
         $orderKey  = $request->get('orderKey');
@@ -228,7 +234,7 @@ class AssetController extends AbstractElementController
      * @Route("/asset-count")
      *
      * Returns the total number of assets matching the given condition
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&q={"type":%20"folder"}
      *
      * Parameters:
      *      - condition
@@ -242,7 +248,12 @@ class AssetController extends AbstractElementController
     {
         $this->checkPermission('assets');
 
-        $condition = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
+
+        $eventData = new FilterEvent($request, 'asset', 'count', $condition);
+        $this->dispatchBeforeLoadEvent($request, $eventData);
+        $condition = $eventData->getCondition();
+
         $this->checkCondition($condition);
         $groupBy   = $request->get('groupBy');
 

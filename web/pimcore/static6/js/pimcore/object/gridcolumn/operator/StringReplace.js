@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
     type: "operator",
     class: "StringReplace",
     iconCls: "pimcore_icon_operator_stringreplace",
-    defaultText: "operator_stringreplace",
+    defaultText: "String Replace",
     group: "string",
 
 
@@ -30,7 +30,7 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
+                text: configAttributes.label ? configAttributes.label : this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 expanded: true,
@@ -42,12 +42,12 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class, label: this.getDefaultText()};
 
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -128,7 +128,7 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_stringreplace_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

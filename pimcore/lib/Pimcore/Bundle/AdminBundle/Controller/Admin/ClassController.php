@@ -17,18 +17,20 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/class")
@@ -37,6 +39,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 {
     /**
      * @Route("/get-document-types")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -57,6 +60,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-asset-types")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -77,6 +81,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-tree")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -102,22 +107,29 @@ class ClassController extends AdminController implements EventedControllerInterf
             $classes = $tmpClasses;
         }
 
-        $getClassConfig = function ($class) use ($defaultIcon) {
+        $withId = $request->get('withId');
+        $getClassConfig = function ($class) use ($defaultIcon, $withId) {
+            $text = $class->getname();
+            if ($withId) {
+                $text .= ' (' . $class->getId() . ')';
+            }
+
             return [
                 'id' => $class->getId(),
-                'text' => $class->getName(),
+                'text' => $text,
                 'leaf' => true,
                 'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
-                'propertyVisibility' => $class->getPropertyVisibility(),
-                'qtipCfg' => [
-                    'title' => 'ID: ' . $class->getId()
-                ]
+                'cls' => 'pimcore_class_icon',
+                'propertyVisibility' => $class->getPropertyVisibility()
             ];
         };
 
         // build groups
         $groups = [];
         foreach ($classes as $class) {
+            if (!$class) {
+                continue;
+            }
             if ($class->getGroup()) {
                 $type = 'manual';
                 $groupName = $class->getGroup();
@@ -188,6 +200,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -195,7 +208,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function getAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
         $class->setFieldDefinitions(null);
 
         return $this->adminJson($class);
@@ -203,6 +216,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-custom-layout")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -217,6 +231,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -224,18 +239,30 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function addAction(Request $request)
     {
+        $className = $request->get('className');
+        $className = $this->correctClassname($className);
+
+        $classId = $request->get('classIdentifier');
+        $existingClass = DataObject\ClassDefinition::getById($classId);
+        if ($existingClass) {
+            throw new \Exception('Class identifier already exists');
+        }
+
         $class = DataObject\ClassDefinition::create(
-            ['name' => $this->correctClassname($request->get('name')),
+            ['name' => $className,
                 'userOwner' => $this->getAdminUser()->getId()]
         );
 
-        $class->save();
+        $class->setId($classId);
+
+        $class->save(true);
 
         return $this->adminJson(['success' => true, 'id' => $class->getId()]);
     }
 
     /**
      * @Route("/add-custom-layout")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -257,6 +284,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -264,7 +292,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function deleteAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
         $class->delete();
 
         return new Response();
@@ -272,6 +300,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/delete-custom-layout")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -289,6 +318,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/save-custom-layout")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -329,6 +359,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/save")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -338,7 +369,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function saveAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
 
         $configuration = $this->decodeJson($request->get('configuration'));
         $values = $this->decodeJson($request->get('values'));
@@ -419,6 +450,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/import-class")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -426,10 +458,10 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function importClassAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
         $json = file_get_contents($_FILES['Filedata']['tmp_name']);
 
-        $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
+        $success = DataObject\ClassDefinition\Service::importClassDefinitionFromJson($class, $json, false, true);
 
         $response = $this->adminJson([
             'success' => $success
@@ -443,6 +475,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/import-custom-layout-definition")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -481,6 +514,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-custom-layout-definitions")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -508,6 +542,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-all-layouts")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -556,6 +591,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-class")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -563,7 +599,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function exportClassAction(Request $request)
     {
-        $id = intval($request->get('id'));
+        $id = $request->get('id');
         $class = DataObject\ClassDefinition::getById($id);
 
         if (!$class instanceof DataObject\ClassDefinition) {
@@ -583,6 +619,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-custom-layout-definition")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -626,6 +663,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -640,6 +678,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-update")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -649,6 +688,8 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         try {
             $key = $request->get('key');
+            $title = $request->get('title');
+            $group = $request->get('group');
 
             if ($request->get('task') == 'add') {
                 // check for existing fieldcollection with same name with different lower/upper cases
@@ -664,6 +705,8 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $fc = new DataObject\Fieldcollection\Definition();
             $fc->setKey($key);
+            $fc->setTitle($title);
+            $fc->setGroup($group);
 
             if ($request->get('values')) {
                 $values = $this->decodeJson($request->get('values'));
@@ -692,6 +735,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/import-fieldcollection")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -718,6 +762,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-fieldcollection")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -743,6 +788,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -758,6 +804,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/fieldcollection-tree")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -768,20 +815,76 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list = new DataObject\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
-        $items = [];
+        $forObjectEditor = $request->get('forObjectEditor');
 
-        foreach ($list as $fc) {
-            $items[] = [
-                'id' => $fc->getKey(),
-                'text' => $fc->getKey()
-            ];
+        $layoutDefinitions = [];
+
+        $definitions = [];
+
+        $allowedTypes = null;
+        if ($request->query->has('allowedTypes')) {
+            $allowedTypes = explode(',', $request->get('allowedTypes'));
         }
 
-        return $this->adminJson($items);
+        $groups = [];
+        /** @var $item DataObject\Fieldcollection\Definition */
+        foreach ($list as $item) {
+            if ($allowedTypes && !in_array($item->getKey(), $allowedTypes)) {
+                continue;
+            }
+
+            if ($item->getGroup()) {
+                if (!$groups[$item->getGroup()]) {
+                    $groups[$item->getGroup()] = [
+                        'id' => 'group_' . $item->getKey(),
+                        'text' => $item->getGroup(),
+                        'expandable' => true,
+                        'leaf' => false,
+                        'allowChildren' => true,
+                        'iconCls' => 'pimcore_icon_folder',
+                        'group' => $item->getGroup(),
+                        'children' => []
+                    ];
+                }
+                if ($forObjectEditor) {
+                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                }
+                $groups[$item->getGroup()]['children'][] =
+                    [
+                        'id' => $item->getKey(),
+                        'text' => $item->getKey(),
+                        'key' => $item->getKey(),
+                        'leaf' => true,
+                        'iconCls' => 'pimcore_icon_fieldcollection'
+                    ];
+            } else {
+                if ($forObjectEditor) {
+                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                }
+                $definitions[] = [
+                    'id' => $item->getKey(),
+                    'text' => $item->getKey(),
+                    'key' => $item->getKey(),
+                    'leaf' => true,
+                    'iconCls' => 'pimcore_icon_fieldcollection'
+                ];
+            }
+        }
+
+        foreach ($groups as $group) {
+            $definitions[] = $group;
+        }
+
+        if ($forObjectEditor) {
+            return $this->adminJson(['fieldcollections' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
+        } else {
+            return $this->adminJson($definitions);
+        }
     }
 
     /**
      * @Route("/fieldcollection-list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -829,6 +932,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-class-definition-for-column-config")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -836,7 +940,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function getClassDefinitionForColumnConfigAction(Request $request)
     {
-        $class = DataObject\ClassDefinition::getById(intval($request->get('id')));
+        $class = DataObject\ClassDefinition::getById($request->get('id'));
         $objectId = intval($request->get('oid'));
 
         $filteredDefinitions = DataObject\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
@@ -896,6 +1000,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -910,6 +1015,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-update")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -919,6 +1025,8 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         try {
             $key = $request->get('key');
+            $title = $request->get('title');
+            $group = $request->get('group');
 
             if ($request->get('task') == 'add') {
                 // check for existing brick with same name with different lower/upper cases
@@ -935,6 +1043,8 @@ class ClassController extends AdminController implements EventedControllerInterf
             // now we create a new definition
             $fc = new DataObject\Objectbrick\Definition();
             $fc->setKey($key);
+            $fc->setTitle($title);
+            $fc->setGroup($group);
 
             if ($request->get('values')) {
                 $values = $this->decodeJson($request->get('values'));
@@ -965,6 +1075,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/import-objectbrick")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -990,6 +1101,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/export-objectbrick")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1015,6 +1127,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -1030,6 +1143,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/objectbrick-tree")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1040,20 +1154,116 @@ class ClassController extends AdminController implements EventedControllerInterf
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
 
-        $items = [];
+        $forObjectEditor = $request->get('forObjectEditor');
 
-        foreach ($list as $fc) {
-            $items[] = [
-                'id' => $fc->getKey(),
-                'text' => $fc->getKey()
-            ];
+        $layoutDefinitions = [];
+        $groups = [];
+
+        if ($request->query->has('class_id') && $request->query->has('field_name')) {
+            $classId = $request->get('class_id');
+            $fieldname = $request->get('field_name');
+            $classDefinition = DataObject\ClassDefinition::getById($classId);
+            $className = $classDefinition->getName();
         }
 
-        return $this->adminJson($items);
+        /** @var $item DataObject\Objectbrick\Definition */
+        foreach ($list as $item) {
+            if ($request->query->has('class_id') && $request->query->has('field_name')) {
+                $keep = false;
+                /** @var $type DataObject\Objectbrick\Definition */
+                $clsDefs = $item->getClassDefinitions();
+                if (!empty($clsDefs)) {
+                    foreach ($clsDefs as $cd) {
+                        if ($cd['classname'] == $className && $cd['fieldname'] == $fieldname) {
+                            $keep = true;
+                            continue;
+                        }
+                    }
+                }
+                if (!$keep) {
+                    continue;
+                }
+            }
+
+            if ($item->getGroup()) {
+                if (!$groups[$item->getGroup()]) {
+                    $groups[$item->getGroup()] = [
+                        'id' => 'group_' . $item->getKey(),
+                        'text' => $item->getGroup(),
+                        'expandable' => true,
+                        'leaf' => false,
+                        'allowChildren' => true,
+                        'iconCls' => 'pimcore_icon_folder',
+                        'group' => $item->getGroup(),
+                        'children' => []
+                    ];
+                }
+                if ($forObjectEditor) {
+                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                }
+                $groups[$item->getGroup()]['children'][] =
+                    [
+                        'id' => $item->getKey(),
+                        'text' => $item->getKey(),
+                        'key' => $item->getKey(),
+                        'leaf' => true,
+                        'iconCls' => 'pimcore_icon_objectbricks'
+                    ];
+            } else {
+                if ($forObjectEditor) {
+                    $layout = $item->getLayoutDefinitions();
+
+                    $currentLayoutId = $request->get('layoutId', null);
+
+                    $user = $this->getAdminUser();
+                    if ($currentLayoutId == -1 && $user->isAdmin()) {
+                        DataObject\Service::createSuperLayout($layout);
+                        $objectData['layout'] = $layout;
+                    }
+
+                    $context = [
+                        'containerType' => 'objectbrick',
+                        'containerKey' => $item->getKey(),
+                        'outerFieldname' => $request->get('field_name')
+                    ];
+
+                    $object = DataObject\AbstractObject::getById($request->get('object_id'));
+
+                    DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
+
+                    $layoutDefinitions[$item->getKey()] = $layout;
+                }
+                $definitions[] = [
+                    'id' => $item->getKey(),
+                    'text' => $item->getKey(),
+                    'key' => $item->getKey(),
+                    'leaf' => true,
+                    'iconCls' => 'pimcore_icon_objectbricks'
+                ];
+            }
+        }
+
+        foreach ($groups as $group) {
+            $definitions[] = $group;
+        }
+
+        $event = new GenericEvent($this, [
+            'list' => $definitions,
+            'objectId'=>$request->get('object_id')
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
+        $definitions = $event->getArgument('list');
+
+        if ($forObjectEditor) {
+            return $this->adminJson(['objectbricks' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
+        } else {
+            return $this->adminJson($definitions);
+        }
     }
 
     /**
      * @Route("/objectbrick-list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1125,6 +1335,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-import")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1185,6 +1396,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-commit")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1209,8 +1421,6 @@ class ClassController extends AdminController implements EventedControllerInterf
             unset($item['modificationDate']);
             unset($item['userOwner']);
             unset($item['userModification']);
-
-            unset($item['id']);
 
             if ($type == 'class' && $item['name'] == $name) {
                 $class = DataObject\ClassDefinition::getByName($name);
@@ -1295,6 +1505,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/bulk-export")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1382,6 +1593,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-fieldcollection-usages")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1414,6 +1626,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/get-bricks-usages")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1439,6 +1652,28 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
             }
         }
+
+        return $this->adminJson($result);
+    }
+
+    /**
+     * @Route("/suggest-class-identifier")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function suggestClassIdentifierAction()
+    {
+        $db = Db::get();
+        $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
+
+        $existingIds = $db->fetchCol('select LOWER(id) from classes');
+
+        $result = [
+            'suggestedIdentifier' => $maxId ? $maxId + 1 : 1,
+            'existingIds' => $existingIds
+            ];
 
         return $this->adminJson($result);
     }

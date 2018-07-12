@@ -31,7 +31,8 @@ services:
     pimcore.service.request_matcher_factory: '@Pimcore\Http\RequestMatcherFactory'
 
     pimcore.translator: '@Pimcore\Translation\Translator'
-    pimcore.locale: '@Pimcore\Localization\Locale'
+    pimcore.locale: '@Pimcore\Localization\LocaleService'
+    Pimcore\Localization\Locale: '@Pimcore\Localization\LocaleService'
     pimcore.locale.intl_formatter: '@Pimcore\Localization\IntlFormatter'
 
     pimcore.app_logger.db_writer: '@Pimcore\Log\Handler\ApplicationLoggerDb'

@@ -85,7 +85,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
                     cls: 'main-toolbar',
                     items: [
                         {
-                            text: t("add_tag"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addField.bind(this)
                         }
@@ -174,7 +174,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_tag'), t('enter_the_name_of_the_new_tag') + "(a-zA-Z-_)",
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + "(a-zA-Z-_)",
                                                         this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -186,14 +186,14 @@ pimcore.settings.tagmanagement.panel = Class.create({
             var tags = this.tree.getRootNode().childNodes;
             for (var i = 0; i < tags.length; i++) {
                 if (tags[i].text == value) {
-                    Ext.MessageBox.alert(t('add_tag'),
-                                         t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                    Ext.MessageBox.alert(' ', t('name_already_in_use'));
                     return;
                 }
             }
 
             Ext.Ajax.request({
                 url: "/admin/settings/tag-management-add",
+                method: 'POST',
                 params: {
                     name: value
                 },
@@ -203,7 +203,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
                     this.tree.getStore().load();
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_tag'), t('problem_creating_new_tag'));
+                        Ext.Msg.alert(' ', t('failed_to_create_new_item'));
                     } else {
                         this.openTag(data.id);
                     }
@@ -214,13 +214,14 @@ pimcore.settings.tagmanagement.panel = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_tag'), t('problem_creating_new_tag'));
+            Ext.Msg.alert(' ', t('failed_to_create_new_item'));
         }
     },
 
     deleteField: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/settings/tag-management-delete",
+            method: 'DELETE',
             params: {
                 name: record.data.id
             }

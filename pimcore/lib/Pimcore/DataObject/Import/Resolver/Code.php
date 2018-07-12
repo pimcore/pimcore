@@ -17,16 +17,16 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
-use Pimcore\Localization\Locale;
+use Pimcore\Localization\LocaleServiceInterface;
 
 class Code extends AbstractResolver
 {
     /**
-     * @var Locale
+     * @var LocaleServiceInterface
      */
     private $localeService;
 
-    public function __construct(Locale $localeService)
+    public function __construct(LocaleServiceInterface $localeService)
     {
         $this->localeService = $localeService;
     }

@@ -21,6 +21,7 @@ use Pimcore\Cache\Runtime;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
@@ -38,6 +39,16 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @var array
      */
     private $oldClassDefinitions = [];
+
+    /**
+     * @var string
+     */
+    public $title;
+
+    /**
+     * @var string
+     */
+    public $group;
 
     /**
      * @param $classDefinitions
@@ -98,11 +109,49 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @throws \Exception
      */
+    public function checkTablenames()
+    {
+        $tables = [];
+        $key = $this->getKey();
+        if (!$this->getFieldDefinitions()) {
+            return;
+        }
+        $isLocalized = $this->getFieldDefinition('localizedfields') ? true : false;
+
+        $classDefinitions = $this->getClassDefinitions();
+        $validLanguages = Tool::getValidLanguages();
+        foreach ($classDefinitions as $classDef) {
+            $classname = $classDef['classname'];
+            $class = DataObject\ClassDefinition::getByName($classname);
+            $tables[] = 'object_brick_query_' . $key .  '_' . $class->getId();
+            $tables[] = 'object_brick_store_' . $key .  '_' . $class->getId();
+            if ($isLocalized) {
+                foreach ($validLanguages as $validLanguage) {
+                    $tables[] = 'object_brick_localized_query_' . $key . '_' . $class->getId() . '_' . $validLanguage;
+                    $tables[] = 'object_brick_localized_' . $key . '_' . $class->getId() . '_' . $validLanguage;
+                }
+            }
+        }
+
+        array_multisort(array_map('strlen', $tables), $tables);
+        $longestTablename = end($tables);
+
+        $length = strlen($longestTablename);
+        if ($length > 64) {
+            throw new \Exception('table name ' . $longestTablename . ' would be too long. Max length is 64. Current length would be ' .  $length . '.');
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
     public function save()
     {
         if (!$this->getKey()) {
             throw new \Exception('A object-brick needs a key to be saved!');
         }
+
+        $this->checkTablenames();
 
         $definitionFile = $this->getDefinitionFile();
 
@@ -490,5 +539,21 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
 
         return $classFile;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 }

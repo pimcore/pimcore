@@ -1712,4 +1712,36 @@ class Service extends Model\Element\Service
     {
         return self::$systemFields;
     }
+
+    /**
+     * @param $objectId
+     *
+     * @return mixed|AbstractObject
+     */
+    public static function getObjectFromSession($objectId)
+    {
+        $object = Session::useSession(function (AttributeBagInterface $session) use ($objectId) {
+            $key = 'object_' . $objectId;
+            $result = $session->get($key);
+
+            return $result;
+        }, 'pimcore_objects');
+
+        if (!$object) {
+            $object = AbstractObject::getById($objectId);
+        }
+
+        return $object;
+    }
+
+    /**
+     * @param $objectId
+     */
+    public static function removeObjectFromSession($objectId)
+    {
+        Session::useSession(function (AttributeBagInterface $session) use ($objectId) {
+            $key = 'object_' . $objectId;
+            $session->remove($key);
+        }, 'pimcore_objects');
+    }
 }

@@ -48,6 +48,7 @@ pimcore.document.edit = Class.create({
             var cleanupFunction = function () {
                 Ext.Ajax.request({
                     url: "/admin/page/clear-editable-data",
+                    method: "PUT",
                     params: {
                         targetGroup: this["targetGroup"] ? this.targetGroup.getValue() : "",
                         id: this.document.id
@@ -60,7 +61,6 @@ pimcore.document.edit = Class.create({
 
             this.areaToolbarTrigger = new Ext.button.Button({
                 iconCls: "pimcore_icon_plus",
-                tooltip: t("add_area_block"),
                 tooltipType: 'title',
                 cls: "pimcore_button_black",
                 enableToggle: true,
@@ -77,34 +77,20 @@ pimcore.document.edit = Class.create({
                 }.bind(this)
             });
 
+            this.highlightTagButton = new Ext.Button({
+                tooltip: t("highlight_editable_elements"),
+                iconCls: "pimcore_icon_highlight",
+                enableToggle: true,
+                handler: this.toggleTagHighlighting.bind(this)
+            });
+
             var lbar = [this.areaToolbarTrigger, {
                 iconCls: "pimcore_icon_reload",
                 tooltip: t("refresh"),
                 handler: this.reload.bind(this)
-            },{
-                tooltip: t("highlight_editable_elements"),
-                iconCls: "pimcore_icon_highlight",
-                enableToggle: true,
-                handler: function (el) {
-                    var editables = this.frame.Ext.getBody().query(".pimcore_editable");
-                    var ed;
-                    for(var i=0; i<editables.length; i++) {
-                        var ed = this.frame.Ext.get(editables[i]);
-
-                        if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
-                            && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
-                            if(el.pressed) {
-                                var mask = ed.mask();
-                                mask.setStyle("background-color","#f5d833");
-                                mask.setStyle("opacity","0.5");
-                                mask.setStyle("pointer-events","none");
-                            } else {
-                                ed.unmask();
-                            }
-                        }
-                    }
-                }.bind(this)
-            },{
+            },
+            this.highlightTagButton,
+            {
                 tooltip: t("clear_content_of_current_view"),
                 iconCls: "pimcore_icon_cleanup",
                 handler: cleanupFunction.bind(this)
@@ -154,6 +140,40 @@ pimcore.document.edit = Class.create({
 
         return this.layout;
 
+    },
+
+    toggleTagHighlighting: function (force) {
+
+        if(!this['tagHighlightingActive']) {
+            this.tagHighlightingActive = false;
+        }
+
+        if(this.tagHighlightingActive === force) {
+            // noting to do in this case
+            return;
+        }
+
+        var editables = this.frame.Ext.getBody().query(".pimcore_editable");
+        var ed;
+        for(var i=0; i<editables.length; i++) {
+            ed = this.frame.Ext.get(editables[i]);
+
+            if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
+                && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
+                if(!this.tagHighlightingActive) {
+                    var mask = ed.mask();
+                    mask.setStyle("background-color","#f5d833");
+                    mask.setStyle("opacity","0.5");
+                    mask.setStyle("pointer-events","none");
+                } else {
+                    ed.unmask();
+                }
+            }
+        }
+
+        this.tagHighlightingActive = !this.tagHighlightingActive;
+
+        this.highlightTagButton.toggle(this.tagHighlightingActive);
     },
 
     addTargetingPanel: function(lbar, cleanupFunction) {

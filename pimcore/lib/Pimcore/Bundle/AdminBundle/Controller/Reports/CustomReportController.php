@@ -16,13 +16,14 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Tool\CustomReport;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/custom-report")
@@ -31,6 +32,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 {
     /**
      * @Route("/tree")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -49,6 +51,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -73,6 +76,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -88,6 +92,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/clone")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -122,6 +127,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -136,6 +142,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -164,6 +171,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/column-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -218,6 +226,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/get-report-config")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -251,6 +260,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/data")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -286,6 +296,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/drill-down-options")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -311,6 +322,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/chart")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -339,6 +351,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
 
     /**
      * @Route("/download-csv")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

@@ -126,6 +126,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
         this.config = Ext.getCmp("pimcore_portlet_selected_custom_report").getValue();
         Ext.Ajax.request({
             url: "/admin/portal/update-portlet-config",
+            method: 'PUT',
             params: {
                 key: this.portal.key,
                 id: this.layout.portletId,

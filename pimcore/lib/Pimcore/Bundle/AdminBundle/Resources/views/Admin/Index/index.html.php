@@ -113,64 +113,63 @@ $user      = $userProxy->getUser();
 $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
 ?>
 
-<div id="pimcore_navigation" style="display:none;">
-    <ul>
-        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "file")) { ?>
-            <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                <svg id="icon-file" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.4 23"><path d="M14.5,1H5.3A2.31,2.31,0,0,0,3,3.3V21.7A2.31,2.31,0,0,0,5.3,24H19.1a2.31,2.31,0,0,0,2.3-2.3V7.9Zm0,3.28L18.12,7.9H14.5ZM5.3,21.7V3.3h6.9v6.9h6.9V21.7Z" transform="translate(-3 -1)"/></svg>
-            </li>
-        <?php } ?>
-        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "extras")) { ?>
-            <li id="pimcore_menu_extras" data-menu-tooltip="<?= $this->translate("tools") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                <svg id="icon-tools" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M23.65,19.34l-8.23-8.23A7.44,7.44,0,0,0,5.24,1.73l5,5L6.74,10.25l-5-5a7.44,7.44,0,0,0,9.38,10.18l8.23,8.23a1.11,1.11,0,0,0,1.61,0l2.7-2.7A1.11,1.11,0,0,0,23.65,19.34Z" transform="translate(-1 -1)"/></svg>
-            </li>
-        <?php } ?>
-        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "marketing")) { ?>
-            <li id="pimcore_menu_marketing" data-menu-tooltip="<?= $this->translate("marketing") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                <svg id="icon-markting" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M9.47,24h6.05V1H9.47ZM1,24H7.05V10.68H1ZM17.95,7.05V24H24V7.05Z" transform="translate(-1 -1)"/></svg>
-            </li>
-        <?php } ?>
-        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "settings")) { ?>
-            <li id="pimcore_menu_settings" data-menu-tooltip="<?= $this->translate("settings") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                <svg id="icon-settings" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23.47"><path d="M21.21,13.85a7.48,7.48,0,0,0,.06-1.17c0-.41-.06-.76-.06-1.17l2.46-1.94a.55.55,0,0,0,.12-.76l-2.35-4a.59.59,0,0,0-.7-.23L17.81,5.69a8.49,8.49,0,0,0-2-1.17L15.4,1.47A.63.63,0,0,0,14.82,1H10.12a.63.63,0,0,0-.59.47L9.07,4.58a9.87,9.87,0,0,0-2,1.17L4.14,4.58a.56.56,0,0,0-.7.23l-2.35,4a.62.62,0,0,0,.12.76l2.52,1.94c0,.41-.06.76-.06,1.17s.06.76.06,1.17L1.26,15.85a.55.55,0,0,0-.12.76l2.35,4a.59.59,0,0,0,.7.23l2.93-1.17a8.49,8.49,0,0,0,2,1.17L9.6,24a.57.57,0,0,0,.59.47h4.69a.63.63,0,0,0,.59-.47l.47-3.11a9.87,9.87,0,0,0,2-1.17l2.93,1.17a.54.54,0,0,0,.7-.23l2.35-4a.62.62,0,0,0-.12-.76Zm-8.74,3a4.11,4.11,0,1,1,4.11-4.11A4.08,4.08,0,0,1,12.47,16.84Z" transform="translate(-1 -1)"/></svg>
-            </li>
-        <?php } ?>
-        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "ecommerce")) { ?>
-            <li id="pimcore_menu_ecommerce" data-menu-tooltip="<?= $this->translate("bundle_ecommerce_mainmenu") ?>" class="pimcore_menu_item pimcore_menu_needs_children" style="display: none;">
-                <svg id="icon-ecommerce" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 19.41"><path d="M8.81,19.67a1.78,1.78,0,0,1-1.74,1.74,1.74,1.74,0,1,1,1.22-3A1.67,1.67,0,0,1,8.81,19.67Zm12.4,0a1.78,1.78,0,1,1-.52-1.22A1.67,1.67,0,0,1,21.2,19.67Zm1.8-15v7.07a.74.74,0,0,1-.23.58.8.8,0,0,1-.58.29L7.76,14.28a8.67,8.67,0,0,1,.17,1,2.16,2.16,0,0,1-.35.87H20.28a.93.93,0,0,1,0,1.85H6.2a1,1,0,0,1-.93-.93,2.61,2.61,0,0,1,.12-.46c.06-.17.17-.35.23-.52l.29-.58a1.86,1.86,0,0,1,.23-.41L3.71,3.74H.87a.93.93,0,0,1-.64-.29A.67.67,0,0,1,0,2.87a.93.93,0,0,1,.29-.64A.67.67,0,0,1,.87,2H4.4a.84.84,0,0,1,.41.12.58.58,0,0,1,.29.23.94.94,0,0,1,.17.35A1.2,1.2,0,0,1,5.39,3c0,.12.06.23.06.41a1,1,0,0,1,.06.35H22.07a.93.93,0,0,1,.64.29A.71.71,0,0,1,23,4.66Z" transform="translate(0 -2)"/></svg>
-            </li>
-        <?php } ?>
-        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "search")) { ?>
-            <li id="pimcore_menu_search" data-menu-tooltip="<?= $this->translate("search") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                <svg id="icon-search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M18,15.81a9.37,9.37,0,1,0-7.62,3.88A9.66,9.66,0,0,0,15.81,18l6,6L24,21.84ZM3.88,10.34a6.47,6.47,0,1,1,6.47,6.47A6.44,6.44,0,0,1,3.88,10.34Z" transform="translate(-1 -1)"/></svg>
-            </li>
-        <?php } ?>
-        <li id="pimcore_menu_maintenance" data-menu-tooltip="<?= $this->translate("deactivate_maintenance") ?>" class="pimcore_menu_item " style="display:none;"></li>
-    </ul>
-</div>
-
-<div id="pimcore_status">
-    <div id="pimcore_status_dev" data-menu-tooltip="DEV MODE" style="display: none;"></div>
-    <div id="pimcore_status_debug" data-menu-tooltip="<?= $this->translate("debug_mode_on") ?>" style="display: none;"></div>
-    <div id="pimcore_status_email" data-menu-tooltip="<?= $this->translate("mail_settings_incomplete") ?>" style="display: none;"></div>
-    <a id="pimcore_status_maintenance" data-menu-tooltip="<?= $this->translate("maintenance_not_active") ?>" style="display: none;" href="https://pimcore.com/docs/5.0.x/Getting_Started/Installation.html#page_5_Maintenance_Cron_Job"></a>
-    <div id="pimcore_status_update" data-menu-tooltip="<?= $this->translate("update_available") ?>" style="display: none;"></div>
-</div>
-
-<div id="pimcore_avatar" style="display:none;">
-    <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
-</div>
-
-<a id="pimcore_logout" data-menu-tooltip="<?= $this->translate("logout") ?>" href="<?= $view->router()->path('pimcore_admin_logout') ?>" style="display: none">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M10.06,17.09l1.8,1.8,6.39-6.39L11.86,6.11l-1.8,1.8,3.3,3.31H1v2.56H13.36ZM21.44,1H3.56A2.55,2.55,0,0,0,1,3.56V8.67H3.56V3.56H21.44V21.44H3.56V16.33H1v5.11A2.55,2.55,0,0,0,3.56,24H21.44A2.56,2.56,0,0,0,24,21.44V3.56A2.56,2.56,0,0,0,21.44,1Z" transform="translate(-1 -1)"/></svg>
-</a>
-
-<div id="pimcore_signet" data-menu-tooltip="Pimcore Platform (<?= \Pimcore\Version::getVersion() ?>|<?= \Pimcore\Version::getRevision() ?>)" style="text-indent: -10000px">
-    BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR LOGO.
-    WE OFFER YOU THE POSSIBILITY TO ADDITIONALLY ADD YOUR OWN LOGO IN PIMCORE'S SYSTEM SETTINGS. THANK YOU!
+<div id="pimcore_sidebar">
+    <div id="pimcore_navigation" style="display:none;">
+        <ul>
+            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "file")) { ?>
+                <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
+                    <svg id="icon-file" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.4 23"><path d="M14.5,1H5.3A2.31,2.31,0,0,0,3,3.3V21.7A2.31,2.31,0,0,0,5.3,24H19.1a2.31,2.31,0,0,0,2.3-2.3V7.9Zm0,3.28L18.12,7.9H14.5ZM5.3,21.7V3.3h6.9v6.9h6.9V21.7Z" transform="translate(-3 -1)"/></svg>
+                </li>
+            <?php } ?>
+            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "extras")) { ?>
+                <li id="pimcore_menu_extras" data-menu-tooltip="<?= $this->translate("tools") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
+                    <svg id="icon-tools" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M23.65,19.34l-8.23-8.23A7.44,7.44,0,0,0,5.24,1.73l5,5L6.74,10.25l-5-5a7.44,7.44,0,0,0,9.38,10.18l8.23,8.23a1.11,1.11,0,0,0,1.61,0l2.7-2.7A1.11,1.11,0,0,0,23.65,19.34Z" transform="translate(-1 -1)"/></svg>
+                </li>
+            <?php } ?>
+            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "marketing")) { ?>
+                <li id="pimcore_menu_marketing" data-menu-tooltip="<?= $this->translate("marketing") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
+                    <svg id="icon-markting" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M9.47,24h6.05V1H9.47ZM1,24H7.05V10.68H1ZM17.95,7.05V24H24V7.05Z" transform="translate(-1 -1)"/></svg>
+                </li>
+            <?php } ?>
+            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "settings")) { ?>
+                <li id="pimcore_menu_settings" data-menu-tooltip="<?= $this->translate("settings") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
+                    <svg id="icon-settings" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23.47"><path d="M21.21,13.85a7.48,7.48,0,0,0,.06-1.17c0-.41-.06-.76-.06-1.17l2.46-1.94a.55.55,0,0,0,.12-.76l-2.35-4a.59.59,0,0,0-.7-.23L17.81,5.69a8.49,8.49,0,0,0-2-1.17L15.4,1.47A.63.63,0,0,0,14.82,1H10.12a.63.63,0,0,0-.59.47L9.07,4.58a9.87,9.87,0,0,0-2,1.17L4.14,4.58a.56.56,0,0,0-.7.23l-2.35,4a.62.62,0,0,0,.12.76l2.52,1.94c0,.41-.06.76-.06,1.17s.06.76.06,1.17L1.26,15.85a.55.55,0,0,0-.12.76l2.35,4a.59.59,0,0,0,.7.23l2.93-1.17a8.49,8.49,0,0,0,2,1.17L9.6,24a.57.57,0,0,0,.59.47h4.69a.63.63,0,0,0,.59-.47l.47-3.11a9.87,9.87,0,0,0,2-1.17l2.93,1.17a.54.54,0,0,0,.7-.23l2.35-4a.62.62,0,0,0-.12-.76Zm-8.74,3a4.11,4.11,0,1,1,4.11-4.11A4.08,4.08,0,0,1,12.47,16.84Z" transform="translate(-1 -1)"/></svg>
+                </li>
+            <?php } ?>
+            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "ecommerce")) { ?>
+                <li id="pimcore_menu_ecommerce" data-menu-tooltip="<?= $this->translate("bundle_ecommerce_mainmenu") ?>" class="pimcore_menu_item pimcore_menu_needs_children" style="display: none;">
+                    <svg id="icon-ecommerce" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 19.41"><path d="M8.81,19.67a1.78,1.78,0,0,1-1.74,1.74,1.74,1.74,0,1,1,1.22-3A1.67,1.67,0,0,1,8.81,19.67Zm12.4,0a1.78,1.78,0,1,1-.52-1.22A1.67,1.67,0,0,1,21.2,19.67Zm1.8-15v7.07a.74.74,0,0,1-.23.58.8.8,0,0,1-.58.29L7.76,14.28a8.67,8.67,0,0,1,.17,1,2.16,2.16,0,0,1-.35.87H20.28a.93.93,0,0,1,0,1.85H6.2a1,1,0,0,1-.93-.93,2.61,2.61,0,0,1,.12-.46c.06-.17.17-.35.23-.52l.29-.58a1.86,1.86,0,0,1,.23-.41L3.71,3.74H.87a.93.93,0,0,1-.64-.29A.67.67,0,0,1,0,2.87a.93.93,0,0,1,.29-.64A.67.67,0,0,1,.87,2H4.4a.84.84,0,0,1,.41.12.58.58,0,0,1,.29.23.94.94,0,0,1,.17.35A1.2,1.2,0,0,1,5.39,3c0,.12.06.23.06.41a1,1,0,0,1,.06.35H22.07a.93.93,0,0,1,.64.29A.71.71,0,0,1,23,4.66Z" transform="translate(0 -2)"/></svg>
+                </li>
+            <?php } ?>
+            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "search")) { ?>
+                <li id="pimcore_menu_search" data-menu-tooltip="<?= $this->translate("search") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
+                    <svg id="icon-search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M18,15.81a9.37,9.37,0,1,0-7.62,3.88A9.66,9.66,0,0,0,15.81,18l6,6L24,21.84ZM3.88,10.34a6.47,6.47,0,1,1,6.47,6.47A6.44,6.44,0,0,1,3.88,10.34Z" transform="translate(-1 -1)"/></svg>
+                </li>
+            <?php } ?>
+            <li id="pimcore_menu_maintenance" data-menu-tooltip="<?= $this->translate("deactivate_maintenance") ?>" class="pimcore_menu_item " style="display:none;"></li>
+        </ul>
+    </div>
+    <div id="pimcore_status">
+        <div id="pimcore_status_dev" data-menu-tooltip="DEV MODE" style="display: none;"></div>
+        <div id="pimcore_status_debug" data-menu-tooltip="<?= $this->translate("debug_mode_on") ?>" style="display: none;"></div>
+        <div id="pimcore_status_email" data-menu-tooltip="<?= $this->translate("mail_settings_incomplete") ?>" style="display: none;"></div>
+        <a id="pimcore_status_maintenance" data-menu-tooltip="<?= $this->translate("maintenance_not_active") ?>" style="display: none;" href="https://pimcore.com/docs/5.0.x/Getting_Started/Installation.html#page_5_Maintenance_Cron_Job"></a>
+        <div id="pimcore_status_update" data-menu-tooltip="<?= $this->translate("update_available") ?>" style="display: none;"></div>
+    </div>
+    <div id="pimcore_avatar" style="display:none;">
+        <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
+    </div>
+    <a id="pimcore_logout" data-menu-tooltip="<?= $this->translate("logout") ?>" href="<?= $view->router()->path('pimcore_admin_logout') ?>" style="display: none">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M10.06,17.09l1.8,1.8,6.39-6.39L11.86,6.11l-1.8,1.8,3.3,3.31H1v2.56H13.36ZM21.44,1H3.56A2.55,2.55,0,0,0,1,3.56V8.67H3.56V3.56H21.44V21.44H3.56V16.33H1v5.11A2.55,2.55,0,0,0,3.56,24H21.44A2.56,2.56,0,0,0,24,21.44V3.56A2.56,2.56,0,0,0,21.44,1Z" transform="translate(-1 -1)"/></svg>
+    </a>
+    <div id="pimcore_signet" data-menu-tooltip="Pimcore Platform (<?= \Pimcore\Version::getVersion() ?>|<?= \Pimcore\Version::getRevision() ?>)" style="text-indent: -10000px">
+        BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR LOGO.
+        WE OFFER YOU THE POSSIBILITY TO ADDITIONALLY ADD YOUR OWN LOGO IN PIMCORE'S SYSTEM SETTINGS. THANK YOU!
+    </div>
 </div>
 
 <div id="pimcore_tooltip" style="display: none;"></div>
+<div id="pimcore_quicksearch"></div>
 
 <?php // define stylesheets ?>
 <?php
@@ -227,6 +226,7 @@ $scriptLibs = array(
     "lib/ext-plugins/portlet/PortalPanel.js",
 
     "lib/ckeditor/ckeditor.js",
+    "lib/vrview/build/vrview.min.js",
 
     // locale
     "lib/ext/classic/locale/locale-" . $language . ".js",
@@ -480,6 +480,7 @@ $scripts = array(
     "pimcore/object/classes/layout/region.js",
     "pimcore/object/classes/layout/tabpanel.js",
     "pimcore/object/classes/layout/button.js",
+    "pimcore/object/classes/layout/iframe.js",
     "pimcore/object/classes/layout/text.js",
     "pimcore/object/fieldcollection.js",
     "pimcore/object/fieldcollections/field.js",
@@ -597,6 +598,7 @@ $scripts = array(
     "pimcore/object/folder.js",
     "pimcore/object/variant.js",
     "pimcore/object/tree.js",
+    "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
 
@@ -630,7 +632,6 @@ $scripts = array(
     "pimcore/report/qrcode/item.js",
 
     // extension manager
-    "pimcore/extensionmanager/xmlEditor.js",
     "pimcore/extensionmanager/admin.js",
 
     // application logging

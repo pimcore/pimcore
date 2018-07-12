@@ -22,13 +22,14 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/translation")
@@ -39,6 +40,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/import")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -90,6 +92,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/export")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -221,6 +224,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/add-admin-translation-keys")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -265,6 +269,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/translations")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -542,6 +547,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/cleanup")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -571,6 +577,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/content-export-jobs")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -654,6 +661,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-export")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -812,6 +820,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-export-download")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -832,6 +841,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-import-upload")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -850,6 +860,7 @@ class TranslationController extends AdminController
         for ($i=0; $i < $steps; $i++) {
             $jobs[] = [[
                 'url' => '/admin/translation/xliff-import-element',
+                'method' => 'POST',
                 'params' => [
                     'id' => $id,
                     'step' => $i
@@ -871,6 +882,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-import-element")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1084,6 +1096,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/word-export")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1299,6 +1312,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/word-export-download")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1360,6 +1374,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/merge-item")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1387,6 +1402,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/get-website-translation-languages")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

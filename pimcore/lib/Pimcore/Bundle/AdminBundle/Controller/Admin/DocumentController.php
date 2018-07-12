@@ -25,6 +25,8 @@ use Pimcore\Model\Version;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -34,7 +36,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/document")
@@ -48,6 +49,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -77,6 +79,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/tree-get-childs-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -162,6 +165,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -307,6 +311,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -354,6 +359,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/delete-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -376,6 +382,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($document instanceof Document) {
             $deleteJobs[] = [[
                 'url' => '/admin/recyclebin/add',
+                'method' => 'POST',
                 'params' => [
                     'type' => 'document',
                     'id' => $document->getId()
@@ -399,6 +406,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                         $deleteJobs[] = [[
                             'url' => '/admin/document/delete',
+                            'method' => 'DELETE',
                             'params' => [
                                 'step' => $i,
                                 'amount' => $deleteObjectsPerRequest,
@@ -413,6 +421,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             // the object itself is the last one
             $deleteJobs[] = [[
                 'url' => '/admin/document/delete',
+                'method' => 'DELETE',
                 'params' => [
                     'id' => $document->getId()
                 ]
@@ -432,6 +441,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -551,6 +561,31 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/doc-types")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function docTypesGetAction(Request $request)
+    {
+        // get list of types
+        $list = new Document\DocType\Listing();
+        $list->load();
+
+        $docTypes = [];
+        foreach ($list->getDocTypes() as $type) {
+            if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
+                $docTypes[] = $type;
+            }
+        }
+
+        return $this->adminJson(['data' => $docTypes, 'success' => true, 'total' => count($docTypes)]);
+    }
+
+    /**
+     * @Route("/doc-types")
+     * @Method({"PUT", "POST","DELETE"})
      *
      * @param Request $request
      *
@@ -590,19 +625,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
                 return $this->adminJson(['data' => $type, 'success' => true]);
             }
-        } else {
-            // get list of types
-            $list = new Document\DocType\Listing();
-            $list->load();
-
-            $docTypes = [];
-            foreach ($list->getDocTypes() as $type) {
-                if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
-                    $docTypes[] = $type;
-                }
-            }
-
-            return $this->adminJson(['data' => $docTypes, 'success' => true, 'total' => count($docTypes)]);
         }
 
         return $this->adminJson(false);
@@ -610,6 +632,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/get-doc-types")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -642,6 +665,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/version-to-session")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -662,6 +686,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/publish-version")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -693,6 +718,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/update-site")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -724,6 +750,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/remove-site")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -739,6 +766,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/copy-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -759,6 +787,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             // first of all the new parent
             $pasteJobs[] = [[
                 'url' => '/admin/document/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -783,6 +812,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
                             'url' => '/admin/document/copy',
+                            'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
                                 'targetParentId' => $request->get('targetId'),
@@ -801,6 +831,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 for ($i = 0; $i < (count($childIds) + 1); $i++) {
                     $pasteJobs[] = [[
                         'url' => '/admin/document/copy-rewrite-ids',
+                        'method' => 'PUT',
                         'params' => [
                             'transactionId' => $transactionId,
                             'enableInheritance' => $request->get('enableInheritance'),
@@ -813,6 +844,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             // the object itself is the last one
             $pasteJobs[] = [[
                 'url' => '/admin/document/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -831,6 +863,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/copy-rewrite-ids")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -876,6 +909,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/copy")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -945,6 +979,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/diff-versions/from/{from}/to/{to}", requirements={"from": "\d+", "to": "\d+"})
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param int $from
@@ -1006,6 +1041,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/diff-versions-image")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1136,6 +1172,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/get-id-for-path")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1159,6 +1196,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/seopanel-tree-root")
+     * @Method({"GET"})
      *
      * @param DocumentRouteHandler $documentRouteHandler
      *
@@ -1183,6 +1221,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/seopanel-tree")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -1254,6 +1293,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/convert")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1294,6 +1334,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/translation-determine-parent")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1323,6 +1364,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/translation-add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1348,6 +1390,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/translation-remove")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -1369,6 +1412,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
     /**
      * @Route("/translation-check-language")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

@@ -302,14 +302,14 @@ pimcore.settings.targeting.rules.item = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/targeting/rule/save",
+            method: 'PUT',
             params: {
                 id: this.data.id,
                 data: Ext.encode(saveData)
             },
-            method: "post",
             success: function () {
                 this.parent.getTree().getStore().load();
-                pimcore.helpers.showNotification(t("success"), t("item_saved_successfully"), "success");
+                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
             }.bind(this)
         });
     },

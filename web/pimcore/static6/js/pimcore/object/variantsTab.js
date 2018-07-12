@@ -308,6 +308,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/variants/update-key",
+                method: 'PUT',
                 params: {id: id, key: value},
                 success: function (response) {
                     this.store.reload();
@@ -323,13 +324,14 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
 
     onAdd: function (btn, ev) {
-        Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'), this.doAdd.bind(this));
+        Ext.MessageBox.prompt(t('add_variant'), t('enter_the_name_of_the_new_item'), this.doAdd.bind(this));
     },
 
     doAdd: function (button, value) {
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/object/add",
+                method: 'POST',
                 params: {
                     className: this.element.data.general.o_className,
                     classId: this.element.data.general.o_classId,
@@ -363,6 +365,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
             Ext.Ajax.request({
                 url: "/admin/object/delete",
+                method: 'DELETE',
                 params: {
                     id: id
                 },

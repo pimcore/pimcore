@@ -115,7 +115,6 @@ pimcore.document.versions = Class.create({
                 trackMouseOver: true,
                 stripeRows: true,
                 width:620,
-                title: t('available_versions'),
                 region: "west",
                 split: true,
                 viewConfig: {
@@ -239,6 +238,7 @@ pimcore.document.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/element/delete-version",
+            method: 'DELETE',
             params: {id: versionId}
         });
 
@@ -256,6 +256,7 @@ pimcore.document.versions = Class.create({
                     
                     Ext.Ajax.request({
                         url: "/admin/element/delete-all-versions",
+                        method: 'DELETE',
                         params: {id: elememntId, date: modificationDate}
                     });
                     
@@ -274,7 +275,7 @@ pimcore.document.versions = Class.create({
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
 
-        window.open(this.document.data.path + this.document.data.key + '?v=' + versionId,'_blank');
+        window.open(this.document.data.path + this.document.data.key + '?pimcore_version=' + versionId,'_blank');
     },
 
     editVersion: function (index, grid) {
@@ -283,6 +284,7 @@ pimcore.document.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/document/version-to-session",
+            method: 'POST',
             params: {id: versionId},
             success: this.reloadEdit.bind(this)
         });
@@ -294,6 +296,7 @@ pimcore.document.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/document/publish-version",
+            method: "POST",
             params: {id: versionId},
             success: function () {
                 // reload document
@@ -308,6 +311,7 @@ pimcore.document.versions = Class.create({
             Ext.Ajax.request({
                 method: "post",
                 url: "/admin/element/version-update",
+                method: 'PUT',
                 params: {
                     data: Ext.encode(record.data)
                 }

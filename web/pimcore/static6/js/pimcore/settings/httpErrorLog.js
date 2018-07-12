@@ -102,7 +102,7 @@ pimcore.settings.httpErrorLog = Class.create({
             listeners: {
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
-                        var input = field;
+                        var input = filterField;
                         var val = input.getValue();
                         this.store.getProxy().extraParams.filter = val ? val : "";
                         this.store.load();
@@ -159,10 +159,10 @@ pimcore.settings.httpErrorLog = Class.create({
                 handler: function () {
                     Ext.Ajax.request({
                         url: "/admin/misc/http-error-log-flush",
+                        method: "DELETE",
                         success: function () {
-                            var input = field;
                             var proxy = this.store.getProxy();
-                            proxy.extraParams.filter = input.getValue();
+                            proxy.extraParams.filter = this.filterField.getValue();
                             this.store.load();
                         }.bind(this)
                     });

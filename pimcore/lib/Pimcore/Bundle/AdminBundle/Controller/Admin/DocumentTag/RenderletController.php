@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DocumentTag;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Document\Tag\TagHandlerInterface;
-use Pimcore\Localization\Locale;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
@@ -42,7 +42,7 @@ class RenderletController extends AdminController
      * @param Request $request
      * @param ActionRenderer $actionRenderer
      * @param TagHandlerInterface $tagHandler
-     * @param Locale $localeService
+     * @param LocaleServiceInterface $localeService
      *
      * @return Response
      */
@@ -50,7 +50,7 @@ class RenderletController extends AdminController
         Request $request,
         ActionRenderer $actionRenderer,
         TagHandlerInterface $tagHandler,
-        Locale $localeService
+        LocaleServiceInterface $localeService
     ) {
         $query      = $request->query->all();
         $attributes = [];

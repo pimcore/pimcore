@@ -260,7 +260,7 @@ class QPay extends AbstractPayment
             'attr' => $formAttributes
         ]);
 
-        $form->setAction('https://www.qenta.com/qpay/init.php');
+        $form->setAction('https://checkout.wirecard.com/page/init.php');
         $form->setMethod('post');
         $form->setAttribute('data-currency', 'EUR');
 

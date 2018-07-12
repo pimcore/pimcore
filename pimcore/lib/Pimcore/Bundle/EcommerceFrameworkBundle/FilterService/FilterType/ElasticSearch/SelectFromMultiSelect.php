@@ -22,7 +22,7 @@ class SelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Fil
 {
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
     {
-        $productList->prepareGroupByValues($filterDefinition->getField(), true);
+        $productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)

@@ -105,7 +105,19 @@ pimcore.settings.user.usertab = Class.create({
         }
 
         try {
-            data.keyBindings = Ext.encode(this.keyBindings.getValues());
+            var keyBindingsFromForm = this.keyBindings.getValues();
+            var userBindings = {};
+
+            for (var key in keyBindingsFromForm) {
+                if (keyBindingsFromForm.hasOwnProperty(key)) {
+                    userBindings[key] = Ext.decode(keyBindingsFromForm[key]);
+                }
+            }
+
+            var user = pimcore.globalmanager.get("user");
+            user.keyBindings = Ext.encode(userBindings);
+
+            data.keyBindings = Ext.encode(keyBindingsFromForm);
         } catch (e3) {
             console.log(e3);
         }
@@ -113,13 +125,13 @@ pimcore.settings.user.usertab = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/user/update",
-            method: "post",
+            method: "PUT",
             params: data,
             success: function (transport) {
                 try{
                     var res = Ext.decode(transport.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         if (this.id == pimcore.currentuser.id && contentLanguages) {
                                 pimcore.settings.websiteLanguages = contentLanguages;
                         }
@@ -145,10 +157,10 @@ pimcore.settings.user.usertab = Class.create({
 
 
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error",t(res.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this)
         });

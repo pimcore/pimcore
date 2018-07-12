@@ -72,7 +72,14 @@ pimcore.settings.document.doctypes = Class.create({
                 editor: new Ext.form.TextField({})
             },
             {
-                text: t("bundle_optional"),
+                text: t("group"),
+                flex: 100,
+                sortable: true,
+                dataIndex: 'group',
+                editor: new Ext.form.TextField({})
+            },
+            {
+                text: t('bundle') + "(" + t('optional') + ")",
                 flex: 50,
                 sortable: true,
                 dataIndex: 'module',

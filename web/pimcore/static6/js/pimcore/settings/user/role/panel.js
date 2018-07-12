@@ -111,7 +111,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
 
         if (record.data.allowChildren) {
             menu.add(new Ext.menu.Item({
-                text: t('add_folder'),
+                text: t('create_folder'),
                 iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                 listeners: {
                     "click": this.add.bind(this, "rolefolder", null, record)
@@ -126,7 +126,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
             }));
         } else if (record.data.elementType == "role") {
             menu.add(new Ext.menu.Item({
-                text: t('clone_role'),
+                text: t('clone'),
                 iconCls: "pimcore_icon_roles pimcore_icon_overlay_add",
                 listeners: {
                     "click": this.add.bind(this, "role", record, record)
@@ -173,7 +173,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
 
         Ext.Ajax.request({
             url: "/admin/user/update",
-            method: "post",
+            method: "PUT",
             params: {
                 id: userId,
                 data: Ext.encode(values)
@@ -182,12 +182,12 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                 try{
                     var res = Ext.decode(transport.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("role_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("role_save_error"), "error",t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error",t(res.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("role_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this)
         });

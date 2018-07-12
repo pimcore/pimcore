@@ -21,10 +21,11 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\Newsletter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/newsletter")
@@ -33,6 +34,7 @@ class NewsletterController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -85,6 +87,7 @@ class NewsletterController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -165,6 +168,7 @@ class NewsletterController extends DocumentControllerBase
 
     /**
      * @Route("/checksql")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -197,6 +201,7 @@ class NewsletterController extends DocumentControllerBase
 
     /**
      * @Route("/get-available-classes")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -227,6 +232,7 @@ class NewsletterController extends DocumentControllerBase
 
     /**
      * @Route("/get-available-reports")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -263,6 +269,7 @@ class NewsletterController extends DocumentControllerBase
 
     /**
      * @Route("/get-send-status")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -281,6 +288,7 @@ class NewsletterController extends DocumentControllerBase
 
     /**
      * @Route("/stop-send")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -298,6 +306,7 @@ class NewsletterController extends DocumentControllerBase
 
     /**
      * @Route("/send")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -328,6 +337,7 @@ class NewsletterController extends DocumentControllerBase
 
     /**
      * @Route("/send-test")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

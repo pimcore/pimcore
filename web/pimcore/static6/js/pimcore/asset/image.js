@@ -139,14 +139,23 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
             iptcPanel.plugins[0].disable();
 
+            var xmpPanel = new Ext.grid.PropertyGrid({
+                title: 'XMP',
+                flex: 1,
+                border: true,
+                source: this.data["imageInfo"]["xmp"] || [],
+                clicksToEdit: 1000
+            });
+            xmpPanel.plugins[0].disable();
+
             this.exifPanel = new Ext.Panel({
-                title: "EXIF/IPTC",
+                title: "EXIF/XMP/IPTC",
                 layout: {
                     type: 'hbox',
                     align: 'stretch'
                 },
                 iconCls: "pimcore_icon_exif",
-                items: [exifPanel, iptcPanel]
+                items: [exifPanel, xmpPanel, iptcPanel]
             });
         }
 
@@ -156,10 +165,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getDisplayPanel: function () {
 
         if (!this.displayPanel) {
-
-            var date = new Date();
-            var dc = date.getTime();
-
             var details = [{
                 title: t("tools"),
                 bodyStyle: "padding: 10px;",
@@ -186,13 +191,40 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                            Ext.get(feature).toggle();
                         });
                     }.bind(this)
+                }, {
+                    xtype: "container",
+                    html: "<hr>"
+                }, {
+                    xtype: "button",
+                    text: t("standard_preview"),
+                    iconCls: "pimcore_icon_image",
+                    width: "100%",
+                    textAlign: "left",
+                    style: "margin-top: 5px",
+                    handler: function () {
+                        if(this.previewMode != 'image') {
+                            this.initPreviewImage();
+                        }
+                    }.bind(this)
+                }, {
+                    xtype: "button",
+                    text: t("360_viewer"),
+                    iconCls: "pimcore_icon_vr",
+                    width: "100%",
+                    textAlign: "left",
+                    style: "margin-top: 5px",
+                    handler: function () {
+                        if(this.previewMode != 'vr') {
+                            this.initPreviewVr();
+                        }
+                    }.bind(this)
                 }]
             }];
 
             if (this.data.imageInfo.dimensions) {
 
                 var dimensionPanel = new Ext.create('Ext.grid.property.Grid', {
-                    title: t("dimensions"),
+                    title: t("details"),
                     source: this.data.imageInfo.dimensions,
                     autoHeight: true,
 
@@ -210,7 +242,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
             var downloadDefaultWidth = 800;
 
-            if (this.data.imageInfo && this.data.imageInfo) {
+            if (this.data.imageInfo) {
                 if (this.data.imageInfo.dimensions && this.data.imageInfo.dimensions.width) {
                     downloadDefaultWidth = intval(this.data.imageInfo.dimensions.width);
                 }
@@ -332,13 +364,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     xtype: "numberfield",
                     name: "quality",
                     fieldLabel: t("quality"),
-                    emptyText: t("original")
+                    emptyText: t("source")
                 }, {
                     xtype: "numberfield",
                     name: "dpi",
                     itemId: "dpi",
                     fieldLabel: "DPI",
-                    emptyText: t("original"),
+                    emptyText: t("source"),
                     disabled: !this.data.imageInfo["exiftoolAvailable"]
                 }],
                 buttons: [{
@@ -353,13 +385,19 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
             details.push(this.customDownloadBox);
 
+            this.previewContainerId = 'pimcore_asset_image_preview_' + this.id;
+            this.previewMode = 'image';
+            if(this.data.imageInfo["isVrImage"]) {
+                this.previewMode = 'vr';
+            }
+
             this.displayPanel = new Ext.Panel({
                 title: t("view"),
                 layout: "border",
                 iconCls: "pimcore_icon_view",
                 items: [{
                     region: "center",
-                    html: '<div class="pimcore_asset_image_preview"><img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&hdpi=true&_dc=' + dc + '"></div>',
+                    html: '<div id="' + this.previewContainerId + '" class="pimcore_asset_image_preview"></div>',
                 }, {
                     region: "east",
                     width: 300,
@@ -368,29 +406,56 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }]
             });
 
-            this.displayPanel.on('afterrender', function (ev) {
-                if(this.data['customSettings']) {
-                    if (this.data['customSettings']['focalPointX']) {
-                        this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
-                    }
-
-                    if (this.data['customSettings']['faceCoordinates']) {
-                        this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
-                            this.addImageFeature(coord);
-                        }.bind(this));
-
+            this.displayPanel.on('resize', function (el, width, height, rWidth, rHeight) {
+                if(this.previewMode == 'vr') {
+                    this.initPreviewVr();
+                } else {
+                    this.initPreviewImage();
+                    var area = this.displayPanel.getEl().down('img');
+                    if(area) {
+                        area.setStyle('max-width', (width - 340) + "px");
+                        area.setStyle('max-height', (height - 40) + "px");
                     }
                 }
-            }.bind(this));
-
-            this.displayPanel.on('resize', function (el, width, height, rWidth, rHeight) {
-                var area = this.displayPanel.getEl().down('img');
-                area.setStyle('max-width', (width-40) + "px");
-                area.setStyle('max-height', (height-40) + "px");
             }.bind(this));
         }
 
         return this.displayPanel;
+    },
+
+    initPreviewVr: function () {
+        Ext.get(this.previewContainerId).setHtml('');
+        var vrView = new VRView.Player('#' + this.previewContainerId, {
+            image: '/admin/asset/get-image-thumbnail%3Fid=' + this.id + '%26width=2000',
+            is_stereo: (this.data.imageInfo.dimensions.width === this.data.imageInfo.dimensions.height),
+            width: (this.displayPanel.getWidth()-340),
+            height: (this.displayPanel.getHeight()-40),
+            hide_fullscreen_button: true
+        });
+
+        this.previewMode = 'vr';
+    },
+
+    initPreviewImage: function () {
+        var date = new Date();
+        var dc = date.getTime();
+        var html = '<img src="/admin/asset/get-image-thumbnail?id=' + this.id + '&treepreview=true&hdpi=true&_dc=' + dc + '">';
+        Ext.get(this.previewContainerId).setHtml(html);
+
+        this.previewMode = 'image';
+
+        if(this.data['customSettings']) {
+            if (this.data['customSettings']['focalPointX']) {
+                this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
+            }
+
+            if (this.data['customSettings']['faceCoordinates']) {
+                this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
+                    this.addImageFeature(coord);
+                }.bind(this));
+
+            }
+        }
     },
 
     addImageFeature: function (coords) {

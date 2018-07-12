@@ -18,14 +18,73 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class QuantityValueController extends AdminController
 {
     /**
      * @Route("/quantity-value/unit-proxy")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function unitProxyGetAction(Request $request)
+    {
+        $list = new Unit\Listing();
+
+        $orderKey = 'abbreviation';
+        $order = 'asc';
+
+        $allParams = array_merge($request->request->all(), $request->query->all());
+        $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
+        if ($sortingSettings['orderKey']) {
+            $orderKey = $sortingSettings['orderKey'];
+        }
+        if ($sortingSettings['order']) {
+            $order  = $sortingSettings['order'];
+        }
+
+        $list->setOrder($order);
+        $list->setOrderKey($orderKey);
+
+        $list->setLimit($request->get('limit'));
+        $list->setOffset($request->get('start'));
+
+        $condition = '1 = 1';
+        if ($request->get('filter')) {
+            $filterString = $request->get('filter');
+            $filters = json_decode($filterString);
+            $db = \Pimcore\Db::get();
+            foreach ($filters as $f) {
+                if ($f->type == 'string') {
+                    $condition .= ' AND ' . $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
+                } elseif ($f->type == 'numeric') {
+                    $operator = $this->getOperator($f->comparison);
+                    $condition .= ' AND ' . $db->quoteIdentifier($f->property) . ' ' . $operator . ' ' . $db->quote($f->value);
+                }
+            }
+            $list->setCondition($condition);
+        }
+        $list->load();
+
+        $units = [];
+        foreach ($list->getUnits() as $u) {
+            $units[] = get_object_vars($u);
+        }
+
+        return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
+    }
+
+    /**
+     * @Route("/quantity-value/unit-proxy")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -67,50 +126,6 @@ class QuantityValueController extends AdminController
 
                 return $this->adminJson(['data' => get_object_vars($unit), 'success' => true]);
             }
-        } else {
-            $list = new Unit\Listing();
-
-            $orderKey = 'abbreviation';
-            $order = 'asc';
-
-            $allParams = array_merge($request->request->all(), $request->query->all());
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
-            if ($sortingSettings['orderKey']) {
-                $orderKey = $sortingSettings['orderKey'];
-            }
-            if ($sortingSettings['order']) {
-                $order  = $sortingSettings['order'];
-            }
-
-            $list->setOrder($order);
-            $list->setOrderKey($orderKey);
-
-            $list->setLimit($request->get('limit'));
-            $list->setOffset($request->get('start'));
-
-            $condition = '1 = 1';
-            if ($request->get('filter')) {
-                $filterString = $request->get('filter');
-                $filters = json_decode($filterString);
-                $db = \Pimcore\Db::get();
-                foreach ($filters as $f) {
-                    if ($f->type == 'string') {
-                        $condition .= ' AND ' . $db->quoteIdentifier($f->property) . ' LIKE ' . $db->quote('%' . $f->value . '%');
-                    } elseif ($f->type == 'numeric') {
-                        $operator = $this->getOperator($f->comparison);
-                        $condition .= ' AND ' . $db->quoteIdentifier($f->property) . ' ' . $operator . ' ' . $db->quote($f->value);
-                    }
-                }
-                $list->setCondition($condition);
-            }
-            $list->load();
-
-            $units = [];
-            foreach ($list->getUnits() as $u) {
-                $units[] = get_object_vars($u);
-            }
-
-            return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
         }
     }
 
@@ -132,6 +147,7 @@ class QuantityValueController extends AdminController
 
     /**
      * @Route("/quantity-value/unit-list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -154,6 +170,22 @@ class QuantityValueController extends AdminController
         }
 
         $units = $list->getUnits();
+
+        /** @var Unit $unit */
+        foreach ($units as $unit) {
+            try {
+                if ($unit->getAbbreviation()) {
+                    $unit->setAbbreviation(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getAbbreviation(),
+                        true, true));
+                }
+                if ($unit->getLongname()) {
+                    $unit->setLongname(\Pimcore\Model\Translation\Admin::getByKeyLocalized($unit->getLongname(), true,
+                        true));
+                }
+            } catch (\Exception $e) {
+                // nothing to do ...
+            }
+        }
 
         return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
     }

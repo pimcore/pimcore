@@ -61,6 +61,11 @@ class Config extends Model\AbstractModel
     /**
      * @var string
      */
+    public $group = '';
+
+    /**
+     * @var string
+     */
     public $format = 'SOURCE';
 
     /**
@@ -82,6 +87,11 @@ class Config extends Model\AbstractModel
      * @var bool
      */
     public $preserveMetaData = false;
+
+    /**
+     * @var bool
+     */
+    public $rasterizeSVG = false;
 
     /**
      * @var int
@@ -721,5 +731,52 @@ class Config extends Model\AbstractModel
     public function setPreserveMetaData($preserveMetaData)
     {
         $this->preserveMetaData = $preserveMetaData;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRasterizeSVG(): bool
+    {
+        return $this->rasterizeSVG;
+    }
+
+    /**
+     * @param bool $rasterizeSVG
+     */
+    public function setRasterizeSVG(bool $rasterizeSVG): void
+    {
+        $this->rasterizeSVG = $rasterizeSVG;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSvgTargetFormatPossible()
+    {
+        $supportedTransformations = ['resize', 'scaleByWidth', 'scaleByHeight'];
+        foreach ($this->getItems() as $item) {
+            if (!in_array($item['method'], $supportedTransformations)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup(): string
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup(string $group): void
+    {
+        $this->group = $group;
     }
 }

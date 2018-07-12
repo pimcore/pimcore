@@ -42,6 +42,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.data.id,
                     type: "document"
@@ -314,6 +315,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
     removeFromSession: function () {
         Ext.Ajax.request({
             url: this.urlprefix + this.getType() + '/remove-from-session',
+            method: 'DELETE',
             params: {id: this.data.id}
         });
     },

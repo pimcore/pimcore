@@ -15,24 +15,25 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Event\Webservice\FilterEvent;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\DataObject;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class ClassController extends AbstractRestController
 {
     /**
      * @Method("GET")
-     * @Route("/class/id/{id}", requirements={"id": "\d+"})
+     * @Route("/class/id/{id}")
      *
      * end point for the class definition
      *
      *  GET http://[YOUR-DOMAIN]/webservice/rest/class/id/1281?apikey=[API-KEY]
      *      returns the class definition for the given class
      *
-     * @param int $id
+     * @param string $id
      *
      * @return JsonResponse
      *
@@ -52,7 +53,7 @@ class ClassController extends AbstractRestController
             $this->getLogger()->error($e);
         }
 
-        throw $this->createNotFoundResponseException(sprintf('Class %d does not exist', $id), $e);
+        throw $this->createNotFoundResponseException(sprintf('Class %s does not exist', $id), $e);
     }
 
     /**
@@ -217,8 +218,12 @@ class ClassController extends AbstractRestController
     {
         $this->checkPermission('classes');
 
-        $condition = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
         $this->checkCondition($condition);
+
+        $eventData = new FilterEvent($request, 'class', 'quantityValueUnitDefinition', $condition);
+        $this->dispatchBeforeLoadEvent($request, $eventData);
+        $condition = $eventData->getCondition();
 
         $list = new DataObject\QuantityValue\Unit\Listing();
         if ($condition) {
@@ -251,7 +256,12 @@ class ClassController extends AbstractRestController
     {
         $this->checkPermission('classes');
 
-        $condition = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
+
+        $eventData = new FilterEvent($request, 'class', 'classificationstoreDefinition', $condition);
+        $this->dispatchBeforeLoadEvent($request, $eventData);
+        $condition = $eventData->getCondition();
+
         $this->checkCondition($condition);
 
         $definition = [];

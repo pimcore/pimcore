@@ -188,6 +188,10 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             }
         }
 
+        if ($options['globalParams']) {
+            $params = array_merge($options['globalParams'], (array)$params);
+        }
+
         $info->setParams($params);
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
@@ -365,6 +369,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $this->outputEditmode('<div class="pimcore_area_buttons" ' . $attr . '>');
         $this->outputEditmode('<div class="pimcore_area_buttons_inner">');
 
+        $this->outputEditmode('<div class="pimcore_block_plus_up" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');

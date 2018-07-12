@@ -22,7 +22,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
     type: "operator",
     class: "DateFormatter",
     iconCls: "pimcore_icon_datetime",
-    defaultText: "operator_dateformatter",
+    defaultText: "Date Formatter",
     group: "other",
 
     getConfigTreeNode: function(configAttributes) {
@@ -43,12 +43,12 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class, label: this.getDefaultText()};
 
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,
@@ -118,7 +118,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
             width: 500,
             height: 250,
             modal: true,
-            title: t('operator_dateformatter_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -135,7 +135,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
         if (configAttributes.format) {
             nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.format + ')</span>';
         }

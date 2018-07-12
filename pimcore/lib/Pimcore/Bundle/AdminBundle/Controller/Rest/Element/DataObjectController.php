@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Rest\Element;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Event\Webservice\FilterEvent;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice\Data\DataObject\Concrete\In as WebserviceObjectIn;
@@ -23,8 +24,8 @@ use Pimcore\Model\Webservice\Data\DataObject\Folder\In as WebserviceFolderIn;
 use Pimcore\Model\Webservice\Data\DataObject\Folder\Out as WebserviceFolderOut;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
@@ -387,10 +388,10 @@ class DataObjectController extends AbstractElementController
      *
      * Returns a list of object id/type pairs matching the given criteria.
      *  Example:
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&q={"type":%20"folder"}
      *
      * Parameters:
-     *      - condition
+     *      - query filter (q)
      *      - sort order (if supplied then also the key must be provided)
      *      - sort order key
      *      - offset
@@ -407,7 +408,12 @@ class DataObjectController extends AbstractElementController
     {
         $this->checkPermission('objects');
 
-        $condition   = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
+
+        $eventData = new FilterEvent($request, 'object', 'list', $condition);
+        $this->dispatchBeforeLoadEvent($request, $eventData);
+        $condition = $eventData->getCondition();
+
         $this->checkCondition($condition);
         $order       = $request->get('order');
         $orderKey    = $request->get('orderKey');
@@ -454,7 +460,7 @@ class DataObjectController extends AbstractElementController
      *
      * Returns the total number of objects matching the given condition
      *  Example:
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-count?apikey=[API-KEY]&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-count?apikey=[API-KEY]&q={"type": "folder"}
      *
      * Parameters:
      *      - condition
@@ -470,7 +476,12 @@ class DataObjectController extends AbstractElementController
     {
         $this->checkPermission('objects');
 
-        $condition   = urldecode($request->get('condition'));
+        $condition = $this->buildCondition($request);
+
+        $eventData = new FilterEvent($request, 'object', 'count', $condition);
+        $this->dispatchBeforeLoadEvent($request, $eventData);
+        $condition = $eventData->getCondition();
+
         $this->checkCondition($condition);
         $groupBy     = $request->get('groupBy');
         $objectClass = $request->get('objectClass');

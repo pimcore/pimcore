@@ -315,17 +315,7 @@ pimcore.element.notes = Class.create({
     onAdd: function () {
 
         var noteTypesStore = new Ext.data.Store({
-            fields: [
-                "name"
-                //,
-                // {
-                //     name:"translatedName",
-                //     convert: function(v, rec){
-                //         return ts(rec.data.name);
-                //     }
-                // }
-            ],
-
+            fields: ["name"],
             proxy: {
                 type: 'ajax',
                 url: '/admin/element/note-types?ctype=' + this.type,

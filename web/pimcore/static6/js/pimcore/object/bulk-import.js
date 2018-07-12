@@ -61,7 +61,7 @@ pimcore.object.bulkimport = Class.create({
             var checkColumn = Ext.create('Ext.grid.column.Check', {
                 text: t("import"),
                 dataIndex: 'checked',
-                width: 30
+                width: 50
             });
 
             this.gridPanel = new Ext.grid.Panel({
@@ -128,6 +128,7 @@ pimcore.object.bulkimport = Class.create({
                 width: 800,
                 height: 500,
                 border: false,
+                modal: true,
                 layout: "fit",
                 iconCls: "pimcore_icon_import",
                 items: [this.gridPanel],
@@ -244,7 +245,7 @@ pimcore.object.bulkimport = Class.create({
                             pimcore.helpers.showNotification(t("success"), t("definitions_saved"));
                         }
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("definition_save_error") + " " + this.values[idx].displayName);
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed") + " " + this.values[idx].displayName);
                     }
 
                     this.batchProgressWin.close();
@@ -253,7 +254,7 @@ pimcore.object.bulkimport = Class.create({
                 failure: function(transport) {
                     this.batchProgressWin.close();
                     var response = Ext.decode(transport.responseText);
-                    pimcore.helpers.showNotification(t("error"), t("definition_save_error") + " " + this.values[idx].displayName);
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed") + " " + this.values[idx].displayName);
                 }.bind(this)
             });
         }

@@ -100,8 +100,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             items.push(
                 {
                     xtype: "button",
-                    tooltip: t("to_left"),
-                    overflowText: t('to_left'),
                     iconCls: "pimcore_icon_left",
                     handler: function (image) {
                         this.move(-1, image.container);
@@ -112,8 +110,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             items.push(
                 {
                     xtype: "button",
-                    tooltip: t("to_right"),
-                    overflowText: t('to_right'),
                     iconCls: "pimcore_icon_right",
                     handler: function (image) {
                         this.move(+1, image.container);

@@ -161,10 +161,7 @@ pimcore.asset.listfolder = Class.create({
                         }
 
                         if(ids.length) {
-                            this.element.downloadZip({
-                                id: this.element.id,
-                                "selectedIds[]": ids
-                            });
+                            pimcore.elementservice.downloadAssetFolderAsZip(this.element.id, ids);
                         } else {
                             Ext.Msg.alert(t('error'), t('please_select_items_to_download'));
                         }
@@ -234,7 +231,7 @@ pimcore.asset.listfolder = Class.create({
             }));
         } else {
             menu.add(new Ext.menu.Item({
-                text: t('open_selected'),
+                text: t('open'),
                 iconCls: "pimcore_icon_open",
                 handler: function (data) {
                     var selectedRows = grid.getSelectionModel().getSelection();
@@ -246,7 +243,7 @@ pimcore.asset.listfolder = Class.create({
             }));
 
             menu.add(new Ext.menu.Item({
-                text: t('delete_selected'),
+                text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
                     var ids = [];

@@ -382,6 +382,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
     getGridPanel: function (columns, gridfilters, selectedClass, save) {
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store,{pageSize: this.itemsPerPage});
+
         this.gridPanel = Ext.create('Ext.grid.Panel', {
             store: this.store,
             border: false,

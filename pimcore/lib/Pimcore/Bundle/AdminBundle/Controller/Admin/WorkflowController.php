@@ -21,11 +21,12 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\WorkflowManagement\Workflow;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/workflow")
@@ -66,6 +67,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
      * Returns a JSON of the available workflow actions to the admin panel
      *
      * @Route("/get-workflow-form")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -142,6 +144,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
     /**
      * @Route("/submit-workflow-transition")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

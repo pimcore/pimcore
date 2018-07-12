@@ -56,15 +56,13 @@ pimcore.object.fieldcollection = Class.create({
                     type: 'ajax',
                     url: '/admin/class/fieldcollection-tree',
                     reader: {
-                        type: 'json',
-                        totalProperty : 'total',
-                        rootProperty: 'nodes'
-
+                        type: 'json'
                     },
                     extraParams: {
                         grouped: 1
                     }
-                }
+                },
+                sorters: ['text']
             });
 
             this.tree = Ext.create('Ext.tree.Panel', {
@@ -121,18 +119,17 @@ pimcore.object.fieldcollection = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick' : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function( thisNode, newChildNode, index, eOpts ) {
-                //newChildNode.data.expanded = true;
-                newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_fieldcollection";
-            }
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
         };
 
         return treeNodeListeners;
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
         this.openFieldcollection(record.data.id);
     },
 
@@ -157,17 +154,16 @@ pimcore.object.fieldcollection = Class.create({
 
         var data = Ext.decode(response.responseText);
 
-        /*if (this.fieldPanel) {
-            this.getEditPanel().removeAll();
-            delete this.fieldPanel;
-        }*/
-
         var fieldPanel = new pimcore.object.fieldcollections.field(data, this, this.openFieldcollection.bind(this, data.key), "pimcore_fieldcollection_editor_panel_");
         pimcore.layout.refresh();
         
     },
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
         e.stopEvent();
         tree.select();
 
@@ -182,7 +178,7 @@ pimcore.object.fieldcollection = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_fieldcollection'), t('enter_the_name_of_the_new_fieldcollection'),
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                                         this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -195,8 +191,10 @@ pimcore.object.fieldcollection = Class.create({
         if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/fieldcollection-update",
+                method: 'POST',
                 params: {
-                    key: value
+                    key: value,
+                    task: 'add'
                 },
                 success: function (response) {
                     this.tree.getStore().load();
@@ -212,7 +210,7 @@ pimcore.object.fieldcollection = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_fieldcollection'), t('problem_creating_new_fieldcollection'));
+            Ext.Msg.alert(' ', t('failed_to_create_new_item'));
         }
     },
 
@@ -226,6 +224,7 @@ pimcore.object.fieldcollection = Class.create({
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: "/admin/class/fieldcollection-delete",
+                    method: 'DELETE',
                     params: {
                         id: record.data.id
                     }

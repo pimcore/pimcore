@@ -17,7 +17,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     initialize: function (id, options) {
         this.id = intval(id);
         this.options = options;
-        
+
         pimcore.plugin.broker.fireEvent("preOpenObject", this, "object");
 
         this.addLoadingPanel();
@@ -184,6 +184,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.id,
                     type: "object"
@@ -231,7 +232,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         //    console.log(e);
         //}
 
-        if (!empty(this.data.previewUrl)) {
+        if (this.data.hasPreview) {
             try {
                 items.push(this.preview.getLayout());
             } catch (e) {
@@ -465,27 +466,18 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             });
 
 
-            if (this.data.general.linkGeneratorReference) {
+            if (this.data.hasPreview) {
                 buttons.push("-");
                 buttons.push({
                     tooltip: t("open"),
                     iconCls: "pimcore_icon_open",
                     scale: "medium",
                     handler: function () {
-                        Ext.Ajax.request({
-                            url: "/admin/object-helper/generate-link",
-                            params: {
-                                id: this.id
-                            },
-                            success: function (response) {
-                                var res = Ext.decode(response.responseText);
-                                if (res["success"]) {
-                                    window.open(res["link"]);
-                                }
-
-                            }.bind(this)
+                        var date = new Date();
+                        var path = "/admin/object/preview?id=" + this.data.general.o_id + "&time=" + date.getTime();
+                        this.saveToSession(function () {
+                            window.open(path);
                         });
-
                     }.bind(this)
                 });
             }
@@ -703,7 +695,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
                     this.tab.unmask();
-                    pimcore.helpers.showPrettyError('object', t("error"), t("error_saving_object"), e.message);
+                    pimcore.helpers.showPrettyError('object', t("error"), t("saving_failed"), e.message);
                     return false;
                 }
 
@@ -716,7 +708,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             Ext.Ajax.request({
                 url: '/admin/object/save?task=' + task,
-                method: "post",
+                method: "PUT",
                 params: saveData,
                 success: function (response) {
                     if (task != "session") {
@@ -727,7 +719,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 successCallback(rdata);
                             }
                             if (rdata && rdata.success) {
-                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
+                                pimcore.helpers.showNotification(t("success"), t("saved_successfully"),
                                     "success");
                                 this.resetChanges();
                                 Ext.apply(this.data.general, rdata.general);
@@ -739,11 +731,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
                             }
                             else {
-                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
+                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
                                     rdata.message, rdata.stack, rdata.code);
                             }
                         } catch (e) {
-                            pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                            pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                         }
                         // reload versions
                         if (this.isAllowed("versions")) {

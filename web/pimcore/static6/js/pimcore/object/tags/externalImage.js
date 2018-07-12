@@ -73,7 +73,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
 
         this.inputField =  new Ext.form.field.Text({
             xtype: "textfield",
-            fieldLabel: t("URL"),
+            fieldLabel: "URL",
             name: "icon",
             width: this.fieldConfig.inputWidth,
             value: this.data,

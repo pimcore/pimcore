@@ -23,6 +23,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,7 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/object")
@@ -46,6 +47,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/tree-get-childs-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -208,7 +210,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $tmpObject['allowChildren'] = true;
         $tmpObject['leaf'] = !$hasChildren;
-        $tmpObject['cls'] = '';
+        $tmpObject['cls'] = 'pimcore_class_icon ';
 
         $tmpObject['qtipCfg'] = $child->getElementAdminStyle()->getElementQtipConfig();
 
@@ -260,6 +262,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/get-id-path-paging-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -311,6 +314,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -340,7 +344,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData = [];
 
             $objectData['idPath'] = Element\Service::getIdPath($object);
-            $objectData['previewUrl'] = $object->getClass()->getPreviewUrl();
+
+            $objectData['hasPreview'] = false;
+            if ($object->getClass()->getPreviewUrl() || $object->getClass()->getLinkGeneratorReference()) {
+                $objectData['hasPreview'] = true;
+            }
 
             $objectData['general'] = [];
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_modificationDate', 'o_creationDate', 'o_classId', 'o_className', 'o_locked', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
@@ -392,9 +400,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             //master layout has id 0 so we check for is_null()
             if (is_null($currentLayoutId) && !empty($validLayouts)) {
-                foreach ($validLayouts as $checkDefaultLayout) {
-                    if ($checkDefaultLayout->getDefault()) {
-                        $currentLayoutId = $checkDefaultLayout->getId();
+                if (count($validLayouts) == 1) {
+                    $firstLayout = reset($validLayouts);
+                    $currentLayoutId = $firstLayout->getId();
+                } else {
+                    foreach ($validLayouts as $checkDefaultLayout) {
+                        if ($checkDefaultLayout->getDefault()) {
+                            $currentLayoutId = $checkDefaultLayout->getId();
+                        }
                     }
                 }
             }
@@ -442,6 +455,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
+
+            DataObject\Service::removeObjectFromSession($object->getId());
 
             return $this->adminJson($data);
         } else {
@@ -601,21 +616,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/lock")
-     *
-     * @param Request $request
-     */
-    public function lockAction(Request $request)
-    {
-        $object = DataObject::getById($request->get('id'));
-        if ($object instanceof DataObject\AbstractObject) {
-            $object->setLocked((bool)$request->get('locked'));
-            //TODO: if latest version published - publish
-            //if latest version not published just save new version
-        }
-    }
-
-    /**
      * @param $layout
      * @param $allowedView
      * @param $allowedEdit
@@ -705,6 +705,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/get-folder")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -784,6 +785,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -859,6 +861,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/add-folder")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -900,6 +903,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -944,6 +948,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/change-children-sort-by")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -965,6 +970,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/delete-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -997,6 +1003,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object instanceof DataObject\AbstractObject) {
                 $recycleJobs[] = [[
                     'url' => '/admin/recyclebin/add',
+                    'method' => 'POST',
                     'params' => [
                         'type' => 'object',
                         'id' => $object->getId()
@@ -1021,6 +1028,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                             $deleteJobs[] = [[
                                 'url' => '/admin/object/delete',
+                                'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
                                     'amount' => $deleteObjectsPerRequest,
@@ -1035,6 +1043,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 // the object itself is the last one
                 $deleteJobs[] = [[
                     'url' => '/admin/object/delete',
+                    'method' => 'DELETE',
                     'params' => [
                         'id' => $object->getId()
                     ]
@@ -1061,6 +1070,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1196,6 +1206,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/save")
+     * @Method({"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1396,6 +1407,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/save-folder")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -1472,6 +1484,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/publish-version")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1507,6 +1520,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/preview-version")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @TemplatePhp()
@@ -1538,6 +1552,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/diff-versions/from/{from}/to/{to}")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1579,6 +1594,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/grid-proxy")
+     * @Method({"GET", "POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1606,6 +1622,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         if ($allParams['data']) {
+            $this->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);
@@ -1978,6 +1995,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/copy-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1998,6 +2016,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // first of all the new parent
             $pasteJobs[] = [[
                 'url' => '/admin/object/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -2020,6 +2039,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
                             'url' => '/admin/object/copy',
+                            'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
                                 'targetParentId' => $request->get('targetId'),
@@ -2037,6 +2057,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 for ($i = 0; $i < (count($childIds) + 1); $i++) {
                     $pasteJobs[] = [[
                         'url' => '/admin/object/copy-rewrite-ids',
+                        'method' => 'PUT',
                         'params' => [
                             'transactionId' => $transactionId,
                             '_dc' => uniqid()
@@ -2048,6 +2069,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // the object itself is the last one
             $pasteJobs[] = [[
                 'url' => '/admin/object/copy',
+                'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
@@ -2064,6 +2086,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/copy-rewrite-ids")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -2105,6 +2128,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/copy")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -2179,6 +2203,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @Route("/preview")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -2191,23 +2216,33 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $session = Tool\Session::getReadOnly('pimcore_objects');
         if ($session->has($key)) {
+            /**
+             * @var DataObject\Concrete $object
+             */
             $object = $session->get($key);
         } else {
             return new Response("Preview not available, it seems that there's a problem with this object.");
         }
 
         $url = $object->getClass()->getPreviewUrl();
-
-        // replace named variables
-        $vars = get_object_vars($object);
-        foreach ($vars as $key => $value) {
-            if (!empty($value) && (is_string($value) || is_numeric($value))) {
-                $url = str_replace('%' . $key, urlencode($value), $url);
-            } else {
-                if (strpos($url, '%' . $key) !== false) {
-                    return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
+        if ($url) {
+            // replace named variables
+            $vars = get_object_vars($object);
+            foreach ($vars as $key => $value) {
+                if (!empty($value) && (is_string($value) || is_numeric($value))) {
+                    $url = str_replace('%' . $key, urlencode($value), $url);
+                } else {
+                    if (strpos($url, '%' . $key) !== false) {
+                        return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
+                    }
                 }
             }
+        } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
+            $url = $linkGenerator->generate($object, [['preview' => true, 'context' => $this]]);
+        }
+
+        if (!$url) {
+            return new Response("Preview not available, it seems that there's a problem with this object.");
         }
 
         // replace all remainaing % signs

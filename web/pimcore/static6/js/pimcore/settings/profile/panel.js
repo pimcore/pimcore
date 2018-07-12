@@ -160,7 +160,8 @@ pimcore.settings.profile.panel = Class.create({
                 fieldLabel: t("old_password"),
                 name: "old_password",
                 inputType: "password",
-                width: 400
+                width: 400,
+                hidden: this.currentUser.isPasswordReset
             }, {
                 xtype: "fieldcontainer",
                 layout: 'hbox',
@@ -284,7 +285,7 @@ pimcore.settings.profile.panel = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/user/update-current-user",
-            method: "post",
+            method: "PUT",
             params: {
                 id: this.currentUser.id,
                 data: Ext.encode(values),
@@ -305,16 +306,16 @@ pimcore.settings.profile.panel = Class.create({
                             }.bind(this));
                         }
 
-                        pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         if (contentLanguages) {
                             pimcore.settings.websiteLanguages = contentLanguages;
                             pimcore.currentuser.contentLanguages = contentLanguages.join(',');
                         }
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error", t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error", t(res.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this)
         });

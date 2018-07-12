@@ -89,6 +89,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.data.id,
                     type: "asset"
@@ -182,7 +183,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             if (this.isAllowed("publish")) {
                 this.toolbarButtons.upload = new Ext.Button({
-                    tooltip: t("upload"),
+                    tooltip: t("upload_new_version"),
                     iconCls: "pimcore_icon_upload",
                     scale: "medium",
                     handler: function () {
@@ -235,6 +236,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     handler: function () {
                         Ext.Ajax.request({
                             url: "/admin/asset/clear-thumbnail",
+                            method: 'POST',
                             params: {
                                 id: this.data.id
                             }
@@ -332,21 +334,21 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         Ext.Ajax.request({
             url: '/admin/asset/save',
-            method: "post",
+            method: "PUT",
             success: function (response) {
                 try{
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("save"), t("successful_saved_asset"), "success");
+                        pimcore.helpers.showNotification(t("save"), t("saved_successfully"), "success");
                         this.resetChanges();
                         pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
                     }
                     else {
-                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_asset"),
+                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
                             rdata.message, rdata.stack, rdata.code);
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_asset"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
                 // reload versions
                 if (this.isAllowed("versions")) {

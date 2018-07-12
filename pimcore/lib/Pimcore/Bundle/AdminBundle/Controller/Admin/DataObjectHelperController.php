@@ -22,7 +22,7 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectImportEvents;
 use Pimcore\Event\Model\DataObjectImportEvent;
 use Pimcore\File;
-use Pimcore\Localization\Locale;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\FactoryInterface;
@@ -34,6 +34,8 @@ use Pimcore\Model\ImportConfigShare;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,7 +43,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/object-helper")
@@ -52,6 +53,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/load-object-data")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -84,7 +86,7 @@ class DataObjectHelperController extends AdminController
         $db = Db::get();
         $configListingConditionParts = [];
         $configListingConditionParts[] = 'ownerId = ' . $userId;
-        $configListingConditionParts[] = 'classId = ' . $classId;
+        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
 
         if ($searchType) {
             $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
@@ -112,7 +114,7 @@ class DataObjectHelperController extends AdminController
         $db = Db::get();
         $configListingConditionParts = [];
         $configListingConditionParts[] = 'sharedWithUserId = ' . $user->getId();
-        $configListingConditionParts[] = 'classId = ' . $classId;
+        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
 
         if ($searchType) {
             $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
@@ -124,10 +126,11 @@ class DataObjectHelperController extends AdminController
         // collect all roles
         $userIds = array_merge($userIds, $user->getRoles());
         $userIds = implode(',', $userIds);
+        $db = Db::get();
 
         $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
-                    where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $classId . ')
-                            UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = ' . $classId . '  and c2.ownerId != ' . $user->getId();
+                    where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
+                            UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
         $ids = $db->fetchCol($query);
 
@@ -145,6 +148,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-export-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -246,6 +250,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/get-export-configs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -281,6 +286,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/delete-import-config")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -308,6 +314,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-delete-column-config")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -338,6 +345,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-get-column-config")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -430,7 +438,7 @@ class DataObjectHelperController extends AdminController
             $db = Db::get();
             $configListingConditionParts = [];
             $configListingConditionParts[] = 'ownerId = ' . $userId;
-            $configListingConditionParts[] = 'classId = ' . $class->getId();
+            $configListingConditionParts[] = 'classId = ' . $db->quote($class->getId());
 
             if ($searchType) {
                 $configListingConditionParts[] = 'searchType = ' . $db->quote($searchType);
@@ -819,6 +827,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/prepare-helper-column-configs")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -852,6 +861,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-config-apply-to-all")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -870,7 +880,7 @@ class DataObjectHelperController extends AdminController
             $db = Db::get();
             $db->query('delete from gridconfig_favourites where '
                 . 'ownerId = ' . $user->getId()
-                . ' and classId = ' . $classId .
+                . ' and classId = ' . $db->quote($classId) .
                 ' and searchType = ' . $db->quote($searchType)
                 . ' and objectId != ' . $objectId . ' and objectId != 0');
 
@@ -882,6 +892,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-mark-favourite-column-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -925,7 +936,7 @@ class DataObjectHelperController extends AdminController
                 $db = Db::get();
                 $count = $db->fetchOne('select * from gridconfig_favourites where '
                     . 'ownerId = ' . $user->getId()
-                    . ' and classId = ' . $classId .
+                    . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
                     . ' and objectId != ' . $objectId . ' and objectId != 0');
                 $specializedConfigs = $count > 0;
@@ -973,6 +984,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-save-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1034,6 +1046,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/grid-save-column-config")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1273,6 +1286,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/prepare-import-preview")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1301,10 +1315,11 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-preview")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param ImportService $importService
-     * @param Locale $localeService
+     * @param LocaleServiceInterface $localeService
      * @param FactoryInterface $modelFactory
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -1313,7 +1328,7 @@ class DataObjectHelperController extends AdminController
     public function importPreviewAction(
         Request $request,
         ImportService $importService,
-        Locale $localeService,
+        LocaleServiceInterface $localeService,
         FactoryInterface $modelFactory,
         EventDispatcherInterface $eventDispatcher
     ) {
@@ -1401,7 +1416,7 @@ class DataObjectHelperController extends AdminController
 
     protected function populateObject(
         ImportService $importService,
-        Locale $localeService,
+        LocaleServiceInterface $localeService,
         $object,
         $configData,
         $rowData,
@@ -1448,6 +1463,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-upload")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -1479,6 +1495,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-get-file-info")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1593,10 +1610,11 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/import-process")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
-     * @param Locale $localeService
+     * @param LocaleServiceInterface $localeService
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
@@ -1606,7 +1624,7 @@ class DataObjectHelperController extends AdminController
     public function importProcessAction(
         Request $request,
         ImportService $importService,
-        Locale $localeService,
+        LocaleServiceInterface $localeService,
         EventDispatcherInterface $eventDispatcher
     ) {
         $parentId = $request->get('parentId');
@@ -1795,9 +1813,13 @@ class DataObjectHelperController extends AdminController
 
         //parameters specified in the objects grid
         $ids = $request->get('ids', []);
-        if (!empty($ids)) {
+        $quotedIds = [];
+        foreach ($ids as $id) {
+            $quotedIds[] = $list->quote($id);
+        }
+        if (!empty($quotedIds)) {
             //add a condition if id numbers are specified
-            $list->addConditionParam("{$objectTableName}.o_id IN (" . implode(',', $ids) . ')');
+            $list->addConditionParam("{$objectTableName}.o_id IN (" . implode(',', $quotedIds) . ')');
         }
 
         $list->setOrder('ASC');
@@ -1838,6 +1860,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/get-export-jobs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1859,13 +1882,14 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/do-export")
+     * @Method({"POST"})
      *
      * @param Request $request
-     * @param Locale $localeService
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function doExportAction(Request $request, Locale $localeService)
+    public function doExportAction(Request $request, LocaleServiceInterface $localeService)
     {
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $ids = $request->get('ids');
@@ -1884,9 +1908,15 @@ class DataObjectHelperController extends AdminController
          * @var $list \Pimcore\Model\DataObject\Listing
          */
         $list = new $listClass();
+
+        $quotedIds = [];
+        foreach ($ids as $id) {
+            $quotedIds[] = $list->quote($id);
+        }
+
         $list->setObjectTypes(['object', 'folder', 'variant']);
-        $list->setCondition('o_id IN (' . implode(',', $ids) . ')');
-        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $ids) . ')', false);
+        $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
+        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
 
         list($fields, $bricks) = $this->extractFieldsAndBricks($request);
 
@@ -1921,6 +1951,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/download-csv-file")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -1977,14 +2008,14 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @param Request $request
-     * @param Locale $localeService
+     * @param LocaleServiceInterface $localeService
      * @param $list
      * @param $fields
      * @param bool $addTitles
      *
      * @return string
      */
-    protected function getCsvData(Request $request, Locale $localeService, $list, $fields, $addTitles = true)
+    protected function getCsvData(Request $request, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true)
     {
         $requestedLanguage = $this->extractLanguage($request);
         $mappedFieldnames = [];
@@ -2204,6 +2235,7 @@ class DataObjectHelperController extends AdminController
 
     /**
      * @Route("/get-batch-jobs")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -2250,29 +2282,8 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/generate-link")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function generateLink(Request $request)
-    {
-        $id = $request->get('id');
-        $object = DataObject\Concrete::getById($id);
-        if (!$object) {
-            return $this->adminJson(['success' => false]);
-        }
-
-        $class = $object->getClass();
-        $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($class->getLinkGeneratorReference());
-        $link = $generator->generate($object, []);
-
-        return $this->adminJson(['success' => true, 'link' => $link]);
-    }
-
-    /**
      * @Route("/batch")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *

@@ -19,7 +19,7 @@ services:
     # LOCALE
     #
 
-    Pimcore\Localization\Locale:
+    Pimcore\Localization\LocaleService:
         arguments:
             # TODO can we just type hint against TranslatorInterface and use autowiring here or do we need to call
             # this on the pimcore.translator?

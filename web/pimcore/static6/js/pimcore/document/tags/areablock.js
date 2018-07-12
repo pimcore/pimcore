@@ -38,7 +38,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.visibilityButtons = {};
 
         var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
-            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv;
+            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv, plusUpDiv, plusUpButton;
 
         this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 
@@ -92,14 +92,24 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 }
 
                 if(!limitReached) {
-                    // plus button
+                    // plus buttons
+                    plusUpDiv = Ext.get(this.elements[i]).query('.pimcore_block_plus_up[data-name="' + this.name + '"]')[0];
+                    plusUpButton = new Ext.Button({
+                        cls: "pimcore_block_button_plus",
+                        iconCls: "pimcore_icon_plus_up",
+                        arrowVisible: false,
+                        menuAlign: "tr",
+                        menu: this.getTypeMenu(this, this.elements[i], "before")
+                    });
+                    plusUpButton.render(plusUpDiv);
+
                     plusDiv = Ext.get(this.elements[i]).query('.pimcore_block_plus[data-name="' + this.name + '"]')[0];
                     plusButton = new Ext.Button({
                         cls: "pimcore_block_button_plus",
-                        iconCls: "pimcore_icon_plus",
+                        iconCls: "pimcore_icon_plus_down",
                         arrowVisible: false,
                         menuAlign: "tr",
-                        menu: this.getTypeMenu(this, this.elements[i])
+                        menu: this.getTypeMenu(this, this.elements[i], "after")
                     });
                     plusButton.render(plusDiv);
                 }
@@ -543,7 +553,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         });
                     });
 
-                    this.addBlock(element, item.type);
+                    this.addBlockAfter(element, item.type);
                 }.bind(this)
             }));
         }
@@ -690,7 +700,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         Ext.get(this.id).addCls("");
     },
 
-    getTypeMenu: function (scope, element) {
+    getTypeMenu: function (scope, element, insertPosition) {
         var menu = [];
         var groupMenu;
 
@@ -707,7 +717,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                     for (var i=0; i<this.options.types.length; i++) {
                         if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
-                            groupMenu.menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element));
+                            groupMenu.menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
                         }
                     }
                     menu.push(groupMenu);
@@ -715,25 +725,27 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             }
         } else {
             for (var i=0; i<this.options.types.length; i++) {
-                menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element));
+                menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
             }
         }
 
         return menu;
     },
 
-    getMenuConfigForBrick: function (brick, scope, element) {
+    getMenuConfigForBrick: function (brick, scope, element, insertPosition) {
 
         var menuText = brick.name;
         if(brick.description) {
             menuText += " | " + brick.description;
         }
 
+        var addBLockFunction = "addBlock" + ucfirst(insertPosition);
+
         var tmpEntry = {
             text: menuText,
             iconCls: "pimcore_icon_area",
             listeners: {
-                "click": this.addBlock.bind(scope, element, brick.type)
+                "click": this[addBLockFunction].bind(scope, element, brick.type)
             }
         };
 
@@ -759,9 +771,13 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         return nextKey;
     },
 
-    addBlock : function (element, type) {
-
+    addBlockAfter : function (element, type) {
         var index = this.getElementIndex(element) + 1;
+        this.addBlockAt(type, index)
+    },
+
+    addBlockBefore : function (element, type) {
+        var index = this.getElementIndex(element);
         this.addBlockAt(type, index)
     },
 

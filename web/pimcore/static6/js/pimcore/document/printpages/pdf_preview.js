@@ -60,6 +60,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     handler: function() {
                         Ext.Ajax.request({
                             url: "/admin/printpage/cancel-generation",
+                            method: 'DELETE',
                             params: {id: this.page.id},
                             success: function(response) {
                                 var result = Ext.decode(response.responseText);
@@ -239,7 +240,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     editable: false,
                     width: 120,
                     renderer: function(value) {
-                        return t("web2print_" + value);
+                        return t("web2print_" + value, value);
                     },
                     sortable: true
                 },
@@ -342,6 +343,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/printpage/start-pdf-generation",
+            method: 'POST',
             params: params,
             success: function(response) {
                 result = Ext.decode(response.responseText);
@@ -393,6 +395,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
     checkForActiveGenerateProcess: function() {
         Ext.Ajax.request({
             url: "/admin/printpage/active-generate-process",
+            method: 'POST',
             params: {id: this.page.id},
             success: function(response) {
                 var result = Ext.decode(response.responseText);

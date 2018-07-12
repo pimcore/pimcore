@@ -276,7 +276,7 @@ pimcore.settings.tagmanagement.item = Class.create({
         formValues.name = this.data.name;
         Ext.Ajax.request({
             url: "/admin/settings/tag-management-update",
-            method: "post",
+            method: "PUT",
             params: {
                 configuration: Ext.encode(formValues),
                 name: this.data.name
@@ -287,7 +287,7 @@ pimcore.settings.tagmanagement.item = Class.create({
 
     saveOnComplete: function () {
         this.parentPanel.tree.getStore().load();
-        pimcore.helpers.showNotification(t("success"), t("tag_saved_successfully"), "success");
+        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
     },
 
     getCurrentIndex: function () {

@@ -110,6 +110,7 @@ Ext.onReady(function () {
 
     body.on("click", function () {
        parent.Ext.menu.MenuMgr.hideAll();
+        editWindow.toggleTagHighlighting(false);
     });
 
     Ext.QuickTips.init();

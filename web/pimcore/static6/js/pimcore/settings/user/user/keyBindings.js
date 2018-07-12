@@ -49,11 +49,9 @@ pimcore.settings.user.user.keyBindings = Class.create({
         return code;
     },
 
-    getPanel: function () {
-        var user = pimcore.globalmanager.get("user");
-
+    buildItems: function(userBindings) {
         var mapping = pimcore.helpers.keyBindingMapping;
-        var keyBindings = Ext.decode(user.keyBindings);
+        var keyBindings = Ext.decode(userBindings);
         var keyBindingsAssoc = {};
 
         for (var key in keyBindings) {
@@ -68,12 +66,6 @@ pimcore.settings.user.user.keyBindings = Class.create({
 
 
         var generalItems = [];
-
-        generalItems.push({
-            xtype: 'panel',
-            html: t('please_dont_forget_to_reload_pimcore'),
-            minHeight:50
-        });
 
         for (var action in mapping) {
             if (mapping.hasOwnProperty(action)) {
@@ -108,7 +100,8 @@ pimcore.settings.user.user.keyBindings = Class.create({
                         },
                         "keydown": function (hiddenField, action, field, key) {
                             key.event.preventDefault();
-                            if (key.keyCode == 9) {
+
+                            if (key.keyCode == 9 || key.keyCode == 8) {
                                 return false;
                             }
 
@@ -139,15 +132,53 @@ pimcore.settings.user.user.keyBindings = Class.create({
                 }));
             }
         }
+        return generalItems;
+    },
 
+    getPanel: function (responseData) {
+        var user = pimcore.globalmanager.get("user");
+        var userBindings = responseData ? responseData : user.keyBindings;
 
+        var generalItems = this.buildItems(userBindings);
 
-        this.panel = new Ext.form.FormPanel({
-            title: this.userProfile ? "" : t("key_bindings"),
-            items: generalItems,
-            bodyStyle: "padding:10px;",
-            autoScroll: true
+        if (!this.panel) {
+            this.panel = new Ext.form.FormPanel({
+                title: this.userProfile ? "" : t("key_bindings"),
+                bodyStyle: "padding:10px;",
+                autoScroll: true
+            });
+        }
+
+        this.panel.removeAll();
+
+        this.panel.add({
+            xtype: "button",
+            text: t("reset"),
+            iconCls : "pimcore_icon_restore",
+            handler: function() {
+                Ext.Ajax.request({
+                    url: "/admin/user/get-default-key-bindings",
+                    success: function (response) {
+                        var rdata = Ext.decode(response.responseText);
+                        if (rdata && rdata.success) {
+                            var defaultBindings = rdata.data;
+                            this.getPanel(defaultBindings);
+                        }
+
+                    }.bind(this)
+                });
+            }.bind(this)
         });
+
+        this.panel.add({
+            xtype: 'panel',
+            html: t('please_dont_forget_to_reload_pimcore'),
+            minHeight:50
+        });
+
+        this.panel.add(generalItems);
+
+        this.panel.updateLayout();
 
         return this.panel;
     },

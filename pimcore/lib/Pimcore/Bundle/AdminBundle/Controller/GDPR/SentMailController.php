@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Tool\Email\Log;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -45,6 +46,7 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
     /**
      * @param Request $request
      * @Route("/export")
+     * @Method({"GET"})
      */
     public function exportDataObjectAction(Request $request)
     {

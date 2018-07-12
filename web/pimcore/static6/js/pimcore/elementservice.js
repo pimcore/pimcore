@@ -179,7 +179,7 @@ pimcore.elementservice.updateAsset = function (id, data, callback) {
 
     Ext.Ajax.request({
         url: "/admin/asset/update",
-        method: "post",
+        method: "PUT",
         params: data,
         success: callback
     });
@@ -196,7 +196,7 @@ pimcore.elementservice.updateDocument = function (id, data, callback) {
 
     Ext.Ajax.request({
         url: "/admin/document/update",
-        method: "post",
+        method: "PUT",
         params: data,
         success: callback
     });
@@ -211,7 +211,7 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
 
     Ext.Ajax.request({
         url: "/admin/object/update",
-        method: "post",
+        method: "PUT",
         params: {
             id: id,
             values: Ext.encode(values)
@@ -415,7 +415,7 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                 var parentChilds = record.parentNode.childNodes;
                 for (var i = 0; i < parentChilds.length; i++) {
                     if (parentChilds[i].data.text == value && this != parentChilds[i].data.text) {
-                        Ext.MessageBox.alert(t('rename'), t('the_filename_is_already_in_use'));
+                        Ext.MessageBox.alert(t('rename'), t('name_already_in_use'));
                         return;
                     }
                 }
@@ -522,8 +522,8 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
     var parentChilds = parentNode.childNodes;
     for (var i = 0; i < parentChilds.length; i++) {
         if (parentChilds[i].data.text == key && node != parentChilds[i]) {
-            Ext.MessageBox.alert(t('edit_key'),
-                t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+            Ext.MessageBox.alert(t('rename'),
+                t('name_already_in_use'));
             return true;
         }
     }
@@ -565,6 +565,7 @@ pimcore.elementservice.addObject = function(options) {
 
     Ext.Ajax.request({
         url: url,
+        method: 'POST',
         params: options,
         success: pimcore.elementservice.addObjectComplete.bind(this, options)
     });
@@ -578,6 +579,7 @@ pimcore.elementservice.addDocument = function(options) {
 
     Ext.Ajax.request({
         url: url,
+        method: 'POST',
         params: options,
         success: pimcore.elementservice.addDocumentComplete.bind(this, options)
     });
@@ -638,11 +640,11 @@ pimcore.elementservice.addDocumentComplete = function (options, response) {
                 pimcore.helpers.openDocument(response.id, response.type);
             }
         }  else {
-            pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error",
+            pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error",
                 t(response.message));
         }
     } catch(e) {
-        pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error");
+        pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error");
     }
 };
 
@@ -658,10 +660,10 @@ pimcore.elementservice.addObjectComplete = function(options, response) {
                 }
             }
         }  else {
-            pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error", t(rdata.message));
+            pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error", t(rdata.message));
         }
     } catch (e) {
-        pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error");
+        pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error");
     }
 
 };
@@ -687,6 +689,7 @@ pimcore.elementservice.unlockElement = function(options) {
     try {
         Ext.Ajax.request({
             url: "/admin/element/unlock-propagate",
+            method: 'PUT',
             params: {
                 id: options.id,
                 type: options.elementType
@@ -765,7 +768,9 @@ pimcore.elementservice.reloadVersions = function(options) {
 };
 
 pimcore.elementservice.showLocateInTreeButton = function(elementType) {
-    if (pimcore.globalmanager.get("layout_" + elementType + "s_locateintree_tree")) {
+    var locateConfigs = pimcore.globalmanager.get("tree_locate_configs");
+
+    if (locateConfigs[elementType]) {
         return true;
     }
     return false;
@@ -820,14 +825,20 @@ pimcore.elementservice.replaceAsset = function (id, callback) {
 };
 
 
-pimcore.elementservice.downloadAssetFolderAsZip = function (id) {
+pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
 
     var that = {};
+
+    var idsParam = '';
+    if(selectedIds && selectedIds.length) {
+        idsParam = selectedIds.join(',');
+    }
 
     Ext.Ajax.request({
         url: "/admin/asset/download-as-zip-jobs",
         params: {
-            id: id
+            id: id,
+            selectedIds: idsParam
         },
         success: function(response) {
             var res = Ext.decode(response.responseText);

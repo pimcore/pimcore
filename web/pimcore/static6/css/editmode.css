@@ -142,6 +142,7 @@
 }
 
 .pimcore_block_plus,
+.pimcore_block_plus_up,
 .pimcore_block_minus,
 .pimcore_block_up,
 .pimcore_block_down,
@@ -152,6 +153,7 @@
 }
 
 .pimcore_area_buttons .pimcore_block_plus,
+.pimcore_area_buttons .pimcore_block_plus_up,
 .pimcore_area_buttons .pimcore_block_minus,
 .pimcore_area_buttons .pimcore_block_up,
 .pimcore_area_buttons .pimcore_block_down,
@@ -163,6 +165,7 @@
 }
 
 .pimcore_area_buttons.top .pimcore_block_plus,
+.pimcore_area_buttons.top .pimcore_block_plus_up,
 .pimcore_area_buttons.top .pimcore_block_minus,
 .pimcore_area_buttons.top .pimcore_block_up,
 .pimcore_area_buttons.top .pimcore_block_down,
@@ -386,6 +389,7 @@
 
 .pimcore_areablock_toolbar.x-layer {
     position: fixed !important;
+    z-index: 10000 !important;
 }
 
 .pimcore_areablock_toolbar .x-btn-default-small {

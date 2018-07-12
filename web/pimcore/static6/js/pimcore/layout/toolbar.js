@@ -101,11 +101,12 @@ pimcore.layout.toolbar = Class.create({
                             text: t("add_dashboard"),
                             iconCls: "pimcore_icon_add",
                             handler: function () {
-                                Ext.MessageBox.prompt(t('create_new_dashboard'), t('please_enter_the_name_of_the_new_dashboard'),
+                                Ext.MessageBox.prompt(t('create_new_dashboard'), t('enter_the_name_of_the_new_item'),
                                     function (button, value, object) {
                                         if (button == "ok") {
                                             Ext.Ajax.request({
                                                 url: "/admin/portal/create-dashboard",
+                                                method: 'POST',
                                                 params: {
                                                     key: value
                                                 },
@@ -282,7 +283,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
                 extrasItems.push({
-                    text: t("translation"),
+                    text: t("translations"),
                     iconCls: "pimcore_icon_translations",
                     hideOnClick: false,
                     menu: {
@@ -360,7 +361,7 @@ pimcore.layout.toolbar = Class.create({
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
-                            text: t("email_logs") + " (" + t("global") + ")",
+                            text: t("email_logs"),
                             iconCls: "pimcore_icon_email",
                             handler: this.sentEmailsLog
                         }, {
@@ -1030,6 +1031,18 @@ pimcore.layout.toolbar = Class.create({
 
         if (perspectiveCfg.inToolbar("search")) {
             var searchItems = [];
+
+            if ((user.isAllowed("documents") || user.isAllowed("asset") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
+                searchItems.push({
+                    text: t("quicksearch"),
+                    iconCls: "pimcore_icon_search",
+                    handler: function () {
+                        pimcore.helpers.showQuickSearch();
+                    }
+                });
+                searchItems.push('-');
+            }
+
             var searchAction = function (type) {
                 pimcore.helpers.itemselector(false, function (selection) {
                         pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
@@ -1523,6 +1536,7 @@ pimcore.layout.toolbar = Class.create({
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: '/admin/settings/clear-cache',
+                    method: "DELETE",
                     params: params
                 });
             }
@@ -1531,7 +1545,8 @@ pimcore.layout.toolbar = Class.create({
 
     clearOutputCache: function () {
         Ext.Ajax.request({
-            url: '/admin/settings/clear-output-cache'
+            url: '/admin/settings/clear-output-cache',
+            method: 'DELETE'
         });
     },
 
@@ -1539,7 +1554,8 @@ pimcore.layout.toolbar = Class.create({
         Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
             if (btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/admin/settings/clear-temporary-files'
+                    url: '/admin/settings/clear-temporary-files',
+                    method: "DELETE"
                 });
             }
         });

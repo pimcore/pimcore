@@ -39,17 +39,35 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         this.currentElements = [];
         this.initClassData();
 
+        this.groupField = new Ext.form.field.Text(
+            {
+                width: 400,
+                name: "group",
+                fieldLabel: t("group"),
+                value: this.data.group
+            });
+
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
+            defaults: {
+                labelWidth: 200
+            },
             items: [{
                 xtype: "textfield",
                 width: 400,
                 name: "parentClass",
-                fieldLabel: t("parent_class"),
+                fieldLabel: t("parent_php_class"),
                 value: this.data.parentClass
-            }
-                , this.getClassDefinitionPanel()
+            }, {
+                xtype: "textfield",
+                width: 400,
+                name: "title",
+                fieldLabel: t("title"),
+                value: this.data.title
+            },
+                this.groupField,
+                this.getClassDefinitionPanel()
             ]
         });
 
@@ -276,6 +294,13 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
     },
 
     save: function () {
+        var reload = false;
+        var newGroup = this.groupField.getValue();
+        if (newGroup != this.data.group) {
+            this.data.group = newGroup;
+            reload = true;
+        }
+
         this.saveCurrentNode();
 
         var m = Ext.encode(this.getData());
@@ -290,20 +315,30 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         if (this.getDataSuccess) {
             Ext.Ajax.request({
                 url: "/admin/class/objectbrick-update",
-                method: "post",
+                method: "PUT",
                 params: {
                     configuration: m,
                     values: n,
-                    key: this.data.key
+                    key: this.data.key,
+                    title: this.data.title,
+                    group: this.data.group
                 },
-                success: this.saveOnComplete.bind(this)
+                success: this.saveOnComplete.bind(this, reload)
             });
         }
     },
 
-    saveOnComplete: function () {
-        this.parentPanel.tree.getStore().load();
-        pimcore.helpers.showNotification(t("success"), t("objectbrick_saved_successfully"), "success");
+    saveOnComplete: function (reload, response) {
+        var rdata = Ext.decode(response.responseText);
+        if (rdata && rdata.success) {
+            if (reload) {
+                this.parentPanel.tree.getStore().load();
+            }
+            pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
+        } else {
+            pimcore.helpers.showNotification(t("saving_failed"), rdata.message, "error");
+        }
+
     },
 
     upload: function () {

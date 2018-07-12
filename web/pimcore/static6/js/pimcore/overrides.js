@@ -944,3 +944,148 @@ Ext.override(Ext.picker.Date, {
         }
     }
 });
+
+
+/**
+ * A specialized {@link Ext.view.BoundListKeyNav} implementation for navigating in the quicksearch.
+ * This is needed because in the default implementation the Crtl+A combination is disabled, but this is needed
+ * for the purpose of the quicksearch
+ */
+Ext.define('Pimcore.view.BoundListKeyNav', {
+    extend: 'Ext.view.BoundListKeyNav',
+
+    alias: 'view.navigation.quicksearch.boundlist',
+
+    initKeyNav: function(view) {
+        var me = this,
+            field = view.pickerField;
+
+        // Add the regular KeyNav to the view.
+        // Unless it's already been done (we may have to defer a call until the field is rendered.
+        if (!me.keyNav) {
+            me.callParent([view]);
+
+            // Add ESC handling to the View's KeyMap to collapse the field
+            me.keyNav.map.addBinding({
+                key: Ext.event.Event.ESC,
+                fn: me.onKeyEsc,
+                scope: me
+            });
+        }
+
+        // BoundLists must be able to function standalone with no bound field
+        if (!field) {
+            return;
+        }
+
+        if (!field.rendered) {
+            field.on('render', Ext.Function.bind(me.initKeyNav, me, [view], 0), me, {single: true});
+            return;
+        }
+
+        // BoundListKeyNav also listens for key events from the field to which it is bound.
+        me.fieldKeyNav = new Ext.util.KeyNav({
+            disabled: true,
+            target: field.inputEl,
+            forceKeyDown: true,
+            up: me.onKeyUp,
+            down: me.onKeyDown,
+            right: me.onKeyRight,
+            left: me.onKeyLeft,
+            pageDown: me.onKeyPageDown,
+            pageUp: me.onKeyPageUp,
+            home: me.onKeyHome,
+            end: me.onKeyEnd,
+            tab: me.onKeyTab,
+            space: me.onKeySpace,
+            enter: me.onKeyEnter,
+            // This object has to get its key processing in first.
+            // Specifically, before any Editor's key hyandling.
+            priority: 1001,
+            scope: me
+        });
+    }
+});
+
+
+/**
+ * EXTJS-17945
+ * Ext.menu.Item changes the hash to # when clicking on Windows 10 Touch Screens
+ * https://www.sencha.com/forum/showthread.php?309916
+ */
+Ext.define(null, {
+    override: 'Ext.menu.Menu',
+
+    onBoxReady: function () {
+        var me = this,
+            iconSeparatorCls = me._iconSeparatorCls,
+            keyNav = me.focusableKeyNav;
+
+        // Keyboard handling can be disabled, e.g. by the DatePicker menu
+        // or the Date filter menu constructed by the Grid
+        if (keyNav) {
+            keyNav.map.processEventScope = me;
+            keyNav.map.processEvent = function (e) {
+                // ESC may be from input fields, and FocusableContainers ignore keys from
+                // input fields. We do not want to ignore ESC. ESC hide menus.
+                if (e.keyCode === e.ESC) {
+                    e.target = this.el.dom;
+                }
+
+                return e;
+            };
+
+            // Handle ESC key
+            keyNav.map.addBinding([{
+                key: Ext.event.Event.ESC,
+                handler: me.onEscapeKey,
+                scope: me
+            },
+                // Handle character shortcuts
+                {
+                    key: /[\w]/,
+                    handler: me.onShortcutKey,
+                    scope: me,
+                    shift: false,
+                    ctrl: false,
+                    alt: false
+                }
+            ]);
+        } else {
+            // Even when FocusableContainer key event processing is disabled,
+            // we still need to handle the Escape key!
+            me.escapeKeyNav = new Ext.util.KeyNav(me.el, {
+                eventName: 'keydown',
+                scope: me,
+                esc: me.onEscapeKey
+            });
+        }
+
+        me.callSuper(arguments);
+
+        // TODO: Move this to a subTemplate When we support them in the future
+        if (me.showSeparator) {
+            me.iconSepEl = me.body.insertFirst({
+                role: 'presentation',
+                cls: iconSeparatorCls + ' ' + iconSeparatorCls + '-' + me.ui,
+                html: ' '
+            });
+        }
+
+        // Modern IE browsers have click events translated to PointerEvents, and b/c of this the
+        // event isn't being canceled like it needs to be. So, we need to add an extra listener.
+        // For devices that have touch support, the default click event may be a gesture that
+        // runs asynchronously, so by the time we try and prevent it, it's already happened
+
+        // we use Ext.supports.TouchEvents here, because we're overriding Ext.supports.Touch in edit/startup.js (Editmode)
+        if (Ext.supports.TouchEvents || Ext.supports.MSPointerEvents || Ext.supports.PointerEvents) {
+            me.el.on({
+                scope: me,
+                click: me.preventClick,
+                translate: false
+            });
+        }
+
+        me.mouseMonitor = me.el.monitorMouseLeave(100, me.onMouseLeave, me);
+    }
+});

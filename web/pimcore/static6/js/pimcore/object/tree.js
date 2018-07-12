@@ -347,7 +347,7 @@ pimcore.object.tree = Class.create({
             // add special icon
             if (classRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
                 tmpMenuEntry.icon = classRecord.get("icon");
-                tmpMenuEntry.iconCls = "";
+                tmpMenuEntry.iconCls = "pimcore_class_icon";
             }
 
             tmpMenuEntryImport = {
@@ -359,9 +359,8 @@ pimcore.object.tree = Class.create({
             // add special icon
             if (classRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
                 tmpMenuEntryImport.icon = classRecord.get("icon");
-                tmpMenuEntryImport.iconCls = "";
+                tmpMenuEntryImport.iconCls = "pimcore_class_icon";
             }
-
 
             // check if the class is within a group
             if(classRecord.get("group")) {
@@ -421,7 +420,7 @@ pimcore.object.tree = Class.create({
 
                 if (perspectiveCfg.inTreeContextMenu("object.addFolder")) {
                     menu.add(new Ext.menu.Item({
-                        text: t('add_folder'),
+                        text: t('create_folder'),
                         iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
                         handler: this.addFolder.bind(this, tree, record)
                     }));
@@ -698,7 +697,7 @@ pimcore.object.tree = Class.create({
     },
 
     createVariant: function (tree, record) {
-        Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'),
+        Ext.MessageBox.prompt(t('add_variant'), t('enter_the_name_of_the_new_item'),
             this.addVariantCreate.bind(this, tree, record));
     },
 
@@ -867,7 +866,7 @@ pimcore.object.tree = Class.create({
                             this.pasteComplete(tree, record);
                         } catch (e) {
                             console.log(e);
-                            pimcore.helpers.showNotification(t("error"), t("error_pasting_object"), "error");
+                            pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error");
                             pimcore.elementservice.refreshNodeAllTrees("object", record.id);
                         }
                     }.bind(this),
@@ -881,7 +880,7 @@ pimcore.object.tree = Class.create({
                         record.pasteWindow.close();
                         record.pasteProgressBar = null;
 
-                        pimcore.helpers.showNotification(t("error"), t("error_pasting_object"), "error", t(message));
+                        pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error", t(message));
 
                         pimcore.elementservice.refreshNodeAllTrees("object", record.parentNode.id);
                     }.bind(this),
@@ -922,13 +921,25 @@ pimcore.object.tree = Class.create({
     },
 
     addObject: function (classId, className, tree, record) {
-        Ext.MessageBox.prompt(sprintf(t('add_object_mbx_title'), ts(className)), t('please_enter_the_name_of_the_new_object'),
+        var dialogText = t("object_add_dialog_custom_text" + "." + className);
+
+        if (dialogText == "object_add_dialog_custom_text" + "." + className) {
+            dialogText =  t('enter_the_name_of_the_new_item');
+        }
+
+        var dialogTitle = t("object_add_dialog_custom_title" + "." + className);
+
+        if (dialogTitle == "object_add_dialog_custom_title" + "." + className) {
+            dialogTitle =  sprintf(t('add_object_mbx_title'), ts(className));
+        }
+
+        Ext.MessageBox.prompt(dialogTitle, dialogText,
             this.addObjectCreate.bind(this, classId, className, tree, record));
     },
 
 
     addFolder: function (tree, record) {
-        Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_new_folder'),
+        Ext.MessageBox.prompt(t('create_folder'), t('enter_the_name_of_the_new_item'),
             this.addFolderCreate.bind(this, tree, record));
     },
 
@@ -958,7 +969,7 @@ pimcore.object.tree = Class.create({
 
         Ext.Ajax.request({
             url: '/admin/object/save?task=' + task,
-            method: "post",
+            method: "PUT",
             params: parameters,
             success: function (tree, record, task, response) {
                 try {
@@ -1002,7 +1013,7 @@ pimcore.object.tree = Class.create({
 
         Ext.Ajax.request({
             url: '/admin/object/change-children-sort-by',
-            method: "post",
+            method: "PUT",
             params: parameters,
             success: function (tree, record, sortBy, response) {
                 try {

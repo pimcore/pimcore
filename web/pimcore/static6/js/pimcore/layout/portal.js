@@ -151,6 +151,7 @@ pimcore.layout.portal = Class.create({
 
                                         Ext.Ajax.request({
                                             url: "/admin/portal/delete-dashboard",
+                                            method: "DELETE",
                                             params: {
                                                 key: this.key
                                             },
@@ -195,6 +196,7 @@ pimcore.layout.portal = Class.create({
             this.panel.on('drop', function(e) {
                 Ext.Ajax.request({
                     url: "/admin/portal/reorder-widget",
+                    method: 'PUT',
                     params: {
                         key: this.key,
                         id: e.panel.portletId,
@@ -226,6 +228,7 @@ pimcore.layout.portal = Class.create({
 
             Ext.Ajax.request({
                 url: "/admin/portal/add-widget",
+                method: 'POST',
                 params: {
                     key: this.key,
                     type: type

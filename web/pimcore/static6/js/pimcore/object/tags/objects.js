@@ -111,7 +111,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         this.parentField = new Ext.form.TextField({
             name: 'parent',
-            fieldLabel: t('parent_element'),
+            fieldLabel: t('parent'),
             width: 300,
             disabled: true
         });
@@ -176,6 +176,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         if (!invalid) {
             Ext.Ajax.request({
                 url: "/admin/object/add",
+                method: 'POST',
                 params: {
                     className: className,
                     classId: classId,
@@ -193,7 +194,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                         pimcore.helpers.openElement(data.id, "object", "object");
                         this.window.close();
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error", data.message);
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error", data.message);
                     }
 
                 }.bind(this)

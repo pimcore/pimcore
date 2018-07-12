@@ -105,4 +105,11 @@ interface IPayment
      * @return Concrete
      */
     public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []);
+
+    /**
+     * returns configuration key in yml configuration file
+     *
+     * @return string
+     */
+    public function getConfigurationKey();
 }

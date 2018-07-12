@@ -227,8 +227,6 @@ pimcore.helpers.updateObjectStyle = function (id, treeData) {
             var store = tree.getStore();
             var record = store.getById(id);
             if (record) {
-                record.set("qtitle", treeData.qtipCfg.title);
-                record.set("qtip", treeData.qtipCfg.text);
                 if (typeof treeData.icon !== "undefined") {
                     record.set("icon", treeData.icon);
                 }
@@ -761,6 +759,7 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
             if (buttonValue == "yes") {
                 Ext.Ajax.request({
                     url: "/admin/element/unlock-element",
+                    method: 'PUT',
                     params: {
                         id: lock[0],
                         type: lock[1]
@@ -832,7 +831,8 @@ pimcore.helpers.itemselector = function (muliselect, callback, restrictions, con
 pimcore.helpers.activateMaintenance = function () {
 
     Ext.Ajax.request({
-        url: "/admin/misc/maintenance?activate=true"
+        url: "/admin/misc/maintenance?activate=true",
+        method: "POST"
     });
 
     var button = Ext.get("pimcore_menu_maintenance");
@@ -844,7 +844,8 @@ pimcore.helpers.activateMaintenance = function () {
 pimcore.helpers.deactivateMaintenance = function () {
 
     Ext.Ajax.request({
-        url: "/admin/misc/maintenance?deactivate=true"
+        url: "/admin/misc/maintenance?deactivate=true",
+        method: "POST"
     });
 
     var button = Ext.get("pimcore_menu_maintenance");
@@ -1181,6 +1182,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
     if (pimcore.settings.htmltoimage) {
         Ext.Ajax.request({
             url: '/admin/page/generate-screenshot',
+            method: "POST",
             ignoreErrors: true,
             params: {
                 id: id
@@ -1554,6 +1556,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
                 }
                 jobs.push([{
                     url: "/admin/" + type + "/update",
+                    method: 'PUT',
                     params: params
                 }]);
             }
@@ -3393,8 +3396,36 @@ pimcore.helpers.clearDataCache = function() {
     }
 };
 
-pimcore.helpers.keyBindingMapping = {
+pimcore.helpers.showQuickSearch = function () {
 
+    // close all windows
+    // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
+    Ext.WindowManager.each(function (win) {
+        win.close();
+    });
+
+    var quicksearchContainer = Ext.get('pimcore_quicksearch');
+    quicksearchContainer.show();
+    quicksearchContainer.removeCls('filled');
+
+    var combo = Ext.getCmp('quickSearchCombo');
+    combo.reset();
+    combo.focus();
+
+    Ext.get('pimcore_body').addCls('blurry');
+    Ext.get('pimcore_sidebar').addCls('blurry');
+};
+
+pimcore.helpers.hideQuickSearch = function () {
+    var quicksearchContainer = Ext.get('pimcore_quicksearch');
+    quicksearchContainer.hide();
+    Ext.get('pimcore_body').removeCls('blurry');
+    Ext.get('pimcore_sidebar').removeCls('blurry');
+};
+
+
+// HAS TO BE THE VERY LAST ENTRY !!!
+pimcore.helpers.keyBindingMapping = {
     "save": pimcore.helpers.handleCtrlS,
     "publish": pimcore.helpers.togglePublish.bind(this, true),
     "unpublish": pimcore.helpers.togglePublish.bind(this, false),
@@ -3428,8 +3459,6 @@ pimcore.helpers.keyBindingMapping = {
     "users": pimcore.helpers.users,
     "roles": pimcore.helpers.roles,
     "clearAllCaches": pimcore.helpers.clearAllCaches,
-    "clearDataCache": pimcore.helpers.clearDataCache
+    "clearDataCache": pimcore.helpers.clearDataCache,
+    "quickSearch": pimcore.helpers.showQuickSearch
 };
-
-
-

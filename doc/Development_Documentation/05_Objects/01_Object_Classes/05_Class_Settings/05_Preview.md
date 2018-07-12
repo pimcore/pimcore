@@ -1,5 +1,11 @@
 # Object Preview
 
+**DEPRECATED FEATURE**  
+**Please use [link generators](./15_Link_Generator.md) instead, which are more powerful and flexibel and 
+offer the same functionality. Since 5.3.0 the preview tab is automatically displayed when a link generator is defined 
+on the data object class.**
+
+
 The object preview allows you to configure a preview URL for your objects, you can do that in the basic configuration 
 of your class (see screen below).
 

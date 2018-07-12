@@ -111,6 +111,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.data.id,
                     type: "document"
@@ -366,7 +367,8 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             });
 
             this.panel = new Ext.form.FormPanel({
-                title: t('link_properties'),
+                title: t('settings'),
+                iconCls: "pimcore_icon_settings",
                 autoHeight: true,
                 labelWidth: 200,
                 defaultType: 'textfield',

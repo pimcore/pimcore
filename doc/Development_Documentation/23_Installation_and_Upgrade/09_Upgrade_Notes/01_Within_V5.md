@@ -2,6 +2,27 @@
 
 
 ## Version 5.3.0
+
+#### Build 280 (2018-07-12)
+Extensions: removed support for `xmlEditorFile` for legacy plugins (compatibility mode).  
+
+#### Build 277 (2018-07-09)
+Admin Localization: Only languages with a [translation progress](https://poeditor.com/projects/view?order=trans_desc&id=38068) over 70% are included in the standard distribution. 
+For the current status this means that the following languages are no longer provided: CA, PL, ZH_Hans, ZH_Hant, SV, JA, PT, PT_BR, RU, FA, TR, UK. 
+Languages with a lower progress need to be installed manually. 
+
+#### Build 276 (2018-07-06)
+Image Thumbnails: SVGs are no longer automatically rasterized when using only one of the following transformations: Resize, Scale By Width, Scale By Height.
+To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on the relevant thumbnail configuration.
+
+#### Build 273 (2018-07-06)
+Webservices API: Support for SQL condition parameters has been removed. Use [Query Filters](../../24_Web_Services/01_Query_Filters.md) instead.
+If you still want to support such conditions, implement your own event listener as described on the same page in the `Legacy Mode`section.. 
+
+#### Build 270 (2018-06-29)
+Data Object Class ID's can now be manually specified (alphanumeric) and are therefore no longer auto-generated (numeric/auto-increment). 
+This can have unexpected side-effects under certain circumstances, see also: https://github.com/pimcore/pimcore/issues/2916 
+
 #### Build 251 (2018-06-05)
 - **PHP 7.1 is required** 
 - CKEditor update from 4.6.2 to 4.9.2, for details see: https://ckeditor.com/cke4/release-notes 
@@ -16,6 +37,12 @@ If you have used this library in your custom code, please update it accordingly.
 The look & feel of the areablock toolbar and inline controls have changed.
 The config option `areablock_toolbar` on areablocks has now [less flags](https://github.com/pimcore/pimcore/blob/0e5d8de0c3ac0829d4e85b6360b9dc409b45d108/pimcore/models/Document/Tag/Areablock.php#L264) to customize the toolbar and 
 a the new option `controlsAlign` was introduced. 
+
+#### Build 267 (2018-06-22)
+To the PaymentProvider* object bricks the (optional) input field `configurationKey` was added. Since it is optional, this is 
+not added to existing object bricks. If issue [#2908](https://github.com/pimcore/pimcore/issues/2908) is a problem for you,
+you need to add `configurationKey` manually to your PaymentProvider object bricks. 
+
 
 
 
