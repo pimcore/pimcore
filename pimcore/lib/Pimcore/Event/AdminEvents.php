@@ -355,6 +355,8 @@ final class AdminEvents
     const QUICKSEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.quickSearch.list.afterListLoad';
 
     /**
+     * Allows to modify the list of admin languages to reduce the amount of languages if not all are needed.
+     *
      * Subject: null
      * Arguments:
      *  - languages | array | the list of available languages

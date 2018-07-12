@@ -76,7 +76,11 @@ class Admin
 
         $eventDispatcher->dispatch(AdminEvents::SETTINGS_GET_AVAILABLE_ADMIN_LANGUAGES, $event);
 
-        return $event->getArgument("languages");
+        if (!empty($event->getArgument("languages"))) {
+            return $event->getArgument("languages");
+        }
+
+        return $languages;
     }
 
     /**
