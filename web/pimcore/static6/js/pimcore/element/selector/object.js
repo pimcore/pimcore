@@ -308,7 +308,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         }
     },
 
-    initClassStore: function (selectedClass, response) {
+    initClassStore: function (selectedClass, response, save) {
         var fields = [];
         if(response.responseText) {
             response = Ext.decode(response.responseText);
@@ -317,6 +317,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             this.sortinfo = response.sortinfo;
             this.settings = response.settings;
             this.availableConfigs = response.availableConfigs;
+            this.sharedConfigs = response.sharedConfigs;
         } else {
             fields = response;
         }
@@ -336,7 +337,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
         //TODO set up filter
 
-        this.getGridPanel(gridColumns, gridfilters, selectedClass);
+        this.getGridPanel(gridColumns, gridfilters, selectedClass, save);
 
         this.buildColumnConfigMenu();
         this.columnConfigButton.show();
@@ -379,7 +380,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.getGridPanel(columns, null);
     },
 
-    getGridPanel: function (columns, gridfilters, selectedClass) {
+    getGridPanel: function (columns, gridfilters, selectedClass, save) {
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store,{pageSize: this.itemsPerPage});
         this.gridPanel = Ext.create('Ext.grid.Panel', {
             store: this.store,
@@ -439,6 +440,13 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.resultPanel.removeAll();
         this.resultPanel.add(this.gridPanel);
         this.resultPanel.updateLayout();
+
+        if (save == true) {
+            if (this.settings.isShared) {
+                this.settings.gridConfigId = null;
+            }
+            this.saveConfig(false);
+        }
     },
 
     openColumnConfig: function(selectedClass, classId) {
@@ -464,12 +472,37 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig,
-            function(data) {
+            function(data, settings, save) {
                 this.saveColumnConfigButton.show(); //unhide save config button
                 this.gridLanguage = data.language;
                 this.itemsPerPage = data.pageSize;
-                this.initClassStore(selectedClass, data.columns);
-            }.bind(this), null, false
+                this.initClassStore(selectedClass, data.columns, save);
+            }.bind(this),
+            function() {
+                Ext.Ajax.request({
+                    url: "/admin/object-helper/grid-get-column-config",
+                    params: {
+                        id: this.classId,
+                        objectId: this.object.id,
+                        gridtype: "grid",
+                        searchType: this.searchType
+                    },
+                    success: function(response) {
+                        if (response) {
+                            this.initClassStore(selectedClass, response, false);
+                            if (typeof this.saveColumnConfigButton !== "undefined") {
+                                this.saveColumnConfigButton.hide();
+                            }
+                        } else {
+                            pimcore.helpers.showNotification(t("error"), t("error_resetting_config"),
+                                "error",t(rdata.message));
+                        }
+                    }.bind(this),
+                    failure: function () {
+                        pimcore.helpers.showNotification(t("error"), t("error_resetting_config"), "error");
+                    }
+                });
+            }.bind(this), true, this.settings
         );
     },
 
@@ -524,7 +557,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     createGrid: function (fromConfig, response, settings, save) {
         var selectedClass = this.classChangeCombo.getValue();
 
-        this.initClassStore(selectedClass,response);
+        this.initClassStore(selectedClass,response, save);
     },
 
     getTableDescription: function () {
