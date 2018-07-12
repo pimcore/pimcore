@@ -202,7 +202,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true}
             ];
 
-            this.pagingtoolbar = this.getPagingToolbar(t("no_documents_found"));
+            this.pagingtoolbar = this.getPagingToolbar();
 
             this.resultPanel = new Ext.grid.GridPanel({
                 region: "center",

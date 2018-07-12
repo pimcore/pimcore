@@ -209,7 +209,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 }
             ];
 
-            this.pagingtoolbar = this.getPagingToolbar(t("no_assets_found"));
+            this.pagingtoolbar = this.getPagingToolbar();
 
             this.resultPanel = new Ext.grid.GridPanel({
                 region: "center",

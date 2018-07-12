@@ -522,7 +522,7 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
     var parentChilds = parentNode.childNodes;
     for (var i = 0; i < parentChilds.length; i++) {
         if (parentChilds[i].data.text == key && node != parentChilds[i]) {
-            Ext.MessageBox.alert(t('edit_key'),
+            Ext.MessageBox.alert(t('rename'),
                 t('name_already_in_use'));
             return true;
         }

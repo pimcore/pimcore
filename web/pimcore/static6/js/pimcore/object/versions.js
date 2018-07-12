@@ -93,7 +93,7 @@ pimcore.object.versions = Class.create({
                 ],
                 stripeRows: true,
                 width: 450,
-                title: t('available_versions') + " (" + t("press_crtl_and_select_to_compare") + ")",
+                title: t("press_crtl_and_select_to_compare"),
                 region: "west",
                 split: true,
                 selModel: new Ext.selection.RowModel({

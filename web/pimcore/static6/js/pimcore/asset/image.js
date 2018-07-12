@@ -224,7 +224,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             if (this.data.imageInfo.dimensions) {
 
                 var dimensionPanel = new Ext.create('Ext.grid.property.Grid', {
-                    title: t("dimensions"),
+                    title: t("details"),
                     source: this.data.imageInfo.dimensions,
                     autoHeight: true,
 

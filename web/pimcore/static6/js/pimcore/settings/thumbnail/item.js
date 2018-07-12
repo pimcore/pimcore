@@ -113,7 +113,7 @@ pimcore.settings.thumbnail.item = Class.create({
                     width: 450
                 }, {
                     xtype: "fieldset",
-                    title: t("advanced_settings"),
+                    title: t("advanced"),
                     collapsible: true,
                     collapsed: true,
                     items: [{

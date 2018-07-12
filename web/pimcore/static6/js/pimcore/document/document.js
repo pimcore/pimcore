@@ -391,7 +391,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 itemId: "parent",
                 width: "100%",
                 fieldCls: "input_drop_target",
-                fieldLabel: t("parent_document"),
+                fieldLabel: t("parent"),
                 listeners: {
                     "render": function (el) {
                         new Ext.dd.DropZone(el.getEl(), {
@@ -554,7 +554,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     handler: this.createTranslation.bind(this, true),
                     iconCls: "pimcore_icon_clone"
                 },{
-                    text: t("empty_document"),
+                    text: "&gt; " + t("blank"),
                     handler: this.createTranslation.bind(this, false),
                     iconCls: "pimcore_icon_file_plain"
                 }]

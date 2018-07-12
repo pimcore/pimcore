@@ -120,10 +120,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 'leaf' => true,
                 'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
                 'cls' => 'pimcore_class_icon',
-                'propertyVisibility' => $class->getPropertyVisibility(),
-                'qtipCfg' => [
-                    'title' => 'ID: ' . $class->getId()
-                ]
+                'propertyVisibility' => $class->getPropertyVisibility()
             ];
         };
 

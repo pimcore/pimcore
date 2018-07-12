@@ -78,7 +78,7 @@ pimcore.document.settings_abstract = Class.create({
                     xtype: "toolbar",
                     width: 700,
                     items: ["->", {
-                        text:t("delete_master_document"),
+                        text:t("delete"),
                         iconCls:"pimcore_icon_delete",
                         autoWidth:true,
                         handler:function () {
@@ -102,7 +102,7 @@ pimcore.document.settings_abstract = Class.create({
                                 }.bind(this));
                         }.bind(this)
                     }, {
-                        text: t("open_master_document"),
+                        text: t("open"),
                         iconCls: "pimcore_icon_open",
                         autoWidth: true,
                         handler: function () {
@@ -110,7 +110,7 @@ pimcore.document.settings_abstract = Class.create({
                             pimcore.helpers.openDocumentByPath(masterPath);
                         }.bind(this)
                     },{
-                        text:t("apply_new_master_document"),
+                        text:t("apply"),
                         iconCls:"pimcore_icon_apply",
                         autoWidth:true,
                         handler:function () {
@@ -141,7 +141,7 @@ pimcore.document.settings_abstract = Class.create({
     getPathAndKeyFields: function () {
         return {
             xtype:'fieldset',
-            title: t('path_and_key_settings'),
+            title: t('path') + ", " + t('key') + " & " + t('id'),
             collapsible: true,
             autoHeight:true,
             defaultType: 'textfield',
@@ -196,7 +196,7 @@ pimcore.document.settings_abstract = Class.create({
         }
 
         var fieldSet = new Ext.form.FieldSet({
-            title: t('controller_and_view_settings'),
+            title: t('controller') + ", " + t('action') + " & " + t('template'),
             collapsible: true,
             autoHeight:true,
             defaults: {
@@ -221,7 +221,7 @@ pimcore.document.settings_abstract = Class.create({
                 },
                 {
                     xtype:'combo',
-                    fieldLabel: this.document.data.legacy ? t('module_optional') : t('bundle_optional'),
+                    fieldLabel: t('bundle') + "(" + t('optional') + ")",
                     itemId: "bundle",
                     displayField: 'name',
                     valueField: 'name',
@@ -373,18 +373,7 @@ pimcore.document.settings_abstract = Class.create({
             fieldLabel: t("legacy_mode"),
             name: "legacy",
             checked: this.document.data.legacy,
-            hidden: !pimcore.settings.isLegacyModeAvailable,
-            listeners: {
-                change: function (el, newValue, oldValue) {
-
-                    var text = t("bundle_optional");
-                    if(newValue == true) {
-                        text = t("module_optional");
-                    }
-
-                    fieldSet.getComponent("bundle").setFieldLabel(text);
-                }
-            }
+            hidden: !pimcore.settings.isLegacyModeAvailable
         });
 
         return fieldSet;

@@ -451,7 +451,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }));
         } else {
             menu.add(new Ext.menu.Item({
-                text: t('open_selected'),
+                text: t('open'),
                 iconCls: "pimcore_icon_open",
                 handler: function (data) {
                     var selectedRows = grid.getSelectionModel().getSelection();
@@ -462,7 +462,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }));
 
             menu.add(new Ext.menu.Item({
-                text: t('delete_selected'),
+                text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
                     var ids = [];

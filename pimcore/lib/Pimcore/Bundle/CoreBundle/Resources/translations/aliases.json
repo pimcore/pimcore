@@ -91,7 +91,7 @@
   "application_logging": "log_applicationlog",
   "keybinding_applicationLogger": "log_applicationlog",
   "log_search_component": "log_component",
-  "log_message": "log_search_message",
+  "log_message": "message",
   "classificationstore": "classificationstore_menu_config",
   "classificationstore_mbx_enterkey_prompt": "classificationstore_mbx_entergroup_prompt",
   "classificationstore_error_addcollection_msg": "classificationstore_error_addgroup_msg",
@@ -122,5 +122,8 @@
   "keybinding_searchAsset": "asset_search",
   "keybinding_searchDocument": "document_search",
   "keybinding_searchObject": "object_search",
+  "routes": "static_routes",
+  "plugins": "extensions",
+  "log_search_message": "message",
   "bool": "boolean"
 }

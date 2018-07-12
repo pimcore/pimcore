@@ -879,7 +879,7 @@ pimcore.asset.tree = Class.create({
                             this.pasteComplete(tree, record);
                         } catch(e) {
                             console.log(e);
-                            pimcore.helpers.showNotification(t("error"), t("error_pasting_asset"), "error");
+                            pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error");
                             pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.id);
                         }
                     }.bind(this),
@@ -893,7 +893,7 @@ pimcore.asset.tree = Class.create({
                         this.pasteWindow.close();
                         record.pasteProgressBar = null;
 
-                        pimcore.helpers.showNotification(t("error"), t("error_pasting_asset"), "error", t(message));
+                        pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error", t(message));
                         pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.id);
                     }.bind(this),
                     jobs: res.pastejobs
@@ -1192,7 +1192,7 @@ pimcore.asset.tree = Class.create({
 
     importFromUrl: function (tree, record) {
 
-        Ext.MessageBox.prompt(t("import_from_url"), t("url_incl_http"), function (button, value, object) {
+        Ext.MessageBox.prompt(t("import_from_url"), ' ', function (button, value, object) {
             if (button == "ok") {
                 var win = new Ext.Window({
                     html: t("please_wait"),
@@ -1220,7 +1220,7 @@ pimcore.asset.tree = Class.create({
                     }
                 });
             }
-        }.bind(this));
+        }.bind(this), null, false, 'https://');
     },
 
     addAssetComplete: function (tree, record, config, file, response) {

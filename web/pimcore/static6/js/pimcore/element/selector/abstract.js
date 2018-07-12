@@ -128,7 +128,7 @@ pimcore.element.selector.abstract = Class.create({
         }
     },
 
-    getPagingToolbar: function(label) {
+    getPagingToolbar: function() {
         var pagingToolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
         return pagingToolbar;
     },

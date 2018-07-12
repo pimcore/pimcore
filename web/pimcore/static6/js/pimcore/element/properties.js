@@ -56,8 +56,9 @@ pimcore.element.properties = Class.create({
                 store: predefinedPropertiesStore,
                 editable: false,
                 triggerAction: 'all',
-                listWidth: 200,
-                emptyText: t("select_a_property"),
+                listWidth: 300,
+                width: 250,
+                emptyText: t("predefined_properties"),
                 listClass: "pimcore_predefined_property_select"
             });
 

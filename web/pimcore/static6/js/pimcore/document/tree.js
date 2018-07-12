@@ -369,28 +369,28 @@ pimcore.document.tree = Class.create({
 
                 // empty page
                 documentMenu.page.push({
-                    text: "&gt; " + t("empty_page"),
+                    text: "&gt; " + t("blank"),
                     iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "page")
                 });
 
                 // empty snippet
                 documentMenu.snippet.push({
-                    text: "&gt; " + t("empty_snippet"),
+                    text: "&gt; " + t("blank"),
                     iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "snippet")
                 });
 
                 // empty email
                 documentMenu.email.push({
-                    text: "&gt; " + t("empty_email"),
+                    text: "&gt; " + t("blank"),
                     iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "email")
                 });
 
                 // empty newsletter
                 documentMenu.newsletter.push({
-                    text: "&gt; " + t("empty_newsletter"),
+                    text: "&gt; " + t("blank"),
                     iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "newsletter")
                 });
@@ -975,7 +975,7 @@ pimcore.document.tree = Class.create({
                             this.pasteComplete(record);
                         } catch(e) {
                             console.log(e);
-                            pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error");
+                            pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error");
                             pimcore.elementservice.refreshNodeAllTrees("document", record.id);
                         }
                     }.bind(this),
@@ -989,7 +989,7 @@ pimcore.document.tree = Class.create({
                         record.pasteWindow.close();
                         record.pasteProgressBar = null;
 
-                        pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error", t(message));
+                        pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error", t(message));
                         pimcore.elementservice.refreshNodeAllTrees("document", record.id);
                     }.bind(this),
                     jobs: res.pastejobs

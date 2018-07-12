@@ -111,7 +111,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         this.parentField = new Ext.form.TextField({
             name: 'parent',
-            fieldLabel: t('parent_element'),
+            fieldLabel: t('parent'),
             width: 300,
             disabled: true
         });

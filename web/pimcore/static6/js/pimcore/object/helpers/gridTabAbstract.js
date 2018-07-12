@@ -636,10 +636,13 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }
         });
 
+
+
         this.sqlButton = new Ext.Button({
             iconCls: "pimcore_icon_sql",
             enableToggle: true,
             tooltip: t("direct_sql_query"),
+            hidden: !pimcore.currentuser.admin,
             handler: function (button) {
 
                 this.sqlEditor.setValue("");

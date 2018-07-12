@@ -136,7 +136,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             }.bind(this);
 
             this.metaDataPanel = new Ext.form.FieldSet({
-                title: t("meta_data"),
+                title: t("html_tags") + " (&lt;meta ...\\/&gt; &lt;link ...\\/&gt; ...)",
                 collapsible: false,
                 autoHeight:true,
                 width: 700,
@@ -232,7 +232,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 items: [
                     {
                         xtype:'fieldset',
-                        title: t('title_description_meta_data'),
+                        title: t('title') + ", " + t("description") + " & " + t('metadata'),
                         itemId: "metaDataPanel",
                         collapsible: true,
                         autoHeight:true,

@@ -866,7 +866,7 @@ pimcore.object.tree = Class.create({
                             this.pasteComplete(tree, record);
                         } catch (e) {
                             console.log(e);
-                            pimcore.helpers.showNotification(t("error"), t("error_pasting_object"), "error");
+                            pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error");
                             pimcore.elementservice.refreshNodeAllTrees("object", record.id);
                         }
                     }.bind(this),
@@ -880,7 +880,7 @@ pimcore.object.tree = Class.create({
                         record.pasteWindow.close();
                         record.pasteProgressBar = null;
 
-                        pimcore.helpers.showNotification(t("error"), t("error_pasting_object"), "error", t(message));
+                        pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error", t(message));
 
                         pimcore.elementservice.refreshNodeAllTrees("object", record.parentNode.id);
                     }.bind(this),

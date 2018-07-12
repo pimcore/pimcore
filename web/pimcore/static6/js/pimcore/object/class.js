@@ -139,21 +139,7 @@ pimcore.object.klass = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //TODO temporary, until changed on server side
-                if (newChildNode.data.qtipCfg) {
-                    if (newChildNode.data.qtipCfg.title) {
-                        newChildNode.data.qtitle = newChildNode.data.qtipCfg.title;
-                    }
-                    if (newChildNode.data.qtipCfg.text) {
-                        newChildNode.data.qtip = newChildNode.data.qtipCfg.text;
-                    } else {
-                        newChildNode.data.qtip = ts(newChildNode.data.text);
-                    }
-                }
-            }
-
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
         };
 
         return treeNodeListeners;
