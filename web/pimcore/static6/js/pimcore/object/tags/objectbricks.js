@@ -193,6 +193,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 this.dirty = true;
             }
         }.bind(this, blockElement), this);
+        return false;
     },
 
 
@@ -297,7 +298,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         });
 
         if(!this.fieldConfig.noteditable) {
-            blockElement.on("close", this.removeBlock.bind(this, blockElement));
+            blockElement.on("beforeclose", this.removeBlock.bind(this, blockElement));
         }
 
         this.component.remove(this.component.getComponent(0));
