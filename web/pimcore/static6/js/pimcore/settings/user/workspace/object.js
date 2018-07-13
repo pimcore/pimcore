@@ -183,6 +183,13 @@ pimcore.settings.user.workspace.object = Class.create({
                     try {
                         var record = data.records[0];
                         var data = record.data;
+
+                        // check for duplicate records
+                        var result = this.grid.getStore().query("path", new RegExp("^" + data.path + "$"));
+                        if (result.length >= 1) {
+                            return false;
+                        }
+
                         if(data.elementType != "object") {
                             return false;
                         }

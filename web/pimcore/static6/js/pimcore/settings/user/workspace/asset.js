@@ -151,6 +151,12 @@ pimcore.settings.user.workspace.asset = Class.create({
                         var record = data.records[0];
                         var data = record.data;
 
+                        // check for duplicate records
+                        var result = this.grid.getStore().query("path", new RegExp("^" + data.path + "$"));
+                        if (result.length >= 1) {
+                            return false;
+                        }
+
                         if(data.elementType != "asset") {
                             return false;
                         }
