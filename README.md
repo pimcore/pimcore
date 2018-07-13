@@ -13,7 +13,10 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
 * [Forums](https://talk.pimcore.org/) - Discussions 
-
+   
+   
+**Looking for the previous stable (version 4)?  
+See https://github.com/pimcore/pimcore/tree/pimcore4**
 
 ## Contribute  
 **Bug fixes:** please create a pull request including a step by step description to reproduce the problem  
@@ -27,7 +30,4 @@ Copyright: [Pimcore](http://www.pimcore.org) GmbH
 For licensing details please visit [LICENSE.md](LICENSE.md) 
   
   
-  
-   
-**Looking for the previous stable (version 4)?  
-See https://github.com/pimcore/pimcore/tree/pimcore4**
+
