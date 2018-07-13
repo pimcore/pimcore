@@ -1016,7 +1016,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                             iconCls: "pimcore_icon_area",
                             hideOnClick: false,
                             width: areaBlockToolbarSettings.buttonWidth,
-                            menu: []
+                            menu: [],
+                            menuAlign: 'tl-tr'
                         });
                     }
 
