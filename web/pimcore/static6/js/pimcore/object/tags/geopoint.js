@@ -111,6 +111,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     getMapUrl: function (fieldConfig, data) {
         this.mapZoom = fieldConfig.zoom;
         this.leafletMap = null;
+        this.marker = null;
         var markerIcon = L.icon({
                 iconUrl: '/pimcore/static6/img/leaflet/marker-icon.png',
                 shadowUrl: '/pimcore/static6/img/leaflet/marker-shadow.png'
@@ -144,7 +145,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             this.lat = data.latitude;
             this.lng = data.longitude;
             this.getLeafletMap();
-            marker = L.marker([this.lat, this.lng], {icon: markerIcon}).addTo(this.leafletMap);
+            this.marker = L.marker([this.lat, this.lng], {icon: markerIcon}).addTo(this.leafletMap);
 
         } else {
             this.lat = fieldConfig.lat;
@@ -155,7 +156,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.leafletMap.addLayer(editableLayers);
         this.leafletMap.addControl(drawControlFull);
         this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
-           if(marker !== null) {
+           if(this.marker !== null) {
                 this.leafletMap.removeLayer(marker);
             }
             var layer = e.layer;
