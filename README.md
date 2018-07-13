@@ -10,11 +10,11 @@ See https://github.com/pimcore/pimcore/tree/pimcore4**
 
 * [Documentation](https://pimcore.com/docs/)
 * [API Documentation](https://pimcore.com/docs/api/)
+* **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb).
 * Homepage: [http://pimcore.com/](https://pimcore.com/) - Learn more about Pimcore
 * Like us on [Facebook](https://www.facebook.com/pimcore)
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
-* Help [translating](https://poeditor.com/join/project/VWmZyvFVMH) Pimcore
 * [Forums](https://talk.pimcore.org/) - Discussions 
 
 

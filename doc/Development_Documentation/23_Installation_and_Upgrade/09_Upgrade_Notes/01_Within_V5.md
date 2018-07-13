@@ -3,6 +3,13 @@
 
 ## Version 5.3.0
 
+#### Build 281 (2018-07-13)
+The admin UI translations are not split into 2 parts, 
+[Essentials](https://poeditor.com/join/project/VWmZyvFVMH) and [Extended](https://poeditor.com/join/project/XliCYYgILb). 
+Essentials contains all translations which are needed for the most common tasks for editors, while the extended
+collection contains mostly admin related translations.   
+This separation should make it a lot easier to start with the localization of the Pimcore UI. 
+
 #### Build 280 (2018-07-12)
 Extensions: removed support for `xmlEditorFile` for legacy plugins (compatibility mode).  
 
