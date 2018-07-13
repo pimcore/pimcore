@@ -76,7 +76,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     getClassDefinitionPanel: function () {
         this.classDefinitionsItems = new Ext.Panel({
-            title: t("class_definitions"),
+            title: t("class"),
             style: "margin-top: 20px",
             items: [
                 this.getAddControl()

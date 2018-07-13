@@ -179,7 +179,7 @@ pimcore.report.qrcode.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + "(a-zA-Z-_)",
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + " (a-zA-Z-_)",
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 

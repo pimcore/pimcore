@@ -52,7 +52,7 @@ pimcore.report.panel = Class.create({
 
             this.tree = Ext.create('Ext.tree.Panel', {
                 region: "west",
-                title: t("select_a_report"),
+                title: t("reports"),
                 width: 250,
                 enableDD: false,
                 split: true,

@@ -564,14 +564,6 @@ pimcore.layout.toolbar = Class.create({
                     });
                 }
 
-                if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.seo.reports")) {
-                    seoMenu.push({
-                        text: t("reports"),
-                        iconCls: "pimcore_icon_reports",
-                        handler: this.showReports.bind(this, null)
-                    });
-                }
-
                 if (seoMenu.length > 0) {
                     marketingItems.push({
                         text: t("search_engine_optimization"),

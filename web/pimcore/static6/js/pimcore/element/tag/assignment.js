@@ -110,7 +110,6 @@ pimcore.element.tag.assignment = Class.create({
             });
 
             var treePanel = Ext.create("Ext.Panel", {
-                title: t('element_tag_tree'),
                 items: [tree.getLayout()],
                 layout: "border",
                 region: 'center'

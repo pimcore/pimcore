@@ -519,7 +519,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     getClassTree: function(url, id) {
         var tree = Ext.create('Ext.tree.Panel', {
             width: 200,
-            title: t('class_definitions'),
+            title: t('class'),
             region: "west",
             autoScroll: true,
             split: true,

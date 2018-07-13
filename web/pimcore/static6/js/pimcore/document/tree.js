@@ -1070,7 +1070,7 @@ pimcore.document.tree = Class.create({
                     name: "domains",
                     height: 150,
                     style: "word-wrap: normal;",
-                    fieldLabel: t("additional_domains") + "<br /><br />Wildcards are supported. eg. *example.com",
+                    fieldLabel: t("additional_domains") + "<br /><br />" + t("wildcards_are_supported") + " (*example.com)",
                     value: data.domains.join("\n")
                 }, {
                     xtype: "textfield",

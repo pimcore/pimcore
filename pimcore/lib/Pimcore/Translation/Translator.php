@@ -216,7 +216,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 if ($domain == 'admin') {
                     $jsonFiles = [
                         $locale . '.json' => 'en.json',
-                        $locale . '.extended.json' => 'en.extended.json'
+                        //$locale . '.extended.json' => 'en.extended.json'
                     ];
 
                     foreach ($jsonFiles as $sourceFile => $fallbackFile) {

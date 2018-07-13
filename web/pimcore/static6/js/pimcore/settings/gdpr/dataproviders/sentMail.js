@@ -68,13 +68,13 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 }
             },
             {
-                text: t('email_log_from'),
+                text: t('from'),
                 sortable: false,
                 dataIndex: "from",
                 flex: 120
             },
             {
-                text: t('email_log_to'),
+                text: t('to'),
                 sortable: false,
                 dataIndex: "to",
                 flex: 120
