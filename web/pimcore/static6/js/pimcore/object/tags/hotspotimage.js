@@ -203,12 +203,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         var toolbarCfg = {
             region: "north",
             border: false,
-            items: items
+            items: items,
+            overflowHandler: 'menu'
         };
 
-        if (this.additionalConfig.condensed) {
-            toolbarCfg.overflowHandler = 'menu';
-        }
         var toolbar = new Ext.Toolbar(toolbarCfg);
 
 
