@@ -227,7 +227,7 @@ pimcore.asset.metadata = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('open'),
-                                icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                                icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                                 handler: function (grid, rowIndex) {
                                     var pData = grid.getStore().getAt(rowIndex).data;
                                     if (pData.data) {
