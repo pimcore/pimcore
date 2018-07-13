@@ -15,7 +15,6 @@
 pimcore.registerNS('pimcore.object.tags.geopoint');
 pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
-
     type: 'geopoint',
 
     getLayoutEdit: function () {
@@ -23,9 +22,9 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.mapImageID = uniqid();
         this.divImageID = uniqid();
         this.searchfield = new Ext.form.TextField({
-            width: 300,
+            width: 200,
             name: 'mapSearch',
-            style: 'float: left;'
+            style: 'float: left;margin-top:0px;'
         });
         this.currentLocationTextNode = new Ext.Toolbar.TextItem({
             text: '&nbsp;'
@@ -60,22 +59,22 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             componentCls: "object_field object_geo_field",
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [
-                  t('latitude'),
-                    this.latitude,
-                    '-',
-                    t('longitude'),
-                    this.longitude,
-                     '-', {
-                        xtype: 'button',
-                        text: t('empty'),
-                        iconCls: "pimcore_icon_empty",
-                        handler: function () {
-                            this.latitude.setValue(null);
-                            this.longitude.setValue(null);
-                            this.currentLocationTextNode.setText(null);
-                            this.updateMap();
-                        }.bind(this)
-                    },
+                t('latitude'),
+                this.latitude,
+                '-',
+                t('longitude'),
+                this.longitude,
+                '-', {
+                    xtype: 'button',
+                    text: t('empty'),
+                    iconCls: "pimcore_icon_empty",
+                    handler: function () {
+                        this.latitude.setValue(null);
+                        this.longitude.setValue(null);
+                        this.currentLocationTextNode.setText(null);
+                        this.updateMap();
+                    }.bind(this)
+                },
             ],
             tbar: [
                 this.currentLocationTextNode,
@@ -87,9 +86,9 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                     handler: this.geocode.bind(this)
                 }
             ]
-    
+
         });
-        
+
 
         this.component.on('afterrender', function () {
             this.updateMap();
@@ -111,14 +110,15 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     getMapUrl: function (fieldConfig, data) {
         this.mapZoom = fieldConfig.zoom;
         this.leafletMap = null;
+        this.mapId = "map" + this.divImageID;
         this.marker = null;
         var markerIcon = L.icon({
-                iconUrl: '/pimcore/static6/img/leaflet/marker-icon.png',
-                shadowUrl: '/pimcore/static6/img/leaflet/marker-shadow.png'
+            iconUrl: '/pimcore/static6/img/leaflet/marker-icon.png',
+            shadowUrl: '/pimcore/static6/img/leaflet/marker-shadow.png'
         });
 
-        var editableLayers = new L.FeatureGroup();
-        var drawControlFull = new L.Control.Draw({
+        this.editableLayers = new L.FeatureGroup();
+        this.drawControlFull = new L.Control.Draw({
             position: 'topright',
             draw: {
                 polyline: false,
@@ -128,14 +128,14 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 circlemarker: false
             },
             edit: {
-                featureGroup: editableLayers,
+                featureGroup: this.editableLayers,
                 remove: true
             }
         });
-        var drawControlEditOnly = new L.Control.Draw({
+        this.drawControlEditOnly = new L.Control.Draw({
             position: 'topright',
             edit: {
-                featureGroup: editableLayers
+                featureGroup: this.editableLayers
             },
             draw: false
         });
@@ -152,52 +152,61 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             this.lng = fieldConfig.lng;
             this.getLeafletMap();
         }
+        this.getLeafletToolbar();
 
-        this.leafletMap.addLayer(editableLayers);
-        this.leafletMap.addControl(drawControlFull);
+    },
+
+    getLeafletToolbar: function () {
+        this.leafletMap.addLayer(this.editableLayers);
+        this.leafletMap.addControl(this.drawControlFull);
         this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
-           if(this.marker !== null) {
-                this.leafletMap.removeLayer(marker);
+            if (this.marker !== null) {
+                this.leafletMap.removeLayer(this.marker);
             }
             var layer = e.layer;
-            editableLayers.addLayer(layer);
-           if (editableLayers.getLayers().length === 1) {
-                drawControlFull.remove(this.leafletMap);
-                drawControlEditOnly.addTo(this.leafletMap);
+            this.editableLayers.addLayer(layer);
+            if (this.editableLayers.getLayers().length === 1) {
+                this.drawControlFull.remove(this.leafletMap);
+                this.drawControlEditOnly.addTo(this.leafletMap);
                 this.latitude.setValue(layer.getLatLng().lat);
                 this.longitude.setValue(layer.getLatLng().lng);
-               this.reverseGeocode();
-               
+                this.reverseGeocode();
+
             }
         }.bind(this));
 
         this.leafletMap.on("draw:deleted", function (e) {
-            drawControlEditOnly.remove(this.leafletMap);
-            drawControlFull.addTo(this.leafletMap);
+            this.drawControlEditOnly.remove(this.leafletMap);
+            this.drawControlFull.addTo(this.leafletMap);
+            this.latitude.setValue(null);
+            this.longitude.setValue(null);
+            this.currentLocationTextNode.setText(null);
+             if (this.marker !== null) {
+                this.marker = null;
+            }
+            
         }.bind(this));
         this.reverseGeocode();
-
     },
-    
+
     geocode: function () {
         var address = this.searchfield.getValue();
-        $.getJSON("https://nominatim.openstreetmap.org/search?q="+address+"&addressdetails=1&format=json&limit=1", function(json) {
+        $.getJSON("https://nominatim.openstreetmap.org/search?q=" + address + "&addressdetails=1&format=json&limit=1", function (json) {
             this.latitude.setValue(json[0].lat);
             this.longitude.setValue(json[0].lon);
             this.updateMap();
         }.bind(this));
-       
+
     },
-    
+
     reverseGeocode: function () {
-        if(this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
-            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat="+this.latitude.getValue()+"&lon="+
-                this.longitude.getValue()+"&addressdetails=1", function(json) {
+        if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
+            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + this.latitude.getValue() + "&lon=" +
+                    this.longitude.getValue() + "&addressdetails=1", function (json) {
                 this.currentLocationTextNode.setText(json.display_name);
             }.bind(this));
         }
     },
-
 
     getValue: function () {
         return {
@@ -241,14 +250,14 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
- 
+
                 this.applyPermissionStyle(key, value, metaData, record);
 
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += ' grid_value_inherited';
                 }
                 if (value) {
-                   return value.latitude + "," + value.longitude ;
+                    return value.latitude + "," + value.longitude;
                 }
             }.bind(this, field.key)
         };
@@ -257,6 +266,5 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     getCellEditValue: function () {
         return this.getValue();
     },
-    
-    
+
 });

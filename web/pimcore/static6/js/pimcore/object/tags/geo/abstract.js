@@ -44,9 +44,9 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
                 if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += ' grid_value_inherited';
                 }
-               // if (value) {
+                if (value) {
                     return ts('preview_not_available');
-               // }
+                }
             }.bind(this, field.key)
         };
     },
@@ -59,16 +59,51 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     },
 
     updateMap: function () {
-        this.getMapUrl(this.fieldConfig, this.data);
+        var width = Ext.get('leaflet_maps_container_' + this.mapImageID).getWidth();
+
+        if (width > 640) {
+            width = 640;
+        }
+        if (width < 10) {
+            window.setTimeout(this.updateMap.bind(this), 1000);
+        }
+
+        this.getMapUrl(this.fieldConfig, this.data, width);
     
     },
     
     getLeafletMap: function() {
-        document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="map'+ this.divImageID +'" style="height:400px;width:650px;"></div>';
-        this.leafletMap =  L.map('map' +this.divImageID).setView([this.lat, this.lng], this.mapZoom);
-        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
+        document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="'+ this.mapId +'" style="height:400px;width:650px;"></div>';
+        this.leafletMap =  L.map(this.mapId).setView([this.lat, this.lng], this.mapZoom);
+        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.leafletMap);
+    },
+
+    getBoundsZoomLevel: function (bounds, mapDim) {
+        var WORLD_DIM = { height: 256, width: 256 };
+        var ZOOM_MAX = 21;
+
+        function latRad(lat) {
+            var sin = Math.sin(lat * Math.PI / 180);
+            var radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+            return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+        }
+
+        function zoom(mapPx, worldPx, fraction) {
+            return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
+        }
+        var ne = bounds.getNorthEast();
+        var sw = bounds.getSouthWest(); 
+        var latFraction = (latRad(ne.lat) - latRad(sw.lat)) / Math.PI;
+
+        var lngDiff = ne.lng - sw.lng;
+        var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+        var latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
+        var lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
+
+        return Math.min(latZoom, lngZoom, ZOOM_MAX);
     }
 
 });

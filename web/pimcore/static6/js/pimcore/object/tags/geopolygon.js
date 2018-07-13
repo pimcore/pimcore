@@ -23,9 +23,9 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         this.mapImageID = uniqid();
         this.divImageID = uniqid();
         this.searchfield = new Ext.form.TextField({
-            width: 300,
+            width: 200,
             name: 'mapSearch',
-            style: 'float: left;'
+            style: 'float: left;margin-top:0px;'
         });
         this.currentLocationTextNode = new Ext.Toolbar.TextItem({
             text: '&nbsp;'
@@ -68,16 +68,14 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         return this.component;
     },
 
-    getMapUrl: function (fieldConfig, data) {
+    getMapUrl: function (fieldConfig, data, width, height) {
         this.mapZoom = fieldConfig.zoom;
-        var lat = fieldConfig.lat;
-        var lng = fieldConfig.lng;
-        this.data = null;
         this.polygon = null;
         this.latlngs = [];
-        var leafletMap;
-        var editableLayers = new L.FeatureGroup();
-        var drawControlFull = new L.Control.Draw({
+        this.mapId = "polygonmap"+ this.divImageID;
+        this.leafletMap = null;
+        this.editableLayers = new L.FeatureGroup();
+        this.drawControlFull = new L.Control.Draw({
             position: 'topright',
             draw: {
                 circle: false,
@@ -87,54 +85,68 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
                 polyline: false
             },
             edit: {
-                featureGroup: editableLayers, //REQUIRED!!
+                featureGroup: this.editableLayers, //REQUIRED!!
                 remove: true
             }
         });
 
-        var drawControlEditOnly = new L.Control.Draw({
+        this.drawControlEditOnly = new L.Control.Draw({
             position: 'topright',
             edit: {
-                featureGroup: editableLayers
+                featureGroup: this.editableLayers
             },
             draw: false
         });
+        if (!width) {
+            width = 300;
+        }
+        if(!height) {
+            height = 300;
+        }
+
+        var py = height;
+        var px = width;
 
         try {
             if(data) {
-                document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML ='<div id="polygonmap'+ this.divImageID +'" style="height:400px;width:650px;"></div>';
-                leafletMap = L.map('polygonmap'+ this.divImageID).setView([lat, lng], this.mapZoom);
-                L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetleafletMap</a> contributors'
-                }).addTo(leafletMap);
-
                 for (var i = 0; i < data.length; i++) {
                     this.latlngs.push([data[i].latitude,data[i].longitude]);
                 }
-                this.polygon = L.polygon(this.latlngs, {color: '0x00000073'}).addTo(leafletMap);
-                leafletMap.fitBounds(this.polygon.getBounds());
+                this.polygon = L.polygon(this.latlngs, {color: '0x00000073'});
+                this.lat = this.polygon.getBounds().getCenter().lat;
+                this.lng = this.polygon.getBounds().getCenter().lng; 
+                this.mapZoom = this.getBoundsZoomLevel(this.polygon.getBounds(), {width: px, height: py});
+                this.getLeafletMap();
+                this.polygon.addTo(this.leafletMap);
+                this.leafletMap.fitBounds(this.polygon.getBounds());
 
             } else {
-                document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="polygonmap'+ this.divImageID +'" style="height:400px;width:650px;"></div>';
-                leafletMap = L.map('polygonmap'+this.divImageID).setView([lat, lng], this.mapZoom);
-                L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetleafletMap</a> contributors'
-                }).addTo(leafletMap);
+                this.lat = fieldConfig.lat;
+                this.lng = fieldConfig.lng;
+                this.getLeafletMap();
             }
-            leafletMap.addLayer(editableLayers);
-            leafletMap.addControl(drawControlFull);
-            leafletMap.on(L.Draw.Event.CREATED, function (e) {
+            this.getLeafletToolbar();
+        }
+        catch (e) {
+            console.log(e);
+        }
+    },
+
+    getLeafletToolbar: function() {
+            this.leafletMap.addLayer(this.editableLayers);
+            this.leafletMap.addControl(this.drawControlFull);
+            this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
                 this.dirty = true;
                 if(this.polygon !== null) {
-                    leafletMap.removeLayer(this.polygon);
+                    this.leafletMap.removeLayer(this.polygon);
                 }
                 var layer = e.layer;
                 type = e.layerType;
-                editableLayers.addLayer(layer);
-                if (editableLayers.getLayers().length === 1) {
+                this.editableLayers.addLayer(layer);
+                if (this.editableLayers.getLayers().length === 1) {
                     this.data = [];
-                    drawControlFull.remove(leafletMap);
-                    drawControlEditOnly.addTo(leafletMap);
+                    this.drawControlFull.remove(this.leafletMap);
+                    this.drawControlEditOnly.addTo(this.leafletMap);
                     latlngs = layer.getLatLngs();
                     for (var i=0; i< latlngs[0].length; i++) {
                             this.data.push({
@@ -145,26 +157,21 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
                 }
             }.bind(this));
 
-            leafletMap.on("draw:deleted", function(e) {
-                drawControlEditOnly.remove(leafletMap);
-                drawControlFull.addTo(leafletMap);
+            this.leafletMap.on("draw:deleted", function() {
+                this.drawControlEditOnly.remove(this.leafletMap);
+                this.drawControlFull.addTo(this.leafletMap);
             });
-        }
-        catch (e) {
-            console.log(e);
-        }
     },
     
     geocode: function () {
         var address = this.searchfield.getValue();
-        console.log(address);
         $.getJSON("https://nominatim.openstreetmap.org/search?q="+address+"&addressdetails=1&format=json&limit=1", function(json) {
-        document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML ='<div id="polygonmap'+ this.divImageID +'" style="height:400px;width:650px;"></div>';
-        leafletMap =  L.map('polygonmap' +this.divImageID).setView([json[0].lat, json[0].lon], this.mapZoom);
-        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(leafletMap);
-           
+          if( json[0].lat !== null && json[0].lon !== null) {
+                this.lat = json[0].lat;
+                this.lng = json[0].lon;
+                this.getLeafletMap();
+                this.getLeafletToolbar();
+            }
         }.bind(this));
        
     },
