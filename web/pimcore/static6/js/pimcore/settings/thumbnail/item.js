@@ -159,6 +159,12 @@ pimcore.settings.thumbnail.item = Class.create({
                         xtype: "container",
                         html: "<small>(" + t("rasterize_svg_info_text") + ")</small>",
                         style: "margin-bottom: 20px"
+                    }, {
+                        xtype: "checkbox",
+                        name: "downloadable",
+                        style: "margin-bottom:0",
+                        boxLabel: t("list_thumbnail_in_download_section_on_image_detail_view"),
+                        checked: this.data.downloadable
                     }]
                 }]
         });

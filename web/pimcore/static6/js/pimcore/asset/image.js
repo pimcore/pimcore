@@ -294,6 +294,43 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
             details.push(this.downloadBox);
 
+            var thumbnailsStore = new Ext.data.JsonStore({
+                autoLoad: true,
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/settings/thumbnail-downloadable'
+                },
+                fields: ['id']
+            });
+
+            this.thumbnailDownloadBox = new Ext.form.FormPanel({
+                title: t("download_thumbnail"),
+                bodyStyle: "padding: 10px;",
+                style: "margin: 10px 0",
+                items: [{
+                    xtype: "combo",
+                    name: "thumbnail",
+                    fieldLabel: t("thumbnail"),
+                    store: thumbnailsStore,
+                    editable: false,
+                    displayField: "id"
+                }],
+                buttons: [{
+                    text: t("download"),
+                    iconCls: "pimcore_icon_download",
+                    handler: function () {
+                        var config = this.thumbnailDownloadBox.getForm().getFieldValues();
+                        if (!config.thumbnail) {
+                            pimcore.helpers.showNotification(t("error"), t("no_thumbnail_selected"), "error");
+                        } else {
+                            pimcore.helpers.download("/admin/asset/download-image-thumbnail?id=" + this.id
+                                + "&thumbnail=" + config.thumbnail);
+                        }
+                    }.bind(this)
+                }]
+            });
+            details.push(this.thumbnailDownloadBox);
 
             this.customDownloadBox = new Ext.form.FormPanel({
                 title: t("custom_download"),
