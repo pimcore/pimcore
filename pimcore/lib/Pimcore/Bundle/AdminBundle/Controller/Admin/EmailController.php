@@ -590,6 +590,7 @@ class EmailController extends DocumentControllerBase
 
     /**
      * @param array $params
+     *
      * @return $data
      */
     protected function parseLoggingParamObject($params)

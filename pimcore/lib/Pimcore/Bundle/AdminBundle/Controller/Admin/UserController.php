@@ -346,13 +346,13 @@ class UserController extends AdminController implements EventedControllerInterfa
 
             // check for workspaces
             if ($request->get('workspaces')) {
-                $processedPaths = ["object" => [],"asset" => [], "document" => []]; //array to find if there are multiple entries for a path
+                $processedPaths = ['object' => [], 'asset' => [], 'document' => []]; //array to find if there are multiple entries for a path
                 $workspaces = $this->decodeJson($request->get('workspaces'), true);
                 foreach ($workspaces as $type => $spaces) {
                     $newWorkspaces = [];
                     foreach ($spaces as $space) {
                         if (in_array($space['path'], $processedPaths[$type])) {
-                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] .'" in '.$this->trans("$type") . "s");
+                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] .'" in '.$this->trans("$type") . 's');
                         }
 
                         $element = Element\Service::getElementByPath($type, $space['path']);
