@@ -246,6 +246,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/open_file.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_cursor {
+    background: url(/pimcore/static6/img/flat-color-icons/cursor.svg) center center no-repeat !important;
+}
+
 /* assets */
 
 .pimcore_icon_doc, .pimcore_icon_docx {

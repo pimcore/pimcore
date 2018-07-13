@@ -470,7 +470,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 buttons.push("-");
                 buttons.push({
                     tooltip: t("open"),
-                    iconCls: "pimcore_icon_open",
+                    iconCls: "pimcore_icon_cursor",
                     scale: "medium",
                     handler: function () {
                         var date = new Date();
