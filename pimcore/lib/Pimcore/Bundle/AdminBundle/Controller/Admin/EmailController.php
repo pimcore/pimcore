@@ -435,6 +435,37 @@ class EmailController extends DocumentControllerBase
             }
 
             $mail->setSubject($emailLog->getSubject());
+
+            // add document
+            if ($emailLog->getDocumentId()) {
+                $mail->setDocument($emailLog->getDocumentId());
+            }
+
+            // re-add params
+            try {
+                $params = $this->decodeJson($emailLog->getParams());
+            } catch (\Exception $e) {
+                Logger::warning('Could not decode JSON param string');
+                $params = [];
+            }
+
+            foreach ($params as $entry) {
+                $data = null;
+                $hasChildren = isset($entry['children']) && is_array($entry['children']);
+
+                if ($hasChildren) {
+                    $childData = [];
+                    foreach ($entry['children'] as $childParam) {
+                        $childData[$childParam['key']] = $this->parseLoggingParamObject($childParam);
+                    }
+                    $data = $childData;
+                } else {
+                    $data = $this->parseLoggingParamObject($entry);
+                }
+
+                $mail->setParam($entry['key'], $data);
+            }
+
             $mail->send();
             $success = true;
         }
@@ -555,5 +586,27 @@ class EmailController extends DocumentControllerBase
         }
 
         return $this->adminJson(false);
+    }
+
+    /**
+     * @param array $params
+     * @return $data
+     */
+    protected function parseLoggingParamObject($params)
+    {
+        $data = null;
+        if ($params['data']['type'] === 'object') {
+            $class = '\\' . ltrim($params['data']['objectClass'], '\\');
+            if (!empty($params['data']['objectId']) && is_subclass_of($class, '\\Pimcore\\Model\\Element\\ElementInterface')) {
+                $obj = $class::getById($params['data']['objectId']);
+                if (!is_null($obj)) {
+                    $data = $obj;
+                }
+            }
+        } else {
+            $data = $params['data']['value'];
+        }
+
+        return $data;
     }
 }
