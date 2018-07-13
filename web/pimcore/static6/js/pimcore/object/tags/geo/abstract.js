@@ -68,7 +68,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
             window.setTimeout(this.updateMap.bind(this), 1000);
         }
 
-        this.getMapUrl(this.fieldConfig, this.data, width);
+        this.getMap(this.fieldConfig, this.data, width);
     
     },
     

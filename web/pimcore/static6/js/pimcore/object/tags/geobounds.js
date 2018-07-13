@@ -68,7 +68,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         return this.component;
     },
 
-    getMapUrl: function (fieldConfig, data, width, height) {
+    getMap: function (fieldConfig, data, width, height) {
         this.mapZoom = fieldConfig.zoom;
         this.leafletMap = null;
         this.rectangle = null;

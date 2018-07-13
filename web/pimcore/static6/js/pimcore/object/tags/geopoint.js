@@ -107,7 +107,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         $super();
     },
 
-    getMapUrl: function (fieldConfig, data) {
+    getMap: function (fieldConfig, data) {
         this.mapZoom = fieldConfig.zoom;
         this.leafletMap = null;
         this.mapId = "map" + this.divImageID;
