@@ -26,6 +26,12 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     getForm: function () {
         var i;
 
+        //set "Home" object ID for search grid column configuration
+        this.object  = new Object();
+        this.object.id = 1;
+
+        this.searchType = "search";
+
         var compositeConfig = {
             xtype: "toolbar",
             items: [{
@@ -150,6 +156,34 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             handler: this.search.bind(this)
         });
 
+        this.saveColumnConfigButton = new Ext.Button({
+            tooltip: t('save_grid_options'),
+            iconCls: "pimcore_icon_publish",
+            hidden: true,
+            handler: function () {
+                var asCopy = !(this.settings.gridConfigId > 0);
+                this.saveConfig(asCopy)
+            }.bind(this)
+        });
+
+        this.columnConfigButton = new Ext.SplitButton({
+            text: t('grid_options'),
+            hidden: true,
+            iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
+            handler: function () {
+                this.openColumnConfig(this.selectedClass, this.classId);
+            }.bind(this),
+            menu: []
+        });
+
+        compositeConfig.items.push("->");
+
+        // add grid config main button
+        compositeConfig.items.push(this.columnConfigButton);
+
+        // add grid config save button
+        compositeConfig.items.push(this.saveColumnConfigButton);
+
         if(!this.formPanel) {
             this.formPanel = new Ext.form.FormPanel({
                 region: "north",
@@ -245,32 +279,53 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var selectedClass = this.classChangeCombo.getValue();
 
         if(selectedClass.indexOf(",") > 0) { // multiple classes because of a comma in the string
+
+            //hide column config buttons
+            this.columnConfigButton.hide();
+            this.saveColumnConfigButton.hide();
+
             // init default store
             this.initDefaultStore();
         } else {
+            var classStore = pimcore.globalmanager.get("object_types_store");
+            var classIdx = classStore.findExact("text", selectedClass);
+            this.selectedClass = selectedClass
+            this.classId = classStore.getAt(classIdx).id;
+            this.settings = {};
+
             // get class definition
             Ext.Ajax.request({
                 url: "/admin/object-helper/grid-get-column-config",
-                params: {name: selectedClass},
+                params: {
+                    id: this.classId,
+                    objectId: this.object.id,
+                    gridtype: "grid",
+                    gridConfigId: this.settings ? this.settings.gridConfigId : null,
+                    searchType: "search"
+                },
                 success: this.initClassStore.bind(this, selectedClass)
             });
         }
     },
 
-    initClassStore: function (selectedClass, response) {
+    initClassStore: function (selectedClass, response, save) {
         var fields = [];
         if(response.responseText) {
             response = Ext.decode(response.responseText);
             fields = response.availableFields;
             this.gridLanguage = response.language;
             this.sortinfo = response.sortinfo;
+            this.settings = response.settings;
+            this.availableConfigs = response.availableConfigs;
+            this.sharedConfigs = response.sharedConfigs;
         } else {
             fields = response;
         }
 
         var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find", null, true);
+        gridHelper.limit = this.itemsPerPage;
         this.store = gridHelper.getStore();
-        this.store.setPageSize(pimcore.helpers.grid.getDefaultPageSize());
+        this.store.setPageSize(this.itemsPerPage);
         this.applyExtraParamsToStore();
         var gridColumns = gridHelper.getGridColumns();
         var gridfilters = gridHelper.getGridFilters();
@@ -282,14 +337,18 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
         //TODO set up filter
 
-        this.getGridPanel(gridColumns, gridfilters, selectedClass);
+        this.getGridPanel(gridColumns, gridfilters, selectedClass, save);
+
+        this.buildColumnConfigMenu();
+        this.columnConfigButton.show();
     },
 
     initDefaultStore: function () {
+        this.itemsPerPage =  pimcore.helpers.grid.getDefaultPageSize(-1);
         this.store = new Ext.data.Store({
             autoDestroy: true,
             remoteSort: true,
-            pageSize: pimcore.helpers.grid.getDefaultPageSize(),
+            pageSize: this.itemsPerPage,
             proxy : {
                 type: 'ajax',
                 url: "/admin/search/search/find",
@@ -321,9 +380,9 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.getGridPanel(columns, null);
     },
 
-    getGridPanel: function (columns, gridfilters, selectedClass) {
+    getGridPanel: function (columns, gridfilters, selectedClass, save) {
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store,{pageSize: this.itemsPerPage});
 
-        this.pagingtoolbar = this.getPagingToolbar();
         this.gridPanel = Ext.create('Ext.grid.Panel', {
             store: this.store,
             border: false,
@@ -382,6 +441,13 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.resultPanel.removeAll();
         this.resultPanel.add(this.gridPanel);
         this.resultPanel.updateLayout();
+
+        if (save == true) {
+            if (this.settings.isShared) {
+                this.settings.gridConfigId = null;
+            }
+            this.saveConfig(false);
+        }
     },
 
     openColumnConfig: function(selectedClass, classId) {
@@ -407,10 +473,37 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig,
-            function(data) {
+            function(data, settings, save) {
+                this.saveColumnConfigButton.show(); //unhide save config button
                 this.gridLanguage = data.language;
-                this.initClassStore(selectedClass, data.columns);
-            }.bind(this), null, false
+                this.itemsPerPage = data.pageSize;
+                this.initClassStore(selectedClass, data.columns, save);
+            }.bind(this),
+            function() {
+                Ext.Ajax.request({
+                    url: "/admin/object-helper/grid-get-column-config",
+                    params: {
+                        id: this.classId,
+                        objectId: this.object.id,
+                        gridtype: "grid",
+                        searchType: this.searchType
+                    },
+                    success: function(response) {
+                        if (response) {
+                            this.initClassStore(selectedClass, response, false);
+                            if (typeof this.saveColumnConfigButton !== "undefined") {
+                                this.saveColumnConfigButton.hide();
+                            }
+                        } else {
+                            pimcore.helpers.showNotification(t("error"), t("error_resetting_config"),
+                                "error",t(rdata.message));
+                        }
+                    }.bind(this),
+                    failure: function () {
+                        pimcore.helpers.showNotification(t("error"), t("error_resetting_config"), "error");
+                    }
+                });
+            }.bind(this), true, this.settings
         );
     },
 
@@ -460,5 +553,72 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     search: function () {
         this.applyExtraParamsToStore();
         this.pagingtoolbar.moveFirst();
-    }
+    },
+
+    createGrid: function (fromConfig, response, settings, save) {
+        var selectedClass = this.classChangeCombo.getValue();
+
+        this.initClassStore(selectedClass,response, save);
+    },
+
+    getTableDescription: function () {
+        var selectedClass = this.classChangeCombo.getValue();
+
+        if(selectedClass.indexOf(",") > 0) { // multiple classes because of a comma in the string
+            // init default store
+            this.initDefaultStore();
+        } else {
+            // get class definition
+            Ext.Ajax.request({
+                url: "/admin/object-helper/grid-get-column-config",
+                params: {
+                    id: this.classId,
+                    objectId: this.object.id,
+                    gridtype: "grid",
+                    gridConfigId: this.settings ? this.settings.gridConfigId : null,
+                    searchType: this.searchType
+                },
+                success: this.initClassStore.bind(this, selectedClass)
+            });
+        }
+    },
+
+    deleteGridConfig: function () {
+
+        Ext.MessageBox.show({
+            title: t('delete'),
+            msg: t('delete_gridconfig_dblcheck'),
+            buttons: Ext.Msg.OKCANCEL,
+            icon: Ext.MessageBox.INFO,
+            fn: this.deleteGridConfigConfirmed.bind(this)
+        });
+    },
+
+    deleteGridConfigConfirmed: function (btn) {
+        if (btn == 'ok') {
+            Ext.Ajax.request({
+                url: "/admin/object-helper/grid-delete-column-config",
+                params: {
+                    id: this.classId,
+                    objectId:
+                    this.object.id,
+                    gridtype: "grid",
+                    gridConfigId: this.settings.gridConfigId,
+                    searchType: this.searchType
+                },
+                success: function (response) {
+
+                    decodedResponse = Ext.decode(response.responseText);
+                    if (decodedResponse.deleteSuccess) {
+                        pimcore.helpers.showNotification(t("success"), t("gridconfig_removed"), "success");
+                    } else {
+                        pimcore.helpers.showNotification(t("error"), t("gridconfig_not_removed"), "error");
+                    }
+                    success: this.initClassStore.bind(this, selectedClass)
+                }.bind(this)
+            });
+        }
+    },
 });
+
+pimcore.element.selector.object.addMethods(pimcore.object.helpers.gridcolumnconfig);
