@@ -57,8 +57,7 @@ pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
-        return
-        [
+        return [
             {
                 xtype: "checkbox",
                 fieldLabel: t("default_value"),

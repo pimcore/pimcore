@@ -136,13 +136,12 @@ pimcore.layout.portal = Class.create({
                         menu: portletMenu
                     },
                     {
-                        text: t("delete_dashboard"),
+                        text: t("delete"),
                         iconCls: "pimcore_icon_delete",
                         hidden: (this.key == "welcome"),
                         handler: function() {
                             Ext.Msg.show({
-                                title:t('delete_dashboard'),
-                                msg: t('really_delete_dashboard'),
+                                msg: t('delete_message'),
                                 buttons: Ext.Msg.YESNO,
                                 fn: function(btn) {
                                     if(btn == "yes") {
@@ -151,6 +150,7 @@ pimcore.layout.portal = Class.create({
 
                                         Ext.Ajax.request({
                                             url: "/admin/portal/delete-dashboard",
+                                            method: "DELETE",
                                             params: {
                                                 key: this.key
                                             },
@@ -195,6 +195,7 @@ pimcore.layout.portal = Class.create({
             this.panel.on('drop', function(e) {
                 Ext.Ajax.request({
                     url: "/admin/portal/reorder-widget",
+                    method: 'PUT',
                     params: {
                         key: this.key,
                         id: e.panel.portletId,
@@ -226,6 +227,7 @@ pimcore.layout.portal = Class.create({
 
             Ext.Ajax.request({
                 url: "/admin/portal/add-widget",
+                method: 'POST',
                 params: {
                     key: this.key,
                     type: type

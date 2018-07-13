@@ -27,14 +27,14 @@ pimcore.object.classificationstore.storeTree = Class.create({
             this.panel = new Ext.Panel({
                 iconCls: "pimcore_icon_classificationstore",
                 id: "pimcore_object_classificationstore_configpanel",
-                title: t("classificationstore_menu_config"),
+                title: t("classification_store"),
                 border: false,
                 layout: "border",
                 closable:true,
                 items: [this.getStoreTree(), this.getEditContainer()],
                 tbar: [
                     {
-                        text: t('add_store'),
+                        text: t('add'),
                         handler: this.onAdd.bind(this),
                         iconCls: "pimcore_icon_add"
                     }
@@ -183,6 +183,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
     applyConfig: function(storeId, newData) {
         Ext.Ajax.request({
                 url: "/admin/classificationstore/edit-store",
+                method: 'PUT',
                 params: {
                     id: storeId,
                     data: Ext.encode(newData)
@@ -217,7 +218,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/user/update",
-            method: "post",
+            method: "PUT",
             params: {
                 id: userId,
                 data: Ext.encode(values)
@@ -226,12 +227,12 @@ pimcore.object.classificationstore.storeTree = Class.create({
                 try{
                     var res = Ext.decode(transport.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error",t(res.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this)
         });
@@ -252,6 +253,7 @@ pimcore.object.classificationstore.storeTree = Class.create({
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
                 url: "/admin/classificationstore/create-store",
+                method: 'POST',
                 params: {
                     name: value
                 },

@@ -138,13 +138,13 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function getRequiredByDependenciesForFrontend(Dependency $d)
+    public static function getRequiredByDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requiredBy'] = [];
 
         // requiredBy
-        foreach ($d->getRequiredBy() as $r) {
+        foreach ($d->getRequiredBy($offset, $limit) as $r) {
             if ($e = self::getDependedElement($r)) {
                 if ($e->isAllowed('list')) {
                     $dependencies['requiredBy'][] = self::getDependencyForFrontend($e);
@@ -162,13 +162,13 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function getRequiresDependenciesForFrontend(Dependency $d)
+    public static function getRequiresDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requires'] = [];
 
         // requires
-        foreach ($d->getRequires() as $r) {
+        foreach ($d->getRequires($offset, $limit) as $r) {
             if ($e = self::getDependedElement($r)) {
                 if ($e->isAllowed('list')) {
                     $dependencies['requires'][] = self::getDependencyForFrontend($e);
@@ -875,6 +875,8 @@ class Service extends Model\AbstractModel
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
+        // replace slashes with a hyphen
+        $key = str_replace('/', '-', $key);
 
         if ($type == 'document') {
             // no spaces & utf8 for documents / clean URLs
@@ -950,7 +952,7 @@ class Service extends Model\AbstractModel
     public static function fixAllowedTypes($data, $type)
     {
         // this is the new method with Ext.form.MultiSelect
-        if ((is_string($data) && !empty($data)) || (is_array($data) && count($data))) {
+        if (is_array($data) && count($data)) {
             $first = reset($data);
             if (!is_array($first)) {
                 $parts = $data;

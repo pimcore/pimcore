@@ -185,8 +185,9 @@ pimcore.element.permissionchecker = Class.create({
             this.window = new Ext.Window({
                 modal: false,
                 width: 1000,
-                height: 800,
+                height: '80%',
                 title: t("analyze_permissions"),
+                iconCls: "pimcore_icon_search",
                 items: [form],
                 autoScroll: true,
                 buttons: [

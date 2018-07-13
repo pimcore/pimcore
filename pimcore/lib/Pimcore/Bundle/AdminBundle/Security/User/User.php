@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Security\User;
 
 use Pimcore\Model\User as PimcoreUser;
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface as GoogleTwoFactorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -22,7 +23,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * Proxy user to pimcore model and expose roles as ROLE_* array. If we can safely change the roles on the user model
  * this proxy can be removed and the UserInterface can directly be implemented on the model.
  */
-class User implements UserInterface, EquatableInterface
+class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterface
 {
     /**
      * @var PimcoreUser
@@ -115,5 +116,50 @@ class User implements UserInterface, EquatableInterface
     public function isEqualTo(UserInterface $user)
     {
         return $user instanceof self && $user->getId() === $this->getId();
+    }
+
+    /**
+     * Return true if the user should do two-factor authentication.
+     *
+     * @return bool
+     */
+    public function isGoogleAuthenticatorEnabled(): bool
+    {
+        if ($this->user->getTwoFactorAuthentication('enabled')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return the user name.
+     *
+     * @return string
+     */
+    public function getGoogleAuthenticatorUsername(): string
+    {
+        return $this->user->getName();
+    }
+
+    /**
+     * Return the Google Authenticator secret
+     * When an empty string or null is returned, the Google authentication is disabled.
+     *
+     * @return string
+     */
+    public function getGoogleAuthenticatorSecret(): string
+    {
+        if ($this->isGoogleAuthenticatorEnabled()) {
+            $secret = $this->user->getTwoFactorAuthentication('secret');
+            if (!$secret) {
+                // we return a dummy token
+                $twoFactorService = \Pimcore::getContainer()->get('scheb_two_factor.security.google_authenticator');
+
+                return $twoFactorService->generateSecret();
+            }
+
+            return $secret;
+        }
     }
 }

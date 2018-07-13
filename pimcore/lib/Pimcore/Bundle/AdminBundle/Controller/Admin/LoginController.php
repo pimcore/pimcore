@@ -32,6 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface
@@ -215,5 +217,36 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         ]);
 
         return $view;
+    }
+
+    /**
+     * @Route("/login/2fa", name="pimcore_admin_2fa")
+     *
+     * @param Request $request
+     *
+     * @TemplatePhp()
+     */
+    public function twoFactorAuthenticationAction(Request $request)
+    {
+        $view = $this->buildLoginPageViewModel();
+
+        $session = $request->getSession();
+        $authException = $session->get(Security::AUTHENTICATION_ERROR);
+        if ($authException instanceof AuthenticationException) {
+            $session->remove(Security::AUTHENTICATION_ERROR);
+
+            $view->error = $authException->getMessage();
+        }
+
+        return $view;
+    }
+
+    /**
+     * @Route("/login/2fa-verify", name="pimcore_admin_2fa-verify")
+     *
+     * @param Request $request
+     */
+    public function twoFactorAuthenticationVerifyAction(Request $request)
+    {
     }
 }

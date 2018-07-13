@@ -31,7 +31,8 @@ services:
     pimcore.service.request_matcher_factory: '@Pimcore\Http\RequestMatcherFactory'
 
     pimcore.translator: '@Pimcore\Translation\Translator'
-    pimcore.locale: '@Pimcore\Localization\Locale'
+    pimcore.locale: '@Pimcore\Localization\LocaleService'
+    Pimcore\Localization\Locale: '@Pimcore\Localization\LocaleService'
     pimcore.locale.intl_formatter: '@Pimcore\Localization\IntlFormatter'
 
     pimcore.app_logger.db_writer: '@Pimcore\Log\Handler\ApplicationLoggerDb'
@@ -45,6 +46,8 @@ services:
     pimcore.service.request.template_vars_resolver: '@Pimcore\Http\Request\Resolver\TemplateVarsResolver'
     pimcore.service.request.view_model_resolver: '@Pimcore\Http\Request\Resolver\ViewModelResolver'
     pimcore.service.request.response_header_resolver: '@Pimcore\Http\Request\Resolver\ResponseHeaderResolver'
+    pimcore.service.request.output_timestamp_resolver: '@Pimcore\Http\Request\Resolver\OutputTimestampResolver'
+
 
     # aliases for event listeners exposing methods (e.g. can be disabled)
     pimcore.event_listener.workflow_management: '@Pimcore\Bundle\CoreBundle\EventListener\WorkflowManagementListener'

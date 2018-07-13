@@ -57,34 +57,19 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         var extraParams = {
             allowedTypes: allowedTypes.join(","),
             object_id: this.object.id,
-            field_name: this.fieldConfig.name
+            field_name: this.fieldConfig.name,
+            forObjectEditor: 1
         };
 
         if (typeof this.fieldConfig.layoutId !== "undefined") {
             extraParams.layoutId = this.fieldConfig.layoutId;
         }
 
-        this.fieldstore = new Ext.data.Store({
-            proxy: {
-                type: 'ajax',
-                url: "/admin/class/fieldcollection-list",
-                reader: {
-                    type: 'json',
-                    rootProperty: 'fieldcollections',
-                    idProperty: 'key'
-                },
-                extraParams: extraParams
-            },
-            autoDestroy: false,
-            fields: ['key', {name: "fieldConfigigurations", convert: function (v, rec) {
-                this.layoutDefinitions[rec.data.key] = rec.data.layoutDefinitions;
-            }.bind(this)}],
-            listeners: {
-                load: this.initData.bind(this)
-            }
+        Ext.Ajax.request({
+            url: "/admin/class/fieldcollection-tree",
+            params: extraParams,
+            success: this.initData.bind(this)
         });
-
-        this.fieldstore.load();
 
     },
 
@@ -130,7 +115,11 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
     },
 
-    initData: function () {
+    initData: function (response) {
+
+        var collectionData = Ext.decode(response.responseText);
+        this.fieldcollections = collectionData.fieldcollections;
+        this.layoutDefinitions = collectionData.layoutDefinitions;
 
         if(this.data.length < 1) {
             this.component.add(this.getControls());
@@ -140,6 +129,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                     i,
                     {
                         type: this.data[i].type,
+                        title: this.data[i].title,
                         oIndex: this.data[i].oIndex
                     },
                     this.data[i].data,
@@ -150,42 +140,60 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.component.updateLayout();
     },
 
-    getControls: function (blockElement) {
-
+    buildMenu: function(data, blockElement) {
         var collectionMenu = [];
 
-        this.fieldstore.each(function (blockElement, rec) {
-            collectionMenu.push({
-                text: ts(rec.data.key),
-                handler: this.addBlock.bind(this,blockElement, rec.data.key),
-                iconCls: "pimcore_icon_fieldcollection"
-            });
-        }.bind(this, blockElement));
+        if (data) {
+            for(var i=0; i<data.length; i++) {
+                var elementData = data[i];
+
+                var menuItem = {
+                    text: elementData.title ? ts(elementData.title) : ts(elementData.text),
+                    iconCls: elementData.iconCls
+                };
+                if (elementData.group) {
+                    var subMenu = this.buildMenu(elementData.children, blockElement);
+                    menuItem.menu = subMenu;
+                } else {
+                    menuItem.handler = this.addBlock.bind(this, blockElement, elementData.key, elementData.title);
+                }
+
+                collectionMenu.push(menuItem);
+
+
+            }
+        }
+        return collectionMenu;
+
+    },
+
+    getControls: function (blockElement, title) {
+
+        var menuData = this.fieldcollections;
+        var collectionMenu = this.buildMenu(menuData, blockElement, true);
 
         var items = [];
 
-        if(collectionMenu.length == 1) {
+        if(collectionMenu.length == 0) {
+            items.push({
+                xtype: "tbtext",
+                text: t("no_collections_allowed")
+            });
+        } else if(collectionMenu.length == 1 && !collectionMenu[0].menu) {
             items.push({
                 disabled: this.fieldConfig.disallowAddRemove,
                 cls: "pimcore_block_button_plus",
                 iconCls: "pimcore_icon_plus",
                 handler: collectionMenu[0].handler
             });
-        } else if (collectionMenu.length > 1) {
+        } else  {
             items.push({
                 disabled: this.fieldConfig.disallowAddRemove,
                 cls: "pimcore_block_button_plus",
                 iconCls: "pimcore_icon_plus",
                 menu: collectionMenu
             });
-        } else {
-            items.push({
-                xtype: "tbtext",
-                text: t("no_collections_allowed")
-            });
         }
-
-
 
         if(blockElement) {
             items.push({
@@ -214,6 +222,15 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                     "click": this.moveBlockDown.bind(this, blockElement)
                 }
             });
+
+            if (title) {
+                items.push('->');
+
+                items.push({
+                    xtype: "tbtext",
+                    text: ts(title)
+                });
+            }
         }
 
         var toolbar = new Ext.Toolbar({
@@ -250,7 +267,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
     },
 
-    addBlock: function (blockElement, type) {
+    addBlock: function (blockElement, type, title) {
 
         this.closeOpenEditors();
 
@@ -274,7 +291,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
 
         this.addBlockElement(index + 1, {
-            type: type
+            type: type,
+            title: title
         });
     },
 
@@ -323,6 +341,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         var type = config.type;
         var oIndex = config.oIndex;
+        var title = config.title ? config.title : type;
 
         this.closeOpenEditors();
 
@@ -364,7 +383,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             disabled: this.fieldConfig.noteditable
         });
 
-        blockElement.insert(0, this.getControls(blockElement));
+        blockElement.insert(0, this.getControls(blockElement, title));
 
         blockElement.key = this.currentElements.length;
         blockElement.fieldtype = type;

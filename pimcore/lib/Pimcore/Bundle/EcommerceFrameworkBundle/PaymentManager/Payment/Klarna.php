@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Klarna implements IPayment
+class Klarna extends AbstractPayment
 {
     /**
      * @var string
@@ -51,6 +51,8 @@ class Klarna implements IPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         $this->eid             = $options['eid'];
         $this->sharedSecretKey = $options['shared_secret_key'];
 
@@ -64,6 +66,8 @@ class Klarna implements IPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'mode',
             'eid',

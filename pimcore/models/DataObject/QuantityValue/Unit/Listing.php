@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\QuantityValue\Unit\Listing\Dao getDao()
+ * @method Model\DataObject\QuantityValue\Unit[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

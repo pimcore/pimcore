@@ -188,7 +188,7 @@ class Service
 
         //get roles
         $roleList = new User\Role\Listing();
-        $roleList->setCondition('id in (?)', [implode(',', $userIds)]);
+        $roleList->setCondition('id in (' . implode(',', $userIds) . ')');
 
         foreach ($roleList->load() as $role) {
             $userList = new User\Listing();
@@ -204,7 +204,7 @@ class Service
 
         //get users
         $roleList = new User\Listing();
-        $roleList->setCondition('id in (?)', [implode(',', $userIds)]);
+        $roleList->setCondition('id in (' . implode(',', $userIds) . ')');
 
         foreach ($roleList->load() as $user) {
             /**

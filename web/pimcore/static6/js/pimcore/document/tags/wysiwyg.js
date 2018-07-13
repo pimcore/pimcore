@@ -101,7 +101,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
             if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
-                eConfig = mergeObject(pimcore.document.tags.wysiwyg.defaultEditorConfig,eConfig);
+                eConfig = mergeObject(eConfig, pimcore.document.tags.wysiwyg.defaultEditorConfig);
             }
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
@@ -119,6 +119,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     urlField.getParent().getParent().getParent().show();
                 }
             });
+
+            this.ckeditorReady = false;
+            this.ckeditor.on("instanceReady", function() {
+                this.ckeditorReady = true;
+            }.bind(this));
         }
         catch (e) {
             console.log(e);
@@ -272,7 +277,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         var value = this.data;
 
-        if (this.ckeditor) {
+        if (this.ckeditorReady && this.ckeditor) {
             value = this.ckeditor.getData();
         }
 

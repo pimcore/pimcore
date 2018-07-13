@@ -53,7 +53,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     data: data,
                     sorters: 'translatedText',
                     fields: [
-                        {name: 'id', type: 'number'},
+                        {name: 'id', type: 'string'},
                         {name: 'name', type: 'string'},
                         {name: 'translatedText', type: 'string'}
                     ]
@@ -140,6 +140,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         var fields = [];
+
         if (response.responseText) {
             response = Ext.decode(response.responseText);
 
@@ -149,6 +150,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
             fields = response.availableFields;
             this.gridLanguage = response.language;
+            this.gridPageSize = response.pageSize;
             this.sortinfo = response.sortinfo;
 
             this.settings = response.settings || {};
@@ -159,6 +161,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 this.onlyDirectChildren = response.onlyDirectChildren;
             }
         } else {
+            itemsPerPage = this.gridPageSize;
             fields = response;
             this.settings = settings;
             this.buildColumnConfigMenu();
@@ -272,7 +275,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var hideSaveColumnConfig = !fromConfig || save;
 
         this.saveColumnConfigButton = new Ext.Button({
-            tooltip: t('save_column_configuration'),
+            tooltip: t('save_grid_options'),
             iconCls: "pimcore_icon_publish",
             hidden: hideSaveColumnConfig,
             handler: function () {
@@ -282,7 +285,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         });
 
         this.columnConfigButton = new Ext.SplitButton({
-            text: t('grid_column_config'),
+            text: t('grid_options'),
             iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: function () {
                 this.openColumnConfig();
@@ -308,6 +311,15 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             viewConfig: {
                 forceFit: false,
                 xtype: 'patchedgridview'
+            },
+            listeners: {
+                celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+                    var columnName = grid.ownerGrid.getColumns();
+                    if(columnName[cellIndex].text == 'ID' || columnName[cellIndex].text == 'Path') {
+                        var data = this.store.getAt(rowIndex);
+                        pimcore.helpers.openObject(data.get("id"), data.get("type"));
+                    }
+                }
             },
             cls: 'pimcore_object_grid_panel',
             tbar: [this.languageInfo, "-", this.toolbarFilterInfo, this.clearFilterButton, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
@@ -439,7 +451,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }));
         } else {
             menu.add(new Ext.menu.Item({
-                text: t('open_selected'),
+                text: t('open'),
                 iconCls: "pimcore_icon_open",
                 handler: function (data) {
                     var selectedRows = grid.getSelectionModel().getSelection();
@@ -450,7 +462,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }));
 
             menu.add(new Ext.menu.Item({
-                text: t('delete_selected'),
+                text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
                     var ids = [];

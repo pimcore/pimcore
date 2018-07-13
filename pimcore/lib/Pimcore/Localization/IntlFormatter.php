@@ -59,7 +59,7 @@ class IntlFormatter
     /**
      * @param $locale
      */
-    public function __construct(Locale $locale)
+    public function __construct(LocaleServiceInterface $locale)
     {
         $this->locale = $locale->findLocale();
     }

@@ -21,6 +21,11 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Webservice;
 
+/**
+ * Class Service
+ *
+ * @package Pimcore\Model\DataObject\ClassDefinition
+ */
 class Service
 {
     /**
@@ -33,13 +38,14 @@ class Service
     public static function generateClassDefinitionJson($class)
     {
         $data = Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
-        unset($data->id);
         unset($data->name);
         unset($data->creationDate);
         unset($data->modificationDate);
         unset($data->userOwner);
         unset($data->userModification);
         unset($data->fieldDefinitions);
+
+        self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
 
         //add propertyVisibility to export data
         $data->propertyVisibility = $class->propertyVisibility;
@@ -49,14 +55,31 @@ class Service
         return $json;
     }
 
+    public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
+    {
+        if (method_exists($layout, 'getChilds')) {
+            $children = $layout->getChildren();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    if ($child instanceof DataObject\ClassDefinition\Data\Select) {
+                        if ($child->getOptionsProviderClass()) {
+                            $child->options = null;
+                        }
+                    }
+                    self::removeDynamicOptionsFromLayoutDefinition($child);
+                }
+            }
+        }
+    }
+
     /**
-     * @param $class
+     * @param $class DataObject\ClassDefinition
      * @param $json
      * @param bool $throwException
      *
      * @return bool
      */
-    public static function importClassDefinitionFromJson($class, $json, $throwException = false)
+    public static function importClassDefinitionFromJson($class, $json, $throwException = false, $ignoreId = false)
     {
         $userId = 0;
         $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -76,6 +99,9 @@ class Service
         }
 
         // set properties of class
+        if (isset($importData['id']) && $importData['id'] && !$ignoreId) {
+            $class->setId($importData['id']);
+        }
         $class->setDescription($importData['description']);
         $class->setModificationDate(time());
         $class->setUserModification($userId);

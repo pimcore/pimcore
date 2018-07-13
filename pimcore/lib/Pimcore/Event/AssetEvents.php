@@ -31,6 +31,13 @@ final class AssetEvents
     const POST_ADD = 'pimcore.asset.postAdd';
 
     /**
+     * @Event("Pimcore\Event\Model\AssetEvent")
+     *
+     * @var string
+     */
+    const POST_ADD_FAILURE = 'pimcore.asset.postAddFailure';
+
+    /**
      * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
      *
@@ -51,6 +58,16 @@ final class AssetEvents
     const POST_UPDATE = 'pimcore.asset.postUpdate';
 
     /**
+     * Arguments:
+     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *
+     * @Event("Pimcore\Event\Model\AssetEvent")
+     *
+     * @var string
+     */
+    const POST_UPDATE_FAILURE = 'pimcore.asset.postUpdateFailure';
+
+    /**
      * @Event("Pimcore\Event\Model\AssetEvent")
      *
      * @var string
@@ -63,6 +80,13 @@ final class AssetEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.asset.postDelete';
+
+    /**
+     * @Event("Pimcore\Event\Model\AssetEvent")
+     *
+     * @var string
+     */
+    const POST_DELETE_FAILURE = 'pimcore.asset.postDeleteFailure';
 
     /**
      * Arguments:

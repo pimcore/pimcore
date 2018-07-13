@@ -126,6 +126,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             this.config.parent.requestPending.call(this.config.parent);
             Ext.Ajax.request({
                 url: "/admin/classificationstore/add-collections",
+                method: 'POST',
                 params: {
                     collectionIds: Ext.util.JSON.encode(collectionIds),
                     oid: this.config.objec ? this.config.object.id : null,
@@ -154,6 +155,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             this.config.parent.requestPending.call(this.config.parent);
             Ext.Ajax.request({
                 url: "/admin/classificationstore/add-groups",
+                method: 'POST',
                 params: {
                     groupIds: Ext.util.JSON.encode(groupIds),
                     oid: this.config.objec ? this.config.object.id : null,

@@ -118,6 +118,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method Tag\Textarea textarea($name, $options = [])
  * @method Tag\Video video($name, $options = [])
  * @method Tag\Wysiwyg wysiwyg($name, $options = [])
+ * @method Tag\Scheduledblock scheduledblock($name, $options = [])
  *
  * @property Document $document
  * @property bool $editmode

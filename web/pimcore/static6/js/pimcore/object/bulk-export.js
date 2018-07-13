@@ -33,6 +33,4 @@ pimcore.object.bulkexport = Class.create({
     getExportUrl: function() {
         return  this.exportUrl;
     }
-
-
 });

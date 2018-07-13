@@ -161,7 +161,9 @@ class File
             $mode = self::$defaultMode;
         }
 
+        $oldMask = umask(0);
         $return = @mkdir($path, $mode, $recursive, self::getContext());
+        umask($oldMask);
 
         return $return;
     }

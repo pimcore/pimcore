@@ -17,7 +17,7 @@ if($asset instanceof Asset\Video) {
    echo $asset->getImageThumbnail("myThumbnail");
  
    // get a snapshot (image) out of the video at the time of 10 secs. (see second parameter) using a dynamic image thumbnail configuration
-   echo $asset->getImageThumbnail(["width" => 250, "frame" => true], 10);
+   echo $asset->getImageThumbnail(["width" => 250], 10);
 }
 ```
 

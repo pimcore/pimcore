@@ -237,7 +237,16 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         DynamicRequestContext $context = null
     ) {
         // if we have a request we're currently in match mode (not generating URLs) -> only match when frontend request by admin
-        $isAdminRequest = null !== $context && $this->requestHelper->isFrontendRequestByAdmin($context->getRequest());
+        try {
+            $request = null;
+            if ($context) {
+                $request = $context->getRequest();
+            }
+            $isAdminRequest = $this->requestHelper->isFrontendRequestByAdmin($request);
+        } catch (\LogicException $e) {
+            // catch logic exception here - when the exception fires, it is no admin request
+            $isAdminRequest = false;
+        }
 
         // abort if document is not published and the request is no admin request
         // and matching unpublished documents was not forced
@@ -304,17 +313,8 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         }
 
         if (null !== $redirectTargetUrl && $redirectTargetUrl !== $context->getOriginalPath()) {
-            $url = $redirectTargetUrl;
-            if ($qs = $context->getRequest()->getQueryString()) {
-                if (false === strpos($url, '?')) {
-                    $url .= '&' . $qs;
-                } else {
-                    $url .= '?' . $qs;
-                }
-            }
-
             $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
-            $route->setDefault('path', $url);
+            $route->setDefault('path', $redirectTargetUrl);
             $route->setDefault('permanent', true);
 
             return $route;

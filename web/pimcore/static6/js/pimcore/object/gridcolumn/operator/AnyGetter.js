@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
         type: "operator",
         class: "AnyGetter",
         iconCls: "pimcore_icon_operator_anygetter",
-        defaultText: "operator_anygetter",
+        defaultText: "Any Getter",
         group: "getter",
 
 
@@ -42,12 +42,12 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
             } else {
 
                 //For building up operator list
-                var configAttributes = {type: this.type, class: this.class, label: t(this.defaultText)};
+                var configAttributes = {type: this.type, class: this.class, label: this.getDefaultText()};
 
                 var node = {
                     draggable: true,
                     iconCls: this.iconCls,
-                    text: t(this.defaultText),
+                    text: this.getDefaultText(),
                     configAttributes: configAttributes,
                     isTarget: true,
                     maxChildCount: 1,
@@ -149,7 +149,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                 width: 400,
                 height: 450,
                 modal: true,
-                title: t('operator_anygetter_settings'),
+                title: t('settings'),
                 layout: "fit",
                 items: [this.configPanel]
             });
@@ -174,7 +174,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
         },
 
         getNodeLabel: function (configAttributes) {
-            var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+            var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
             if (configAttributes.attribute) {
                 var attr = configAttributes.attribute;
                 if (configAttributes.param1) {

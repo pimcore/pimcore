@@ -54,6 +54,7 @@ doctrine:
                     collate: utf8mb4_unicode_ci
                 mapping_types:
                     enum: string
+                    bit: boolean
 
 # Monolog Configuration
 monolog:
@@ -226,7 +227,6 @@ pimcore:
                 - pimcore_copy
                 - pimcore_gridconfig
                 - pimcore_importconfig
-                - pimcore_backup
 
         # the following routes won't be double checked for authentication
         # this usually applies to login routes

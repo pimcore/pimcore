@@ -47,6 +47,9 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $this->setName('Pimcore');
         $this->setVersion(Version::getVersion());
 
+        // we set locale to EN.UTF8 to not getting into UTF-8 issues, eg. when dealing with umlauts & escapeshellarg()
+        setlocale(LC_ALL, ['en.utf8', 'en_US.utf8', 'en_GB.utf8']);
+
         // allow to register commands here (e.g. through plugins)
         $dispatcher = \Pimcore::getEventDispatcher();
         $event = new ConsoleEvent($this);

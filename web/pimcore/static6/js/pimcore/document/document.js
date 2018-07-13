@@ -98,13 +98,13 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
             Ext.Ajax.request({
                 url: this.urlprefix + this.getType() + '/save?task=' + task,
-                method: "post",
+                method: "PUT",
                 params: saveData,
                 success: function (response) {
                     try{
                         var rdata = Ext.decode(response.responseText);
                         if (rdata && rdata.success) {
-                            pimcore.helpers.showNotification(t("success"), t("successful_saved_document"), "success");
+                            pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                             this.resetChanges();
 
                             if(typeof this["createScreenshot"] == "function") {
@@ -113,11 +113,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             pimcore.plugin.broker.fireEvent("postSaveDocument", this, this.getType(), task, only);
                         }
                         else {
-                            pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_document"),
+                            pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
                                 rdata.message, rdata.stack, rdata.code);
                         }
                     } catch (e) {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error");
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                     }
 
 
@@ -323,6 +323,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
                     Ext.Ajax.request({
                         url: "/admin/document/translation-add",
+                        method: 'POST',
                         params: {
                             sourceId: this.id,
                             targetPath: win.getComponent("translation").getValue()
@@ -390,7 +391,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 itemId: "parent",
                 width: "100%",
                 fieldCls: "input_drop_target",
-                fieldLabel: t("parent_document"),
+                fieldLabel: t("parent"),
                 listeners: {
                     "render": function (el) {
                         new Ext.dd.DropZone(el.getEl(), {
@@ -479,6 +480,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
                                     Ext.Ajax.request({
                                         url: "/admin/document/add",
+                                        method: 'POST',
                                         params: params,
                                         success: function (response) {
                                             response = Ext.decode(response.responseText);
@@ -505,7 +507,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     getTranslationButtons: function () {
 
         var translationsMenu = [];
+        var unlinkTranslationsMenu = [];
         if(this.data["translations"]) {
+            var me = this;
             Ext.iterate(this.data["translations"], function (language, documentId, myself) {
                 translationsMenu.push({
                     text: pimcore.available_languages[language] + " [" + language + "]",
@@ -513,6 +517,25 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     handler: function () {
                         pimcore.helpers.openElement(documentId, "document");
                     }
+                });
+
+                unlinkTranslationsMenu.push({
+                    text: pimcore.available_languages[language] + " [" + language + "]",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/document/translation-remove",
+                            method: 'DELETE',
+                            params: {
+                                sourceId: me.id,
+                                targetId: documentId
+                            },
+                            success: function (response) {
+                                me.reload();
+                            }.bind(this)
+                        });
+                    }.bind(this),
+                    iconCls: "pimcore_icon_language_" + language
+                   
                 });
             });
         }
@@ -531,7 +554,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     handler: this.createTranslation.bind(this, true),
                     iconCls: "pimcore_icon_clone"
                 },{
-                    text: t("empty_document"),
+                    text: "&gt; " + t("blank"),
                     handler: this.createTranslation.bind(this, false),
                     iconCls: "pimcore_icon_file_plain"
                 }]
@@ -544,7 +567,24 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 menu: translationsMenu,
                 hidden: !translationsMenu.length,
                 iconCls: "pimcore_icon_open"
+            }, {
+                text: t("unlink_existing_document"),
+                menu: unlinkTranslationsMenu,
+                hidden: !unlinkTranslationsMenu.length,
+                iconCls: "pimcore_icon_delete"
             }]
         };
+    },
+
+    resetPath: function () {
+        Ext.Ajax.request({
+            url: "/admin/document/get-data-by-id",
+            params: {id: this.id},
+            success: function (response) {
+                var rdata = Ext.decode(response.responseText);
+                this.data.path = rdata.path;
+                this.data.key = rdata.key;
+            }.bind(this)
+        });
     }
 });

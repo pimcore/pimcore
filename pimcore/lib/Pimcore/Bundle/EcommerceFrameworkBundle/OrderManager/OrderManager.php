@@ -17,11 +17,14 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -218,6 +221,9 @@ class OrderManager implements IOrderManager
         ));
     }
 
+    /**
+     * @return Folder
+     */
     protected function getOrderParentFolder()
     {
         if (empty($this->orderParentFolder)) {
@@ -469,6 +475,80 @@ class OrderManager implements IOrderManager
         }
 
         return $this->buildModelClass($orderClassName);
+    }
+
+    /**
+     * Get list of valid source orders to perform recurring payment on.
+     *
+     * @param string $customerId
+     * @param IPayment $paymentProvider
+     * @param null $paymentMethod
+     * @param null|int $limit
+     * @param string $orderId
+     *
+     * @throws ProviderNotFoundException
+     * @throws \Exception
+     *
+     * @return false|\Pimcore\Model\DataObject\Listing\Concrete
+     */
+    public function getRecurringPaymentSourceOrderList(string $customerId, IPayment $paymentProvider, $paymentMethod = null, $orderId = '')
+    {
+        $orders = $this->buildOrderList();
+        $orders->addConditionParam('customer__id = ?', $customerId);
+        $orders->addConditionParam('orderState IS NOT NULL');
+
+        /* Check if provider is registered */
+        $paymentProviderName = $paymentProvider->getName();
+        Factory::getInstance()->getPaymentManager()->getProvider(strtolower($paymentProviderName));
+
+        if ($orderId) {
+            $orders->setCondition("oo_id = '{$orderId}'");
+        }
+
+        /* Apply provider specific condition */
+        $paymentProvider->applyRecurringPaymentCondition($orders, ['paymentMethod' => $paymentMethod]);
+
+        if (empty($orders->getOrderKey())) {
+            $orders->setOrderKey('o_creationDate');
+            $orders->setOrder('DESC');
+        }
+
+        return $orders;
+    }
+
+    /**
+     * Get source order for performing recurring payment
+     *
+     * @param string $customerId
+     * @param IPayment $paymentProvider
+     * @param null $paymentMethod
+     *
+     * @return mixed
+     */
+    public function getRecurringPaymentSourceOrder(string $customerId, IPayment $paymentProvider, $paymentMethod = null)
+    {
+        if (!$paymentProvider->isRecurringPaymentEnabled()) {
+            return null;
+        }
+
+        $orders = $this->getRecurringPaymentSourceOrderList($customerId, $paymentProvider, $paymentMethod);
+        $orders->setLimit(1);
+
+        return $orders->current();
+    }
+
+    /**
+     * @param AbstractOrder $order
+     * @param IPayment $payment
+     * @param string $customerId
+     *
+     * @return bool
+     */
+    public function isValidOrderForRecurringPayment(AbstractOrder $order, IPayment $payment, $customerId = '')
+    {
+        $orders = $this->getRecurringPaymentSourceOrderList($customerId, $payment, null, $order->getId());
+
+        return !empty($orders->current());
     }
 
     /**

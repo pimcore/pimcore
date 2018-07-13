@@ -14,21 +14,11 @@ Please visit the official install guide for Composer: [https://getcomposer.org/]
 
 ## FFMPEG
 
-* Linux 64bit static builds (including qt-faststart): http://johnvansickle.com/ffmpeg/
-* Windows builds: http://ffmpeg.zeranoe.com/builds/
-
-Run all this commands as root
+Please keep in mind that many Linux/GNU distributions ship FFMPEG only with free codecs, 
+so they do not support commonly used video codecs such as mpeg4 and many others.   
 
 ```bash
-cd ~
-wget http://FFMPEG-ARCHIVE-URL-FROM-ABOVE -O ffmpeg.tar.xz
-tar -Jxf ffmpeg*.tar.xz
-rm ffmpeg*.tar.xz
-mv ffmpeg-* /usr/local/ffmpeg
-ln -s /usr/local/ffmpeg/ffmpeg /usr/local/bin/
-ln -s /usr/local/ffmpeg/ffprobe /usr/local/bin/
-ln -s /usr/local/ffmpeg/qt-faststart /usr/local/bin/
-ln -s /usr/local/ffmpeg/qt-faststart /usr/local/bin/qtfaststart
+sudo apt-get install ffmpeg
 ```
 
 ## LibreOffice, pdftotext, Inkscape, ...

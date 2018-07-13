@@ -51,9 +51,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                     type: 'ajax',
                     url: '/admin/class/objectbrick-tree',
                     reader: {
-                        type: 'json',
-                        totalProperty : 'total',
-                        rootProperty: 'nodes'
+                        type: 'json'
 
                     },
                     extraParams: {
@@ -79,7 +77,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                 tbar: {
                     items: [
                         {
-                            text: t("add_objectbrick"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_objectbricks pimcore_icon_overlay_add",
                             handler: this.addField.bind(this)
                         }
@@ -98,17 +96,15 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //newChildNode.data.expanded = true;
-                newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_objectbricks";
-            }
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
         };
         return treeNodeListeners;
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
+        if (!record.isLeaf()) {
+            return;
+        }
         this.openBrick(record.data.id);
     },
 
@@ -137,7 +133,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_objectbrick'), t('enter_the_name_of_the_new_objectbrick'),
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                                     this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -150,8 +146,10 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         if (button == "ok" && value.length > 2 && regresult == value && !in_arrayi(value, forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/objectbrick-update",
+                method: 'POST',
                 params: {
-                    key: value
+                    key: value,
+                    task: 'add'
                 },
                 success: function (response) {
                     this.tree.getStore().load();
@@ -167,7 +165,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
             return;
         }
         else {
-            Ext.Msg.alert(t('add_objectbrick'), t('problem_creating_new_objectbrick'));
+            Ext.Msg.alert(' ', t('failed_to_create_new_item'));
         }
     },
 
@@ -181,6 +179,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
             if (btn == 'yes'){
                 Ext.Ajax.request({
                     url: "/admin/class/objectbrick-delete",
+                    method: 'DELETE',
                     params: {
                         id: record.data.id
                     }

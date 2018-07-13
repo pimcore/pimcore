@@ -20,7 +20,7 @@ namespace Pimcore\Tests\Test;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
-use Pimcore\Localization\Locale;
+use Pimcore\Localization\LocaleService;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -40,7 +40,7 @@ abstract class EcommerceTestCase extends TestCase
     protected function buildEnvironment(): IEnvironment
     {
         if (null === $this->environment) {
-            $this->environment = new Environment(new Locale());
+            $this->environment = new Environment(new LocaleService());
         }
 
         return $this->environment;

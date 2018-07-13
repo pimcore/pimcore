@@ -18,10 +18,11 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/snippet")
@@ -30,6 +31,7 @@ class SnippetController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -86,6 +88,7 @@ class SnippetController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     * @Method({"POST","PUT"})
      *
      * @param Request $request
      *

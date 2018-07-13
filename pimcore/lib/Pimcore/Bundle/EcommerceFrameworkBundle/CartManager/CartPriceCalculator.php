@@ -19,12 +19,14 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -139,7 +141,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     /**
      * @throws UnsupportedException
      */
-    public function calculate()
+    public function calculate($ignorePricingRules = false)
     {
         // sum up all item prices
         $subTotalNet = Decimal::zero();
@@ -243,6 +245,30 @@ class CartPriceCalculator implements ICartPriceCalculator
 
         $this->grandTotal   = $currentSubTotal;
         $this->isCalculated = true;
+
+        if (!$ignorePricingRules) {
+            // apply pricing rules
+            $this->getPricingManager()->applyCartRules($this->cart);
+
+            //check if some pricing rule needs recalculation of sums
+            if (!$this->isCalculated) {
+                $this->calculate(true);
+            }
+        }
+    }
+
+    public function setPricingManager(IPricingManager $pricingManager)
+    {
+        $this->pricingManager = $pricingManager;
+    }
+
+    public function getPricingManager()
+    {
+        if (empty($this->pricingManager)) {
+            $this->pricingManager = Factory::getInstance()->getPricingManager();
+        }
+
+        return $this->pricingManager;
     }
 
     /**

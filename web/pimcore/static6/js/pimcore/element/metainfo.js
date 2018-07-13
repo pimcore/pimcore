@@ -34,7 +34,6 @@ pimcore.element.metainfo = Class.create({
                 width: 800,
                 height: height,
                 iconCls: "pimcore_icon_info",
-                title: t('element_metainfo'),
                 layout: "fit",
                 closeAction:'close',
                 plain: true,

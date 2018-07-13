@@ -39,6 +39,16 @@ class Definition extends Model\AbstractModel
     public $parentClass;
 
     /**
+     * @var string
+     */
+    public $title;
+
+    /**
+     * @var string
+     */
+    public $group;
+
+    /**
      * @var array
      */
     public $layoutDefinitions;
@@ -81,6 +91,22 @@ class Definition extends Model\AbstractModel
         $this->parentClass = $parentClass;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 
     /**
@@ -161,7 +187,7 @@ class Definition extends Model\AbstractModel
      */
     public function getFieldDefinition($key, $context = [])
     {
-        if (array_key_exists($key, $this->fieldDefinitions)) {
+        if (is_array($this->fieldDefinitions) && array_key_exists($key, $this->fieldDefinitions)) {
             if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
                 return $this->fieldDefinitions[$key];
             }
@@ -415,5 +441,21 @@ class Definition extends Model\AbstractModel
         $cd .= '*/ ';
 
         return $cd;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
     }
 }

@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.localeswitcher");
 
-pimcore.object.importcolumn.operator.localeswitcher = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.importcolumn.operator.localeswitcher = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "LocaleSwitcher",
     iconCls: "pimcore_icon_operator_localeswitcher",
-    defaultText: "operator_localeswitcher",
+    defaultText: "Locale Switcher",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -45,7 +45,7 @@ pimcore.object.importcolumn.operator.localeswitcher = Class.create(pimcore.objec
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -137,7 +137,7 @@ pimcore.object.importcolumn.operator.localeswitcher = Class.create(pimcore.objec
             width: 400,
             height: 200,
             modal: true,
-            title: t('localeswitcher_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

@@ -159,20 +159,22 @@ class Service
      */
     public function getSharedImportConfigs($user, $classId)
     {
+        $db = Db::get();
         $userId = $user->getId();
         $configListingConditionParts = [];
         $configListingConditionParts[] = 'sharedWithUserId = ' . $userId;
-        $configListingConditionParts[] = 'classId = ' . $classId;
+        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
         $configListing = [];
 
         $userIds = [$userId];
         // collect all roles
         $userIds = array_merge($userIds, $user->getRoles());
         $userIds = implode(',', $userIds);
+        $db = Db::get();
 
         $query = 'select distinct c.id from importconfigs c, importconfig_shares s where '
             . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId
-                . ' UNION distinct select c2.id from importconfigs c2 where shareGlobally = 1 and c2.classId = ' . $classId;
+                . ' UNION distinct select c2.id from importconfigs c2 where shareGlobally = 1 and c2.classId = ' . $db->quote($classId);
 
         $ids = $this->db->fetchCol($query);
 
@@ -196,10 +198,11 @@ class Service
      */
     public function getMyOwnImportConfigs($user, $classId)
     {
+        $db = Db::get();
         $userId = $user->getId();
         $configListingConditionParts = [];
         $configListingConditionParts[] = 'ownerId = ' . $userId;
-        $configListingConditionParts[] = 'classId = ' . $classId;
+        $configListingConditionParts[] = 'classId = ' . $db->quote($classId);
         $configCondition = implode(' AND ', $configListingConditionParts);
         $configListing = new ImportConfig\Listing();
         $configListing->setOrderKey('name');

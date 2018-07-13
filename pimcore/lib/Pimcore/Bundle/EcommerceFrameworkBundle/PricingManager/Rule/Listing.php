@@ -15,7 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 
+/**
+ * @method Rule[] load()
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing\Dao getDao()
+ */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**

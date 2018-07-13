@@ -58,6 +58,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             name: this.fieldConfig.name
         };
 
+        var labelWidth = this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100;
+
         if (this.data) {
             if (this.data.path) {
                 href.value = this.data.path;
@@ -69,6 +71,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         } else {
             href.width = 300;
         }
+
         href.enableKeyEvents = true;
         href.fieldCls = "pimcore_droptarget_input";
         this.component = new Ext.form.TextField(href);
@@ -141,6 +144,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         this.composite = Ext.create('Ext.form.FieldContainer', {
             fieldLabel: this.fieldConfig.title,
+            labelWidth: labelWidth,
             layout: 'hbox',
             items: items,
             componentCls: "object_field",

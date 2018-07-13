@@ -84,7 +84,7 @@ pimcore.settings.httpErrorLog = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                    icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         window.open(data.get("uri"));
@@ -102,7 +102,7 @@ pimcore.settings.httpErrorLog = Class.create({
             listeners: {
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
-                        var input = field;
+                        var input = filterField;
                         var val = input.getValue();
                         this.store.getProxy().extraParams.filter = val ? val : "";
                         this.store.load();
@@ -159,17 +159,17 @@ pimcore.settings.httpErrorLog = Class.create({
                 handler: function () {
                     Ext.Ajax.request({
                         url: "/admin/misc/http-error-log-flush",
+                        method: "DELETE",
                         success: function () {
-                            var input = field;
                             var proxy = this.store.getProxy();
-                            proxy.extraParams.filter = input.getValue();
+                            proxy.extraParams.filter = this.filterField.getValue();
                             this.store.load();
                         }.bind(this)
                     });
                 }.bind(this),
                 iconCls: "pimcore_icon_flush_recyclebin"
             }, "-", {
-                text: t("errors_from_the_last_14_days"),
+                text: t("errors_from_the_last_7_days"),
                 xtype: "tbtext"
             }, '-',"->",{
               text: t("filter") + "/" + t("search"),

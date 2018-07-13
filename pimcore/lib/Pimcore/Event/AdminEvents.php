@@ -254,6 +254,17 @@ final class AdminEvents
     const ASSET_GET_PRE_SEND_DATA = 'pimcore.admin.asset.get.preSendData';
 
     /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Arguments:
+     *  - assets | array | the list of asset tree nodes
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.asset.treeGetChildsById.preSendData';
+
+    /**
      * Fired before the request params are parsed.
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase
@@ -266,6 +277,17 @@ final class AdminEvents
      * @var string
      */
     const DOCUMENT_GET_PRE_SEND_DATA = 'pimcore.admin.document.get.preSendData';
+
+    /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DocumentController
+     * Arguments:
+     *  - documents | array | the list of document tree nodes
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildsById.preSendData';
 
     /**
      * Fired before the request params are parsed.
@@ -303,4 +325,32 @@ final class AdminEvents
      * @var string
      */
     const CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA = 'pimcore.admin.class.objectbrickList.preSendData';
+
+    /**
+     * Allows you to modify the search backend list before it is loaded.
+     *
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
+     * Arguments:
+     *  - list | the search backend list
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const QUICKSEARCH_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.quickSearch.list.beforeListLoad';
+
+    /**
+     * Allows you to modify the the result after the list was loaded.
+     *
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
+     * Arguments:
+     *  - list | raw result as an array
+     *  - context | contains contextual information
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const QUICKSEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.quickSearch.list.afterListLoad';
 }

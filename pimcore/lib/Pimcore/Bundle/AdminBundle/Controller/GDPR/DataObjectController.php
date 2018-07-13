@@ -15,7 +15,9 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\DataObject\AbstractObject;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -45,6 +47,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     /**
      * @param Request $request
      * @Route("/search-data-objects")
+     * @Method({"GET"})
      */
     public function searchDataObjectsAction(Request $request, DataObjects $service)
     {
@@ -66,13 +69,17 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     /**
      * @param Request $request
      * @Route("/export")
+     * @Method({"GET"})
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {
         $object = AbstractObject::getById($request->get('id'));
         $exportResult = $service->doExportData($object);
-        $jsonResponse = $this->adminJson($exportResult);
-        $jsonResponse->headers->set('Content-Disposition', 'attachment; filename="export-data-object-' . $object->getId() . '.json"');
+
+        $json = $this->encodeJson($exportResult, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
+        $jsonResponse = new JsonResponse($json, 200, [
+            'Content-Disposition' => 'attachment; filename="export-data-object-' . $object->getId() . '.json"'
+        ], true);
 
         return $jsonResponse;
     }

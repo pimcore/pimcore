@@ -70,7 +70,7 @@ class ObjectTest extends RestTestCase
         $this->assertTrue($creationDate >= $time, 'wrong creation date');
 
         // as the object key is unique there must be exactly one object with that key
-        $list = $this->restClient->getObjectList("o_key = '" . $unsavedObject->getKey() . "'");
+        $list = $this->restClient->getObjectList('{ "o_key" : "' . $unsavedObject->getKey() . '"}');
         $this->assertEquals(1, count($list));
     }
 

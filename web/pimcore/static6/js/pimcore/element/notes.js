@@ -279,7 +279,7 @@ pimcore.element.notes = Class.create({
                     width: 30,
                     items: [{
                         tooltip: t('open'),
-                        icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                        icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                         handler: function (grid, rowIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
                             if(rec.get("type") == "document" || rec.get("type") == "asset"
@@ -314,14 +314,28 @@ pimcore.element.notes = Class.create({
 
     onAdd: function () {
 
+        var noteTypesStore = new Ext.data.Store({
+            fields: ["name"],
+            proxy: {
+                type: 'ajax',
+                url: '/admin/element/note-types?ctype=' + this.type,
+                reader: {
+                    type: 'json',
+                    rootProperty: "noteTypes"
+                }
+            }
+        });
+
         var formPanel = new Ext.form.FormPanel({
             bodyStyle: "padding:10px;",
             items: [{
                 xtype: "combo",
                 fieldLabel: t('type'),
                 name: "type",
-                store: ["","content","seo","warning","notice"],
                 editable: true,
+                displayField: 'name',
+                valueField: 'name',
+                store: noteTypesStore,
                 mode: "local",
                 triggerAction: "all",
                 width: 250

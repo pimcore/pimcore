@@ -34,10 +34,11 @@ interface NamingStrategyInterface
      * @param string $name
      * @param string $type
      * @param BlockState $blockState
+     * @param string $targetGroupElementName
      *
      * @return string
      */
-    public function buildTagName(string $name, string $type, BlockState $blockState): string;
+    public function buildTagName(string $name, string $type, BlockState $blockState, string $targetGroupElementName = null): string;
 
     /**
      * Builds a tag name for a child element

@@ -703,7 +703,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
     public function preGetData($object, $params = [])
     {
         if (!$object instanceof DataObject\Concrete) {
-            throw new \Exception('Localized Fields are only valid in Objects');
+            throw new \Exception('Classification store fields are only valid in Objects');
         }
 
         if (!$object->{$this->getName()} instanceof DataObject\Classificationstore) {

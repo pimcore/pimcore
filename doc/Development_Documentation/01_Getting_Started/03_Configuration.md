@@ -40,7 +40,7 @@ $ bin/console config:dump-reference pimcore
 
 ## Pimcore constants
 
-Pimcore uses several constants for locating certain directories like logging, asses, versions etc. These constants are
+Pimcore uses several constants for locating certain directories like logging, assets, versions etc. These constants are
 defined in [`/pimcore/config/constants.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/config/constants.php).
 
 If you need to overwrite these constants, e.g. for using a special directory for assets or versions at an object storage

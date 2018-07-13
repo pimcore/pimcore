@@ -154,7 +154,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                    icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openObject(data.data.id, "object");
@@ -199,7 +199,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
                     items: [
                         {
                             tooltip: t('open'),
-                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 pimcore.helpers.openObject(data.data.id, "object");

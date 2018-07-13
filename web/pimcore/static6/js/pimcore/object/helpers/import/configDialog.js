@@ -119,7 +119,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         );
 
         this.deleteButton = new Ext.button.Button({
-            text: t('remove_config'),
+            text: t('delete'),
             iconCls: "pimcore_icon_delete",
             disabled: !this.config.importConfigId,
             handler: this.deleteConfig.bind(this)
@@ -129,7 +129,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         this.loadButton = new Ext.button.Split({
 
-                text: t("load_configuration"),
+                text: t("load"),
                 iconCls: "pimcore_icon_load_import_config",
                 handler: function () {
                     this.showLoadDialog();
@@ -148,7 +148,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         buttons.push(this.loadButton);
 
         this.saveButton = new Ext.button.Split({
-            text: t("save_configuration"),
+            text: t("save"),
             iconCls: "pimcore_icon_save",
             handler: function () {
                 this.saveConfig(false);
@@ -288,23 +288,23 @@ pimcore.object.helpers.import.configDialog = Class.create({
                             this.config.isShared = false;
                             this.deleteButton.setDisabled(false);
                             this.containerPanel.setTitle(this.getWindowTitle());
-                            pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
+                            pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         }
                         else {
-                            pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"),
+                            pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                                 "error", t(rdata.message));
                         }
                     } catch (e) {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                     }
                 }.bind(this),
                 failure: function () {
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             });
 
         } catch (e3) {
-            pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+            pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
         }
 
     },
@@ -485,7 +485,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
             width: 600,
             height: 200,
             modal: true,
-            title: t('load_configuration'),
+            title: t('load'),
             layout: "fit",
             items: [configPanel],
             buttons: [
@@ -528,6 +528,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         if (btn == 'ok') {
             Ext.Ajax.request({
                 url: "/admin/object-helper/delete-import-config",
+                method: "DELETE",
                 params: {
                     importConfigId: this.importConfigId
 
@@ -540,10 +541,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
                         this.importConfigId = null;
                         this.deleteButton.disable();
                         this.containerPanel.setTitle(this.getWindowTitle());
-
-                        pimcore.helpers.showNotification(t("success"), t("importconfig_removed"), "success");
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("importconfig_not_removed"), "error");
+                        pimcore.helpers.showNotification(t("error"), t("error_deleting_item"), "error");
                     }
 
 
@@ -578,6 +577,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/object-helper/import-export-config",
+            method: 'POST',
             params: {
                 gridConfigId: gridConfigId,
                 classId: this.classId

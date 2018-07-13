@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
@@ -86,10 +87,11 @@ interface IOrderAgent
 
     /**
      * @param IPayment $paymentProvider
+     * @param AbstractOrder|null $sourceOrder
      *
      * @return Order
      */
-    public function setPaymentProvider(IPayment $paymentProvider);
+    public function setPaymentProvider(IPayment $paymentProvider, AbstractOrder $sourceOrder = null);
 
     /**
      * Starts payment:

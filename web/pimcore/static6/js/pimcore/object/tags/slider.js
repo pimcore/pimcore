@@ -50,12 +50,15 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
             slider.value = this.data;
         }
 
-        if (this.fieldConfig.width) {
+        if (this.fieldConfig.width && !this.fieldConfig.vertical) {
             slider.width = this.fieldConfig.width;
         }
         if (this.fieldConfig.height) {
             slider.height = this.fieldConfig.height;
+        } else {
+            slider.height = 200;
         }
+
         if (this.fieldConfig.minValue) {
             slider.minValue = this.fieldConfig.minValue;
         }

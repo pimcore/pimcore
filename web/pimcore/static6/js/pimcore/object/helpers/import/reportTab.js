@@ -122,7 +122,7 @@ pimcore.object.helpers.import.reportTab = Class.create({
             });
 
             this.importProgressBar = new Ext.ProgressBar({
-                text: t('Initializing'),
+                text: t('initializing'),
                 style: "margin: 10px;",
                 width: 500
             });

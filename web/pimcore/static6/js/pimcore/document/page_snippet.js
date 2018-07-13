@@ -42,6 +42,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.data.id,
                     type: "document"
@@ -163,15 +164,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 tooltip: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 scale: "medium",
-                handler: function () {
-                    var options = {
-                        elementType: "document",
-                        elementSubType: this.getType(),
-                        id: this.id,
-                        default: this.data.key
-                    };
-                    pimcore.elementservice.editElementKey(options);
-                }.bind(this)
+                handler: this.rename.bind(this)
             });
 
 
@@ -225,7 +218,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             buttons.push("-");
             buttons.push({
                 tooltip: t("open"),
-                iconCls: "pimcore_icon_open",
+                iconCls: "pimcore_icon_cursor",
                 scale: "medium",
                 handler: function () {
                     var date = new Date();
@@ -258,7 +251,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.id,
+                text: t("id") + " " + this.data.id,
                 scale: "medium"
             });
 
@@ -322,6 +315,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
     removeFromSession: function () {
         Ext.Ajax.request({
             url: this.urlprefix + this.getType() + '/remove-from-session',
+            method: 'DELETE',
             params: {id: this.data.id}
         });
     },
@@ -378,5 +372,17 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 value: pimcore.helpers.getDeeplink("document", this.data.id, this.data.type)
             }
         ], "document");
+    },
+
+    rename: function () {
+        if(this.isAllowed("rename") && !this.data.locked && this.data.id != 1) {
+            var options = {
+                elementType: "document",
+                elementSubType: this.getType(),
+                id: this.id,
+                default: this.data.key
+            };
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 });

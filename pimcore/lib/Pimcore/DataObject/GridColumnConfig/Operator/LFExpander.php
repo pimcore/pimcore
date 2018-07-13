@@ -18,13 +18,13 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\DataObject\GridColumnConfig\ResultContainer;
-use Pimcore\Localization\Locale;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 
 class LFExpander extends AbstractOperator
 {
     /**
-     * @var Locale
+     * @var LocaleServiceInterface
      */
     private $localeService;
 
@@ -32,7 +32,7 @@ class LFExpander extends AbstractOperator
     private $asArray;
     private $prefix;
 
-    public function __construct(Locale $localeService, \stdClass $config, $context = null)
+    public function __construct(LocaleServiceInterface $localeService, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 

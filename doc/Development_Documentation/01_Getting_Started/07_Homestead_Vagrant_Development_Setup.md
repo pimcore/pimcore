@@ -87,19 +87,7 @@ install_dependencies() {
   sudo apt-get install -y php7.1-apcu php7.1-imagick php7.1-redis
 
   # System packages
-  sudo apt-get install -y libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript libimage-exiftool-perl
-
-  # ffmpeg
-  if [ ! -e /usr/local/ffmpeg/ffmpeg ]; then
-    wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz -O ffmpeg.tar.xz
-    tar -Jxf ffmpeg*.tar.xz
-    rm ffmpeg*.tar.xz
-    sudo mv ffmpeg-* /usr/local/ffmpeg
-    sudo ln -s /usr/local/ffmpeg/ffmpeg /usr/local/bin/
-    sudo ln -s /usr/local/ffmpeg/ffprobe /usr/local/bin/
-    sudo ln -s /usr/local/ffmpeg/qt-faststart /usr/local/bin/
-    sudo ln -s /usr/local/ffmpeg/qt-faststart /usr/local/bin/qtfaststart
-  fi
+  sudo apt-get install -y libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript libimage-exiftool-perl ffmpeg
 
   # Image optimizers
   if [ ! -e /usr/local/bin/zopflipng ]; then

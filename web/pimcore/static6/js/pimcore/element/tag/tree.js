@@ -128,6 +128,7 @@ pimcore.element.tag.tree = Class.create({
 
                             Ext.Ajax.request({
                                 url: "/admin/tags/update",
+                                method: 'PUT',
                                 params: {
                                     id: data.records[0].id,
                                     parentId: overModel.id
@@ -211,10 +212,10 @@ pimcore.element.tag.tree = Class.create({
         if (this.allowAdd && user.isAllowed("tags_configuration")) {
             hasEntries = true;
             menu.add(new Ext.menu.Item({
-                text: t('add_tag'),
+                text: t('add'),
                 iconCls: "pimcore_icon_add",
                 handler: function (tree, record) {
-                    Ext.MessageBox.prompt(t('add_tag'), t('enter_the_name_of_the_new_tag'), this.addTagComplete.bind(this, tree, record), null, null, "");
+                    Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'), this.addTagComplete.bind(this, tree, record), null, null, "");
                 }.bind(this, tree, record)
             }));
         }
@@ -229,6 +230,7 @@ pimcore.element.tag.tree = Class.create({
                         if (btn == 'yes') {
                             Ext.Ajax.request({
                                 url: "/admin/tags/delete",
+                                method: 'DELETE',
                                 params: {
                                     id: record.data.id
                                 },
@@ -252,6 +254,7 @@ pimcore.element.tag.tree = Class.create({
                         if (button == "ok" && value.length > 2) {
                             Ext.Ajax.request({
                                 url: "/admin/tags/update",
+                                method: 'PUT',
                                 params: {
                                     id: record.id,
                                     text: value
@@ -265,7 +268,7 @@ pimcore.element.tag.tree = Class.create({
                             return;
                         }
                         else {
-                            Ext.Msg.alert(t('rename_tag'), t('invalid_tag_name'));
+                            Ext.Msg.alert(t('rename'), t('invalid_name'));
                         }
 
                     }.bind(this, tree, record), null, null, record.get('text'));
@@ -283,6 +286,7 @@ pimcore.element.tag.tree = Class.create({
         if (button == "ok" && value.length > 2) {
             Ext.Ajax.request({
                 url: "/admin/tags/add",
+                method: 'POST',
                 params: {
                     parentId: record.data.id,
                     text: value
@@ -300,7 +304,7 @@ pimcore.element.tag.tree = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_tag'), t('invalid_tag_name'));
+            Ext.Msg.alert(' ', t('invalid_name'));
         }
     },
 

@@ -95,7 +95,7 @@ class GridConfigFavourite extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getClassId()
     {

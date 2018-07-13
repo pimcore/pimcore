@@ -137,7 +137,7 @@ pimcore.settings.robotstxt = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/settings/robots-txt",
-            method: "post",
+            method: "PUT",
             params: {
                 data: this.editArea.getValue(),
                 site: this.site
@@ -147,12 +147,12 @@ pimcore.settings.robotstxt = Class.create({
                 try {
                     var data = Ext.decode(response.responseText);
                     if(data.success) {
-                        pimcore.helpers.showNotification(t("success"), t("save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                     } else {
                         throw "save error";
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this)
         });

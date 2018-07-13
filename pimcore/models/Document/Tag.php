@@ -264,11 +264,27 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     protected function outputEditmodeOptions(array $options, $return = false)
     {
+        // clean up invalid brick editmode options
+        if (array_key_exists('options', $options) && array_key_exists('params', $options['options'])) {
+            $validOptions = ['forceEditInView', 'editWidth', 'editHeight'];
+            foreach ($options['options']['params'] as $brickName => $params) {
+                foreach ($params as $key => $val) {
+                    if (!in_array($key, $validOptions)) {
+                        unset($options['options']['params'][$brickName][$key]);
+                    }
+                }
+            }
+        }
+
         $code = '
-            <script type="text/javascript">
+            <script>
                 editableConfigurations.push(' . json_encode($options) . ');
             </script>
         ';
+
+        if (json_last_error()) {
+            throw new \Exception('json encode failed: ' . json_last_error_msg());
+        }
 
         if ($return) {
             return $code;
@@ -639,11 +655,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
-        if ($document && $document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
-            $name = $document->getTargetGroupElementName($name);
+        $targetGroupElementName = null;
+        if ($document && $document instanceof TargetingDocumentInterface) {
+            $targetGroupElementName = $document->getTargetGroupElementName($name);
+
+            if (!$blockState->hasBlocks()) {
+                $name = $targetGroupElementName;
+            }
         }
 
-        $tagName = $namingStrategy->buildTagName($name, $type, $blockState);
+        $tagName = $namingStrategy->buildTagName($name, $type, $blockState, $targetGroupElementName);
 
         $event = new TagNameEvent($type, $name, $blockState, $tagName, $document);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::TAG_NAME, $event);

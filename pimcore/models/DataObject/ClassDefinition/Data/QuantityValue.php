@@ -352,10 +352,9 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = [])
     {
-        $key = $this->getName();
-        $getter = 'get'.ucfirst($key);
-        if ($object->$getter() instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
-            return $object->$getter()->getValue() . '_' . $object->$getter()->getUnitId();
+        $data = $this->getDataFromObjectParam($object, $params);
+        if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
+            return $data->getValue() . '_' . $data->getUnitId();
         } else {
             return null;
         }

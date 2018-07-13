@@ -325,7 +325,7 @@ The object listing of this example only delivers objects of the type Collectiont
 
 <a name="zendPaginatorListing">&nbsp;</a>
 
-### Working with Zend_Paginator
+### Working with Zend\Paginator
 
 ##### Action 
 ```php
@@ -335,7 +335,7 @@ public function testAction( Request $request )
     $list->setOrderKey("name");
     $list->setOrder("asc");
  
-    $paginator = \Zend_Paginator::factory($list);
+    $paginator = new \Zend\Paginator\Paginator($list);
     $paginator->setCurrentPageNumber( $request->get('page') );
     $paginator->setItemCountPerPage(10);
     $this->view->paginator  = $paginator;
@@ -350,10 +350,10 @@ public function testAction( Request $request )
 <br />
  
 <!-- pagination start -->
-<?= $this->paginationControl($this->paginator, 'Sliding', 'includes/paging.php', [
-   'urlprefix' => $this->document->getFullPath() . '?page=', // just example (this parameter could be used in paging.php to construct the URL)
-   'appendQueryString' => true // just example (this parameter could be used in paging.php to construct the URL)
-]); ?>
+<?=     $this->render("Backend/Includes/paging.html.php", get_object_vars($this->paginator->getPages("Sliding")), [
+       'urlprefix' => $this->document->getFullPath() . '?page=', // just example (this parameter could be used in paging.php to construct the URL)
+       'appendQueryString' => true // just example (this parameter could be used in paging.php to construct the URL)
+    ]); ?>
 <!-- pagination end -->
 ```
 
@@ -362,25 +362,25 @@ public function testAction( Request $request )
 <div>
     <ul class="pagination">
         <!-- First page link -->
-        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->url(['page' => $this->first]); ?>">Start</a></li>
+        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->first]); ?>">Start</a></li>
   
         <!-- Previous page link -->
-        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->url(['page' => $this->previous]); ?>">&lt; Previous</a></li>
+        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->previous]); ?>">&lt; Previous</a></li>
  
         <!-- Numbered page links -->
         <?php foreach ($this->pagesInRange as $page): ?>
             <?php if ($page != $this->current): ?>
-                <li><a href="<?= $this->url(['page' => $page]); ?>"><?= $page; ?></a></li>
+                <li><a href="<?= $this->pimcoreUrl(['page' => $page]); ?>"><?= $page; ?></a></li>
             <?php else: ?>
                 <li class="disabled"><a href="#"><?= $page; ?></a></li>
             <?php endif; ?>
         <?php endforeach; ?>
          
         <!-- Next page link -->
-        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->url(['page' => $this->next]); ?>">Next &gt;</a></li>
+        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->next]); ?>">Next &gt;</a></li>
          
         <!-- Last page link -->
-        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->url(['page' => $this->last]); ?>">End</a></li>
+        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->last]); ?>">End</a></li>
          
     </ul>
  </div>
@@ -389,7 +389,7 @@ public function testAction( Request $request )
 ### Access and modify internal object list query
 
 It is possible to access and modify the internal query from every object listing. The internal query is based 
-on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html).
+on `\Pimcore\Db\ZendCompatibility\QueryBuilder`.
 ```php
 
 <?php
@@ -399,19 +399,20 @@ on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(function (Zend_Db_Select $query) use ($list) {
-    // join another table
-    $query->join(
+$list->onCreateQuery(
+    function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) {
+        $select->join(
         ['rating' => 'plugin_rating_ratings'],
         'rating.ratingTargetId = object_' . $list->getClassId() . '.o_id',
         ''
     );
-});
+    }
+);
 ```
 
 ### Debugging the Object List Query
 
-You can access and print the internal query which is based on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html) to debug your conditions like this:
+You can access and print the internal query which is based on `\Pimcore\Db\ZendCompatibility\QueryBuilder` to debug your conditions like this:
 
 ```php
 <?php
@@ -421,7 +422,7 @@ You can access and print the internal query which is based on [Zend_Db_Select](h
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(function (Zend_Db_Select $query) use ($list) {
+$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder query) {
     // echo query
     echo $query;
 });

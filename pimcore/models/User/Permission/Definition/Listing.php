@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\User\Permission\Definition\Listing\Dao getDao()
+ * @method Model\User\Permission\Definition[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

@@ -284,7 +284,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         }
 
         // set core cache pool alias
-        $container->setAlias('pimcore.cache.core.pool', $coreCachePool);
+        $container->setAlias('pimcore.cache.core.pool', $coreCachePool)->setPublic(true);
     }
 
     private function configureTranslations(ContainerBuilder $container, array $config)
