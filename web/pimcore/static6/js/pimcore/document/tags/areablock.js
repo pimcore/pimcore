@@ -739,6 +739,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             menuText += " | " + brick.description;
         }
 
+        if(!insertPosition) {
+            insertPosition = 'after';
+        }
+        
         var addBLockFunction = "addBlock" + ucfirst(insertPosition);
 
         var tmpEntry = {

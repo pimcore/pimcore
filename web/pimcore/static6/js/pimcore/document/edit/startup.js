@@ -145,7 +145,10 @@ Ext.onReady(function () {
             try {
                 editables.push(getEditable(editableConfigurations[i]));
             } catch (e) {
-                console.log(e);
+                console.error(e);
+                if(e.stack) {
+                    console.error(e.stack);
+                }
             }
         }
 
