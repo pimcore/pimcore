@@ -1,9 +1,6 @@
 # Pimcore 5
 THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE  
 
-**Looking for the previous stable (version 4)?  
-See https://github.com/pimcore/pimcore/tree/pimcore4**
-
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
 [![Build Status](https://travis-ci.org/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
@@ -28,3 +25,9 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 ## Copyright and license 
 Copyright: [Pimcore](http://www.pimcore.org) GmbH  
 For licensing details please visit [LICENSE.md](LICENSE.md) 
+  
+  
+  
+   
+**Looking for the previous stable (version 4)?  
+See https://github.com/pimcore/pimcore/tree/pimcore4**
