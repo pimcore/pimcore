@@ -25,6 +25,14 @@ use Pimcore\Model\DataObject\AbstractObject;
 abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements ICartItem
 {
     /**
+     * flag needed for preventing call modified on cart when loading cart from storage
+     *
+     * @var bool
+     */
+    protected $isLoading = false;
+
+
+    /**
      * @var ICheckoutable
      */
     protected $product;
@@ -54,7 +62,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     public function setCount($count)
     {
-        if ($this->count != $count && $this->getCart() && !$this->getCart()->isCartReadOnly()) {
+        if ($this->count != $count && $this->getCart() && !$this->isLoading) {
             $this->getCart()->modified();
         }
         $this->count = $count;
@@ -67,6 +75,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     public function setProduct(ICheckoutable $product)
     {
+        if ((isEmpty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading) {
+            $this->getCart()->modified();
+        }
         $this->product = $product;
         $this->productId = $product->getId();
     }
@@ -131,7 +142,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setProductId($productId)
     {
+        if ($this->productId != $productId && $this->getCart() && !$this->isLoading) {
+            $this->getCart()->modified();
+        }
         $this->productId = $productId;
+        $this->product = null;
     }
 
     /**
@@ -173,6 +188,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setSubItems($subItems)
     {
+        if ($this->getCart() && !$this->isLoading) {
+            $this->getCart()->modified();
+        }
+
         foreach ($subItems as $item) {
             $item->setParentItemKey($this->getItemKey());
         }
@@ -308,4 +327,17 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     {
         return $this->getProduct()->getOSName();
     }
+
+    /**
+     * Flag needed for preventing call modified on cart when loading cart from storage
+     * only for internal usage
+     *
+     * @param bool $isLoading
+     * @internal
+     */
+    public function setIsLoading(bool $isLoading)
+    {
+        $this->isLoading = $isLoading;
+    }
+
 }

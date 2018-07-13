@@ -52,7 +52,12 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         if (empty($classRaw)) {
             throw new \Exception('CartItem for cartId ' . $cartId . ' and itemKey ' . $itemKey . ' not found.');
         }
+
+        $this->model->setIsLoading(true);
+
         $this->assignVariablesToModel($classRaw);
+
+        $this->model->setIsLoading(false);
     }
 
     /**
