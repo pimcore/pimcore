@@ -22,6 +22,14 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
         this.mapImageID = uniqid();
         this.divImageID = uniqid();
+        this.searchfield = new Ext.form.TextField({
+            width: 300,
+            name: 'mapSearch',
+            style: 'float: left;'
+        });
+        this.currentLocationTextNode = new Ext.Toolbar.TextItem({
+            text: '&nbsp;'
+        });
 
         var coordConf = {
             decimalPrecision: 15,
@@ -64,11 +72,24 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                         handler: function () {
                             this.latitude.setValue(null);
                             this.longitude.setValue(null);
+                            this.currentLocationTextNode.setText(null);
                             this.updateMap();
                         }.bind(this)
                     },
+            ],
+            tbar: [
+                this.currentLocationTextNode,
+                "->",
+                this.searchfield,
+                {
+                    xtype: 'button',
+                    iconCls: "pimcore_icon_search",
+                    handler: this.geocode.bind(this)
+                }
             ]
+    
         });
+        
 
         this.component.on('afterrender', function () {
             this.updateMap();
@@ -88,10 +109,8 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     },
 
     getMapUrl: function (fieldConfig, data) {
-        var mapZoom = fieldConfig.zoom;
-        var lat = fieldConfig.lat;
-        var lng = fieldConfig.lng;
-        var leafletMap;
+        this.mapZoom = fieldConfig.zoom;
+        this.leafletMap = null;
         var markerIcon = L.icon({
                 iconUrl: '/pimcore/static6/img/leaflet/marker-icon.png',
                 shadowUrl: '/pimcore/static6/img/leaflet/marker-shadow.png'
@@ -121,44 +140,63 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         });
 
         if (data) {
-            lat = data.latitude;
-            lng = data.longitude;
-            mapZoom = 15;
-            document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="map'+ this.divImageID +'" style="height:400px;width:650px;"></div>';
-            leafletMap =  L.map('map' +this.divImageID).setView([lat, lng], mapZoom);
-            L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(leafletMap);
+            this.mapZoom = 15;
+            this.lat = data.latitude;
+            this.lng = data.longitude;
+            this.getLeafletMap();
+            marker = L.marker([this.lat, this.lng], {icon: markerIcon}).addTo(this.leafletMap);
 
         } else {
-            document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="map'+ this.divImageID +'" style="height:400px;width:650px;"></div>';
-            leafletMap =  L.map('map'+this.divImageID).setView([lat, lng], mapZoom);
-            L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png ', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(leafletMap);
-
+            this.lat = fieldConfig.lat;
+            this.lng = fieldConfig.lng;
+            this.getLeafletMap();
         }
-        marker = L.marker([lat, lng], {icon: markerIcon}).addTo(leafletMap);
-        leafletMap.addLayer(editableLayers);
-        leafletMap.addControl(drawControlFull);
-        leafletMap.on(L.Draw.Event.CREATED, function (e) {
-            leafletMap.removeLayer(marker);
+
+        this.leafletMap.addLayer(editableLayers);
+        this.leafletMap.addControl(drawControlFull);
+        this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
+           if(marker !== null) {
+                this.leafletMap.removeLayer(marker);
+            }
             var layer = e.layer;
             editableLayers.addLayer(layer);
-            if (editableLayers.getLayers().length === 1) {
-                drawControlFull.remove(leafletMap);
-                drawControlEditOnly.addTo(leafletMap);
+           if (editableLayers.getLayers().length === 1) {
+                drawControlFull.remove(this.leafletMap);
+                drawControlEditOnly.addTo(this.leafletMap);
                 this.latitude.setValue(layer.getLatLng().lat);
-                this.longitude.setValue(layer.getLatLng().lng)
+                this.longitude.setValue(layer.getLatLng().lng);
+               this.reverseGeocode();
+               
             }
         }.bind(this));
 
-        leafletMap.on("draw:deleted", function (e) {
-            drawControlEditOnly.remove(leafletMap);
-            drawControlFull.addTo(leafletMap);
-        });
+        this.leafletMap.on("draw:deleted", function (e) {
+            drawControlEditOnly.remove(this.leafletMap);
+            drawControlFull.addTo(this.leafletMap);
+        }.bind(this));
+        this.reverseGeocode();
 
     },
+    
+    geocode: function () {
+        var address = this.searchfield.getValue();
+        $.getJSON("https://nominatim.openstreetmap.org/search?q="+address+"&addressdetails=1&format=json&limit=1", function(json) {
+            this.latitude.setValue(json[0].lat);
+            this.longitude.setValue(json[0].lon);
+            this.updateMap();
+        }.bind(this));
+       
+    },
+    
+    reverseGeocode: function () {
+        if(this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
+            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat="+this.latitude.getValue()+"&lon="+
+                this.longitude.getValue()+"&addressdetails=1", function(json) {
+                this.currentLocationTextNode.setText(json.display_name);
+            }.bind(this));
+        }
+    },
+
 
     getValue: function () {
         return {
@@ -217,5 +255,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     getCellEditValue: function () {
         return this.getValue();
-    }
+    },
+    
+    
 });

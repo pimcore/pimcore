@@ -50,12 +50,13 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         return this.component;
     },
 
-    getMapUrl: function (fieldConfig, data, width, height) {
-
+    getMapUrl: function (fieldConfig, data) {
+        
         var mapZoom = fieldConfig.zoom;
         var lat = fieldConfig.lat;
         var lng = fieldConfig.lng;
         var leafletMap;
+        this.rectangle = null;
         var editableLayers = new L.FeatureGroup();
         var drawControlFull = new L.Control.Draw({
             position: 'topright',
@@ -88,7 +89,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
                 }).addTo(leafletMap);
 
                 var bounds = [[data.NElatitude, data.NElongitude], [data.SWlatitude, data.SWlongitude]];
-                rectangle = L.rectangle(bounds, {color: "0x00000073", weight: 1}).addTo(leafletMap);
+                this.rectangle = L.rectangle(bounds, {color: "0x00000073", weight: 1}).addTo(leafletMap);
                 leafletMap.fitBounds(bounds);
 
             } else {
@@ -102,8 +103,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             leafletMap.addControl(drawControlFull);
             leafletMap.on(L.Draw.Event.CREATED, function (e) {
                 this.dirty = true;
-                if(rectangle === null) {
-                    leafletMap.removeLayer(rectangle);
+                if(this.rectangle !== null) {
+                    leafletMap.removeLayer(this.rectangle);
                 }
                 var layer = e.layer;
                 editableLayers.addLayer(layer);
