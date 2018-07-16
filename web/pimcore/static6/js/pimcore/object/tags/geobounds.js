@@ -27,12 +27,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             name: 'mapSearch',
             style: 'float:left;margin-top:0px;'
         });
-        this.currentLocationTextNode = new Ext.Toolbar.TextItem({
-            text: '&nbsp;'
-        });
 
         this.component = new Ext.Panel({
-            title: this.fieldConfig.title,
             border: true,
             style: "margin-bottom: 10px",
             height: 370,
@@ -50,7 +46,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
                     }.bind(this)
                 }],
             tbar: [
-                this.currentLocationTextNode,
+                 this.fieldConfig.title,
                 "->",
                 this.searchfield,
                 {

@@ -180,6 +180,7 @@ class IndexController extends AdminController
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config->assets->hide_edit_image,
+            'leaflet_tile_layer_url_template' => 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);

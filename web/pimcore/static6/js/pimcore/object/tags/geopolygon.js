@@ -32,7 +32,6 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         });
 
         this.component = new Ext.Panel({
-            title: this.fieldConfig.title,
             height: 370,
             width: 650,
             border: true,
@@ -50,7 +49,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
                 }.bind(this)
             }],
             tbar: [
-                this.currentLocationTextNode,
+                this.fieldConfig.title,
                 "->",
                 this.searchfield,
                 {
@@ -109,13 +108,16 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
 
         try {
             if(data) {
+                var bounds = new L.latLngBounds();
                 for (var i = 0; i < data.length; i++) {
+                    bounds.extend(new L.latLng(data[i].latitude, data[i].longitude));
                     this.latlngs.push([data[i].latitude,data[i].longitude]);
                 }
+                this.latlngs.push([data[0].latitude,data[0].longitude]);
                 this.polygon = L.polygon(this.latlngs, {color: '0x00000073'});
-                this.lat = this.polygon.getBounds().getCenter().lat;
-                this.lng = this.polygon.getBounds().getCenter().lng; 
-                this.mapZoom = this.getBoundsZoomLevel(this.polygon.getBounds(), {width: px, height: py});
+                this.lat = bounds.getCenter().lat;
+                this.lng = bounds.getCenter().lng;
+                this.mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
                 this.getLeafletMap();
                 this.polygon.addTo(this.leafletMap);
                 this.leafletMap.fitBounds(this.polygon.getBounds());

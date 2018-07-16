@@ -24,10 +24,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.searchfield = new Ext.form.TextField({
             width: 200,
             name: 'mapSearch',
-            style: 'float: left;margin-top:0px;'
-        });
-        this.currentLocationTextNode = new Ext.Toolbar.TextItem({
-            text: '&nbsp;'
+            style: 'float:left;margin-top:0px;'
         });
 
         var coordConf = {
@@ -51,7 +48,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.latitude.on('keyup', this.updateMap.bind(this));
 
         this.component = new Ext.Panel({
-            title: this.fieldConfig.title,
             border: true,
             style: "margin-bottom: 10px",
             height: 370,
@@ -71,13 +67,12 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                     handler: function () {
                         this.latitude.setValue(null);
                         this.longitude.setValue(null);
-                        this.currentLocationTextNode.setText(null);
                         this.updateMap();
                     }.bind(this)
                 },
             ],
             tbar: [
-                this.currentLocationTextNode,
+                this.fieldConfig.title,
                 "->",
                 this.searchfield,
                 {
@@ -146,7 +141,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             this.lng = data.longitude;
             this.getLeafletMap();
             this.marker = L.marker([this.lat, this.lng], {icon: markerIcon}).addTo(this.leafletMap);
-
+            this.reverseGeocode(this.marker);
         } else {
             this.lat = fieldConfig.lat;
             this.lng = fieldConfig.lng;
@@ -163,14 +158,15 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             if (this.marker !== null) {
                 this.leafletMap.removeLayer(this.marker);
             }
-            var layer = e.layer;
-            this.editableLayers.addLayer(layer);
+            this.layer = e.layer;
+            this.editableLayers.addLayer(this.layer);
+
             if (this.editableLayers.getLayers().length === 1) {
+                this.latitude.setValue(this.layer.getLatLng().lat);
+                this.longitude.setValue(this.layer.getLatLng().lng);
+                this.reverseGeocode(this.layer);
                 this.drawControlFull.remove(this.leafletMap);
                 this.drawControlEditOnly.addTo(this.leafletMap);
-                this.latitude.setValue(layer.getLatLng().lat);
-                this.longitude.setValue(layer.getLatLng().lng);
-                this.reverseGeocode();
 
             }
         }.bind(this));
@@ -180,13 +176,11 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             this.drawControlFull.addTo(this.leafletMap);
             this.latitude.setValue(null);
             this.longitude.setValue(null);
-            this.currentLocationTextNode.setText(null);
-             if (this.marker !== null) {
+            if (this.marker !== null) {
                 this.marker = null;
             }
-            
         }.bind(this));
-        this.reverseGeocode();
+
     },
 
     geocode: function () {
@@ -199,11 +193,13 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     },
 
-    reverseGeocode: function () {
+    reverseGeocode: function (layerObj) {
         if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
             $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + this.latitude.getValue() + "&lon=" +
-                    this.longitude.getValue() + "&addressdetails=1", function (json) {
-                this.currentLocationTextNode.setText(json.display_name);
+                this.longitude.getValue() + "&addressdetails=1", function (json) {
+                this.currentLocationText = json.display_name;
+                layerObj.bindTooltip(this.currentLocationText);
+                layerObj.openTooltip();
             }.bind(this));
         }
     },

@@ -75,7 +75,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     getLeafletMap: function() {
         document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="'+ this.mapId +'" style="height:400px;width:650px;"></div>';
         this.leafletMap =  L.map(this.mapId).setView([this.lat, this.lng], this.mapZoom);
-        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer(pimcore.settings.leaflet_tile_layer_url_template, {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.leafletMap);
     },
