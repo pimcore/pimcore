@@ -378,7 +378,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['showAppLoggerTab'] = $object->getClass()->getShowAppLoggerTab();
             $objectData['general']['fullpath'] = $object->getRealFullPath();
             $objectData['general']['versionDate'] = $object->getModificationDate();
-            $objectData['validLanguages'] = Tool::getValidLanguages();
 
             if ($object->getElementAdminStyle()->getElementIcon()) {
                 $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
