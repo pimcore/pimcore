@@ -15,6 +15,12 @@
 @import 'ext-modifications.css';
 @import 'icons.css';
 
+
+.cke {
+    /* needs to go over the ExtJS panels */
+    z-index: 100200 !important;
+}
+
 .cke * {
     box-sizing: content-box !important;
     -moz-box-sizing: content-box !important;
