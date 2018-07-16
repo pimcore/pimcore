@@ -75,7 +75,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     public function setProduct(ICheckoutable $product)
     {
-        if ((isEmpty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading) {
+        if ((empty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading) {
             $this->getCart()->modified();
         }
         $this->product = $product;
