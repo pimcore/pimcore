@@ -15,10 +15,12 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Text\Csv;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Admin
 {
@@ -67,6 +69,15 @@ class Admin
                     }
                 }
             }
+        }
+
+        $eventDispatcher = \Pimcore::getContainer()->get("event_dispatcher");
+        $event = new GenericEvent(null, ["languages" => $languages]);
+
+        $eventDispatcher->dispatch(AdminEvents::SETTINGS_GET_AVAILABLE_ADMIN_LANGUAGES, $event);
+
+        if (!empty($event->getArgument("languages"))) {
+            return $event->getArgument("languages");
         }
 
         return $languages;
