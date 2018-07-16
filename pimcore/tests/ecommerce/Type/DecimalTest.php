@@ -91,7 +91,7 @@ class DecimalTest extends TestCase
 
         $this->assertEquals(16, $val->asRawValue());
         $this->assertEquals(16.0, $val->asNumeric());
-        $this->assertEquals('16.0000', $val->asString());
+        $this->assertEquals('16', $val->asString());
     }
 
     public function testCreateZero()
