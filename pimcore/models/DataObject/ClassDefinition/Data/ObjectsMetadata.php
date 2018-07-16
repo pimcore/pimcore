@@ -700,6 +700,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
     public function setAllowedClassId($allowedClassId)
     {
         $this->allowedClassId = $allowedClassId;
+
         return $this;
     }
 

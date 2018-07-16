@@ -15,7 +15,7 @@ foreach ($classes as $ckey => $class) {
             $found = true;
         }
     }
-    if($found) {
+    if ($found) {
         try {
             $class->save();
         } catch (\Exception $e) {
@@ -39,7 +39,7 @@ foreach ($brickList as $brickDef) {
             $found = true;
         }
     }
-    if($found) {
+    if ($found) {
         try {
             $brickDef->save();
         } catch (\Exception $e) {
@@ -63,7 +63,7 @@ foreach ($fcList as $collectionDef) {
             $found = true;
         }
     }
-    if($found) {
+    if ($found) {
         try {
             $collectionDef->save();
         } catch (\Exception $e) {
