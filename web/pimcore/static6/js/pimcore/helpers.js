@@ -2790,15 +2790,15 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
         items: pages
     });
 
-    var loadingInterval = window.setInterval(function () {
+    var loadingInterval = window.setTimeout(function () {
 
         if (!this.pagesContainer || !this.pagesContainer.body || !this.pagesContainer.body.dom) {
             clearInterval(loadingInterval);
         } else {
             var el;
             var scroll = this.pagesContainer.body.getScroll();
-            var startPage = Math.floor(scroll.top / 162); // 162 is the height of one thumbnail incl. border and margin
-            for (var i = startPage; i < (startPage + 5); i++) {
+            var startPage = (Math.floor(scroll.top / 162) > 0 ? Math.floor(scroll.top / 162) : 1 ); // 162 is the height of one thumbnail incl. border and margin
+            for (var i = startPage; i <= pages.length; i++) {
                 el = Ext.get(this.getName() + "-page-" + i);
                 if (el) {
                     // el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
@@ -2807,6 +2807,8 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             }
         }
     }.bind(this), 1000);
+
+
 
     this.metaDataWindow = new Ext.Window({
         width: 700,
