@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.anonymizer");
 
-pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.gridcolumn.operator.text, {
     type: "operator",
     class: "Anonymizer",
     iconCls: "pimcore_icon_operator_anonymizer",
-    defaultText: "operator_anonymizer",
+    defaultText: "Anonymizer",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -46,7 +46,7 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -121,7 +121,7 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_anonymizer_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -142,7 +142,7 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
         if (configAttributes.mode == "md5" || configAttributes.mode == "bcrypt") {
             var mode = configAttributes.mode == "md5" ? t("md5") : t("bcrypt");
 

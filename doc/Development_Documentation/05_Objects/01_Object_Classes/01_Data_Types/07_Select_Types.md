@@ -16,7 +16,17 @@ languages. The country and language select field are also available as multi sel
 The user field has fixed values as well. It allows to select a user from all available Pimcore system users. 
 Thereby a system user can be associated an object. 
 
+For multiselect types there is extra configuration to set render type (list or tags)
 
+![Select Field](../../../img/multiselect_rendertype.png)
+
+Object Editor view for List Render Type:
+
+![Select Field](../../../img/multiselect_view_list.png)
+
+Object Editor view for Tags Render Type:
+
+![Select Field](../../../img/multiselect_view_tags.png)
 ### Working with select data types via API
 
 In order to set a select field's value programmatically, the value is simply passed to the setter. To set the values 

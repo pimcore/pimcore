@@ -182,7 +182,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
                 }
 
                 var navigationEnhanced = new Ext.form.FieldSet({
-                    title: t('enhanced'),
+                    title: t('advanced'),
                     autoHeight: true,
                     collapsible: true,
                     collapsed: true,
@@ -194,7 +194,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
                 });
 
                 this.navigationPanel = new Ext.form.FormPanel({
-                    title: t("navigation_settings"),
+                    title: t("navigation"),
                     bodyStyle: "padding: 10px;",
                     autoWidth: true,
                     autoHeight: true,
@@ -206,7 +206,6 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
             }
 
             this.systemPropertiesPanel = new Ext.Panel({
-                title: t("system_properties"),
                 width: 300,
                 region: "east",
                 autoScroll: true,

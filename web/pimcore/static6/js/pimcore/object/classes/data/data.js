@@ -199,7 +199,7 @@ pimcore.object.classes.data.data = Class.create({
             if (this.datax.hasOwnProperty("unique")) {
                 uniqueCheckbox.setHidden(false);
                 Ext.QuickTips.init();
-                Ext.QuickTips.register({target:  uniqueCheckbox, text: t("unique_qtip")});
+                Ext.QuickTips.register({target:  uniqueCheckbox, text: t("unique")});
             }
         }
 

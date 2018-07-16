@@ -17,11 +17,12 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/tags")
@@ -30,6 +31,7 @@ class TagsController extends AdminController
 {
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -47,6 +49,7 @@ class TagsController extends AdminController
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -68,6 +71,7 @@ class TagsController extends AdminController
 
     /**
      * @Route("/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -97,6 +101,7 @@ class TagsController extends AdminController
 
     /**
      * @Route("/tree-get-children-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -171,6 +176,7 @@ class TagsController extends AdminController
 
     /**
      * @Route("/load-tags-for-element")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -195,6 +201,7 @@ class TagsController extends AdminController
 
     /**
      * @Route("/add-tag-to-element")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -218,6 +225,7 @@ class TagsController extends AdminController
 
     /**
      * @Route("/remove-tag-from-element")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -241,6 +249,7 @@ class TagsController extends AdminController
 
     /**
      * @Route("/get-batch-assignment-jobs")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -380,6 +389,7 @@ class TagsController extends AdminController
 
     /**
      * @Route("/do-batch-assignment")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *

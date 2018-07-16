@@ -70,7 +70,7 @@ pimcore.asset.listfolder = Class.create({
 
         var typesColumns = [
             {text: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40, filter: 'numeric'},
-            {text: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string'},
+            {text: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string', renderer: Ext.util.Format.htmlEncode},
             {text: t("type"), sortable: true, dataIndex: 'type', editable: false, flex: 50, filter: 'string'}
         ];
 
@@ -148,7 +148,26 @@ pimcore.asset.listfolder = Class.create({
             tbar: [
                 "->"
                 ,this.checkboxOnlyDirectChildren
-                ]
+                , "-"
+                ,{
+                    text: t("download_selected_as_zip"),
+                    iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
+                    handler: function () {
+                        var ids = [];
+
+                        var selectedRows = this.grid.getSelectionModel().getSelection();
+                        for (var i = 0; i < selectedRows.length; i++) {
+                            ids.push(selectedRows[i].data.id);
+                        }
+
+                        if(ids.length) {
+                            pimcore.elementservice.downloadAssetFolderAsZip(this.element.id, ids);
+                        } else {
+                            Ext.Msg.alert(t('error'), t('please_select_items_to_download'));
+                        }
+                    }.bind(this)
+                }
+            ]
         });
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
@@ -212,7 +231,7 @@ pimcore.asset.listfolder = Class.create({
             }));
         } else {
             menu.add(new Ext.menu.Item({
-                text: t('open_selected'),
+                text: t('open'),
                 iconCls: "pimcore_icon_open",
                 handler: function (data) {
                     var selectedRows = grid.getSelectionModel().getSelection();
@@ -224,7 +243,7 @@ pimcore.asset.listfolder = Class.create({
             }));
 
             menu.add(new Ext.menu.Item({
-                text: t('delete_selected'),
+                text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
                     var ids = [];

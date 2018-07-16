@@ -528,7 +528,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $value = json_decode(json_encode($value), true);
 
             if ($value['image__image']) {
-                $value['image__image'] = $idMapper->getMappedId('asset', $value['image__image']);
+                $value['image__image'] = $idMapper ? $idMapper->getMappedId('asset', $value['image__image']) : $value['image__image'] ;
             }
         }
 

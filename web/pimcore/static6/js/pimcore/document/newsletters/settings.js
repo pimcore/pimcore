@@ -45,27 +45,6 @@ pimcore.document.newsletters.settings = Class.create(pimcore.document.settings_a
                                 value: this.document.data.from
                             },
                             {
-                                xtype: 'checkbox',
-                                fieldLabel: t('newsletter_enableTrackingParameters'),
-                                name: 'enableTrackingParameters',
-                                checked: this.document.data.enableTrackingParameters
-                            },
-                            {
-                                fieldLabel: t('newsletter_trackingParameterSource'),
-                                name: 'trackingParameterSource',
-                                value: this.document.data.trackingParameterSource
-                            },
-                            {
-                                fieldLabel: t('newsletter_trackingParameterMedium'),
-                                name: 'trackingParameterMedium',
-                                value: this.document.data.trackingParameterMedium
-                            },
-                            {
-                                fieldLabel: t('newsletter_trackingParameterName'),
-                                name: 'trackingParameterName',
-                                value: this.document.data.trackingParameterName
-                            },
-                            {
                                 xtype: 'combo',
                                 store: Ext.create('Ext.data.Store', {
                                     fields: ['key', 'value'],
@@ -82,6 +61,34 @@ pimcore.document.newsletters.settings = Class.create(pimcore.document.settings_a
                                 value: this.document.data.sendingMode
                             }
                         ]
+                    }, {
+                        xtype:'fieldset',
+                        title: t('newsletter_enableTrackingParameters'),
+                        collapsible: true,
+                        autoHeight:true,
+                        defaultType: 'textfield',
+                        defaults: {width: 700, labelWidth: 320},
+                        items :[{
+                            xtype: 'checkbox',
+                            boxLabel: t('active'),
+                            name: 'enableTrackingParameters',
+                            checked: this.document.data.enableTrackingParameters
+                        },
+                        {
+                            fieldLabel: t('source'),
+                            name: 'trackingParameterSource',
+                            value: this.document.data.trackingParameterSource
+                        },
+                        {
+                            fieldLabel: t('medium'),
+                            name: 'trackingParameterMedium',
+                            value: this.document.data.trackingParameterMedium
+                        },
+                        {
+                            fieldLabel: t('name'),
+                            name: 'trackingParameterName',
+                            value: this.document.data.trackingParameterName
+                        }]
                     },
                     this.getControllerViewFields(),
                     this.getPathAndKeyFields()

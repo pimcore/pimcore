@@ -77,6 +77,8 @@ Frontend:
 
 You can ***preselect*** an option in your select editable by using `setDataFromResource()`.
 
+<div class="code-section">
+    
 ```php
 if($this->editmode):
     if($this->select("valid_for")->isEmpty()):
@@ -87,3 +89,15 @@ if($this->editmode):
     
 endif;
 ```
+
+```twig
+{% if editmode %}
+    {% if pimcore_select("valid_for").isEmpty() %}
+        {% do pimcore_select("valid_for").setDataFromResource("unlimited") %}
+    {% endif %}
+    
+    ...
+    
+{% endif %}
+```
+</div>

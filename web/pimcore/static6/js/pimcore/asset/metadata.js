@@ -120,7 +120,17 @@ pimcore.asset.metadata = Class.create({
                     beforeedit: function(editor, context, eOpts) {
                         //need to clear cached editors of cell-editing editor in order to
                         //enable different editors per row
-                        editor.editors.each(Ext.destroy, Ext);
+                        editor.editors.each(function (e) {
+                            try {
+                                // complete edit, so the value is stored when hopping around with TAB
+                                e.completeEdit();
+                                Ext.destroy(e);
+                            } catch (exception) {
+                                // garbage collector was faster
+                                // already destroyed
+                            }
+                        });
+
                         editor.editors.clear();
                     }
                 }
@@ -217,7 +227,7 @@ pimcore.asset.metadata = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('open'),
-                                icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                                icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                                 handler: function (grid, rowIndex) {
                                     var pData = grid.getStore().getAt(rowIndex).data;
                                     if (pData.data) {
@@ -394,7 +404,7 @@ pimcore.asset.metadata = Class.create({
         // check for duplicate name
         var dublicateIndex = store.findBy(function (record, id) {
             if (record.data.name.toLowerCase() == key.toLowerCase()) {
-                if(record.data.language.toLowerCase() == language.toLowerCase()) {
+                if(String(record.data.language).toLowerCase() == language.toLowerCase()) {
                     return true;
                 }
             }
@@ -532,7 +542,7 @@ pimcore.asset.metadata = Class.create({
 
             var dublicateIndex = store.findBy(function (record, id) {
                 if (record.data.name.toLowerCase() == key.toLowerCase()) {
-                    if(record.data.language.toLowerCase() == language.toLowerCase()) {
+                    if(String(record.data.language).toLowerCase() == language.toLowerCase()) {
                         return true;
                     }
                 }

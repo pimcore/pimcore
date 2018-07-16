@@ -50,6 +50,11 @@ class Multiselect extends Model\DataObject\ClassDefinition\Data
      */
     public $maxItems;
 
+    /**
+     * @var string
+     */
+    public $renderType;
+
     /** Options provider class
      * @var string
      */
@@ -159,6 +164,26 @@ class Multiselect extends Model\DataObject\ClassDefinition\Data
     public function getMaxItems()
     {
         return $this->maxItems;
+    }
+
+    /**
+     * @param $renderType
+     *
+     * @return $this
+     */
+    public function setRenderType($renderType)
+    {
+        $this->renderType = $renderType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRenderType()
+    {
+        return $this->renderType;
     }
 
     /**

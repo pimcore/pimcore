@@ -165,7 +165,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         width: 40,
                         items: [{
                             tooltip: t('open'),
-                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 var subtype = data.data.subtype;
@@ -350,7 +350,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     width: 40,
                     items: [{
                         tooltip: t('open'),
-                        icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                        icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                         handler: function (grid, rowIndex) {
                             var data = grid.getStore().getAt(rowIndex);
                             var subtype = data.data.subtype;

@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\GridConfig\Listing\Dao getDao()
+ * @method Model\GridConfig[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

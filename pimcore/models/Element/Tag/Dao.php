@@ -202,7 +202,11 @@ class Dao extends Model\Dao\AbstractDao
     public function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace)
     {
         if ($replace) {
-            $this->db->deleteWhere('tags_assignment', 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $cIds) . ')');
+            $quotedCIds = [];
+            foreach ($cIds as $cId) {
+                $quotedCIds[] = $this->db->quote($cId);
+            }
+            $this->db->deleteWhere('tags_assignment', 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
         }
 
         foreach ($tagIds as $tagId) {

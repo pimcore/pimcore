@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Pimcore
  *
@@ -45,12 +44,12 @@ class ImportConfigListener implements EventSubscriberInterface
 
         // collect gridConfigs for that class id
         $db = Db::get();
-        $importConfigIds = $db->fetchCol('select id from importconfigs where classId = ' . $classId);
+        $importConfigIds = $db->fetchCol('select id from importconfigs where classId = ?', $classId);
         if ($importConfigIds) {
             $db->query('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
         }
 
-        $this->cleanupImportConfigs('classId = ' . $classId);
+        $this->cleanupImportConfigs('classId = ' . $db->quote($classId));
     }
 
     /**

@@ -195,8 +195,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     }
                 },
                 {text: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
-                {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
-                {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
+                {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath', renderer: Ext.util.Format.htmlEncode},
+                {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
                 {text: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         if(record.data.subtype == "image") {
@@ -209,7 +209,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 }
             ];
 
-            this.pagingtoolbar = this.getPagingToolbar(t("no_assets_found"));
+            this.pagingtoolbar = this.getPagingToolbar();
 
             this.resultPanel = new Ext.grid.GridPanel({
                 region: "center",

@@ -208,7 +208,7 @@ pimcore.object.helpers.edit = {
                     if(l[configKeys[u]]) {
                         //if (typeof l[configKeys[u]] != "undefined") {
                         if(configKeys[u] == "html"){
-                            newConfig[configKeys[u]] = ts(l[configKeys[u]]);
+                            newConfig[configKeys[u]] = l["renderingClass"] ? l[configKeys[u]] : ts(l[configKeys[u]]);
                         } else {
                             newConfig[configKeys[u]] = l[configKeys[u]];
                         }
@@ -216,31 +216,35 @@ pimcore.object.helpers.edit = {
                 }
             }
 
-            newConfig = Object.extend(xTypeLayoutMapping[l.fieldtype] || {}, newConfig);
-            if (typeof newConfig.labelWidth != "undefined") {
-                newConfig = Ext.applyIf(newConfig, {
-                    defaults: {
-                    }
-                });
-                newConfig.defaults.labelWidth = newConfig.labelWidth;
+            if (l.fieldtype == "iframe") {
+                var iframe = new pimcore.object.layout.iframe(l, context);
+                newConfig = iframe.getLayout();
+            } else {
+                newConfig = Object.extend(xTypeLayoutMapping[l.fieldtype] || {}, newConfig);
+                if (typeof newConfig.labelWidth != "undefined") {
+                    newConfig = Ext.applyIf(newConfig, {
+                        defaults: {}
+                    });
+                    newConfig.defaults.labelWidth = newConfig.labelWidth;
 
-            }
-
-            newConfig.forceLayout = true;
-
-            if (newConfig.items) {
-                if (newConfig.items.length < 1) {
-                    delete newConfig.items;
                 }
-            }
 
-            var tmpLayoutId;
-            // generate id for layout cmp
-            if (newConfig.name) {
-                tmpLayoutId = Ext.id();
+                newConfig.forceLayout = true;
 
-                newConfig.id = tmpLayoutId;
-                newConfig.cls = "objectlayout_element_"+newConfig.name + " objectlayout_element_"+l.fieldtype;
+                if (newConfig.items) {
+                    if (newConfig.items.length < 1) {
+                        delete newConfig.items;
+                    }
+                }
+
+                var tmpLayoutId;
+                // generate id for layout cmp
+                if (newConfig.name) {
+                    tmpLayoutId = Ext.id();
+
+                    newConfig.id = tmpLayoutId;
+                    newConfig.cls = "objectlayout_element_" + newConfig.name + " objectlayout_element_" + l.fieldtype;
+                }
             }
 
 

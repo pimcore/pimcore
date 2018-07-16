@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -55,6 +56,11 @@ class PricingManager implements IPricingManager
     protected $options;
 
     /**
+     * @var VisitorInfoStorageInterface
+     */
+    protected $visitorInfoStorage = null;
+
+    /**
      * @var Rule[]
      */
     protected $rules;
@@ -63,7 +69,8 @@ class PricingManager implements IPricingManager
         array $conditionMapping,
         array $actionMapping,
         SessionInterface $session,
-        array $options = []
+        array $options = [],
+        VisitorInfoStorageInterface $visitorInfoStorage = null
     ) {
         $this->conditionMapping = $conditionMapping;
         $this->actionMapping    = $actionMapping;
@@ -71,6 +78,7 @@ class PricingManager implements IPricingManager
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
+        $this->visitorInfoStorage = $visitorInfoStorage;
 
         $this->options = $resolver->resolve($options);
     }
@@ -141,6 +149,9 @@ class PricingManager implements IPricingManager
         $env->setCart($cart);
         $env->setExecutionMode(IEnvironment::EXECUTION_MODE_CART);
         $env->setProduct(null);
+        if ($this->visitorInfoStorage && $this->visitorInfoStorage->hasVisitorInfo()) {
+            $env->setVisitorInfo($this->visitorInfoStorage->getVisitorInfo());
+        }
 
         $categories = [];
         foreach ($cart->getItems() as $item) {
@@ -324,6 +335,10 @@ class PricingManager implements IPricingManager
 
         if (method_exists($priceInfo->getProduct(), 'getCategories')) {
             $environment->setCategories((array)$priceInfo->getProduct()->getCategories());
+        }
+
+        if ($this->visitorInfoStorage && $this->visitorInfoStorage->hasVisitorInfo()) {
+            $environment->setVisitorInfo($this->visitorInfoStorage->getVisitorInfo());
         }
 
         $priceInfoWithRules = new $class($priceInfo, $environment);

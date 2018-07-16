@@ -81,7 +81,7 @@ pimcore.settings.gdpr.gdprPanel = Class.create({
                         {
                             xtype: "button",
                             text: t("search"),
-                            iconCls: "pimcore_icon_apply",
+                            iconCls: "pimcore_icon_search",
                             style: "margin-left: 20px;",
                             handler: this.search.bind(this)
                         }

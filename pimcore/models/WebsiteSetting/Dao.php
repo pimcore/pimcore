@@ -92,9 +92,6 @@ class Dao extends Model\Dao\PhpArrayTable
 
     /**
      * Save object to database
-     *
-     * @return bool
-
      */
     public function save()
     {

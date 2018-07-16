@@ -77,18 +77,13 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             data: allowedDataTypes
         });
 
-        var url = "/admin/classificationstore/properties?";
         var proxy = {
+            url: "/admin/classificationstore/properties",
+            batchActions: false,
             type: 'ajax',
             reader: {
                 type: 'json',
                 rootProperty: 'data'
-            },
-            api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
             },
             writer: {
                 type: 'json',
@@ -203,6 +198,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
                         Ext.Ajax.request({
                             url: "/admin/classificationstore/delete-property",
+                            method: 'DELETE',
                             params: {
                                 id: id
                             },
@@ -334,6 +330,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
                 url: "/admin/classificationstore/add-property",
+                method: 'POST',
                 params: {
                     name: value,
                     storeId: this.storeConfig.id

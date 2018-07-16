@@ -25,49 +25,9 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersio
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 42) {
     $supported = true;
 }
-
-$config = $this->config;
 ?>
 
-<?php if ($config->general->loginscreencustomimage) { ?>
-    <style type="text/css">
-        body {
-            background: url(<?= $config->general->loginscreencustomimage; ?>) no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-        }
-
-        #header {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        #content {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
-    </style>
-<?php } ?>
-
-<?php if($config->branding) { ?>
-    <?php if($config->branding->color_login_screen) {
-        $customColor = $config->branding->color_login_screen;
-        ?>
-        <style type="text/css">
-            #loginform button {
-                background: <?= $customColor ?>;
-            }
-
-            a, a:hover, a:visited, a:active {
-                color: <?= $customColor ?>;
-            }
-        </style>
-    <?php } ?>
-<?php } ?>
-
-<div id="vcenter" class="<?= ($config->general->loginscreencustomimage ? "customimage" : ""); ?>">
+<div id="vcenter">
     <div id="hcenter">
         <div id="header">
             <img src="/admin/settings/display-custom-logo">
@@ -134,19 +94,12 @@ $config = $this->config;
 
 <?php $view->slots()->start('below_footer') ?>
 
-    <?php if (!$config->general->loginscreencustomimage) { ?>
-        <div id="background"></div>
-        <div id="backgroundImageInfo"></div>
+<script>
+    <?php if(!$view->getParam("deeplink")) { ?>
+    // clear opened tabs store
+    localStorage.removeItem("pimcore_opentabs");
     <?php } ?>
-
-    <script type="text/javascript">
-        <?php if(!$view->getParam("deeplink")) { ?>
-        // clear opened tabs store
-        localStorage.removeItem("pimcore_opentabs");
-        <?php } ?>
-        $("#username").select();
-    </script>
-
-    <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
+    $("#username").select();
+</script>
 
 <?php $view->slots()->stop() ?>

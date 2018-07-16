@@ -23,26 +23,19 @@ pimcore.element.dependencies = Class.create({
 
     getLayout: function() {
         
-        this.requiresPanel = new Ext.Panel({
-            flex: 1,
-            layout: "fit"
-        });
-        
-        this.requiredByPanel = new Ext.Panel({
-            flex: 1,
-            layout: "fit"
-        });
-        
         if (this.layout == null) {
             this.layout = new Ext.Panel({
                 tabConfig: {
                     tooltip: t('dependencies')
                 },
-                border: false,
-                scrollable: "y",
+                layout: {
+                    type: 'hbox',
+                    pack: 'start',
+                    align: 'stretch',
+                },
                 iconCls: "pimcore_icon_dependencies",
                 listeners:{
-                    activate: this.getData.bind(this)
+                    activate: this.getGridLayouts.bind(this)
                 }
             });
         }
@@ -58,145 +51,191 @@ pimcore.element.dependencies = Class.create({
     },
 
     completeLoad: function() {
-        
-        this.layout.add(this.requiresNote);
-        this.layout.add(this.requiresGrid);
-        
-        this.layout.add(this.requiredByNote);
-        this.layout.add(this.requiredByGrid);
+        this.layout.add(this.requiresPanel);
+        this.layout.add(this.requiredByPanel);
         
         this.layout.updateLayout();
     },
 
 
-    getData: function() {
+    getGridLayouts: function() {
         
         // only load it once
         if(this.requiresLoaded && this.requiredByLoaded) {
             return;
         }
-        
-        
-        Ext.Ajax.request({
-            url: '/admin/element/get-requires-dependencies',
-            params: {
-                id: this.element.id,
-                elementType: this.type
-            },
-            success: this.getRequiresLayout.bind(this)
-        });
-        
-        Ext.Ajax.request({
-            url: '/admin/element/get-required-by-dependencies',
-            params: {
-                id: this.element.id,
-                elementType: this.type
-            },
-            success: this.getRequiredByLayout.bind(this)
-        });
 
+        this.getRequiresLayout();
+        this.getRequiredByLayout();
 
         this.waitForLoaded();
     },
         
-    getRequiresLayout: function(response) {
-        if (response != null) {
-            this.requiresData = Ext.decode(response.responseText);
-        }
-                
-        
-        this.requiresStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            data: this.requiresData,
-            fields: ['id', 'path', 'type', 'subtype'],
-            proxy: {
-                type: 'memory',
+    getRequiresLayout: function() {
+
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
+
+        this.requiresStore = new Ext.data.Store({
+            pageSize: itemsPerPage,
+            proxy : {
+                type: 'ajax',
+                url: '/admin/element/get-requires-dependencies',
                 reader: {
                     type: 'json',
                     rootProperty: 'requires'
+                },
+                extraParams: {
+                    id: this.element.id,
+                    elementType: this.type
                 }
-            }
-        });                
+            },
+            autoLoad: false,
+            fields: ['id', 'path', 'type', 'subtype']
+        });
 
         this.requiresGrid = new Ext.grid.GridPanel({
             store: this.requiresStore,
             columns: [
-                {text: "ID", sortable: true, dataIndex: 'id'},
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
-                {text: t("type"), sortable: true, dataIndex: 'type'},
-                {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
+                {text: "ID", sortable: true, dataIndex: 'id', hidden:true},
+                {text: t("type"), sortable: true, dataIndex: 'type', hidden: true},
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 50,
+                  renderer:
+                    function (value, metaData, record, rowIndex, colIndex, store) {
+                        return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
+                            + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                    }
+                },
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, renderer: Ext.util.Format.htmlEncode}
             ],
-            collapsible: true,
+            flex: 1,
             columnLines: true,
             stripeRows: true,
-            autoHeight: true,              
-            title: t('requires'),
-            viewConfig: {
-                forceFit: true
-            },
-            style: "margin-bottom: 30px;"
+            bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiresStore, {pageSize: itemsPerPage})
         });
         this.requiresGrid.on("rowclick", this.click.bind(this));
         
-        
+        this.requiresStore.load({
+            callback : function(records, operation, success) {
+                if (success) {
+                    var response = operation.getResponse();
+                    this.requiresData = Ext.decode(response.responseText);
+
+                    if (this.requiresData.hasHidden) {
+                        this.requiresNote.show();
+                    }
+                }
+            }.bind(this)
+        });
+
         this.requiresNote = new Ext.Panel({
             html:t('hidden_dependencies'),
             cls:'dependency-warning',
-            border:false,
-            hidden: !this.requiresData.hasHidden                        
+            border: false,
+            hidden: true,
+            height: 50,
+            style: {
+                marginLeft: '10px'
+            },
         });
-        
-        
-        
+
+        this.requiresPanel = new Ext.Panel({
+            title: t('requires'),
+            flex: .5,
+            layout: {
+                  type: 'vbox',
+                  align: 'stretch'
+            },
+            resizable: true,
+            split: true,
+            collapsible: true,
+            collapseDirection: 'left',
+            items: [this.requiresNote, this.requiresGrid]
+        });
+
         this.requiresLoaded = true;        
     },
-    getRequiredByLayout: function(response) {
-        if (response != null) {
-            this.requiredByData = Ext.decode(response.responseText);
-        }
-                
-        this.requiredByStore = new Ext.data.JsonStore({
-            autoDestroy: true,
-            data: this.requiredByData,
-            fields: ['id', 'path', 'type', 'subtype'],
-            proxy: {
-                type: 'memory',
+
+    getRequiredByLayout: function() {
+
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
+        
+        this.requiredByStore = new Ext.data.Store({
+            pageSize: itemsPerPage,
+            proxy : {
+                type: 'ajax',
+                url: '/admin/element/get-required-by-dependencies',
                 reader: {
                     type: 'json',
                     rootProperty: 'requiredBy'
+                },
+                extraParams: {
+                    id: this.element.id,
+                    elementType: this.type
                 }
-            }
+            },
+            autoLoad: false,
+            fields: ['id', 'path', 'type', 'subtype']
         });
-                                
+
         this.requiredByGrid = Ext.create('Ext.grid.Panel', {
             store: this.requiredByStore,
             columns: [
-                {text: "ID", sortable: true, dataIndex: 'id'},
-                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1},
-                {text: t("type"), sortable: true, dataIndex: 'type'},
-                {text: t("subtype"), sortable: true, dataIndex: 'subtype'}
+                {text: "ID", sortable: true, dataIndex: 'id', hidden:true},
+                {text: t("type"), sortable: true, dataIndex: 'type', hidden: true},
+                {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 50,
+                 renderer:
+                    function (value, metaData, record, rowIndex, colIndex, store) {
+                        return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
+                            + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                    }
+                },
+                {text: t("path"), sortable: true, dataIndex: 'path', flex: 1, renderer: Ext.util.Format.htmlEncode}
             ],
-            collapsible: true,
-            autoExpandColumn: "path",
             columnLines: true,
             stripeRows: true,
-            autoHeight: true,
-            title: t('required_by'),
-            viewConfig: {
-                forceFit: true
-            }
+            flex: 1,
+            bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiredByStore,{pageSize: itemsPerPage})
         });
         this.requiredByGrid.on("rowclick", this.click.bind(this));
-        
-        
-        
+
+        this.requiredByStore.load({
+            callback : function(records, operation, success) {
+                if (success) {
+                    var response = operation.getResponse();
+                    this.requiredByData = Ext.decode(response.responseText);
+
+                    if (this.requiredByData.hasHidden) {
+                        this.requiredByNote.show();
+                    }
+                }
+            }.bind(this)
+        });
+
         this.requiredByNote = new Ext.Panel({
             html:t('hidden_dependencies'),
             cls:'dependency-warning',
             border:false,
-            hidden: !this.requiredByData.hasHidden                        
+            hidden: true,
+            height: 50,
+            style: {
+                marginLeft: '10px'
+            },
         });
-        
+
+        this.requiredByPanel = new Ext.Panel({
+            title: t('required_by'),
+            flex: .5,
+            layout: {
+                  type: 'vbox',
+                  align: 'stretch'
+            },
+            resizable: true,
+            split: true,
+            collapsible: true,
+            collapseDirection: 'right',
+            autoExpandColumn: "path",
+            items: [this.requiredByNote, this.requiredByGrid]
+        });
     
         this.requiredByLoaded = true;        
     },

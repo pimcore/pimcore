@@ -423,4 +423,19 @@ class Page extends TargetingDocument
     {
         return $this->getUseTargetGroup();
     }
+
+    /**
+     * @param bool $hdpi
+     *
+     * @return string
+     */
+    public function getPreviewImageFilesystemPath($hdpi = false)
+    {
+        $suffix = '';
+        if ($hdpi) {
+            $suffix = '@2x';
+        }
+
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . $suffix . '.jpg';
+    }
 }

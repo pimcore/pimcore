@@ -77,7 +77,7 @@ class TestController
     {
         // get the "somenumber" setting for "de"
         // if the property does not exist you will get the setting with not language provided
-        $somesetting = \Pimcore\Model\WebsiteSetting::getByName('somenumber', 'de');
+        $somesetting = \Pimcore\Model\WebsiteSetting::getByName('somenumber', null, 'de');
         $currentnumber = $somesetting->getData();
         //Now do something with the data or set new data
         //Count up in this case

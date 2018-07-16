@@ -68,13 +68,13 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 }
             },
             {
-                text: t('email_log_from'),
+                text: t('from'),
                 sortable: false,
                 dataIndex: "from",
                 flex: 120
             },
             {
-                text: t('email_log_to'),
+                text: t('to'),
                 sortable: false,
                 dataIndex: "to",
                 flex: 120
@@ -102,22 +102,22 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 sortable: false,
                 width: 50,
                 dataIndex: "emailLogExistsHtml",
-                text: t('email_log_html'),
-                menuText: t('email_log_html'),
+                text: t('html'),
+                menuText: t('html'),
                 items : [{
-                    tooltip: t('email_log_show_html_email'),
                     icon: "/pimcore/static6/img/flat-color-icons/feedback.svg",
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
+                        var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=html';
+                        url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
-                            title: t("email_log_iframe_title_html"),
+                            title: t("html"),
                             width: iFrameSettings.width,
                             height: iFrameSettings.height,
                             layout: 'fit',
                             items : [{
                                 xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log?id=" + rec.get('id')
-                                + "&type=html"}
+                                autoEl: {tag: 'iframe', src: url}
                             }]
                         });
                         iframe.show();
@@ -134,23 +134,23 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 sortable: false,
                 width: 50,
                 dataIndex: "emailLogExistsText",
-                text: t('email_log_text'),
-                menuText: t('email_log_text'),
+                text: t('text'),
+                menuText: t('text'),
                 hidden: true,
                 items : [{
-                    tooltip: t('email_log_show_text_email'),
                     icon: "/pimcore/static6/img/flat-color-icons/text.svg",
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
+                        var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=text';
+                        url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
-                            title: t("email_log_iframe_title_text"),
+                            title: t("text"),
                             width: iFrameSettings.width,
                             height: iFrameSettings.height,
                             layout: 'fit',
                             items : [{
                                 xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log?id=" + rec.get('id')
-                                + "&type=text"}
+                                autoEl: {tag: 'iframe', src: url}
                             }]
                         });
                         iframe.show();
@@ -168,18 +168,17 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 width: 120,
                 dataIndex: "params",
                 hidden: false,
-                text: t('email_log_params'),
-                menuText: t('email_log_params'),
+                text: t('parameters'),
+                menuText: t('parameters'),
                 items : [{
-                    tooltip: t('email_log_show_text_params'),
                     icon: "/pimcore/static6/img/flat-color-icons/info.svg",
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
-
+                        var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=params';
                         var store = Ext.create('Ext.data.TreeStore', {
                             proxy: {
                                 type: 'ajax',
-                                url: '/admin/email/show-email-log?id=' + rec.get('id') + '&type=params',
+                                url: url,
                                 reader: {
                                     type: 'json'
                                 },
@@ -196,12 +195,12 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                             columnLines: true,
                             columns:[
                                 new Ext.tree.Column({
-                                    text: t('email_log_property'),
+                                    text: t('name'),
                                     dataIndex: 'key',
                                     width: 230
                                 }),
                                 {
-                                    text: t('email_log_data'),
+                                    text: t('value'),
                                     width: 370,
                                     dataIndex: 'data',
                                     renderer: function(value, metadata, record) {
@@ -232,8 +231,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                         this.window = new Ext.Window({
                             modal: true,
                             width: 620,
-                            height: 700,
-                            title: t('email_log_params'),
+                            height: "90%",
+                            title: t('parameters'),
                             items: [this.tree],
                             layout: "fit"
                         });
@@ -276,6 +275,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                                 if (button == "yes") {
                                     Ext.Ajax.request({
                                         url: '/admin/email/delete-email-log',
+                                        method: 'DELETE',
                                         success: function(response){
                                             var data = Ext.decode( response.responseText );
                                             if(!data.success){

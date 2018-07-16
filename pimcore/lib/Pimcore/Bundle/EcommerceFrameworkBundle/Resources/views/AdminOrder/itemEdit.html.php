@@ -19,6 +19,7 @@ $product = $orderItem->getProduct();
 $urlSave = $this->pimcoreUrl();
 ?>
 <form action="<?= $urlSave ?>" method="post">
+    <input type="hidden" name="csrfToken" value="<?= $this->csrfToken ?>">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
         <h4 class="modal-title"><?= $orderItem->getProductName() ?> <small><?= $this->translateAdmin('bundle_ecommerce.back-office.order.item-edit') ?></small></h4>

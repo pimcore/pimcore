@@ -152,6 +152,12 @@ pimcore.settings.user.workspace.document = Class.create({
                         var record = data.records[0];
                         var data = record.data;
 
+                        // check for duplicate records
+                        var index = this.grid.getStore().findExact("path", data.path);
+                        if (index >= 0) {
+                            return false;
+                        }
+
                         if(data.elementType != "document") {
                             return false;
                         }

@@ -20,7 +20,7 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
     type: "operator",
     class: "ObjectBrickGetter",
     iconCls: "pimcore_icon_objectbricks",
-    defaultText: "operator_objectbrickgetter",
+    defaultText: "ObjectBrick Getter",
     group: "getter",
 
 
@@ -42,12 +42,12 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class, label: this.getDefaultText()};
 
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,
@@ -132,7 +132,7 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_objectbrickgetter_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -162,7 +162,7 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
         if (configAttributes.attr) {
             nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.attr  + "-" + configAttributes.brickType  + "-" + configAttributes.brickAttr + ')</span>';
         }

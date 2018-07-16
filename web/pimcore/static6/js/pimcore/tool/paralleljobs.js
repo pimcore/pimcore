@@ -100,8 +100,14 @@ pimcore.tool.paralleljobs = Class.create({
 
             this.jobsRunning++;
 
+            var method = 'POST';
+            if(this.config.jobs[this.groupsFinished][this.jobsStarted]['method']) {
+                method = this.config.jobs[this.groupsFinished][this.jobsStarted]['method'];
+            }
+
             var requestConfig = {
                 url: this.config.jobs[this.groupsFinished][this.jobsStarted].url,
+                method: method,
                 params: this.config.jobs[this.groupsFinished][this.jobsStarted].params,
                 success: function (response) {
 

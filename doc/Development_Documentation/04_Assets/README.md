@@ -15,3 +15,5 @@ output channels. Note that the image editor does use the Adobe Creative SDK unde
 The sub chapters of this chapter provide insight into details for
  * [Working with Assets via PHP API](./01_Working_with_PHP_API.md) 
  * [Working with Thumbnails](./03_Working_with_Thumbnails/README.md)
+ * [Accessing Assets via WebDAV](./05_Accessing_Assets_via_WebDAV.md)
+ * [Restricting Public Asset Access](./07_Restricting_Public_Asset_Access.md)

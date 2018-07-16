@@ -52,7 +52,7 @@ pimcore.report.panel = Class.create({
 
             this.tree = Ext.create('Ext.tree.Panel', {
                 region: "west",
-                title: t("select_a_report"),
+                title: t("reports"),
                 width: 250,
                 enableDD: false,
                 split: true,
@@ -137,7 +137,7 @@ pimcore.report.panel = Class.create({
 
             var layoutConfig = {
                 tabConfig: {
-                    tooltip: t('reports_and_marketing')
+                    tooltip: t('reports')
                 },
                 border: false,
                 layout: "border",
@@ -149,7 +149,7 @@ pimcore.report.panel = Class.create({
             if (this.type == "global") {
                 layoutConfig.id = "pimcore_reports";
                 layoutConfig.closable = true;
-                layoutConfig["title"] = t('reports_and_marketing');
+                layoutConfig["title"] = t('reports');
             }
 
             this.layout = new Ext.Panel(layoutConfig);

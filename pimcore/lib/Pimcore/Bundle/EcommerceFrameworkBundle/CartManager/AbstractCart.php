@@ -81,7 +81,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * @var ICartPriceCalculator
      */
-    protected $priceCalcuator;
+    protected $priceCalculator;
 
     /**
      * @var int
@@ -204,9 +204,6 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
         //load items first in order to lazyload items (if they are lazy loaded)
         $this->getItems();
-
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
 
         if (!array_key_exists($itemKey, $this->items)) {
             $className = $this->getCartItemClassName();
@@ -361,9 +358,6 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     {
         $this->checkCartIsReadOnly();
 
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
-
         $this->items = [];
         $this->giftItems = [];
 
@@ -484,6 +478,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getGiftItems()
     {
+        //make sure that cart is calculated
+        $this->getPriceCalculator()->calculate();
+
         return $this->giftItems;
     }
 
@@ -494,6 +491,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getGiftItem($itemKey)
     {
+        //make sure that cart is calculated
+        $this->getPriceCalculator()->calculate();
+
         return array_key_exists($itemKey, $this->giftItems) ? $this->giftItems[$itemKey] : null;
     }
 
@@ -503,9 +503,6 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     public function setItems($items)
     {
         $this->checkCartIsReadOnly();
-
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
 
         $this->items = $items;
 
@@ -522,9 +519,6 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
 
         //load items first in order to lazyload items (if they are lazy loaded)
         $this->getItems();
-
-        $this->itemAmount = null;
-        $this->subItemAmount = null;
 
         unset($this->items[$itemKey]);
 
@@ -734,30 +728,43 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
      */
     public function getPriceCalculator()
     {
-        if (empty($this->priceCalcuator)) {
-            $this->priceCalcuator = Factory::getInstance()->getCartManager()->getCartPriceCalculator($this);
+        if (empty($this->priceCalculator)) {
+            $this->priceCalculator = Factory::getInstance()->getCartManager()->getCartPriceCalculator($this);
         }
 
-        return $this->priceCalcuator;
+        return $this->priceCalculator;
     }
 
     /**
-     * cart has been changed
+     * @param ICartPriceCalculator $priceCalculator
      */
-    protected function modified()
+    public function setPriceCalculator(ICartPriceCalculator $priceCalculator)
+    {
+        $this->priceCalculator = $priceCalculator;
+    }
+
+    /**
+     * @return $this
+     */
+    public function modified()
     {
         $this->setModificationDateTimestamp(time());
 
+        $this->itemAmount = null;
+        $this->subItemAmount = null;
+        $this->itemCount = null;
+        $this->subItemCount = null;
+
         //don't use getter here because reset is only necessary if price calculator is already there
-        if ($this->priceCalcuator) {
-            $this->priceCalcuator->reset();
+        if ($this->priceCalculator) {
+            $this->priceCalculator->reset();
         }
 
         $this->validateVoucherTokenReservations();
 
         $this->giftItems = [];
-        // apply pricing rules
-        Factory::getInstance()->getPricingManager()->applyCartRules($this);
+
+        return $this;
     }
 
     /**

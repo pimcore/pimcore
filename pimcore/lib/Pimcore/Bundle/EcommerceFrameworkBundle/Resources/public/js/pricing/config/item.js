@@ -412,7 +412,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
                 id: this.data.id,
                 data: Ext.encode(saveData)
             },
-            method: "post",
+            method: "PUT",
             success: this.saveOnComplete.bind(this)
         });
     },
@@ -422,7 +422,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
      */
     saveOnComplete: function () {
         this.parent.refresh(this.parent.getTree().getRootNode());
-        pimcore.helpers.showNotification(t("success"), t("bundle_ecommerce_pricing_config_saved_successfully"), "success");
+        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
     },
 
     recalculateButtonStatus: function () {
@@ -680,7 +680,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
             tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionDateRange"),
             items: [{
                 xtype:'datefield',
-                fieldLabel: t("bundle_ecommerce_pricing_config_condition_daterange_from"),
+                fieldLabel: t("from"),
                 name: "starting",
                 format: 'd.m.Y',
                 altFormats: 'U',
@@ -688,7 +688,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
                 width: 400
             },{
                 xtype:'datefield',
-                fieldLabel: t("bundle_ecommerce_pricing_config_condition_daterange_until"),
+                fieldLabel: t("to"),
                 name: "ending",
                 format: 'd.m.Y',
                 altFormats: 'U',
@@ -711,7 +711,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
      */
     conditionCatalogProduct: function (panel, data, getName) {
 
-        var niceName = t("bundle_ecommerce_pricing_config_condition_catalog_product");
+        var niceName = t("product");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -774,7 +774,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
      */
     conditionCatalogCategory: function (panel, data, getName) {
 
-        var niceName = t("bundle_ecommerce_pricing_config_condition_catalog_category");
+        var niceName = t("category");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -897,7 +897,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
             tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionToken"),
             items: [{
                 xtype: "textfield",
-                fieldLabel: t("bundle_ecommerce_pricing_config_condition_token_value"),
+                fieldLabel: t("value"),
                 name: "token",
                 width: 200,
                 value: data.token
@@ -979,7 +979,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
             tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionSales"),
             items: [{
                 xtype: "numberfield",
-                fieldLabel: t("bundle_ecommerce_pricing_config_condition_sales_amount"),
+                fieldLabel: t("amount"),
                 name: "amount",
                 width: 300,
                 value: data.amount
@@ -999,7 +999,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
     conditionClientIp: function (panel, data, getName) {
 
         //
-        var niceName = t("bundle_ecommerce_pricing_config_condition_client-ip");
+        var niceName = 'IP';
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -1016,7 +1016,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
             tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionClientIp"),
             items: [{
                 xtype: "textfield",
-                fieldLabel: t("bundle_ecommerce_pricing_config_condition_client_ip"),
+                fieldLabel: 'IP',
                 name: "ip",
                 width: 300,
                 value: data.ip
@@ -1136,11 +1136,81 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
             tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionTenant"),
             items: [{
                 xtype: "textfield",
-                fieldLabel: t("bundle_ecommerce_pricing_config_condition_tenant_tenant"),
+                fieldLabel: t("bundle_ecommerce_pricing_config_condition_tenant"),
                 name: "tenant",
                 width: 350,
                 value: data.tenant
             }]
+        });
+
+        return item;
+    },
+
+    /**
+     * @param panel
+     * @param data
+     * @param getName
+     * @returns Ext.form.FormPanel
+     */
+    conditionTargetGroup: function (panel, data, getName) {
+        var niceName = t("bundle_ecommerce_pricing_config_condition_targetgroup");
+        if (typeof getName !== "undefined" && getName) {
+            return niceName;
+        }
+
+        // check params
+        if (typeof data === "undefined") {
+            data = {};
+        }
+
+
+        this.targetGroupStore = Ext.create('Ext.data.JsonStore', {
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                url: "/admin/targeting/target-group/list"
+            },
+            fields: ["id", "text"],
+            listeners: {
+                load: function() {
+                    this.targetGroup.setValue(data.targetGroupId);
+                }.bind(this)
+            }
+        });
+
+        this.targetGroup = new Ext.form.ComboBox({
+            displayField:'text',
+            valueField: "id",
+            name: "targetGroupId",
+            fieldLabel: t("bundle_ecommerce_pricing_config_condition_targetgroup"),
+            store: this.targetGroupStore,
+            editable: false,
+            triggerAction: 'all',
+            width: 500,
+            listeners: {
+            }
+        });
+
+
+        // create item
+        var myId = Ext.id();
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            type: 'TargetGroup',
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data, "bundle_ecommerce_pricing_icon_conditionTargetGroup"),
+            items: [
+                this.targetGroup,
+                {
+                    xtype: "numberfield",
+                    fieldLabel: t("bundle_ecommerce_pricing_config_condition_targetgroup_threshold"),
+                    name: "threshold",
+                    width: 200,
+                    value: data.threshold
+                }
+            ]
         });
 
         return item;
@@ -1215,7 +1285,7 @@ pimcore.bundle.EcommerceFramework.pricing.actions = {
             items: [
                 {
                     xtype: "textfield",
-                    fieldLabel: t("bundle_ecommerce_pricing_config_action_gift_product"),
+                    fieldLabel: t("product"),
                     name: "product",
                     width: 500,
                     cls: "input_drop_target",

@@ -67,10 +67,7 @@ class LocaleListener implements EventSubscriberInterface
                 }
             }
 
-            // currently we have to exclude LC_MONETARY from being set, because of issues in combination with
-            // see https://github.com/zendframework/zf1/issues/706
-            // once this is resolved we can safely set the locale for LC_MONETARY as well.
-            setlocale(LC_ALL & ~LC_MONETARY, $localeList);
+            setlocale(LC_ALL, $localeList);
         }
     }
 

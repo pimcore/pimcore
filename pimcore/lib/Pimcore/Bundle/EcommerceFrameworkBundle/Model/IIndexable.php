@@ -78,7 +78,7 @@ interface IIndexable
     /**
      * returns the class id of the object
      *
-     * @return int
+     * @return string
      */
     public function getClassId();
 }

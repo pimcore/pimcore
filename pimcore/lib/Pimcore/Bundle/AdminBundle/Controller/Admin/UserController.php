@@ -21,6 +21,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
 use Pimcore\Tool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,12 +30,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AdminController implements EventedControllerInterface
 {
     /**
      * @Route("/user/tree-get-childs-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -103,6 +105,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -110,8 +113,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function addAction(Request $request)
     {
-        $this->protectCsrf($request);
-
         try {
             $type = $request->get('type');
 
@@ -227,6 +228,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -285,6 +287,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -294,8 +297,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function updateAction(Request $request)
     {
-        $this->protectCsrf($request);
-
         $user = User\AbstractUser::getById(intval($request->get('id')));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -317,6 +318,10 @@ class UserController extends AdminController implements EventedControllerInterfa
                     }
                     break;
                 }
+            }
+
+            if (isset($values['2fa_required'])) {
+                $user->setTwoFactorAuthentication('required', (bool) $values['2fa_required']);
             }
 
             $user->setValues($values);
@@ -341,10 +346,15 @@ class UserController extends AdminController implements EventedControllerInterfa
 
             // check for workspaces
             if ($request->get('workspaces')) {
+                $processedPaths = ['object' => [], 'asset' => [], 'document' => []]; //array to find if there are multiple entries for a path
                 $workspaces = $this->decodeJson($request->get('workspaces'), true);
                 foreach ($workspaces as $type => $spaces) {
                     $newWorkspaces = [];
                     foreach ($spaces as $space) {
+                        if (in_array($space['path'], $processedPaths[$type])) {
+                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] .'" in '.$this->trans("$type") . 's');
+                        }
+
                         $element = Element\Service::getElementByPath($type, $space['path']);
                         if ($element) {
                             $className = '\\Pimcore\\Model\\User\\Workspace\\' . Element\Service::getBaseClassNameForElement($type);
@@ -356,11 +366,24 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $workspace->setUserId($user->getId());
 
                             $newWorkspaces[] = $workspace;
+                            $processedPaths[$type][] = $space['path'];
                         }
                     }
                     $user->{'setWorkspaces' . ucfirst($type)}($newWorkspaces);
                 }
             }
+        }
+
+        if ($request->get('keyBindings')) {
+            $keyBindings = json_decode($request->get('keyBindings'), true);
+            $tmpArray = [];
+            foreach ($keyBindings as $action => $item) {
+                $tmpArray[] = json_decode($item, true);
+            }
+            $tmpArray = array_values(array_filter($tmpArray));
+            $tmpArray = json_encode($tmpArray);
+
+            $user->setKeyBindings($tmpArray);
         }
 
         $user->save();
@@ -370,6 +393,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -383,6 +407,9 @@ class UserController extends AdminController implements EventedControllerInterfa
             return $this->adminJson(['success' => false]);
         }
 
+        /**
+         * @var $user User
+         */
         $user = User::getById(intval($request->get('id')));
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -439,7 +466,9 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData = object2array($user);
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
+        $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
         unset($userData['password']);
+        unset($userData['twoFactorAuthentication']['secret']);
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
@@ -463,6 +492,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/get-minimal")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -485,6 +515,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/upload-current-user-image")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -508,6 +539,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/update-current-user")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -515,8 +547,6 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function updateCurrentUserAction(Request $request)
     {
-        $this->protectCsrf($request);
-
         $user = $this->getAdminUser();
         if ($user != null) {
             if ($user->getId() == $request->get('id')) {
@@ -557,6 +587,19 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
 
                 $user->setValues($values);
+
+                if ($request->get('keyBindings')) {
+                    $keyBindings = json_decode($request->get('keyBindings'), true);
+                    $tmpArray = [];
+                    foreach ($keyBindings as $action => $item) {
+                        $tmpArray[] = json_decode($item, true);
+                    }
+                    $tmpArray = array_values(array_filter($tmpArray));
+                    $tmpArray = json_encode($tmpArray);
+
+                    $user->setKeyBindings($tmpArray);
+                }
+
                 $user->save();
 
                 return $this->adminJson(['success' => true]);
@@ -572,6 +615,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/get-current-user")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -592,7 +636,16 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData = object2array($user);
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
+        $userData['keyBindings'] = $user->getKeyBindings();
+
         unset($userData['password']);
+        $userData['twoFactorAuthentication'] = $user->getTwoFactorAuthentication();
+        unset($userData['twoFactorAuthentication']['secret']);
+        $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
+
+        $userData['isPasswordReset'] = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+            return $adminSession->get('password_reset');
+        });
 
         $response = new Response('pimcore.currentuser = ' . $this->encodeJson($userData));
         $response->headers->set('Content-Type', 'text/javascript');
@@ -604,6 +657,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/role-tree-get-childs-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -664,6 +718,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/role-get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -706,6 +761,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/upload-image")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -742,7 +798,94 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
+     * @Route("/user/renew-2fa-qr-secret")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     */
+    public function renew2FaSecretAction(Request $request)
+    {
+        $this->checkCsrfToken($request);
+
+        $user = $this->getAdminUser();
+        $proxyUser = $this->getAdminUser(true);
+
+        $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
+        $newSecret = $twoFactorService->generateSecret();
+        $user->setTwoFactorAuthentication('enabled', true);
+        $user->setTwoFactorAuthentication('type', 'google');
+        $user->setTwoFactorAuthentication('secret', $newSecret);
+        $user->save();
+
+        Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+            Tool\Session::regenerateId();
+            $adminSession->set('2fa_required', true);
+        });
+
+        $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
+        $url = $twoFactorService->getQRContent($proxyUser);
+
+        $code = new \Endroid\QrCode\QrCode;
+        $code->setWriterByName('png');
+        $code->setText($url);
+        $code->setSize(200);
+
+        $qrCodeFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $code->writeFile($qrCodeFile);
+
+        $response = new BinaryFileResponse($qrCodeFile);
+
+        return $response;
+    }
+
+    /**
+     * @Route("/user/disable-2fa")
+     * @Method({"DELETE"})
+     *
+     * @param Request $request
+     */
+    public function disable2FaSecretAction(Request $request)
+    {
+        $user = $this->getAdminUser();
+        $success = false;
+
+        if (!$user->getTwoFactorAuthentication('required')) {
+            $user->setTwoFactorAuthentication([]);
+            $user->save();
+
+            $success = true;
+        }
+
+        return $this->adminJson([
+            'success' => $success
+        ]);
+    }
+
+    /**
+     * @Route("/user/reset-2fa-secret")
+     * @Method({"PUT"})
+     *
+     * @param Request $request
+     */
+    public function reset2FaSecretAction(Request $request)
+    {
+        /**
+         * @var $user User
+         */
+        $user = User::getById(intval($request->get('id')));
+        $success = true;
+        $user->setTwoFactorAuthentication('enabled', false);
+        $user->setTwoFactorAuthentication('secret', '');
+        $user->save();
+
+        return $this->adminJson([
+            'success' => $success
+        ]);
+    }
+
+    /**
      * @Route("/user/get-image")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -771,6 +914,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/get-token-login-link")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -815,6 +959,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @Route("/user/search")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -864,7 +1009,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         // check permissions
         $unrestrictedActions = [
             'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
-            'getImageAction', 'uploadCurrentUserImageAction'
+            'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction'
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);
@@ -881,6 +1026,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     /**
      * @param Request $request
      * @Route("/user/get-users")
+     * @Method({"GET"})
      */
     public function getUsersAction(Request $request)
     {
@@ -906,6 +1052,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     /**
      * @param Request $request
      * @Route("/user/get-roles")
+     * @Method({"GET"})
      */
     public function getRolesAction(Request $request)
     {
@@ -924,5 +1071,17 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         return $this->adminJson(['success' => true, 'total' => count($roles), 'data' => $roles]);
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/user/get-default-key-bindings")
+     * @Method({"GET"})
+     */
+    public function getDefaultKeyBindingsAction(Request $request)
+    {
+        $data = User::getDefaultKeyBindings();
+
+        return $this->adminJson(['success' => true, 'data' => $data]);
     }
 }

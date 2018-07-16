@@ -89,7 +89,7 @@ class DefaultElasticSearch implements IProductList
     /**
      * @var int
      */
-    protected $offset;
+    protected $offset = 0;
 
     /**
      * @var AbstractCategory

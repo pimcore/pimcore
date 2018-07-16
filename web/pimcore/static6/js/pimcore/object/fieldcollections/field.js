@@ -58,23 +58,42 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
             }
         });
 
+        this.groupField = new Ext.form.field.Text(
+            {
+                width: 400,
+                name: "group",
+                fieldLabel: t("group"),
+                value: this.data.group
+            });
+
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
             bodyStyle: "padding: 10px;",
+            defaults: {
+                labelWidth: 200
+            },
             items: [{
                 xtype: "textfield",
                 width: 400,
                 name: "parentClass",
-                fieldLabel: t("parent_class"),
+                fieldLabel: t("parent_php_class"),
                 value: this.data.parentClass
             }, {
-                xtype: 'displayfield',
-                text: '<b>' + t("used_by_class") + '</b>'
+                xtype: "textfield",
+                width: 400,
+                name: "title",
+                fieldLabel: t("title"),
+                value: this.data.title
             },
+                this.groupField,
+                {
+                    xtype: 'displayfield',
+                    text: '<b>' + t("used_by_class") + '</b>'
+                },
                 usagesGrid]
         });
 
-        this.rootPanel.on("afterrender", function() {
+        this.rootPanel.on("afterrender", function () {
             this.usagesStore.reload()
         }.bind(this));
 
@@ -82,6 +101,13 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
     },
 
     save: function () {
+
+        var reload = false;
+        var newGroup = this.groupField.getValue();
+        if (newGroup != this.data.group) {
+            this.data.group = newGroup;
+            reload = true;}
+
 
         this.saveCurrentNode();
 
@@ -91,23 +117,27 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         if (this.getDataSuccess) {
             Ext.Ajax.request({
                 url: "/admin/class/fieldcollection-update",
-                method: "post",
+                method: 'PUT',
                 params: {
                     configuration: m,
                     values: n,
-                    key: this.data.key
+                    key: this.data.key,
+                    title: this.data.title,
+                    group: this.data.group
                 },
-                success: this.saveOnComplete.bind(this)
+                success: this.saveOnComplete.bind(this, reload)
             });
         }
     },
 
-    saveOnComplete: function (response) {
+    saveOnComplete: function (reload, response) {
         try {
             var res = Ext.decode(response.responseText);
             if (res.success) {
-                this.parentPanel.tree.getStore().load();
-                pimcore.helpers.showNotification(t("success"), t("fieldcollection_saved_successfully"), "success");
+                if (reload) {
+                    this.parentPanel.tree.getStore().load();
+                }
+                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
             } else {
                 throw "save was not successful, see log files in /var/logs";
             }
@@ -117,7 +147,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
     },
 
     saveOnError: function () {
-        pimcore.helpers.showNotification(t("error"), t("definition_save_error"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     },
 
     upload: function () {

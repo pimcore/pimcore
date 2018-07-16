@@ -36,7 +36,7 @@ For a multi-line alternative have a look at the [textarea editable](./36_Textare
 
 ```twig
 <h2>
- {{ pimcore_input("myHeadline"); }}
+ {{ pimcore_input("myHeadline") }}
 </h2>
 ```
 </div>

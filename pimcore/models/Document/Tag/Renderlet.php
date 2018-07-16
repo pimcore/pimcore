@@ -143,7 +143,6 @@ class Renderlet extends Model\Document\Tag
                 'type' => $this->type,
                 'subtype' => $this->subtype,
                 'pimcore_request_source' => 'renderlet',
-                'disableBlockClearing' => true
             ];
 
             foreach ($this->options as $key => $value) {

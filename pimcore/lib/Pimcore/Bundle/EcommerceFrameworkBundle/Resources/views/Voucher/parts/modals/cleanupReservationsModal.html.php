@@ -27,7 +27,7 @@
             </div>
             <div class="modal-body-content">
                 <form class="form-horizontal js-cleanup-reservations-modal-form"
-                      action="<?=$this->path('pimcore_ecommerce_backend_voucher_cleanup-reservations', $this->urlParams)?>">
+                      action="<?=$this->path('pimcore_ecommerce_backend_voucher_cleanup-reservations', $this->urlParams)?>" method="post">
                     <h3><?=$this->translateAdmin('bundle_ecommerce_voucherservice_modal_cleanup-reservations-headline')?></h3>
                     <div class="form-group" style="margin-top: 20px">
                         <div class="col col-sm-12">

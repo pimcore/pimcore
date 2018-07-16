@@ -53,7 +53,7 @@ class Housekeeping
         $directory = new \RecursiveDirectoryIterator($folder);
         $filter = new \RecursiveCallbackFilterIterator($directory, function (\SplFileInfo $current, $key, $iterator) use ($days) {
             if ($current->isFile()) {
-                if ($current->getATime() < (time() - ($days * 86400))) {
+                if ($current->getATime() && $current->getATime() < (time() - ($days * 86400))) {
                     return true;
                 }
             } else {

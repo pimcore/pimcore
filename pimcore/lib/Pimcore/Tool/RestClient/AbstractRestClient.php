@@ -459,7 +459,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     protected function buildRestParameters(array $parameters = [], $condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null)
     {
         if ($condition) {
-            $parameters['condition'] = urlencode($condition);
+            $parameters['q'] = urlencode($condition);
         }
 
         if ($order) {
@@ -989,7 +989,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
      */
     public function getClassById($id, $decode = true)
     {
-        $response     = $this->getJsonResponse('GET', sprintf('/class/id/%d', $id));
+        $response     = $this->getJsonResponse('GET', sprintf('/class/id/%s', $id));
         $responseData = $response->data;
 
         if (!$decode) {

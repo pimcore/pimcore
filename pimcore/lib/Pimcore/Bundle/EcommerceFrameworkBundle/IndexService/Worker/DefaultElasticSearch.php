@@ -699,6 +699,8 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                         'index' => '*',
                         'alias' => $this->indexName,
                     ],
+                ],
+                [
                     'add' => [
                         'index' => $this->getIndexNameVersion(),
                         'alias' => $this->indexName,

@@ -20,7 +20,7 @@ pimcore.object.importcolumn.operator.objectbricksetter = Class.create(pimcore.ob
     type: "operator",
     class: "ObjectBrickSetter",
     iconCls: "pimcore_icon_objectbricks",
-    defaultText: "operator_objectbricksetter",
+    defaultText: "ObjectBrick Setter",
 
 
     getConfigTreeNode: function(configAttributes) {
@@ -41,12 +41,12 @@ pimcore.object.importcolumn.operator.objectbricksetter = Class.create(pimcore.ob
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class, label: this.getDefaultText()};
 
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,
@@ -169,7 +169,7 @@ pimcore.object.importcolumn.operator.objectbricksetter = Class.create(pimcore.ob
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
         if (configAttributes.attr) {
             nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.attr  + "-" + configAttributes.brickType + ')</span>';
         }

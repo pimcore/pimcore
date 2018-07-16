@@ -51,10 +51,13 @@ class ClassManager extends Module
             $class = new ClassDefinition();
             $class->setName($name);
             $class->setUserOwner(1);
+            $class->setId($name);
 
             ClassDefinition\Service::importClassDefinitionFromJson($class, $json, true);
 
             $class->save();
+
+            $this->debug(sprintf('[CLASSMANAGER] Setting up class %s DONE', $name));
 
             $class = ClassDefinition::getById($class->getId());
             $class->setUserModification(1);

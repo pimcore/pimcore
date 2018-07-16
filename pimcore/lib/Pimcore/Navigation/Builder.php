@@ -16,6 +16,7 @@ namespace Pimcore\Navigation;
 
 use Pimcore\Cache as CacheManager;
 use Pimcore\Http\RequestHelper;
+use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Navigation\Page\Document as DocumentPage;
@@ -242,10 +243,11 @@ class Builder
      *
      * @return array
      */
-    protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null)
+    protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [])
     {
         $pages  = [];
         $childs = $this->getChilds($parentDocument);
+        $parents[$parentDocument->getId()] = $parentDocument;
 
         if (!is_array($childs)) {
             return $pages;
@@ -256,6 +258,15 @@ class Builder
 
             if ($child instanceof Document\Hardlink) {
                 $child = Document\Hardlink\Service::wrap($child);
+                if (!$child) {
+                    continue;
+                }
+            }
+
+            // infinite loop detection, we use array keys here, because key lookups are much faster
+            if (isset($parents[$child->getId()])) {
+                Logger::critical('Navigation: Document with ID ' . $child->getId() . ' would produce an infinite loop -> skipped, parent IDs (' . implode(',', array_keys($parents)) . ')');
+                continue;
             }
 
             if (($child instanceof Document\Folder or $child instanceof Document\Page or $child instanceof Document\Link) and $child->getProperty('navigation_name')) {
@@ -291,7 +302,7 @@ class Builder
                 $page->setClass($page->getClass() . $classes);
 
                 if ($child->hasChildren()) {
-                    $childPages = $this->buildNextLevel($child, false, $pageCallback);
+                    $childPages = $this->buildNextLevel($child, false, $pageCallback, $parents);
                     $page->setPages($childPages);
                 }
 

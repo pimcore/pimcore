@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
 use Pimcore\Routing\Redirect\Csv;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -33,6 +35,129 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class RedirectsController extends AdminController
 {
+    /**
+     * @Route("/list")
+     * @Method({"POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function redirectsAction(Request $request)
+    {
+        if ($request->get('data')) {
+            $this->checkPermission('redirects');
+
+            if ($request->get('xaction') == 'destroy') {
+                $data = $this->decodeJson($request->get('data'));
+
+                $id = $data['id'] ?? null;
+                if ($id) {
+                    $redirect = Redirect::getById($id);
+                    $redirect->delete();
+                }
+
+                return $this->adminJson(['success' => true, 'data' => []]);
+            } elseif ($request->get('xaction') == 'update') {
+                $data = $this->decodeJson($request->get('data'));
+
+                // save redirect
+                $redirect = Redirect::getById($data['id']);
+
+                if ($data['target']) {
+                    if ($doc = Document::getByPath($data['target'])) {
+                        $data['target'] = $doc->getId();
+                    }
+                }
+
+                if (!$data['regex'] && $data['source']) {
+                    $data['source'] = str_replace('+', ' ', $data['source']);
+                }
+
+                $redirect->setValues($data);
+
+                $redirect->save();
+
+                $redirectTarget = $redirect->getTarget();
+                if (is_numeric($redirectTarget)) {
+                    if ($doc = Document::getById(intval($redirectTarget))) {
+                        $redirect->setTarget($doc->getRealFullPath());
+                    }
+                }
+
+                return $this->adminJson(['data' => $redirect, 'success' => true]);
+            } elseif ($request->get('xaction') == 'create') {
+                $data = $this->decodeJson($request->get('data'));
+                unset($data['id']);
+
+                // save route
+                $redirect = new Redirect();
+
+                if ($data['target']) {
+                    if ($doc = Document::getByPath($data['target'])) {
+                        $data['target'] = $doc->getId();
+                    }
+                }
+
+                if (!$data['regex'] && $data['source']) {
+                    $data['source'] = str_replace('+', ' ', $data['source']);
+                }
+
+                $redirect->setValues($data);
+
+                $redirect->save();
+
+                $redirectTarget = $redirect->getTarget();
+                if (is_numeric($redirectTarget)) {
+                    if ($doc = Document::getById(intval($redirectTarget))) {
+                        $redirect->setTarget($doc->getRealFullPath());
+                    }
+                }
+
+                return $this->adminJson(['data' => $redirect, 'success' => true]);
+            }
+        } else {
+            // get list of routes
+
+            $list = new Redirect\Listing();
+            $list->setLimit($request->get('limit'));
+            $list->setOffset($request->get('start'));
+
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+            if ($sortingSettings['orderKey']) {
+                $list->setOrderKey($sortingSettings['orderKey']);
+                $list->setOrder($sortingSettings['order']);
+            }
+
+            if ($filterValue = $request->get('filter')) {
+                if (is_numeric($filterValue)) {
+                    $list->setCondition('id = ?', [$filterValue]);
+                } else {
+                    $list->setCondition('`source` LIKE ' . $list->quote('%' . $filterValue . '%') . ' OR `target` LIKE ' . $list->quote('%' . $filterValue . '%'));
+                }
+            }
+
+            $list->load();
+
+            $redirects = [];
+            foreach ($list->getRedirects() as $redirect) {
+                if ($link = $redirect->getTarget()) {
+                    if (is_numeric($link)) {
+                        if ($doc = Document::getById(intval($link))) {
+                            $redirect->setTarget($doc->getRealFullPath());
+                        }
+                    }
+                }
+
+                $redirects[] = $redirect;
+            }
+
+            return $this->adminJson(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);
+        }
+
+        return $this->adminJson(false);
+    }
+
     /**
      * @Route("/csv-export")
      * @Method("GET")

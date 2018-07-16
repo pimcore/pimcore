@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Email\Blacklist\Listing\Dao getDao()
+ * @method Model\Tool\Email\Blacklist[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

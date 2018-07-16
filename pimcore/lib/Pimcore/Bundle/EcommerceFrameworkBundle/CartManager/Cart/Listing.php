@@ -16,6 +16,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 
+/**
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart[] load()
+ * @method int getTotalCount()
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing\Dao getDao()
+ */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
@@ -29,15 +34,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @var array
+     * @param string $key The key to check
+     *
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
-        if ($key == 'userId' || $key == 'name') {
-            return true;
-        }
-
-        return false;
+        return in_array($key, ['userId', 'name', 'creationDateTimestamp', 'modificationDateTimestamp']);
     }
 
     /**

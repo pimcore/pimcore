@@ -66,7 +66,7 @@ server {
     
     # Thumbnails
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$request_uri /app.php;
+        try_files /var/tmp/$1-thumbnails$uri /app.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
@@ -85,7 +85,7 @@ server {
     # Installer
     # Remove this if you don't need the web installer (anymore)
     if (-f $document_root/install.php) {
-        rewrite ^/install(/?.*) /install.php$1 last;
+        rewrite ^/install(/?.*) /install.php last;
     }
 
     location / {
@@ -105,7 +105,7 @@ server {
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
-        include fastcgi.conf;
+        include fastcgi_params;
         # Bypass the fact that try_files resets $fastcgi_path_info
         # see: http://trac.nginx.org/nginx/ticket/321
         set $path_info $fastcgi_path_info;
@@ -170,14 +170,14 @@ __Step 2: Replace the location that handles on-demand thumbnail generation__
     # Pimcore On-Demand Thumbnail generation
     # with Rate-Limit.
     location ~* .*/(image|video)-thumb__\d+__.* {
-        try_files /var/tmp/$1-thumbnails$request_uri @imggen;
+        try_files /var/tmp/$1-thumbnails$uri @imggen;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";
     }
     location @imggen {
         limit_req zone=imggen burst=15;
-        try_files /var/tmp/$1-thumbnails$request_uri /app.php;
+        try_files /var/tmp/$1-thumbnails$uri /app.php;
         expires 2w;
         access_log off;
         add_header Cache-Control "public";

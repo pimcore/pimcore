@@ -35,6 +35,7 @@ class PiwikController extends ReportsControllerBase
 {
     /**
      * @Route("/reports")
+     * @Method({"GET"})
      *
      * @param ReportBroker $reportBroker
      *
@@ -51,6 +52,7 @@ class PiwikController extends ReportsControllerBase
 
     /**
      * @Route("/reports/{report}")
+     * @Method({"GET"})
      *
      * @param ReportBroker $reportBroker
      *
@@ -71,6 +73,7 @@ class PiwikController extends ReportsControllerBase
 
     /**
      * @Route("/iframe-integration")
+     * @Method({"GET"})
      *
      * @param ConfigProvider $configProvider
      *
@@ -98,6 +101,7 @@ class PiwikController extends ReportsControllerBase
 
     /**
      * @Route("/config/configured-sites")
+     * @Method({"GET"})
      *
      * @param SiteIdProvider $siteConfigProvider
      * @param ConfigProvider $configProvider
@@ -132,6 +136,7 @@ class PiwikController extends ReportsControllerBase
 
     /**
      * @Route("/portal-widgets/{configKey}")
+     * @Method({"GET"})
      *
      * @param WidgetBroker $widgetBroker
      * @param string $configKey
@@ -149,6 +154,7 @@ class PiwikController extends ReportsControllerBase
 
     /**
      * @Route("/portal-widgets/{configKey}/{widgetId}")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param WidgetBroker $widgetBroker

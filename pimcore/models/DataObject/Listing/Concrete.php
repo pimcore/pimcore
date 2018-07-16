@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\DataObject\Listing\Concrete\Dao getDao()
+ * @method Model\Webservice\Data\DataObject\Concrete[] load()
  */
 abstract class Concrete extends Model\DataObject\Listing
 {
@@ -70,7 +71,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getClassId()
     {

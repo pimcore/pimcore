@@ -260,7 +260,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                    icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var subtype = data.data.subtype;
@@ -659,11 +659,14 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         var menu = new Ext.menu.Menu();
         var data = record;
 
-        menu.add(new Ext.menu.Item({
-            text: t('remove'),
-            iconCls: "pimcore_icon_delete",
-            handler: this.removeElement.bind(this, rowIndex)
-        }));
+         // check if field noteditable property is false
+        if(this.fieldConfig.noteditable == false) {
+            menu.add(new Ext.menu.Item({
+                text: t('remove'),
+                iconCls: "pimcore_icon_delete",
+                handler: this.removeElement.bind(this, rowIndex)
+            }));
+        }
 
         menu.add(new Ext.menu.Item({
             text: t('open'),

@@ -214,16 +214,22 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 $data = ['__pimcore_dummy' => 'only_a_dummy'];
 
                 if ($domain == 'admin') {
-                    // add json catalogue
-                    try {
-                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/' . $locale . '.json');
-                    } catch (\Exception $e) {
-                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/en.json');
-                    }
+                    $jsonFiles = [
+                        $locale . '.json' => 'en.json',
+                        $locale . '.extended.json' => 'en.extended.json'
+                    ];
 
-                    $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
-                    if (is_array($jsonTranslations)) {
-                        $data = array_merge($data, $jsonTranslations);
+                    foreach ($jsonFiles as $sourceFile => $fallbackFile) {
+                        try {
+                            $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/' . $sourceFile);
+                        } catch (\Exception $e) {
+                            $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . '/' . $fallbackFile);
+                        }
+
+                        $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
+                        if (is_array($jsonTranslations)) {
+                            $data = array_merge($jsonTranslations, $data);
+                        }
                     }
                 }
 
@@ -246,6 +252,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                         }
 
                         $data[$translationKey] = $translationTerm;
+                    }
+                }
+
+                // aliases support
+                $aliasesPath = $this->getKernel()->locateResource($this->getAdminPath() . '/aliases.json');
+                $aliases = json_decode(file_get_contents($aliasesPath), true);
+                foreach ($aliases as $aliasTarget => $aliasSource) {
+                    if (isset($data[$aliasSource]) && !isset($data[$aliasTarget])) {
+                        $data[$aliasTarget] = $data[$aliasSource];
                     }
                 }
 

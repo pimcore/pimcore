@@ -29,7 +29,7 @@ pimcore.settings.thumbnail.panel = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_thumbnails",
-                title: t("thumbnails"),
+                title: t("image_thumbnails"),
                 iconCls: "pimcore_icon_thumbnails",
                 border: false,
                 layout: "border",
@@ -90,7 +90,7 @@ pimcore.settings.thumbnail.panel = Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_thumbnail"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addField.bind(this)
                         }
@@ -127,18 +127,17 @@ pimcore.settings.thumbnail.panel = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
-            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //newChildNode.data.expanded = true;
-                newChildNode.data.leaf = true;
-                newChildNode.data.iconCls = "pimcore_icon_thumbnails";
-            }
+            'itemcontextmenu': this.onTreeNodeContextmenu.bind(this)
         };
 
         return treeNodeListeners;
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
         this.openThumbnail(record.data.id);
     },
 
@@ -165,6 +164,10 @@ pimcore.settings.thumbnail.panel = Class.create({
     },
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
+        if (!record.isLeaf()) {
+            return;
+        }
+
         e.stopEvent();
 
         tree.select();
@@ -181,7 +184,7 @@ pimcore.settings.thumbnail.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_thumbnail'), t('enter_the_name_of_the_new_thumbnail'),
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
             this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -194,14 +197,14 @@ pimcore.settings.thumbnail.panel = Class.create({
             var thumbnails = this.tree.getRootNode().childNodes;
             for (var i = 0; i < thumbnails.length; i++) {
                 if (thumbnails[i].text == value) {
-                    Ext.MessageBox.alert(t('add_thumbnail'),
-                        t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                    Ext.MessageBox.alert(' ', t('name_already_in_use'));
                     return;
                 }
             }
 
             Ext.Ajax.request({
                 url: "/admin/settings/thumbnail-add",
+                method: "POST",
                 params: {
                     name: value
                 },
@@ -211,7 +214,7 @@ pimcore.settings.thumbnail.panel = Class.create({
                     this.tree.getStore().load();
 
                     if (!data || !data.success) {
-                        Ext.Msg.alert(t('add_thumbnail'), t('problem_creating_new_thumbnail'));
+                        Ext.Msg.alert(' ', t('failed_to_create_new_item'));
                     } else {
                         this.openThumbnail(data.id);
                     }
@@ -222,13 +225,14 @@ pimcore.settings.thumbnail.panel = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_thumbnail'), t('problem_creating_new_thumbnail'));
+            Ext.Msg.alert(' ', t('failed_to_create_new_item'));
         }
     },
 
     deleteField: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/settings/thumbnail-delete",
+            method: 'DELETE',
             params: {
                 name: record.data.id
             }

@@ -452,6 +452,52 @@ class Video extends Model\Document\Tag
     }
 
     /**
+     * @return mixed|string
+     */
+    private function parseYoutubeId()
+    {
+        $youtubeId = '';
+        if ($this->type == 'youtube') {
+            if ($youtubeId = $this->id) {
+                if (strpos($youtubeId, '//') !== false) {
+                    $parts = parse_url($this->id);
+                    parse_str($parts['query'], $vars);
+
+                    if ($vars['v']) {
+                        $youtubeId = $vars['v'];
+                    }
+
+                    //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
+                    if (strpos($this->id, 'embed') !== false) {
+                        $explodedPath = explode('/', $parts['path']);
+                        $youtubeId = $explodedPath[array_search('embed', $explodedPath) + 1];
+                    }
+
+                    if ($parts['host'] == 'youtu.be') {
+                        $youtubeId = trim($parts['path'], ' /');
+                    }
+                }
+            }
+        }
+
+        return $youtubeId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getYoutubeUrlEmbedded()
+    {
+        if ($this->type == 'youtube') {
+            if ($youtubeId = $this->parseYoutubeId()) {
+                return 'https://www.youtube-nocookie.com/embed/'.$youtubeId;
+            }
+        }
+
+        return '';
+    }
+
+    /**
      * @return string
      */
     public function getYoutubeCode()
@@ -463,27 +509,7 @@ class Video extends Model\Document\Tag
         $options = $this->getOptions();
         $code = '';
 
-        // get youtube id
-        $youtubeId = $this->id;
-        if (strpos($youtubeId, '//') !== false) {
-            $parts = parse_url($this->id);
-            parse_str($parts['query'], $vars);
-
-            if ($vars['v']) {
-                $youtubeId = $vars['v'];
-            }
-
-            //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-            if (strpos($this->id, 'embed') !== false) {
-                $explodedPath = explode('/', $parts['path']);
-                $youtubeId = $explodedPath[array_search('embed', $explodedPath) + 1];
-            }
-
-            if ($parts['host'] == 'youtu.be') {
-                $youtubeId = trim($parts['path'], ' /');
-            }
-        }
-
+        $youtubeId = $this->parseYoutubeId();
         if (!$youtubeId) {
             return $this->getEmptyCode();
         }

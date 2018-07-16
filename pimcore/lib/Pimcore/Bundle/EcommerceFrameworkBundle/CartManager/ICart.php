@@ -181,6 +181,15 @@ interface ICart
     public function getPriceCalculator();
 
     /**
+     * executes necessary steps when cart is modified - e.g. updating modification timestamp, resetting cart price calculator etc.
+     *
+     * -> is called internally every time when cart has been changed.
+     *
+     * @return $this
+     */
+    public function modified();
+
+    /**
      * Set custom checkout data for cart.
      * can be used for delivery information, ...
      *

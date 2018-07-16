@@ -626,7 +626,9 @@ class DefaultMysql implements IProductList
                     }
 
                     $condition .= is_array($cond)
-                        ? sprintf(' ( %1$s IN (%2$s) )', $fieldname, implode(',', $cond))
+                        ? sprintf(' ( %1$s IN (%2$s) )', $fieldname, implode(',', array_map(function ($value) {
+                            return $this->quote($value);
+                        }, $cond)))
                         : '(' . $cond . ')'
                     ;
                 }

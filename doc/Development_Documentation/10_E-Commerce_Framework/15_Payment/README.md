@@ -128,7 +128,29 @@ pimcore_ecommerce_config:
                         secret: D343DDFD3434
                         pspid: MyLiveAccount
                         mode: live                        
-#                       encryptionType: SHA256 or SHA512 (optional)                                                             
+#                       encryptionType: SHA256 or SHA512 (optional)
+            mpay24:
+                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Mpay24Seamless
+                profile: testsystem
+                profiles:
+                  _defaults:
+                      #paypal_activate_item_level: true
+                      partial: Shared/Includes/Shop/Payment/paymentMethods.html.php
+                      payment_methods:
+                          cc:
+                          paypal:
+                          sofort:
+                          invoice:
+                  testsystem:
+                      merchant_id: 95387
+                      password: 7&jcQ%v6RB
+                      testSystem: true
+                      debugMode: true
+                  live:
+                      merchant_id: todo
+                      password: todo
+                      testSystem: false
+                      debugMode: false                                                             
 ```
 
 The payment provider name will be referenced from the checkout manager configuration and can be used to fetch a specific
@@ -143,6 +165,7 @@ Currently following Payment Providers are integrated into the framework:
 - [PayPal](./04_PayPal.md)
 - [Klarna](./05_Klarna.md)
 - [OGone](./06_OGone.md)
+- [MPay24](./07_MPay24.md)
 
 
 ## Further Payment Aspects

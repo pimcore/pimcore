@@ -244,6 +244,7 @@ $regionArray = $locale->getDisplayRegions();
                                     $provider[] = 'datatrans';
                                     $provider[] = 'paypal';
                                     $provider[] = 'ogone';
+                                    $provider[] = 'mpay24';
 
                                     $amount = null;
                                     foreach($provider as $p)
@@ -480,7 +481,7 @@ $regionArray = $locale->getDisplayRegions();
     </div>
 </div>
 
-<script type="text/javascript">
+<script>
     <?php $this->headScript()->captureStart(); ?>
     $(function () {
 

@@ -21,6 +21,10 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class PimcoreAdminExtension extends Extension
 {
+    const PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES = 'pimcore_admin.dataObjects.notes_events.types';
+    const PARAM_ASSETS_NOTES_EVENTS_TYPES = 'pimcore_admin.assets.notes_events.types';
+    const PARAM_DOCUMENTS_NOTES_EVENTS_TYPES = 'pimcore_admin.documents.notes_events.types';
+
     /**
      * {@inheritdoc}
      */
@@ -46,5 +50,11 @@ class PimcoreAdminExtension extends Extension
         //Set Config for GDPR data providers to container parameters
         $container->setParameter('pimcore.gdpr-data-extrator.dataobjects', $config['gdpr_data_extractor']['dataObjects']);
         $container->setParameter('pimcore.gdpr-data-extrator.assets', $config['gdpr_data_extractor']['assets']);
+
+        //Set Config for Notes/Events Types to container parameters
+        $container->setParameter(self::PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES, $config['dataObjects']['notes_events']['types']);
+        $container->setParameter(self::PARAM_ASSETS_NOTES_EVENTS_TYPES, $config['assets']['notes_events']['types']);
+        $container->setParameter(self::PARAM_DOCUMENTS_NOTES_EVENTS_TYPES, $config['documents']['notes_events']['types']);
+        $container->setParameter('pimcore_admin.csrf_protection.excluded_routes', $config['csrf_protection']['excluded_routes']);
     }
 }

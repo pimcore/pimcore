@@ -85,7 +85,7 @@ pimcore.report.qrcode.panel = Class.create({
                     cls: 'main-toolbar',
                     items: [
                         {
-                            text: t("add_qr_code"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addField.bind(this)
                         }
@@ -179,7 +179,7 @@ pimcore.report.qrcode.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_qr_code'), t('enter_the_name_of_the_new_qrcode') + "(a-zA-Z-_)",
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item') + " (a-zA-Z-_)",
                                                 this.addFieldComplete.bind(this), null, null, "");
     },
 
@@ -191,14 +191,14 @@ pimcore.report.qrcode.panel = Class.create({
             var codes = this.tree.getRootNode().childNodes;
             for (var i = 0; i < codes.length; i++) {
                 if (codes[i].text == value) {
-                    Ext.MessageBox.alert(t('add_thumbnail'),
-                                         t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                    Ext.MessageBox.alert(' ', t('name_already_in_use'));
                     return;
                 }
             }
 
             Ext.Ajax.request({
                 url: "/admin/reports/qrcode/add",
+                method: 'POST',
                 params: {
                     name: value
                 },
@@ -208,7 +208,7 @@ pimcore.report.qrcode.panel = Class.create({
                     this.tree.getStore().load();
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_qr_code'), t('problem_creating_new_qrcode'));
+                        Ext.Msg.alert(' ', t('failed_to_create_new_item'));
                     } else {
                         this.openCode(data.id);
                     }
@@ -226,6 +226,7 @@ pimcore.report.qrcode.panel = Class.create({
     deleteField: function (tree, record) {
         Ext.Ajax.request({
             url: "/admin/reports/qrcode/delete",
+            method: 'DELETE',
             params: {
                 name: record.data.id
             }

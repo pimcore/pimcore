@@ -519,7 +519,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     getClassTree: function(url, id) {
         var tree = Ext.create('Ext.tree.Panel', {
             width: 200,
-            title: t('class_definitions'),
+            title: t('class'),
             region: "west",
             autoScroll: true,
             split: true,
@@ -760,7 +760,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             if (this.getDataSuccess) {
                 Ext.Ajax.request({
                     url: "/admin/class/save-custom-layout",
-                    method: "post",
+                    method: "PUT",
                     params: {
                         configuration: m,
                         values: n,
@@ -777,7 +777,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         try {
             var res = Ext.decode(response.responseText);
             if(res.success) {
-                pimcore.helpers.showNotification(t("success"), t("layout_saved_successfully"), "success");
+                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                 this.layoutComboStore.reload();
                 this.data = res.data;
             } else {
@@ -789,11 +789,11 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     saveOnError: function () {
-        pimcore.helpers.showNotification(t("error"), t("layout_save_error"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     },
 
     addLayout: function () {
-        Ext.MessageBox.prompt(t('add_layout'), t('enter_the_name_of_the_new_layout'), this.addLayoutComplete.bind(this),
+        Ext.MessageBox.prompt(t('add_layout'), t('enter_the_name_of_the_new_item'), this.addLayoutComplete.bind(this),
             null, null, "");
     },
 
@@ -802,6 +802,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             && !in_array(value.toLowerCase(), this.forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/add-custom-layout",
+                method: 'POST',
                 params: {
                     name: value,
                     classId: this.klass.id
@@ -819,7 +820,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                         this.layoutChangeCombo.setValue(data.id);
                         this.initLayoutFields(true, response);
                     } else {
-                        Ext.Msg.alert(t('error'), t('custom_layout_save_error'));
+                        Ext.Msg.alert(t('error'), t('saving_failed'));
                     }
                 }.bind(this)
             });
@@ -828,7 +829,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
+            Ext.Msg.alert(' ', t('invalid_class_name'));
         }
     },
 
@@ -847,6 +848,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 if (btn == 'yes'){
                     Ext.Ajax.request({
                         url: "/admin/class/delete-custom-layout",
+                        method: 'DELETE',
                         params: {
                             id: id
                         }
@@ -871,10 +873,11 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     upload: function() {
 
         pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function() {
+            var layoutId = this.data.id;
             Ext.Ajax.request({
                 url: "/admin/class/get-custom-layout",
                 params: {
-                    id: this.data.id
+                    id: layoutId
                 },
                 success: function(response) {
                     this.editPanel.removeAll();

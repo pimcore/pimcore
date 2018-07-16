@@ -188,6 +188,10 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             }
         }
 
+        if ($options['globalParams']) {
+            $params = array_merge($options['globalParams'], (array)$params);
+        }
+
         $info->setParams($params);
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
@@ -262,11 +266,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     {
         return [
             'areablock_toolbar' => [
-                'title' => '',
                 'width' => 172,
-                'x' => 20,
-                'y' => 50,
-                'xAlign' => 'left',
                 'buttonWidth' => 168,
                 'buttonMaxCharacters' => 20
             ]
@@ -366,8 +366,10 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         // outer element
         $this->outputEditmode('<div class="pimcore_area_entry pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
 
-        $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
+        $this->outputEditmode('<div class="pimcore_area_buttons" ' . $attr . '>');
+        $this->outputEditmode('<div class="pimcore_area_buttons_inner">');
 
+        $this->outputEditmode('<div class="pimcore_block_plus_up" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_plus" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_minus" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_up" ' . $attr . '></div>');
@@ -376,9 +378,11 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $this->outputEditmode('<div class="pimcore_block_type" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_options" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_visibility" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_label" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
 
-        $this->outputEditmode('</div>'); // .pimcore_block_buttons
+        $this->outputEditmode('</div>'); // .pimcore_area_buttons_inner
+        $this->outputEditmode('</div>'); // .pimcore_area_buttons
     }
 
     /**
