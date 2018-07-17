@@ -107,10 +107,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.leafletMap = null;
         this.mapId = "map" + this.divImageID;
         this.marker = null;
-        var markerIcon = L.icon({
-            iconUrl: '/pimcore/static6/img/leaflet/marker-icon.png',
-            shadowUrl: '/pimcore/static6/img/leaflet/marker-shadow.png'
-        });
 
         this.editableLayers = new L.FeatureGroup();
         this.drawControlFull = new L.Control.Draw({
@@ -140,7 +136,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             this.lat = data.latitude;
             this.lng = data.longitude;
             this.getLeafletMap();
-            this.marker = L.marker([this.lat, this.lng], {icon: markerIcon}).addTo(this.leafletMap);
+            this.marker = L.marker([this.lat, this.lng], {}).addTo(this.leafletMap);
             this.reverseGeocode(this.marker);
         } else {
             this.lat = fieldConfig.lat;
