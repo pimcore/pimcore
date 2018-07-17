@@ -22,9 +22,12 @@ use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Exception\MissingDependencyException;
+use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -600,5 +603,60 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @param string $hostUrl
+     * @return bool
+     * @throws \Exception
+     */
+    public static function generatePagePreview($id, $request = null, $hostUrl = null) {
+
+        $success = false;
+
+        $doc = Document::getById($id);
+        if(!$hostUrl) {
+            $hostUrl = Tool::getHostUrl(false, $request);
+        }
+
+        $url = $hostUrl . $doc->getRealFullPath();
+
+        $config = \Pimcore\Config::getSystemConfig();
+        if ($config->general->http_auth) {
+            $username = $config->general->http_auth->username;
+            $password = $config->general->http_auth->password;
+            if ($username && $password) {
+                $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
+            }
+        }
+
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
+        $file = $doc->getPreviewImageFilesystemPath();
+
+        $dir = dirname($file);
+        if (!is_dir($dir)) {
+            File::mkdir($dir);
+        }
+
+        if (\Pimcore\Image\HtmlToImage::convert($url, $tmpFile)) {
+            $im = \Pimcore\Image::getInstance();
+            $im->load($tmpFile);
+            $im->scaleByWidth(400);
+            $im->save($file, 'jpeg', 85);
+
+            // HDPi version
+            $im = \Pimcore\Image::getInstance();
+            $im->load($tmpFile);
+            $im->scaleByWidth(800);
+            $im->save($doc->getPreviewImageFilesystemPath(true), 'jpeg', 85);
+
+            unlink($tmpFile);
+
+            $success = true;
+        }
+
+        return $success;
     }
 }

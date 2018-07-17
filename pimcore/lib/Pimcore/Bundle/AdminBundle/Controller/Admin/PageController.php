@@ -282,45 +282,10 @@ class PageController extends DocumentControllerBase
     {
         $success = false;
         if ($request->get('id')) {
-            $doc = Document::getById($request->get('id'));
-            $url = Tool::getHostUrl() . $doc->getRealFullPath();
-
-            $config = \Pimcore\Config::getSystemConfig();
-            if ($config->general->http_auth) {
-                $username = $config->general->http_auth->username;
-                $password = $config->general->http_auth->password;
-                if ($username && $password) {
-                    $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
-                }
-            }
-
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
-            $file = $doc->getPreviewImageFilesystemPath();
-
-            $dir = dirname($file);
-            if (!is_dir($dir)) {
-                File::mkdir($dir);
-            }
-
             try {
-                if (\Pimcore\Image\HtmlToImage::convert($url, $tmpFile)) {
-                    $im = \Pimcore\Image::getInstance();
-                    $im->load($tmpFile);
-                    $im->scaleByWidth(400);
-                    $im->save($file, 'jpeg', 85);
-
-                    // HDPi version
-                    $im = \Pimcore\Image::getInstance();
-                    $im->load($tmpFile);
-                    $im->scaleByWidth(800);
-                    $im->save($doc->getPreviewImageFilesystemPath(true), 'jpeg', 85);
-
-                    unlink($tmpFile);
-
-                    $success = true;
-                }
+                $success = Document\Service::generatePagePreview($request->get('id'), $request);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::err($e);
             }
         }
 
