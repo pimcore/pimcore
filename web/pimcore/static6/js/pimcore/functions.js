@@ -94,7 +94,7 @@ function FormatJSON(oData, sIndent) {
         var sHTML = "[";
     } else {
         var iCount = 0;
-        $.each(oData, function() {
+        jQuery.each(oData, function() {
             iCount++;
             return;
         });
@@ -106,7 +106,7 @@ function FormatJSON(oData, sIndent) {
 
     // loop through items
     var iCount = 0;
-    $.each(oData, function(sKey, vValue) {
+    jQuery.each(oData, function(sKey, vValue) {
         if (iCount > 0) {
             sHTML += ",";
         }
