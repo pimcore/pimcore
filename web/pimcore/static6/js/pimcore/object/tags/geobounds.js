@@ -168,6 +168,13 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             this.drawControlEditOnly.remove(this.leafletMap);
             this.drawControlFull.addTo(this.leafletMap);
         });
+
+        this.leafletMap.on("draw:editresize draw:editmove", function (e) {
+            this.data = {
+                ne: e.layer.getBounds().getNorthEast(),
+                sw: e.layer.getBounds().getSouthWest()
+            };
+        }.bind(this));
     },
     
     geocode: function () {
