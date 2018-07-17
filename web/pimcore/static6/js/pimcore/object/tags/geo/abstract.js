@@ -62,7 +62,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     getLeafletMap: function() {
         document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="'+ this.mapId +'" style="height:400px;width:650px;"></div>';
         this.leafletMap =  L.map(this.mapId).setView([this.lat, this.lng], this.mapZoom);
-        L.tileLayer(pimcore.settings.leaflet_tile_layer_url_template, {
+        L.tileLayer(pimcore.settings.tile_layer_url_template, {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(this.leafletMap);
     },
@@ -91,6 +91,10 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         var lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
 
         return Math.min(latZoom, lngZoom, ZOOM_MAX);
-    }
+    },
 
+    getSearchUrl: function (query) {
+        var url = pimcore.settings.geocoding_url_template.replace('{q}', urlencode(query));
+        return url;
+    }
 });

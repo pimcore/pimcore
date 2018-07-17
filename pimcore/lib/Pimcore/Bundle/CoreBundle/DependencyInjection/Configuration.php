@@ -82,6 +82,20 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('maps')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('tile_layer_url_template')
+                            ->defaultValue('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png')
+                        ->end()
+                        ->scalarNode('geocoding_url_template')
+                            ->defaultValue('https://nominatim.openstreetmap.org/search?q={q}&addressdetails=1&format=json&limit=1')
+                        ->end()
+                        ->scalarNode('reverse_geocoding_url_template')
+                            ->defaultValue('https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&addressdetails=1')
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         $this->addObjectsNode($rootNode);
