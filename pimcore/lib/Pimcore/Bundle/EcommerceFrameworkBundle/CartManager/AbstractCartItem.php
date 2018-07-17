@@ -31,7 +31,6 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     protected $isLoading = false;
 
-
     /**
      * @var ICheckoutable
      */
@@ -75,7 +74,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     public function setProduct(ICheckoutable $product)
     {
-        if ((isEmpty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading) {
+        if ((empty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading) {
             $this->getCart()->modified();
         }
         $this->product = $product;
@@ -333,11 +332,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * only for internal usage
      *
      * @param bool $isLoading
+     *
      * @internal
      */
     public function setIsLoading(bool $isLoading)
     {
         $this->isLoading = $isLoading;
     }
-
 }

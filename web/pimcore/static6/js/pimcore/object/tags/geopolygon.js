@@ -194,7 +194,6 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
                 this.getLeafletToolbar();
             }
         }.bind(this));
-
     },
 
     getValue: function () {

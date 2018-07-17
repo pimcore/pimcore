@@ -816,7 +816,7 @@ abstract class Data
         $key = $this->getName();
         $code = '';
         $code .= '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
@@ -834,7 +834,7 @@ abstract class Data
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
         $code .= "\t return " . '$data' . ";\n";

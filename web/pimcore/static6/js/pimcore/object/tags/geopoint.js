@@ -83,8 +83,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             ]
 
         });
-
-
         this.component.on('afterrender', function () {
             this.updateMap();
         }.bind(this));

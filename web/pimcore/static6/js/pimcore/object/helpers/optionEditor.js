@@ -71,18 +71,20 @@ pimcore.object.helpers.optionEditor = Class.create({
                     handler: function(){
                         this.store.removeAll();
                         var content = this.textarea.getValue();
-                        var csvData = Ext.util.CSV.decode(content);
+                        if (content.length > 0) {
+                           var csvData = Ext.util.CSV.decode(content);
 
-                        for(var i = 0;i < csvData.length;i++){
-                            var pair = csvData[i];
-                            var key = pair[0];
-                            var value = pair[1];
+                            for(var i = 0;i < csvData.length;i++){
+                                var pair = csvData[i];
+                                var key = pair[0];
+                                var value = pair[1];
 
-                            var u = {
-                                key: key,
-                                value: value
-                            };
-                            this.store.add(u);
+                                var u = {
+                                    key: key,
+                                    value: value
+                                };
+                                this.store.add(u);
+                            }
                         }
 
                         this.window.hide();
