@@ -102,26 +102,6 @@ abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @return string
-     */
-    public function getMapType()
-    {
-        return $this->mapType;
-    }
-
-    /**
-     * @param $mapType
-     *
-     * @return $this
-     */
-    public function setMapType($mapType)
-    {
-        $this->mapType = $mapType;
-
-        return $this;
-    }
-
-    /**
      * @param $value
      * @param null $object
      * @param array $params

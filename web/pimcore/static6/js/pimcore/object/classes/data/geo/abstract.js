@@ -66,22 +66,6 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 decimalPrecision: 0,
                 minValue: 1,
                 incrementValue: 1
-            }, {
-                xtype: 'combo',
-                fieldLabel: t('map_type'),
-                name: 'mapType',
-                mode: 'local',
-                allowBlank: false,
-                editable: false,
-                typeAhead: false,
-                allowblank: false,
-                triggerAction: 'all',
-                store: [
-                    ['roadmap', t('roadmap')],
-                    ['satellite', t('satellite')],
-                    ['hybrid', t('hybrid')]
-                ],
-                value: datax.mapType || 'roadmap'
             }
         ];
     },
