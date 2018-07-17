@@ -167,7 +167,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
     
     geocode: function () {
         var address = this.searchfield.getValue();
-        $.getJSON("https://nominatim.openstreetmap.org/search?q="+address+"&addressdetails=1&format=json&limit=1", function(json) {
+        jQuery.getJSON("https://nominatim.openstreetmap.org/search?q="+address+"&addressdetails=1&format=json&limit=1", function(json) {
           if( json[0].lat !== null && json[0].lon !== null) {
                 this.lat = json[0].lat;
                 this.lng = json[0].lon;

@@ -185,7 +185,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     geocode: function () {
         var address = this.searchfield.getValue();
-        $.getJSON("https://nominatim.openstreetmap.org/search?q=" + address + "&addressdetails=1&format=json&limit=1", function (json) {
+        jQuery.getJSON("https://nominatim.openstreetmap.org/search?q=" + address + "&addressdetails=1&format=json&limit=1", function (json) {
             this.latitude.setValue(json[0].lat);
             this.longitude.setValue(json[0].lon);
             this.updateMap();
@@ -195,7 +195,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     reverseGeocode: function (layerObj) {
         if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
-            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + this.latitude.getValue() + "&lon=" +
+            jQuery.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + this.latitude.getValue() + "&lon=" +
                 this.longitude.getValue() + "&addressdetails=1", function (json) {
                 this.currentLocationText = json.display_name;
                 layerObj.bindTooltip(this.currentLocationText);
