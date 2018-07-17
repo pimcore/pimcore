@@ -46,7 +46,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
                     }.bind(this)
                 }],
             tbar: [
-                 this.fieldConfig.title,
+                this.fieldConfig.title,
                 "->",
                 this.searchfield,
                 {
@@ -126,29 +126,6 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         this.leafletMap.addControl(this.drawControlFull);
         this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
             this.dirty = true;
-            this.leafletMap.addLayer(this.editableLayers);
-            this.leafletMap.addControl(this.drawControlFull);
-            this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
-                this.dirty = true;
-                if (this.rectangle !== null) {
-                    this.leafletMap.removeLayer(this.rectangle);
-                }
-                var layer = e.layer;
-                this.editableLayers.addLayer(layer);
-                if (this.editableLayers.getLayers().length === 1) {
-                    this.drawControlFull.remove(this.leafletMap);
-                    this.drawControlEditOnly.addTo(this.leafletMap);
-                    this.data = {
-                        ne: layer.getBounds().getNorthEast(),
-                        sw: layer.getBounds().getSouthWest()
-                    };
-                }
-            }.bind(this));
-
-            this.leafletMap.on("draw:deleted", function (e) {
-                this.drawControlEditOnly.remove(this.leafletMap);
-                this.drawControlFull.addTo(this.leafletMap);
-            });
             if (this.rectangle !== null) {
                 this.leafletMap.removeLayer(this.rectangle);
             }
@@ -167,20 +144,27 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         this.leafletMap.on("draw:deleted", function (e) {
             this.drawControlEditOnly.remove(this.leafletMap);
             this.drawControlFull.addTo(this.leafletMap);
-        });
+        }.bind(this));
+
+        this.leafletMap.on("draw:editresize draw:editmove", function (e) {
+            this.data = {
+                ne: e.layer.getBounds().getNorthEast(),
+                sw: e.layer.getBounds().getSouthWest()
+            };
+        }.bind(this));
     },
-    
+
     geocode: function () {
         var address = this.searchfield.getValue();
-        jQuery.getJSON(this.getSearchUrl(address), function(json) {
-          if( json[0].lat !== null && json[0].lon !== null) {
+        jQuery.getJSON(this.getSearchUrl(address), function (json) {
+            if (json[0].lat !== null && json[0].lon !== null) {
                 this.lat = json[0].lat;
                 this.lng = json[0].lon;
-                this.getLeafletMap();   
+                this.getLeafletMap();
                 this.getLeafletToolbar();
             }
         }.bind(this));
-       
+
     },
 
     getValue: function () {

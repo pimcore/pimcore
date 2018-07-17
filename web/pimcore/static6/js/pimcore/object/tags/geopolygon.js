@@ -39,15 +39,15 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             componentCls: 'object_field object_geo_field',
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
-                xtype: 'button',
-                text: t('empty'),
-                iconCls: "pimcore_icon_empty",
-                handler: function () {
-                    this.data = null;
-                    this.updateMap();
-                    this.dirty = true;
-                }.bind(this)
-            }],
+                    xtype: 'button',
+                    text: t('empty'),
+                    iconCls: "pimcore_icon_empty",
+                    handler: function () {
+                        this.data = null;
+                        this.updateMap();
+                        this.dirty = true;
+                    }.bind(this)
+                }],
             tbar: [
                 this.fieldConfig.title,
                 "->",
@@ -71,7 +71,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         this.mapZoom = fieldConfig.zoom;
         this.polygon = null;
         this.latlngs = [];
-        this.mapId = "polygonmap"+ this.divImageID;
+        this.mapId = "polygonmap" + this.divImageID;
         this.leafletMap = null;
         this.editableLayers = new L.FeatureGroup();
         this.drawControlFull = new L.Control.Draw({
@@ -99,7 +99,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         if (!width) {
             width = 300;
         }
-        if(!height) {
+        if (!height) {
             height = 300;
         }
 
@@ -107,13 +107,13 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         var px = width;
 
         try {
-            if(data) {
+            if (data) {
                 var bounds = new L.latLngBounds();
                 for (var i = 0; i < data.length; i++) {
                     bounds.extend(new L.latLng(data[i].latitude, data[i].longitude));
-                    this.latlngs.push([data[i].latitude,data[i].longitude]);
+                    this.latlngs.push([data[i].latitude, data[i].longitude]);
                 }
-                this.latlngs.push([data[0].latitude,data[0].longitude]);
+                this.latlngs.push([data[0].latitude, data[0].longitude]);
                 this.polygon = L.polygon(this.latlngs, {color: '0x00000073'});
                 this.lat = bounds.getCenter().lat;
                 this.lng = bounds.getCenter().lng;
@@ -128,54 +128,73 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
                 this.getLeafletMap();
             }
             this.getLeafletToolbar();
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
         }
     },
 
-    getLeafletToolbar: function() {
-            this.leafletMap.addLayer(this.editableLayers);
-            this.leafletMap.addControl(this.drawControlFull);
-            this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
-                this.dirty = true;
-                if(this.polygon !== null) {
-                    this.leafletMap.removeLayer(this.polygon);
+    getLeafletToolbar: function () {
+        this.leafletMap.addLayer(this.editableLayers);
+        this.leafletMap.addControl(this.drawControlFull);
+        this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
+            this.dirty = true;
+            if (this.polygon !== null) {
+                this.leafletMap.removeLayer(this.polygon);
+            }
+            var layer = e.layer;
+            type = e.layerType;
+            this.editableLayers.addLayer(layer);
+            if (this.editableLayers.getLayers().length === 1) {
+                this.data = [];
+                this.drawControlFull.remove(this.leafletMap);
+                this.drawControlEditOnly.addTo(this.leafletMap);
+                latlngs = layer.getLatLngs();
+                for (var i = 0; i < latlngs[0].length; i++) {
+                    this.data.push({
+                        latitude: latlngs[0][i].lat,
+                        longitude: latlngs[0][i].lng
+                    });
                 }
-                var layer = e.layer;
-                type = e.layerType;
-                this.editableLayers.addLayer(layer);
-                if (this.editableLayers.getLayers().length === 1) {
-                    this.data = [];
-                    this.drawControlFull.remove(this.leafletMap);
-                    this.drawControlEditOnly.addTo(this.leafletMap);
-                    latlngs = layer.getLatLngs();
-                    for (var i=0; i< latlngs[0].length; i++) {
-                            this.data.push({
-                                latitude: latlngs[0][i].lat,
-                                longitude: latlngs[0][i].lng
-                            });
-                        }
-                }
-            }.bind(this));
+            }
+        }.bind(this));
 
-            this.leafletMap.on("draw:deleted", function() {
-                this.drawControlEditOnly.remove(this.leafletMap);
-                this.drawControlFull.addTo(this.leafletMap);
-            });
+        this.leafletMap.on("draw:deleted", function () {
+            this.drawControlEditOnly.remove(this.leafletMap);
+            this.drawControlFull.addTo(this.leafletMap);
+        });
+
+        this.leafletMap.on("draw:editvertex", function (e) {
+            var layer1;
+            var newPolyLatLngArray;
+            this.data = [];
+            for (layer1 in e.target._layers) {
+                if (e.target._layers.hasOwnProperty(layer1)) {
+                    if (e.target._layers[layer1].hasOwnProperty("edited")) {
+                        newPolyLatLngArray = e.target._layers[layer1].editing.latlngs[0];
+                    }
+                }
+            }
+            for (var i = 0; i < newPolyLatLngArray[0].length; i++) {
+                this.data.push({
+                    latitude: newPolyLatLngArray[0][i].lat,
+                    longitude: newPolyLatLngArray[0][i].lng
+                });
+            }
+
+        }.bind(this));
     },
-    
+
     geocode: function () {
         var address = this.searchfield.getValue();
-        jQuery.getJSON(this.getSearchUrl(address), function(json) {
-          if( json[0].lat !== null && json[0].lon !== null) {
+        jQuery.getJSON(this.getSearchUrl(address), function (json) {
+            if (json[0].lat !== null && json[0].lon !== null) {
                 this.lat = json[0].lat;
                 this.lng = json[0].lon;
                 this.getLeafletMap();
                 this.getLeafletToolbar();
             }
         }.bind(this));
-       
+
     },
 
     getValue: function () {
@@ -191,14 +210,14 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
 
         // @TODO
         /*if (value.longitude && value.latitude) {
-            return false;
-        }*/
+         return false;
+         }*/
 
         return true;
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty: function () {
+        if (!this.isRendered()) {
             return false;
         }
 
