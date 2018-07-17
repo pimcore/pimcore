@@ -36,15 +36,15 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             componentCls: 'object_field object_geo_field',
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
-                    xtype: 'button',
-                    text: t('empty'),
-                    iconCls: "pimcore_icon_empty",
-                    handler: function () {
-                        this.data = null;
-                        this.updateMap();
-                        this.dirty = true;
-                    }.bind(this)
-                }],
+                xtype: 'button',
+                text: t('empty'),
+                iconCls: "pimcore_icon_empty",
+                handler: function () {
+                    this.data = null;
+                    this.updateMap();
+                    this.dirty = true;
+                }.bind(this)
+            }],
             tbar: [
                 this.fieldConfig.title,
                 "->",
@@ -156,15 +156,14 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
     geocode: function () {
         var address = this.searchfield.getValue();
-        jQuery.getJSON(this.getSearchUrl(address), function (json) {
-            if (json[0].lat !== null && json[0].lon !== null) {
+        jQuery.getJSON(this.getSearchUrl(address), function(json) {
+            if( json[0].lat !== null && json[0].lon !== null) {
                 this.lat = json[0].lat;
                 this.lng = json[0].lon;
                 this.getLeafletMap();
                 this.getLeafletToolbar();
             }
         }.bind(this));
-
     },
 
     getValue: function () {

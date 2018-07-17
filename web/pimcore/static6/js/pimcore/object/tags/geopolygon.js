@@ -39,15 +39,15 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             componentCls: 'object_field object_geo_field',
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
-                    xtype: 'button',
-                    text: t('empty'),
-                    iconCls: "pimcore_icon_empty",
-                    handler: function () {
-                        this.data = null;
-                        this.updateMap();
-                        this.dirty = true;
-                    }.bind(this)
-                }],
+                xtype: 'button',
+                text: t('empty'),
+                iconCls: "pimcore_icon_empty",
+                handler: function () {
+                    this.data = null;
+                    this.updateMap();
+                    this.dirty = true;
+                }.bind(this)
+            }],
             tbar: [
                 this.fieldConfig.title,
                 "->",
@@ -71,7 +71,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         this.mapZoom = fieldConfig.zoom;
         this.polygon = null;
         this.latlngs = [];
-        this.mapId = "polygonmap" + this.divImageID;
+        this.mapId = "polygonmap"+ this.divImageID;
         this.leafletMap = null;
         this.editableLayers = new L.FeatureGroup();
         this.drawControlFull = new L.Control.Draw({
@@ -96,10 +96,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             },
             draw: false
         });
-        if (!width) {
+        if(!width) {
             width = 300;
         }
-        if (!height) {
+        if(!height) {
             height = 300;
         }
 
@@ -107,7 +107,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         var px = width;
 
         try {
-            if (data) {
+            if(data) {
                 var bounds = new L.latLngBounds();
                 for (var i = 0; i < data.length; i++) {
                     bounds.extend(new L.latLng(data[i].latitude, data[i].longitude));
@@ -186,8 +186,8 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
 
     geocode: function () {
         var address = this.searchfield.getValue();
-        jQuery.getJSON(this.getSearchUrl(address), function (json) {
-            if (json[0].lat !== null && json[0].lon !== null) {
+        jQuery.getJSON(this.getSearchUrl(address), function(json) {
+            if( json[0].lat !== null && json[0].lon !== null) {
                 this.lat = json[0].lat;
                 this.lng = json[0].lon;
                 this.getLeafletMap();
@@ -210,13 +210,13 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         // @TODO
         /*if (value.longitude && value.latitude) {
          return false;
-         }*/
+        }*/
 
         return true;
     },
 
-    isDirty: function () {
-        if (!this.isRendered()) {
+    isDirty: function() {
+        if(!this.isRendered()) {
             return false;
         }
 
