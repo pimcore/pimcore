@@ -163,6 +163,26 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
                 this.drawControlEditOnly.remove(this.leafletMap);
                 this.drawControlFull.addTo(this.leafletMap);
             });
+            
+            this.leafletMap.on("draw:editvertex", function (e) {
+                var layer1;
+                var newPolyLatLngArray;
+                this.data = [];
+                for (layer1 in e.target._layers) {
+                    if (e.target._layers.hasOwnProperty(layer1)) {
+                        if (e.target._layers[layer1].hasOwnProperty("edited")) {
+                            newPolyLatLngArray = e.target._layers[layer1].editing.latlngs[0];
+                        }
+                    }
+                }
+                for (var i = 0; i < newPolyLatLngArray[0].length; i++) {
+                    this.data.push({
+                        latitude: newPolyLatLngArray[0][i].lat,
+                        longitude: newPolyLatLngArray[0][i].lng
+                    });
+                }
+
+        }.bind(this));
     },
     
     geocode: function () {
