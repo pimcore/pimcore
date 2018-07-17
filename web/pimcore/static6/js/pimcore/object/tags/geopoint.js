@@ -83,8 +83,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             ]
 
         });
-
-
         this.component.on('afterrender', function () {
             this.updateMap();
         }.bind(this));
@@ -107,6 +105,10 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.leafletMap = null;
         this.mapId = "map" + this.divImageID;
         this.marker = null;
+        var markerIcon = L.icon({
+            iconUrl: '/pimcore/static6/img/leaflet/marker-icon.png',
+            shadowUrl: '/pimcore/static6/img/leaflet/marker-shadow.png'
+        });
 
         this.editableLayers = new L.FeatureGroup();
         this.drawControlFull = new L.Control.Draw({
@@ -136,7 +138,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             this.lat = data.latitude;
             this.lng = data.longitude;
             this.getLeafletMap();
-            this.marker = L.marker([this.lat, this.lng], {}).addTo(this.leafletMap);
+            this.marker = L.marker([this.lat, this.lng], {icon: markerIcon}).addTo(this.leafletMap);
             this.reverseGeocode(this.marker);
         } else {
             this.lat = fieldConfig.lat;
@@ -175,6 +177,12 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             if (this.marker !== null) {
                 this.marker = null;
             }
+        }.bind(this));
+
+        this.leafletMap.on("draw:editmove", function (e) {
+            this.latitude.setValue(e.layer.getLatLng().lat);
+            this.longitude.setValue(e.layer.getLatLng().lng);
+            this.reverseGeocode(e.layer);
         }.bind(this));
 
     },
