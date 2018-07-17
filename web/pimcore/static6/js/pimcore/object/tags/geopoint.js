@@ -177,6 +177,12 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             }
         }.bind(this));
 
+        this.leafletMap.on("draw:editmove", function (e) {
+            this.latitude.setValue(e.layer.getLatLng().lat);
+            this.longitude.setValue(e.layer.getLatLng().lng);
+            this.reverseGeocode(e.layer);
+        }.bind(this));
+
     },
 
     geocode: function () {
