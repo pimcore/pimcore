@@ -19,19 +19,6 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
-    getErrorLayout: function() {
-        this.component = new Ext.Panel({
-            title: t("geo_error_title"),
-            height: 370,
-            width: 650,
-            border: true,
-            bodyStyle: "padding: 10px",
-            html: '<span style="color:red">' + t("geo_error_message") + '</span>'
-        });
-
-        return this.component;
-    },
-
     getGridColumnConfig: function(field) {
         return {
             text: ts(field.label),
