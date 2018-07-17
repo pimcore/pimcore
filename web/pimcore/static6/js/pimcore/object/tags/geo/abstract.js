@@ -17,46 +17,6 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
-
-        // extend google maps to support the getBounds() method
-        if (this.isMapsAvailable() && !google.maps.Polygon.prototype.getBounds) {
-
-            google.maps.Polygon.prototype.getBounds = function(latLng) {
-
-                var bounds = new google.maps.LatLngBounds();
-                var paths = this.getPaths();
-                var path;
-
-                for (var p = 0; p < paths.getLength(); p++) {
-                    path = paths.getAt(p);
-                    for (var i = 0; i < path.getLength(); i++) {
-                        bounds.extend(path.getAt(i));
-                    }
-                }
-
-                return bounds;
-            };
-        }
-    },
-
-    isMapsAvailable: function() {
-        if(typeof google != "undefined" && pimcore.settings.google_maps_api_key) {
-            return true;
-        }
-        return false;
-    },
-
-    getErrorLayout: function() {
-        this.component = new Ext.Panel({
-            title: t("geo_error_title"),
-            height: 370,
-            width: 650,
-            border: true,
-            bodyStyle: "padding: 10px",
-            html: '<span style="color:red">' + t("geo_error_message") + '</span>'
-        });
-
-        return this.component;
     },
 
     getGridColumnConfig: function(field) {
@@ -71,13 +31,8 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
                 if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += ' grid_value_inherited';
                 }
-
                 if (value) {
-                    var width = 200;
-
-                    var mapUrl = this.getMapUrl(field, value, width, 100);
-
-                    return '<img src="' + mapUrl + '" />';
+                    return ts('preview_not_available');
                 }
             }.bind(this, field.key)
         };
@@ -90,33 +45,26 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    updatePreviewImage: function () {
-        var width = Ext.get('google_maps_container_' + this.mapImageID).getWidth();
+    updateMap: function () {
+        var width = Ext.get('leaflet_maps_container_' + this.mapImageID).getWidth();
 
         if (width > 640) {
             width = 640;
         }
         if (width < 10) {
-            window.setTimeout(this.updatePreviewImage.bind(this), 1000);
+            window.setTimeout(this.updateMap.bind(this), 1000);
         }
 
-        Ext.get('google_maps_container_' + this.mapImageID).dom.innerHTML =
-            '<img align="center" width="' + width + '" height="300" src="' +
-                this.getMapUrl(this.fieldConfig, this.data, width) + '" />';
+        this.getMap(this.fieldConfig, this.data, width);
+    
     },
-
-    geocode: function () {
-        if (!this.geocoder) {
-            return;
-        }
-
-        var address = this.searchfield.getValue();
-        this.geocoder.geocode( { 'address': address}, function(results, status) {
-            if (this.isMapsAvailable() && status === google.maps.GeocoderStatus.OK) {
-                this.gmap.setCenter(results[0].geometry.location, 16);
-                this.gmap.setZoom(14);
-            }
-        }.bind(this));
+    
+    getLeafletMap: function() {
+        document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="'+ this.mapId +'" style="height:400px;width:650px;"></div>';
+        this.leafletMap =  L.map(this.mapId).setView([this.lat, this.lng], this.mapZoom);
+        L.tileLayer(pimcore.settings.tile_layer_url_template, {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(this.leafletMap);
     },
 
     getBoundsZoomLevel: function (bounds, mapDim) {
@@ -132,19 +80,21 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         function zoom(mapPx, worldPx, fraction) {
             return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
         }
-
         var ne = bounds.getNorthEast();
-        var sw = bounds.getSouthWest();
+        var sw = bounds.getSouthWest(); 
+        var latFraction = (latRad(ne.lat) - latRad(sw.lat)) / Math.PI;
 
-        var latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
-
-        var lngDiff = ne.lng() - sw.lng();
+        var lngDiff = ne.lng - sw.lng;
         var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
 
         var latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
         var lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
 
         return Math.min(latZoom, lngZoom, ZOOM_MAX);
-    }
+    },
 
+    getSearchUrl: function (query) {
+        var url = pimcore.settings.geocoding_url_template.replace('{q}', urlencode(query));
+        return url;
+    }
 });

@@ -1834,3 +1834,19 @@ span.warning {
     max-width: 100%;
     max-height: 200px;
 }
+
+
+.leaflet-tooltip{
+    width: 100px;
+    white-space: normal;
+}
+
+
+ul.leaflet-draw-actions.leaflet-draw-actions-bottom li:first-child {
+    display: none !important;
+}
+
+
+ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:first-child {
+    display: inline-block !important;
+}
