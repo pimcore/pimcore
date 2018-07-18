@@ -3,6 +3,9 @@
 
 ## Version 5.3.0
 
+#### Build 285 (2018-07-18)
+Asset filenames: introduced new policy, the following disallowed characters were added: `#?*:\<>|"` 
+
 #### Build 281 (2018-07-13)
 The admin UI translations are not split into 2 parts, 
 [Essentials](https://poeditor.com/join/project/VWmZyvFVMH) and [Extended](https://poeditor.com/join/project/XliCYYgILb). 
