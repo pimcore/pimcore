@@ -15,7 +15,7 @@ add the `apikey` to the request if you have a valid user session from the admin 
 > Please have a look at the following topics before your're seriously considering using the REST API: [External System Interaction](../05_Objects/05_External_System_Interaction.md), [Console CLI](../19_Development_Tools_and_Details/11_Console_CLI.md), [Working with the PHP API](../05_Objects/03_Working_with_PHP_API.md).
   
   
-> **Important: Frontend Applications **
+> **Important: Frontend Applications**  
 > The Pimcore REST API is not intended to be used as a data provider for frontend applications (Vue.js, React, Angular, ...), 
 > please build your own actions for that purpose or use any existing bundles. 
   
