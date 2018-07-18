@@ -888,6 +888,9 @@ class Service extends Model\AbstractModel
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
+
+            // windows forbidden filenames + URL reserved characters (at least the once which are problematic)
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"]/', '-', $key);
         } else {
             $key = trim($key);
             $key = ltrim($key, '.');
