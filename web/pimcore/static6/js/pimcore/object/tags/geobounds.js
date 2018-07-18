@@ -163,6 +163,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
           if( json[0].lat !== null && json[0].lon !== null) {
                 this.lat = json[0].lat;
                 this.lng = json[0].lon;
+                this.mapZoom = 15;
                 this.getLeafletMap();   
                 this.getLeafletToolbar();
             }
