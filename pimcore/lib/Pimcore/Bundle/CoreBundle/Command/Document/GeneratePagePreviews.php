@@ -17,25 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Console\Application;
-use Pimcore\Console\Traits\DryRun;
-use Pimcore\Document\Tag\NamingStrategy\Migration\AbstractMigrationStrategy;
-use Pimcore\Document\Tag\NamingStrategy\Migration\Exception\NameMappingException;
-use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\File;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
-use Psr\SimpleCache\CacheInterface;
-use Symfony\Component\Cache\Simple\ArrayCache;
-use Symfony\Component\Cache\Simple\FilesystemCache;
-use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 class GeneratePagePreviews extends AbstractCommand
 {
@@ -62,12 +50,13 @@ class GeneratePagePreviews extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $hostUrl = $input->getOption('urlPrefix');
-        if(!$hostUrl) {
+        if (!$hostUrl) {
             $hostUrl = Tool::getHostUrl();
         }
 
-        if(!$hostUrl) {
+        if (!$hostUrl) {
             $this->io->error('Unable to determine URL prefix, please use option -u or specify a main domain in system settings');
+
             return;
         }
 
@@ -75,11 +64,10 @@ class GeneratePagePreviews extends AbstractCommand
         $docs->setCondition("type = 'page'");
         $docs->load();
 
-        foreach($docs as $doc) {
+        foreach ($docs as $doc) {
             /**
              * @var Document\Page $doc
              */
-
             try {
                 $success = Document\Service::generatePagePreview($doc->getId(), null, $hostUrl);
             } catch (\Exception $e) {
