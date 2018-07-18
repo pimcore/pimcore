@@ -126,29 +126,6 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         this.leafletMap.addControl(this.drawControlFull);
         this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
             this.dirty = true;
-            this.leafletMap.addLayer(this.editableLayers);
-            this.leafletMap.addControl(this.drawControlFull);
-            this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
-                this.dirty = true;
-                if (this.rectangle !== null) {
-                    this.leafletMap.removeLayer(this.rectangle);
-                }
-                var layer = e.layer;
-                this.editableLayers.addLayer(layer);
-                if (this.editableLayers.getLayers().length === 1) {
-                    this.drawControlFull.remove(this.leafletMap);
-                    this.drawControlEditOnly.addTo(this.leafletMap);
-                    this.data = {
-                        ne: layer.getBounds().getNorthEast(),
-                        sw: layer.getBounds().getSouthWest()
-                    };
-                }
-            }.bind(this));
-
-            this.leafletMap.on("draw:deleted", function (e) {
-                this.drawControlEditOnly.remove(this.leafletMap);
-                this.drawControlFull.addTo(this.leafletMap);
-            });
             if (this.rectangle !== null) {
                 this.leafletMap.removeLayer(this.rectangle);
             }
@@ -167,7 +144,10 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         this.leafletMap.on("draw:deleted", function (e) {
             this.drawControlEditOnly.remove(this.leafletMap);
             this.drawControlFull.addTo(this.leafletMap);
-        });
+            this.data = null;
+            this.dirty = true;
+            this.updateMap();
+        }.bind(this));
 
         this.leafletMap.on("draw:editresize draw:editmove", function (e) {
             this.data = {
@@ -183,6 +163,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
           if( json[0].lat !== null && json[0].lon !== null) {
                 this.lat = json[0].lat;
                 this.lng = json[0].lon;
+                this.mapZoom = 15;
                 this.getLeafletMap();   
                 this.getLeafletToolbar();
             }
