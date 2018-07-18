@@ -162,7 +162,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             this.leafletMap.on("draw:deleted", function() {
                 this.drawControlEditOnly.remove(this.leafletMap);
                 this.drawControlFull.addTo(this.leafletMap);
-            });
+                this.data = null;
+                this.dirty = true;
+                this.updateMap();
+            }.bind(this));
             
             this.leafletMap.on("draw:editvertex", function (e) {
                 var layer1;
