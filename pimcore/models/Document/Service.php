@@ -23,7 +23,6 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Exception\MissingDependencyException;
 use Pimcore\File;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -609,15 +608,17 @@ class Service extends Model\Element\Service
      * @param $id
      * @param Request $request
      * @param string $hostUrl
+     *
      * @return bool
+     *
      * @throws \Exception
      */
-    public static function generatePagePreview($id, $request = null, $hostUrl = null) {
-
+    public static function generatePagePreview($id, $request = null, $hostUrl = null)
+    {
         $success = false;
 
         $doc = Document::getById($id);
-        if(!$hostUrl) {
+        if (!$hostUrl) {
             $hostUrl = Tool::getHostUrl(false, $request);
         }
 
