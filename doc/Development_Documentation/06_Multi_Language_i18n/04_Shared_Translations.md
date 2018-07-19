@@ -46,6 +46,16 @@ pimcore:
 </div>
 ```
 
+```twig
+<div>
+    <!-- there is a twig extension for the pimcore translate helper -->
+    <address>&copy; {{ pimcore_translate("copyright") }}</address>
+    <a href="/imprint">{{ pimcore_translate("imprint") }}</a>
+    <a href="/legal">{{ pimcore_translate("legal_notice") }}</a>
+        
+</div>
+```
+
 #### Example in a Controller
  
 ```php
