@@ -62,7 +62,7 @@ pimcore.layout.portlets.modifiedAssets = Class.create(pimcore.layout.portlets.ab
             pimcore.helpers.openAsset(data.data.id, data.data.type);
         });
 
-        this.layout = Ext.create('Portal.view.Portlet', Object.extend(this.getDefaultConfig(), {
+        this.layout = Ext.create('Portal.view.Portlet', Object.assign(this.getDefaultConfig(), {
             title: this.getName(),
             iconCls: this.getIcon(),
             height: 275,

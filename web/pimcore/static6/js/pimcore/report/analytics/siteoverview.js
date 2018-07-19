@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.report.analytics.overview");
 pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
 
     matchType: function (type) {
-        
+
         // deactivate temporary
         return;
 // // commented this out, otherwise JSLint would complain
@@ -159,7 +159,7 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
         queryString.site = this.site;
 
         Ext.get(this.iframeId).dom.setAttribute("src",
-                                "/admin/reports/analytics/siteoverview?" + Object.toQueryString(queryString));
+                                "/admin/reports/analytics/siteoverview?" + Ext.Object.toQueryString(queryString));
     }
 });
 
