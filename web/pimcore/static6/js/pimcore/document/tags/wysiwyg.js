@@ -70,10 +70,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     },
 
     startCKeditor: function () {
-
+        
         try {
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
-            var eConfig = Object.assign({}, this.options);
+            var eConfig = Object.clone(this.options);
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
             // is also Basic
@@ -143,7 +143,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         var wrappedText = data.text;
         var textIsSelected = false;
-
+        
         try {
             var selection = this.ckeditor.getSelection();
             var bookmarks = selection.createBookmarks();
