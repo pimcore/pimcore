@@ -63,7 +63,8 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit:function () {
 
         var date = {
-            width:130
+            width:130,
+            format: "Y-m-d"
         };
 
         var time = {
