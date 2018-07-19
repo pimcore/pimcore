@@ -560,6 +560,14 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 $tracker->setArgument('$trackingItemBuilder', new Reference($trackerConfig['item_builder_id']));
             }
 
+            if (!empty($trackerConfig['tenants']['assortment'])) {
+                $tracker->setArgument('$assortmentTenants', $trackerConfig['tenants']['assortment']);
+            }
+            if (!empty($trackerConfig['tenants']['checkout'])) {
+                $tracker->setArgument('$checkoutTenants', $trackerConfig['tenants']['checkout']);
+            }
+
+
             if (!empty($trackerConfig['options'])) {
                 $tracker->setArgument('$options', $trackerConfig['options']);
             }

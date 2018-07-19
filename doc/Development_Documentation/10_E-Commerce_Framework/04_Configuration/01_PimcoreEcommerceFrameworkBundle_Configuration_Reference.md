@@ -92,7 +92,7 @@ pimcore_ecommerce_framework:
                     modificators:
 
                         # Prototype
-                        -
+                        name:
                             class:                ~ # Required
                             options:              []
 
@@ -208,7 +208,7 @@ pimcore_ecommerce_framework:
                 steps:
 
                     # Prototype
-                    -
+                    name:
                         class:                ~ # Required
                         options:              []
 
@@ -383,4 +383,14 @@ pimcore_ecommerce_framework:
 
                 # Service id for item builder for tracker
                 item_builder_id:      Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder
+
+                # List of assortment and checkout tenants where this tracker should be activated for.
+                tenants:
+
+                    # Add list of assortment tenants where the tracker should be activated for. Empty array means activated for all tenants.
+                    assortment:           []
+
+                    # Add list of checkout tenants where the tracker should be activated for. Empty array means activated for all tenants.
+                    checkout:             []
+
 ```
