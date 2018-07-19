@@ -189,7 +189,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
             }
         });
 
-        this.layout = Ext.create('Portal.view.Portlet', Object.extend(this.getDefaultConfig(), {
+        this.layout = Ext.create('Portal.view.Portlet', Object.assign(this.getDefaultConfig(), {
             title: this.getName(),
             iconCls: this.getIcon(),
             height: 275,
