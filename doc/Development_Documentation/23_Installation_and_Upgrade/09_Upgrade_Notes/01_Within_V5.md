@@ -3,6 +3,11 @@
 
 ## Version 5.3.0
 
+#### Build 286 (2018-07-19)
+To the interface `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker` the two methods `getAssortmentTenants` and
+`getCheckoutTenants` where added. No action is required, except you have have implemented your own trackers and did not 
+extend them from the abstract `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker` class.
+
 #### Build 285 (2018-07-18)
 Asset filenames: introduced new policy, the following disallowed characters were added: `#?*:\<>|"` 
 
