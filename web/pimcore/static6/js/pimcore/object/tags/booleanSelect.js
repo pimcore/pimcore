@@ -76,7 +76,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        editorConfig = Object.extend(editorConfig, {
+        editorConfig = Object.assign(editorConfig, {
             store: store,
             triggerAction: "all",
             editable: false,
@@ -120,7 +120,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        editorConfig = Object.extend(editorConfig, {
+        editorConfig = Object.assign(editorConfig, {
             store: store,
             triggerAction: "all",
             editable: false,

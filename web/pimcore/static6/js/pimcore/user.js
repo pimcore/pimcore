@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.user");
 pimcore.user = Class.create({
 
     initialize: function(object) {
-        Object.extend(this, object);
+        Object.assign(this, object);
     },
 
     isAllowed: function (type) {

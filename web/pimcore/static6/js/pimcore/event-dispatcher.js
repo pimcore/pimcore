@@ -38,7 +38,7 @@ pimcore.eventDispatcher = {
     },
 
     fireEvent: function (e) {
-        var args = $A(arguments);
+        var args = Array.from(arguments);
         args.splice(0, 1);
 
         var key;
