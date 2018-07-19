@@ -708,7 +708,7 @@ Ext.onReady(function () {
                 );
 
             }
-            
+
         }
         pimcore.globalmanager.add("tree_locate_configs", locateConfigs);
 
@@ -854,7 +854,7 @@ Ext.onReady(function () {
 
     Ext.getBody().on('click', function (event) {
         // hide on click outside
-        if(!quicksearchContainer.isAncestor(event.target)) {
+        if(quicksearchContainer && !quicksearchContainer.isAncestor(event.target)) {
             var pickerEl = quickSearchCombo.getPicker().getEl();
             if(!pickerEl || !pickerEl.isAncestor(event.target)) {
                 pimcore.helpers.hideQuickSearch();

@@ -31,8 +31,8 @@ pimcore.plugin.broker = {
     pluginsAvailable: function () {
         var size;
 
-        if (this.plugins != null && this.plugins.size() > 0) {
-            return this.plugins.size();
+        if (this.plugins != null && this.plugins.length > 0) {
+            return this.plugins.length;
         }
         return 0;
     },
@@ -47,7 +47,7 @@ pimcore.plugin.broker = {
     fireEvent: function (e) {
         var plugin;
         var size = this.pluginsAvailable();
-        var args = $A(arguments);
+        var args = Array.from(arguments);
         args.splice(0, 1);
 
         for (var i = 0; i < size; i++) {

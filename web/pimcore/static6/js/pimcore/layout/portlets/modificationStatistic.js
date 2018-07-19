@@ -170,7 +170,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
         });
 
 
-        this.layout = Ext.create('Portal.view.Portlet', Object.extend(this.getDefaultConfig(), {
+        this.layout = Ext.create('Portal.view.Portlet', Object.assign(this.getDefaultConfig(), {
             title: this.getName(),
             iconCls: this.getIcon(),
             height: 275,
