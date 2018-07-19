@@ -235,22 +235,16 @@ pimcore.settings.targeting.conditions = (function () {
 
                 var createSearchButton = function() {
                     var handler = function () {
-                        var gmap, marker, circle;
+                        var leafletMap, marker, circle;
 
                         var searchHandler = function() {
-                            var geocoder = new google.maps.Geocoder();
-                            if (!geocoder) {
-                                return;
-                            }
-
                             var address = searchfield.getValue();
-                            geocoder.geocode({'address': address}, function (results, status) {
-                                if (status === google.maps.GeocoderStatus.OK) {
-                                    marker.setPosition(results[0].geometry.location);
-                                    gmap.setCenter(results[0].geometry.location, 16);
-                                    gmap.setZoom(7);
+                            jQuery.getJSON(pimcore.settings.targeting.conditions.getSearchUrl(address), function (json) {
+                                if (json[0].lat !== null && json[0].lon !== null) {
+                                    marker.setLatLng(L.latLng(json[0].lat, json[0].lon));
+                                    leafletMap.setView(L.latLng(json[0].lat, json[0].lon), 7);
                                 }
-                            });
+                            }.bind(this));
                         };
 
                         var searchfield = new Ext.form.TextField({
@@ -276,6 +270,7 @@ pimcore.settings.targeting.conditions = (function () {
                             width: 700,
                             height: 500,
                             resizable: false,
+                            html: '<div id="leaflet_maps_container" ></div>',
                             tbar: [currentLocationTextNode],
                             bbar: [searchfield, {
                                 xtype: "button",
@@ -294,9 +289,9 @@ pimcore.settings.targeting.conditions = (function () {
                                 text: t("OK"),
                                 iconCls: "pimcore_icon_save",
                                 handler: function () {
-                                    var point = marker.getPosition();
-                                    latitude.setValue(point.lat());
-                                    longitude.setValue(point.lng());
+                                    var point = marker.getLatLng();
+                                    latitude.setValue(point.lat);
+                                    longitude.setValue(point.lng);
                                     radius.setValue(Math.round(circle.getRadius() / 1000));
 
                                     searchWindow.close();
@@ -319,23 +314,16 @@ pimcore.settings.targeting.conditions = (function () {
                                 radiusMap = radius.getValue() * 1000;
                             }
 
-                            var startingPoint = new google.maps.LatLng(latitudeMap, longitudeMap);
+                            document.getElementById('leaflet_maps_container').innerHTML = '<div id="leafletmap" style="height:400px;width:700px;"></div>';
+                            leafletMap = new L.Map("leafletmap").setView([latitudeMap, longitudeMap], mapZoom);
+                            L.tileLayer(pimcore.settings.tile_layer_url_template, {
+                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(leafletMap);
 
-                            gmap = new google.maps.Map(searchWindow.body.dom, {
-                                zoom: mapZoom,
-                                center: startingPoint,
-                                mapTypeId: google.maps.MapTypeId.ROADMAP
-                            });
+                            marker = new L.Marker([latitudeMap, longitudeMap], {draggable: true}).addTo(leafletMap);
 
-                            marker = new google.maps.Marker({
-                                position: startingPoint,
-                                map: gmap,
-                                draggable: true
-                            });
-
-                            circle = new google.maps.Circle({
-                                map: gmap,
-                                center: startingPoint,
+                            circle = new L.Circle(
+                                [latitudeMap, longitudeMap], {
                                 editable: true,
                                 radius: radiusMap,
                                 fillColor: "#ff6600",
@@ -343,22 +331,26 @@ pimcore.settings.targeting.conditions = (function () {
                                 strokeWeight: 2,
                                 strokeOpacity: 1,
                                 strokeColor: "#000000"
-                            });
+                            }).addTo(leafletMap);
 
-                            google.maps.event.addListener(marker, "position_changed", function () {
-                                circle.setCenter(marker.getPosition());
-                            });
+                            marker.on("move", function () {
+                                circle.editing.disable();
+                                leafletMap.removeLayer(circle);
+                                circle.setLatLng(marker.getLatLng());
+                                circle.editing.enable();
+                                circle.addTo(leafletMap);
+                            }.bind(this));
 
                             var GLOBE_WIDTH = 256; // a constant in Google's map projection
-                            var west = circle.getBounds().getSouthWest().lng();
-                            var east = circle.getBounds().getNorthEast().lng();
+                            var west = circle.getBounds().getSouthWest().lng;
+                            var east = circle.getBounds().getNorthEast().lng;
                             var angle = east - west;
                             if (angle < 0) {
                                 angle += 360;
                             }
                             var zoom = Math.round(Math.log(searchWindow.body.getWidth() * 360 / angle / GLOBE_WIDTH) / Math.LN2);
 
-                            gmap.setZoom(zoom - 1);
+                            leafletMap.setZoom(zoom - 1);
                         });
 
                         searchWindow.show();
@@ -718,6 +710,11 @@ pimcore.settings.targeting.conditions = (function () {
             var conditionClass = this.get(name);
 
             return new conditionClass();
+        },
+
+        getSearchUrl: function (query) {
+            var url = pimcore.settings.geocoding_url_template.replace('{q}', urlencode(query));
+            return url;
         },
 
         get: function (name) {
