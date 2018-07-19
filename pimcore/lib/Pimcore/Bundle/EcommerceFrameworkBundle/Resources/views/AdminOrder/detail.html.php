@@ -21,6 +21,14 @@
 
 $this->extend('PimcoreEcommerceFrameworkBundle::back-office.html.php');
 
+/* Leaflet CSS
+====================== */
+$this->headLink()->appendStylesheet('/pimcore/static6/js/lib/leaflet/leaflet.css');
+
+/* Leaflet Javascript
+====================== */
+$this->headScript()->appendFile('/pimcore/static6/js/lib/leaflet/leaflet.js');
+
 $orderAgent = $this->orderAgent;
 $order = $orderAgent->getOrder();
 $currency = $orderAgent->getCurrency();
@@ -312,6 +320,7 @@ $regionArray = $locale->getDisplayRegions();
                         , $geoPoint->lng
                     );
                     ?>
+
                     <a href="<?= $urlLink ?>" target="_blank" class="pull-right address-map">
                         <img src="<?= $urlImage ?>" alt=""/>
                     </a>
@@ -509,14 +518,17 @@ $regionArray = $locale->getDisplayRegions();
             $(this).find('.modal-content').html("");
         });
 
-        if (<?= $this->geoAddressInvoice->lat; ?>, <?= $this->geoAddressInvoice->lon; ?>) {
-            var leafletMapInvoice =  L.map("leafletmap-invoice").setView([<?= $this->geoAddressInvoice->lat; ?>, <?= $this->geoAddressInvoice->lon; ?>], 10);
+        var latitude = "<?=$this->geoAddressInvoice->lat;?>";
+        var longitude = "<?=$this->geoAddressInvoice->lon;?>";
+        var tileLayerUrl = "<?=$this->pimcoreSymfonyConfig['maps']['tile_layer_url_template'];?>";
 
-            var leafletMapDelivery =  L.map("leafletmap-delivery").setView([<?= $this->geoAddressInvoice->lat; ?>, <?= $this->geoAddressInvoice->lon; ?>], 10);
+        if (latitude && longitude) {
+            var leafletMapInvoice =  L.map("leafletmap-invoice").setView([latitude, longitude], 10);
 
-            L.tileLayer("<?= $this->pimcoreSymfonyConfig['maps']['tile_layer_url_template']; ?>").addTo(leafletMapInvoice);
+            var leafletMapDelivery =  L.map("leafletmap-delivery").setView([latitude, longitude], 10);
 
-            L.tileLayer("<?= $this->pimcoreSymfonyConfig['maps']['tile_layer_url_template']; ?>").addTo(leafletMapDelivery);
+            L.tileLayer(tileLayerUrl).addTo(leafletMapInvoice);
+            L.tileLayer(tileLayerUrl).addTo(leafletMapDelivery);
         }
 
     });
