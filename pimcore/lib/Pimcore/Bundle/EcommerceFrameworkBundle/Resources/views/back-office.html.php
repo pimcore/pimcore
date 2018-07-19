@@ -38,6 +38,9 @@
     <!-- Custom styles for this template -->
     <link href="/bundles/pimcoreecommerceframework/css/back-office.css" rel="stylesheet">
 
+     <!-- Leaflet CSS -->
+    <link href="/pimcore/static6/js/lib/leaflet/leaflet.css" rel="stylesheet">
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -116,6 +119,10 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="/bundles/pimcoreecommerceframework/vendor/jquery-1.11.1.min.js"></script>
 <script src="/bundles/pimcoreecommerceframework/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Leaflet Javascript
+================================================== -->
+<script src="/pimcore/static6/js/lib/leaflet/leaflet.js"></script>
 
 <script>
     var pimcore = parent.pimcore;

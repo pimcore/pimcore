@@ -342,8 +342,11 @@ $regionArray = $locale->getDisplayRegions();
                                 <?php endif; ?>
                             </address>
                         </div>
-
-                        <?= $this->geoAddressInvoice ? $printMap($this->geoAddressInvoice) : '' ?>
+                        <?php if ($this->geoAddressInvoice->lat && $this->geoAddressInvoice->lon) { ?>
+                            <div class="col-md-6">
+                                <div id="leafletmap-invoice" style="width: 200px; height:200px"></div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -368,8 +371,11 @@ $regionArray = $locale->getDisplayRegions();
                                 <?= strtoupper($regionArray[$order->getDeliveryCountry()]) ?><br/>
                             </address>
                         </div>
-
-                        <?= $this->geoAddressDelivery ? $printMap($this->geoAddressDelivery) : '' ?>
+                        <?php if ($this->geoAddressInvoice->lat && $this->geoAddressInvoice->lon) { ?>
+                            <div class="col-md-6">
+                                <div id="leafletmap-delivery" style="width: 200px; height:200px"></div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -502,6 +508,16 @@ $regionArray = $locale->getDisplayRegions();
             $(this).removeData('bs.modal');
             $(this).find('.modal-content').html("");
         });
+
+        if (<?= $this->geoAddressInvoice->lat; ?>, <?= $this->geoAddressInvoice->lon; ?>) {
+            var leafletMapInvoice =  L.map("leafletmap-invoice").setView([<?= $this->geoAddressInvoice->lat; ?>, <?= $this->geoAddressInvoice->lon; ?>], 10);
+
+            var leafletMapDelivery =  L.map("leafletmap-delivery").setView([<?= $this->geoAddressInvoice->lat; ?>, <?= $this->geoAddressInvoice->lon; ?>], 10);
+
+            L.tileLayer("<?= $this->pimcoreSymfonyConfig['maps']['tile_layer_url_template']; ?>").addTo(leafletMapInvoice);
+
+            L.tileLayer("<?= $this->pimcoreSymfonyConfig['maps']['tile_layer_url_template']; ?>").addTo(leafletMapDelivery);
+        }
 
     });
     <?php $this->headScript()->captureEnd(); ?>
