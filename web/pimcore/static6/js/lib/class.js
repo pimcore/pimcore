@@ -15,11 +15,11 @@ var Class = (function() {
             array[arrayLength + length] = args[length];
         return array;
     }
-    function wrap(obj, wrapper) {
-        var __method = obj;
+    function wrap(wrapper) {
+        var __method = this;
         return function() {
-            var a = update( [ __method.bind(obj) ], arguments);
-            return wrapper.apply(obj, a);
+            var a = update( [ __method.bind(this) ], arguments);
+            return wrapper.apply(this, a);
         }
     }
     function subclass() {
@@ -60,13 +60,14 @@ var Class = (function() {
         for ( var i = 0, length = properties.length; i < length; i++) {
             var property = properties[i], value = source[property];
             if (ancestor && isFunction(value)
-                && argumentNames(value)[0] == "$super") {
+                    && argumentNames(value)[0] == "$super") {
                 var method = value;
-                value = wrap((function(m) {
+
+                value = wrap.bind((function(m) {
                     return function() {
                         return ancestor[m].apply(this, arguments);
                     };
-                })(property), method);
+                })(property))(method);
 
                 value.valueOf = method.valueOf.bind(method);
                 value.toString = method.toString.bind(method);
