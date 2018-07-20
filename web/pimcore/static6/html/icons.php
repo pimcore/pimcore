@@ -4,6 +4,7 @@
 
     $iconDir = realpath(__DIR__ . '/../img');
     $icons = rscandir($iconDir . '/flat-color-icons/');
+    $twemoji = rscandir($iconDir . '/twemoji/');
 
 ?><!DOCTYPE html>
 <html>
@@ -17,7 +18,7 @@
             font-size: 12px;
         }
 
-        #icons {
+        .icons {
             width:1200px;
             margin: 0 auto;
         }
@@ -35,25 +36,39 @@
         .info {
             text-align: center;
             margin-bottom: 30px;
+            clear: both;
+            font-size: 22px;
+            padding-top: 50px;
         }
     </style>
 </head>
 <body>
 
     <div class="info">
-        <a href="https://raw.githack.com/icons8/flat-color-icons/master/index.html" target="_blank">Source</a>
+        <a href="https://raw.githack.com/icons8/flat-color-icons/master/index.html" target="_blank">Source (Icon8)</a>
     </div>
 
-    <div id="icons">
-        <?php foreach ($icons as $icon) {
-    ?>
+    <div id="icon8" class="icons">
+        <?php foreach ($icons as $icon) { ?>
             <div class="icon">
                 <img style="width:50px;" src="<?= str_replace(PIMCORE_WEB_ROOT, "", $icon) ?>" title="<?= basename($icon) ?>">
                 <div class="label"><?= basename($icon) ?></div>
             </div>
-        <?php
+        <?php } ?>
+    </div>
 
-} ?>
+
+    <div class="info">
+        <a href="https://github.com/twitter/twemoji" target="_blank">Source (Twemoji)</a>
+    </div>
+
+    <div id="icon8" class="icons">
+        <?php foreach ($twemoji as $icon) { ?>
+            <div class="icon">
+                <img style="width:50px;" src="<?= str_replace(PIMCORE_WEB_ROOT, "", $icon) ?>" title="<?= basename($icon) ?>">
+                <div class="label"><?= basename($icon) ?></div>
+            </div>
+        <?php } ?>
     </div>
 
 </body>
