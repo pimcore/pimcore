@@ -186,7 +186,6 @@ class AdminOrderController extends AdminController implements EventedControllerI
          * @return string
          */
         $geoPoint = function (array $address) {
-
             $baseUrl = $this->view->pimcoreSymfonyConfig['maps']['geocoding_url_template'];
             $url = str_replace(
                 '{q}',
