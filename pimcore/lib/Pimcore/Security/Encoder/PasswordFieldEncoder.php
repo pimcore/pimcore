@@ -27,14 +27,14 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
     /**
      * @var string
      */
-    private $fieldName = 'password';
+    protected $fieldName = 'password';
 
     /**
      * If true, the user password hash will be updated if necessary.
      *
      * @var bool
      */
-    private $updateHash = true;
+    protected $updateHash = true;
 
     /**
      * @param string $fieldName
@@ -87,7 +87,7 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
     /**
      * @return Password
      */
-    private function getFieldDefinition()
+    protected function getFieldDefinition()
     {
         /* @var Password $passwordField */
         $field = $this->getUser()->getClass()->getFieldDefinition($this->fieldName);
