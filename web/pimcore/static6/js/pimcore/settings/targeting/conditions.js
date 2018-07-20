@@ -261,17 +261,12 @@ pimcore.settings.targeting.conditions = (function () {
                             }
                         });
 
-                        var currentLocationTextNode = new Ext.Toolbar.TextItem({
-                            text: " - "
-                        });
-
                         var searchWindow = new Ext.Window({
                             modal: true,
                             width: 700,
                             height: 500,
                             resizable: false,
                             html: '<div id="leaflet_maps_container" ></div>',
-                            tbar: [currentLocationTextNode],
                             bbar: [searchfield, {
                                 xtype: "button",
                                 text: t("search"),
@@ -314,7 +309,7 @@ pimcore.settings.targeting.conditions = (function () {
                                 radiusMap = radius.getValue() * 1000;
                             }
 
-                            document.getElementById('leaflet_maps_container').innerHTML = '<div id="leafletmap" style="height:400px;width:700px;"></div>';
+                            document.getElementById('leaflet_maps_container').innerHTML = '<div id="leafletmap" class="personalization-geopoint"></div>';
                             leafletMap = new L.Map("leafletmap").setView([latitudeMap, longitudeMap], mapZoom);
                             L.tileLayer(pimcore.settings.tile_layer_url_template, {
                                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
