@@ -684,6 +684,6 @@
     "iframe_url": "URL Iframe",
     "rasterize_svg": "Rendi SVG a mappa di punti",
     "rasterize_svg_info_text": "I file SVG sono convertiti automaticamente a mappa di punti quando sono usate trasformazioni diverse da ridimensiona o scala per larghezza/altezza.",
-    "wildcards_are_supported": "Wildcards are supported",
+    "wildcards_are_supported": "Caratteri jolly supportati",
     "classification_store": "Classification Store"
 }
