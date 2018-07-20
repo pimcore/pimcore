@@ -29,5 +29,4 @@ interface ITracker
      * @return array
      */
     public function getCheckoutTenants(): array;
-
 }

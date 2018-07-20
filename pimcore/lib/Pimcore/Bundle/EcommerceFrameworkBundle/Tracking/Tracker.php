@@ -51,6 +51,7 @@ abstract class Tracker implements ITracker
 
     /**
      * Tracker constructor.
+     *
      * @param ITrackingItemBuilder $trackingItemBuilder
      * @param EngineInterface $templatingEngine
      * @param array $options
@@ -139,7 +140,6 @@ abstract class Tracker implements ITracker
         return $this->assortmentTenants;
     }
 
-
     /**
      * @inheritdoc
      */
@@ -147,6 +147,4 @@ abstract class Tracker implements ITracker
     {
         return $this->checkoutTenants;
     }
-
-
 }
