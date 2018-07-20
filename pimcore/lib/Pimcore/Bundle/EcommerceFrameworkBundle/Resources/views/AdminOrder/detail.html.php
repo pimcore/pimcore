@@ -21,6 +21,14 @@
 
 $this->extend('PimcoreEcommerceFrameworkBundle::back-office.html.php');
 
+/* Leaflet CSS
+====================== */
+$this->headLink()->appendStylesheet('/pimcore/static6/js/lib/leaflet/leaflet.css');
+
+/* Leaflet Javascript
+====================== */
+$this->headScript()->appendFile('/pimcore/static6/js/lib/leaflet/leaflet.js');
+
 $orderAgent = $this->orderAgent;
 $order = $orderAgent->getOrder();
 $currency = $orderAgent->getCurrency();
@@ -312,6 +320,7 @@ $regionArray = $locale->getDisplayRegions();
                         , $geoPoint->lng
                     );
                     ?>
+
                     <a href="<?= $urlLink ?>" target="_blank" class="pull-right address-map">
                         <img src="<?= $urlImage ?>" alt=""/>
                     </a>
@@ -342,8 +351,11 @@ $regionArray = $locale->getDisplayRegions();
                                 <?php endif; ?>
                             </address>
                         </div>
-
-                        <?= $this->geoAddressInvoice ? $printMap($this->geoAddressInvoice) : '' ?>
+                        <?php if ($this->geoAddressInvoice->lat && $this->geoAddressInvoice->lon) { ?>
+                            <div class="col-md-6">
+                                <div id="leafletmap-invoice" style="width: 200px; height:200px"></div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -368,8 +380,11 @@ $regionArray = $locale->getDisplayRegions();
                                 <?= strtoupper($regionArray[$order->getDeliveryCountry()]) ?><br/>
                             </address>
                         </div>
-
-                        <?= $this->geoAddressDelivery ? $printMap($this->geoAddressDelivery) : '' ?>
+                        <?php if ($this->geoAddressInvoice->lat && $this->geoAddressInvoice->lon) { ?>
+                            <div class="col-md-6">
+                                <div id="leafletmap-delivery" style="width: 200px; height:200px"></div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -502,6 +517,19 @@ $regionArray = $locale->getDisplayRegions();
             $(this).removeData('bs.modal');
             $(this).find('.modal-content').html("");
         });
+
+        var latitude = "<?=$this->geoAddressInvoice->lat;?>";
+        var longitude = "<?=$this->geoAddressInvoice->lon;?>";
+        var tileLayerUrl = "<?=$this->pimcoreSymfonyConfig['maps']['tile_layer_url_template'];?>";
+
+        if (latitude && longitude) {
+            var leafletMapInvoice =  L.map("leafletmap-invoice").setView([latitude, longitude], 10);
+
+            var leafletMapDelivery =  L.map("leafletmap-delivery").setView([latitude, longitude], 10);
+
+            L.tileLayer(tileLayerUrl).addTo(leafletMapInvoice);
+            L.tileLayer(tileLayerUrl).addTo(leafletMapDelivery);
+        }
 
     });
     <?php $this->headScript()->captureEnd(); ?>

@@ -177,31 +177,45 @@ class AdminOrderController extends AdminController implements EventedControllerI
         /* @var AbstractOrder $order */
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
+        // config
+        $this->view->pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
+
         /**
          * @param array $address
          *
          * @return string
          */
         $geoPoint = function (array $address) {
-            // https://developers.google.com/maps/documentation/geocoding/index?hl=de#JSON
-            $url = sprintf(
-                'http://maps.googleapis.com/maps/api/geocode/json?address=%1$s&sensor=false',
+
+            $baseUrl = $this->view->pimcoreSymfonyConfig['maps']['geocoding_url_template'];
+            $url = str_replace(
+                '{q}',
                 urlencode(
                     $address[0]
                     . ' ' . $address[1]
                     . ' ' . $address[2]
                     . ' ' . $address[3]
-                )
+                ),
+                $baseUrl
             );
-            $json = json_decode(file_get_contents($url));
 
-            return $json->results[0]->geometry->location;
+            $client = \Pimcore::getContainer()->get('pimcore.http_client');
+            $response = $client->request('GET', $url);
+
+            if ($response->getStatusCode() < 300) {
+                $json = json_decode($response->getBody());
+                if (is_array($json)) {
+                    $json = $json[0];
+                }
+            }
+
+            return $json;
         };
 
         // get geo point
-        $geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
+        $this->view->geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
         if ($order->getDeliveryStreet() && $order->getDeliveryZip()) {
-            $geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
+            $this->view->geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
         }
 
         // get customer info
