@@ -116,7 +116,6 @@
     "ext-curl": "*",
     "ext-imagick": "*",
     "ext-redis": "*",
-    "ext-memcache": "*",
     "klarna/checkout": "1.2.0",
     "elasticsearch/elasticsearch": "2.0.0"
   },
