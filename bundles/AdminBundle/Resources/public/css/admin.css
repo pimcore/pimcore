@@ -1859,3 +1859,9 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 #leafletmap.personalization-geopoint .leaflet-pane.leaflet-marker-pane .leaflet-marker-icon.leaflet-edit-move {
    display: none;
 }
+
+.object_geo_field .leaflet-edit-marker-selected {
+    border: 2px dashed rgba(51, 136, 255, .5);
+    margin-left: -12px !important;
+    margin-top: -41px !important;
+}
