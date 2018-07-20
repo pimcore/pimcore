@@ -1179,7 +1179,7 @@ class DataObjectHelperController extends AdminController
     protected function updateGridConfigShares($gridConfig, $metadata)
     {
         $user = $this->getAdminUser();
-        if (!$gridConfig || !$user->isAllowed('share_permissions')) {
+        if (!$gridConfig || !$user->isAllowed('share_configurations')) {
             // nothing to do
             return;
         }
