@@ -171,22 +171,21 @@ class AdminOrderController extends AdminController implements EventedControllerI
     public function detailAction(Request $request)
     {
         $dateFormatter = $this->get('pimcore.locale.intl_formatter');
+        $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         // init
         $order = OnlineShopOrder::getById($request->get('id'));
         /* @var AbstractOrder $order */
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
-        // config
-        $this->view->pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
-
         /**
          * @param array $address
          *
          * @return string
          */
-        $geoPoint = function (array $address) {
-            $baseUrl = $this->view->pimcoreSymfonyConfig['maps']['geocoding_url_template'];
+        $geoPoint = function (array $address) use ($pimcoreSymfonyConfig) {
+
+            $baseUrl = $pimcoreSymfonyConfig['maps']['geocoding_url_template'];
             $url = str_replace(
                 '{q}',
                 urlencode(
@@ -198,23 +197,27 @@ class AdminOrderController extends AdminController implements EventedControllerI
                 $baseUrl
             );
 
+            $json = null;
             $client = \Pimcore::getContainer()->get('pimcore.http_client');
-            $response = $client->request('GET', $url);
-
-            if ($response->getStatusCode() < 300) {
-                $json = json_decode($response->getBody());
-                if (is_array($json)) {
-                    $json = $json[0];
+            try {
+                $response = $client->request('GET', $url);
+                if ($response->getStatusCode() < 300) {
+                    $json = json_decode($response->getBody());
+                    if (is_array($json)) {
+                        $json = $json[0];
+                    }
                 }
+            } catch (\Exception $e) {
+                // noting to do
             }
 
             return $json;
         };
 
         // get geo point
-        $this->view->geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
+        $geoAddressInvoice = $geoPoint([$order->getCustomerStreet(), $order->getCustomerZip(), $order->getCustomerCity(), $order->getCustomerCountry()]);
         if ($order->getDeliveryStreet() && $order->getDeliveryZip()) {
-            $this->view->geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
+            $geoAddressDelivery = $geoPoint([$order->getDeliveryStreet(), $order->getDeliveryZip(), $order->getDeliveryCity(), $order->getDeliveryCountry()]);
         }
 
         // get customer info
@@ -294,7 +297,8 @@ class AdminOrderController extends AdminController implements EventedControllerI
             'timeLine' => $arrTimeline,
             'geoAddressInvoice' => $geoAddressInvoice,
             'arrCustomerAccount' => $arrCustomerAccount,
-            'geoAddressDelivery' => $geoAddressDelivery
+            'geoAddressDelivery' => $geoAddressDelivery,
+            'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig
         ];
     }
 
