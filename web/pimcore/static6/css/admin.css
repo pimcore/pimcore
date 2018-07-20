@@ -1850,3 +1850,12 @@ ul.leaflet-draw-actions.leaflet-draw-actions-bottom li:first-child {
 ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:first-child {
     display: inline-block !important;
 }
+
+#leafletmap.personalization-geopoint {
+    height: 400px;
+    width: 700px;
+}
+
+#leafletmap.personalization-geopoint .leaflet-pane.leaflet-marker-pane .leaflet-marker-icon.leaflet-edit-move {
+   display: none;
+}
