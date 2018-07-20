@@ -550,7 +550,7 @@
     "log_pid": "PID",
     "search_console_settings_description": "Pour utiliser l'intégration Google Search Console, veuillez configurer le compte de service de l'API Google (Google API Service Account) dans les Paramètres Système",
     "fieldcontainer": "Conteneur de champs",
-    "edit_configuration": "Editer le Magasin de Classification",
+    "edit_configuration": "Editer la Configuration du Magasin",
     "search_for_key": "Rechercher une clé",
     "web2print_enable_in_default_view": "Activer les documents Web2Print dans la vue par défaut des documents",
     "web2print_enable_in_default_view_txt": "Activer les documents Web2Print dans la vue par défaut des documents dans la perspective par défaut",
@@ -684,6 +684,6 @@
     "iframe_url": "URL IFrame",
     "rasterize_svg": "Rasteriser les SVG",
     "rasterize_svg_info_text": "Les SVG sont automatiquement pixelisés lorsqu'une transformation autre que le redimensionnement ou le retaillage par largeur / hauteur est utilisée.",
-    "wildcards_are_supported": "Wildcards are supported",
-    "classification_store": "Classification Store"
+    "wildcards_are_supported": "Les wildcards sont pris en charge",
+    "classification_store": "Magasin de Classification"
 }
