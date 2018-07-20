@@ -22,6 +22,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
         this.mapImageID = uniqid();
         this.divImageID = uniqid();
+        this.mapId = "boundmap" + this.divImageID;
+
         this.searchfield = new Ext.form.TextField({
             width: 200,
             name: 'mapSearch',
@@ -64,13 +66,45 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         return this.component;
     },
 
-    getMap: function (fieldConfig, data, width, height) {
-        this.mapZoom = fieldConfig.zoom;
-        this.leafletMap = null;
+    getMap: function (fieldConfig, data) {
         this.rectangle = null;
-        this.mapId = "boundmap" + this.divImageID;
+
         this.editableLayers = new L.FeatureGroup();
-        this.drawControlFull = new L.Control.Draw({
+
+
+        try {
+            var leafletMap = null;
+            if (data) {
+                var bounds = L.latLngBounds(L.latLng(data.NElatitude, data.NElongitude), L.latLng(data.SWlatitude, data.SWlongitude));
+
+                leafletMap = this.getLeafletMap(
+                    bounds.getCenter().lat,
+                    bounds.getCenter().lng,
+                    fieldConfig.zoom
+                );
+
+                this.rectangle = L.rectangle(bounds, {stroke: true, color: "#3388ff", opacity: 0.5, fillOpacity: 0.2, weight: 4});
+                leafletMap.addLayer(this.rectangle);
+                leafletMap.fitBounds(bounds);
+                this.editableLayers.addLayer(this.rectangle);
+
+            } else {
+                leafletMap = this.getLeafletMap(
+                    fieldConfig.lat,
+                    fieldConfig.lng,
+                    fieldConfig.zoom
+                );
+            }
+            this.getLeafletToolbar(leafletMap);
+        } catch (e) {
+            console.log(e);
+        }
+    },
+
+    getLeafletToolbar: function (leafletMap) {
+        leafletMap.addLayer(this.editableLayers);
+
+        var drawControlFull = new L.Control.Draw({
             position: 'topright',
             draw: {
                 polyline: false,
@@ -81,59 +115,22 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             },
             edit: {
                 featureGroup: this.editableLayers,
-                remove: true
+                remove: false
             }
         });
-        this.drawControlEditOnly = new L.Control.Draw({
-            position: 'topright',
-            edit: {
-                featureGroup: this.editableLayers
-            },
-            draw: false
-        });
-        if (!width) {
-            width = 300;
-        }
-        if (!height) {
-            height = 300;
-        }
+        leafletMap.addControl(drawControlFull);
 
-        var py = height;
-        var px = width;
-        try {
-            if (data) {
-                var bounds = L.latLngBounds(L.latLng(data.NElatitude, data.NElongitude), L.latLng(data.SWlatitude, data.SWlongitude));
-                this.lat = bounds.getCenter().lat;
-                this.lng = bounds.getCenter().lng;
-                this.mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
-                this.getLeafletMap();
-                this.rectangle = L.rectangle(bounds, {color: "0x00000073", weight: 1}).addTo(this.leafletMap);
-                this.leafletMap.fitBounds(bounds);
-
-            } else {
-                this.lat = fieldConfig.lat;
-                this.lng = fieldConfig.lng;
-                this.getLeafletMap();
-            }
-            this.getLeafletToolbar();
-        } catch (e) {
-            console.log(e);
-        }
-    },
-
-    getLeafletToolbar: function () {
-        this.leafletMap.addLayer(this.editableLayers);
-        this.leafletMap.addControl(this.drawControlFull);
-        this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
+        leafletMap.on(L.Draw.Event.CREATED, function (e) {
             this.dirty = true;
+
+            this.editableLayers.clearLayers();
             if (this.rectangle !== null) {
-                this.leafletMap.removeLayer(this.rectangle);
+                this.rectangle.remove();
             }
+
             var layer = e.layer;
             this.editableLayers.addLayer(layer);
             if (this.editableLayers.getLayers().length === 1) {
-                this.drawControlFull.remove(this.leafletMap);
-                this.drawControlEditOnly.addTo(this.leafletMap);
                 this.data = {
                     ne: layer.getBounds().getNorthEast(),
                     sw: layer.getBounds().getSouthWest()
@@ -141,15 +138,14 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             }
         }.bind(this));
 
-        this.leafletMap.on("draw:deleted", function (e) {
-            this.drawControlEditOnly.remove(this.leafletMap);
-            this.drawControlFull.addTo(this.leafletMap);
+        leafletMap.on("draw:deleted", function (e) {
             this.data = null;
             this.dirty = true;
             this.updateMap();
         }.bind(this));
 
-        this.leafletMap.on("draw:editresize draw:editmove", function (e) {
+        leafletMap.on("draw:editresize draw:editmove", function (e) {
+            this.dirty = true;
             this.data = {
                 ne: e.layer.getBounds().getNorthEast(),
                 sw: e.layer.getBounds().getSouthWest()
@@ -161,11 +157,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         var address = this.searchfield.getValue();
         jQuery.getJSON(this.getSearchUrl(address), function(json) {
           if( json[0].lat !== null && json[0].lon !== null) {
-                this.lat = json[0].lat;
-                this.lng = json[0].lon;
-                this.mapZoom = 15;
-                this.getLeafletMap();   
-                this.getLeafletToolbar();
+                var map = this.getLeafletMap(json[0].lat, json[0].lon, 15);
+                this.getLeafletToolbar(map);
             }
         }.bind(this));
        
@@ -173,7 +166,6 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
     getValue: function () {
         if (this.data) {
-
             return {
                 NElatitude: this.data.ne.lat,
                 NElongitude: this.data.ne.lng,
@@ -181,7 +173,6 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
                 SWlongitude: this.data.sw.lng
             };
         }
-
         return null;
     },
 
@@ -209,3 +200,4 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
     }
 
 });
+

@@ -46,25 +46,18 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     },
 
     updateMap: function () {
-        var width = Ext.get('leaflet_maps_container_' + this.mapImageID).getWidth();
-
-        if (width > 640) {
-            width = 640;
-        }
-        if (width < 10) {
-            window.setTimeout(this.updateMap.bind(this), 1000);
-        }
-
-        this.getMap(this.fieldConfig, this.data, width);
-    
+        this.getMap(this.fieldConfig, this.data);
     },
     
-    getLeafletMap: function() {
-        document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="'+ this.mapId +'" style="height:400px;width:650px;"></div>';
-        this.leafletMap =  L.map(this.mapId).setView([this.lat, this.lng], this.mapZoom);
+    getLeafletMap: function(lat, lng, mapZoom) {
+        document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="'+ this.mapId +'" style="height:296px;width:650px;"></div>';
+
+        var leafletMap =  L.map(this.mapId).setView([lat, lng], mapZoom);
         L.tileLayer(pimcore.settings.tile_layer_url_template, {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(this.leafletMap);
+        }).addTo(leafletMap);
+
+        return leafletMap;
     },
 
     getBoundsZoomLevel: function (bounds, mapDim) {

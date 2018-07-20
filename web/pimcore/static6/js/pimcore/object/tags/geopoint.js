@@ -21,6 +21,8 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
         this.mapImageID = uniqid();
         this.divImageID = uniqid();
+        this.mapId = "map" + this.divImageID;
+
         this.searchfield = new Ext.form.TextField({
             width: 200,
             name: 'mapSearch',
@@ -103,13 +105,36 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     },
 
     getMap: function (fieldConfig, data) {
-        this.mapZoom = fieldConfig.zoom;
-        this.leafletMap = null;
-        this.mapId = "map" + this.divImageID;
         this.marker = null;
 
         this.editableLayers = new L.FeatureGroup();
-        this.drawControlFull = new L.Control.Draw({
+
+        var leafletMap = null;
+        if (data) {
+            leafletMap = this.getLeafletMap(
+                data.latitude,
+                data.longitude,
+                15
+            );
+            this.marker = L.marker([data.latitude, data.longitude], {});
+            leafletMap.addLayer(this.marker);
+            this.editableLayers.addLayer(this.marker);
+            this.reverseGeocode(this.marker);
+        } else {
+            leafletMap = this.getLeafletMap(
+                fieldConfig.lat,
+                fieldConfig.lng,
+                fieldConfig.zoom
+            );
+        }
+        this.getLeafletToolbar(leafletMap);
+
+    },
+
+    getLeafletToolbar: function (leafletMap) {
+        leafletMap.addLayer(this.editableLayers);
+
+        var drawControlFull = new L.Control.Draw({
             position: 'topright',
             draw: {
                 polyline: false,
@@ -120,56 +145,31 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             },
             edit: {
                 featureGroup: this.editableLayers,
-                remove: true
+                remove: false
             }
         });
-        this.drawControlEditOnly = new L.Control.Draw({
-            position: 'topright',
-            edit: {
-                featureGroup: this.editableLayers
-            },
-            draw: false
-        });
+        leafletMap.addControl(drawControlFull);
 
-        if (data) {
-            this.mapZoom = 15;
-            this.lat = data.latitude;
-            this.lng = data.longitude;
-            this.getLeafletMap();
-            this.marker = L.marker([this.lat, this.lng], {}).addTo(this.leafletMap);
-            this.reverseGeocode(this.marker);
-        } else {
-            this.lat = fieldConfig.lat;
-            this.lng = fieldConfig.lng;
-            this.getLeafletMap();
-        }
-        this.getLeafletToolbar();
+        leafletMap.on(L.Draw.Event.CREATED, function (e) {
+            this.dirty = true;
 
-    },
-
-    getLeafletToolbar: function () {
-        this.leafletMap.addLayer(this.editableLayers);
-        this.leafletMap.addControl(this.drawControlFull);
-        this.leafletMap.on(L.Draw.Event.CREATED, function (e) {
+            this.editableLayers.clearLayers();
             if (this.marker !== null) {
-                this.leafletMap.removeLayer(this.marker);
+                this.marker.remove();
             }
-            this.layer = e.layer;
-            this.editableLayers.addLayer(this.layer);
+
+            var layer = e.layer;
+            this.editableLayers.addLayer(layer);
 
             if (this.editableLayers.getLayers().length === 1) {
-                this.latitude.setValue(this.layer.getLatLng().lat);
-                this.longitude.setValue(this.layer.getLatLng().lng);
-                this.reverseGeocode(this.layer);
-                this.drawControlFull.remove(this.leafletMap);
-                this.drawControlEditOnly.addTo(this.leafletMap);
-
+                this.latitude.setValue(layer.getLatLng().lat);
+                this.longitude.setValue(layer.getLatLng().lng);
+                this.reverseGeocode(layer);
             }
         }.bind(this));
 
-        this.leafletMap.on("draw:deleted", function (e) {
-            this.drawControlEditOnly.remove(this.leafletMap);
-            this.drawControlFull.addTo(this.leafletMap);
+        leafletMap.on("draw:deleted", function (e) {
+            this.dirty = true;
             this.latitude.setValue(null);
             this.longitude.setValue(null);
             if (this.marker !== null) {
@@ -177,7 +177,8 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             }
         }.bind(this));
 
-        this.leafletMap.on("draw:editmove", function (e) {
+        leafletMap.on("draw:editmove", function (e) {
+            this.dirty = true;
             this.latitude.setValue(e.layer.getLatLng().lat);
             this.longitude.setValue(e.layer.getLatLng().lng);
             this.reverseGeocode(e.layer);
@@ -196,6 +197,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     },
 
     reverseGeocode: function (layerObj) {
+        console.log("ble");
         if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
             var url = pimcore.settings.reverse_geocoding_url_template.replace('{lat}', this.latitude.getValue()).replace('{lon}', this.longitude.getValue());
             jQuery.getJSON(url, function (json) {
