@@ -3,6 +3,10 @@
 
 ## Version 5.3.0
 
+#### Build 289 (2018-07-20)
+The context of the button layout component in objects changed to the edit tab. 
+See [Layout Components](../../05_Objects/01_Object_Classes/03_Layout_Elements/README.md).
+
 #### Build 286 (2018-07-19)
 To the interface `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker` the two methods `getAssortmentTenants` and
 `getCheckoutTenants` where added. No action is required, except you have have implemented your own trackers and did not 
