@@ -16,7 +16,7 @@ extend them from the abstract `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\
 Asset filenames: introduced new policy, the following disallowed characters were added: `#?*:\<>|"` 
 
 #### Build 281 (2018-07-13)
-The admin UI translations are not split into 2 parts, 
+The admin UI translations are now split into 2 parts, 
 [Essentials](https://poeditor.com/join/project/VWmZyvFVMH) and [Extended](https://poeditor.com/join/project/XliCYYgILb). 
 Essentials contains all translations which are needed for the most common tasks for editors, while the extended
 collection contains mostly admin related translations.   
