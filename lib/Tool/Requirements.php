@@ -17,7 +17,6 @@ namespace Pimcore\Tool;
 use Pimcore\Db\Connection;
 use Pimcore\File;
 use Pimcore\Tool\Requirements\Check;
-use Pimcore\Update;
 
 class Requirements
 {
@@ -350,7 +349,7 @@ class Requirements
         // Composer
         $checks[] = new Check([
             'name' => 'Composer',
-            'state' => Update::isComposerAvailable() ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => (bool) \Pimcore\Tool\Console::getExecutable('composer') ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // FFMPEG BIN

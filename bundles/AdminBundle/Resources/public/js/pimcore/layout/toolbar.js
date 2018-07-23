@@ -378,16 +378,6 @@ pimcore.layout.toolbar = Class.create({
             }
 
             if (user.admin) {
-                if (perspectiveCfg.inToolbar("extras.update")) {
-                    extrasItems.push({
-                        text: t("update"),
-                        iconCls: "pimcore_icon_update",
-                        handler: function () {
-                            var update = new pimcore.settings.update();
-                        }
-                    });
-                }
-
                 if (perspectiveCfg.inToolbar("extras.maintenance")) {
                     extrasItems.push({
                         text: t("maintenance_mode"),
