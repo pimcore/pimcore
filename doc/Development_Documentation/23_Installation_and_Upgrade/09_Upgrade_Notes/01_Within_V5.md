@@ -14,8 +14,14 @@ The following list should help you to locate and replace them, if available you 
 - `Object.extend()` ( `Object.assign()` ) 
 - `Object.toQueryString()` ( `Ext.Object.toQueryString` )
 - `Object.clone()` ( `Object.assign({}, object)` )
+- `Object.isElement()` ( `Ext.isElement()` )
+- `Object.isArray()` ( `Ext.isArray()` )
+- `Object.isFunction()` ( `Ext.isFunction()` )
+- `Object.isString()` ( `Ext.isString()` )
+- `Object.isNumber()` ( `Ext.isNumber()` )
+- `Object.Undefined()` ( `!Ext.isDefined()` )
 - `Object.toHTML()`
-- `Object.is[Element|Array|Hash|Function|String|Number|Undefined]()`
+- `Object.isHash()`
 - `Function.prototype.[update|merge|bindAsEventListener|curry|delay|defer|wrap|methodize]`
 - `Array.prototype.[clear|first|last|compact|flatten|without|reverse|uniq|intersect|clone|toArray|size|inspect]`
 
