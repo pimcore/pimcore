@@ -72,7 +72,7 @@
     "myclabs/php-enum": "^1.5",
     "neitanod/forceutf8": "~2",
     "nesbot/carbon": "~1",
-    "ocramius/package-versions": "1.2.0",
+    "ocramius/package-versions": "^1.2",
     "ocramius/proxy-manager": "2.1.*",
     "oyejorge/less.php": "~1.7",
     "pear/net_url2": "~2.2",

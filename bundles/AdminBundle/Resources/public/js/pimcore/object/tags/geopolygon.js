@@ -73,10 +73,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         this.polygon = null;
         this.latlngs = [];
 
-        this.leafletMap = null;
         this.editableLayers = new L.FeatureGroup();
 
         try {
+            var leafletMap = null;
             if(data) {
                 var bounds = new L.latLngBounds();
                 for (var i = 0; i < data.length; i++) {
@@ -98,7 +98,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
                 this.editableLayers.addLayer(this.polygon);
 
             } else {
-                this.getLeafletMap(
+                leafletMap = this.getLeafletMap(
                     fieldConfig.lat,
                     fieldConfig.lng,
                     fieldConfig.zoom
