@@ -5,7 +5,7 @@
         $this->get("translate")->setDomain("admin");
     ?>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="/pimcore/static6/css/admin.css"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/pimcoreadmin/css/admin.css"/>
 
     <style type="text/css">
 
@@ -50,7 +50,7 @@
                         color:#555;
                         font-family:Arial,Verdana,sans-serif;
                         line-height:66px;
-                        background:#fff url(/pimcore/static6/img/video-loading.gif) center center no-repeat;
+                        background:#fff url(/bundles/pimcoreadmin/img/video-loading.gif) center center no-repeat;
                         width:66px;
                         height:66px;
                         padding:20px;

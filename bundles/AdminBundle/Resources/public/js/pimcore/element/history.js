@@ -73,7 +73,7 @@ pimcore.element.history = Class.create({
                             items: [
                                 {
                                     tooltip: t('open'),
-                                    icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
+                                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                                     handler: function (grid, rowIndex) {
                                         var data = grid.getStore().getAt(rowIndex).data;
                                         pimcore.helpers.openElement(data.id, data.type);

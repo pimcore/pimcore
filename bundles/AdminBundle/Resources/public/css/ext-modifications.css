@@ -269,7 +269,7 @@ body > .x-mask {
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:28 */
 .x-colorpicker-colormap {
-    background-image: url(/pimcore/static6/img/ext/colorpicker/map_gradient.png);
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/map_gradient.png);
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:35 */
 .x-colorpicker-colormap-draghandle-container {
@@ -291,7 +291,7 @@ body > .x-mask {
     position: relative;
     left: -7px;
     top: -7px;
-    background-image: url(/pimcore/static6/img/ext/colorpicker/drag_circle.png);
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/drag_circle.png);
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:60 */
 .x-colorpicker-draghandle-container {
@@ -308,13 +308,13 @@ body > .x-mask {
     position: relative;
     left: -6px;
     top: -4px;
-    background-image: url(/pimcore/static6/img/ext/colorpicker/pickerslider.png);
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/pickerslider.png);
     background-repeat: no-repeat;
     z-index: 1;
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:79 */
 .x-colorpicker-hue {
-    background-image: url(/pimcore/static6/img/ext/colorpicker/huegradient.png);
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/huegradient.png);
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:86 */
 .x-colorpicker-hue-gradient {
@@ -363,17 +363,17 @@ body > .x-mask {
 
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:117 */
 .x-colorpicker-alpha .x-colorpicker-draghandle-container {
-    background-image: url(/pimcore/static6/img/ext/colorpicker/checkerboard.png);
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:123 */
 .x-colorpicker-preview {
-    background-image: url(/pimcore/static6/img/ext/colorpicker/checkerboard.png);
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Button.scss:2 */
 .x-colorpicker-button {
     position: relative;
     border: 1px solid gray;
-    background-image: url(/pimcore/static6/img/ext/colorpicker/checkerboard.png);
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);
 }
 /* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Field.scss:3 */
 .x-colorpicker-field .x-form-item-body {
@@ -389,7 +389,7 @@ body > .x-mask {
     width: 20px;
     height: 20px;
     left: 4px;
-    background-image: url(/pimcore/static6/img/ext/colorpicker/checkerboard.png);
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);
     top: 0px;
     bottom: 0px;
     margin: auto;

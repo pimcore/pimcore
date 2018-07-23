@@ -154,7 +154,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openObject(data.data.id, "object");
@@ -171,7 +171,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
                 items: [
                     {
                         tooltip: t('remove'),
-                        icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                         handler: function (grid, rowIndex) {
                             grid.getStore().removeAt(rowIndex);
                         }.bind(this)
@@ -199,7 +199,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
                     items: [
                         {
                             tooltip: t('open'),
-                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 pimcore.helpers.openObject(data.data.id, "object");
@@ -214,7 +214,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
                     items: [
                         {
                             tooltip: t('remove'),
-                            icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
                             }.bind(this)

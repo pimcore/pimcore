@@ -227,7 +227,7 @@ pimcore.asset.metadata = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('open'),
-                                icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
+                                icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                                 handler: function (grid, rowIndex) {
                                     var pData = grid.getStore().getAt(rowIndex).data;
                                     if (pData.data) {
@@ -249,7 +249,7 @@ pimcore.asset.metadata = Class.create({
                             width: 40,
                             items: [{
                                 tooltip: t('delete'),
-                                icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                                icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                                 handler: function (grid, rowIndex) {
                                     grid.getStore().removeAt(rowIndex);
                                 }.bind(this)

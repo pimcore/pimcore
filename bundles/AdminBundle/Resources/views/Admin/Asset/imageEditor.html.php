@@ -4,9 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="x-ua-compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <base href="/pimcore/static6/js/lib/minipaint/" />
-    <script src="/pimcore/static6/js/lib/minipaint/dist/bundle.js"></script>
-    <script src="/pimcore/static6/js/lib/jquery-3.3.1.min.js"></script>
+    <base href="/bundles/pimcoreadmin/js/lib/minipaint/" />
+    <script src="/bundles/pimcoreadmin/js/lib/minipaint/dist/bundle.js"></script>
+    <script src="/bundles/pimcoreadmin/js/lib/jquery-3.3.1.min.js"></script>
 </head>
 <body>
 <div class="wrapper">

@@ -51,7 +51,7 @@ Ext.Loader.setConfig({
 });
 Ext.enableAriaButtons = false;
 
-Ext.Loader.setPath('Ext.ux', '/pimcore/static6/js/lib/ext/ux');
+Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/ext/ux');
 
 Ext.require([
     'Ext.button.Split',

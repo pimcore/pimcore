@@ -102,7 +102,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                     if (preg_match('@default.css$@', $path)) {
                         // append custom styles, because in Adminer everything is hardcoded
                         $content .= file_get_contents($this->adminerHome . 'designs/konya/adminer.css');
-                        $content .= file_get_contents(PIMCORE_WEB_ROOT . '/pimcore/static6/css/adminer-modifications.css');
+                        $content .= file_get_contents(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/css/adminer-modifications.css');
                     }
                 }
             }

@@ -229,7 +229,7 @@ class Tool
      */
     public static function getLanguageFlagFile($language)
     {
-        $relativePath = '/pimcore/static6/img/flags';
+        $relativePath = '/bundles/pimcoreadmin/img/flags';
         $iconWebBasePath = PIMCORE_PROJECT_ROOT . $relativePath;
         $iconFsBasePath = PIMCORE_WEB_ROOT . $relativePath;
 

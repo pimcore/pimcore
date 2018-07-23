@@ -301,7 +301,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $value = $data->getHex(true, true);
-            $result = '<div style="float: left;"><div style="float: left; margin-right: 5px; background-image: ' . ' url(/pimcore/static6/img/ext/colorpicker/checkerboard.png);">'
+            $result = '<div style="float: left;"><div style="float: left; margin-right: 5px; background-image: ' . ' url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);">'
                         . '<div style="background-color: ' . $value . '; width:15px; height:15px;"></div></div>' . $value . '</div>';
 
             return $result;

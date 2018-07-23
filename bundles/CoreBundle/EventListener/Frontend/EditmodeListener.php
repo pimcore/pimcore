@@ -201,7 +201,7 @@ class EditmodeListener implements EventSubscriberInterface
             }
 
             if ($skipCheck || ($headElement && $bodyElement && $htmlElement)) {
-                $startupJavascript = '/pimcore/static6/js/pimcore/document/edit/startup.js';
+                $startupJavascript = '/bundles/pimcoreadmin/js/pimcore/document/edit/startup.js';
 
                 $headHtml = $this->buildHeadHtml($document, $user->getLanguage());
                 $bodyHtml = "\n\n" . '<script src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
@@ -290,11 +290,11 @@ class EditmodeListener implements EventSubscriberInterface
         $disableMinifyJs = \Pimcore::disableMinifyJs();
 
         return [
-            '/pimcore/static6/js/pimcore/common.js',
-            '/pimcore/static6/js/lib/prototype-light.js',
-            '/pimcore/static6/js/lib/jquery-3.3.1.min.js',
-            '/pimcore/static6/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
-            '/pimcore/static6/js/lib/ckeditor/ckeditor.js'
+            '/bundles/pimcoreadmin/js/pimcore/common.js',
+            '/bundles/pimcoreadmin/js/lib/prototype-light.js',
+            '/bundles/pimcoreadmin/js/lib/jquery-3.3.1.min.js',
+            '/bundles/pimcoreadmin/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
+            '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js'
         ];
     }
 
@@ -305,38 +305,38 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return array_merge(
             [
-                '/pimcore/static6/js/pimcore/functions.js',
-                '/pimcore/static6/js/pimcore/overrides.js',
-                '/pimcore/static6/js/pimcore/tool/milestoneslider.js',
-                '/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js',
-                '/pimcore/static6/js/pimcore/element/tag/imagecropper.js',
-                '/pimcore/static6/js/pimcore/document/edit/helper.js',
-                '/pimcore/static6/js/pimcore/elementservice.js',
-                '/pimcore/static6/js/pimcore/document/edit/dnd.js',
-                '/pimcore/static6/js/pimcore/document/tag.js',
-                '/pimcore/static6/js/pimcore/document/tags/block.js',
-                '/pimcore/static6/js/pimcore/document/tags/scheduledblock.js',
-                '/pimcore/static6/js/pimcore/document/tags/date.js',
-                '/pimcore/static6/js/pimcore/document/tags/href.js',
-                '/pimcore/static6/js/pimcore/document/tags/multihref.js',
-                '/pimcore/static6/js/pimcore/document/tags/checkbox.js',
-                '/pimcore/static6/js/pimcore/document/tags/image.js',
-                '/pimcore/static6/js/pimcore/document/tags/input.js',
-                '/pimcore/static6/js/pimcore/document/tags/link.js',
-                '/pimcore/static6/js/pimcore/document/tags/select.js',
-                '/pimcore/static6/js/pimcore/document/tags/snippet.js',
-                '/pimcore/static6/js/pimcore/document/tags/textarea.js',
-                '/pimcore/static6/js/pimcore/document/tags/numeric.js',
-                '/pimcore/static6/js/pimcore/document/tags/wysiwyg.js',
-                '/pimcore/static6/js/pimcore/document/tags/renderlet.js',
-                '/pimcore/static6/js/pimcore/document/tags/table.js',
-                '/pimcore/static6/js/pimcore/document/tags/video.js',
-                '/pimcore/static6/js/pimcore/document/tags/multiselect.js',
-                '/pimcore/static6/js/pimcore/document/tags/areablock.js',
-                '/pimcore/static6/js/pimcore/document/tags/area.js',
-                '/pimcore/static6/js/pimcore/document/tags/pdf.js',
-                '/pimcore/static6/js/pimcore/document/tags/embed.js',
-                '/pimcore/static6/js/pimcore/document/edit/helper.js'
+                '/bundles/pimcoreadmin/js/pimcore/functions.js',
+                '/bundles/pimcoreadmin/js/pimcore/overrides.js',
+                '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
+                '/bundles/pimcoreadmin/js/pimcore/element/tag/imagehotspotmarkereditor.js',
+                '/bundles/pimcoreadmin/js/pimcore/element/tag/imagecropper.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
+                '/bundles/pimcoreadmin/js/pimcore/elementservice.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/edit/dnd.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tag.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/block.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/scheduledblock.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/date.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/href.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/multihref.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/checkbox.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/image.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/input.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/link.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/select.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/snippet.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/textarea.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/numeric.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/wysiwyg.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/renderlet.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/table.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/video.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/multiselect.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/areablock.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/area.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/pdf.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/embed.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js'
             ],
             $this->bundleManager->getEditmodeJsPaths()
         );
@@ -349,8 +349,8 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return array_merge(
             [
-                '/pimcore/static6/css/icons.css',
-                '/pimcore/static6/css/editmode.css?_dc=' . time()
+                '/bundles/pimcoreadmin/css/icons.css',
+                '/bundles/pimcoreadmin/css/editmode.css?_dc=' . time()
             ],
             $this->bundleManager->getEditmodeCssPaths()
         );

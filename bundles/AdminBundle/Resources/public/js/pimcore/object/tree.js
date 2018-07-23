@@ -345,7 +345,7 @@ pimcore.object.tree = Class.create({
             };
 
             // add special icon
-            if (classRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
+            if (classRecord.get("icon") != "/bundles/pimcoreadmin/img/flat-color-icons/timeline.svg") {
                 tmpMenuEntry.icon = classRecord.get("icon");
                 tmpMenuEntry.iconCls = "pimcore_class_icon";
             }
@@ -357,7 +357,7 @@ pimcore.object.tree = Class.create({
             };
 
             // add special icon
-            if (classRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
+            if (classRecord.get("icon") != "/bundles/pimcoreadmin/img/flat-color-icons/timeline.svg") {
                 tmpMenuEntryImport.icon = classRecord.get("icon");
                 tmpMenuEntryImport.iconCls = "pimcore_class_icon";
             }

@@ -40,7 +40,7 @@ pimcore.object.tags.rgbaColor = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 if (value) {
-                    var result = '<div style="float: left;"><div style="float: left; margin-right: 5px; background-image: ' + ' url(/pimcore/static6/img/ext/colorpicker/checkerboard.png);">'
+                    var result = '<div style="float: left;"><div style="float: left; margin-right: 5px; background-image: ' + ' url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);">'
                         + '<div style="background-color: ' + value + '; width:15px; height:15px;"></div></div>' + value + '</div>';
                     return result;
                 }

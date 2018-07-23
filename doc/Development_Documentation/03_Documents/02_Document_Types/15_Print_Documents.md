@@ -68,7 +68,7 @@ They can be activated by the printermarks rendering setting. Technically they ar
 For Details, check links below:
 
 * [view-script](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/app/Resources/views/Web2print/default.html.php#L102-L102)
-* [css-file](https://github.com/pimcore/pimcore/blob/master/web/pimcore/static6/css/print/print-printermarks.css)
+* [css-file](https://github.com/pimcore/pimcore/blob/master/web/bundles/pimcoreadmin/css/print/print-printermarks.css)
 
 ## Settings
 In the web-to-print settings, the used PDF renderer is specified. Depending on the renderer, there are additional settings to be made. 

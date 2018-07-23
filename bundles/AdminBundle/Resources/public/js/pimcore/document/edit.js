@@ -254,7 +254,7 @@ pimcore.document.edit = Class.create({
         var record = this.targetGroupStore.getById(targetgroup);
 
         if(record) {
-            this.targetGroupText.update('&nbsp;&nbsp;<img src="/pimcore/static6/img/flat-color-icons/manager.svg" style="height: 16px;" align="absbottom" />&nbsp;&nbsp;'
+            this.targetGroupText.update('&nbsp;&nbsp;<img src="/bundles/pimcoreadmin/img/flat-color-icons/manager.svg" style="height: 16px;" align="absbottom" />&nbsp;&nbsp;'
                 + record.data.text);
         } else {
             this.targetGroupText.update('');

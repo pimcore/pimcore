@@ -98,7 +98,7 @@ pimcore.settings.recyclebin = Class.create({
         var typesColumns = [
             {
                 text: t("type"), width: 50, sortable: true, dataIndex: 'subtype', renderer: function (d) {
-                    return '<img src="/pimcore/static6/img/flat-color-icons/' + d + '.svg" style="height: 16px" />';
+                    return '<img src="/bundles/pimcoreadmin/img/flat-color-icons/' + d + '.svg" style="height: 16px" />';
                 }
             },
             {text: t("path"), flex: 200, sortable: true, dataIndex: 'path', filter: 'string', renderer: Ext.util.Format.htmlEncode},
@@ -119,7 +119,7 @@ pimcore.settings.recyclebin = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('delete'),
-                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         grid.getStore().removeAt(rowIndex);
                     }.bind(this)

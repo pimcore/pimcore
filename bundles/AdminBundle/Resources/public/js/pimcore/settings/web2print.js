@@ -206,7 +206,7 @@ pimcore.settings.web2print = Class.create({
                     {
                         text: t("test"),
                         handler: this.test.bind(this),
-                        icon: "/pimcore/static6/img/flat-color-icons/approval.svg"
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/approval.svg"
                     },
                     {
                         text: t("save"),

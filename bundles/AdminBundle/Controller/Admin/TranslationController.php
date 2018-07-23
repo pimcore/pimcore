@@ -1335,7 +1335,7 @@ class TranslationController extends AdminController
             "<html>\n" .
                 "<head>\n" .
                     '<style type="text/css">' . "\n" .
-                    file_get_contents(PIMCORE_WEB_ROOT . '/pimcore/static6/css/word-export.css') .
+                    file_get_contents(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/css/word-export.css') .
                     "</style>\n" .
                 "</head>\n\n" .
                 "<body>\n" .

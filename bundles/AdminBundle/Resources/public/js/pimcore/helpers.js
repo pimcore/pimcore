@@ -1278,7 +1278,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (treeView, record, item, ind
                 '<style type="text/css">' +
                 'body { margin:0; padding: 0; } ' +
                 '.thumbnails { width: 410px; } ' +
-                '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/pimcore/static6/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; } ' +
+                '.thumb { border: 1px solid #999; background: url(' + uriPrefix + '/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) no-repeat center center; background-size: 20px 20px; box-sizing: border-box; } ' +
                 '.big { min-height: 300px; } ' +
                 '.complete { border:none; border-radius: 0; background:none; }' +
                 '.small { width: 130px; height: 130px; float: left; overflow: hidden; margin: 0 5px 5px 0; } ' +
@@ -2841,7 +2841,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 pimcore.helpers.showAbout = function () {
 
     var html = '<div class="pimcore_about_window">';
-    html += '<br><img src="/pimcore/static6/img/logo-gray.svg" style="width: 300px;"><br>';
+    html += '<br><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Build: ' + pimcore.settings.build + '</b> (' + pimcore.settings.buildDate + ')';
     html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
@@ -2849,7 +2849,7 @@ pimcore.helpers.showAbout = function () {
     html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a> | ';
     html += '<a href="https://pimcore.com/en/about/team" target="_blank">Team</a>';
-    html += '<img src="/pimcore/static6/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
+    html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
 
     var win = new Ext.Window({

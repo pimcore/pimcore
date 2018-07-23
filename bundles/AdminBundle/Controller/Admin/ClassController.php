@@ -89,7 +89,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function getTreeAction(Request $request)
     {
-        $defaultIcon = '/pimcore/static6/img/flat-color-icons/timeline.svg';
+        $defaultIcon = '/bundles/pimcoreadmin/img/flat-color-icons/timeline.svg';
 
         $classesList = new DataObject\ClassDefinition\Listing();
         $classesList->setOrderKey('name');

@@ -2,7 +2,7 @@
 
 include("../../../../pimcore/config/startup_cli.php");
 
-$iconPath = '/pimcore/static6/img/flags/';
+$iconPath = '/bundles/pimcoreadmin/img/flags/';
 
 $locales = \Pimcore\Tool::getSupportedLocales();
 $languageOptions = [];

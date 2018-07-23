@@ -89,7 +89,7 @@ pimcore.settings.translation.xliff = Class.create({
                         width: 30,
                         items: [{
                             tooltip: t('remove'),
-                            icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
                             }.bind(this)

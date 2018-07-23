@@ -443,7 +443,7 @@ class Video extends Model\Document\Tag
 
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
-            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/pimcore/static6/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
@@ -862,7 +862,7 @@ class Video extends Model\Document\Tag
                     font-family:Arial,Verdana,sans-serif;
                     line-height:66px;
                     box-sizing:content-box;
-                    background:#fff url(/pimcore/static6/img/video-loading.gif) center center no-repeat;
+                    background:#fff url(/bundles/pimcoreadmin/img/video-loading.gif) center center no-repeat;
                     width:66px;
                     height:66px;
                     padding:20px;

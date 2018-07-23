@@ -9,10 +9,10 @@
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, follow"/>
 
-    <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" href="/bundles/pimcoreadmin/img/favicon/favicon-32x32.png"/>
 
-    <link rel="stylesheet" href="/pimcore/static6/css/login.css" type="text/css"/>
-    <script src="/pimcore/static6/js/lib/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="/bundles/pimcoreadmin/css/login.css" type="text/css"/>
+    <script src="/bundles/pimcoreadmin/js/lib/jquery-3.3.1.min.js"></script>
 
     <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
         <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>

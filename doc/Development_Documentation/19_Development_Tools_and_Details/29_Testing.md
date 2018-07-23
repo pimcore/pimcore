@@ -457,7 +457,7 @@ class IndexPageCest
         $I->amOnRoute('document_1');
 
         $I->seeElement('#site #logo a', ['href' => 'http://www.pimcore.com/']);
-        $I->seeElement('#site #logo img', ['src' => '/pimcore/static6/img/logo-claim-gray.svg']);
+        $I->seeElement('#site #logo img', ['src' => '/bundles/pimcoreadmin/img/logo-claim-gray.svg']);
     }
 }
 ```

@@ -144,7 +144,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     items: [
                         {
                             tooltip: t('up'),
-                            icon: "/pimcore/static6/img/flat-color-icons/up.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/up.svg",
                             handler: function (grid, rowIndex) {
                                 if (rowIndex > 0) {
                                     var rec = grid.getStore().getAt(rowIndex);
@@ -164,7 +164,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     items: [
                         {
                             tooltip: t('down'),
-                            icon: "/pimcore/static6/img/flat-color-icons/down.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
                             handler: function (grid, rowIndex) {
                                 if (rowIndex < (grid.getStore().getCount() - 1)) {
                                     var rec = grid.getStore().getAt(rowIndex);
@@ -184,7 +184,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     items: [
                         {
                             tooltip: t('remove'),
-                            icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
                             }.bind(this)

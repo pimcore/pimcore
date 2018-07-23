@@ -70,7 +70,7 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
                 items: [
                     {
                         tooltip: t('gdpr_dataSource_export'),
-                        icon: "/pimcore/static6/img/flat-color-icons/export.svg",
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/export.svg",
                         handler: function (grid, rowIndex) {
                             var data = grid.getStore().getAt(rowIndex);
                             pimcore.helpers.download("/admin/gdpr/pimcore-users/export-user-data?id=" + data.data.id);
@@ -85,7 +85,7 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
                 items: [
                     {
                         tooltip: t('remove'),
-                        icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                         handler: function (grid, rowIndex) {
 
                             var data = grid.getStore().getAt(rowIndex);

@@ -21,7 +21,7 @@ $user      = $userProxy->getUser();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
 
-    <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" href="/bundles/pimcoreadmin/img/favicon/favicon-32x32.png"/>
     <meta name="google" value="notranslate">
 
     <style type="text/css">
@@ -184,12 +184,12 @@ if ($disableMinifyJs) {
 
 $styles = array(
     "/admin/misc/admin-css",
-    "/pimcore/static6/css/icons.css",
-    "/pimcore/static6/js/lib/leaflet/leaflet.css",
-    "/pimcore/static6/js/lib/leaflet.draw/leaflet.draw.css",
-    "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
-    "/pimcore/static6/js/lib/ext/classic/theme-triton/resources/charts-all" . $debugSuffix . ".css",
-    "/pimcore/static6/css/admin.css"
+    "/bundles/pimcoreadmin/css/icons.css",
+    "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
+    "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
+    "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
+    "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/charts-all" . $debugSuffix . ".css",
+    "/bundles/pimcoreadmin/css/admin.css"
 );
 ?>
 
@@ -715,22 +715,22 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 
 <!-- library scripts -->
 <?php foreach ($scriptLibs as $scriptUrl) { ?>
-    <script src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 
 
 <!-- internal scripts -->
 <?php if ($disableMinifyJs) { ?>
     <?php foreach ($scripts as $scriptUrl) { ?>
-    <script src="/pimcore/static6/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <?php } ?>
 <?php } else { ?>
 <?php
 
     $scriptContents = "";
     foreach ($scripts as $scriptUrl) {
-        if (is_file(PIMCORE_WEB_ROOT . "/pimcore/static6/js/" . $scriptUrl)) {
-            $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . "/pimcore/static6/js/" . $scriptUrl) . "\n\n\n";
+        if (is_file(PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl)) {
+            $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl) . "\n\n\n";
         }
     }
     $minimizedScriptPath = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents);
@@ -760,6 +760,6 @@ if ($disableMinifyJs) {
 <?php endforeach; ?>
 
 <?php // MUST BE THE LAST LINE ?>
-<script src="/pimcore/static6/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script src="/bundles/pimcoreadmin/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 </body>
 </html>

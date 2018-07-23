@@ -502,8 +502,8 @@ class Pdf extends Model\Document\Tag
                 <div class="pimcore-pdfButtonRight pimcore-pdfButton "><div class="pimcore-pdfArrowRight"></div></div>
             </div>
 
-            <link rel="stylesheet" type="text/css" href="/pimcore/static6/js/frontend/pdfViewer/styles.css" />
-            <script src="/pimcore/static6/js/frontend/pdfViewer/viewer.js"></script>
+            <link rel="stylesheet" type="text/css" href="/bundles/pimcoreadmin/js/frontend/pdfViewer/styles.css" />
+            <script src="/bundles/pimcoreadmin/js/frontend/pdfViewer/viewer.js"></script>
             <script>
                 var pimcore_pdf = pimcore_pdf || {};
                 pimcore_pdf["$jsVarName"] = new pimcore.pdf({
@@ -538,7 +538,7 @@ HTML;
 
         $code = '
         <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_tag_pdf">
-            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/pimcore/static6/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';

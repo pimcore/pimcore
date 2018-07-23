@@ -120,7 +120,7 @@ class ImageThumbnail
 
     public function generate()
     {
-        $errorImage = PIMCORE_WEB_ROOT . '/pimcore/static6/img/filetype-not-supported.svg';
+        $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $generated = false;
 
         if (!$this->asset) {
@@ -147,7 +147,7 @@ class ImageThumbnail
                         $generated = true;
                         Model\Tool\Lock::release($lockKey);
                     } elseif (Model\Tool\Lock::isLocked($lockKey)) {
-                        return '/pimcore/static6/img/please-wait.png';
+                        return '/bundles/pimcoreadmin/img/please-wait.png';
                     }
                 }
 

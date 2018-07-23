@@ -577,7 +577,7 @@ class User extends User\UserRole
             return $thumb;
         }
 
-        return PIMCORE_WEB_ROOT . '/pimcore/static6/img/avatar.png';
+        return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';
     }
 
     /**

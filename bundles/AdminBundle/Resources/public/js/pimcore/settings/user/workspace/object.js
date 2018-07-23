@@ -69,7 +69,7 @@ pimcore.settings.user.workspace.object = Class.create({
             width: 40,
             items: [{
                 tooltip: t('special_settings_tooltip'),
-                icon: "/pimcore/static6/img/flat-color-icons/settings.svg",
+                icon: "/bundles/pimcoreadmin/img/flat-color-icons/settings.svg",
                 handler: function (grid, rowIndex) {
                     var data = grid.getStore().getAt(rowIndex);
                     var callback = this.applySpecialConfigs.bind(this, data, "special");
@@ -94,7 +94,7 @@ pimcore.settings.user.workspace.object = Class.create({
             width: 40,
             items: [{
                 tooltip: t('delete'),
-                icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                 handler: function (grid, rowIndex) {
                     grid.getStore().removeAt(rowIndex);
                     this.updateRows();

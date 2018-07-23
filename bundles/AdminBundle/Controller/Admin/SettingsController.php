@@ -60,7 +60,7 @@ class SettingsController extends AdminController
     public function displayCustomLogoAction(Request $request)
     {
         // default logo
-        $logo = PIMCORE_WEB_ROOT . '/pimcore/static6/img/logo-claim-gray.svg';
+        $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-gray.svg';
         $mime = 'image/svg+xml';
         $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . '/custom-logo.';
 

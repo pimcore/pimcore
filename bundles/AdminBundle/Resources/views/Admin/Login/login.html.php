@@ -65,10 +65,10 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 
                     <div class="body">
                         <div class="links">
-                            <a href="http://www.google.com/chrome/" target="_blank" title="Chrome"><img src="/pimcore/static6/img/login/chrome.svg" alt="Chrome"/></a>
-                            <a href="http://www.mozilla.com/" target="_blank" title="Firefox"><img src="/pimcore/static6/img/login/firefox.svg" alt="Firefox"/></a>
-                            <a href="http://www.apple.com/safari/" target="_blank" title="Safari"><img src="/pimcore/static6/img/login/safari.svg" alt="Safari"/></a>
-                            <a href="http://www.microsoft.com/" target="_blank" title="Edge"><img src="/pimcore/static6/img/login/edge.svg" alt="Edge"/></a>
+                            <a href="http://www.google.com/chrome/" target="_blank" title="Chrome"><img src="/bundles/pimcoreadmin/img/login/chrome.svg" alt="Chrome"/></a>
+                            <a href="http://www.mozilla.com/" target="_blank" title="Firefox"><img src="/bundles/pimcoreadmin/img/login/firefox.svg" alt="Firefox"/></a>
+                            <a href="http://www.apple.com/safari/" target="_blank" title="Safari"><img src="/bundles/pimcoreadmin/img/login/safari.svg" alt="Safari"/></a>
+                            <a href="http://www.microsoft.com/" target="_blank" title="Edge"><img src="/bundles/pimcoreadmin/img/login/edge.svg" alt="Edge"/></a>
                         </div>
                         <br>
                         <a href="#" onclick="showLogin();"><?= $this->translate("Click here to proceed"); ?></a>

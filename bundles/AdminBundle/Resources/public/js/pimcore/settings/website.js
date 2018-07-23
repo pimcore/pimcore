@@ -211,7 +211,7 @@ pimcore.settings.website = Class.create({
                 menuText:t('empty'),
                 width:40,
                 tooltip:t('empty'),
-                icon: "/pimcore/static6/img/flat-color-icons/full_trash.svg",
+                icon: "/bundles/pimcoreadmin/img/flat-color-icons/full_trash.svg",
                 handler:function (grid, rowIndex) {
                     grid.getStore().getAt(rowIndex).set("data","");
                 }.bind(this)
@@ -223,7 +223,7 @@ pimcore.settings.website = Class.create({
                 menuText: t('delete'),
                 width:40,
                 tooltip:t('delete'),
-                icon:"/pimcore/static6/img/flat-color-icons/delete.svg",
+                icon:"/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                 handler:function (grid, rowIndex) {
                     grid.getStore().removeAt(rowIndex);
                 }.bind(this)

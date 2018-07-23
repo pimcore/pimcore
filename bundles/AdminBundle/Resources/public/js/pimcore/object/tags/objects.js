@@ -308,7 +308,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     items: [
                         {
                             tooltip: t('up'),
-                            icon: "/pimcore/static6/img/flat-color-icons/up.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/up.svg",
                             handler: function (grid, rowIndex) {
                                 if (rowIndex > 0) {
                                     var rec = grid.getStore().getAt(rowIndex);
@@ -326,7 +326,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     items: [
                         {
                             tooltip: t('down'),
-                            icon: "/pimcore/static6/img/flat-color-icons/down.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
                             handler: function (grid, rowIndex) {
                                 if (rowIndex < (grid.getStore().getCount() - 1)) {
                                     var rec = grid.getStore().getAt(rowIndex);
@@ -344,7 +344,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     items: [
                         {
                             tooltip: t('open'),
-                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 pimcore.helpers.openObject(data.data.id, "object");
@@ -359,7 +359,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     items: [
                         {
                             tooltip: t('remove'),
-                            icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
                             }.bind(this)
@@ -511,7 +511,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     items: [
                         {
                             tooltip: t('open'),
-                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
+                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 pimcore.helpers.openObject(data.data.id, "object");

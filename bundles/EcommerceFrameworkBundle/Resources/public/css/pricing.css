@@ -14,13 +14,13 @@
 
 /** Main Menu **/
 .bundle_ecommerce_pricing_rules {
-    background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
 
 /** Tree **/
 .bundle_ecommerce_pricing_icon_rule_additiv {
     position: relative;
-    background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_rule_additiv:before {
     position: absolute;
@@ -29,13 +29,13 @@
     bottom: 4px;
     right: 0;
     content: "";
-    background: url(/pimcore/static6/img/flat-color-icons/plus-circle.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/plus-circle.svg) center center no-repeat !important;
 }
 
 
 .bundle_ecommerce_pricing_icon_rule_stopExecute {
     position: relative;
-    background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_rule_stopExecute:before {
     position: absolute;
@@ -44,11 +44,11 @@
     bottom: 4px;
     right: 0;
     content: "";
-    background: url(/pimcore/static6/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
 }
 
 .bundle_ecommerce_pricing_icon_rule_disabled {
-    background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/percent.svg") no-repeat center center !important;
     -webkit-filter: grayscale(100%) brightness(200%);
     filter: grayscale(100%) brightness(200%);
 
@@ -59,16 +59,16 @@
     margin: 0 20px !important;
 }
 .bundle_ecommerce_pricing_icon_conditionCartAmount {
-    background: url("/pimcore/static6/img/flat-color-icons/shopping-cart.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/shopping-cart.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_conditionDateRange {
-    background: url("/pimcore/static6/img/flat-color-icons/calendar.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/calendar.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_conditionCatalogProduct {
-    background: url("/pimcore/static6/img/flat-color-icons/camera.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/camera.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_conditionCatalogCategory {
-    background: url("/pimcore/static6/img/flat-color-icons/folder.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/folder.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_conditionCatalogCategory:before {
     position: absolute;
@@ -77,36 +77,36 @@
     top: 4px;
     right: 0;
     content: "";
-    background: url(/pimcore/static6/img/flat-color-icons/camera.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/camera.svg) center center no-repeat !important;
 }
 .bundle_ecommerce_pricing_icon_conditionToken {
-    background: url("/pimcore/static6/img/flat-color-icons/sms.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/sms.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_conditionSold,
 .bundle_ecommerce_pricing_icon_conditionSales {
-    background: url("/pimcore/static6/img/flat-color-icons/sales_performance.svg") no-repeat center center !important;;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/sales_performance.svg") no-repeat center center !important;;
 }
 .bundle_ecommerce_pricing_icon_conditionClientIp {
-    background: url("/pimcore/static6/img/flat-color-icons/laptop.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/laptop.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_conditionVoucherToken {
-    background: url("/pimcore/static6/img/flat-color-icons/diamond.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/diamond.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_conditionTenant {
-    background: url("/pimcore/static6/img/flat-color-icons/department.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/department.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_conditionTargetGroup {
-    background: url("/pimcore/static6/img/flat-color-icons/manager.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/manager.svg") no-repeat center center !important;
 }
 
 /** Actions **/
 .bundle_ecommerce_pricing_icon_actionGift {
-    background: url("/pimcore/static6/img/flat-color-icons/gift.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/gift.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_actionCartDiscount,
 .bundle_ecommerce_pricing_icon_actionProductDiscount {
-    background: url("/pimcore/static6/img/flat-color-icons/donate.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/donate.svg") no-repeat center center !important;
 }
 .bundle_ecommerce_pricing_icon_actionFreeShipping {
-    background: url("/pimcore/static6/img/flat-color-icons/in_transit.svg") no-repeat center center !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/in_transit.svg") no-repeat center center !important;
 }

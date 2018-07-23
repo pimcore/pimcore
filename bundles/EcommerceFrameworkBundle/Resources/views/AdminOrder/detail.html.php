@@ -23,11 +23,11 @@ $this->extend('PimcoreEcommerceFrameworkBundle::back-office.html.php');
 
 /* Leaflet CSS
 ====================== */
-$this->headLink()->appendStylesheet('/pimcore/static6/js/lib/leaflet/leaflet.css');
+$this->headLink()->appendStylesheet('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css');
 
 /* Leaflet Javascript
 ====================== */
-$this->headScript()->appendFile('/pimcore/static6/js/lib/leaflet/leaflet.js');
+$this->headScript()->appendFile('/bundles/pimcoreadmin/js/lib/leaflet/leaflet.js');
 
 $orderAgent = $this->orderAgent;
 $order = $orderAgent->getOrder();

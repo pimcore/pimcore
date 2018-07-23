@@ -69,7 +69,7 @@
     background-position: center center;
     background-size: 20px 20px;
     background-repeat: no-repeat;
-    background-image: url(/pimcore/static6/img/flat-color-icons/puzzle.svg);
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/puzzle.svg);
 }
 
 #pimcore_navigation li:hover {
@@ -87,7 +87,7 @@
 }
 
 #pimcore_menu_maintenance {
-    background-image: url(/pimcore/static6/img/flat-color-icons/stop-circle.svg) !important;
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) !important;
     filter: grayscale(0%) !important;
     -webkit-filter: grayscale(0%) !important;
     background-size: 28px;
@@ -110,24 +110,24 @@
 }
 
 #pimcore_status_debug {
-    background-image: url(/pimcore/static6/img/flat-color-icons/medium_priority.svg);
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg);
 }
 
 #pimcore_status_dev {
-    background-image: url(/pimcore/static6/img/flat-color-icons/high_priority.svg);
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/high_priority.svg);
 }
 
 #pimcore_status_email {
-    background-image: url(/pimcore/static6/img/flat-color-icons/email.svg);
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/email.svg);
 }
 
 #pimcore_status_update {
     cursor: pointer;
-    background-image: url(/pimcore/static6/img/flat-color-icons/process.svg);
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/process.svg);
 }
 
 #pimcore_status_maintenance {
-    background-image: url(/pimcore/static6/img/flat-color-icons/factory.svg);
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/factory.svg);
 }
 
 #pimcore_logout {
@@ -333,12 +333,12 @@
 }
 
 .pimcore_error_input input {
-    background: url(/pimcore/static6/img/flat-color-icons/high_priority.svg) right center/16px no-repeat #fff !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/high_priority.svg) right center/16px no-repeat #fff !important;
     cursor: default;
 }
 
 .pimcore_droptarget_image  {
-    background: url(/pimcore/static6/img/flat-color-icons/target.svg) center center/45px no-repeat #fff;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/45px no-repeat #fff;
 }
 
 
@@ -347,33 +347,33 @@
 }
 
 .pimcore_property_document .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static6/img/icon/page_white.png) left top no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/icon/page_white.png) left top no-repeat !important;
 }
 
 .pimcore_property_asset .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static6/img/icon/asset.png) left top no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/icon/asset.png) left top no-repeat !important;
 }
 
 .pimcore_property_object .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static6/img/icon/database.png) left top no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/icon/database.png) left top no-repeat !important;
 }
 
 .pimcore_property_bool .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static6/img/icon/tick.png) left top no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/icon/tick.png) left top no-repeat !important;
 }
 
 .pimcore_property_select .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static6/img/icon/select.png) left top no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/icon/select.png) left top no-repeat !important;
 }
 
 .pimcore_property_text .x-grid3-td-name div.x-grid3-cell-inner {
-    background: url(/pimcore/static6/img/icon/textfield.png) left top no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/icon/textfield.png) left top no-repeat !important;
 }
 
 
 .pimcore_property_droptarget {
     min-height: 18px;
-    background: url(/pimcore/static6/img/flat-color-icons/target.svg) right 5px center/17px no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right 5px center/17px no-repeat !important;
 }
 
 .pimcore_property_inherited {
@@ -470,7 +470,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static6/img/inheritance-indicator.png) top left no-repeat !important;
+    background: #dad9d9 url(/bundles/pimcoreadmin/img/inheritance-indicator.png) top left no-repeat !important;
 }
 
 .grid_value_noview {
@@ -478,7 +478,7 @@
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
     pointer-events: none;
-    background: #dad9d9 url(/pimcore/static6/img/flat-color-icons/lock.svg) center center/16px no-repeat !important;
+    background: #dad9d9 url(/bundles/pimcoreadmin/img/flat-color-icons/lock.svg) center center/16px no-repeat !important;
 }
 
 .grid_value_noedit {
@@ -486,7 +486,7 @@
     /*filter: Alpha(opacity=60) !important;*/
     /*opacity: 0.6 !important;*/
     pointer-events: none;
-    background: #dad9FF url(/pimcore/static6/img/flat-color-icons/unlock.svg) center left/16px no-repeat !important;
+    background: #dad9FF url(/bundles/pimcoreadmin/img/flat-color-icons/unlock.svg) center left/16px no-repeat !important;
 }
 
 .grid_value_noedit > *{
@@ -501,7 +501,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static6/img/locked.png) top left no-repeat !important;
+    background: #dad9d9 url(/bundles/pimcoreadmin/img/locked.png) top left no-repeat !important;
 }
 
 
@@ -509,7 +509,7 @@
     color: #606060 !important;
     filter: Alpha(opacity=60) !important;
     opacity: 0.6 !important;
-    background: #dad9d9 url(/pimcore/static6/img/inheritance-indicator-locked.png) top left no-repeat !important;
+    background: #dad9d9 url(/bundles/pimcoreadmin/img/inheritance-indicator-locked.png) top left no-repeat !important;
     opacity: 0.6 !important;
 }
 
@@ -528,7 +528,7 @@
     height:10px;
     z-index:1000;
     cursor:pointer;
-    background:url(/pimcore/static6/img/inheritance-indicator.png) top left no-repeat;
+    background:url(/bundles/pimcoreadmin/img/inheritance-indicator.png) top left no-repeat;
     pointer-events: all !important;
 }
 
@@ -705,7 +705,7 @@
 
 
 .permission_checked  {
-    background: url(/pimcore/static6/img/icon/checked_no_edit.png) no-repeat center center;
+    background: url(/bundles/pimcoreadmin/img/icon/checked_no_edit.png) no-repeat center center;
     width: 100%;
     height: 16px;
 
@@ -713,14 +713,14 @@
 
 .permission_edit{
     cursor:pointer;
-    background: url(/pimcore/static6/img/icon/lock_edit.png) no-repeat center center;
+    background: url(/bundles/pimcoreadmin/img/icon/lock_edit.png) no-repeat center center;
     width: 16px;
     height:16px;
 }
 
 .permission_add{
     cursor:pointer;
-    background: url(/pimcore/static6/img/icon/bullet_add.png) no-repeat center center;
+    background: url(/bundles/pimcoreadmin/img/icon/bullet_add.png) no-repeat center center;
     width: 16px;
     height:16px;
 
@@ -728,7 +728,7 @@
 
 .dependency-warning{
     font:11px/13px arial,tahoma,helvetica,sans-serif;
-    background: url(/pimcore/static6/img/icon/error.png) left 5px no-repeat;
+    background: url(/bundles/pimcoreadmin/img/icon/error.png) left 5px no-repeat;
     padding: 7px 5px 5px 21px;
 }
 
@@ -806,7 +806,7 @@
 }
 
 span.warning {
-    background:url("/pimcore/static6/img/icon/error.png") no-repeat scroll 0 0 transparent;
+    background:url("/bundles/pimcoreadmin/img/icon/error.png") no-repeat scroll 0 0 transparent;
     margin:0 0 0 20px;
     padding:2px 5px 2px 20px;
 }
@@ -875,7 +875,7 @@ span.warning {
 }
 
 .pimcore_document_seo_warning {
-    background: url(/pimcore/static6/img/flat-color-icons/high_priority.svg) 2px 2px/16px no-repeat #ffdbdb;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/high_priority.svg) 2px 2px/16px no-repeat #ffdbdb;
 }
 
 .pimcore_targeting_bracket {
@@ -936,7 +936,7 @@ span.warning {
 
 /* object data-type hotspotimage */
 .pimcore_image_marker {
-    background: url(/pimcore/static6/img/icon/marker.png);
+    background: url(/bundles/pimcoreadmin/img/icon/marker.png);
     width: 20px;
     height: 35px;
     cursor: pointer;
@@ -1087,7 +1087,7 @@ span.warning {
 }
 
 .object_field_setting_warning{
-    background:url("/pimcore/static6/img/icon/error.png") no-repeat scroll 0 0 transparent;
+    background:url("/bundles/pimcoreadmin/img/icon/error.png") no-repeat scroll 0 0 transparent;
     padding:2px 5px 2px 20px;
     color: #999;
 
@@ -1172,11 +1172,11 @@ span.warning {
 /* custom styles */
 
 .x-tree-view .x-tree-icon.pimcore_tree_node_loading_indicator {
-    background: url(/pimcore/static6/img/panel-loader.gif) center center no-repeat !important;;
+    background: url(/bundles/pimcoreadmin/img/panel-loader.gif) center center no-repeat !important;;
 }
 
 .pimcore_droptarget_input, .input_drop_target, .input_drop_target input  {
-    background: url(/pimcore/static6/img/flat-color-icons/target.svg) right 5px center/20px no-repeat transparent !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right 5px center/20px no-repeat transparent !important;
     cursor: default;
 }
 
@@ -1325,7 +1325,7 @@ span.warning {
 #pimcore_panel_tabs > .x-tab-bar {
     background: #191919;
 
-    background-image: url(/pimcore/static6/img/logo-gray.svg);
+    background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
     background-repeat: no-repeat;
     background-position: right 5px top 4px;
     background-size: 105px;
@@ -1603,7 +1603,7 @@ span.warning {
     height: 100px;
     top: 50%;
     left: 50%;
-    background: url(/pimcore/static6/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
     cursor: pointer;
     margin: -50px 0 0 -50px;
 }
@@ -1685,7 +1685,7 @@ span.warning {
     height: 27px;
     z-index: 1000;
     content: '';
-    background: url(/pimcore/static6/img/magnifier.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/magnifier.svg) center center no-repeat !important;
 }
 
 #pimcore_quicksearch .x-form-trigger-wrap {
@@ -1743,7 +1743,7 @@ span.warning {
     height: 100%;
     top:0;
     left:0;
-    background: url(/pimcore/static6/img/flat-color-icons/hourglass.svg) center center no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) center center no-repeat;
     background-size: 50px 50px;
 }
 

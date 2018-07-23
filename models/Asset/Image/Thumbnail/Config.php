@@ -193,7 +193,7 @@ class Config extends Model\AbstractModel
             'width' => 400
         ]);
         $thumbnail->addItem('setBackgroundImage', [
-            'path' => '/pimcore/static6/img/tree-preview-transparent-background.png',
+            'path' => '/bundles/pimcoreadmin/img/tree-preview-transparent-background.png',
             'mode' => 'cropTopLeft'
         ]);
         $thumbnail->setQuality(60);

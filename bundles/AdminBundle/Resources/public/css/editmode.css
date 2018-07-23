@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-@import '/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css';
+@import '/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css';
 @import 'ext-modifications.css';
 @import 'icons.css';
 
@@ -293,18 +293,18 @@
 
 .pimcore_tag_snippet_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static6/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
+	background:url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
 }
 
 .pimcore_tag_image_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static6/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
+	background:url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
     min-height: 50px;
 }
 
 .pimcore_tag_video_empty {
 	border: 1px solid #d0d0d0 !important;
-    background:url(/pimcore/static6/img/flat-color-icons/film_reel.svg) center center/50px no-repeat #f9fbfb !important;
+    background:url(/bundles/pimcoreadmin/img/flat-color-icons/film_reel.svg) center center/50px no-repeat #f9fbfb !important;
     cursor: pointer;
 }
 
@@ -314,18 +314,18 @@
 
 .pimcore_tag_embed_empty {
     border: 1px solid #d0d0d0 !important;
-    background:url(/pimcore/static6/img/flat-color-icons/bricks.svg) center center/50px no-repeat #f9fbfb !important;
+    background:url(/bundles/pimcoreadmin/img/flat-color-icons/bricks.svg) center center/50px no-repeat #f9fbfb !important;
     cursor: pointer;
     min-height:100px;
 }
 
 .pimcore_tag_href input{
-	background: url(/pimcore/static6/img/flat-color-icons/target.svg) right center/20px no-repeat #fff;
+	background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right center/20px no-repeat #fff;
 	cursor: default;
 }
 
 .pimcore_tag_droptarget {
-    background: url(/pimcore/static6/img/flat-color-icons/target.svg) center center/20px no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/20px no-repeat;
     position:absolute;
     width:20px;
     height:20px;
@@ -365,7 +365,7 @@
 }
 
 .pimcore_droptarget_input  {
-	background: url(/pimcore/static6/img/flat-color-icons/target.svg) right 2px/20px no-repeat #fff !important;
+	background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right 2px/20px no-repeat #fff !important;
 	cursor: default;
 }
 
@@ -434,7 +434,7 @@
 }
 
 .pimcore_image_marker {
-    background: url(/pimcore/static6/img/icon/marker.png);
+    background: url(/bundles/pimcoreadmin/img/icon/marker.png);
     width: 20px;
     height: 35px;
     cursor: pointer;

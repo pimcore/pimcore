@@ -432,7 +432,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 var brick = this.options.types[i];
 
                 if (!brick.icon) {
-                    brick.icon = "/pimcore/static6/img/flat-color-icons/" + iconStore[i + 1] + ".svg";
+                    brick.icon = "/bundles/pimcoreadmin/img/flat-color-icons/" + iconStore[i + 1] + ".svg";
                 }
             }
         }

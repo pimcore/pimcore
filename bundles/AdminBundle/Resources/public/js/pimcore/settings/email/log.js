@@ -160,7 +160,7 @@ pimcore.settings.email.log = Class.create({
                 menuText: t('html'),
                 text: t('html'),
                 items : [{
-                    icon: '/pimcore/static6/img/flat-color-icons/feedback.svg',
+                    icon: '/bundles/pimcoreadmin/img/flat-color-icons/feedback.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=html';
@@ -193,7 +193,7 @@ pimcore.settings.email.log = Class.create({
                 text: t('text'),
                 hidden: true,
                 items : [{
-                    icon: '/pimcore/static6/img/flat-color-icons/text.svg',
+                    icon: '/bundles/pimcoreadmin/img/flat-color-icons/text.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=text';
@@ -226,7 +226,7 @@ pimcore.settings.email.log = Class.create({
                 menuText: t('parameters'),
                 text: t('parameters'),
                 items : [{
-                    icon: '/pimcore/static6/img/flat-color-icons/info.svg',
+                    icon: '/bundles/pimcoreadmin/img/flat-color-icons/info.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=params';
@@ -300,7 +300,7 @@ pimcore.settings.email.log = Class.create({
                 items:[
                     {
                         tooltip: t('email_log_resend'),
-                        icon: '/pimcore/static6/img/flat-color-icons/email.svg',
+                        icon: '/bundles/pimcoreadmin/img/flat-color-icons/email.svg',
                         handler: function (grid, rowIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
                             Ext.Msg.confirm(t('email_log_resend'), t('email_log_resend_window_msg'),
@@ -341,7 +341,7 @@ pimcore.settings.email.log = Class.create({
                 menuText: t('delete'),
                 items: [{
                     tooltip: t('delete'),
-                    icon: '/pimcore/static6/img/flat-color-icons/delete.svg',
+                    icon: '/bundles/pimcoreadmin/img/flat-color-icons/delete.svg',
                     handler: function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
                         Ext.Ajax.request({

@@ -52,7 +52,7 @@ $(document).ready(function ($) {
         $('.modal-footer').append(
             "<div class='text-left row'> <div class='col col-sm-12'> <span>"
             + text +
-            "</span>&nbsp;<img class='pull-right' src='/pimcore/static6/img/video-loading.gif' alt='loading' style='margin-right: 40px;'><div><div>"
+            "</span>&nbsp;<img class='pull-right' src='/bundles/pimcoreadmin/img/video-loading.gif' alt='loading' style='margin-right: 40px;'><div><div>"
         );
         return true;
     });

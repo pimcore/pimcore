@@ -105,7 +105,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 text: t('html'),
                 menuText: t('html'),
                 items : [{
-                    icon: "/pimcore/static6/img/flat-color-icons/feedback.svg",
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/feedback.svg",
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=html';
@@ -138,7 +138,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 menuText: t('text'),
                 hidden: true,
                 items : [{
-                    icon: "/pimcore/static6/img/flat-color-icons/text.svg",
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/text.svg",
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=text';
@@ -171,7 +171,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 text: t('parameters'),
                 menuText: t('parameters'),
                 items : [{
-                    icon: "/pimcore/static6/img/flat-color-icons/info.svg",
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/info.svg",
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=params';
@@ -248,7 +248,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 items: [
                     {
                         tooltip: t('gdpr_dataSource_export'),
-                        icon: "/pimcore/static6/img/flat-color-icons/export.svg",
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/export.svg",
                         handler: function (grid, rowIndex) {
                             var data = grid.getStore().getAt(rowIndex);
                             pimcore.helpers.download("/admin/gdpr/sent-mail/export?id=" + data.data.id);
@@ -262,7 +262,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('delete'),
-                    icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
 
