@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.isequal");
 
-pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "IsEqual",
     iconCls: "pimcore_icon_operator_isequal",
-    defaultText: "operator_isequal",
+    defaultText: "Is Equal",
     group: "boolean",
 
     getConfigTreeNode: function(configAttributes) {
@@ -46,7 +46,7 @@ pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcol
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -113,7 +113,7 @@ pimcore.object.gridcolumn.operator.isequal = Class.create(pimcore.object.gridcol
             width: 400,
             height: 200,
             modal: true,
-            title: t('isequal_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

@@ -44,6 +44,11 @@ class Definition extends Model\AbstractModel
     public $title;
 
     /**
+     * @var string
+     */
+    public $group;
+
+    /**
      * @var array
      */
     public $layoutDefinitions;
@@ -436,5 +441,21 @@ class Definition extends Model\AbstractModel
         $cd .= '*/ ';
 
         return $cd;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
     }
 }

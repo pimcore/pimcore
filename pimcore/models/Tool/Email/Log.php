@@ -73,7 +73,7 @@ class Log extends Model\AbstractModel
      *
      * @var string
      */
-    public $replyTo = '';
+    public $replyTo;
 
     /**
      * The "to" recipients (multiple recipients are separated by a ",")

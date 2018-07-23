@@ -313,17 +313,8 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         }
 
         if (null !== $redirectTargetUrl && $redirectTargetUrl !== $context->getOriginalPath()) {
-            $url = $redirectTargetUrl;
-            if ($qs = $context->getRequest()->getQueryString()) {
-                if (false === strpos($url, '?')) {
-                    $url .= '&' . $qs;
-                } else {
-                    $url .= '?' . $qs;
-                }
-            }
-
             $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
-            $route->setDefault('path', $url);
+            $route->setDefault('path', $redirectTargetUrl);
             $route->setDefault('permanent', true);
 
             return $route;

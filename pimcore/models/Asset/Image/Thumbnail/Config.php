@@ -61,6 +61,11 @@ class Config extends Model\AbstractModel
     /**
      * @var string
      */
+    public $group = '';
+
+    /**
+     * @var string
+     */
     public $format = 'SOURCE';
 
     /**
@@ -87,6 +92,11 @@ class Config extends Model\AbstractModel
      * @var bool
      */
     public $rasterizeSVG = false;
+
+    /**
+     * @var bool
+     */
+    public $downloadable = false;
 
     /**
      * @var int
@@ -757,5 +767,37 @@ class Config extends Model\AbstractModel
         }
 
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup(): string
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup(string $group): void
+    {
+        $this->group = $group;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDownloadable(): bool
+    {
+        return $this->downloadable;
+    }
+
+    /**
+     * @param bool $downloadable
+     */
+    public function setDownloadable(bool $downloadable): void
+    {
+        $this->downloadable = $downloadable;
     }
 }

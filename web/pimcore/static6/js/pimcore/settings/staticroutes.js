@@ -111,7 +111,7 @@ pimcore.settings.staticroutes = Class.create({
             {text:t("reverse"), flex:100, sortable:true, dataIndex:'reverse',
                 editor:new Ext.form.TextField({})},
             {
-                text: t("bundle_optional"), flex: 50, sortable: false, dataIndex: 'module',
+                text: t('bundle') + "(" + t('optional') + ")", flex: 50, sortable: false, dataIndex: 'module',
                 editor: new Ext.form.ComboBox({
                     store: new Ext.data.JsonStore({
                         autoDestroy: true,

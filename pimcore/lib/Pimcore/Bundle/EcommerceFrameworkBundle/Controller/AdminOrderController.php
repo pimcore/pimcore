@@ -171,6 +171,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     public function detailAction(Request $request)
     {
         $dateFormatter = $this->get('pimcore.locale.intl_formatter');
+        $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         // init
         $order = OnlineShopOrder::getById($request->get('id'));
@@ -182,20 +183,34 @@ class AdminOrderController extends AdminController implements EventedControllerI
          *
          * @return string
          */
-        $geoPoint = function (array $address) {
-            // https://developers.google.com/maps/documentation/geocoding/index?hl=de#JSON
-            $url = sprintf(
-                'http://maps.googleapis.com/maps/api/geocode/json?address=%1$s&sensor=false',
+        $geoPoint = function (array $address) use ($pimcoreSymfonyConfig) {
+            $baseUrl = $pimcoreSymfonyConfig['maps']['geocoding_url_template'];
+            $url = str_replace(
+                '{q}',
                 urlencode(
                     $address[0]
                     . ' ' . $address[1]
                     . ' ' . $address[2]
                     . ' ' . $address[3]
-                )
+                ),
+                $baseUrl
             );
-            $json = json_decode(file_get_contents($url));
 
-            return $json->results[0]->geometry->location;
+            $json = null;
+            $client = \Pimcore::getContainer()->get('pimcore.http_client');
+            try {
+                $response = $client->request('GET', $url);
+                if ($response->getStatusCode() < 300) {
+                    $json = json_decode($response->getBody());
+                    if (is_array($json)) {
+                        $json = $json[0];
+                    }
+                }
+            } catch (\Exception $e) {
+                // noting to do
+            }
+
+            return $json;
         };
 
         // get geo point
@@ -281,7 +296,8 @@ class AdminOrderController extends AdminController implements EventedControllerI
             'timeLine' => $arrTimeline,
             'geoAddressInvoice' => $geoAddressInvoice,
             'arrCustomerAccount' => $arrCustomerAccount,
-            'geoAddressDelivery' => $geoAddressDelivery
+            'geoAddressDelivery' => $geoAddressDelivery,
+            'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig
         ];
     }
 

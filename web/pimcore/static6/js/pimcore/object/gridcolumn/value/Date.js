@@ -68,7 +68,7 @@ pimcore.object.gridcolumn.value.date = Class.create(pimcore.object.gridcolumn.Ab
         });
 
         var helpButton = new Ext.Button({
-            text: t("click_for_help"),
+            text: t("help"),
             handler: function () {
                 window.open("http://php.net/manual/de/function.date.php");
             },
@@ -93,7 +93,7 @@ pimcore.object.gridcolumn.value.date = Class.create(pimcore.object.gridcolumn.Ab
             width: 500,
             height: 250,
             modal: true,
-            title: t('attribute_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

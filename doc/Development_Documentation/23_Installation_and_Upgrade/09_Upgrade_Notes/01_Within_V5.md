@@ -3,6 +3,28 @@
 
 ## Version 5.3.0
 
+#### Build 289 (2018-07-20)
+The context of the button layout component in objects changed to the edit tab. 
+See [Layout Components](../../05_Objects/01_Object_Classes/03_Layout_Elements/README.md).
+
+#### Build 286 (2018-07-19)
+To the interface `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker` the two methods `getAssortmentTenants` and
+`getCheckoutTenants` where added. No action is required, except you have have implemented your own trackers and did not 
+extend them from the abstract `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker` class.
+
+#### Build 285 (2018-07-18)
+Asset filenames: introduced new policy, the following disallowed characters were added: `#?*:\<>|"` 
+
+#### Build 281 (2018-07-13)
+The admin UI translations are now split into 2 parts, 
+[Essentials](https://poeditor.com/join/project/VWmZyvFVMH) and [Extended](https://poeditor.com/join/project/XliCYYgILb). 
+Essentials contains all translations which are needed for the most common tasks for editors, while the extended
+collection contains mostly admin related translations.   
+This separation should make it a lot easier to start with the localization of the Pimcore UI. 
+
+#### Build 280 (2018-07-12)
+Extensions: removed support for `xmlEditorFile` for legacy plugins (compatibility mode).  
+
 #### Build 277 (2018-07-09)
 Admin Localization: Only languages with a [translation progress](https://poeditor.com/projects/view?order=trans_desc&id=38068) over 70% are included in the standard distribution. 
 For the current status this means that the following languages are no longer provided: CA, PL, ZH_Hans, ZH_Hant, SV, JA, PT, PT_BR, RU, FA, TR, UK. 
@@ -10,7 +32,11 @@ Languages with a lower progress need to be installed manually.
 
 #### Build 276 (2018-07-06)
 Image Thumbnails: SVGs are no longer automatically rasterized when using only one of the following transformations: Resize, Scale By Width, Scale By Height.
-To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on the relevant thumbnail configuration. 
+To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on the relevant thumbnail configuration.
+
+#### Build 273 (2018-07-06)
+Webservices API: Support for SQL condition parameters has been removed. Use [Query Filters](../../24_Web_Services/01_Query_Filters.md) instead.
+If you still want to support such conditions, implement your own event listener as described on the same page in the `Legacy Mode`section.. 
 
 #### Build 270 (2018-06-29)
 Data Object Class ID's can now be manually specified (alphanumeric) and are therefore no longer auto-generated (numeric/auto-increment). 

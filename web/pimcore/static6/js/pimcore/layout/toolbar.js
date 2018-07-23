@@ -98,10 +98,10 @@ pimcore.layout.toolbar = Class.create({
 
                         this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
                         this.dashboardMenu.menu.add({
-                            text: t("add_dashboard"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: function () {
-                                Ext.MessageBox.prompt(t('create_new_dashboard'), t('please_enter_the_name_of_the_new_dashboard'),
+                                Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                     function (button, value, object) {
                                         if (button == "ok") {
                                             Ext.Ajax.request({
@@ -283,7 +283,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
                 extrasItems.push({
-                    text: t("translation"),
+                    text: t("translations"),
                     iconCls: "pimcore_icon_translations",
                     hideOnClick: false,
                     menu: {
@@ -361,7 +361,7 @@ pimcore.layout.toolbar = Class.create({
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
-                            text: t("email_logs") + " (" + t("global") + ")",
+                            text: t("email_logs"),
                             iconCls: "pimcore_icon_email",
                             handler: this.sentEmailsLog
                         }, {
@@ -561,14 +561,6 @@ pimcore.layout.toolbar = Class.create({
                         text: t("http_errors"),
                         iconCls: "pimcore_icon_httperrorlog",
                         handler: this.showHttpErrorLog
-                    });
-                }
-
-                if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.seo.reports")) {
-                    seoMenu.push({
-                        text: t("reports"),
-                        iconCls: "pimcore_icon_reports",
-                        handler: this.showReports.bind(this, null)
                     });
                 }
 
@@ -857,7 +849,7 @@ pimcore.layout.toolbar = Class.create({
 
                     if (perspectiveCfg.inToolbar("settings.objects.classificationstore")) {
                         objectMenu.menu.items.push({
-                            text: t("classificationstore_menu_config"),
+                            text: t("classification_store"),
                             iconCls: "pimcore_icon_classificationstore",
                             handler: this.editClassificationStoreConfig
                         });

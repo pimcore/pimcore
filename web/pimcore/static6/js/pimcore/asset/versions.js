@@ -96,7 +96,6 @@ pimcore.asset.versions = Class.create({
                 ],
                 stripeRows: true,
                 width: 450,
-                title: t('available_versions'),
                 region: "west",
                 split: true,
                 viewConfig: {

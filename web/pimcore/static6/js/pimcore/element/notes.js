@@ -279,7 +279,7 @@ pimcore.element.notes = Class.create({
                     width: 30,
                     items: [{
                         tooltip: t('open'),
-                        icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                        icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                         handler: function (grid, rowIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
                             if(rec.get("type") == "document" || rec.get("type") == "asset"

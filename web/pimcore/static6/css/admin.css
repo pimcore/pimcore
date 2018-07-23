@@ -1660,7 +1660,7 @@ span.warning {
     position: absolute;
     z-index: 10000;
     top: 50%;
-    left: calc(50% - 300px);
+    left: calc(50% - 450px);
     width: 900px;
     opacity: 0.9;
     box-shadow: 0px 18px 88px -12px #000;
@@ -1833,4 +1833,35 @@ span.warning {
 .pimcore_video_preview_image {
     max-width: 100%;
     max-height: 200px;
+}
+
+
+.leaflet-tooltip{
+    width: 100px;
+    white-space: normal;
+}
+
+
+ul.leaflet-draw-actions.leaflet-draw-actions-bottom li:first-child {
+    display: none !important;
+}
+
+
+ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:first-child {
+    display: inline-block !important;
+}
+
+#leafletmap.personalization-geopoint {
+    height: 400px;
+    width: 700px;
+}
+
+#leafletmap.personalization-geopoint .leaflet-pane.leaflet-marker-pane .leaflet-marker-icon.leaflet-edit-move {
+   display: none;
+}
+
+.object_geo_field .leaflet-edit-marker-selected {
+    border: 2px dashed rgba(51, 136, 255, .5);
+    margin-left: -12px !important;
+    margin-top: -41px !important;
 }

@@ -23,9 +23,15 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
+
+        var displayValues = {};
+        for (var i = 0; i < field.layout.options.length; i++) {
+            displayValues[field.layout.options[i].value] = ts(field.layout.options[i].key);
+        }
+
         return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor:this.getWindowCellEditor.bind(this, field),
-            renderer: function (key, value, metaData, record) {
+            renderer: function (key, displayValues, value, metaData, record) {
                 try {
                     if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.tdCls += " grid_value_inherited";
@@ -35,11 +41,28 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 if (value) {
-                    return value;
+
+                    var singleValues = [];
+                    if(typeof value === 'string') {
+                        singleValues = value.split(',');
+                    } else {
+                        singleValues = value;
+                    }
+
+                    var singleDisplayValues = [];
+                    for(var i = 0; i < singleValues.length; i++) {
+                        if(displayValues[singleValues[i]]) {
+                            singleDisplayValues.push(displayValues[singleValues[i]]);
+                        } else {
+                            singleDisplayValues.push(singleValues[i]);
+                        }
+                    }
+
+                    return singleDisplayValues.join(", ");
                 } else {
                     return "";
                 }
-            }.bind(this, field.key)};
+            }.bind(this, field.key, displayValues)};
     },
 
     getGridColumnFilter: function(field) {
@@ -62,6 +85,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         // generate store
         var storeData = [];
         var validValues = [];
+        var hasHTMLContent = false;
 
         var restrictTo = null;
 
@@ -78,12 +102,17 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
 
-                storeData.push([value, ts(this.fieldConfig.options[i].key)]);
+                storeData.push({id: value, text: ts(this.fieldConfig.options[i].key)});
+
+                if(ts(this.fieldConfig.options[i].key).indexOf('<') >= 0) {
+                    hasHTMLContent = true;
+                }
+
                 validValues.push(value);
             }
         }
 
-        var store = Ext.create('Ext.data.ArrayStore', {
+        var store = Ext.create('Ext.data.Store', {
             fields: ['id', 'text'],
             data: storeData
         });
@@ -135,6 +164,9 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.renderType == "tags") {
             options.queryMode = 'local';
             options.editable = true;
+            if(hasHTMLContent) {
+                options.labelTpl = '{[Ext.util.Format.stripTags(values.text)]}';
+            }
             this.component = Ext.create('Ext.form.field.Tag', options);
         } else {
             this.component = Ext.create('Ext.ux.form.MultiSelect', options);

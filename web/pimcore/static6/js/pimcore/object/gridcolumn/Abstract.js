@@ -24,9 +24,13 @@ pimcore.object.gridcolumn.Abstract = Class.create({
     allowedTypes: null,
     allowedParents: null,
     maxChildCount: null,
-    
+
     initialize: function(classId) {
         this.objectClassId = classId;
+    },
+
+    getDefaultText: function () {
+        return t(this.type + "_" + this.defaultText, t('operator') + " " + this.defaultText);
     },
 
     getConfigTreeNode: function(configAttributes) {

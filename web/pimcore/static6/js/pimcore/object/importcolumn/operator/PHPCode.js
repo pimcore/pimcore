@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.phpcode");
 
-pimcore.object.importcolumn.operator.phpcode = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.importcolumn.operator.phpcode = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "PHPCode",
     iconCls: "pimcore_icon_operator_phpcode",
-    defaultText: "operator_phpcode",
+    defaultText: "PHP Code",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -44,7 +44,7 @@ pimcore.object.importcolumn.operator.phpcode = Class.create(pimcore.object.gridc
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,

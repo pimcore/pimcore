@@ -20,7 +20,7 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
     type: "operator",
     class: "FieldCollectionGetter",
     iconCls: "pimcore_icon_fieldcollection",
-    defaultText: "operator_fieldcollectiongetter",
+    defaultText: "FieldCollection Getter",
     group: "getter",
 
 
@@ -42,12 +42,12 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class, label: this.getDefaultText()};
 
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,
@@ -99,7 +99,7 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
         });
 
         this.indexField = new Ext.form.NumberField({
-            fieldLabel: t('offset'),
+            fieldLabel: t('offset') + " (0-...)",
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.idx
@@ -131,7 +131,7 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_fieldcollectiongetter_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -158,7 +158,7 @@ pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
         if (configAttributes.attr) {
             nodeLabel += '<span class="pimcore_gridnode_hint"> (' + configAttributes.attr + "-" + configAttributes.idx + "-" + configAttributes.colAttr + ')</span>';
         }

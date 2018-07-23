@@ -37,6 +37,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [System](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/SystemEvents.php)
 - [Translation](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/TranslationEvents.php)
 - [Bundle Manager for injecting js/css files to Pimcore backend or editmode](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/BundleManagerEvents.php)
+- [Web Services](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/WebserviceEvents.php)
 
 ## Examples
 

@@ -115,7 +115,6 @@ pimcore.document.versions = Class.create({
                 trackMouseOver: true,
                 stripeRows: true,
                 width:620,
-                title: t('available_versions'),
                 region: "west",
                 split: true,
                 viewConfig: {

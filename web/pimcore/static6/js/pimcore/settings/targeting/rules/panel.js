@@ -106,7 +106,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                     cls: 'main-toolbar',
                     items: [
                         {
-                            text: t("add_target"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addTarget.bind(this)
                         },
@@ -150,7 +150,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
     },
 
     addTarget: function () {
-        Ext.MessageBox.prompt(t('add_target'), t('enter_the_name_of_the_new_target'),
+        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                                 this.addTargetComplete.bind(this), null, null, "");
     },
 
@@ -170,7 +170,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                     this.tree.getStore().load();
 
                     if(!data || !data.success) {
-                        Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
+                        Ext.Msg.alert(' ', t('failed_to_create_new_item'));
                     } else {
                         this.openTarget(intval(data.id));
                     }
@@ -180,7 +180,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_target'), t('naming_requirements_3chars'));
+            Ext.Msg.alert(' ', t('naming_requirements_3chars'));
         }
     },
 

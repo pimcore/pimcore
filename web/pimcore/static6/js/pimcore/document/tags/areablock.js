@@ -739,6 +739,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             menuText += " | " + brick.description;
         }
 
+        if(!insertPosition) {
+            insertPosition = 'after';
+        }
+        
         var addBLockFunction = "addBlock" + ucfirst(insertPosition);
 
         var tmpEntry = {
@@ -919,7 +923,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             modal: true,
             width: editmodeWindowWidth,
             height: editmodeWindowHeight,
-            title: t("edit_block"),
+            title: t("edit"),
             closeAction: "hide",
             bodyStyle: "padding: 10px;",
             closable: false,
@@ -1012,7 +1016,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                             iconCls: "pimcore_icon_area",
                             hideOnClick: false,
                             width: areaBlockToolbarSettings.buttonWidth,
-                            menu: []
+                            menu: [],
+                            menuAlign: 'tl-tr'
                         });
                     }
 

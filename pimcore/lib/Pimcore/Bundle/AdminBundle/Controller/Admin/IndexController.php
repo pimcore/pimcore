@@ -187,6 +187,9 @@ class IndexController extends AdminController
         // flags
         $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
 
+        // config
+        $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
+
         $settings->getParameters()->add([
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config->general->debug_admin_translations,
@@ -196,6 +199,9 @@ class IndexController extends AdminController
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config->assets->hide_edit_image,
+            'tile_layer_url_template' => $pimcoreSymfonyConfig['maps']['tile_layer_url_template'],
+            'geocoding_url_template' => $pimcoreSymfonyConfig['maps']['geocoding_url_template'],
+            'reverse_geocoding_url_template' => $pimcoreSymfonyConfig['maps']['reverse_geocoding_url_template'],
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);

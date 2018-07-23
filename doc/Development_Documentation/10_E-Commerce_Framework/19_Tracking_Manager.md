@@ -88,7 +88,26 @@ pimcore_ecommerce_config:
            
                 # service id for item builder
                 item_builder_id: AppBundle\Ecommerce\Tracking\TrackingItemBuilder
+                
+                # List of assortment and checkout tenants where this tracker should be activated for.
+                tenants:
+
+                    # Add list of assortment tenants where the tracker should be activated for. Empty array means activated for all tenants.
+                    assortment:           []
+
+                    # Add list of checkout tenants where the tracker should be activated for. Empty array means activated for all tenants.
+                    checkout:             []                
 ```
+
+## Tracking Manager With Tenants
+
+The Tracking Manager supports tenants in a different way than the other framework modules. While with the other modules,
+the tenant configuration takes place on the highest level of configuration and each configuration is only valid for one 
+tenant, the tenant configuration in the tracking manager takes place within the trackers them self. There a list of assortment
+and checkout tenants for which the tracker should be enabled can be provided (see configuration above).
+
+If nothing is set or an empty array is provided, the tracker is active for all tenants.     
+
 
 ## Working with Tracking Manager
 

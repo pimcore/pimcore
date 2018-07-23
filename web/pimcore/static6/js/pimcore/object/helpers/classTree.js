@@ -74,7 +74,7 @@ pimcore.object.helpers.classTree = Class.create({
         });
 
         var headerConfig = {
-            title: t('class_definitions'),
+            title: t('fields'),
             items: [
                 filterField,
                 filterButton

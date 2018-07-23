@@ -98,7 +98,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             width: 600,
             height: 150,
             modal: true,
-            title: t('portlet_customreport_settings'),
+            title: t('settings'),
             closeAction: "destroy",
             items: [
                 {
@@ -451,7 +451,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     items: [
                         {
                             tooltip: t("open") + " " + (colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"])),
-                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                             handler: function (colConfig, grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex).getData();
                                 var columnName = colConfig["name"];

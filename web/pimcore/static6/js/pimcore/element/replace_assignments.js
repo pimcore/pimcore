@@ -289,7 +289,7 @@ pimcore.element.replace_assignments = Class.create({
             });
 
             this.progressBarWin = new Ext.Window({
-                title: t("replacing"),
+                title: t("please_wait"),
                 layout: 'fit',
                 width: 500,
                 bodyStyle: "padding: 10px;",

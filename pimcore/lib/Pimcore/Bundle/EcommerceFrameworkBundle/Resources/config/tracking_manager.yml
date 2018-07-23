@@ -10,7 +10,7 @@ services:
     #
     # TRACKERS
     #
-    # Predefined core trackers. The item builder can be overriden via config (see extension).
+    # Predefined core trackers. The item builder can be overwritten via config (see extension).
     #
 
     Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce:

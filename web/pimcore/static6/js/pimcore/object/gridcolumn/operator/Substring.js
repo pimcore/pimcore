@@ -21,7 +21,7 @@ pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridc
     type: "operator",
     class: "Substring",
     iconCls: "pimcore_icon_operator_substring",
-    defaultText: "operator_substring",
+    defaultText: "Substring",
     group: "string",
 
     getConfigTreeNode: function(configAttributes) {
@@ -29,7 +29,7 @@ pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridc
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
+                text: configAttributes.label ? configAttributes.label : this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 expanded: true,
@@ -41,12 +41,12 @@ pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridc
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class, label: this.getDefaultText()};
 
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,

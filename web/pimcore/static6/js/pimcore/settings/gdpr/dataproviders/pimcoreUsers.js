@@ -26,7 +26,7 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
         if(!this.panel) {
 
             this.panel = new Ext.Panel({
-                title: t("gdpr_dataSource_pimcoreUsers"),
+                title: t("users") + " (Pimcore)",
                 layout: "border",
                 iconCls: "pimcore_icon_user",
                 closable: false

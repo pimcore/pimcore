@@ -1137,7 +1137,10 @@ class AssetController extends ElementControllerBase implements EventedController
             throw new \Exception('not allowed to view thumbnail');
         }
 
-        $config = null;
+        $config        = null;
+        $thumbnail     = null;
+        $thumbnailName = $request->get('thumbnail');
+        $thumbnailFile = null;
 
         if ($request->get('config')) {
             $config = $this->decodeJson($request->get('config'));
@@ -1167,6 +1170,8 @@ class AssetController extends ElementControllerBase implements EventedController
             ];
 
             $config = $predefined[$request->get('type')];
+        } elseif ($thumbnailName) {
+            $thumbnail = $image->getThumbnail($thumbnailName);
         }
 
         if ($config) {
@@ -1206,6 +1211,9 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
                 \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . $config['dpi'] . ' -yresolution=' . $config['dpi'] . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
             }
+        }
+        if ($thumbnail) {
+            $thumbnailFile = $thumbnailFile ?: $thumbnail->getFileSystemPath();
 
             $downloadFilename = str_replace(
                 '.' . File::getFileExtension($image->getFilename()),

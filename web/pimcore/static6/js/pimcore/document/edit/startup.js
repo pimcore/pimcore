@@ -59,7 +59,7 @@ if (pimcore_document_id) {
 Ext.supports.Touch = false;
 
 // overwrite default z-index of windows, this ensures that CKEditor is above ExtJS Windows
-Ext.WindowManager.zseed = 200;
+Ext.WindowManager.zseed = 10020;
 
 
 Ext.Ajax.setDisableCaching(true);
@@ -145,7 +145,10 @@ Ext.onReady(function () {
             try {
                 editables.push(getEditable(editableConfigurations[i]));
             } catch (e) {
-                console.log(e);
+                console.error(e);
+                if(e.stack) {
+                    console.error(e.stack);
+                }
             }
         }
 

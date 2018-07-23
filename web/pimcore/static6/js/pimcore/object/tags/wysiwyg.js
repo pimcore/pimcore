@@ -206,7 +206,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
 
         if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
-            eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
+            eConfig = mergeObject(eConfig, pimcore.object.tags.wysiwyg.defaultEditorConfig);
         }
 
         try {

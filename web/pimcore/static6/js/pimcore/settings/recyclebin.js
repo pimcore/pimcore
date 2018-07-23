@@ -131,13 +131,13 @@ pimcore.settings.recyclebin = Class.create({
             cls: 'main-toolbar',
             items: [
                 {
-                    text: t('restore_selected'),
+                    text: t('restore'),
                     handler: this.restoreSelected.bind(this),
                     iconCls: "pimcore_icon_restore",
                     id: "pimcore_recyclebin_button_restore",
                     disabled: true
                 }, '-', {
-                    text: t('delete_selected'),
+                    text: t('delete'),
                     handler: this.deleteSelected.bind(this),
                     iconCls: "pimcore_icon_delete",
                     id: "pimcore_recyclebin_button_delete",
@@ -206,13 +206,13 @@ pimcore.settings.recyclebin = Class.create({
         var selectedRows = selModel.getSelection();
 
         menu.add(new Ext.menu.Item({
-            text: selectedRows.length > 1 ? t('restore_selected') : t('restore'),
+            text: t('restore'),
             iconCls: "pimcore_icon_restore",
             handler: this.restoreSelected.bind(this),
             disabled: !selectedRows.length
         }));
         menu.add(new Ext.menu.Item({
-            text: selectedRows.length > 1 ? t('delete_selected') : t('delete'),
+            text: t('delete'),
             iconCls: "pimcore_icon_delete",
             handler: this.deleteSelected.bind(this),
             disabled: !selectedRows.length

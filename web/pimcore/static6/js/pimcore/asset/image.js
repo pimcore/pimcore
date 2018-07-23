@@ -208,7 +208,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     }.bind(this)
                 }, {
                     xtype: "button",
-                    text: t("vr_viewer"),
+                    text: t("360_viewer"),
                     iconCls: "pimcore_icon_vr",
                     width: "100%",
                     textAlign: "left",
@@ -224,7 +224,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             if (this.data.imageInfo.dimensions) {
 
                 var dimensionPanel = new Ext.create('Ext.grid.property.Grid', {
-                    title: t("dimensions"),
+                    title: t("details"),
                     source: this.data.imageInfo.dimensions,
                     autoHeight: true,
 
@@ -294,6 +294,43 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
             details.push(this.downloadBox);
 
+            var thumbnailsStore = new Ext.data.JsonStore({
+                autoLoad: true,
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/settings/thumbnail-downloadable'
+                },
+                fields: ['id']
+            });
+
+            this.thumbnailDownloadBox = new Ext.form.FormPanel({
+                title: t("download_thumbnail"),
+                bodyStyle: "padding: 10px;",
+                style: "margin: 10px 0",
+                items: [{
+                    xtype: "combo",
+                    name: "thumbnail",
+                    fieldLabel: t("thumbnail"),
+                    store: thumbnailsStore,
+                    editable: false,
+                    displayField: "id"
+                }],
+                buttons: [{
+                    text: t("download"),
+                    iconCls: "pimcore_icon_download",
+                    handler: function () {
+                        var config = this.thumbnailDownloadBox.getForm().getFieldValues();
+                        if (!config.thumbnail) {
+                            pimcore.helpers.showNotification(t("error"), t("no_thumbnail_selected"), "error");
+                        } else {
+                            pimcore.helpers.download("/admin/asset/download-image-thumbnail?id=" + this.id
+                                + "&thumbnail=" + config.thumbnail);
+                        }
+                    }.bind(this)
+                }]
+            });
+            details.push(this.thumbnailDownloadBox);
 
             this.customDownloadBox = new Ext.form.FormPanel({
                 title: t("custom_download"),
@@ -325,7 +362,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     triggerAction: "all",
                     name: "resize_mode",
                     itemId: "resize_mode",
-                    fieldLabel: t("resize_mode"),
+                    fieldLabel: t("mode"),
                     forceSelection: true,
                     store: [["scaleByWidth", t("scalebywidth")], ["scaleByHeight", t("scalebyheight")], ["resize", t("resize")]],
                     mode: "local",
@@ -364,13 +401,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     xtype: "numberfield",
                     name: "quality",
                     fieldLabel: t("quality"),
-                    emptyText: t("original")
+                    emptyText: t("source")
                 }, {
                     xtype: "numberfield",
                     name: "dpi",
                     itemId: "dpi",
                     fieldLabel: "DPI",
-                    emptyText: t("original"),
+                    emptyText: t("source"),
                     disabled: !this.data.imageInfo["exiftoolAvailable"]
                 }],
                 buttons: [{
@@ -405,22 +442,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     scrollable: "y"
                 }]
             });
-
-            this.displayPanel.on('afterrender', function (ev) {
-                if(this.data['customSettings']) {
-                    if (this.data['customSettings']['focalPointX']) {
-                        this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
-                    }
-
-                    if (this.data['customSettings']['faceCoordinates']) {
-                        this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
-                            this.addImageFeature(coord);
-                        }.bind(this));
-
-                    }
-                }
-
-            }.bind(this));
 
             this.displayPanel.on('resize', function (el, width, height, rWidth, rHeight) {
                 if(this.previewMode == 'vr') {
@@ -459,6 +480,19 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         Ext.get(this.previewContainerId).setHtml(html);
 
         this.previewMode = 'image';
+
+        if(this.data['customSettings']) {
+            if (this.data['customSettings']['focalPointX']) {
+                this.addFocalPoint(this.data['customSettings']['focalPointX'], this.data['customSettings']['focalPointY']);
+            }
+
+            if (this.data['customSettings']['faceCoordinates']) {
+                this.data['customSettings']['faceCoordinates'].forEach(function (coord) {
+                    this.addImageFeature(coord);
+                }.bind(this));
+
+            }
+        }
     },
 
     addImageFeature: function (coords) {

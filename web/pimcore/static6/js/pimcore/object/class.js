@@ -139,21 +139,7 @@ pimcore.object.klass = Class.create({
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
             'itemclick': this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //TODO temporary, until changed on server side
-                if (newChildNode.data.qtipCfg) {
-                    if (newChildNode.data.qtipCfg.title) {
-                        newChildNode.data.qtitle = newChildNode.data.qtipCfg.title;
-                    }
-                    if (newChildNode.data.qtipCfg.text) {
-                        newChildNode.data.qtip = newChildNode.data.qtipCfg.text;
-                    } else {
-                        newChildNode.data.qtip = ts(newChildNode.data.text);
-                    }
-                }
-            }
-
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
         };
 
         return treeNodeListeners;
@@ -235,7 +221,7 @@ pimcore.object.klass = Class.create({
         });
 
         this.win = new Ext.Window({
-            title: t('enter_the_name_of_the_new_class'),
+            title: t('enter_the_name_of_the_new_item'),
             width: 400,
             height: 250,
             draggable: false,
@@ -284,18 +270,18 @@ pimcore.object.klass = Class.create({
 
         if (className.length <= 2 || classNameRegresult != className
             || in_array(className.toLowerCase(), this.forbiddennames)) {
-            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
+            Ext.Msg.alert(' ', t('invalid_class_name'));
             return false;
         }
 
         var classIdentifierRegresult = classIdentifier.match(/[a-zA-Z0-9]+/);
         if (classIdentifier.length < 1 || classIdentifierRegresult != classIdentifier) {
-            Ext.Msg.alert(t('add_class'), t('invalid_class_identifier'));
+            Ext.Msg.alert(' ', t('invalid_class_identifier'));
             return false;
         }
 
         if (in_array(classIdentifier.toLowerCase(), classes["existingIds"])) {
-            Ext.Msg.alert(t('add_class'), t('class_identifier_already_exists'));
+            Ext.Msg.alert(' ', t('class_identifier_already_exists'));
             return false;
         }
 

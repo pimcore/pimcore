@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.arithmetic");
 
-pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Arithmetic",
     iconCls: "pimcore_icon_operator_arithmetic",
-    defaultText: "operator_arithmetic",
+    defaultText: "Arithmetic",
     group: "other",
 
     getConfigTreeNode: function (configAttributes) {
@@ -46,7 +46,7 @@ pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.grid
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -128,7 +128,7 @@ pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.grid
             width: 400,
             height: 400,
             modal: true,
-            title: t('operator_arithmetic_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

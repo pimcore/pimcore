@@ -92,7 +92,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     this.tabPanel.setActiveTab(this.savePanel);
                     Ext.Msg.show({
                         title: t("error"),
-                        msg: t('name_must_not_be_empty'),
+                        msg: t('invalid_name'),
                         buttons: Ext.Msg.OK,
                         icon: Ext.MessageBox.ERROR
                     });

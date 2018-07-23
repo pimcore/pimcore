@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
 
@@ -27,13 +28,36 @@ class TrackingManager implements ITrackingManager
     protected $trackers = [];
 
     /**
-     * @param ITracker[] $trackers
+     * @var ITracker[]
      */
-    public function __construct(array $trackers = [])
+    protected $activeTrackerCache = [];
+
+    /**
+     * @var string
+     */
+    protected $cachedAssortmentTenant = null;
+
+    /**
+     * @var string
+     */
+    protected $cachedCheckoutTenant = null;
+
+    /**
+     * @var null|IEnvironment
+     */
+    protected $enviroment = null;
+
+    /**
+     * @param ITracker[] $trackers
+     * @param IEnvironment $environment
+     */
+    public function __construct(array $trackers = [], IEnvironment $environment)
     {
         foreach ($trackers as $tracker) {
             $this->registerTracker($tracker);
         }
+
+        $this->enviroment = $environment;
     }
 
     /**
@@ -57,6 +81,39 @@ class TrackingManager implements ITrackingManager
     }
 
     /**
+     * Get all for current tenants active trackers
+     *
+     * @return ITracker[]
+     */
+    public function getActiveTrackers(): array
+    {
+        $currentAssortmentTenant = $this->enviroment->getCurrentAssortmentTenant() ?: 'default';
+        $currentCheckoutTenant = $this->enviroment->getCurrentCheckoutTenant() ?: 'default';
+
+        if ($currentAssortmentTenant !== $this->cachedAssortmentTenant || $currentCheckoutTenant !== $this->cachedCheckoutTenant) {
+            $this->cachedCheckoutTenant = $currentCheckoutTenant;
+            $this->cachedAssortmentTenant = $currentAssortmentTenant;
+
+            $this->activeTrackerCache = [];
+            foreach ($this->trackers as $tracker) {
+                $active = false;
+                if (empty($tracker->getAssortmentTenants()) || in_array($currentAssortmentTenant, $tracker->getAssortmentTenants())) {
+                    $active = true;
+                }
+                if (empty($tracker->getCheckoutTenants()) || in_array($currentCheckoutTenant, $tracker->getCheckoutTenants())) {
+                    $active = true;
+                }
+
+                if ($active) {
+                    $this->activeTrackerCache[] = $tracker;
+                }
+            }
+        }
+
+        return $this->activeTrackerCache;
+    }
+
+    /**
      * Tracks a category page view
      *
      * @param array|string $category One or more categories matching the page
@@ -64,7 +121,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCategoryPageView($category, $page = null)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICategoryPageView) {
                 $tracker->trackCategoryPageView($category, $page);
             }
@@ -80,7 +137,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductImpression(IProduct $product)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductImpression) {
                 $tracker->trackProductImpression($product);
             }
@@ -96,7 +153,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductView(IProduct $product)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductView) {
                 $tracker->trackProductView($product);
             }
@@ -110,7 +167,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCartUpdate(ICart $cart)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICartUpdate) {
                 $tracker->trackCartUpdate($cart);
             }
@@ -126,7 +183,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICartProductActionAdd) {
                 $tracker->trackCartProductActionAdd($cart, $product, $quantity);
             }
@@ -143,7 +200,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductActionAdd(IProduct $product, $quantity = 1)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductActionAdd) {
                 $tracker->trackProductActionAdd($product, $quantity);
             }
@@ -159,7 +216,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCartProductActionRemove(ICart $cart, IProduct $product, $quantity = 1)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICartProductActionRemove) {
                 $tracker->trackCartProductActionRemove($cart, $product, $quantity);
             }
@@ -176,7 +233,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductActionRemove(IProduct $product, $quantity = 1)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductActionRemove) {
                 $tracker->trackProductActionRemove($product, $quantity);
             }
@@ -192,7 +249,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckout(ICart $cart)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICheckout) {
                 $tracker->trackCheckout($cart);
             }
@@ -216,7 +273,7 @@ class TrackingManager implements ITrackingManager
         $order->setProperty('os_tracked', 'bool', true);
         $order->save();
 
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICheckoutComplete) {
                 $tracker->trackCheckoutComplete($order);
             }
@@ -235,7 +292,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
-        foreach ($this->trackers as $tracker) {
+        foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICheckoutStep) {
                 $tracker->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption);
             }

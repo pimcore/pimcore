@@ -57,12 +57,12 @@ pimcore.settings.translation.translationmerger = Class.create({
                 cls: 'main-toolbar',
                 items: [
                     {
-                        text: t('apply_all'),
+                        text: t('apply'),
                         handler: this.applyAll.bind(this),
                         iconCls: "pimcore_icon_arrow_right"
                     },
                     {
-                        text: t('revert_all'),
+                        text: t('revert'),
                         handler: this.revertAll.bind(this),
                         iconCls: "pimcore_icon_revert"
                     }
@@ -175,7 +175,7 @@ pimcore.settings.translation.translationmerger = Class.create({
             });
 
             this.panel = new Ext.Panel({
-                title: t("translation_merger_" + this.translationType),
+                title: t("merge_translations"),
                 iconCls: "pimcore_icon_translations",
                 border: false,
                 layout: "fit",

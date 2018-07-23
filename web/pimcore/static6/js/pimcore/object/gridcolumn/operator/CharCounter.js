@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.charcounter");
 
-pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "CharCounter",
     iconCls: "pimcore_icon_operator_charcounter",
-    defaultText: "operator_charcounter",
+    defaultText: "Char Counter",
     group: "string",
 
     getConfigTreeNode: function(configAttributes) {
@@ -45,7 +45,7 @@ pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gri
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true
@@ -103,7 +103,7 @@ pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gri
             width: 400,
             height: 200,
             modal: true,
-            title: t('concatenator_operator_settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

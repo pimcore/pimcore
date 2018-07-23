@@ -1234,10 +1234,69 @@ class SettingsController extends AdminController
         $list = new Asset\Image\Thumbnail\Config\Listing();
         $items = $list->load();
 
+        $groups = [];
+        /** @var $item Asset\Image\Thumbnail\Config */
+        foreach ($items as $item) {
+            if ($item->getGroup()) {
+                if (!$groups[$item->getGroup()]) {
+                    $groups[$item->getGroup()] = [
+                        'id' => 'group_' . $item->getName(),
+                        'text' =>  $item->getGroup(),
+                        'expandable' => true,
+                        'leaf' => false,
+                        'allowChildren' => true,
+                        'iconCls' => 'pimcore_icon_folder',
+                        'group' => $item->getGroup(),
+                        'children' => []
+                        ];
+                }
+                $groups[$item->getGroup()]['children'][] =
+                    [
+                        'id' => $item->getName(),
+                        'text' => $item->getName(),
+                        'leaf' => true,
+                        'iconCls' => 'pimcore_icon_thumbnails'
+                    ];
+            } else {
+                $thumbnails[] = [
+                    'id' => $item->getName(),
+                    'text' => $item->getName(),
+                    'leaf' => true,
+                    'iconCls' => 'pimcore_icon_thumbnails'
+                ];
+            }
+        }
+
+        foreach ($groups as $group) {
+            $thumbnails[] = $group;
+        }
+
+        return $this->adminJson($thumbnails);
+    }
+
+    /**
+     * @Route("/thumbnail-downloadable")
+     * @Method("GET")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function thumbnailDownloadableAction(Request $request)
+    {
+        $thumbnails = [];
+
+        $list = new Asset\Image\Thumbnail\Config\Listing();
+        $list->setFilter(function (array $config) {
+            return array_key_exists('downloadable', $config) ? $config['downloadable'] : false;
+        });
+        $items = $list->load();
+
+        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             $thumbnails[] = [
-                'id' => $item->getName(),
-                'text' => $item->getName()
+                'id'   => $item->getName(),
+                'text' => $item->getName(),
             ];
         }
 
@@ -1385,11 +1444,41 @@ class SettingsController extends AdminController
         $list = new Asset\Video\Thumbnail\Config\Listing();
         $items = $list->load();
 
+        $groups = [];
+        /** @var $item Asset\Image\Thumbnail\Config */
         foreach ($items as $item) {
-            $thumbnails[] = [
-                'id' => $item->getName(),
-                'text' => $item->getName()
-            ];
+            if ($item->getGroup()) {
+                if (!$groups[$item->getGroup()]) {
+                    $groups[$item->getGroup()] = [
+                        'id' => 'group_' . $item->getName(),
+                        'text' => $item->getGroup(),
+                        'expandable' => true,
+                        'leaf' => false,
+                        'allowChildren' => true,
+                        'iconCls' => 'pimcore_icon_folder',
+                        'group' => $item->getGroup(),
+                        'children' => []
+                    ];
+                }
+                $groups[$item->getGroup()]['children'][] =
+                    [
+                        'id' => $item->getName(),
+                        'text' => $item->getName(),
+                        'leaf' => true,
+                        'iconCls' => 'pimcore_icon_videothumbnails'
+                    ];
+            } else {
+                $thumbnails[] = [
+                    'id' => $item->getName(),
+                    'text' => $item->getName(),
+                    'leaf' => true,
+                    'iconCls' => 'pimcore_icon_videothumbnails'
+                ];
+            }
+        }
+
+        foreach ($groups as $group) {
+            $thumbnails[] = $group;
         }
 
         return $this->adminJson($thumbnails);
@@ -1688,7 +1777,7 @@ class SettingsController extends AdminController
 
         // parameters get/post
         $params = [];
-        for ($i=0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $params[] = [
                 'name' => $data['params.name' . $i],
                 'value' => $data['params.value' . $i]
@@ -1879,7 +1968,7 @@ class SettingsController extends AdminController
     {
         $options = [
             [
-                'key'   => 'password_hash',
+                'key' => 'password_hash',
                 'value' => 'password_hash',
             ]
         ];
@@ -1939,9 +2028,9 @@ class SettingsController extends AdminController
             $params['adapterConfig'] = '-O landscape';
         } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor8) {
             $params['adapterConfig'] = [
-                'javaScriptMode'  => 0,
-                'addLinks'        => true,
-                'appendLog'       => true,
+                'javaScriptMode' => 0,
+                'addLinks' => true,
+                'appendLog' => true,
                 'enableDebugMode' => true,
             ];
         }

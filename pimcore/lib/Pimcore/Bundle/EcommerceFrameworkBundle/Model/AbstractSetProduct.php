@@ -73,9 +73,9 @@ class AbstractSetProduct extends AbstractProduct
                 }
             }
             //set is only bookable when price is valid!!! //
-            $priceInfo =$this->getOSPriceInfo($quantityScale, $products);
+            $priceInfo = $this->getOSPriceInfo($quantityScale, $products);
 
-            return $priceInfo != null && $priceInfo->isPriceValid();
+            return $priceInfo != null;
         } else {
             return false;
         }

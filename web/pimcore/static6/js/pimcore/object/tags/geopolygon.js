@@ -20,280 +20,176 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
 
     getLayoutEdit: function () {
 
-        if(!this.isMapsAvailable()) {
-            return this.getErrorLayout();
-        }
-
         this.mapImageID = uniqid();
+        this.divImageID = uniqid();
+        this.mapId = "polygonmap"+ this.divImageID;
+
+        this.searchfield = new Ext.form.TextField({
+            width: 200,
+            name: 'mapSearch',
+            style: 'float: left;margin-top:0px;'
+        });
+        this.currentLocationTextNode = new Ext.Toolbar.TextItem({
+            text: '&nbsp;'
+        });
 
         this.component = new Ext.Panel({
-            title: this.fieldConfig.title,
             height: 370,
             width: 650,
             border: true,
             style: "margin-bottom: 10px",
             componentCls: 'object_field object_geo_field',
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"></div>',
+            html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
                 xtype: 'button',
                 text: t('empty'),
                 iconCls: "pimcore_icon_empty",
                 handler: function () {
                     this.data = null;
-                    this.updatePreviewImage();
+                    this.updateMap();
                     this.dirty = true;
                 }.bind(this)
-            }, '->', {
-                xtype: 'button',
-                text: t('open_select_editor'),
-                iconCls: "pimcore_icon_search",
-                handler: this.openPicker.bind(this)
-            }]
+            }],
+            tbar: [
+                this.fieldConfig.title,
+                "->",
+                this.searchfield,
+                {
+                    xtype: 'button',
+                    iconCls: "pimcore_icon_search",
+                    handler: this.geocode.bind(this)
+                }
+            ]
         });
 
         this.component.on('afterrender', function () {
-            this.updatePreviewImage();
+            this.updateMap();
         }.bind(this));
 
         return this.component;
     },
 
-    getMapUrl: function (fieldConfig, data, width, height) {
+    getMap: function (fieldConfig, data) {
+        this.polygon = null;
+        this.latlngs = [];
 
-        // static maps api image url
-        var mapZoom = fieldConfig.zoom;
-        var mapUrl;
-
-        if (!width) {
-            width = 300;
-        }
-        if(!height) {
-            height = 300;
-        }
-
-        var py = height;
-        var px = width;
+        this.editableLayers = new L.FeatureGroup();
 
         try {
-            if (data) {
-
-                var pointConfig = [];
-
-                var bounds = new google.maps.LatLngBounds();
-
+            var leafletMap = null;
+            if(data) {
+                var bounds = new L.latLngBounds();
                 for (var i = 0; i < data.length; i++) {
-                    bounds.extend(new google.maps.LatLng(data[i].latitude, data[i].longitude));
-                    pointConfig.push(data[i].latitude + "," + data[i].longitude);
+                    bounds.extend(new L.latLng(data[i].latitude, data[i].longitude));
+                    this.latlngs.push([data[i].latitude,data[i].longitude]);
                 }
 
-                // add startpoint also as endpoint
-                pointConfig.push(data[0].latitude + "," + data[0].longitude);
+                var leafletMap = this.getLeafletMap(
+                    bounds.getCenter().lat,
+                    bounds.getCenter().lng,
+                    fieldConfig.zoom
+                );
 
-                var center = bounds.getCenter();
-                mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
+                this.latlngs.push([data[0].latitude,data[0].longitude]);
+                this.polygon = L.polygon(this.latlngs, {stroke: true, color: "#3388ff", opacity: 0.5, fillOpacity: 0.2, weight: 4});
 
-                var path = 'weight:0|fillcolor:0x00000073|' + pointConfig.join('|');
-                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.lat() + ','
-                    + center.lng() + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
-                    + '&path=' + path + '&maptype=' + fieldConfig.mapType;
-            }
-            else {
-                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
-                    + fieldConfig.lat + ',' + fieldConfig.lng
-                    + '&zoom=' + mapZoom + '&size='
-                    + px + 'x' + py + '&maptype=' + fieldConfig.mapType;
-            }
+                leafletMap.addLayer(this.polygon);
+                leafletMap.fitBounds(this.polygon.getBounds());
+                this.editableLayers.addLayer(this.polygon);
 
-            if (pimcore.settings.google_maps_api_key) {
-                mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
+            } else {
+                leafletMap = this.getLeafletMap(
+                    fieldConfig.lat,
+                    fieldConfig.lng,
+                    fieldConfig.zoom
+                );
             }
+            this.getLeafletToolbar(leafletMap);
         }
         catch (e) {
             console.log(e);
         }
-        return mapUrl;
     },
 
-    openPicker: function () {
+    getLeafletToolbar: function(leafletMap) {
+        leafletMap.addLayer(this.editableLayers);
 
-        this.polygon;
-
-        this.searchfield = new Ext.form.TextField({
-            width: 300,
-            name: 'mapSearch',
-            style: 'float: left;',
-            fieldLabel: t('search')
+        var drawControlFull = new L.Control.Draw({
+            position: 'topright',
+            draw: {
+                circle: false,
+                marker: false,
+                circlemarker: false,
+                rectangle: false,
+                polyline: false
+            },
+            edit: {
+                featureGroup: this.editableLayers,
+                remove: false
+            }
         });
 
-        this.mapPanel = new Ext.Panel({
-            plain: true
-        });
+        leafletMap.addControl(drawControlFull);
+        leafletMap.on(L.Draw.Event.CREATED, function (e) {
+            this.dirty = true;
 
-        this.searchWindow = new Ext.Window({
-            modal: true,
-            width: 600,
-            height: 500,
-            resizable: false,
-            tbar: [{
-                xtype: 'button',
-                text: t('empty'),
-                iconCls: "pimcore_icon_empty",
-                handler: this.removePolygon.bind(this)
-            }],
-            bbar: [this.searchfield, {
-                xtype: 'button',
-                text: t('search'),
-                iconCls: "pimcore_icon_search",
-                handler: this.geocode.bind(this)
-            }, '->', {
-                xtype: 'button',
-                text: t('cancel'),
-                iconCls: "pimcore_icon_cancel",
-                handler: function () {
-                    this.searchWindow.close();
-                }.bind(this)
-            },{
-                xtype: 'button',
-                text: 'OK',
-                iconCls: "pimcore_icon_save",
-                handler: function () {
+            this.editableLayers.clearLayers();
+            if(this.polygon !== null) {
+                this.polygon.remove();
+            }
 
-                    this.data = null;
+            var layer = e.layer;
+            this.editableLayers.addLayer(layer);
+            if (this.editableLayers.getLayers().length === 1) {
+                this.data = [];
+                var latlngs = layer.getLatLngs();
+                for (var i = 0; i < latlngs[0].length; i++) {
+                    this.data.push({
+                        latitude: latlngs[0][i].lat,
+                        longitude: latlngs[0][i].lng
+                    });
+                }
+            }
+        }.bind(this));
 
-                    if (this.polygon) {
-                        var points = this.polygon.getPath();
+        leafletMap.on("draw:deleted", function() {
+            this.data = null;
+            this.dirty = true;
+            this.updateMap();
+        }.bind(this));
 
-                        if(points.length > 0) {
-                            this.data = [];
-                        }
+        leafletMap.on("draw:editvertex", function (e) {
+            this.dirty = true;
 
-                        for (var i=0; i<points.length; i++) {
-                            this.data.push({
-                                latitude: points.getAt(i).lat(),
-                                longitude: points.getAt(i).lng()
-                            });
-                        }
+            var layer1;
+            var newPolyLatLngArray;
+            this.data = [];
+            for (layer1 in e.target._layers) {
+                if (e.target._layers.hasOwnProperty(layer1)) {
+                    if (e.target._layers[layer1].hasOwnProperty("edited")) {
+                        newPolyLatLngArray = e.target._layers[layer1].editing.latlngs[0];
                     }
-
-                    this.updatePreviewImage();
-                    this.dirty = true;
-                    this.searchWindow.close();
-                }.bind(this)
-            }],
-            plain: true
-        });
-
-        this.alreadyIntitialized = false;
-
-        this.searchWindow.on('afterlayout', function () {
-            if (this.alreadyIntitialized) {
-                return;
-            }
-
-            this.alreadyIntitialized = true;
-
-            var center = new google.maps.LatLng(this.fieldConfig.lat, this.fieldConfig.lng);
-            var mapZoom = this.fieldConfig.zoom;
-            this.polygonPoints = new google.maps.MVCArray();
-
-            this.gmap = new google.maps.Map(this.searchWindow.body.dom, {
-                zoom: mapZoom,
-                center: center,
-                streetViewControl: false,
-                mapTypeControl: true,
-                mapTypeControlOptions: {
-                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-                },
-                mapTypeId: this.fieldConfig.mapType
-            });
-
-            this.drawingManager = new google.maps.drawing.DrawingManager({
-                drawingControl: false,
-                polygonOptions: {
-                    strokeWeight: 0,
-                    fillOpacity: 0.45,
-                    editable: true,
-                    draggable: true
-                },
-                map: this.gmap
-            });
-
-            google.maps.event.addListener(this.drawingManager, 'overlaycomplete', function (e) {
-                // Switch back to non-drawing mode after drawing a shape.
-                this.drawingManager.setDrawingMode(null);
-
-                this.polygon = e.overlay;
-                this.bindPolygonEvent();
-            }.bind(this));
-
-            if (this.data) {
-                for (var i = 0; i < this.data.length; i++) {
-                    this.polygonPoints.push(new google.maps.LatLng(this.data[i].latitude, this.data[i].longitude));
                 }
             }
-
-            if(this.polygonPoints.length > 0) {
-                this.renderPolygon();
-            } else {
-                this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+            for (var i = 0; i < newPolyLatLngArray[0].length; i++) {
+                this.data.push({
+                    latitude: newPolyLatLngArray[0][i].lat,
+                    longitude: newPolyLatLngArray[0][i].lng
+                });
             }
 
-            if(this.data) {
-                this.gmap.fitBounds(this.polygon.getBounds());
-                this.gmap.setCenter(this.polygon.getBounds().getCenter());
-            }
-
-            this.geocoder = new google.maps.Geocoder();
         }.bind(this));
-
-        this.searchWindow.on('beforeclose', function () {
-            delete this.polygon;
-            delete this.gmap;
-            delete this.geocoder;
-        }.bind(this));
-
-        this.searchWindow.show();
     },
-
-    renderPolygon: function () {
-
-        this.polygon = new google.maps.Polygon({
-            paths: this.polygonPoints,
-            strokeWeight: 0,
-            fillOpacity: 0.45,
-            editable: true,
-            draggable: true,
-            map: this.gmap
-        });
-        this.bindPolygonEvent();
-    },
-
-    removePolygon: function() {
-        if (this.polygon) {
-            this.polygon.setMap(null);
-            delete this.polygon;
-        }
-        this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
-    },
-
-    bindPolygonEvent: function () {
-        google.maps.event.addListener(this.polygon, 'click', function (e) {
-            if (e.vertex !== undefined) {
-                var path = this.polygon.getPaths().getAt(e.path);
-                path.removeAt(e.vertex);
-                if (path.length < 3) {
-                    this.removePolygon();
-                }
+    
+    geocode: function () {
+        var address = this.searchfield.getValue();
+        jQuery.getJSON(this.getSearchUrl(address), function(json) {
+          if( json[0].lat !== null && json[0].lon !== null) {
+              var map = this.getLeafletMap(json[0].lat, json[0].lon, 15);
+              this.getLeafletToolbar(map);
             }
         }.bind(this));
-    },
-
-    addPoint : function (event) {
-        this.polygonPoints.insertAt(this.polygonPoints.length, event.latLng);
-
-        if(this.polygonPoints.length == 1) {
-            this.renderPolygon();
-        }
+       
     },
 
     getValue: function () {

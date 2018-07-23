@@ -157,17 +157,16 @@ pimcore.settings.email.log = Class.create({
                 sortable: false,
                 width: 50,
                 dataIndex: 'emailLogExistsHtml',
-                menuText: t('email_log_html'),
-                text: t('email_log_html'),
+                menuText: t('html'),
+                text: t('html'),
                 items : [{
-                    tooltip: t('email_log_show_html_email'),
                     icon: '/pimcore/static6/img/flat-color-icons/feedback.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=html';
                         url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
-                            title: t('email_log_iframe_title_html'),
+                            title: t('html'),
                             width: iFrameSettings.width,
                             height: iFrameSettings.height,
                             layout: 'fit',
@@ -190,18 +189,17 @@ pimcore.settings.email.log = Class.create({
                 sortable: false,
                 width: 50,
                 dataIndex: 'emailLogExistsText',
-                menuText: t('email_log_text'),
-                text: t('email_log_text'),
+                menuText: t('text'),
+                text: t('text'),
                 hidden: true,
                 items : [{
-                    tooltip: t('email_log_show_text_email'),
                     icon: '/pimcore/static6/img/flat-color-icons/text.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=text';
                         url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
-                            title: t('email_log_iframe_title_text'),
+                            title: t('text'),
                             width: iFrameSettings.width,
                             height: iFrameSettings.height,
                             layout: 'fit',
@@ -225,10 +223,9 @@ pimcore.settings.email.log = Class.create({
                 width: 120,
                 dataIndex: 'params',
                 hidden: false,
-                menuText: t('email_log_params'),
-                text: t('email_log_params'),
+                menuText: t('parameters'),
+                text: t('parameters'),
                 items : [{
-                    tooltip: t('email_log_show_text_params'),
                     icon: '/pimcore/static6/img/flat-color-icons/info.svg',
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
@@ -252,12 +249,12 @@ pimcore.settings.email.log = Class.create({
                             columnLines: true,
                             columns:[
                                 new Ext.tree.Column({
-                                    text: t('email_log_property'),
+                                    text: t('name'),
                                     dataIndex: 'key',
                                     width: 230
                                 }),
                                 {
-                                    text: t('email_log_data'),
+                                    text: t('value'),
                                     width: 370,
                                     dataIndex: 'data',
                                     renderer: function(value, metadata, record) {
@@ -287,7 +284,7 @@ pimcore.settings.email.log = Class.create({
                             modal: true,
                             width: 620,
                             height: "90%",
-                            title: t('email_log_params'),
+                            title: t('parameters'),
                             items: [this.tree],
                             layout: 'fit'
                         });
@@ -306,7 +303,7 @@ pimcore.settings.email.log = Class.create({
                         icon: '/pimcore/static6/img/flat-color-icons/email.svg',
                         handler: function (grid, rowIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
-                            Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'),
+                            Ext.Msg.confirm(t('email_log_resend'), t('email_log_resend_window_msg'),
                                 function(btn){
                                     if (btn == 'yes'){
                                         Ext.Ajax.request({
@@ -315,10 +312,10 @@ pimcore.settings.email.log = Class.create({
                                             success: function(response){
                                                 var data = Ext.decode( response.responseText );
                                                 if(data.success){
-                                                    Ext.Msg.alert(t('email_log_resend_window_title'),
+                                                    Ext.Msg.alert(t('email_log_resend'),
                                                         t('email_log_resend_window_success_message'));
                                                 }else{
-                                                    Ext.Msg.alert(t('email_log_resend_window_title'),
+                                                    Ext.Msg.alert(t('email_log_resend'),
                                                         t('email_log_resend_window_error_message'));
                                                 }
                                             },

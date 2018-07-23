@@ -20,7 +20,7 @@ pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.
     type: "operator",
     class: "TranslateValue",
     iconCls: "pimcore_icon_localizedfields",
-    defaultText: "operator_translate_value",
+    defaultText: "Translate Value",
     group: "string",
 
 
@@ -29,7 +29,7 @@ pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: configAttributes.label ? configAttributes.label : t(this.defaultText),
+                text: configAttributes.label ? configAttributes.label : this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,
@@ -40,12 +40,12 @@ pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.
         } else {
 
             //For building up operator list
-            var configAttributes = { type: this.type, class: this.class, label: t(this.defaultText)};
+            var configAttributes = { type: this.type, class: this.class, label: this.getDefaultText()};
 
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 maxChildCount: 1,
@@ -88,7 +88,7 @@ pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.
         });
 
         this.prefix = new Ext.form.TextField({
-            fieldLabel: t('operator_translate_value_prefix'),
+            fieldLabel: t('prefix'),
             length: 255,
             width: 200,
             value: this.node.data.configAttributes.prefix
@@ -113,7 +113,7 @@ pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.
             width: 400,
             height: 350,
             modal: true,
-            title: t('operator_translate_value_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

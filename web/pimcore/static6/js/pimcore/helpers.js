@@ -477,7 +477,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
 
     if (stack) {
         stack = str_replace("#", "<br>#", stack);
-        var htmlValue = '<a href="#">' + t("detailed_info") + '</a>';
+        var htmlValue = '<a href="#">' + t("details") + '</a>';
         var detailedInfo = {
             xtype: "displayfield",
             readOnly: true,
@@ -488,7 +488,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
                     c.getEl().on('click', function () {
                         var detailedWindow = new Ext.Window({
                             modal: true,
-                            title: t('detailed_info'),
+                            title: t('details'),
                             width: 1000,
                             height: 600,
                             html: stack,
@@ -2135,18 +2135,18 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }],
         buttons: [
             {
-                text: t("cancel"),
-                iconCls: "pimcore_icon_cancel",
-                listeners: {
-                    "click": callback["cancel"]
-                }
-            },
-            {
                 text: t("save"),
                 listeners: {
                     "click": callback["save"]
                 },
                 iconCls: "pimcore_icon_save"
+            },
+            {
+                text: t("cancel"),
+                iconCls: "pimcore_icon_cancel",
+                listeners: {
+                    "click": callback["cancel"]
+                }
             }
         ]
     });
@@ -2790,15 +2790,15 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
         items: pages
     });
 
-    var loadingInterval = window.setInterval(function () {
+    var loadingInterval = window.setTimeout(function () {
 
         if (!this.pagesContainer || !this.pagesContainer.body || !this.pagesContainer.body.dom) {
             clearInterval(loadingInterval);
         } else {
             var el;
             var scroll = this.pagesContainer.body.getScroll();
-            var startPage = Math.floor(scroll.top / 162); // 162 is the height of one thumbnail incl. border and margin
-            for (var i = startPage; i < (startPage + 5); i++) {
+            var startPage = (Math.floor(scroll.top / 162) > 0 ? Math.floor(scroll.top / 162) : 1 ); // 162 is the height of one thumbnail incl. border and margin
+            for (var i = startPage; i <= pages.length; i++) {
                 el = Ext.get(this.getName() + "-page-" + i);
                 if (el) {
                     // el.parent().update('<img src="' + el.getAttribute("data-src") + '" height="150" />');
@@ -2807,6 +2807,8 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
             }
         }
     }.bind(this), 1000);
+
+
 
     this.metaDataWindow = new Ext.Window({
         width: 700,
@@ -2881,27 +2883,27 @@ pimcore.helpers.markColumnConfigAsFavourite = function (objectId, classId, gridC
                     var rdata = Ext.decode(response.responseText);
 
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("success"), t("your_favourite_has_been_saved"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
                         if (rdata.spezializedConfigs) {
                             pimcore.helpers.removeOtherConfigs(objectId, classId, gridConfigId, searchType);
                         }
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error", t(rdata.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this),
             failure: function () {
-                pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+                pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
             }
         });
 
     } catch (e3) {
-        pimcore.helpers.showNotification(t("error"), t("error_saving_favourite"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     }
 };
 
@@ -2956,23 +2958,23 @@ pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, s
                         if (typeof callback == "function") {
                             callback(rdata);
                         }
-                        pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error", t(rdata.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this),
             failure: function () {
-                pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
             }
         });
 
     } catch (e3) {
-        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     }
 };
 
