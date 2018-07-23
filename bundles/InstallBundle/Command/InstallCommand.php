@@ -149,12 +149,6 @@ class InstallCommand extends Command
             ->setDescription($description)
             ->setHelp($help)
             ->addOption(
-                'no-overwrite',
-                null,
-                InputOption::VALUE_NONE,
-                'Do no overwrite existing files'
-            )
-            ->addOption(
                 'ignore-existing-config',
                 null,
                 InputOption::VALUE_NONE,
@@ -306,10 +300,6 @@ class InstallCommand extends Command
             $this->io->listing($missing);
 
             return 1;
-        }
-
-        if ($input->getOption('no-overwrite')) {
-            $this->installer->setOverwriteExistingFiles(false);
         }
 
         $checkErrors = $this->installer->checkPrerequisites();

@@ -24,7 +24,9 @@ use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Model\Tool\Setup;
+use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\AssetsInstaller;
+use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
@@ -33,6 +35,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class Installer
 {
@@ -47,11 +50,6 @@ class Installer
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
-
-    /**
-     * @var bool
-     */
-    private $overwriteExistingFiles = true;
 
     /**
      * Predefined DB credentials from config
@@ -76,7 +74,7 @@ class Installer
         'boot_kernel'         => 'Booting new kernel...',
         'setup_database'      => 'Running database setup...',
         'install_assets'      => 'Installing assets...',
-        'install_bundles'     => 'Installing bundles...',
+        'install_classes'     => 'Installing classes ...',
         'complete'            => 'Install complete!'
     ];
 
@@ -91,11 +89,6 @@ class Installer
     public function setDbCredentials(array $dbCredentials = [])
     {
         $this->dbCredentials = $dbCredentials;
-    }
-
-    public function setOverwriteExistingFiles(bool $overwriteExistingFiles)
-    {
-        $this->overwriteExistingFiles = $overwriteExistingFiles;
     }
 
     public function setCommandLineOutput(PimcoreStyle $commandLineOutput)
@@ -309,11 +302,61 @@ class Installer
 
         $this->dispatchStepEvent('install_assets');
         $this->installAssets($kernel);
-        $this->installAssets($kernel);
+
+        $this->dispatchStepEvent('install_classes');
+        $this->installClasses($kernel);
 
         $this->clearKernelCacheDir($kernel);
 
         return $errors;
+    }
+
+    private function installClasses(KernelInterface $kernel) {
+        $this->logger->info('Running {command} command', ['command' => 'assets:install']);
+        $io = $this->commandLineOutput;
+
+        try {
+            $arguments = [
+                Console::getPhpCli(),
+                PIMCORE_PROJECT_ROOT . '/bin/console',
+                'pimcore:deployment:classes-rebuild',
+                '-c'
+            ];
+
+            $partsBuilder = new PartsBuilder($arguments);
+            $parts = $partsBuilder->getParts();
+
+            $process = new Process($parts);
+            $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new ProcessFailedException($process);
+            }
+
+            if (null !== $io) {
+                $io->writeln($process->getOutput());
+            }
+        } catch (ProcessFailedException $e) {
+            $this->logger->error($e->getMessage());
+
+            if (null === $io) {
+                return;
+            }
+
+            $stdErr  = $io->getErrorStyle();
+            $process = $e->getProcess();
+
+            $errorOutput = trim($process->getErrorOutput());
+            if (!empty($errorOutput)) {
+                $stdErr->write($errorOutput);
+            }
+
+            $stdErr->write($process->getOutput());
+            $stdErr->write($process->getErrorOutput());
+            $stdErr->note('Installing classes failed. Please run the following command manually:');
+            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
+        }
     }
 
     private function installAssets(KernelInterface $kernel)
