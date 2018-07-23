@@ -20,9 +20,8 @@ namespace Pimcore\Bundle\InstallBundle\Command;
 use Pimcore\Config;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
-use Pimcore\Install\Event\InstallerStepEvent;
-use Pimcore\Install\Installer;
-use Pimcore\Install\Profile\ProfileLocator;
+use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
+use Pimcore\Bundle\InstallBundle\Installer;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -43,11 +42,6 @@ class InstallCommand extends Command
     private $installer;
 
     /**
-     * @var ProfileLocator
-     */
-    private $profileLocator;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
@@ -64,11 +58,9 @@ class InstallCommand extends Command
 
     public function __construct(
         Installer $installer,
-        ProfileLocator $profileLocator,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->installer       = $installer;
-        $this->profileLocator  = $profileLocator;
         $this->eventDispatcher = $eventDispatcher;
 
         parent::__construct();
@@ -80,20 +72,8 @@ class InstallCommand extends Command
             return $this->options;
         }
 
-        $profiles = array_keys($this->profileLocator->getProfiles());
-
         $options = [
-            'profile'           => [
-                'description' => sprintf(
-                    'The install profile to use. Available profiles: %s',
-                    implode(', ', $profiles)
-                ),
-                'prompt'      => 'Please choose the install profile you want to use',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'default'     => 'empty',
-                'choices'     => $profiles,
-                'group'       => 'profile',
-            ],
+
             'admin-username'    => [
                 'description' => 'Admin username',
                 'mode'        => InputOption::VALUE_REQUIRED,
@@ -175,22 +155,10 @@ class InstallCommand extends Command
                 'Do no overwrite existing files'
             )
             ->addOption(
-                'symlink',
-                null,
-                InputOption::VALUE_NONE,
-                'Symlink install profile files instead of copying them. Will fall back to copy on Windows.'
-            )
-            ->addOption(
                 'ignore-existing-config',
                 null,
                 InputOption::VALUE_NONE,
                 'Do not abort if a <comment>system.php</comment> file already exists'
-            )
-            ->addOption(
-                'no-copy-profile-files',
-                null,
-                InputOption::VALUE_NONE,
-                'Do not copy any profile files. Just install DB structure'
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -299,10 +267,6 @@ class InstallCommand extends Command
 
     private function installerNeedsOption(array $config): bool
     {
-        if ('profile' === ($config['group'] ?? null) && !$this->installer->needsProfile()) {
-            return false;
-        }
-
         if ('db_credentials' === ($config['group'] ?? null) && !$this->installer->needsDbCredentials()) {
             return false;
         }
@@ -344,16 +308,8 @@ class InstallCommand extends Command
             return 1;
         }
 
-        if ($input->getOption('no-copy-profile-files')) {
-            $this->installer->setInstallProfileFiles(false);
-        }
-
         if ($input->getOption('no-overwrite')) {
             $this->installer->setOverwriteExistingFiles(false);
-        }
-
-        if ($input->getOption('symlink')) {
-            $this->installer->setSymlink(true);
         }
 
         $checkErrors = $this->installer->checkPrerequisites();

@@ -54,7 +54,7 @@ services:
         public: true
 
     Pimcore\Composer\Config\Normalizer\:
-        resource: '../../../../Composer/Config/Normalizer'
+        resource: '../../../../lib/Composer/Config/Normalizer'
         tags: ['pimcore.composer.config_normalizer']
 
     #

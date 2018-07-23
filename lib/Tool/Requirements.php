@@ -58,12 +58,6 @@ class Requirements
             }
         }
 
-        // pimcore writeable
-        $checks[] = new Check([
-            'name' => '/pimcore/ writeable',
-            'state' => \Pimcore\Update::isWriteable() ? Check::STATE_OK : Check::STATE_WARNING
-        ]);
-
         return $checks;
     }
 

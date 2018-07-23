@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Install\SystemConfig;
+namespace Pimcore\Bundle\InstallBundle\SystemConfig;
 
 use Pimcore\File;
 

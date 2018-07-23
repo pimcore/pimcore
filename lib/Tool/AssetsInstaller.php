@@ -69,7 +69,7 @@ class AssetsInstaller
     {
         $arguments = [
             Console::getPhpCli(),
-            'bin/console',
+            PIMCORE_PROJECT_ROOT . '/bin/console',
             'assets:install',
             'web'
         ];
@@ -150,7 +150,6 @@ class AssetsInstaller
             return $this->composerJsonSetting;
         }
 
-        $json = [];
         $file = PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'composer.json';
         if (file_exists($file)) {
             $contents = file_get_contents($file);

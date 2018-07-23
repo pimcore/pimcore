@@ -5,7 +5,7 @@ services:
         public: false
 
     Pimcore\Migrations\Command\:
-        resource: '../../../../Migrations/Command'
+        resource: '../../../../lib/Migrations/Command'
 
     Pimcore\Migrations\Configuration\ConfigurationFactory:
         public: true

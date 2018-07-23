@@ -4,17 +4,6 @@ services:
         autoconfigure: true
         public: false
 
-    Pimcore\Bundle\InstallBundle\Controller\:
-        resource: '../../Controller'
-        public: true
-        tags: ['controller.service_arguments']
-
-    Pimcore\Bundle\InstallBundle\Controller\InstallController:
-        public: true
-        arguments:
-            $infoMessage:
-        tags: ['controller.service_arguments']
-
     Pimcore\Bundle\InstallBundle\Command\:
         resource: '../../Command'
         public: true
@@ -22,10 +11,4 @@ services:
 
     Pimcore\Composer\PackageInfo: ~
 
-    Pimcore\Install\Installer: ~
-
-    Pimcore\Install\Profile\ProfileLocator: ~
-
-    Pimcore\Install\Profile\FileInstaller:
-        arguments:
-            '$projectRoot': '%kernel.project_dir%'
+    Pimcore\Bundle\InstallBundle\Installer: ~

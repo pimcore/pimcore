@@ -42,6 +42,8 @@ class Update
      */
     public static function isWriteable()
     {
+        return true;
+
         if (self::$dryRun) {
             return true;
         }

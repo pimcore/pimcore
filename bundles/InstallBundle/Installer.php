@@ -15,26 +15,20 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Install;
+namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
-use Pimcore\Extension;
-use Pimcore\Extension\Bundle\Config\StateConfig;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
-use Pimcore\Install\Event\InstallerStepEvent;
-use Pimcore\Install\Profile\FileInstaller;
-use Pimcore\Install\Profile\Profile;
-use Pimcore\Install\Profile\ProfileLocator;
-use Pimcore\Install\SystemConfig\ConfigWriter;
+use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Model\Tool\Setup;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
+use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -50,43 +44,14 @@ class Installer
     private $logger;
 
     /**
-     * @var ProfileLocator
-     */
-    private $profileLocator;
-
-    /**
-     * @var FileInstaller
-     */
-    private $fileInstaller;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
 
     /**
-     * If false, profile files won't be copied/symlinked
-     *
-     * @var bool
-     */
-    private $installProfileFiles = true;
-
-    /**
      * @var bool
      */
     private $overwriteExistingFiles = true;
-
-    /**
-     * @var bool
-     */
-    private $symlink = false;
-
-    /**
-     * Predefined profile from config
-     *
-     * @var string
-     */
-    private $profile;
 
     /**
      * Predefined DB credentials from config
@@ -106,9 +71,7 @@ class Installer
     private $stepEvents = [
         'validate_parameters' => 'Validating input parameters...',
         'check_prerequisites' => 'Checking prerequisites...',
-        'load_profile'        => 'Loading install profile...',
         'start_install'       => 'Starting installation...',
-        'copy_files'          => 'Copying profile files...',
         'create_config_files' => 'Creating config files...',
         'boot_kernel'         => 'Booting new kernel...',
         'setup_database'      => 'Running database setup...',
@@ -119,24 +82,10 @@ class Installer
 
     public function __construct(
         LoggerInterface $logger,
-        ProfileLocator $profileLocator,
-        FileInstaller $fileInstaller,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->logger          = $logger;
-        $this->profileLocator  = $profileLocator;
-        $this->fileInstaller   = $fileInstaller;
         $this->eventDispatcher = $eventDispatcher;
-    }
-
-    public function setInstallProfileFiles(bool $installFiles)
-    {
-        $this->installProfileFiles = $installFiles;
-    }
-
-    public function setProfile(string $profile = null)
-    {
-        $this->profile = $profile;
     }
 
     public function setDbCredentials(array $dbCredentials = [])
@@ -149,19 +98,9 @@ class Installer
         $this->overwriteExistingFiles = $overwriteExistingFiles;
     }
 
-    public function setSymlink(bool $symlink)
-    {
-        $this->symlink = $symlink;
-    }
-
     public function setCommandLineOutput(PimcoreStyle $commandLineOutput)
     {
         $this->commandLineOutput = $commandLineOutput;
-    }
-
-    public function needsProfile(): bool
-    {
-        return null === $this->profile;
     }
 
     public function needsDbCredentials(): bool
@@ -270,34 +209,6 @@ class Installer
             $errors[] = 'Username and password should have at least 4 characters';
         }
 
-        $profileId = null;
-        if (null !== $this->profile) {
-            $profileId = $this->profile;
-        } else {
-            $profileId = 'empty';
-            if (isset($params['profile'])) {
-                $profileId = $params['profile'];
-            }
-        }
-
-        if (empty($profileId)) {
-            $errors[] = sprintf('Invalid profile ID');
-
-            return $errors;
-        }
-
-        $profile = null;
-
-        $this->dispatchStepEvent('load_profile');
-
-        try {
-            $profile = $this->profileLocator->getProfile($profileId);
-        } catch (\Exception $e) {
-            $errors[] = sprintf(
-                htmlentities($e->getMessage(), ENT_QUOTES, 'UTF-8')
-            );
-        }
-
         if (!empty($errors)) {
             return $errors;
         }
@@ -306,7 +217,6 @@ class Installer
 
         try {
             return $this->runInstall(
-                $profile,
                 $dbConfig,
                 [
                     'username' => $adminUser,
@@ -359,21 +269,9 @@ class Installer
         return $dbConfig;
     }
 
-    private function runInstall(Profile $profile, array $dbConfig, array $userCredentials): array
+    private function runInstall(array $dbConfig, array $userCredentials): array
     {
-        $this->logger->info('Running installation with profile {profile}', [
-            'profile' => $profile->getName()
-        ]);
-
-        $this->dispatchStepEvent('copy_files');
-
         $errors = [];
-        if ($this->installProfileFiles) {
-            $errors = $this->fileInstaller->installFiles($profile, $this->overwriteExistingFiles, $this->symlink);
-            if (count($errors) > 0) {
-                return $errors;
-            }
-        }
 
         $this->dispatchStepEvent('create_config_files');
 
@@ -387,8 +285,6 @@ class Installer
                 'params' => $dbConfig
             ],
         ]);
-
-        $this->enableBundles($profile);
 
         $this->dispatchStepEvent('boot_kernel');
 
@@ -409,13 +305,11 @@ class Installer
         $setup = new Setup();
         $setup->database();
 
-        $errors = $this->setupProfileDatabase($setup, $profile, $userCredentials, $errors);
+        $errors = $this->setupDatabase($setup, $userCredentials, $errors);
 
         $this->dispatchStepEvent('install_assets');
         $this->installAssets($kernel);
-
-        $this->dispatchStepEvent('install_bundles');
-        $errors = array_merge($this->installBundles($kernel, $profile), $errors);
+        $this->installAssets($kernel);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -461,42 +355,6 @@ class Installer
         }
     }
 
-    private function enableBundles(Profile $profile)
-    {
-        $stateConfig = new StateConfig(new Extension\Config());
-
-        foreach ($profile->getBundlesToEnable() as $id => $config) {
-            $stateConfig->setState($id, $config);
-        }
-    }
-
-    private function installBundles(KernelInterface $kernel, Profile $profile): array
-    {
-        if (empty($installBundles = $profile->getBundlesToInstall())) {
-            return [];
-        }
-
-        $bundleManager = $kernel->getContainer()->get(PimcoreBundleManager::class);
-        $errors        = [];
-
-        foreach ($installBundles as $installBundle) {
-            if (null !== $this->commandLineOutput) {
-                $this->commandLineOutput->writeln(sprintf('  <comment>*</comment> Installing bundle <info>%s</info>', $installBundle));
-            }
-
-            try {
-                $bundle = $bundleManager->getActiveBundle($installBundle, false);
-                if ($bundleManager->canBeInstalled($bundle)) {
-                    $bundleManager->install($bundle);
-                }
-            } catch (\Throwable $e) {
-                $errors[] = $e->getMessage();
-            }
-        }
-
-        return $errors;
-    }
-
     private function createConfigFiles(array $config)
     {
         $writer = new ConfigWriter();
@@ -525,14 +383,16 @@ class Installer
         $filesystem->remove($oldCacheDir);
     }
 
-    private function setupProfileDatabase(Setup $setup, Profile $profile, array $userCredentials, array $errors = []): array
+    private function setupDatabase(Setup $setup, array $userCredentials, array $errors = []): array
     {
+        $dataFiles = $this->getDataFiles();
+
         try {
-            if (empty($profile->getDbDataFiles())) {
+            if (empty($dataFiles)) {
                 // empty installation
                 $setup->contents($userCredentials);
             } else {
-                foreach ($profile->getDbDataFiles() as $dbFile) {
+                foreach ($dataFiles as $dbFile) {
                     $this->logger->info('Importing DB file {dbFile}', ['dbFile' => $dbFile]);
                     $setup->insertDump($dbFile);
                 }
@@ -545,5 +405,11 @@ class Installer
         }
 
         return $errors;
+    }
+
+    protected function getDataFiles() {
+        $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
+
+        return $files;
     }
 }

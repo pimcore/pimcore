@@ -17,8 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\DependencyInjection;
 
-use Pimcore\Bundle\InstallBundle\Controller\InstallController;
-use Pimcore\Install\Installer;
+use Pimcore\Bundle\InstallBundle\Installer;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -35,10 +34,6 @@ class PimcoreInstallExtension extends ConfigurableExtension
 
         $loader->load('services.yml');
 
-        $container
-            ->getDefinition(InstallController::class)
-            ->setArgument('$infoMessage', $config['info_message']);
-
         $this->configureInstaller($container, $config);
     }
 
@@ -47,20 +42,11 @@ class PimcoreInstallExtension extends ConfigurableExtension
         $parameters = $config['parameters'] ?? [];
         $definition = $container->getDefinition(Installer::class);
 
-        $definition->addMethodCall('setInstallProfileFiles', [$config['files']['install']]);
-        $definition->addMethodCall('setSymlink', [$config['files']['symlink']]);
-
         $dbCredentials = $parameters['database_credentials'] ?? [];
         $dbCredentials = $this->normalizeDbCredentials($dbCredentials);
 
         if (!empty($dbCredentials)) {
             $definition->addMethodCall('setDbCredentials', [$dbCredentials]);
-        }
-
-        $profile = $parameters['profile'] ?? null;
-
-        if (!empty($profile)) {
-            $definition->addMethodCall('setProfile', [$profile]);
         }
     }
 

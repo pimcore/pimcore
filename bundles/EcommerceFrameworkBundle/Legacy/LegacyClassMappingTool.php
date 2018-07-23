@@ -744,7 +744,7 @@ class LegacyClassMappingTool
             $fileContent .= "} \n\n// -- end namespace " . $namespace . " ---------------------------------------------------------------------------------- \n\n\n\n";
         }
 
-        file_put_contents(PIMCORE_PATH . '/lib/Pimcore/Bundle/PimcoreEcommerceFrameworkBundle/config/namespace_compatibility.php', $fileContent);
+        file_put_contents(PIMCORE_PATH . '/bundles/PimcoreEcommerceFrameworkBundle/config/namespace_compatibility.php', $fileContent);
     }
 
     protected static function generateClass($className, $parentClassName, $type)

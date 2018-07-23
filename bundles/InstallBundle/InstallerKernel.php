@@ -15,21 +15,17 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Install;
+namespace Pimcore\Bundle\InstallBundle;
 
-use Pimcore\Bundle\InstallBundle\Controller\InstallController;
-use Pimcore\Bundle\InstallBundle\PimcoreInstallBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MonologBundle\MonologBundle;
-use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
 class InstallerKernel extends Kernel
@@ -72,7 +68,6 @@ class InstallerKernel extends Kernel
         $bundles = [
             new FrameworkBundle(),
             new MonologBundle(),
-            new TwigBundle(),
             new PimcoreInstallBundle()
         ];
 
@@ -89,13 +84,6 @@ class InstallerKernel extends Kernel
     protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
     {
         $c->setParameter('secret', uniqid('installer-', true));
-
-        $c->loadFromExtension('twig', [
-            'paths' => [
-                __DIR__ . '/../Bundle/AdminBundle/Resources/views' => 'PimcoreAdminBundle'
-            ]
-        ]);
-
         $loader->load('@PimcoreInstallBundle/Resources/config/config.yml');
 
         // load installer config files if available
@@ -116,20 +104,6 @@ class InstallerKernel extends Kernel
      */
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->addRoute($this->buildRoute('/install/', 'index', ['GET']));
-        $routes->addRoute($this->buildRoute('/install/', 'install', ['POST']));
-        $routes->addRoute($this->buildRoute('/install/check', 'check', ['POST']));
-    }
-
-    private function buildRoute(string $path, string $action, array $methods = []): Route
-    {
-        $route = new Route($path);
-        $route->setDefault('_controller', sprintf('%s:%sAction', InstallController::class, $action));
-
-        if (!empty($methods)) {
-            $route->setMethods($methods);
-        }
-
-        return $route;
+        // nothing to do
     }
 }
