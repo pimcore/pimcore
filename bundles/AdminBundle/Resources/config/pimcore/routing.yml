@@ -18,11 +18,6 @@ _pimcore_search:
     type:     annotation
     prefix:   /admin/search
 
-_pimcore_update:
-    resource: "@PimcoreAdminBundle/Controller/Update/"
-    type:     annotation
-    prefix:   /admin/update
-
 _pimcore_gdpr:
     resource: "@PimcoreAdminBundle/Controller/GDPR/"
     type:     annotation
