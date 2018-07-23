@@ -763,7 +763,7 @@ class Service extends Model\AbstractModel
         if (!($foundElement = $type::getByPath($sanitizedPath))) {
             foreach ($parts as $part) {
                 $pathPart = $pathsArray[count($pathsArray) - 1] ?? '';
-                $pathsArray[] = $pathPart . '/' . self::getValidKey($part, $type);
+                $pathsArray[] = $pathPart . '/' . self::getValidKey($part, $itemType);
             }
 
             for ($i = 0; $i < count($pathsArray); $i++) {
