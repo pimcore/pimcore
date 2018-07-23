@@ -567,7 +567,6 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 $tracker->setArgument('$checkoutTenants', $trackerConfig['tenants']['checkout']);
             }
 
-
             if (!empty($trackerConfig['options'])) {
                 $tracker->setArgument('$options', $trackerConfig['options']);
             }

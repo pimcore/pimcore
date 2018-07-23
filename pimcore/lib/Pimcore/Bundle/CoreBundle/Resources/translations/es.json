@@ -814,5 +814,9 @@
     "bundle_ecommerce_clear_config_cache": "Clear configuration cache",
     "bundle_ecommerce_back-office_order": "Back Office - Ordering",
     "bundle_ecommerce_vouchertoolkit_tab": "Voucher Details",
-    "path": "Path"
+    "path": "Path",
+    "thumbnail": "Thumbnail",
+    "download_thumbnail": "Download Thumbnail",
+    "no_thumbnail_selected": "No thumbnail selected",
+    "list_thumbnail_in_download_section_on_image_detail_view": "List as option in download section on image detail view"
 }

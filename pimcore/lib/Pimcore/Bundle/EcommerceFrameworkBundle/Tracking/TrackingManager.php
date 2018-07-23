@@ -87,25 +87,24 @@ class TrackingManager implements ITrackingManager
      */
     public function getActiveTrackers(): array
     {
-        $currentAssortmentTenant = $this->enviroment->getCurrentAssortmentTenant() ? : 'default';
-        $currentCheckoutTenant = $this->enviroment->getCurrentCheckoutTenant() ? : 'default';
+        $currentAssortmentTenant = $this->enviroment->getCurrentAssortmentTenant() ?: 'default';
+        $currentCheckoutTenant = $this->enviroment->getCurrentCheckoutTenant() ?: 'default';
 
-        if($currentAssortmentTenant !== $this->cachedAssortmentTenant || $currentCheckoutTenant !== $this->cachedCheckoutTenant) {
-
+        if ($currentAssortmentTenant !== $this->cachedAssortmentTenant || $currentCheckoutTenant !== $this->cachedCheckoutTenant) {
             $this->cachedCheckoutTenant = $currentCheckoutTenant;
             $this->cachedAssortmentTenant = $currentAssortmentTenant;
 
             $this->activeTrackerCache = [];
-            foreach($this->trackers as $tracker) {
+            foreach ($this->trackers as $tracker) {
                 $active = false;
-                if(empty($tracker->getAssortmentTenants()) || in_array($currentAssortmentTenant, $tracker->getAssortmentTenants())) {
+                if (empty($tracker->getAssortmentTenants()) || in_array($currentAssortmentTenant, $tracker->getAssortmentTenants())) {
                     $active = true;
                 }
-                if(empty($tracker->getCheckoutTenants()) || in_array($currentCheckoutTenant, $tracker->getCheckoutTenants())) {
+                if (empty($tracker->getCheckoutTenants()) || in_array($currentCheckoutTenant, $tracker->getCheckoutTenants())) {
                     $active = true;
                 }
 
-                if($active) {
+                if ($active) {
                     $this->activeTrackerCache[] = $tracker;
                 }
             }

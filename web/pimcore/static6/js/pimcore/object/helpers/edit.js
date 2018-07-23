@@ -202,7 +202,7 @@ pimcore.object.helpers.edit = {
 
                     // handlers must be eval()
                     if(configKeys[u] == "handler") {
-                        l[configKeys[u]] = eval(l[configKeys[u]]);
+                        l[configKeys[u]] = eval(l[configKeys[u]]).bind(this);
                     }
 
                     if(l[configKeys[u]]) {

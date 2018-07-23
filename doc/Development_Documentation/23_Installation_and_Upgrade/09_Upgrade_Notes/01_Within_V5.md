@@ -19,7 +19,7 @@ The following list should help you to locate and replace them, if available you 
 - `Object.isFunction()` ( `Ext.isFunction()` )
 - `Object.isString()` ( `Ext.isString()` )
 - `Object.isNumber()` ( `Ext.isNumber()` )
-- `Object.Undefined()` ( `!Ext.isDefined()` )
+- `Object.isUndefined()` ( `!Ext.isDefined()` )
 - `Object.toHTML()`
 - `Object.isHash()`
 - `Array.prototype.clear` ( `array.filter(() => false)` )
@@ -41,6 +41,10 @@ The following list should help you to locate and replace them, if available you 
 
 ## Version 5.3.0
 
+#### Build 289 (2018-07-20)
+The context of the button layout component in objects changed to the edit tab.
+See [Layout Components](../../05_Objects/01_Object_Classes/03_Layout_Elements/README.md).
+
 #### Build 286 (2018-07-19)
 To the interface `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker` the two methods `getAssortmentTenants` and
 `getCheckoutTenants` where added. No action is required, except you have have implemented your own trackers and did not
@@ -50,7 +54,7 @@ extend them from the abstract `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\
 Asset filenames: introduced new policy, the following disallowed characters were added: `#?*:\<>|"`
 
 #### Build 281 (2018-07-13)
-The admin UI translations are not split into 2 parts,
+The admin UI translations are now split into 2 parts,
 [Essentials](https://poeditor.com/join/project/VWmZyvFVMH) and [Extended](https://poeditor.com/join/project/XliCYYgILb).
 Essentials contains all translations which are needed for the most common tasks for editors, while the extended
 collection contains mostly admin related translations.

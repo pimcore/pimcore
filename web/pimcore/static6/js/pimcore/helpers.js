@@ -2135,18 +2135,18 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }],
         buttons: [
             {
-                text: t("cancel"),
-                iconCls: "pimcore_icon_cancel",
-                listeners: {
-                    "click": callback["cancel"]
-                }
-            },
-            {
                 text: t("save"),
                 listeners: {
                     "click": callback["save"]
                 },
                 iconCls: "pimcore_icon_save"
+            },
+            {
+                text: t("cancel"),
+                iconCls: "pimcore_icon_cancel",
+                listeners: {
+                    "click": callback["cancel"]
+                }
             }
         ]
     });

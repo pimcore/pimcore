@@ -346,7 +346,11 @@ class Imagick extends Adapter
         // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
         // problem is described here: http://imagemagick.org/Usage/basics/#type
         // and here: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=6888#p31891
-        $currentLocale = setlocale(LC_ALL, '0'); // this locale hack thing is also a hack for imagick
+
+        // 20.7.2018: this seems to cause new issues with newer Imagick/PHP versions, so we take it out for now ...
+        //  not sure if this workaround is actually still necessary (wouldn't assume so).
+
+        /*$currentLocale = setlocale(LC_ALL, '0'); // this locale hack thing is also a hack for imagick
         setlocale(LC_ALL, 'en'); // Set locale to "en" for ImagickDraw::point() to ensure the involved tostring() methods keep the decimal point
 
         $draw = new \ImagickDraw();
@@ -356,6 +360,7 @@ class Imagick extends Adapter
         $this->resource->drawImage($draw);
 
         setlocale(LC_ALL, $currentLocale); // see setlocale() above, for details ;-)
+        */
 
         return $this;
     }
