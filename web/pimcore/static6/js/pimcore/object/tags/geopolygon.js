@@ -73,7 +73,6 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
         this.polygon = null;
         this.latlngs = [];
 
-        this.leafletMap = null;
         this.editableLayers = new L.FeatureGroup();
 
         try {
