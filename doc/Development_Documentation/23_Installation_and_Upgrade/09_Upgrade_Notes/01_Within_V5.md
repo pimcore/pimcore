@@ -1,6 +1,26 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
 
+## Version 5.4.0
+
+#### Removed PrototypeJS (light) library from the Admin UI
+Quite a lot of functions have a native Javascript equivalent or are covered by vanilla JS anyway. 
+However, there are some functions which need to be adapted or replaced when used in Bundles. 
+The following list should help you to locate and replace them, if available you can find the replacement in brackets: 
+- `Prototype.*` functions and properties 
+- `Enumerable.*` functions and properties 
+- `$A()` ( `Array.from()` ) 
+- `$w()` 
+- `Object.extend()` ( `Object.assign()` ) 
+- `Object.toQueryString()` ( `Ext.Object.toQueryString` )
+- `Object.clone()` ( `Object.assign({}, object)` )
+- `Object.toHTML()`
+- `Object.is[Element|Array|Hash|Function|String|Number|Undefined]()`
+- `Function.prototype.[update|merge|bindAsEventListener|curry|delay|defer|wrap|methodize]`
+- `Array.prototype.[clear|first|last|compact|flatten|without|reverse|uniq|intersect|clone|toArray|size|inspect]`
+
+
+
 ## Version 5.3.0
 
 #### Build 286 (2018-07-19)
