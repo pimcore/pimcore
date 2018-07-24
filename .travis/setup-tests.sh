@@ -5,15 +5,6 @@ set -eu
 echo "Starting Install-Script"
 
 # checkout skeleton
-# this was added to an extra script because travis had problems when the .travis.yml contained
-# the string "sudo"
-if [[ "$TRAVIS_SUDO" == "true" ]]
-then
-    echo "Creating folder in /tmp/www"
-    .travis/install-sudo.sh
-fi
-
-
 mkdir /tmp/www
 git clone https://github.com/pimcore/skeleton.git /tmp/www
 mkdir /tmp/www/dev
@@ -32,5 +23,5 @@ cp .travis/composer.local.json /tmp/www/composer.local.json
 # install composer dependencies
 
 cd /tmp/www
-composer install --dev --no-interaction --optimize-autoloader
+COMPOSER_MEMORY_LIMIT=-1 composer install --dev --no-interaction --optimize-autoloader
 cd ~
