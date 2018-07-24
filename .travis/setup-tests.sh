@@ -2,11 +2,28 @@
 
 set -eu
 
+# --- DOC -----
+#
+# Folder structure is as follows:
+# - Pimcore repository is checked out by travis to /home/travis/build
+# - Empty Pimcore skeleton is checkout out to /tmp/www
+# - Symlink /tmp/www/dev/pimcore/pimcore is created to point to Pimcore repository
+#   checked out by travis (make sure we are testing the correct Pimcore version)
+# - Apache document root points to /tmp/www/web
+# - Composer dependencies are installed to /tmp/www/vendor
+# - Additional Symlink /home/travis/vendor points to /tmp/www/vendor
+#   (to make relative paths in Pimcore repository work)
+#
+# --- END DOC -----
+
+
 echo "Starting Install-Script"
 
 # checkout skeleton
 
-[[ -d /tmp/www ]] || mkdir /tmp/www
+if [ ! -d /tmp/www  ]; then
+  mkdir /tmp/www
+fi
 
 git clone https://github.com/pimcore/skeleton.git /tmp/www
 mkdir /tmp/www/dev
