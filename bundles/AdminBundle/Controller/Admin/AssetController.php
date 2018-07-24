@@ -410,7 +410,9 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     protected function getSafeFilename($targetPath, $filename)
     {
-        $originalFilename = $filename;
+        $pathinfo = pathinfo($filename);
+        $originalFilename = $pathinfo['filename'];
+        $originalFileextension = empty($pathinfo['extension']) ? '' : '.' . $pathinfo['extension'];
         $count = 1;
 
         if ($targetPath == '/') {
@@ -419,7 +421,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         while (true) {
             if (Asset\Service::pathExists($targetPath . '/' . $filename)) {
-                $filename = str_ireplace('.' . File::getFileExtension($originalFilename), '_' . $count . '.' . File::getFileExtension($originalFilename), $originalFilename);
+                $filename = $originalFilename . '_' . $count . $originalFileextension;
                 $count++;
             } else {
                 return $filename;

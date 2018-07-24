@@ -753,14 +753,17 @@ class Service extends Model\AbstractModel
         $parts = array_filter($parts, '\\Pimcore\\Model\\Element\\Service::filterNullValues');
 
         $sanitizedPath = '/';
+
+        $itemType = self::getElementType(new $type);
+
         foreach ($parts as $part) {
-            $sanitizedPath = $sanitizedPath . self::getValidKey($part, $type) . '/';
+            $sanitizedPath = $sanitizedPath . self::getValidKey($part, $itemType) . '/';
         }
 
         if (!($foundElement = $type::getByPath($sanitizedPath))) {
             foreach ($parts as $part) {
                 $pathPart = $pathsArray[count($pathsArray) - 1] ?? '';
-                $pathsArray[] = $pathPart . '/' . self::getValidKey($part, $type);
+                $pathsArray[] = $pathPart . '/' . self::getValidKey($part, $itemType);
             }
 
             for ($i = 0; $i < count($pathsArray); $i++) {

@@ -107,7 +107,7 @@ class Bootstrap
                 'PIMCORE_PROJECT_ROOT',
                 getenv('PIMCORE_PROJECT_ROOT')
                     ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
-                    ?: realpath(__DIR__ . '/../../../..')
+                    ?: realpath(__DIR__ . '/../../..')
             );
         }
     }
@@ -116,7 +116,7 @@ class Bootstrap
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
         /** @var $loader \Composer\Autoload\ClassLoader */
-        $loader = include __DIR__ . '/../../../../vendor/autoload.php';
+        $loader = include __DIR__ . '/../../../vendor/autoload.php';
         self::defineConstants();
 
         if (is_integer(PIMCORE_PHP_ERROR_REPORTING)) {
@@ -171,7 +171,7 @@ class Bootstrap
         // basic paths
         $resolveConstant('PIMCORE_COMPOSER_PATH', PIMCORE_PROJECT_ROOT . '/vendor');
         $resolveConstant('PIMCORE_COMPOSER_FILE_PATH', PIMCORE_PROJECT_ROOT);
-        $resolveConstant('PIMCORE_PATH', realpath(__DIR__ . '/..'));
+        $resolveConstant('PIMCORE_PATH', PIMCORE_PROJECT_ROOT . '/pimcore');
         $resolveConstant('PIMCORE_APP_ROOT', PIMCORE_PROJECT_ROOT . '/app');
         $resolveConstant('PIMCORE_WEB_ROOT', PIMCORE_PROJECT_ROOT . '/web');
         $resolveConstant('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
@@ -256,14 +256,14 @@ class Bootstrap
         if (!class_exists('Zend_Date')) {
             // if ZF is not loaded, we need to provide some compatibility stubs
             // for a detailed description see the included file
-            require_once __DIR__ . '/../stubs/compatibility-v4.php';
+            require_once __DIR__ . '/../../stubs/compatibility-v4.php';
         }
     }
 
     public static function includes() {
         // some pimcore specific generic includes
         // includes not covered by composer autoloader
-        require_once __DIR__ . '/helper-functions.php';
+        require_once __DIR__ . '/../helper-functions.php';
     }
 
     public static function kernel() {
