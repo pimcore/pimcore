@@ -11,6 +11,6 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
 $kernel = \Pimcore\Bootstrap::kernel();
+
 return $kernel;

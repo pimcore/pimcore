@@ -11,6 +11,5 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
-include __DIR__ . "/../../vendor/autoload.php";
+include __DIR__ . '/../../vendor/autoload.php';
 \Pimcore\Bootstrap::boostrap();
