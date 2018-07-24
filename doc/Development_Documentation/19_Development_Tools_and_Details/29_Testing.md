@@ -150,14 +150,11 @@ with the following content (customize as needed):
 
 // tests/bootstrap.php
 
-// use the env var set from the XML config, but transform it into an absolute path
-define(
-    'PIMCORE_PROJECT_ROOT',
-    realpath(getenv('PIMCORE_PROJECT_ROOT'))
-);
+include "../../vendor/autoload.php";
 
-// bootstrap Pimcore
-require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/bootstrap.php';
+\Pimcore\Bootstrap::setProjectRoot();
+\Pimcore\Bootstrap::boostrap();
+
 ```
 
 Now we're ready to write tests which depend on a bootstrapped environment. Symfony already provides `KernelTestCase` and
