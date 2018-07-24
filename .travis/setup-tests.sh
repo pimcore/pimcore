@@ -26,4 +26,4 @@ cd /tmp/www
 COMPOSER_MEMORY_LIMIT=-1 composer install --dev --no-interaction --optimize-autoloader
 cd ~
 
-ln -s ~ /tmp/www/vendor
+ln -s /tmp/www/vendor ~
