@@ -2,7 +2,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "./dev/*/*",
+      "url": "/tmp/www/dev/*/*",
       "options": {
         "symlink": true
       }
