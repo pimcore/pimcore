@@ -22,6 +22,10 @@ echo "Starting Install-Script"
 
 # checkout skeleton
 
+if [ -d /tmp/www/vendor/pimcore/pimcore ]; then
+  rm -r /tmp/www/vendor/pimcore/pimcore
+fi
+
 if [ -d /tmp/www/vendor  ]; then
   rm -r /tmp/www/vendor/pimcore/pimcore
   mv /tmp/www/vendor /tmp/vendor
