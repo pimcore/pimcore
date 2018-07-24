@@ -25,3 +25,5 @@ cp .travis/composer.local.json /tmp/www/composer.local.json
 cd /tmp/www
 COMPOSER_MEMORY_LIMIT=-1 composer install --dev --no-interaction --optimize-autoloader
 cd ~
+
+ln -s ~ /tmp/www/vendor
