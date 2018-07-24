@@ -10,4 +10,5 @@ services:
     Pimcore\Migrations\Configuration\ConfigurationFactory:
         public: true
 
-    Pimcore\Migrations\MigrationManager: ~
+    Pimcore\Migrations\MigrationManager:
+        public: true

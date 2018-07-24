@@ -250,6 +250,12 @@ pimcore:
                 namespace: App\Migrations
                 directory: "%kernel.root_dir%/Resources/migrations"
 
+            # this is the core migration set used for Composer post-package-update event
+            pimcore_core:
+                name: Pimcore Core Migrations
+                namespace: Pimcore\Bundle\CoreBundle\Migrations
+                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Resources/migrations"
+
     sitemaps:
         generators:
             pimcore_documents:

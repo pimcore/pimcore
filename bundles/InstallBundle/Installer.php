@@ -75,6 +75,7 @@ class Installer
         'setup_database'      => 'Running database setup...',
         'install_assets'      => 'Installing assets...',
         'install_classes'     => 'Installing classes ...',
+        'migrations'          => 'Mark existing migrations as done ...',
         'complete'            => 'Install complete!'
     ];
 
@@ -306,9 +307,23 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses($kernel);
 
+        $this->dispatchStepEvent('migrations');
+        $this->markMigrationsAsDone($kernel);
+
         $this->clearKernelCacheDir($kernel);
 
         return $errors;
+    }
+
+    private function markMigrationsAsDone(KernelInterface $kernel) {
+        /**
+         * @var $manager \Pimcore\Migrations\MigrationManager
+         */
+        $manager = $kernel->getContainer()->get(\Pimcore\Migrations\MigrationManager::class);
+        $config = $manager->getConfiguration('pimcore_core');
+        $config->registerMigrationsFromDirectory($config->getMigrationsDirectory());
+        $latest = end($config->getMigrations());
+        $manager->markVersionAsMigrated($latest);
     }
 
     private function installClasses(KernelInterface $kernel) {
