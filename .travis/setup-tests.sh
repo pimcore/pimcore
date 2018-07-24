@@ -10,8 +10,9 @@ set -eu
 # - Symlink /tmp/www/dev/pimcore/pimcore is created to point to Pimcore repository
 #   checked out by travis (make sure we are testing the correct Pimcore version)
 # - Apache document root points to /tmp/www/web
-# - Composer dependencies are installed to /tmp/vendor
-# - Additional Symlink /home/travis/vendor points to /tmp/vendor
+# - Composer dependencies are installed to /tmp/www/vendor,
+#   which is cached by travis and moved back and forth while setup
+# - Additional Symlink /home/travis/vendor points to /tmp/www/vendor
 #   (to make relative paths in Pimcore repository work)
 #
 # --- END DOC -----
@@ -21,15 +22,18 @@ echo "Starting Install-Script"
 
 # checkout skeleton
 
-if [ ! -d /tmp/vendor  ]; then
-  mkdir /tmp/vendor
+if [ -d /tmp/www/vendor  ]; then
+  mv /tmp/www/vendor /tmp/vendor
+  rm -r /tmp/www
 fi
 
 git clone https://github.com/pimcore/skeleton.git /tmp/www
 mkdir /tmp/www/dev
 mkdir /tmp/www/dev/pimcore
 
-ln -s /tmp/vendor /tmp/www
+if [ -d /tmp/vendor  ]; then
+  mv /tmp/vendor /tmp/www/vendor
+fi
 
 ln -s ~ /tmp/www/dev/pimcore/pimcore
 
@@ -47,4 +51,4 @@ cd /tmp/www
 COMPOSER_MEMORY_LIMIT=-1 composer install --dev --no-interaction --optimize-autoloader
 cd ~
 
-ln -s /tmp/vendor ~
+ln -s /tmp/www/vendor ~

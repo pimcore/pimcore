@@ -50,7 +50,7 @@ matrix:
 
 cache:
   directories:
-    - /tmp/vendor
+    - /tmp/www/vendor
 
 env:
   global:
