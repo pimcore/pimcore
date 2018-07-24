@@ -86,7 +86,7 @@ pimcore:
     bundles:
         search_paths:
             - src
-            - pimcore/lib/Pimcore/Bundle
+            - vendor/pimcore/pimcore/bundles
 
     objects:
         class_definitions:
