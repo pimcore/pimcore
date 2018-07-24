@@ -24,7 +24,7 @@ git clone https://github.com/pimcore/skeleton.git /tmp/www
 mkdir /tmp/www/dev
 mkdir /tmp/www/dev/pimcore
 
-ln -s ~ /tmp/www/dev/pimcore/pimcore
+ln -s ~/pimcore/pimcore /tmp/www/dev/pimcore/pimcore
 
 # add config templates
 mkdir -p /tmp/www/var/config
