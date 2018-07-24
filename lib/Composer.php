@@ -39,25 +39,7 @@ class Composer
     public static function postCreateProject(Event $event)
     {
         $rootPath = self::getRootPath($event);
-
         self::parametersYmlCheck($rootPath);
-
-        $filesystem = new Filesystem();
-        $cleanupFiles = [
-            '.github',
-            '.travis',
-            '.travis.yml',
-            'update-scripts',
-        ];
-
-        foreach ($cleanupFiles as $file) {
-            $path = $rootPath . '/' . $file;
-            if (is_dir($path)) {
-                $filesystem->removeDirectory($path);
-            } elseif (is_file($path)) {
-                $filesystem->unlink($path);
-            }
-        }
     }
 
     /**
