@@ -10,8 +10,7 @@ set -eu
 # - Symlink /tmp/www/dev/pimcore/pimcore is created to point to Pimcore repository
 #   checked out by travis (make sure we are testing the correct Pimcore version)
 # - Apache document root points to /tmp/www/web
-# - Composer dependencies are installed to /tmp/www/vendor,
-#   which is cached by travis and moved back and forth while setup
+# - Composer dependencies are installed to /tmp/www/vendor
 # - Additional Symlink /home/travis/vendor points to /tmp/www/vendor
 #   (to make relative paths in Pimcore repository work)
 #
@@ -42,7 +41,7 @@ cp .travis/composer.local.json /tmp/www/composer.local.json
 # install composer dependencies
 
 cd /tmp/www
-COMPOSER_MEMORY_LIMIT=-1 composer install --dev --no-interaction --optimize-autoloader
+COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer install --dev --no-interaction --optimize-autoloader
 cd ~
 
 ln -s /tmp/www/vendor ~
