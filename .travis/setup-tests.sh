@@ -19,22 +19,12 @@ set -eu
 
 echo "Starting Install-Script"
 
-echo "PWD: "
-pwd
-
-echo "list current"
-ls -la .
-
-echo "list home"
-ls -la ~
-
-
 # checkout skeleton
 git clone https://github.com/pimcore/skeleton.git /tmp/www
 mkdir /tmp/www/dev
 mkdir /tmp/www/dev/pimcore
 
-ln -s ~/pimcore/pimcore /tmp/www/dev/pimcore/pimcore
+ln -s ~/build/pimcore/pimcore /tmp/www/dev/pimcore/pimcore
 
 # add config templates
 mkdir -p /tmp/www/var/config
