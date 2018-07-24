@@ -5,8 +5,12 @@ set -eu
 echo "Starting Install-Script"
 
 # checkout skeleton
-mkdir -p /tmp/www/dev/pimcore
+
+[[ -d /tmp/www ]] || mkdir /tmp/www
+
 git clone https://github.com/pimcore/skeleton.git /tmp/www
+mkdir /tmp/www/dev
+mkdir /tmp/www/dev/pimcore
 
 ln -s ~ /tmp/www/dev/pimcore/pimcore
 
