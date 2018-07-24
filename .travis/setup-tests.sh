@@ -24,10 +24,6 @@ git clone https://github.com/pimcore/skeleton.git /tmp/www
 mkdir /tmp/www/dev
 mkdir /tmp/www/dev/pimcore
 
-if [ -d /tmp/vendor  ]; then
-  mv /tmp/vendor /tmp/www/vendor
-fi
-
 ln -s ~ /tmp/www/dev/pimcore/pimcore
 
 # add config templates
