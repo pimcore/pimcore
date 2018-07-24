@@ -111,6 +111,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout
                 $this->html = $result;
             }
         }
+
         return $this;
     }
 }

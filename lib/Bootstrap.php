@@ -14,25 +14,27 @@
 
 namespace Pimcore;
 
-use Pimcore\Config;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Dotenv\Dotenv;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Component\Debug\Debug;
+use Symfony\Component\Dotenv\Dotenv;
 
 class Bootstrap
 {
-    public static function startup() {
+    public static function startup()
+    {
         self::setProjectRoot();
         self::boostrap();
         $kernel = self::kernel();
+
         return $kernel;
     }
 
-    public static function startupCli() {
+    public static function startupCli()
+    {
 
         // ensure the cli arguments are set
         if (!isset($_SERVER['argv'])) {
@@ -99,7 +101,8 @@ class Bootstrap
         return $kernel;
     }
 
-    public static function setProjectRoot() {
+    public static function setProjectRoot()
+    {
         // this should already be defined at this point, but we include a fallback here
         // fot backwards compatibility
         if (!defined('PIMCORE_PROJECT_ROOT')) {
@@ -112,7 +115,8 @@ class Bootstrap
         }
     }
 
-    public static function boostrap() {
+    public static function boostrap()
+    {
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
         /** @var $loader \Composer\Autoload\ClassLoader */
@@ -139,7 +143,8 @@ class Bootstrap
         }
     }
 
-    public static function defineConstants() {
+    public static function defineConstants()
+    {
         $resolveConstant = function (string $name, $default, bool $define = true) {
             // return constant if defined
             if (defined($name)) {
@@ -212,7 +217,8 @@ class Bootstrap
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
     }
 
-    public static function autoload() {
+    public static function autoload()
+    {
         $loader = \Pimcore::getAutoloader();
 
         // tell the autoloader where to find Pimcore's generated class stubs
@@ -252,7 +258,8 @@ class Bootstrap
         self::zendCompatibility();
     }
 
-    public static function zendCompatibility() {
+    public static function zendCompatibility()
+    {
         if (!class_exists('Zend_Date')) {
             // if ZF is not loaded, we need to provide some compatibility stubs
             // for a detailed description see the included file
@@ -260,13 +267,15 @@ class Bootstrap
         }
     }
 
-    public static function includes() {
+    public static function includes()
+    {
         // some pimcore specific generic includes
         // includes not covered by composer autoloader
         require_once __DIR__ . '/helper-functions.php';
     }
 
-    public static function kernel() {
+    public static function kernel()
+    {
         $environment = Config::getEnvironment();
         $debug       = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
 

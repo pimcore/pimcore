@@ -69,7 +69,6 @@ class Service
             $delegateDataType = $dataDefinition->getDelegateDatatype();
             $delegateDefinition = self::getFieldDefinitionFromJson($delegateDefinitionRaw, $delegateDataType);
             $dataDefinition->setDelegate($delegateDefinition);
-
         }
 
         return $dataDefinition;

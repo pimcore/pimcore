@@ -179,7 +179,7 @@ class Sql extends AbstractAdapter
                     $operator = $filter['operator'];
                     if ($type == 'date') {
                         if ($operator == 'eq') {
-                            $maxValue = strtotime($value . "+23 hours 59 minutes");
+                            $maxValue = strtotime($value . '+23 hours 59 minutes');
                         }
                         $value = strtotime($value);
                     }
