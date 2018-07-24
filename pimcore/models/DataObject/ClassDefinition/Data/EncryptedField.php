@@ -133,7 +133,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
                 $data = $this->delegate->marshalBeforeEncryption($data, $object, $params);
             }
 
-            $rawBinary = (isset($params["asString"]) && $params["asString"]) ? false : true;
+            $rawBinary = (isset($params['asString']) && $params['asString']) ? false : true;
 
             $data = Crypto::encrypt($data, $key, $rawBinary);
         }
@@ -166,7 +166,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
                     throw new \Exception('could not load key');
                 }
 
-                $rawBinary = (isset($params["asString"]) && $params["asString"]) ? false : true;
+                $rawBinary = (isset($params['asString']) && $params['asString']) ? false : true;
 
                 if (!(isset($params['skipDecryption']) && $params['skipDecryption'])) {
                     $data = Crypto::decrypt($data, $key, $rawBinary);
@@ -430,12 +430,12 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             $value = $value instanceof Model\DataObject\Data\EncryptedField ? $value->getPlain() : null;
             $result = $fd->marshal($value, $object, $params);
             if ($result) {
-                $params["asString"] = true;
-                if ($params["raw"]) {
+                $params['asString'] = true;
+                if ($params['raw']) {
                     $result = $this->encrypt($result, $object, $params);
                 } else {
-                    $result["value"] = $this->encrypt($result["value"], $object, $params);
-                    $result["value2"] = $this->encrypt($result["value2"], $object, $params);
+                    $result['value'] = $this->encrypt($result['value'], $object, $params);
+                    $result['value2'] = $this->encrypt($result['value2'], $object, $params);
                 }
             }
 
@@ -454,13 +454,12 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd && $value) {
-
-            $params["asString"] = true;
-            if ($params["raw"]) {
+            $params['asString'] = true;
+            if ($params['raw']) {
                 $value = $this->decrypt($value, $object, $params);
             } else {
-                $value["value"] = $this->decrypt($value["value"], $object, $params);
-                $value["value2"] = $this->decrypt($value["value2"], $object, $params);
+                $value['value'] = $this->decrypt($value['value'], $object, $params);
+                $value['value2'] = $this->decrypt($value['value2'], $object, $params);
             }
 
             $result = $fd->unmarshal($value, $object, $params);

@@ -306,9 +306,6 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
                         $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-
-
-
                         $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
                         $activeGroups[$groupId] = true;
 
