@@ -38,6 +38,6 @@ cp .travis/composer.local.json /tmp/www/composer.local.json
 
 cd /tmp/www
 COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autoloader
-cd ~/pimcore/pimcore
+cd ~/build/pimcore/pimcore
 
 ln -s /tmp/www/vendor ~
