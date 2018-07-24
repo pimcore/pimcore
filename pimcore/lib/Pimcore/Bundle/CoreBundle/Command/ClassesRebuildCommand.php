@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,21 +23,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ClassesRebuildCommand extends AbstractCommand
 {
-    /**
-     * @var Db\Connection
-     */
-    private $db;
-
-    /**
-     * @param Db\Connection $db
-     */
-    public function __construct(Db\Connection $db)
-    {
-        parent::__construct();
-
-        $this->db = $db;
-    }
-
     protected function configure()
     {
         $this
@@ -64,6 +48,7 @@ class ClassesRebuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $db = \Pimcore\Db::get();
         if ($input->getOption('delete-classes')) {
             $questionResult = true;
 
@@ -80,7 +65,7 @@ class ClassesRebuildCommand extends AbstractCommand
                     $output->writeln('Delete Classes that don\'t have class-definitions anymore.');
                 }
 
-                $classes = $this->db->fetchAll('SELECT * FROM classes');
+                $classes = $db->fetchAll('SELECT * FROM classes');
 
                 foreach ($classes as $class) {
                     $id = $class['id'];
