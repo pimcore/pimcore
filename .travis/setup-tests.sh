@@ -5,7 +5,7 @@ set -eu
 # --- DOC -----
 #
 # Folder structure is as follows:
-# - Pimcore repository is checked out by travis to /home/travis/build
+# - Pimcore repository is checked out by travis to /home/travis/pimcore/pimcore
 # - Empty Pimcore skeleton is checkout out to /tmp/www
 # - Symlink /tmp/www/dev/pimcore/pimcore is created to point to Pimcore repository
 #   checked out by travis (make sure we are testing the correct Pimcore version)
@@ -18,6 +18,16 @@ set -eu
 
 
 echo "Starting Install-Script"
+
+echo "PWD: "
+pwd
+
+echo "list current"
+ls -la .
+
+echo "list home"
+ls -la ~
+
 
 # checkout skeleton
 git clone https://github.com/pimcore/skeleton.git /tmp/www
