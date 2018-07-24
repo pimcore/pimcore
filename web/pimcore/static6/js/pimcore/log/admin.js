@@ -25,6 +25,7 @@ pimcore.log.admin = Class.create({
         Ext.apply(this.config, config);
         this.searchParams = this.config.searchParams;
         this.refreshInterval = this.config.refreshInterval;
+        this.getTabPanel();
     },
 
     activate: function () {
