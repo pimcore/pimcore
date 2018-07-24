@@ -74,5 +74,6 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout
     {
         $this->width = $this->getWidth() ? $this->getWidth() : 500;
         $this->height = $this->getHeight() ? $this->getHeight() : 500;
+        return $this;
     }
 }

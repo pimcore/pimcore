@@ -101,7 +101,7 @@ class EncryptedField
                 $this->encrypted = $data;
             } catch (\Exception $e) {
                 Logger::error($e);
-                throw new \Exception('could not laod key');
+                throw new \Exception('could not load key');
             }
 
             return ['encrypted'];
@@ -124,7 +124,7 @@ class EncryptedField
                 $this->plain = $data;
             } catch (\Exception $e) {
                 Logger::error($e);
-                throw new \Exception('could not laod key');
+                throw new \Exception('could not load key');
             }
         }
         unset($this->encrypted);
