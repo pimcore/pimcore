@@ -18,16 +18,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-if (!defined('PIMCORE_PROJECT_ROOT')) {
-    define(
-        'PIMCORE_PROJECT_ROOT',
-        getenv('PIMCORE_PROJECT_ROOT')
-            ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
-            ?: realpath(__DIR__ . '/..')
-    );
-}
-
-require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/bootstrap.php';
+include __DIR__ . "/../vendor/autoload.php";
+\Pimcore\Bootstrap::setProjectRoot();
+\Pimcore\Bootstrap::boostrap();
 
 $request = Request::createFromGlobals();
 
@@ -47,7 +40,7 @@ if (!is_file(\Pimcore\Config::locateConfigFile('system.php'))) {
 }
 
 /** @var \Pimcore\Kernel $kernel */
-$kernel = require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/kernel.php';
+$kernel = \Pimcore\Bootstrap::kernel();
 
 // reset current request - will be read from request stack from now on
 Tool::setCurrentRequest(null);
