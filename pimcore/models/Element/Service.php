@@ -754,7 +754,7 @@ class Service extends Model\AbstractModel
 
         $sanitizedPath = '/';
 
-        $itemType = strtolower(array_pop(explode('\\',$type)));
+        $itemType = self::getElementType(new $type);
 
         foreach ($parts as $part) {
             $sanitizedPath = $sanitizedPath . self::getValidKey($part, $itemType) . '/';
