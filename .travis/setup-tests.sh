@@ -3,6 +3,9 @@
 set -eu
 
 # checkout skeleton
+sudo mkdir /var/www
+sudo chmod 0755 /var/www
+
 git clone https://github.com/pimcore/skeleton.git /var/www
 mkdir /var/www/dev
 mkdir /var/www/dev/pimcore
