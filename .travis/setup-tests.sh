@@ -25,7 +25,7 @@ ln -s ~ /tmp/www/dev/pimcore/pimcore
 mkdir -p /tmp/www/var/config
 cp .travis/system.template.php /tmp/www/var/config/system.php
 cp .travis/extensions.template.php /tmp/www/var/config/extensions.php
-cp app/config/parameters.example.yml /tmp/www/app/config/parameters.yml
+cp /tmp/www/app/config/parameters.example.yml /tmp/www/app/config/parameters.yml
 
 cp .travis/composer.local.json /tmp/www/composer.local.json
 
