@@ -306,6 +306,9 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
                         $dataDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
+
+
+
                         $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
                         $activeGroups[$groupId] = true;
 
@@ -468,6 +471,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                     ];
 
                     foreach ($validLanguages as $language) {
+                        $context['language'] = $language;
                         $value = $fd->getForWebserviceExport($object, ['context' => $context, 'language' => $language]);
                         $groupResult[$language][] = [
                             'id' => $keyId,
