@@ -37,7 +37,7 @@ cp .travis/composer.local.json /tmp/www/composer.local.json
 # install composer dependencies
 
 cd /tmp/www
-COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer install --dev --no-interaction --optimize-autoloader
-cd ~
+COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autoloader
+cd ~/pimcore/pimcore
 
 ln -s /tmp/www/vendor ~
