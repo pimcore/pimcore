@@ -3,8 +3,15 @@
 set -eu
 
 # checkout skeleton
-sudo mkdir /var/www
-sudo chmod 0755 /var/www
+# this was added to an extra script because travis had problems when the .travis.yml contained
+# the string "sudo"
+if [[ "$TRAVIS_SUDO" == "true" ]]
+then
+    echo "Creating folder in /var/www"
+    .travis/install-sudo.sh
+fi
+
+
 
 git clone https://github.com/pimcore/skeleton.git /var/www
 mkdir /var/www/dev
