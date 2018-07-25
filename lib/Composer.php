@@ -71,9 +71,11 @@ class Composer
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
         self::zendFrameworkOptimization($rootPath);
-        self::executeMigrationsUp($event);
     }
 
+    /**
+     * @param Event $event
+     */
     public static function executeMigrationsUp(Event $event) {
         $consoleDir = static::getConsoleDir($event, 'pimcore migrations');
 
