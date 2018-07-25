@@ -48,9 +48,9 @@ matrix:
         directories:
           - tmp-docs/pimcore-docs/vendor
 
-cache:
-  directories:
-    - $HOME/.cache/composer
+#cache:
+#  directories:
+#    - $HOME/.cache/composer
 
 env:
   global:
