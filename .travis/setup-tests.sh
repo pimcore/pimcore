@@ -23,6 +23,7 @@ echo "Starting Install-Script"
 git clone https://github.com/pimcore/skeleton.git /tmp/www
 #mkdir /tmp/www/dev
 # mkdir /tmp/www/dev/pimcore
+rm -r ~/build/pimcore/pimcore/.git
 
 
 #mkdir -p /tmp/www/vendor/pimcore
