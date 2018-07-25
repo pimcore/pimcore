@@ -87,6 +87,7 @@ pimcore.object.helpers.classTree = Class.create({
             region: "center",
             autoScroll: true,
             rootVisible: false,
+            bufferedRenderer: false,
             root: {
                 id: "0",
                 root: true,
