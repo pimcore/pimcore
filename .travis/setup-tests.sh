@@ -21,10 +21,10 @@ echo "Starting Install-Script"
 
 # checkout skeleton
 git clone https://github.com/pimcore/skeleton.git /tmp/www
-mkdir /tmp/www/dev
+#mkdir /tmp/www/dev
 # mkdir /tmp/www/dev/pimcore
 
-ln -s ~/build/pimcore /tmp/www/dev/pimcore
+#ln -s ~/build/pimcore /tmp/www/dev/pimcore
 
 # add config templates
 mkdir -p /tmp/www/var/config

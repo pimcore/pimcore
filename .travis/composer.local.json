@@ -2,7 +2,7 @@
   "repositories": [
     {
       "type": "path",
-      "url": "./dev/*/*",
+      "url": "~/build/*/*",
       "options": {
         "symlink": true
       }
