@@ -5,12 +5,12 @@ set -eu
 # --- DOC -----
 #
 # Folder structure is as follows:
-# - Pimcore repository is checked out by travis to /home/travis/pimcore/pimcore
+# - Pimcore repository is checked out by travis to /home/travis/pimcore/pimcore and then moved to /tmp/www/dev/pimcore/pimcore
+#   (necessary to make several relative path definitions to vendor, app, var in Pimcore work
+# - Symlink /home/travis/pimcore points to /tmp/www/dev/pimcore for compatibility
 # - Empty Pimcore skeleton is checkout out to /tmp/www
 # - Composer dependencies are installed to /tmp/www/vendor
-# - Via composer.local.json checked out Pimcore sources (/home/travis/pimcore/pimcore) are linked to vendor folder
-# - Additional symlinks /home/travis/vendor points to /tmp/www/vendor, /home/travis/app points to /tmp/www/app
-#   (to make relative paths in Pimcore repository work)
+# - Via composer.local.json checked out Pimcore sources (/tmp/www/dev/pimcore/pimcore) are linked to vendor folder
 # - Apache document root points to /tmp/www/web
 #
 # --- END DOC -----
@@ -41,8 +41,6 @@ cp .travis/composer.local.json /tmp/www/composer.local.json
 mkdir -p /tmp/www/vendor
 #ln -s /tmp/www/vendor ~
 #ln -s /tmp/www/app ~
-
-cat /tmp/www/var/config/extensions.php
 
 # install composer dependencies
 cd /tmp/www
