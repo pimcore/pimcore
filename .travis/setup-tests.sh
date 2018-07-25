@@ -21,10 +21,9 @@ echo "Starting Install-Script"
 
 # checkout skeleton
 git clone https://github.com/pimcore/skeleton.git /tmp/www
-#mkdir /tmp/www/dev
-# mkdir /tmp/www/dev/pimcore
-rm -r -f ~/build/pimcore/pimcore/.git
 
+# remove .git folder so that composer merge plugin makes symlink correctly
+rm -r -f ~/build/pimcore/pimcore/.git
 
 #mkdir -p /tmp/www/vendor/pimcore
 #ln -s ~/build/pimcore/pimcore /tmp/www/vendor/pimcore/pimcore
@@ -39,12 +38,13 @@ cp /tmp/www/app/config/parameters.example.yml /tmp/www/app/config/parameters.yml
 cp .travis/composer.local.json /tmp/www/composer.local.json
 
 # install composer dependencies
+mkdir -p /tmp/www/vendor
+ln -s /tmp/www/vendor ~
 
 cd /tmp/www
-COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer update -d /tmp/www --no-interaction --optimize-autoloader -vvv
+COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer update --no-interaction --optimize-autoloader -vvv
 cd ~/build/pimcore/pimcore
 
-ln -s /tmp/www/vendor ~
 
 echo "----list----"
 cat /tmp/www/composer.local.json
