@@ -48,6 +48,6 @@ cat /tmp/www/composer.local.json
 ls -la /tmp/www/vendor/pimcore
 ls -la ~
 #ls -la /tmp/www/dev/pimcore/pimcore
-#cat /tmp/www/dev/pimcore/pimcore/composer.json
+cat ~/build/pimcore/pimcore/composer.json
 
 
