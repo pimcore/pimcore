@@ -75,7 +75,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     protected function getCondition()
     {
-        $condition = $this->model->getIncludeDisabled() ? 'enabled is null or enabled is 0' : 'enabled = 1';
+        $condition = $this->model->getIncludeDisabled() ? '(enabled is null or enabled = 0)' : 'enabled = 1';
 
         $cond = $this->model->getCondition();
         if ($cond) {
