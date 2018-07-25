@@ -16,7 +16,6 @@ pimcore.document.edit = Class.create({
 
     initialize: function(document) {
         this.document = document;
-
     },
 
     getEditLink: function () {
@@ -153,11 +152,10 @@ pimcore.document.edit = Class.create({
             return;
         }
 
-        var editables = this.frame.Ext.getBody().query(".pimcore_editable");
         var ed;
-        for(var i=0; i<editables.length; i++) {
-            ed = this.frame.Ext.get(editables[i]);
-
+        var editables = this.frame.editables;
+        for (var i=0; i<editables.length; i++) {
+            ed = this.frame.Ext.get(editables[i].getId());
             if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
                 && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
                 if(!this.tagHighlightingActive) {
@@ -166,7 +164,12 @@ pimcore.document.edit = Class.create({
                     mask.setStyle("opacity","0.5");
                     mask.setStyle("pointer-events","none");
                 } else {
-                    ed.unmask();
+                    if (editables[i].getInherited()) {
+                       var mask = ed.mask();
+                       editables[i].setInherited(editables[i].getInherited());
+                    } else {
+                        ed.unmask();
+                    }
                 }
             }
         }
@@ -389,7 +392,6 @@ pimcore.document.edit = Class.create({
         try {
             var editables = this.frame.editables;
             var editableName = "";
-
             for (var i = 0; i < editables.length; i++) {
                 try {
                     if (editables[i].getName() && !editables[i].getInherited()) {
