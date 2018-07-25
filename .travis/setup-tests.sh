@@ -25,9 +25,8 @@ git clone https://github.com/pimcore/skeleton.git /tmp/www
 # mkdir /tmp/www/dev/pimcore
 
 
-mkdir -p /tmp/www/vendor/pimcore
-ln -s ~/build/pimcore/pimcore /tmp/www/vendor/pimcore/pimcore
-
+#mkdir -p /tmp/www/vendor/pimcore
+#ln -s ~/build/pimcore/pimcore /tmp/www/vendor/pimcore/pimcore
 #ln -s ~/build/pimcore /tmp/www/dev/pimcore
 
 # add config templates
@@ -41,7 +40,7 @@ cp .travis/composer.local.json /tmp/www/composer.local.json
 # install composer dependencies
 
 cd /tmp/www
-COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autoloader
+COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer update -d /tmp/www --no-interaction --optimize-autoloader
 cd ~/build/pimcore/pimcore
 
 ln -s /tmp/www/vendor ~
