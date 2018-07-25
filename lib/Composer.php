@@ -83,7 +83,14 @@ class Composer
             return;
         }
 
-        static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -s pimcore_core -n');
+        $process = static::executeCommand($event, $consoleDir, 'pimcore:migrations:status -s pimcore_core -o current_version', 30, false);
+        $currentVersion = trim($process->getOutput());
+
+        if(!empty($currentVersion)) {
+            static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -s pimcore_core -n');
+        } else {
+            $event->getIO()->write('<comment>Skipping migrations, because current version is `0` -> run installer first or mark migrations as done manually!</comment>', true);
+        }
     }
 
     /**
@@ -158,7 +165,7 @@ class Composer
     /**
      * The following is copied from \Sensio\Bundle\DistributionBundle\Composer\ScriptHandler
      */
-    protected static function executeCommand(Event $event, $consoleDir, $cmd, $timeout = 900)
+    protected static function executeCommand(Event $event, $consoleDir, $cmd, $timeout = 900, $writeBuffer = true)
     {
         $php = escapeshellarg(static::getPhp(false));
         $phpArgs = implode(' ', array_map('escapeshellarg', static::getPhpArguments()));
@@ -168,10 +175,16 @@ class Composer
         }
 
         $process = new Process($php.($phpArgs ? ' '.$phpArgs : '').' '.$console.' '.$cmd, null, null, null, $timeout);
-        $process->run(function ($type, $buffer) use ($event) { $event->getIO()->write($buffer, false); });
+        $process->run(function ($type, $buffer) use ($event, $writeBuffer) {
+            if($writeBuffer) {
+                $event->getIO()->write($buffer, false);
+            }
+        });
         if (!$process->isSuccessful()) {
             throw new \RuntimeException(sprintf("An error occurred when executing the \"%s\" command:\n\n%s\n\n%s", escapeshellarg($cmd), self::removeDecoration($process->getOutput()), self::removeDecoration($process->getErrorOutput())));
         }
+
+        return $process;
     }
 
     protected static function getPhp($includeArgs = true)
