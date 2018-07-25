@@ -164,12 +164,7 @@ pimcore.document.edit = Class.create({
                     mask.setStyle("opacity","0.5");
                     mask.setStyle("pointer-events","none");
                 } else {
-                    if (editables[i].getInherited()) {
-                       var mask = ed.mask();
-                       editables[i].setInherited(editables[i].getInherited());
-                    } else {
-                        ed.unmask();
-                    }
+                    editables[i].setInherited(editables[i].getInherited());
                 }
             }
         }
