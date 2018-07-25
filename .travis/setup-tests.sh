@@ -34,13 +34,7 @@ mkdir -p /tmp/www/var/config
 cp .travis/system.template.php /tmp/www/var/config/system.php
 cp .travis/extensions.template.php /tmp/www/var/config/extensions.php
 cp /tmp/www/app/config/parameters.example.yml /tmp/www/app/config/parameters.yml
-
 cp .travis/composer.local.json /tmp/www/composer.local.json
-
-# create vendor folder and symlink vendor and app folder to home directory
-mkdir -p /tmp/www/vendor
-#ln -s /tmp/www/vendor ~
-#ln -s /tmp/www/app ~
 
 # install composer dependencies
 cd /tmp/www
