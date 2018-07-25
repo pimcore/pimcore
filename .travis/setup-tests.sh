@@ -42,7 +42,9 @@ cd ~/build/pimcore/pimcore
 
 
 echo "----list----"
+cat /tmp/www/composer.local.json
 ls -la /tmp/www/dev/pimcore
 ls -la /tmp/www/vendor/pimcore
+ls -la ~
 
 ln -s /tmp/www/vendor ~
