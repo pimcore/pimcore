@@ -37,20 +37,24 @@ cp /tmp/www/app/config/parameters.example.yml /tmp/www/app/config/parameters.yml
 
 cp .travis/composer.local.json /tmp/www/composer.local.json
 
-# install composer dependencies
-#mkdir -p /tmp/www/vendor
-#ln -s /tmp/www/vendor ~
+# create vendor folder and symlink vendor and app folder to home directory
+mkdir -p /tmp/www/vendor
+ln -s /tmp/www/vendor ~
+ln -s /tmp/www/app ~
 
+
+# install composer dependencies
 cd /tmp/www
 COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autoloader -vv
+cd ~/build/pimcore/pimcore
 
-#cd ~/build/pimcore/pimcore
-#echo "----list----"
-#cat /tmp/www/composer.local.json
+
+echo "----list----"
+cat /tmp/www/composer.local.json
 #ls -la /tmp/www/dev/pimcore
-#ls -la /tmp/www/vendor/pimcore
-#ls -la ~
+ls -la /tmp/www/vendor/pimcore
+ls -la ~
 #ls -la /tmp/www/dev/pimcore/pimcore
-#cat ~/build/pimcore/pimcore/composer.json
+cat ~/build/pimcore/pimcore/composer.json
 
 
