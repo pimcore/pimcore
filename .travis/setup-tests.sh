@@ -42,7 +42,7 @@ cd ~/build/pimcore/pimcore
 
 
 echo "----list----"
-ls -la /var/www/dev/pimcore
-ls -la /var/www/vendor/pimcore
+ls -la /tmp/www/dev/pimcore
+ls -la /tmp/www/vendor/pimcore
 
 ln -s /tmp/www/vendor ~
