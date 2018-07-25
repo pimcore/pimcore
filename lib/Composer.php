@@ -83,8 +83,14 @@ class Composer
             return;
         }
 
-        $process = static::executeCommand($event, $consoleDir, 'pimcore:migrations:status -s pimcore_core -o current_version', 30, false);
-        $currentVersion = trim($process->getOutput());
+        $currentVersion = null;
+        try {
+            $process = static::executeCommand($event, $consoleDir,
+                'pimcore:migrations:status -s pimcore_core -o current_version', 30, false);
+            $currentVersion = trim($process->getOutput());
+        } catch (\Throwable $e) {
+            $event->getIO()->write('<comment>Unable to retrieve current migration version</comment>');
+        }
 
         if(!empty($currentVersion)) {
             static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -s pimcore_core -n');
