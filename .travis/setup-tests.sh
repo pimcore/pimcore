@@ -40,4 +40,9 @@ cd /tmp/www
 COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autoloader
 cd ~/build/pimcore/pimcore
 
+
+echo "----list----"
+ls -la /var/www/dev/pimcore
+ls -la /var/www/vendor/pimcore
+
 ln -s /tmp/www/vendor ~
