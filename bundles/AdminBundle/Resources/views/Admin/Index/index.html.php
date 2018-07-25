@@ -215,7 +215,7 @@ $styles = array(
 $scriptLibs = array(
 
     // library
-    "lib/prototype-light.js",
+    "lib/class.js",
     "lib/jquery-3.3.1.min.js",
     "lib/ext/ext-all" . $debugSuffix . ".js",
     "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",

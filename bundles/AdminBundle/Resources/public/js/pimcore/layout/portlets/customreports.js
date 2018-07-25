@@ -46,7 +46,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             }
         ];
 
-        this.layout = Ext.create('Portal.view.Portlet', Object.extend(defaultConf, {
+        this.layout = Ext.create('Portal.view.Portlet', Object.assign(defaultConf, {
             title: this.getName(),
             iconCls: this.getIcon(),
             height: 275,

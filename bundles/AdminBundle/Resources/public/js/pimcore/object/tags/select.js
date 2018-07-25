@@ -128,7 +128,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        editorConfig = Object.extend(editorConfig, {
+        editorConfig = Object.assign(editorConfig, {
             store: store,
             triggerAction: "all",
             editable: false,
@@ -177,7 +177,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        editorConfig = Object.extend(editorConfig, {
+        editorConfig = Object.assign(editorConfig, {
             store: store,
             triggerAction: "all",
             editable: false,

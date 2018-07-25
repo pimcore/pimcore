@@ -220,7 +220,7 @@ pimcore.object.helpers.edit = {
                 var iframe = new pimcore.object.layout.iframe(l, context);
                 newConfig = iframe.getLayout();
             } else {
-                newConfig = Object.extend(xTypeLayoutMapping[l.fieldtype] || {}, newConfig);
+                newConfig = Object.assign(xTypeLayoutMapping[l.fieldtype] || {}, newConfig);
                 if (typeof newConfig.labelWidth != "undefined") {
                     newConfig = Ext.applyIf(newConfig, {
                         defaults: {}

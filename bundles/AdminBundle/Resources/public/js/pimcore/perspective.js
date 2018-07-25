@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.perspective");
 pimcore.perspective = Class.create({
 
     initialize: function(perspective) {
-        Object.extend(this, perspective);
+        Object.assign(this, perspective);
         this.cache = {};
     },
 
