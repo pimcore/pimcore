@@ -205,11 +205,14 @@ pimcore.settings.tagmanagement.item = Class.create({
 
 
     addItem: function (data) {
-
         if(typeof data == "undefined") {
             data = {};
         }
         var myId = Ext.id();
+
+        if(data.date) {
+           data.date = new Date(data.date * 1000);
+        }
 
         var item =  new Ext.Panel({
             id: myId,
@@ -261,6 +264,34 @@ pimcore.settings.tagmanagement.item = Class.create({
                 fieldLabel: t("enabled_in_editmode"),
                 name: "item." + myId + ".enabledInEditmode",
                 checked: data.enabledInEditmode
+            },{
+                xtype: "datefield",
+                name: "item." + myId + ".date",
+                width: 220,
+                style: "float: left; margin-right:5px;",
+                fieldLabel: t("expiry"),
+                value: data.date,
+                format: "m/d/y",
+                renderer:
+                function(d) {
+                    if(d instanceof Date) {
+                        return Ext.Date.format(d, "m/d/y");
+                    }
+                    return null;
+                }
+            },{
+                xtype: "timefield",
+                name: "item." + myId + ".time",
+                width: 120,
+                style: "float: left;",
+                value: data.date,
+                format: 'H:i A',
+                function(d) {
+                    if(d instanceof Date) {
+                        return Ext.Date.format(d, "H:i A");
+                    }
+                    return null;
+                }
             }]
         });
 

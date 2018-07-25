@@ -148,8 +148,17 @@ class TagManagerListener
                 }
 
                 if (is_array($tag->getItems()) && $paramsValid) {
-                    foreach ($tag->getItems() as $item) {
+                    foreach ($tag->getItems() as $itemKey => $item) {
+
                         if ($item['disabled']) {
+                            continue;
+                        }
+
+                        $currentTime = new \Carbon\Carbon();
+                        if ($currentTime->getTimestamp() > $item['date']) {
+                            //disable tag item if expired
+                            $tag->items[$itemKey]['disabled'] = true;
+                            $tag->save();
                             continue;
                         }
 
