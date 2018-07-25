@@ -26,7 +26,7 @@ git clone https://github.com/pimcore/skeleton.git /tmp/www
 
 
 mkdir -p /tmp/www/vendor/pimcore
-ln -s ~/build/pimcore/pimcore /tmp/www/dev/pimcore/pimcore
+ln -s ~/build/pimcore/pimcore /tmp/www/vendor/pimcore/pimcore
 
 #ln -s ~/build/pimcore /tmp/www/dev/pimcore
 
