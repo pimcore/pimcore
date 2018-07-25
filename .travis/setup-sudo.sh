@@ -4,6 +4,7 @@ set -e
 
 # set home directory permissions to be readable by apache
 sudo chmod 0755 /home/travis
+sudo chmod 0755 /tmp/www
 
 # install apache
 sudo apt-get update

@@ -2,7 +2,7 @@
 
 When targeting is enabled, a snippet of JavaScript in injected into every response. This snippet contains some information
 needed by the frontend regarding the application state (e.g. if debug mode is enabled) and includes the script
-[`pimcore/static6/js/frontend/targeting.js`](https://github.com/pimcore/pimcore/blob/master/web/pimcore/static6/js/frontend/targeting.js)
+[`pimcore/static6/js/frontend/targeting.js`](https://github.com/pimcore/pimcore/blob/master/web/bundles/pimcoreadmin/js/frontend/targeting.js)
 which handles the frontend behaviour of the targeting engine (e.g. exposes an API to set the visitor ID). The whole targeting
 logic is handled inside the `window._ptg` object. 
 

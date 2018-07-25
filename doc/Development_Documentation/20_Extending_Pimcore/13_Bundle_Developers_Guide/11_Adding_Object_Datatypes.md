@@ -22,7 +22,7 @@ options in class editor.
    `$fieldtype` property of the corresponding PHP class.
      
    For examples have a look at the Pimcore core datatypes at  
-   [github](https://github.com/pimcore/pimcore/tree/master/web/pimcore/static6/js/pimcore/object/classes/data)
+   [github](https://github.com/pimcore/pimcore/tree/master/web/bundles/pimcoreadmin/js/pimcore/object/classes/data)
 
 
 3) Create JavaScript class for object editor (object tag):
@@ -33,7 +33,7 @@ is presented and an can be entered within Pimcore objects.
    `$fieldtype` property of the corresponding PHP class.
      
    For examples have a look at the Pimcore core datatypes at  
-   [github](https://github.com/pimcore/pimcore/tree/master/web/pimcore/static6/js/pimcore/object/tags)
+   [github](https://github.com/pimcore/pimcore/tree/master/web/bundles/pimcoreadmin/js/pimcore/object/tags)
    
    
 4) Register a datatype in Pimcore

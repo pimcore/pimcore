@@ -1,12 +1,11 @@
 
 * -text
 
-web/pimcore/static6/js/lib/* linguist-vendored
-install-profiles/* linguist-vendored
+bundles/AdminBundle/Resources/public/js/lib/* linguist-vendored
 
+/.ci export-ignore
 /.github export-ignore
 /.travis export-ignore
-/update-scripts export-ignore
 /.gitattributes export-ignore
 /.gitignore export-ignore
 /.php_cs export-ignore

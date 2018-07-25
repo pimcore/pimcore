@@ -1,0 +1,14 @@
+{
+  "repositories": [
+    {
+      "type": "path",
+      "url": "./dev/*/*",
+      "options": {
+        "symlink": true
+      }
+    }
+  ],
+  "require": {
+    "pimcore/pimcore": "@dev"
+  }
+}
