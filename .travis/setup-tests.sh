@@ -42,7 +42,7 @@ mkdir -p /tmp/www/vendor
 ln -s /tmp/www/vendor ~
 
 cd /tmp/www
-COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer update --no-interaction --optimize-autoloader -vvv
+COMPOSER_DISCARD_CHANGES=true COMPOSER_MEMORY_LIMIT=-1 composer install --no-interaction --optimize-autoloader -vv
 cd ~/build/pimcore/pimcore
 
 
