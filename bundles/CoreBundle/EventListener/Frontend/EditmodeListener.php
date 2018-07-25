@@ -291,7 +291,7 @@ class EditmodeListener implements EventSubscriberInterface
 
         return [
             '/bundles/pimcoreadmin/js/pimcore/common.js',
-            '/bundles/pimcoreadmin/js/lib/prototype-light.js',
+            '/bundles/pimcoreadmin/js/lib/class.js',
             '/bundles/pimcoreadmin/js/lib/jquery-3.3.1.min.js',
             '/bundles/pimcoreadmin/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
             '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js'
