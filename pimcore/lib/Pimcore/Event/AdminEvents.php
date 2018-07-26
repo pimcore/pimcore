@@ -290,7 +290,20 @@ final class AdminEvents
     const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildsById.preSendData';
 
     /**
-     * Fired before the request params are parsed.
+     * Fired before the object data is loaded.
+     *
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DataObjectController
+     * Arguments:
+     *  - object | AbstractObject | the current object
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_GET_PRE_LOAD_DATA = 'pimcore.admin.dataobject.get.preLoadData';
+
+    /**
+     * Fired before the object data is sent.
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DataObjectController
      * Arguments:

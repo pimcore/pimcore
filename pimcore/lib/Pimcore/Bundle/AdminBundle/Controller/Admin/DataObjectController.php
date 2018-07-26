@@ -340,6 +340,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $objectFromVersion = $latestObject === $object ? false : true;
         $object = $latestObject;
 
+        // Hook for manipulating the object before loading the data
+        $event = new GenericEvent($this, [
+            'object' => $object,
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_LOAD_DATA, $event);
+        $object = $event->getArgument('object');
+
         if ($object->isAllowed('view')) {
             $objectData = [];
 
