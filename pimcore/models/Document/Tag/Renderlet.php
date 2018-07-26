@@ -118,8 +118,8 @@ class Renderlet extends Model\Document\Tag
         }
 
         if (!$this->options['controller'] && !$this->options['action']) {
-            $this->options['controller'] = Config::getSystemConfig()->documents->default_controller;
-            $this->options['action'] = Config::getSystemConfig()->documents->default_action;
+            $this->options['controller'] = PIMCORE_SYMFONY_DEFAULT_CONTROLLER;
+            $this->options['action'] = PIMCORE_SYMFONY_DEFAULT_ACTION;
         }
 
         if (method_exists($this->o, 'isPublished')) {

@@ -205,8 +205,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $createValues['action'] = $translationsBaseDocument->getAction();
                     $createValues['module'] = $translationsBaseDocument->getModule();
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
-                    $createValues['controller'] = Config::getSystemConfig()->documents->default_controller;
-                    $createValues['action'] = Config::getSystemConfig()->documents->default_action;
+                    $createValues['controller'] = PIMCORE_SYMFONY_DEFAULT_CONTROLLER;
+                    $createValues['action'] = PIMCORE_SYMFONY_DEFAULT_ACTION;
                 }
 
                 if ($request->get('inheritanceSource')) {

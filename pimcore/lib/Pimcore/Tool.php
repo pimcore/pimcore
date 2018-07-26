@@ -289,29 +289,11 @@ class Tool
      */
     public static function getRoutingDefaults()
     {
-        $config = Config::getSystemConfig();
-
-        if ($config) {
-            // system default
-            $routingDefaults = [
-                'controller' => 'Default',
-                'action'     => 'default',
-                'module'     => PIMCORE_SYMFONY_DEFAULT_BUNDLE
-            ];
-
-            // get configured settings for defaults
-            $systemRoutingDefaults = $config->documents->toArray();
-
-            foreach ($routingDefaults as $key => $value) {
-                if (isset($systemRoutingDefaults['default_' . $key]) && $systemRoutingDefaults['default_' . $key]) {
-                    $routingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
-                }
-            }
-
-            return $routingDefaults;
-        } else {
-            return [];
-        }
+        return [
+            'controller' => PIMCORE_SYMFONY_DEFAULT_CONTROLLER,
+            'action'     => PIMCORE_SYMFONY_DEFAULT_ACTION,
+            'module'     => PIMCORE_SYMFONY_DEFAULT_BUNDLE
+        ];
     }
 
     /**
